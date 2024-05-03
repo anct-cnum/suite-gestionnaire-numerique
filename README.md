@@ -18,7 +18,7 @@ pnpm dev
 
 Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat
 
-## Tests
+## 🧪 Tests
 
 Pour lancer les tests une fois, exécutez :
 ```bash
