@@ -28,4 +28,4 @@ pnpm test
 Pour lancer les tests en continu fois, exécutez :
 ```bash
 pnpm test:watch
-``
+```
