@@ -1,0 +1,42 @@
+name: Clever Cloud Review App
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - [ md/configurationCICD ]
+jobs:
+  deploy:
+    if: github.event.action === 'opened' || github.event.action === 'reopened'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: read
+    environment:
+      name: review/${{ github.event.number }}
+    steps:
+      - run: echo "Le nom de la branche est ${{ github.ref }} et le nom du repository est ${{ github.repository }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
+      - run: echo "Le workflow est prêt à tester le code dans le runner"
+      - run: |
+          ls ${{ github.workspace }}
+      - run: echo "Le statut du job est ${{ job.status }}"
+      - name: Installation de clever-tools
+        run: npm install -g clever-tools
+      - name: Création et deploiement de l'application
+        env: 
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+          ORGA_ID: ${{ secrets.ORGA_ID }}
+        run: |
+          clever create --type node ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
+          clever domain add ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }}.cleverapps.io
+          clever deploy
