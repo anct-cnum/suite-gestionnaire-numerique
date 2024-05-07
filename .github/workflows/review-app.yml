@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
-      - [ md/configurationCICD ]
+      - md/configurationCICD
 jobs:
   deploy:
     if: github.event.action === 'opened' || github.event.action === 'reopened'
