@@ -25,7 +25,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
-      - run: echo "Le workflow est prêt à tester le code dans le runner"
+      - run: echo "🚀 Le workflow est prêt à tester le code dans le runner"
       - run: |
           ls ${{ github.workspace }}
       - run: echo "Le statut du job est ${{ job.status }}"
