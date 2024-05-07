@@ -29,7 +29,7 @@ export default function Home() {
       </div>
 
       <div className={styles.center}>
-        <h1>Suite gestionnaire numérique !</h1>
+        <h1>Suite gestionnaire numérique ! v0.0.1</h1>
       </div>
 
       <div className={styles.grid}>
