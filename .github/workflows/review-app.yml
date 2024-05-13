@@ -43,6 +43,6 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever create --type static ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
+          clever create --type static-apache ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
           clever domain add ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }}.cleverapps.io
           clever deploy
