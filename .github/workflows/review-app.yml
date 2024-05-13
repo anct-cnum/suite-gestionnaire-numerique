@@ -44,5 +44,9 @@ jobs:
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
           clever create --type static-apache ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
+          clever env set CC_WEBROOT "/out"
+          clever env set CC_PRE_BUILD_HOOK "npm install"
+          clever env set CC_POST_BUILD_HOOK "npm run build"
+          clever env set CC_OVERRIDE_BUILDCACHE "/out"
           clever domain add ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }}.cleverapps.io
           clever deploy
