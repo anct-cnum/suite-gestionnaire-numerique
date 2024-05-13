@@ -7,7 +7,7 @@ on:
       - md/configurationCICD
 jobs:
   deploy:
-    if: github.event.action === 'opened' || github.event.action === 'reopened'
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
     permissions:
       issues: write
