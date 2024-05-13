@@ -5,6 +5,12 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - md/configurationCICD
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Execution manuelle du workflow'
+        required: true
+        default: 'md/configurationCICD'
 jobs:
   deploy:
     if: github.event.action == 'opened' || github.event.action == 'reopened'
