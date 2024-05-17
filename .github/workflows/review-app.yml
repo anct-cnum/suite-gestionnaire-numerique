@@ -5,9 +5,15 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - md/configurationCICD
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Execution manuelle du workflow'
+        required: true
+        default: 'md/configurationCICD'
 jobs:
   deploy:
-    if: github.event.action === 'opened' || github.event.action === 'reopened'
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -25,7 +31,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
-      - run: echo "Le workflow est prêt à tester le code dans le runner"
+      - run: echo "🚀 Le workflow est prêt à tester le code dans le runner"
       - run: |
           ls ${{ github.workspace }}
       - run: echo "Le statut du job est ${{ job.status }}"
@@ -35,8 +41,96 @@ jobs:
         env: 
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
-          ORGA_ID: ${{ secrets.ORGA_ID }}
+          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever create --type node ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
+          clever create --type static-apache ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
+          clever env set CC_WEBROOT "/out"
+          clever env set CC_PRE_BUILD_HOOK "npm install"
+          clever env set CC_POST_BUILD_HOOK "npm run build"
+          clever env set CC_OVERRIDE_BUILDCACHE "/out"
           clever domain add ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }}.cleverapps.io
           clever deploy
+      - name: Commentaires PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const message = `Environnement déployé avec succès accessible [ici](https://doc-review-PR-${{ github.event.number }}.cleverapps.io)`;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: message
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  update:
+    if: github.event.action == 'synchronize'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      - name: install clever-tools
+        run: npm install -g clever-tools
+      - name: Link and update app
+        env:
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
+        run: | 
+          clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
+          clever deploy --force
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://doc-review-PR-${{ github.event.number }}.cleverapps.io)`;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: message
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  delete:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    if: always() && github.event_name == 'pull_request_target' && github.event.action == 'closed'
+    steps:
+      - name: install clever-tools
+        run: npm install -g clever-tools
+      - name: Delete app
+        env:
+          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
+        run: |
+          clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
+          clever delete --alias  doc-review-PR-${{ github.event.number }} --yes
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.payload.pull_request.number;
+            const message = `L'environnement de test a été supprimé avec succès👋`;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: message
+            });
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
