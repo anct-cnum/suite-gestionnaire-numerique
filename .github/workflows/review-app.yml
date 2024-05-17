@@ -120,14 +120,14 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever link -o "$ORGA_ID" {{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
-          clever delete --alias  {{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }} --yes
+          clever link -o "$ORGA_ID" ${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
+          clever delete --alias ${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }} --yes
       - name: Comment PR
         uses: actions/github-script@v7
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `L'environnement de test a été supprimé avec succès👋`;
+            const message = `L'environnement de test a été supprimé avec succès 👋`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
