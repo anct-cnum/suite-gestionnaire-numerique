@@ -85,7 +85,7 @@ jobs:
         env:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
-          ORGA_ID: ${{ secrets.ORGA_ID }}
+          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: | 
           clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
           clever deploy --force
@@ -116,7 +116,7 @@ jobs:
         env:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
-          ORGA_ID: ${{ secrets.ORGA_ID }}
+          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
           clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
           clever delete --alias  doc-review-PR-${{ github.event.number }} --yes
