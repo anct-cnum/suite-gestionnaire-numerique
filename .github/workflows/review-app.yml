@@ -120,8 +120,8 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
-          clever delete --alias  doc-review-PR-${{ github.event.number }} --yes
+          clever link -o "$ORGA_ID" {{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
+          clever delete --alias  {{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }} --yes
       - name: Comment PR
         uses: actions/github-script@v7
         with:
