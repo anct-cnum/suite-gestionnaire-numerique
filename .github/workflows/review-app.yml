@@ -43,19 +43,20 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever create --type static-apache ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --alias ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }} --region par --org "$ORGA_ID"
-          clever env set CC_WEBROOT "/out"
-          clever env set CC_PRE_BUILD_HOOK "npm install"
-          clever env set CC_POST_BUILD_HOOK "npm run build"
-          clever env set CC_OVERRIDE_BUILDCACHE "/out"
-          clever domain add ${{ github.event.pull_request.head.repo.name}}-PR-${{ github.event.number }}.cleverapps.io
-          clever deploy
+          APP_NAME=${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
+          clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID" || echo "Application $APP_NAME already exists."
+          clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
+          clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
+          clever env set CC_POST_BUILD_HOOK "npm run build" --alias "$APP_NAME"
+          clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
+          clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
+          clever deploy --alias "$APP_NAME"
       - name: Commentaires PR
         uses: actions/github-script@v7
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `Environnement déployé avec succès accessible [ici](https://doc-review-PR-${{ github.event.number }}.cleverapps.io)`;
+            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -87,14 +88,15 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: | 
-          clever link -o "$ORGA_ID" doc-review-PR-${{ github.event.number }}
-          clever deploy --force
+          APP_NAME=${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
+          clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
+          clever deploy --alias "$APP_NAME" --force
       - name: Comment PR
         uses: actions/github-script@v7
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://doc-review-PR-${{ github.event.number }}.cleverapps.io)`;
+            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
