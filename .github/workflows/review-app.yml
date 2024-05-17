@@ -56,7 +56,7 @@ jobs:
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
+            const message = `Environnement de recette déployé avec succès accessible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
