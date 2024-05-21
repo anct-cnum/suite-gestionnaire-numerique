@@ -1,6 +1,14 @@
 # Suite gestionnaire numérique
 
-**Sur ce projet, `pnpm` est le gestionnaire de paquets utilisé** 
+**Sur ce projet, `pnpm` est le gestionnaire de paquets utilisé**
+
+## 🛠️ Prérequis
+
+Avoir la version LTS de node décrite dans le fichier `.nvmrc`.
+
+```bash
+nvm install v20.x.x
+```
 
 ## 🚀 Démarrage
 
@@ -21,11 +29,13 @@ Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour 
 ## 🧪 Tests
 
 Pour lancer les tests une fois, exécutez :
+
 ```bash
 pnpm test
 ```
 
 Pour lancer les tests en continu fois, exécutez :
+
 ```bash
 pnpm test:watch
 ```
