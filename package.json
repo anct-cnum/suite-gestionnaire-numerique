@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "build": "next build",
+    "deadcode": "knip",
     "depcheck": "depcheck",
     "dev": "next dev --turbo",
     "lint": "next lint",
@@ -27,6 +28,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "jsdom": "^24.0.0",
+    "knip": "^5.16.0",
     "typescript": "^5",
     "vitest": "^1.6.0",
     "vitest-dom": "^0.1.1"
