@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { addition } from '../src/app/addition';
 
 test('devrait retourner 3 quand on additionne 1 et 2', () => {
