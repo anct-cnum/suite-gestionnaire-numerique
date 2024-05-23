@@ -1,12 +1,13 @@
 {
   "name": "suite-gestionnaire-numerique",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
   "scripts": {
-    "dev": "next dev --turbo",
     "build": "next build",
-    "start": "next start",
+    "depcheck": "depcheck",
+    "dev": "next dev --turbo",
     "lint": "next lint",
+    "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -19,6 +20,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "depcheck": "^1.4.7",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "typescript": "^5",
