@@ -6,9 +6,7 @@ export default defineConfig({
   test: {
     coverage: {
       exclude: [],
-      include: [
-        'src/**/*',
-      ],
+      include: ['src/**/*'],
       provider: 'istanbul',
       skipFull: true,
     },
