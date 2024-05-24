@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
+    "amibroken": "pnpm lint:css && pnpm typecheck && pnpm lint:ts && pnpm test:coverage",
     "build": "next build",
     "deadcode": "knip",
     "depcheck": "depcheck",
     "dev": "next dev --turbo",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:ts": "eslint . --ext .tsx,.ts --max-warnings=0",
+    "prepare": "husky",
     "start": "next start",
     "test": "vitest run",
-    "test:coverage": "pnpm test --coverage",
-    "test:watch": "vitest"
+    "test:coverage": "pnpm test -- --coverage",
+    "test:watch": "vitest",
+    "typecheck": "tsc"
   },
   "dependencies": {
     "next": "14.2.3",
@@ -39,6 +42,7 @@
     "eslint-plugin-testing-library": "^6.2.2",
     "eslint-plugin-unused-imports": "^3.2.0",
     "eslint-plugin-vitest": "^0.4.1",
+    "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "knip": "^5.16.0",
     "stylelint": "^16.5.0",
