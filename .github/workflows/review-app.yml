@@ -10,22 +10,10 @@ on:
         required: true
         default: 'md/configurationCICD'
       pr_number:
-        description: 'Numéro de la PR à déployer'
+        description: 'Pull Request Number'
         required: true
 jobs:
-  set-pr-number:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set PR Number
-        id: set-pr-number
-        run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "PR_NUMBER=${{ github.event.inputs.pr_number }}" >> $GITHUB_ENV
-          else
-            echo "PR_NUMBER=${{ github.event.number }}" >> $GITHUB_ENV
-          fi
   deploy:
-    needs: set-pr-number
     if: github.event_name == 'workflow_dispatch' || github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
     permissions:
@@ -33,14 +21,14 @@ jobs:
       pull-requests: write
       contents: read
     environment:
-       name: review/${{ env.PR_NUMBER }}
+      name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.event.inputs.branch || github.ref }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est ${{ github.ref }} et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event_name == 'workflow_dispatch' && github.repository || github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.branch || github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
@@ -55,9 +43,8 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
-          PR_NUMBER: ${{ env.PR_NUMBER }}
         run: |
-          APP_NAME="${{ github.repository }}-PR-${{ env.PR_NUMBER }}"
+          APP_NAME=${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID" || echo "Application $APP_NAME already exists."
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
           clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
@@ -69,8 +56,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const issue_number = process.env.PR_NUMBER;
-            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.repository }}-PR-${{ env.PR_NUMBER }}.cleverapps.io)`;
+            const issue_number = context.payload.pull_request.number;
+            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -80,7 +67,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update:
-    needs: set-pr-number
     if: github.event.action == 'synchronize'
     runs-on: ubuntu-latest
     permissions:
@@ -102,9 +88,8 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
-          PR_NUMBER: ${{ env.PR_NUMBER }}
         run: | 
-          APP_NAME="${{ github.repository }}-PR-${{ env.PR_NUMBER }}"
+          APP_NAME=${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
       - name: Comment PR
