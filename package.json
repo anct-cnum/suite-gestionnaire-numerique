@@ -1,7 +1,7 @@
 {
   "name": "suite-gestionnaire-numerique",
   "version": "0.1.0",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "scripts": {
     "amibroken": "pnpm lint:css && pnpm typecheck && pnpm lint:ts && pnpm test:coverage",
     "build": "next build",
