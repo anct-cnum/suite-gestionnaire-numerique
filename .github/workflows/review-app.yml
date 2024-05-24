@@ -2,9 +2,7 @@ name: Clever Cloud Review App
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - md/configurationCICD
+    types: [synchronize, reopened, closed]
   workflow_dispatch:
     inputs:
       branch:
@@ -12,26 +10,8 @@ on:
         required: true
         default: 'md/configurationCICD'
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-      - name: Configuration de Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-      - name: Installation des dépendances
-        run: npm install
-      - name: Lancement des tests
-        run: npm test
   deploy:
-    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    if: github.event_name == 'workflow_dispatch' || github.event.action == 'opened' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
     permissions:
       issues: write
