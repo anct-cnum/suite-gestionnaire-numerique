@@ -9,6 +9,9 @@ on:
         description: 'Execution manuelle du workflow'
         required: true
         default: 'md/configurationCICD'
+      pull_request_number:
+        description: 'Pull Request Number'
+        required: true
       app_name:
         description: "Nom de l'environnement à déployer"
         required: true
@@ -99,6 +102,7 @@ jobs:
         with:
           script: |
             const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.inputs.app_name}}.cleverapps.io)`;
+            const prNumber = ${{ github.event.inputs.pull_request_number }};
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
