@@ -53,20 +53,20 @@ jobs:
           clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
           clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
           clever deploy --alias "$APP_NAME"
-      - name: Informations relatives à l'environnement
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
-            const branchName = ${{ github.event.inputs.branch_name }};
-            github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Déploiement de l'environnement pour ${branchName}`,
-              body: message
-            });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Informations relatives à l'environnement
+      #   uses: actions/github-script@v7
+      #   with:
+      #     script: |
+      #       const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
+      #       const branchName = ${{ github.event.inputs.branch_name }};
+      #       github.rest.issues.createComment({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         title: `Déploiement de l'environnement pour ${branchName}`,
+      #         body: message
+      #       });
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update:
     if: github.event.action == 'synchronize'
     runs-on: ubuntu-latest
