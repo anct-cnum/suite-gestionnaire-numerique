@@ -45,7 +45,7 @@ jobs:
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
           APP_NAME=${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
-          clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID" || echo "Application $APP_NAME already exists."
+          clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID""
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
           clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
           clever env set CC_POST_BUILD_HOOK "npm run build" --alias "$APP_NAME"
