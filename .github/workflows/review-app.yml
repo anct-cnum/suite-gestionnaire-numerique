@@ -42,6 +42,7 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
+          NODE_PATH: ${{ github.workspace }}/node_modules
         run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
           echo "Le nom de l'environnement est $APP_NAME"
