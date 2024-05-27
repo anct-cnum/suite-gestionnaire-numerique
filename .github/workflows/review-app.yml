@@ -44,6 +44,7 @@ jobs:
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
+          node --max-old-space-size=4096
           echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
