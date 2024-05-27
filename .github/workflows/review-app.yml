@@ -9,6 +9,9 @@ on:
         description: 'Execution manuelle du workflow'
         required: true
         default: 'md/configurationCICD'
+      app_name:
+        description: "Nom de l'environnement à déployer"
+        required: true
 jobs:
   deploy:
     if: github.event_name == 'workflow_dispatch'
@@ -41,7 +44,7 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}"
+          APP_NAME="${{ github.event.inputs.app_name }}"
           echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
@@ -55,7 +58,7 @@ jobs:
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
+            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -87,7 +90,7 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: | 
-          APP_NAME="${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}"
+          APP_NAME="${{ github.event.inputs.app_name }}"
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
       - name: Comment PR
@@ -95,7 +98,7 @@ jobs:
         with:
           script: |
             const issue_number = context.payload.pull_request.number;
-            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}.cleverapps.io)`;
+            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.inputs.app_name}}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -119,8 +122,8 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever link -o "$ORGA_ID" ${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}
-          clever delete --alias ${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }} --yes
+          clever link -o "$ORGA_ID" ${{ github.event.inputs.app_name }}
+          clever delete --alias ${{ github.event.inputs.app_name }} --yes
       - name: Comment PR
         uses: actions/github-script@v7
         with:
