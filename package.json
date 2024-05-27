@@ -29,6 +29,23 @@
     "@vitejs/plugin-react": "^4.3.0",
     "@vitest/coverage-istanbul": "^1.6.0",
     "depcheck": "^1.4.7",
-    "eslint": "^8.57.0"
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.3",
+    "eslint-plugin-deprecation": "^2.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "eslint-plugin-testing-library": "^6.2.2",
+    "eslint-plugin-unused-imports": "^3.2.0",
+    "eslint-plugin-vitest": "^0.4.1",
+    "jsdom": "^24.0.0",
+    "knip": "^5.16.0",
+    "stylelint": "^16.5.0",
+    "stylelint-config-standard": "^36.0.0",
+    "stylelint-order": "^6.0.4",
+    "typescript": "^5",
+    "vitest": "^1.6.0",
+    "vitest-dom": "^0.1.1"
   }
 }

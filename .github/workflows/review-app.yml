@@ -45,6 +45,7 @@ jobs:
         run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
           echo "Le nom de l'environnement est $APP_NAME"
+          node --max-old-space-size=4096 npm install
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
           clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
