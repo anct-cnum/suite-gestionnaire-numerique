@@ -97,12 +97,10 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const issue_number = context.payload.pull_request.number;
             const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.inputs.app_name}}.cleverapps.io)`;
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
               body: message
             });
         env:
