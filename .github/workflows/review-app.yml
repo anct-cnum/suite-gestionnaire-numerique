@@ -58,7 +58,7 @@ jobs:
         with:
           script: |
             const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
-            github.rest.issues.createComment({
+            github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Déploiement de l'environnement pour ${{ github.event.inputs.app_name }}`,
