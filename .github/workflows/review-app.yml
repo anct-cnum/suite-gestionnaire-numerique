@@ -58,7 +58,8 @@ jobs:
         with:
           script: |
             const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
-            github.rest.issues.create({
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Déploiement de l'environnement pour ${{ github.event.inputs.app_name }}`,
@@ -98,6 +99,7 @@ jobs:
           script: |
             const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.inputs.app_name}}.cleverapps.io)`;
             github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: message
@@ -127,6 +129,7 @@ jobs:
           script: |
             const message = `L'environnement de test a été supprimé avec succès 👋`;
             github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: message
