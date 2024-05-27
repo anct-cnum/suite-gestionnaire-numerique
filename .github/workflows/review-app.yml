@@ -11,7 +11,7 @@ on:
         default: 'md/configurationCICD'
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || github.event.action == 'opened' || github.event.action == 'reopened'
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -42,6 +42,7 @@ jobs:
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
           APP_NAME="${{ github.event.pull_request.head.repo.name }}-PR-${{ github.event.number }}"
+          echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
           clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
