@@ -1,0 +1,22 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "schedule:earlyMondays"
+  ],
+  "rebaseWhen": "conflicted",
+  "automerge": false,
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "excludePackagePatterns": ["^eslint"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "matchPackagePatterns": ["^eslint", "^@typescript-eslint"],
+      "enabled": false
+    }
+  ]
+}
