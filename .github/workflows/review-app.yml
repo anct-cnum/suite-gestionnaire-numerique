@@ -1,8 +1,7 @@
 name: Clever Cloud Review App
 
 on:
-  pull_request:
-    types: [synchronize, reopened, closed]
+  push:
   workflow_dispatch:
     inputs:
       branch:
@@ -69,7 +68,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update:
-    if: github.event.action == 'synchronize'
+    if: github.event.name == 'push'
     runs-on: ubuntu-latest
     permissions:
       issues: write
