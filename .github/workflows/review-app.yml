@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Execution manuelle du workflow'
+        description: "Execution manuelle du workflow"
         required: true
       app_name:
         description: "Nom de l'environnement à déployer"
@@ -38,7 +38,7 @@ jobs:
       - name: Installation de clever-tools
         run: npm install -g clever-tools
       - name: Création et deploiement de l'application
-        env: 
+        env:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
@@ -46,11 +46,11 @@ jobs:
         run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
           echo "Le nom de l'environnement est $APP_NAME"
-          node --max-old-space-size=4096 npm install
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
-          clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
-          clever env set CC_POST_BUILD_HOOK "npm run build" --alias "$APP_NAME"
+          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm" --alias "$APP_NAME"
+          clever env set CC_NODE_BUILD_TOOL "custom" --alias "$APP_NAME"
+          clever env set CC_CUSTOM_BUILD_TOOL "pnpm install && pnpm build" --alias "$APP_NAME"
           clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
           clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
           clever deploy --alias "$APP_NAME"
@@ -90,7 +90,7 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
-        run: | 
+        run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
