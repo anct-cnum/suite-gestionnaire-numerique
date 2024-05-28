@@ -115,5 +115,6 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever link -o "$ORGA_ID" ${{ steps.branch_name.outputs.branch }}
+          APP_NAME="${{ steps.branch_name.outputs.branch }}"
+          clever link -o "$ORGA_ID" "$APP_NAME"
           clever delete --alias ${{ steps.branch_name.outputs.branch }} --yes
