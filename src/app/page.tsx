@@ -36,7 +36,7 @@ export default function Home(): ReactElement {
 
       <div className={styles.center}>
         <h1>
-          Suite gestionnaire numérique ! v0.0.7
+          Suite gestionnaire numérique ! v0.0.8
         </h1>
       </div>
 
