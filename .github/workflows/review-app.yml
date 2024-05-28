@@ -106,7 +106,7 @@ jobs:
     steps:
       - name: Extract branch name
         id: branch_name
-        run: echo ::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})
+        run: echo ::set-output name=branch::$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
       - name: install clever-tools
         run: npm install -g clever-tools
       - name: Delete app
