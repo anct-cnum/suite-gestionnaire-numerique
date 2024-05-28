@@ -26,8 +26,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.event.inputs.branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
@@ -79,8 +79,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.event.inputs.branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - name: install clever-tools
