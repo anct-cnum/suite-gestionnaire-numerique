@@ -102,7 +102,7 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-    if: always() && github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     steps:
       - name: install clever-tools
         run: npm install -g clever-tools
