@@ -1,6 +1,7 @@
 name: Clever Cloud Review App
 
 on:
+  push:
   pull_request:
     types: [synchronize, reopened, closed]
   workflow_dispatch:
