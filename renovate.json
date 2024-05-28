@@ -15,7 +15,7 @@
       "groupSlug": "all-minor-patch"
     },
     {
-      "matchPackagePatterns": ["^eslint", "^@typescript/eslint"],
+      "matchPackagePatterns": ["^eslint", "^@typescript-eslint"],
       "enabled": false
     }
   ]
