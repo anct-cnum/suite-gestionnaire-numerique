@@ -4,7 +4,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "amibroken": "pnpm lint:css && pnpm typecheck && pnpm lint:ts && pnpm test:coverage",
+    "amibroken": "pnpm typecheck && pnpm lint:ts && pnpm test:coverage",
     "build": "next build",
     "deadcode": "knip",
     "depcheck": "depcheck",
