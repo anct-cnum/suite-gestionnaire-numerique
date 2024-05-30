@@ -1,9 +1,6 @@
 name: Clever Cloud Review App
 
 on:
-  push:
-  pull_request:
-    types: [synchronize, closed]
   workflow_dispatch:
     inputs:
       branch:
@@ -12,9 +9,18 @@ on:
       app_name:
         description: "Nom de l'environnement à déployer"
         required: true
+      action:
+        description: "Type: déploiement, mise à jour, suppression"
+        required: true
+        default: déploiement
+        type: choice
+        options:
+          - deploy
+          - update
+          - delete
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event.inputs.action == 'deploy'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -23,7 +29,7 @@ jobs:
     environment:
       name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.ref }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est ${{ github.event.inputs.branch }} et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -43,7 +49,6 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
-          NODE_PATH: ${{ github.workspace }}/node_modules
         run: |
           APP_NAME="${{ github.event.inputs.app_name }}"
           echo "Le nom de l'environnement est $APP_NAME"
@@ -68,7 +73,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/$(cat branch-name.txt)'
+    if: github.event.inputs.action == 'update'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -81,9 +86,6 @@ jobs:
           repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-      - name: Extract branch name
-        id: branch_name
-        run: echo ::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})
       - name: install clever-tools
         run: npm install -g clever-tools
       - name: Link and update app
@@ -92,7 +94,7 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ steps.branch_name.outputs.branch }}"
+          APP_NAME="${{ github.event.inputs.app_name }}"
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
   delete:
@@ -100,19 +102,16 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    if: github.event.inputs.action == 'delete'
     steps:
-      - name: Extract branch name
-        id: branch_name
-        run: echo ::set-output name=branch::${{ github.event.pull_request.head.ref }}
       - name: install clever-tools
         run: npm install -g clever-tools
-      - name: Delete app
+      - name: Supprimer l'application
         env:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ steps.branch_name.outputs.branch }}"
+          APP_NAME="${{ github.event.inputs.app_name }}"
           clever link -o "$ORGA_ID" "$APP_NAME"
-          clever delete --alias ${{ steps.branch_name.outputs.branch }} --yes
+          clever delete --alias "$APP_NAME" --yes
