@@ -9,6 +9,8 @@ export default defineConfig({
         '**/global-error.tsx',
         '**/layout.tsx',
         '**/not-found.tsx',
+        '**/sentry/**',
+        'src/instrumentation.ts',
         '**/Accessibilite/**',
         '**/accessibilite/**',
         '**/MentionsLegales/**',
