@@ -5,9 +5,6 @@ on:
     inputs:
       branch:
         required: true
-      app_name:
-        description: "Nom de la branche à déployer"
-        required: true
       action:
         description: "Action"
         required: true
@@ -49,7 +46,7 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.app_name }}"
+          APP_NAME="${{ github.event.inputs.branch }}"
           echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
@@ -79,7 +76,7 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.app_name }}"
+          APP_NAME="${{ github.event.inputs.branch }}"
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
   delete:
@@ -97,6 +94,6 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.app_name }}"
+          APP_NAME="${{ github.event.inputs.branch }}"
           clever link -o "$ORGA_ID" "$APP_NAME"
           clever delete --alias "$APP_NAME" --yes
