@@ -12,6 +12,8 @@ on:
           - deploy
           - update
           - delete
+env:
+  APP_NAME: ${{ github.ref_name }}
 jobs:
   deploy:
     if: github.event.inputs.action == 'deploy'
@@ -23,12 +25,12 @@ jobs:
     environment:
       name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.ref }} test ${{ github.ref_name }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est ${{ github.ref_name }} et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
@@ -44,7 +46,6 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.branch }}"
           echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
@@ -74,7 +75,6 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.branch }}"
           clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
           clever deploy --alias "$APP_NAME" --force
   delete:
@@ -92,6 +92,5 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.branch }}"
           clever link -o "$ORGA_ID" "$APP_NAME"
           clever delete --alias "$APP_NAME" --yes
