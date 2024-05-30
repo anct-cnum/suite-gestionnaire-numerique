@@ -3,10 +3,8 @@ name: Clever Cloud Review App
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        required: true
       action:
-        description: "Action"
+        description: "action"
         required: true
         default: déploiement
         type: choice
