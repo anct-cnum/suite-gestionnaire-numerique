@@ -1,8 +1,9 @@
 name: Clever Cloud Review App
 
 on:
+  push:
   pull_request:
-    types: [synchronize, reopened, closed]
+    types: [synchronize, closed]
   workflow_dispatch:
     inputs:
       branch:
@@ -67,7 +68,7 @@ jobs:
       #   env:
       #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   update:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.branch == github.ref_name
+    if: github.event_name == 'push' && github.ref == 'refs/heads/$(cat branch-name.txt)'
     runs-on: ubuntu-latest
     permissions:
       issues: write
