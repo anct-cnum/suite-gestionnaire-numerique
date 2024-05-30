@@ -3,6 +3,8 @@ name: Clever Cloud Review App
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        required: true
       action:
         description: "action"
         required: true
@@ -23,7 +25,7 @@ jobs:
     environment:
       name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.event.inputs.branch }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est ${{ github.ref }} test ${{ github.ref_name }} et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
