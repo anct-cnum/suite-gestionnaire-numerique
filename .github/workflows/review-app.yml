@@ -49,9 +49,7 @@ jobs:
           echo "Le nom de l'environnement est $APP_NAME"
           clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
           clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
-          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm" --alias "$APP_NAME"
-          clever env set CC_NODE_BUILD_TOOL "custom" --alias "$APP_NAME"
-          clever env set CC_CUSTOM_BUILD_TOOL "pnpm install && pnpm build" --alias "$APP_NAME"
+          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$APP_NAME"
           clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
           clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
           clever deploy --alias "$APP_NAME"
@@ -106,7 +104,7 @@ jobs:
     steps:
       - name: Extract branch name
         id: branch_name
-        run: echo ::set-output name=branch::$(jq -r .pull_request.base.ref "$GITHUB_EVENT_PATH")
+        run: echo ::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})
       - name: install clever-tools
         run: npm install -g clever-tools
       - name: Delete app
