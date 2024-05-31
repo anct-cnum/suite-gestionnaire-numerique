@@ -39,3 +39,7 @@ Pour lancer les tests en continu fois, exécutez :
 ```bash
 pnpm test:watch
 ```
+
+## ⬆️ Mise à jour du DSFR
+
+Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.

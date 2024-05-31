@@ -5,7 +5,15 @@ export default defineConfig({
   plugins: [react()],
   test: {
     coverage: {
-      exclude: [],
+      exclude: [
+        '**/global-error.tsx',
+        '**/layout.tsx',
+        '**/not-found.tsx',
+        '**/Accessibilite/**',
+        '**/accessibilite/**',
+        '**/MentionsLegales/**',
+        '**/mentions-legales/**',
+      ],
       include: ['src/**/*'],
       provider: 'istanbul',
       skipFull: true,
