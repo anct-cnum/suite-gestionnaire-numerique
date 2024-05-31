@@ -3,6 +3,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    typedRoutes: true,
+  },
   output: 'export',
   poweredByHeader: false,
   reactStrictMode: true,
