@@ -44,6 +44,10 @@ jobs:
       - name: Installation de clever-tools
         run: npm install -g clever-tools
       - name: Création et deploiement de l'application
+        env:
+          CLEVER_TOKEN: $CLEVER_TOKEN
+          CLEVER_SECRET: $CLEVER_SECRET
+          ORGA_ID: $ORGA_ID
         run: |
           echo "Le nom de l'environnement est $BRANCH_NAME"
           clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
