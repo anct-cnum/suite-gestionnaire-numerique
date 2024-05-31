@@ -53,7 +53,7 @@ jobs:
             echo "Application $BRANCH_NAME en cours de création."
             clever create --type node "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
             clever env set CC_NODE_BUILD_TOOL "custom" --alias "$BRANCH_NAME"
-            clever env set CC_PRE_BUILD_HOOK "corepack enable pnpm" --alias "$BRANCH_NAME"
+            clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm" --alias "$BRANCH_NAME"
             clever env set CC_CUSTOM_BUILD_TOOL "pnpm install --prod && pnpm build" --alias "$BRANCH_NAME"
             clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
             clever deploy --alias "$BRANCH_NAME"
