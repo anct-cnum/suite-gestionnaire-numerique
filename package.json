@@ -21,14 +21,16 @@
   "dependencies": {
     "@gouvfr/dsfr": "^1.11.2",
     "@sentry/nextjs": "^8",
+    "@types/node": "^20.12.13",
+    "@types/react": "^18.3.3",
+    "husky": "^9.0.11",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@testing-library/react": "^15.0.7",
-    "@types/node": "^20",
-    "@types/react": "^18",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
     "@typescript-eslint/parser": "^7.10.0",
@@ -45,13 +47,11 @@
     "eslint-plugin-testing-library": "^6.2.2",
     "eslint-plugin-unused-imports": "^3.2.0",
     "eslint-plugin-vitest": "^0.4.1",
-    "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "knip": "^5.16.0",
     "stylelint": "^16.5.0",
     "stylelint-config-standard": "^36.0.0",
     "stylelint-order": "^6.0.4",
-    "typescript": "^5",
     "vitest": "^1.6.0",
     "vitest-dom": "^0.1.1"
   }
