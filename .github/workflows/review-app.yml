@@ -46,12 +46,18 @@ jobs:
         run: |
           BRANCH_NAME="${{ github.ref_name }}"
           echo "Le nom de l'environnement est $BRANCH_NAME"
-          clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
-          clever env set CC_WEBROOT "/out" --alias "$BRANCH_NAME"
-          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$BRANCH_NAME"
-          clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$BRANCH_NAME"
-          clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
-          clever deploy --alias "$BRANCH_NAME"
+          if clever link -o "$ORGA_ID" "$BRANCH_NAME"; then
+            echo "L'application $BRANCH_NAME existe déjà. Annulation du déploiement."
+            exit 1
+          else
+            echo "Application $BRANCH_NAME en cours de création."
+            clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
+            clever env set CC_WEBROOT "/out" --alias "$BRANCH_NAME"
+            clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$BRANCH_NAME"
+            clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$BRANCH_NAME"
+            clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
+            clever deploy --alias "$BRANCH_NAME"
+          fi
   update:
     if: github.event.inputs.action == 'update'
     runs-on: ubuntu-latest
