@@ -13,7 +13,10 @@ on:
           - update
           - delete
 env:
-  APP_NAME: ${{ github.ref_name }}
+  BRANCH_NAME: ${{ github.ref_name }}
+  CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
+  CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
+  ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
 jobs:
   deploy:
     if: github.event.inputs.action == 'deploy'
@@ -25,12 +28,12 @@ jobs:
     environment:
       name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.ref_name }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est $BRANCH_NAME et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          ref: ${{ github.ref_name }}
+          ref: $BRANCH_NAME
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
@@ -41,18 +44,14 @@ jobs:
       - name: Installation de clever-tools
         run: npm install -g clever-tools
       - name: Création et deploiement de l'application
-        env:
-          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
-          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
-          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          echo "Le nom de l'environnement est $APP_NAME"
-          clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
-          clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
-          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$APP_NAME"
-          clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
-          clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
-          clever deploy --alias "$APP_NAME"
+          echo "Le nom de l'environnement est $BRANCH_NAME"
+          clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
+          clever env set CC_WEBROOT "/out" --alias "$BRANCH_NAME"
+          clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$BRANCH_NAME"
+          clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$BRANCH_NAME"
+          clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
+          clever deploy --alias "$BRANCH_NAME"
   update:
     if: github.event.inputs.action == 'update'
     runs-on: ubuntu-latest
@@ -72,12 +71,12 @@ jobs:
         run: npm install -g clever-tools
       - name: Link and update app
         env:
-          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
-          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
-          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
+          CLEVER_SECRET: $CLEVER_SECRET
+          CLEVER_TOKEN: $CLEVER_TOKEN
+          ORGA_ID: $ORGA_ID
         run: |
-          clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
-          clever deploy --alias "$APP_NAME" --force
+          clever link -o "$ORGA_ID" "$BRANCH_NAME" || echo "Application $BRANCH_NAME not found, skipping link."
+          clever deploy --alias "$BRANCH_NAME" --force
   delete:
     runs-on: ubuntu-latest
     permissions:
@@ -89,9 +88,9 @@ jobs:
         run: npm install -g clever-tools
       - name: Supprimer l'application
         env:
-          CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
-          CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
-          ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
+          CLEVER_SECRET: $CLEVER_SECRET
+          CLEVER_TOKEN: $CLEVER_TOKEN
+          ORGA_ID: $ORGA_ID
         run: |
-          clever link -o "$ORGA_ID" "$APP_NAME"
-          clever delete --alias "$APP_NAME" --yes
+          clever link -o "$ORGA_ID" "$BRANCH_NAME"
+          clever delete --alias "$BRANCH_NAME" --yes
