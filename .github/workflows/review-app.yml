@@ -38,7 +38,7 @@ jobs:
       - run: echo "Le statut du job est ${{ job.status }}"
       - name: Installation de clever-tools
         run: npm install -g clever-tools
-      - name: Création et deploiement de l'application
+      - name: Création et deploiement de l'application sur Clever Cloud
         env:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
