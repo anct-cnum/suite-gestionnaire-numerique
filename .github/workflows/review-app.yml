@@ -48,6 +48,7 @@ jobs:
           CLEVER_TOKEN: $CLEVER_TOKEN
           CLEVER_SECRET: $CLEVER_SECRET
           ORGA_ID: $ORGA_ID
+          BRANCH_NAME: $BRANCH_NAME
         run: |
           echo "Le nom de l'environnement est $BRANCH_NAME"
           clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
@@ -78,6 +79,7 @@ jobs:
           CLEVER_SECRET: $CLEVER_SECRET
           CLEVER_TOKEN: $CLEVER_TOKEN
           ORGA_ID: $ORGA_ID
+          BRANCH_NAME: $BRANCH_NAME
         run: |
           clever link -o "$ORGA_ID" "$BRANCH_NAME" || echo "Application $BRANCH_NAME not found, skipping link."
           clever deploy --alias "$BRANCH_NAME" --force
