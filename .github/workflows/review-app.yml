@@ -1,20 +1,20 @@
 name: Clever Cloud Review App
 
 on:
-  pull_request:
-    types: [synchronize, reopened, closed]
   workflow_dispatch:
     inputs:
-      branch:
-        description: 'Execution manuelle du workflow'
+      action:
+        description: "action"
         required: true
-        default: 'md/configurationCICD'
-      app_name:
-        description: "Nom de l'environnement à déployer"
-        required: true
+        default: déploiement
+        type: choice
+        options:
+          - deploy
+          - update
+          - delete
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event.inputs.action == 'deploy'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -23,12 +23,12 @@ jobs:
     environment:
       name: review/${{ github.event.number }}
     steps:
-      - run: echo "Le nom de la branche est ${{ github.ref }} et le nom du repository est ${{ github.repository }}"
+      - run: echo "Le nom de la branche est ${{ github.ref_name }} et le nom du repository est ${{ github.repository }}"
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.repository }}
+          ref: ${{ github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - run: echo "Le repository cloné est ${{ github.repository }} a été cloné dans le runner de GitHub"
@@ -39,37 +39,27 @@ jobs:
       - name: Installation de clever-tools
         run: npm install -g clever-tools
       - name: Création et deploiement de l'application
-        env: 
+        env:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          APP_NAME="${{ github.event.inputs.app_name }}"
-          echo "Le nom de l'environnement est $APP_NAME"
-          clever create --type static-apache "$APP_NAME" --alias "$APP_NAME" --region par --org "$ORGA_ID"
-          clever env set CC_WEBROOT "/out" --alias "$APP_NAME"
-          clever env set CC_PRE_BUILD_HOOK "npm install" --alias "$APP_NAME"
-          clever env set CC_POST_BUILD_HOOK "npm run build" --alias "$APP_NAME"
-          clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$APP_NAME"
-          clever domain add "$APP_NAME.cleverapps.io" --alias "$APP_NAME"
-          clever deploy --alias "$APP_NAME"
-      - name: Informations relatives à l'environnement
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const message = `Environnement déployé avec succès accessible [ici](https://${{ github.event.inputs.app_name }}.cleverapps.io)`;
-            const issue_number = context.payload.pull_request.number
-            github.rest.issues.createComment({
-              issue_number: issue_number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Déploiement de l'environnement pour ${{ github.event.inputs.app_name }}`,
-              body: message
-            });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME="${{ github.ref_name }}"
+          echo "Le nom de l'environnement est $BRANCH_NAME"
+          if clever link -o "$ORGA_ID" "$BRANCH_NAME"; then
+            echo "L'application $BRANCH_NAME existe déjà. Annulation du déploiement."
+            exit 1
+          else
+            echo "Application $BRANCH_NAME en cours de création."
+            clever create --type static-apache "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
+            clever env set CC_WEBROOT "/out" --alias "$BRANCH_NAME"
+            clever env set CC_PRE_BUILD_HOOK "npm install -g pnpm && pnpm install && pnpm build" --alias "$BRANCH_NAME"
+            clever env set CC_OVERRIDE_BUILDCACHE "/out" --alias "$BRANCH_NAME"
+            clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
+            clever deploy --alias "$BRANCH_NAME"
+          fi
   update:
-    if: github.event.action == 'synchronize'
+    if: github.event.inputs.action == 'update'
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -79,8 +69,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.repository }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
       - name: install clever-tools
@@ -90,50 +79,25 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
-        run: | 
-          APP_NAME="${{ github.event.inputs.app_name }}"
-          clever link -o "$ORGA_ID" "$APP_NAME" || echo "Application $APP_NAME not found, skipping link."
-          clever deploy --alias "$APP_NAME" --force
-      - name: Comment PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const message = `🚀 L'environnement à été mis à jour et est disponible [ici](https://${{ github.event.inputs.app_name}}.cleverapps.io)`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: message
-            });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          clever link -o "$ORGA_ID" "$BRANCH_NAME" || echo "Application $BRANCH_NAME not found, skipping link."
+          clever deploy --alias "$BRANCH_NAME" --force
   delete:
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: write
-    if: always() && github.event.action == 'closed'
+    if: github.event.inputs.action == 'delete'
     steps:
       - name: install clever-tools
         run: npm install -g clever-tools
-      - name: Delete app
+      - name: Supprimer l'application
         env:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          clever link -o "$ORGA_ID" ${{ github.event.inputs.app_name }}
-          clever delete --alias ${{ github.event.inputs.app_name }} --yes
-      - name: Comment PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const message = `L'environnement de test a été supprimé avec succès 👋`;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: message
-            });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME="${{ github.ref_name }}"
+          clever link -o "$ORGA_ID" "$BRANCH_NAME"
+          clever delete --alias "$BRANCH_NAME" --yes
