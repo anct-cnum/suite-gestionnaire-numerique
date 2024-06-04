@@ -21,6 +21,15 @@ const securityHeaders = [
     value: 'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
   },
   /**
+   * The HTTP Strict-Transport-Security response header (often abbreviated as HSTS) informs browsers that the site
+   * should only be accessed using HTTPS, and that any future attempts to access it using HTTP should automatically
+   * be converted to HTTPS.
+   **/
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=31536000; includeSubDomains',
+  },
+  /**
    * Referrer-Policy, see: https://scotthelme.co.uk/a-new-security-header-referrer-policy/
    * This header lets know where the visitor of the site came from. This header allows to control or restrict the amount
    * of information sent to the destination site.
