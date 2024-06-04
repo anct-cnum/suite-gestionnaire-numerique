@@ -12,6 +12,10 @@ on:
           - deploy
           - update
           - delete
+
+env:
+  BRANCH_NAME: "sgn-${{ github.ref_name }}"
+
 jobs:
   deploy:
     if: github.event.inputs.action == 'deploy'
@@ -44,19 +48,19 @@ jobs:
           CLEVER_SECRET: ${{ secrets.CLEVER_SECRET }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          echo "Le nom de l'environnement est $BRANCH_NAME"
-          if clever link -o "$ORGA_ID" "$BRANCH_NAME"; then
+          echo "Le nom de l'application est $BRANCH_NAME"
+          if clever link -o $ORGA_ID $BRANCH_NAME; then
             echo "L'application $BRANCH_NAME existe déjà. Annulation du déploiement."
             exit 1
           else
             echo "Application $BRANCH_NAME en cours de création."
-            clever create --type node "$BRANCH_NAME" --alias "$BRANCH_NAME" --region par --org "$ORGA_ID"
-            clever env set CC_NODE_BUILD_TOOL "custom" --alias "$BRANCH_NAME"
-            clever env set CC_PRE_BUILD_HOOK "corepack enable pnpm" --alias "$BRANCH_NAME"
-            clever env set CC_CUSTOM_BUILD_TOOL "pnpm install --prod && pnpm build" --alias "$BRANCH_NAME"
-            clever domain add "$BRANCH_NAME.cleverapps.io" --alias "$BRANCH_NAME"
-            clever deploy --alias "$BRANCH_NAME"
+            clever create --type node $BRANCH_NAME --alias $BRANCH_NAME --region par --org $ORGA_ID
+            clever scale --flavor pico --alias $BRANCH_NAME
+            clever env set CC_NODE_BUILD_TOOL "custom" --alias $BRANCH_NAME
+            clever env set CC_PRE_BUILD_HOOK "corepack enable pnpm" --alias $BRANCH_NAME
+            clever env set CC_CUSTOM_BUILD_TOOL "pnpm install --prod && pnpm build" --alias $BRANCH_NAME
+            clever domain add "$BRANCH_NAME.cleverapps.io" --alias $BRANCH_NAME
+            clever deploy --alias $BRANCH_NAME
           fi
   update:
     if: github.event.inputs.action == 'update'
@@ -80,9 +84,8 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          clever link -o "$ORGA_ID" "$BRANCH_NAME" || echo "Application $BRANCH_NAME not found, skipping link."
-          clever deploy --alias "$BRANCH_NAME" --force
+          clever link -o $ORGA_ID $BRANCH_NAME || echo "Application $BRANCH_NAME not found, skipping link."
+          clever deploy --alias $BRANCH_NAME --force
   delete:
     runs-on: ubuntu-latest
     permissions:
@@ -98,6 +101,5 @@ jobs:
           CLEVER_TOKEN: ${{ secrets.CLEVER_TOKEN }}
           ORGA_ID: ${{ secrets.CLEVER_ORGA_ID }}
         run: |
-          BRANCH_NAME="${{ github.ref_name }}"
-          clever link -o "$ORGA_ID" "$BRANCH_NAME"
-          clever delete --alias "$BRANCH_NAME" --yes
+          clever link -o $ORGA_ID $BRANCH_NAME
+          clever delete --alias $BRANCH_NAME --yes
