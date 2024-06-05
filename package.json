@@ -10,7 +10,7 @@
     "depcheck": "depcheck",
     "dev": "next dev",
     "lint:css": "stylelint 'src/**/*.css'",
-    "lint:ts": "eslint . --ext .tsx,.ts --max-warnings=0",
+    "lint:ts": "eslint src --ext .tsx,.ts --max-warnings=0 --cache --cache-location node_modules/.cache/eslint",
     "prepare": "husky || true",
     "start": "next start",
     "test": "vitest run",
