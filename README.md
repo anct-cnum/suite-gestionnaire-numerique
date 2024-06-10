@@ -1,6 +1,6 @@
 # Suite gestionnaire numérique
 
-**Sur ce projet, `pnpm` est le gestionnaire de paquets utilisé**
+**Sur ce projet, `yarn` est le gestionnaire de paquets utilisé**
 
 ## 🛠️ Prérequis
 
@@ -15,13 +15,13 @@ nvm install v20.x.x
 D'abord, installez les dépendances
 
 ```bash
-pnpm install
+yarn install
 ```
 
 Ensuite, lancez le serveur de développement
 
 ```bash
-pnpm dev
+yarn dev
 ```
 
 Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat
@@ -31,13 +31,13 @@ Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour 
 Pour lancer les tests une fois, exécutez :
 
 ```bash
-pnpm test
+yarn test
 ```
 
 Pour lancer les tests en continu fois, exécutez :
 
 ```bash
-pnpm test:watch
+yarn test:watch
 ```
 
 ## ⬆️ Mise à jour du DSFR
