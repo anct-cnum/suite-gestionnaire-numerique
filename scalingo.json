@@ -1,0 +1,16 @@
+{
+  "env": {
+    "SENTRY_ENVIRONMENT": {
+      "value": "review-app"
+    },
+    "NODE_ENV": {
+      "value": "review-app"
+    }
+  },
+  "formation": {
+    "web": {
+      "amount": 1,
+      "size": "S"
+    }
+  }
+}
