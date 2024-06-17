@@ -2323,12 +2323,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.14.2":
+"@types/node@npm:*":
   version: 20.14.2
   resolution: "@types/node@npm:20.14.2"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/2d86e5f2227aaa42212e82ea0affe72799111b888ff900916376450b02b09b963ca888b20d9c332d8d2b833ed4781987867a38eaa2e4863fa8439071468b0a6f
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.14.3":
+  version: 20.14.3
+  resolution: "@types/node@npm:20.14.3"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/fbd15d63ac64b7d864e7a423c9af4fcc672cc78316c66b764effcf39736f3bac907df491dbd827329492252de08174d877b1855ec6e853e421eb0eeba31737e2
   languageName: node
   linkType: hard
 
@@ -6355,7 +6364,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json5@npm:^2.2.3":
+"json5@npm:^2.2.2, json5@npm:^2.2.3":
   version: 2.2.3
   resolution: "json5@npm:2.2.3"
   bin:
@@ -6404,9 +6413,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"knip@npm:^5.18.2":
-  version: 5.18.2
-  resolution: "knip@npm:5.18.2"
+"knip@npm:^5.21.0":
+  version: 5.21.0
+  resolution: "knip@npm:5.21.0"
   dependencies:
     "@ericcornelissen/bash-parser": "npm:0.5.3"
     "@nodelib/fs.walk": "npm:2.0.0"
@@ -6424,6 +6433,7 @@ __metadata:
     smol-toml: "npm:^1.1.4"
     strip-json-comments: "npm:5.0.1"
     summary: "npm:2.1.0"
+    tsconfig-paths: "npm:^4.2.0"
     zod: "npm:^3.22.4"
     zod-validation-error: "npm:^3.0.3"
   peerDependencies:
@@ -6432,7 +6442,7 @@ __metadata:
   bin:
     knip: bin/knip.js
     knip-bun: bin/knip-bun.js
-  checksum: 10c0/f10e0d76c108356ea3976770f4d4c97324ffe2bbe5e3f1553fc5bfd5f1b1f9a63cbc9c34c51c15a0380444bb1eeda609ecaacd32e8bd9156d12d8ad795012a5d
+  checksum: 10c0/ea8b3911eef195d3fcca46a41d34efe7b3032142f8677c2a63f81aefbc08d9618b95fc02b14c65b0156e7667e98ca08b1d3a151bfe209570ee463b78caaaa166
   languageName: node
   linkType: hard
 
@@ -8818,7 +8828,7 @@ __metadata:
     "@stryker-mutator/vitest-runner": "npm:^8.2.6"
     "@testing-library/dom": "npm:^10.1.0"
     "@testing-library/react": "npm:^16.0.0"
-    "@types/node": "npm:^20.14.2"
+    "@types/node": "npm:^20.14.3"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18"
     "@typescript-eslint/eslint-plugin": "npm:^7.10.0"
@@ -8838,7 +8848,7 @@ __metadata:
     eslint-plugin-vitest: "npm:^0.4.1"
     husky: "npm:^9.0.11"
     jsdom: "npm:^24.0.0"
-    knip: "npm:^5.18.2"
+    knip: "npm:^5.21.0"
     next: "npm:14.2.4"
     react: "npm:^18"
     react-dom: "npm:^18"
@@ -9085,6 +9095,17 @@ __metadata:
     minimist: "npm:^1.2.6"
     strip-bom: "npm:^3.0.0"
   checksum: 10c0/5b4f301a2b7a3766a986baf8fc0e177eb80bdba6e396792ff92dc23b5bca8bb279fc96517dcaaef63a3b49bebc6c4c833653ec58155780bc906bdbcf7dda0ef5
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "tsconfig-paths@npm:4.2.0"
+  dependencies:
+    json5: "npm:^2.2.2"
+    minimist: "npm:^1.2.6"
+    strip-bom: "npm:^3.0.0"
+  checksum: 10c0/09a5877402d082bb1134930c10249edeebc0211f36150c35e1c542e5b91f1047b1ccf7da1e59babca1ef1f014c525510f4f870de7c9bda470c73bb4e2721b3ea
   languageName: node
   linkType: hard
 
