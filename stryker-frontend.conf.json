@@ -1,0 +1,15 @@
+{
+  "checkers": ["typescript"],
+  "disableTypeChecks": true,
+  "htmlReporter": { "fileName": "reports/mutation/mutation-frontend.html" },
+  "ignorePatterns": [".*", "coverage", "public", "reports", "yarn.lock"],
+  "ignoreStatic": true,
+  "logLevel": "info",
+  "mutate": [
+    "src/**/*.tsx",
+    "!src/**/*.test.tsx"
+  ],
+  "packageManager": "yarn",
+  "reporters": ["html"],
+  "testRunner": "vitest"
+}
