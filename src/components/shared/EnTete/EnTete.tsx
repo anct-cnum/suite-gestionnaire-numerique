@@ -1,8 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import styles from './EnTete.module.css'
+import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
+import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
+
 
 import '@gouvfr/dsfr/dist/component/header/header.min.css'
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
@@ -13,6 +16,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 export default function EnTete(): ReactElement {
+  const { session, setSession } = useContext(sessionUtilisateurContext)
   return (
     <header className="fr-header">
       <div className="fr-header__body">
@@ -24,7 +28,7 @@ export default function EnTete(): ReactElement {
                   <Image
                     alt="Accueil"
                     height={70}
-                    src="/logo.svg"
+                    src={`${session.role.pictogramme}.svg`}
                     width={70}
                   />
                 </div>
@@ -49,15 +53,16 @@ export default function EnTete(): ReactElement {
                 >
                   <p className="fr-header__service-title">
                     <span className={styles['libelle-session-utilisateur__prefix']}>
-                      {' FNE '}
+                      {' '}
+                      FNE
+                      {' '}
                     </span>
+                    {' '}
                     <span className={`${styles['libelle-session-utilisateur__prefix']} ${styles['libelle-session-utilisateur__separateur']}`}>
-                      {' '}
                       /
-                      {' '}
                     </span>
-                    {/**/}
-                    Suite gestionnaire numérique
+                    {' '}
+                    {session.role.libelle}
                   </p>
                 </Link>
               </div>
@@ -98,9 +103,13 @@ export default function EnTete(): ReactElement {
                     <Link
                       className="fr-link"
                       href="/"
+                      onClick={() => {
+                        setSession(sessionUtilisateurNonAuthentifie)
+                      }}
                     >
-                      Martin Tartempion
-                      {/**/}
+                      {session.prenom}
+                      {' '}
+                      {session.nom}
                       <span
                         aria-hidden="true"
                         className="fr-icon-arrow-down-s-line"
