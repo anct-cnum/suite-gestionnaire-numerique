@@ -1,12 +1,19 @@
-import Script from 'next/script'
-import { PropsWithChildren, ReactElement } from 'react'
+'use client'
 
+import Script from 'next/script'
+import { PropsWithChildren, ReactElement, useMemo, useState } from 'react'
+
+import { sessionUtilisateurContext } from '../components/shared/session-utilisateur-context'
 import EnTete from '@/components/shared/EnTete/EnTete'
 import LienEvitement from '@/components/shared/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/shared/PiedDePage/PiedDePage'
+import SelecteurRole from '@/components/shared/SelecteurRole/SelecteurRole'
 import '@gouvfr/dsfr/dist/core/core.min.css'
+import { SessionUtilisateurViewModel, sessionUtilisateurNonAuthentifie, isUtilisateurAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 
 export default function Layout({ children }: PropsWithChildren): ReactElement {
+  const [session, setSession] = useState<SessionUtilisateurViewModel>(sessionUtilisateurNonAuthentifie)
+  const sessionUtilisateurContextProvider = useMemo(() => ({ session, setSession }), [session, setSession])
   return (
     <html
       dir="ltr"
@@ -33,7 +40,9 @@ export default function Layout({ children }: PropsWithChildren): ReactElement {
       </head>
       <body>
         <LienEvitement />
-        <EnTete />
+        <sessionUtilisateurContext.Provider value={sessionUtilisateurContextProvider}>
+          {isUtilisateurAuthentifie(session) ? <EnTete /> : <SelecteurRole />}
+        </sessionUtilisateurContext.Provider>
         <main
           className="fr-container fr-pt-3w"
           id="content"
