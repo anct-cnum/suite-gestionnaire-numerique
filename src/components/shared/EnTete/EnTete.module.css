@@ -1,0 +1,11 @@
+.libelle-session-utilisateur__prefix {
+    font-weight: 400;
+}    
+
+.libelle-session-utilisateur__separateur{
+    color: var(--grey-425-625);
+}
+
+.fr-links-group li:not(:last-child) {
+  border-right: 1px solid var(--grey-900-175);
+}

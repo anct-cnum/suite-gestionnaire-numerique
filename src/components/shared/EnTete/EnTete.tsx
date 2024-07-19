@@ -2,11 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './EnTete.module.css'
+
 import '@gouvfr/dsfr/dist/component/header/header.min.css'
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css'
 import '@gouvfr/dsfr/dist/component/button/button.min.css'
+import '@gouvfr/dsfr/dist/component/search/search.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 export default function EnTete(): ReactElement {
   return (
@@ -16,17 +20,9 @@ export default function EnTete(): ReactElement {
           <div className="fr-header__body-row">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
-                <div className="fr-header__logo">
-                  <p className="fr-logo">
-                    République
-                    <br />
-                    Française
-                  </p>
-                </div>
                 <div className="fr-header__operator">
                   <Image
                     alt="Accueil"
-                    className="fr-responsive-img"
                     height={70}
                     src="/logo.svg"
                     width={70}
@@ -52,12 +48,18 @@ export default function EnTete(): ReactElement {
                   title="Accueil"
                 >
                   <p className="fr-header__service-title">
+                    <span className={styles['libelle-session-utilisateur__prefix']}>
+                      {' FNE '}
+                    </span>
+                    <span className={`${styles['libelle-session-utilisateur__prefix']} ${styles['libelle-session-utilisateur__separateur']}`}>
+                      {' '}
+                      /
+                      {' '}
+                    </span>
+                    {/**/}
                     Suite gestionnaire numérique
                   </p>
                 </Link>
-                <p className="fr-header__service-tagline">
-                  baseline - précisions sur l’organisation
-                </p>
               </div>
             </div>
             <div className="fr-header__tools">
@@ -65,10 +67,44 @@ export default function EnTete(): ReactElement {
                 <ul className="fr-links-group">
                   <li>
                     <Link
-                      className="fr-link fr-icon-lock-line"
+                      className="fr-link fr-icon-search-line"
                       href="/"
                     >
-                      Se connecter
+                      Rechercher
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="fr-link fr-icon-question-line"
+                      href="/"
+                    >
+                      Aide
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="fr-link fr-icon-notification-3-line"
+                      href="/"
+                    >
+                      Notifications
+                      {/**/}
+                      <span
+                        aria-hidden="true"
+                        className="fr-icon-arrow-down-s-line"
+                      />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      className="fr-link"
+                      href="/"
+                    >
+                      Martin Tartempion
+                      {/**/}
+                      <span
+                        aria-hidden="true"
+                        className="fr-icon-arrow-down-s-line"
+                      />
                     </Link>
                   </li>
                 </ul>
