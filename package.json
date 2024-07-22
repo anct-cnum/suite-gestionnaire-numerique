@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "scripts": {
+    "bash:production": "scalingo -a suite-gestionnaire-numerique run bash",
     "build": "next build",
     "check": "yarn dedupe --check && yarn typecheck && yarn lint:ts && yarn test:coverage",
     "deadcode": "knip",
