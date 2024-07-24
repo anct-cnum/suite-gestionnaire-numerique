@@ -11,7 +11,7 @@
     "dev": "next dev",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:ts": "eslint src --ext .tsx,.ts --max-warnings=0 --cache --cache-location node_modules/.cache/eslint",
-    "prepare": "husky || true",
+    "postinstall": "husky || true",
     "start": "next start",
     "test": "vitest run",
     "test:coverage": "yarn test --coverage",
