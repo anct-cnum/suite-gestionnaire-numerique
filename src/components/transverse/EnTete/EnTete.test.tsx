@@ -10,6 +10,7 @@ describe('en-tête', () => {
     // GIVEN
     const sessionUtilisateurContextProvider = {
       session: {
+        email: 'martin.tartempion@email.com',
         nom: 'Tartempion',
         prenom: 'Martin',
         role: {
@@ -48,6 +49,7 @@ describe('en-tête', () => {
     // GIVEN
     const sessionUtilisateurContextProvider = {
       session: {
+        email: 'martin.tartempion@email.com',
         nom: 'Tartempion',
         prenom: 'Martin',
         role: {
