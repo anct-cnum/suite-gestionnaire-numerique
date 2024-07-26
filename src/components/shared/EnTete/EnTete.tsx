@@ -2,17 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
+import '@gouvfr/dsfr/dist/component/header/header.min.css'
+import '@gouvfr/dsfr/dist/component/modal/modal.min.css'
+import '@gouvfr/dsfr/dist/component/button/button.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
+
 import styles from './EnTete.module.css'
 import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
-
-import '@gouvfr/dsfr/dist/component/header/header.min.css'
-import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
-import '@gouvfr/dsfr/dist/component/modal/modal.min.css'
-import '@gouvfr/dsfr/dist/component/button/button.min.css'
-import '@gouvfr/dsfr/dist/component/search/search.min.css'
-import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
-import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 export default function EnTete(): ReactElement {
   const { session, setSession } = useContext(sessionUtilisateurContext)
@@ -67,7 +65,7 @@ export default function EnTete(): ReactElement {
               <div className="fr-header__tools-links">
                 <ul
                   aria-label="menu"
-                  className="fr-links-group"
+                  className={`fr-links-group ${styles['fr-links-group']}`}
                 >
                   <li>
                     <Link

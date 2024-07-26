@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import '@gouvfr/dsfr/dist/component/footer/footer.min.css'
+import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
+
 import LienExterne from '../LienExterne/LienExterne'
 
 export default function PiedDePage(): ReactElement {

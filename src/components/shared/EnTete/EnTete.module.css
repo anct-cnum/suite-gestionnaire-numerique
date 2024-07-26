@@ -1,9 +1,9 @@
 .libelle-session-utilisateur__prefix {
-    font-weight: 400;
-}    
+  font-weight: 400;
+}
 
-.libelle-session-utilisateur__separateur{
-    color: var(--grey-425-625);
+.libelle-session-utilisateur__separateur {
+  color: var(--grey-425-625);
 }
 
 .fr-links-group li:not(:last-child) {

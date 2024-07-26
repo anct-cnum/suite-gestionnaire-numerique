@@ -3,12 +3,13 @@
 import Script from 'next/script'
 import { PropsWithChildren, ReactElement, useMemo, useState } from 'react'
 
+import '@gouvfr/dsfr/dist/core/core.min.css'
+
 import { sessionUtilisateurContext } from '../components/shared/session-utilisateur-context'
 import EnTete from '@/components/shared/EnTete/EnTete'
 import LienEvitement from '@/components/shared/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/shared/PiedDePage/PiedDePage'
 import SelecteurRole from '@/components/shared/SelecteurRole/SelecteurRole'
-import '@gouvfr/dsfr/dist/core/core.min.css'
 import { SessionUtilisateurViewModel, sessionUtilisateurNonAuthentifie, isUtilisateurAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 
 export default function Layout({ children }: PropsWithChildren): ReactElement {
