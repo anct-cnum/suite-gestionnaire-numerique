@@ -2,10 +2,11 @@
 
 import { ReactElement, useContext } from 'react'
 
+import '@gouvfr/dsfr/dist/component/select/select.min.css'
+
 import { bouchonProfilUtilisateur } from './bouchon-profil-utilisateur'
 import { sessionUtilisateurPresenter, SessionUtilisateurViewModel } from './session-utilisateur-presenter'
 import { ROLES, type TypologieRole } from '../../../core/domain/role'
-import '@gouvfr/dsfr/dist/component/select/select.min.css'
 import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
 
 export default function SelecteurRole(): ReactElement {
