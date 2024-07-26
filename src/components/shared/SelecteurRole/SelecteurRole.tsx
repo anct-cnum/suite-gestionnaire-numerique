@@ -5,8 +5,8 @@ import { ReactElement, useContext } from 'react'
 
 import { bouchonProfilUtilisateur } from './bouchon-profil-utilisateur'
 import { sessionUtilisateurPresenter, SessionUtilisateurViewModel } from './session-utilisateur-presenter'
-import { ROLES, type TypologieRole } from '../../../core/domain/role'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import { ROLES, type TypologieRole } from '@/domain/Role'
 
 export default function SelecteurRole(): ReactElement {
   const router = useRouter()
@@ -55,7 +55,5 @@ export default function SelecteurRole(): ReactElement {
 }
 
 function role(typologieRole: TypologieRole): SessionUtilisateurViewModel {
-  return sessionUtilisateurPresenter(bouchonProfilUtilisateur[typologieRole],
-    'Tartempion',
-    'Martin')
+  return sessionUtilisateurPresenter(bouchonProfilUtilisateur[typologieRole])
 }
