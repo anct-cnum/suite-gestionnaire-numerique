@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
 import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
-import { InfosSessionUtilisateurContext, sessionUtilisateurContext } from '../session-utilisateur-context'
+import { InfosSessionUtilisateurContext, sessionUtilisateurContext } from '../SessionUtilisateurContext'
 
 describe('en-tête', () => {
   it('étant connecté quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {

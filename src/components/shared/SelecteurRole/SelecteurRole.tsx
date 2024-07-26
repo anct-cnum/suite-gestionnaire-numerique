@@ -1,5 +1,6 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { ReactElement, useContext } from 'react'
 
 import '@gouvfr/dsfr/dist/component/select/select.min.css'
@@ -7,10 +8,12 @@ import '@gouvfr/dsfr/dist/component/select/select.min.css'
 import { bouchonProfilUtilisateur } from './bouchon-profil-utilisateur'
 import { sessionUtilisateurPresenter, SessionUtilisateurViewModel } from './session-utilisateur-presenter'
 import { ROLES, type TypologieRole } from '../../../core/domain/role'
-import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
+import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function SelecteurRole(): ReactElement {
+  const router = useRouter()
   const { setSession } = useContext(sessionUtilisateurContext)
+
   return (
     <div className="fr-select-group">
       <label
@@ -27,6 +30,7 @@ export default function SelecteurRole(): ReactElement {
         onChange={
           ({ currentTarget }) => {
             setSession(role(currentTarget.value as TypologieRole))
+            router.push('/')
           }
         }
       >

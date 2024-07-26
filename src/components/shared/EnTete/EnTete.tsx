@@ -10,7 +10,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 import styles from './EnTete.module.css'
 import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
-import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
+import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function EnTete(): ReactElement {
   const { session, setSession } = useContext(sessionUtilisateurContext)
