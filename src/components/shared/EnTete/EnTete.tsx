@@ -6,7 +6,6 @@ import styles from './EnTete.module.css'
 import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/session-utilisateur-context'
 
-
 import '@gouvfr/dsfr/dist/component/header/header.min.css'
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
 import '@gouvfr/dsfr/dist/component/modal/modal.min.css'
@@ -17,6 +16,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 export default function EnTete(): ReactElement {
   const { session, setSession } = useContext(sessionUtilisateurContext)
+
   return (
     <header className="fr-header">
       <div className="fr-header__body">
@@ -26,7 +26,7 @@ export default function EnTete(): ReactElement {
               <div className="fr-header__brand-top">
                 <div className="fr-header__operator">
                   <Image
-                    alt="Accueil"
+                    alt=""
                     height={70}
                     src={`${session.role.pictogramme}.svg`}
                     width={70}
@@ -53,15 +53,11 @@ export default function EnTete(): ReactElement {
                 >
                   <p className="fr-header__service-title">
                     <span className={styles['libelle-session-utilisateur__prefix']}>
-                      {' '}
                       FNE
-                      {' '}
                     </span>
-                    {' '}
                     <span className={`${styles['libelle-session-utilisateur__prefix']} ${styles['libelle-session-utilisateur__separateur']}`}>
-                      /
+                      &nbsp;/&nbsp;
                     </span>
-                    {' '}
                     {session.role.libelle}
                   </p>
                 </Link>
@@ -69,7 +65,10 @@ export default function EnTete(): ReactElement {
             </div>
             <div className="fr-header__tools">
               <div className="fr-header__tools-links">
-                <ul className="fr-links-group">
+                <ul
+                  aria-label="menu"
+                  className="fr-links-group"
+                >
                   <li>
                     <Link
                       className="fr-link fr-icon-search-line"
@@ -107,9 +106,7 @@ export default function EnTete(): ReactElement {
                         setSession(sessionUtilisateurNonAuthentifie)
                       }}
                     >
-                      {session.prenom}
-                      {' '}
-                      {session.nom}
+                      {`${session.prenom} ${session.nom}`}
                       <span
                         aria-hidden="true"
                         className="fr-icon-arrow-down-s-line"
