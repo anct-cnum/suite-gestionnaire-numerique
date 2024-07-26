@@ -1,8 +1,10 @@
 import { sessionUtilisateurPresenter } from './session-utilisateur-presenter'
-import { Role } from '../../../core/domain/role'
+import { Role } from '../../../domain/Role'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 const utilisateur = {
-  nom: 'Tartempion',
+  email: 'martin.tartempion@example.net',
+  nom:'Tartempion',
   prenom: 'Martin',
 }
 
@@ -41,7 +43,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       role: 'Support animation' as const,
     },
   ])('$role : $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ role, expected }) => {
-    expect(sessionUtilisateurPresenter(new Role(role), utilisateur.nom, utilisateur.prenom))
+    expect(sessionUtilisateurPresenter(makeUtilisateur(new Role({ typologie: role }))))
       .toStrictEqual(expected)
   })
 
@@ -80,11 +82,11 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       expected: {
         ...utilisateur,
         role: {
-          libelle: 'Poitou-Charentes',
+          libelle: 'Nouvelle-Aquitaine',
           pictogramme: 'marianne',
         },
       },
-      perimetre: 'Poitou-Charentes',
+      perimetre: 'Nouvelle-Aquitaine',
       role: 'Gestionnaire région' as const,
     },
     {
@@ -98,8 +100,20 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       perimetre: 'Structure λ',
       role: 'Gestionnaire structure' as const,
     },
-  ])('$role $perimetre: $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ role, perimetre, expected }) => {
-    expect(sessionUtilisateurPresenter(new Role(role, perimetre), utilisateur.nom, utilisateur.prenom))
-      .toStrictEqual(expected)
-  })
+  ])(
+    '$role $perimetre: $expected.role.libelle avec le pictogramme $expected.role.pictogramme',
+    ({ role, perimetre, expected }) => {
+      expect(
+        sessionUtilisateurPresenter(
+          makeUtilisateur(
+            new Role({ territoireOuStructure: perimetre, typologie: role })
+          )
+        )
+      ).toStrictEqual(expected)
+    }
+  )
 })
+
+function makeUtilisateur(role: Role): Utilisateur {
+  return new Utilisateur(role, utilisateur.nom, utilisateur.prenom, utilisateur.email)
+}
