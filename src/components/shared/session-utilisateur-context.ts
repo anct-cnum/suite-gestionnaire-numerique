@@ -12,7 +12,7 @@ const initialInfosSessionUtilisateurContext = {
 export const sessionUtilisateurContext =
   createContext<InfosSessionUtilisateurContext>(initialInfosSessionUtilisateurContext)
 
-type InfosSessionUtilisateurContext = Readonly<{
+export type InfosSessionUtilisateurContext = Readonly<{
   session: SessionUtilisateurViewModel,
   setSession: Dispatch<SetStateAction<SessionUtilisateurViewModel>>
 }>
