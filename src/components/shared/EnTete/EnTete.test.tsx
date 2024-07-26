@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
 import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
-import { sessionUtilisateurContext } from '../session-utilisateur-context'
+import { InfosSessionUtilisateurContext, sessionUtilisateurContext } from '../session-utilisateur-context'
 
 describe('en-tête', () => {
   it('étant connecté quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
@@ -71,10 +71,8 @@ describe('en-tête', () => {
   })
 })
 
-// @ts-expect-error
-function renderComponent(children: ReactElement, sessionUtilisateurContextProvider) {
+function renderComponent(children: ReactElement, sessionUtilisateurContextProvider: InfosSessionUtilisateurContext) {
   render(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     <sessionUtilisateurContext.Provider value={sessionUtilisateurContextProvider}>
       {children}
     </sessionUtilisateurContext.Provider>
