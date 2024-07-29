@@ -2,10 +2,6 @@
   font-weight: 400;
 }
 
-.libelle-session-utilisateur__separateur {
-  color: var(--grey-425-625);
-}
-
 .fr-links-group li:not(:last-child) {
   border-right: .05rem solid var(--grey-900-175);
 }
