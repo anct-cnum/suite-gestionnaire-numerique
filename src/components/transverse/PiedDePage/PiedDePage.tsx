@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import '@gouvfr/dsfr/dist/component/footer/footer.min.css'
 import '@gouvfr/dsfr/dist/component/logo/logo.min.css'
 
-import LienExterne from '../LienExterne/LienExterne'
+import LienExterne from '../../shared/LienExterne/LienExterne'
 
 export default function PiedDePage(): ReactElement {
   return (

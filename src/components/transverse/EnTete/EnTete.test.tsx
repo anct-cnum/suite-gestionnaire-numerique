@@ -2,8 +2,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
-import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
-import { InfosSessionUtilisateurContext, sessionUtilisateurContext } from '../SessionUtilisateurContext'
+import { sessionUtilisateurNonAuthentifie } from '../../shared/SelecteurRole/session-utilisateur-presenter'
+import { InfosSessionUtilisateurContext, sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 describe('en-tête', () => {
   it('étant connecté quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {

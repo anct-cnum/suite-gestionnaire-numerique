@@ -9,7 +9,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 import styles from './EnTete.module.css'
-import { sessionUtilisateurNonAuthentifie } from '../SelecteurRole/session-utilisateur-presenter'
+import { sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function EnTete(): ReactElement {
