@@ -1,6 +1,5 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-import '@gouvfr/dsfr/dist/core/core.min.css'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 
 export default function Layout({ children }: PropsWithChildren): ReactElement {

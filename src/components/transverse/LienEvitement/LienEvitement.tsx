@@ -1,7 +1,5 @@
 import { ReactElement } from 'react'
 
-import '@gouvfr/dsfr/dist/component/skiplink/skiplink.min.css'
-
 export default function LienEvitement(): ReactElement {
   return (
     <div className="fr-skiplinks">
