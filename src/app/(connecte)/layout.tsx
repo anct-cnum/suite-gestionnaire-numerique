@@ -5,11 +5,11 @@ import { PropsWithChildren, ReactElement, useContext } from 'react'
 
 import '@gouvfr/dsfr/dist/core/core.min.css'
 
-import EnTete from '@/components/shared/EnTete/EnTete'
-import LienEvitement from '@/components/shared/LienEvitement/LienEvitement'
-import PiedDePage from '@/components/shared/PiedDePage/PiedDePage'
 import { isUtilisateurAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import EnTete from '@/components/transverse/EnTete/EnTete'
+import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
+import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 
 export default function Layout({ children }: PropsWithChildren): ReactElement {
   const router = useRouter()
