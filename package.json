@@ -33,7 +33,7 @@
     "@stryker-mutator/vitest-runner": "^8.2.6",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.0.0",
-    "@types/node": "^20.14.12",
+    "@types/node": "^22.0.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
