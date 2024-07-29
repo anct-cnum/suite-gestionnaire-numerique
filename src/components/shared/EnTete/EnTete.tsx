@@ -18,7 +18,7 @@ export default function EnTete(): ReactElement {
   return (
     <header className="fr-header">
       <div className="fr-header__body">
-        <div className="fr-container">
+        <div className="fr-px-3w">
           <div className="fr-header__body-row">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
@@ -66,6 +66,7 @@ export default function EnTete(): ReactElement {
                 <ul
                   aria-label="menu"
                   className={`fr-links-group ${styles['fr-links-group']}`}
+                  id="menuUtilisateur"
                 >
                   <li>
                     <Link

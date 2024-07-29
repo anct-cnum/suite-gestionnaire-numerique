@@ -21,9 +21,9 @@ export default function LienEvitement(): ReactElement {
           <li>
             <a
               className="fr-link"
-              href="#header-navigation"
+              href="#menuUtilisateur"
             >
-              Menu
+              Menu utilisateur
             </a>
           </li>
           <li>
