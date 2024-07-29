@@ -70,13 +70,16 @@ describe('en-tête', () => {
     expect(liens).toHaveLength(3)
 
     const mesInformations = within(liens[0]).getByRole('link', { name: 'Mes informations' })
-    expect(mesInformations).toHaveAttribute('href', '/')
+    expect(mesInformations).toHaveAttribute('href', '/mes-informations-personnelles')
+    expect(mesInformations).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const mesParametres = within(liens[1]).getByRole('link', { name: 'Mes paramètres' })
     expect(mesParametres).toHaveAttribute('href', '/')
+    expect(mesParametres).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mes utilisateurs' })
     expect(mesUtilisateurs).toHaveAttribute('href', '/')
+    expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
   })
 
   it('le menu utilisateur étant ouvert, quand je clique sur le bouton de fermeture, il se ferme', () => {

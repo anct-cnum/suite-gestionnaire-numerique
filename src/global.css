@@ -1,0 +1,21 @@
+.color-blue-france {
+  color: var(--text-title-blue-france);
+}
+
+.color-grey {
+  color: var(--grey-425-625);
+}
+
+.red-button {
+  background-color: var(--error-425-625) !important;
+}
+
+.font-weight-700 {
+  font-weight: 700;
+}
+
+.icon-title {
+  background-color: var(--blue-france-975-75);
+  border-radius: .25rem;
+  padding: 0 1rem;
+}
