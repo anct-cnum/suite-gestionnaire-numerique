@@ -6,7 +6,7 @@ import styles from './MenuUtilisateur.module.css'
 import { sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
-export default function MenuUtilisateur(): ReactElement {
+export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
   const { session, setSession } = useContext(sessionUtilisateurContext)
 
   return (
@@ -20,14 +20,14 @@ export default function MenuUtilisateur(): ReactElement {
           width={80}
         />
         <div className="fr-mb-0 fr-h4">
-          <span className={`${styles['color-blue-france']} ${styles.nom}`}>
+          <span className={`color-blue-france ${styles.nom}`}>
             {session.prenom}
           </span>
-          <span className={`${styles['color-blue-france']} ${styles.nom}`}>
+          <span className={`color-blue-france ${styles.nom}`}>
             {session.nom}
           </span>
         </div>
-        <div className={`fr-text--xs ${styles['color-blue-france']}`}>
+        <div className={'fr-text--xs color-blue-france'}>
           {session.email}
         </div>
       </div>
@@ -37,22 +37,25 @@ export default function MenuUtilisateur(): ReactElement {
       >
         <li>
           <Link
+            aria-controls={ariaControlsId}
             className="fr-text--md fr-link fr-icon-account-circle-line fr-link--icon-left"
-            href="/"
+            href="/mes-informations-personnelles"
           >
             Mes informations
           </Link>
         </li>
-        <li className="">
+        <li>
           <Link
+            aria-controls={ariaControlsId}
             className="fr-text-md fr-link fr-icon-settings-5-line fr-link--icon-left"
             href="/"
           >
             Mes paramètres
           </Link>
         </li>
-        <li className="">
+        <li>
           <Link
+            aria-controls={ariaControlsId}
             className="fr-text-md fr-link fr-icon-team-line fr-link--icon-left"
             href="/"
           >
@@ -73,3 +76,7 @@ export default function MenuUtilisateur(): ReactElement {
     </div>
   )
 }
+
+type MenuUtilisateurProps = Readonly<{
+  ariaControlsId: string
+}>

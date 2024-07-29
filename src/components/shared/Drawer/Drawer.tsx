@@ -18,9 +18,7 @@ export default function Drawer({
       open={isOpen}
     >
       <div className="fr-grid-row fr-grid-row--right">
-        <div
-className={`fr-col-4 ${styles['modal-box']} ${isFixedWidth ? styles['modal-box--fixed-width'] : ''}`}
-        >
+        <div className={`fr-col-4 ${styles['modal-box']} ${isFixedWidth ? styles['modal-box--fixed-width'] : ''}`}>
           <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
             <button
               aria-controls={id}
@@ -40,7 +38,6 @@ className={`fr-col-4 ${styles['modal-box']} ${isFixedWidth ? styles['modal-box--
     </dialog>
   )
 }
-
 
 type DrawerProps = PropsWithChildren<Readonly<{
   id: string,

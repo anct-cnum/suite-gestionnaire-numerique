@@ -8,7 +8,6 @@ import Drawer from '@/components/shared/Drawer/Drawer'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function EnTete(): ReactElement {
-
   const { session } = useContext(sessionUtilisateurContext)
   const [isOpen, setIsOpen] = useState(false)
   const [drawerPortal, setDrawerPortal] = useState(<div />)
@@ -24,7 +23,7 @@ export default function EnTete(): ReactElement {
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         >
-          <MenuUtilisateur />
+          <MenuUtilisateur ariaControlsId={drawerId} />
         </Drawer>,
         document.body
       )
@@ -82,7 +81,7 @@ export default function EnTete(): ReactElement {
                     <span className={styles['libelle-session-utilisateur__prefix']}>
                       FNE
                     </span>
-                    <span className={`${styles['libelle-session-utilisateur__prefix']} ${styles['libelle-session-utilisateur__separateur']}`}>
+                    <span className={`${styles['libelle-session-utilisateur__prefix']} color-grey`}>
                       &nbsp;/&nbsp;
                     </span>
                     {session.role.libelle}
