@@ -2,12 +2,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
-import '@gouvfr/dsfr/dist/component/header/header.min.css'
-import '@gouvfr/dsfr/dist/component/modal/modal.min.css'
-import '@gouvfr/dsfr/dist/component/button/button.min.css'
-import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
-import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
-
 import styles from './EnTete.module.css'
 import { sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'

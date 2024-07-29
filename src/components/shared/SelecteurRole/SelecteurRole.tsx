@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { ReactElement, useContext } from 'react'
 
-import '@gouvfr/dsfr/dist/component/select/select.min.css'
-
 import { bouchonProfilUtilisateur } from './bouchon-profil-utilisateur'
 import { sessionUtilisateurPresenter, SessionUtilisateurViewModel } from './session-utilisateur-presenter'
 import { ROLES, type TypologieRole } from '../../../core/domain/role'

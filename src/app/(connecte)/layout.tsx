@@ -3,8 +3,6 @@
 import { useRouter } from 'next/navigation'
 import { PropsWithChildren, ReactElement, useContext } from 'react'
 
-import '@gouvfr/dsfr/dist/core/core.min.css'
-
 import { isUtilisateurAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import EnTete from '@/components/transverse/EnTete/EnTete'

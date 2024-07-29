@@ -1,7 +1,9 @@
 import Script from 'next/script'
 import { PropsWithChildren, ReactElement } from 'react'
 
-import '@gouvfr/dsfr/dist/core/core.min.css'
+import '@gouvfr/dsfr/dist/dsfr.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 import SessionUtilisateurContext from '../components/shared/SessionUtilisateurContext'
 
