@@ -7,5 +7,5 @@
 }
 
 .fr-links-group li:not(:last-child) {
-  border-right: 1px solid var(--grey-900-175);
+  border-right: .05rem solid var(--grey-900-175);
 }
