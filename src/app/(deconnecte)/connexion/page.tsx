@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title,
 }
 
-export default async function PageConnexion(): Promise<ReactElement> {
+export default async function ConnexionController(): Promise<ReactElement> {
   const providers = await getProviders() as unknown as ProConnectProvider
 
   return (
