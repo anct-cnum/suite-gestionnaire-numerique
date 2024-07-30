@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title,
 }
 
-export default function PageAccessibilite(): ReactElement {
+export default function AccessibiliteController(): ReactElement {
   return (
     <Accessibilite />
   )
