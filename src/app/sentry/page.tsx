@@ -3,7 +3,7 @@
 import { startSpan } from '@sentry/nextjs'
 import { ReactElement } from 'react'
 
-export default function PageSentry(): ReactElement {
+export default function SentryController(): ReactElement {
   async function generateError() {
     await startSpan({
       name: 'Example Frontend Span',

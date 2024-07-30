@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title,
 }
 
-export default async function PageMesInformationsPersonnelles(): Promise<ReactElement> {
+export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const mesInformationsPersonnellesQuery = new InMemoryMesInformationsPersonnellesQuery()
   const mesInformationsPersonnelles =
     await mesInformationsPersonnellesQuery.retrieveMesInformationsPersonnelles()

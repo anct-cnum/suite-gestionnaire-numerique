@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title,
 }
 
-export default function Home(): ReactElement {
+export default function AccueilController(): ReactElement {
   return (
     <>
       <SelecteurRole />
