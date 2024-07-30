@@ -1,0 +1,33 @@
+.fr-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.fr-links-group {
+  list-style-type: none;
+}
+
+.fr-links-group a[href] {
+  background-image: none;
+}
+
+.deconnexion {
+  align-self: center;
+  justify-content: center;
+  max-width: 14rem !important;
+  text-align: center;
+  width: 100%;
+}
+
+.color-blue-france {
+  color: var(--blue-france-sun-113-625);
+}
+
+.nom {
+  display: block;
+}
+
+.zone-infos {
+  border-bottom: .1rem solid var(--border-default-grey);
+}
+

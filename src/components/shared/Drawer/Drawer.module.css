@@ -1,0 +1,50 @@
+.fr-modal::before {
+  content: unset;
+}
+
+.modal-box {
+  min-width: 20rem;
+}
+
+.modal-box--fixed-width {
+  max-width: 20rem;
+}
+
+.fr-modal .modal-box {
+  animation: move-out .2s ease-in;
+}
+
+.fr-modal[open] .modal-box {
+  animation: move-in .2s ease-out;
+}
+
+@keyframes move-out {
+  100%{
+    transform: translateX(100%)
+  }
+}
+
+@keyframes move-in {
+  0%{
+    transform: translateX(100%)
+  }
+}
+
+.fr-modal__body {
+  height: 100vh;
+  max-height: 100vh !important;
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+}
+
+.close {
+  position: absolute;
+  right: 2rem;
+  z-index: 2751;
+}
+
+.fr-modal__content {
+  height: 100%;
+  margin: 0;
+}
+

@@ -1,12 +1,36 @@
 import Link from 'next/link'
-import { ReactElement, useContext } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import styles from './EnTete.module.css'
-import { sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
+import MenuUtilisateur from './MenuUtilisateur/MenuUtilisateur'
+import Drawer from '@/components/shared/Drawer/Drawer'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function EnTete(): ReactElement {
-  const { session, setSession } = useContext(sessionUtilisateurContext)
+
+  const { session } = useContext(sessionUtilisateurContext)
+  const [isOpen, setIsOpen] = useState(false)
+  const [drawerPortal, setDrawerPortal] = useState(<div />)
+  const drawerId = 'drawer-menu-utilisateur'
+
+  useEffect(() => {
+    setDrawerPortal(
+      createPortal(
+        <Drawer
+          boutonFermeture="Fermer le menu"
+          id={drawerId}
+          isFixedWidth={true}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        >
+          <MenuUtilisateur />
+        </Drawer>,
+        document.body
+      )
+    )
+  },
+  [drawerId, isOpen])
 
   return (
     <header className="fr-header">
@@ -103,19 +127,21 @@ export default function EnTete(): ReactElement {
                     </Link>
                   </li>
                   <li>
-                    <Link
+                    <button
+                      aria-controls={drawerId}
                       className="fr-link"
-                      href="/"
+                      data-fr-opened="false"
                       onClick={() => {
-                        setSession(sessionUtilisateurNonAuthentifie)
+                        setIsOpen(true)
                       }}
+                      type="button"
                     >
                       {`${session.prenom} ${session.nom}`}
                       <span
                         aria-hidden="true"
                         className="fr-icon-arrow-down-s-line"
                       />
-                    </Link>
+                    </button>
                   </li>
                 </ul>
               </div>
@@ -140,6 +166,7 @@ export default function EnTete(): ReactElement {
           <div className="fr-header__menu-links" />
         </div>
       </dialog>
+      {drawerPortal}
     </header>
   )
 }
