@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import '@gouvfr/dsfr/dist/dsfr.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 
 import SessionUtilisateurContext from '../components/shared/SessionUtilisateurContext'
