@@ -40,7 +40,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       },
       role: 'Support animation' as const,
     },
-  ])('$role : $expected.libelle avec le pictogramme $expected.pictogramme', ({ role, expected }) => {
+  ])('$role : $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ role, expected }) => {
     expect(sessionUtilisateurPresenter(new Role(role), utilisateur.nom, utilisateur.prenom))
       .toStrictEqual(expected)
   })
@@ -98,7 +98,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       perimetre: 'Structure λ',
       role: 'Gestionnaire structure' as const,
     },
-  ])('$role $perimetre: $expected.libelle avec le pictogramme $expected.pictogramme', ({ role, perimetre, expected }) => {
+  ])('$role $perimetre: $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ role, perimetre, expected }) => {
     expect(sessionUtilisateurPresenter(new Role(role, perimetre), utilisateur.nom, utilisateur.prenom))
       .toStrictEqual(expected)
   })
