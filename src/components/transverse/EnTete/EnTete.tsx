@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
@@ -17,12 +16,24 @@ export default function EnTete(): ReactElement {
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
                 <div className="fr-header__operator">
-                  <Image
-                    alt=""
-                    height={70}
-                    src={`${session.role.pictogramme}.svg`}
-                    width={70}
-                  />
+                  <svg
+                    height="40"
+                    width="35"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M17.387 0 0 10v20l17.387 10 17.29-10V10z"
+                      fill="#e1000f"
+                    />
+                    <path
+                      d="M22.32 17.122h6.545v-3.805L17.387 6.683 5.812 13.317v13.268l11.575 6.732 11.478-6.732V22.83H22.32z"
+                      fill="#fff"
+                    />
+                    <path
+                      d="M22.32 22.83v-5.708l-4.933-2.878-5.03 2.878v5.707l5.03 2.878z"
+                      fill="#000091"
+                    />
+                  </svg>
                 </div>
                 <div className="fr-header__navbar">
                   <button
