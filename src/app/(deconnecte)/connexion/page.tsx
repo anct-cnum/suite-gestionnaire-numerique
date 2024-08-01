@@ -1,15 +1,19 @@
 import { Metadata } from 'next'
+import { getProviders } from 'next-auth/react'
 import { ReactElement } from 'react'
 
-import SelecteurRole from '@/components/shared/SelecteurRole/SelecteurRole'
+import Connexion from '@/components/Connexion/Connexion'
+import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
 
 const title = 'Se connecter'
 export const metadata: Metadata = {
   title,
 }
 
-export default function PageConnexion(): ReactElement {
+export default async function PageConnexion(): Promise<ReactElement> {
+  const providers = await getProviders() as unknown as ProConnectProvider
+
   return (
-    <SelecteurRole />
+    <Connexion provider={providers['pro-connect']} />
   )
 }

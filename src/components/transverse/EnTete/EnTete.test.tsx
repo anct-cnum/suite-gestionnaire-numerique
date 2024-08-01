@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
+import * as nextAuth from 'next-auth/react'
 import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
-import { sessionUtilisateurNonAuthentifie } from '../../shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 describe('en-tête', () => {
@@ -100,6 +100,7 @@ describe('en-tête', () => {
 
   it('étant connecté quand je clique sur le bouton de déconnexion alors je suis déconnecté', () => {
     // GIVEN
+    vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
     renderComponent(<EnTete />)
 
     const menu = screen.getByRole('list', { name: 'menu' })
@@ -115,7 +116,7 @@ describe('en-tête', () => {
     fireEvent.click(deconnexion)
 
     // THEN
-    expect(sessionUtilisateurContextProvider.setSession).toHaveBeenCalledWith(sessionUtilisateurNonAuthentifie)
+    expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
   })
 })
 

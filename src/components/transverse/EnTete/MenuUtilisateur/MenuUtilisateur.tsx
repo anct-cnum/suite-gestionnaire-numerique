@@ -1,13 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { signOut } from 'next-auth/react'
 import { ReactElement, useContext } from 'react'
 
 import styles from './MenuUtilisateur.module.css'
-import { sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
-  const { session, setSession } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(sessionUtilisateurContext)
 
   return (
     <div className={`fr-container ${styles['fr-container']}`}>
@@ -66,9 +66,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
       <button
         className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion}`}
         name="deconnexion"
-        onClick={() => {
-          setSession(sessionUtilisateurNonAuthentifie)
-        }}
+        onClick={async () => signOut({ callbackUrl: '/connexion' })}
         type="button"
       >
         Se déconnecter
