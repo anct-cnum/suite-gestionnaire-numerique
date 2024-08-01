@@ -1,20 +1,14 @@
-'use client'
+import { redirect } from 'next/navigation'
+import { PropsWithChildren, ReactElement } from 'react'
 
-import { useRouter } from 'next/navigation'
-import { PropsWithChildren, ReactElement, useContext } from 'react'
-
-import { isUtilisateurAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
+import { amIConnected } from '@/gateways/ProConnectAuthentificationGateway'
 
-export default function Layout({ children }: PropsWithChildren): ReactElement {
-  const router = useRouter()
-  const { session } = useContext(sessionUtilisateurContext)
-
-  if (!isUtilisateurAuthentifie(session)) {
-    router.push('/connexion')
+export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
+  if (!await amIConnected()) {
+    redirect('/connexion')
   }
 
   return (

@@ -3,7 +3,19 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    {
+      name: 'test-svg',
+      transform(_, id) {
+        if (id.endsWith('.svg')) {
+          return 'export default () => {}'
+        }
+        return ''
+      },
+    },
+  ],
   test: {
     coverage: {
       exclude: [
