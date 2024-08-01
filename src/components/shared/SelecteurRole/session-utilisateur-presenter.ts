@@ -9,12 +9,12 @@ export type SessionUtilisateurViewModel = Readonly<{
 }>
 
 export const sessionUtilisateurNonAuthentifie: SessionUtilisateurViewModel = {
-  email: '',
-  nom: '',
-  prenom: '',
+  email: 'martin.tartempion@example.net',
+  nom: 'Tartempion',
+  prenom: 'Martin',
   role: {
-    libelle: '',
-    pictogramme: '',
+    libelle: 'Administrateur dispositif',
+    pictogramme: 'anct',
   },
 }
 

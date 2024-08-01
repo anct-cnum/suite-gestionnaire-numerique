@@ -18,6 +18,9 @@ D'abord, installez les dépendances
 yarn install
 ```
 
+Remplissez les variables d'environnement en copiant `.env` en `.env.local`.
+Pour `NEXTAUTH_SECRET`, lancer la commande `openssl rand -base64 32`.
+
 Ensuite, lancez le serveur de développement
 
 ```bash

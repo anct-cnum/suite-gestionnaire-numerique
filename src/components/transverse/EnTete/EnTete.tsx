@@ -1,5 +1,7 @@
+'use client'
+
 import Link from 'next/link'
-import React, { ReactElement, useContext, useEffect, useState } from 'react'
+import { ReactElement, useContext, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import styles from './EnTete.module.css'
