@@ -24,6 +24,7 @@ Pour `NEXTAUTH_SECRET`, lancer la commande `openssl rand -base64 32`.
 Ensuite, lancez le serveur de développement
 
 ```bash
+yarn start:db
 yarn dev
 ```
 
