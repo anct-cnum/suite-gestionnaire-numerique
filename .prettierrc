@@ -1,0 +1,20 @@
+{
+  "overrides": [
+    {
+      "files": [".eslintrc", ".lintstagedrc", ".stylelintrc", ".prettierrc"],
+      "options": {
+        "parser": "json"
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ],
+  "printWidth": 100,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "es5"
+}
