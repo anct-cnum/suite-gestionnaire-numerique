@@ -24,6 +24,5 @@
 }
 
 .zone-infos {
-  border-bottom: .1rem solid var(--border-default-grey);
+  border-bottom: 0.1rem solid var(--border-default-grey);
 }
-

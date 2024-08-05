@@ -5,10 +5,7 @@
   "ignorePatterns": [".*", "coverage", "public", "reports", "yarn.lock"],
   "ignoreStatic": true,
   "logLevel": "info",
-  "mutate": [
-    "src/**/*.ts",
-    "!src/**/*.test.ts"
-  ],
+  "mutate": ["src/**/*.ts", "!src/**/*.test.ts"],
   "packageManager": "yarn",
   "reporters": ["html"],
   "testRunner": "vitest"
