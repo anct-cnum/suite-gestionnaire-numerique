@@ -7,7 +7,8 @@ const securityHeaders = [
    **/
   {
     key: 'Content-Security-Policy',
-    value: "default-src https: 'unsafe-inline'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:;",
+    value:
+      "default-src https: 'unsafe-inline'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:;",
   },
   /**
    * Permissions-Policy, see: https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/
@@ -18,7 +19,8 @@ const securityHeaders = [
    **/
   {
     key: 'Permissions-Policy',
-    value: 'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
+    value:
+      'accelerometer=(), camera=(), microphone=(), document-domain=(), gyroscope=(), magnetometer=(), payment=(), usb=(), xr-spatial-tracking=()',
   },
   /**
    * The HTTP Strict-Transport-Security response header (often abbreviated as HSTS) informs browsers that the site
@@ -72,12 +74,14 @@ const nextConfig = {
     typedRoutes: true,
   },
   headers() {
-    return process.env.NODE_ENV !== 'development' ? [
-      {
-        headers: securityHeaders,
-        source: '/:path*',
-      },
-    ] : []
+    return process.env.NODE_ENV !== 'development'
+      ? [
+          {
+            headers: securityHeaders,
+            source: '/:path*',
+          },
+        ]
+      : []
   },
   poweredByHeader: false,
   reactStrictMode: true,

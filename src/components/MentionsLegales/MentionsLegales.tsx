@@ -3,12 +3,8 @@ import { ReactElement } from 'react'
 export default function MentionsLegales(): ReactElement {
   return (
     <>
-      <h1>
-        Mentions légales
-      </h1>
-      <h2>
-        Éditeur de la plateforme
-      </h2>
+      <h1>Mentions légales</h1>
+      <h2>Éditeur de la plateforme</h2>
       <address className="fr-mb-2w">
         Agence Nationale de la Cohésion des Territoires
         <br />
@@ -16,18 +12,10 @@ export default function MentionsLegales(): ReactElement {
         <br />
         75334 Paris Cedex 07
       </address>
-      <h2>
-        Directeur de la publication
-      </h2>
-      <p>
-        Yves Le BRETON, Directeur général de l’Agence Nationale de la Cohésion des Territoires
-      </p>
-      <h2>
-        Hébergement de la plateforme
-      </h2>
-      <p>
-        Cette plateforme est hébergée par :
-      </p>
+      <h2>Directeur de la publication</h2>
+      <p>Yves Le BRETON, Directeur général de l’Agence Nationale de la Cohésion des Territoires</p>
+      <h2>Hébergement de la plateforme</h2>
+      <p>Cette plateforme est hébergée par :</p>
       <address className="fr-mb-2w">
         Clever Cloud SAS
         <br />

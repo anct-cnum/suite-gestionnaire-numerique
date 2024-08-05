@@ -11,10 +11,9 @@ export const ROLES = [
   'Support animation',
 ] as const
 
-export type TypologieRole = typeof ROLES[number]
+export type TypologieRole = (typeof ROLES)[number]
 
-export type Categorisation =
-  'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
+export type Categorisation = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 
 export type RoleState = Required<PartialState>
 
@@ -38,7 +37,7 @@ export class Role implements Model {
 }
 
 type PartialState = Readonly<{
-  typologie: TypologieRole,
+  typologie: TypologieRole
   territoireOuStructure?: string
 }>
 

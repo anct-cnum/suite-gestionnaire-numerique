@@ -16,22 +16,22 @@
 }
 
 .fr-modal .modal-box {
-  animation: move-out .2s ease-in;
+  animation: move-out 0.2s ease-in;
 }
 
 .fr-modal[open] .modal-box {
-  animation: move-in .2s ease-out;
+  animation: move-in 0.2s ease-out;
 }
 
 @keyframes move-out {
-  100%{
-    transform: translateX(100%)
+  100% {
+    transform: translateX(100%);
   }
 }
 
 @keyframes move-in {
-  0%{
-    transform: translateX(100%)
+  0% {
+    transform: translateX(100%);
   }
 }
 
@@ -52,4 +52,3 @@
   height: 100%;
   margin: 0;
 }
-

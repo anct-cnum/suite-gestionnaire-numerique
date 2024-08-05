@@ -5,7 +5,9 @@ export function mesInformationsPersonnellesPresenter(
 ): MesInformationsPersonnellesPresenterDTO {
   return {
     ...mesInformationsPersonnelles,
-    isStructure: mesInformationsPersonnelles.role === 'Gestionnaire structure' || mesInformationsPersonnelles.role === 'Gestionnaire groupement',
+    isStructure:
+      mesInformationsPersonnelles.role === 'Gestionnaire structure' ||
+      mesInformationsPersonnelles.role === 'Gestionnaire groupement',
   }
 }
 

@@ -1,5 +1,8 @@
 import { TypologieRole } from '@/domain/Role'
-import { MesInformationsPersonnelles, MesInformationsPersonnellesQuery } from '@/use-cases/queries/MesInformationsPersonnelles'
+import {
+  MesInformationsPersonnelles,
+  MesInformationsPersonnellesQuery,
+} from '@/use-cases/queries/MesInformationsPersonnelles'
 
 export class InMemoryMesInformationsPersonnellesQuery implements MesInformationsPersonnellesQuery {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this

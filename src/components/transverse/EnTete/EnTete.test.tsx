@@ -66,7 +66,9 @@ describe('en-tête', () => {
     const email = within(menuUtilisateur).getByText('martin.tartempion@example.net')
     expect(email).toBeInTheDocument()
 
-    const liens = within(within(menuUtilisateur).getByRole('list', { name: 'liens-menu' })).getAllByRole('listitem')
+    const liens = within(
+      within(menuUtilisateur).getByRole('list', { name: 'liens-menu' })
+    ).getAllByRole('listitem')
     expect(liens).toHaveLength(3)
 
     const mesInformations = within(liens[0]).getByRole('link', { name: 'Mes informations' })
@@ -120,7 +122,6 @@ describe('en-tête', () => {
   })
 })
 
-
 const sessionUtilisateurContextProvider = {
   session: {
     email: 'martin.tartempion@example.net',
@@ -140,5 +141,4 @@ function renderComponent(children: ReactElement) {
       {children}
     </sessionUtilisateurContext.Provider>
   )
-
 }

@@ -12,24 +12,12 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
   return (
     <div className={`fr-container ${styles['fr-container']}`}>
       <div className={`fr-mb-8v ${styles['zone-infos']}`}>
-        <Image
-          alt=""
-          height={80}
-          role="img"
-          src={`${session.role.pictogramme}.svg`}
-          width={80}
-        />
+        <Image alt="" height={80} role="img" src={`${session.role.pictogramme}.svg`} width={80} />
         <div className="fr-mb-0 fr-h4">
-          <span className={`color-blue-france ${styles.nom}`}>
-            {session.prenom}
-          </span>
-          <span className={`color-blue-france ${styles.nom}`}>
-            {session.nom}
-          </span>
+          <span className={`color-blue-france ${styles.nom}`}>{session.prenom}</span>
+          <span className={`color-blue-france ${styles.nom}`}>{session.nom}</span>
         </div>
-        <div className={'fr-text--xs color-blue-france'}>
-          {session.email}
-        </div>
+        <div className={'fr-text--xs color-blue-france'}>{session.email}</div>
       </div>
       <ul
         aria-label="liens-menu"

@@ -1,12 +1,19 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-type LienExterneProps = PropsWithChildren<Readonly<{
-  href: string
-  className?: string
-  title: string
-}>>
+type LienExterneProps = PropsWithChildren<
+  Readonly<{
+    href: string
+    className?: string
+    title: string
+  }>
+>
 
-export default function LienExterne({ children, className = '', href, title }: LienExterneProps): ReactElement {
+export default function LienExterne({
+  children,
+  className = '',
+  href,
+  title,
+}: LienExterneProps): ReactElement {
   return (
     <a
       className={className}
