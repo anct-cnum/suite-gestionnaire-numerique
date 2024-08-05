@@ -9,10 +9,10 @@
 .red-button {
   background-color: var(--red-marianne-main-472) !important;
 
-    &:disabled {
-      color: var(--blue-france-975-75);
-      opacity: .3;
-    }
+  &:disabled {
+    color: var(--blue-france-975-75);
+    opacity: 0.3;
+  }
 }
 
 .font-weight-700 {
@@ -21,6 +21,6 @@
 
 .icon-title {
   background-color: var(--blue-france-975-75);
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   padding: 0 1rem;
 }

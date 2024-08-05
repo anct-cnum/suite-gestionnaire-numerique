@@ -21,10 +21,7 @@
       "version": "detect"
     }
   },
-  "ignorePatterns": [
-    "public",
-    "next.config.js"
-  ],
+  "ignorePatterns": ["public", "next.config.js"],
   "parser": "@typescript-eslint/parser",
   "plugins": ["sort-keys-fix", "unused-imports"],
   "rules": {
@@ -85,7 +82,10 @@
     "import/order": [
       "warn",
       {
-        "groups": [["builtin", "external"], ["internal", "parent", "sibling", "index", "object", "type"]],
+        "groups": [
+          ["builtin", "external"],
+          ["internal", "parent", "sibling", "index", "object", "type"]
+        ],
         "newlines-between": "always",
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }
@@ -114,27 +114,28 @@
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/prefer-destructuring": "off",
-    "@typescript-eslint/prefer-readonly-parameter-types": ["off", {
-      "allow": [
-        "FormEvent",
-        "HTMLFormElement",
-        "HTMLInputElement",
-        "SubmitEvent",
-        "SyntheticEvent",
-        "ReactElement",
-        "ChartDataset",
-        "ClientSafeProvider",
-        "inventaireModel"
-      ]
-    }],
+    "@typescript-eslint/prefer-readonly-parameter-types": [
+      "off",
+      {
+        "allow": [
+          "FormEvent",
+          "HTMLFormElement",
+          "HTMLInputElement",
+          "SubmitEvent",
+          "SyntheticEvent",
+          "ReactElement",
+          "ChartDataset",
+          "ClientSafeProvider",
+          "inventaireModel"
+        ]
+      }
+    ],
     "unused-imports/no-unused-imports": "error"
   },
   "overrides": [
     {
       "files": ["**/*.test.ts?(x)"],
-      "extends": [
-        "plugin:vitest/all"
-      ],
+      "extends": ["plugin:vitest/all"],
       "rules": {
         "@typescript-eslint/unbound-method": "off",
         "vitest/max-expects": "off",
