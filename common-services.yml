@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:15.7-alpine # Conserver la même version avec celle de Scalingo
+    environment:
+      POSTGRES_DB: sgn
+      POSTGRES_USER: sgn
+      POSTGRES_PASSWORD: sgn
+    command: ["postgres", "-c", "log_statement=all", "-c", "max_connections=30"]
+    healthcheck:
+      test: pg_isready -U sgn
+      interval: 10s
+      timeout: 5s
+      retries: 5

@@ -4,7 +4,7 @@
 
 ## 🛠️ Prérequis
 
-Avoir la version LTS de node décrite dans le fichier `.nvmrc`.
+Avoir la version LTS de Node décrite dans le fichier `.nvmrc`.
 
 ```bash
 nvm install v20.x.x
@@ -24,6 +24,7 @@ Pour `NEXTAUTH_SECRET`, lancer la commande `openssl rand -base64 32`.
 Ensuite, lancez le serveur de développement
 
 ```bash
+yarn db:start
 yarn dev
 ```
 
@@ -31,16 +32,30 @@ Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour 
 
 ## 🧪 Tests
 
-Pour lancer les tests une fois, exécutez :
+Pour lancer les tests une fois :
 
 ```bash
 yarn test
 ```
 
-Pour lancer les tests en continu fois, exécutez :
+Pour lancer les tests en continu :
 
 ```bash
 yarn test:watch
+```
+
+Pour lancer les tests avec le coverage :
+
+```bash
+yarn test:coverage
+```
+
+Pour accéder à la base de données selon un environnement :
+
+```bash
+yarn psql:local
+yarn psql:production (il faut avoir installer la CLI de Scalingo au préalable)
+yarn psql:test
 ```
 
 ## ⬆️ Mise à jour du DSFR

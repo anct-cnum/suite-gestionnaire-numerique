@@ -1,0 +1,30 @@
+services:
+  postgres-dev:
+    extends:
+      file: common-services.yml
+      service: postgres
+    container_name: sgn_db_dev
+    ports:
+      - target: 5432
+        published: 5432
+    volumes:
+      - type: volume
+        source: postgres_data
+        target: /var/lib/postgresql/data
+
+  postgres-test:
+    extends:
+      file: common-services.yml
+      service: postgres
+    container_name: sgn_db_test
+    ports:
+      - target: 5432
+        published: 5433
+    volumes:
+      - type: volume
+        source: postgres_data_test
+        target: /var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  postgres_data_test:
