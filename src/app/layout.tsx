@@ -6,6 +6,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-weather/icons-weather.min.css'
 import '../global.css'
 
 import SessionUtilisateurContext from '../components/shared/SessionUtilisateurContext'
@@ -13,6 +14,7 @@ import SessionUtilisateurContext from '../components/shared/SessionUtilisateurCo
 export default function Layout({ children }: PropsWithChildren): ReactElement {
   return (
     <html
+      data-fr-scheme="light"
       dir="ltr"
       lang="fr"
     >
