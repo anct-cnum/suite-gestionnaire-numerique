@@ -19,7 +19,7 @@ services:
     container_name: sgn_db_test
     ports:
       - target: 5432
-        published: 5433
+        published: 5434
     volumes:
       - type: volume
         source: postgres_data_test
