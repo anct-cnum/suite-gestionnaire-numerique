@@ -1,3 +1,7 @@
+.fr-container {
+  padding: 0;
+}
+
 .fr-modal::before {
   content: unset;
 }
