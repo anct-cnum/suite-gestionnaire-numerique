@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+  output = "./client-fne"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("FNE_DATABASE_URL")
+}
+
+// Les models ci-dessous sont copiés/collés du projet inclusion-numerique en fonction de nos besoin de migrations.
+// Les models sont suffixés par "FNE" pour les distinguer des notres.
+
+model AccountFNE {
+  id                String  @id @default(cuid())
+  id_token          String  @db.Text
+  userId            String  @map("user_id") @db.Uuid
+
+  user UserFNE @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model UserFNE {
+  id String     @id @default(uuid()) @db.Uuid
+  accounts      AccountFNE[]
+  created       DateTime @default(now())
+  email         String @unique
+  firstName     String? @map("first_name")
+  lastName      String? @map("last_name")
+  role          UserRoleFNE @default(User)
+
+  @@map("users")
+}
+
+enum UserRoleFNE {
+  Administrator         @map("administrator")
+  Demo                  @map("demo")
+  PrefectureDepartement @map("prefecture_departement")
+  PrefectureRegion      @map("prefecture_region")
+  User                  @map("user")
+
+  @@map("user_role")
+}

@@ -5,4 +5,36 @@ generator client {
 datasource db {
   provider = "postgresql"
   url = env("DATABASE_URL")
+  // Prisma a besoin de créer une database temporaire quand on lance la migration
+  // https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database
+  // Du coup, on a créée une application Scalingo qui contient qu'une database dédiée à ça
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model UtilisateurRecord {
+  id Int @id @default(autoincrement())
+
+  dateDeCreation DateTime
+  derniereConnexion DateTime?
+  email String @unique
+  inviteLe DateTime
+  nom String
+  prenom String
+  role Role
+  // Identifiant fourni par le SSO
+  sub String @unique @default("")
+  telephone String @default("")
+
+  @@map("utilisateur")
+}
+
+enum Role {
+  administrateur_dispositif
+  gestionnaire_departement
+  gestionnaire_groupement
+  gestionnaire_region
+  gestionnaire_structure
+  instructeur
+  pilote_politique_publique
+  support_animation
 }

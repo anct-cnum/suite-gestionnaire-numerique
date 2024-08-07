@@ -2,4 +2,3 @@
 .husky
 .yarn
 src
-yarn.lock
