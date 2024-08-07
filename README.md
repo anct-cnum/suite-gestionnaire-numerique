@@ -58,6 +58,24 @@ yarn psql:production (il faut avoir installer la CLI de Scalingo au préalable)
 yarn psql:test
 ```
 
+Quand le schéma de SGN est modifié, regénérer les tables à partir des schémas Prisma, créer les migrations au besoin et générer les types pour Prisma Client :
+
+```bash
+yarn prisma:migrate
+```
+
+Quand tu veux repartir de zéro (supprime tout en base) :
+
+```bash
+yarn prisma:drop:schema
+```
+
+Quand le schéma de FNE est modifié, regénérer les types FNE pour Prisma Client :
+
+```bash
+yarn prisma:generate:fne
+```
+
 ## ⬆️ Mise à jour du DSFR
 
 Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
