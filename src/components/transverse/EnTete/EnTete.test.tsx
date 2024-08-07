@@ -74,7 +74,7 @@ describe('en-tête', () => {
     expect(mesInformations).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const mesParametres = within(liens[1]).getByRole('link', { name: 'Mes paramètres' })
-    expect(mesParametres).toHaveAttribute('href', '/')
+    expect(mesParametres).toHaveAttribute('href', '/mes-parametres')
     expect(mesParametres).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mes utilisateurs' })

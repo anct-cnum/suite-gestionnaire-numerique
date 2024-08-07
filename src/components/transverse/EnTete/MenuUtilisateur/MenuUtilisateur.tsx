@@ -48,7 +48,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           <Link
             aria-controls={ariaControlsId}
             className="fr-text-md fr-link fr-icon-settings-5-line fr-link--icon-left"
-            href="/"
+            href="/mes-parametres"
           >
             Mes paramètres
           </Link>

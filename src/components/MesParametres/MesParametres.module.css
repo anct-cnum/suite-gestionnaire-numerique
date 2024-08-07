@@ -1,0 +1,15 @@
+.fr-toggle--bb {
+  border-bottom: .0625rem solid var(--grey-900-175);
+}
+
+.fr-segmented__elements{
+  width: 100%;
+}
+
+.fr-segmented__element {
+  width: 50%;
+}
+
+.fr-segmented__element > label {
+  justify-content: center;
+}
