@@ -8,6 +8,10 @@
 
 .red-button {
   background-color: var(--error-425-625) !important;
+
+    &:disabled {
+      opacity: .5;
+    }
 }
 
 .font-weight-700 {

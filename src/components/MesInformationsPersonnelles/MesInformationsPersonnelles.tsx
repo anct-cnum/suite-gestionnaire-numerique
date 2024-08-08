@@ -1,11 +1,33 @@
-import { ReactElement } from 'react'
+'use client'
+import { ReactElement, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import Role from './Role'
+import SupprimerMonCompte from './SupprimerMonCompte'
 import Titre from './Titre'
 import { MesInformationsPersonnellesPresenterDTO } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles({ presenter }: MesInformationsPersonnellesProps): ReactElement {
+
+  const [portal, setPortal] = useState(<div />)
+  const [isOpen, setIsOpen] = useState(false)
+  const supprimerMonCompteModalId = 'supprimer-mon-compte'
+
+  useEffect(() => {
+    setPortal(
+      createPortal(
+        <SupprimerMonCompte
+          email={presenter.informationsPersonnellesEmail}
+          id={supprimerMonCompteModalId}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+        />,
+        document.body
+      )
+    )
+  }, [presenter, supprimerMonCompteModalId, isOpen])
+
   return (
     <>
       <Titre icon="account-circle-line">
@@ -153,16 +175,22 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
         </p>
         <hr />
         <button
+          aria-controls={supprimerMonCompteModalId}
           className="fr-btn red-button"
+          data-fr-opened="false"
+          onClick={() => {
+            setIsOpen(true)
+          }}
           type="button"
         >
           Supprimer mon compte
         </button>
       </section>
+      {portal}
     </>
   )
 }
 
 type MesInformationsPersonnellesProps = Readonly<{
-  presenter: MesInformationsPersonnellesPresenterDTO
+    presenter: MesInformationsPersonnellesPresenterDTO
 }>
