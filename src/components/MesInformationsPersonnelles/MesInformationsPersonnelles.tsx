@@ -1,11 +1,16 @@
-import { ReactElement } from 'react'
+'use client'
+import { ReactElement, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import Role from './Role'
+import SupprimerMonCompte from './SupprimerMonCompte'
 import Titre from './Titre'
 import { MesInformationsPersonnellesPresenterDTO } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles({ presenter }: MesInformationsPersonnellesProps): ReactElement {
+  const [isOpen, setIsOpen] = useState(false)
+  const supprimerMonCompteModalId = 'supprimer-mon-compte'
+
   return (
     <>
       <Titre icon="account-circle-line">
@@ -153,12 +158,23 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
         </p>
         <hr />
         <button
+          aria-controls={supprimerMonCompteModalId}
           className="fr-btn red-button"
+          data-fr-opened="false"
+          onClick={() => {
+            setIsOpen(true)
+          }}
           type="button"
         >
           Supprimer mon compte
         </button>
       </section>
+      <SupprimerMonCompte
+        email={presenter.informationsPersonnellesEmail}
+        id={supprimerMonCompteModalId}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   )
 }

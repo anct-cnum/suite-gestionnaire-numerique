@@ -1,0 +1,11 @@
+.fr-modal__body {
+  border-radius: 1rem;
+}
+
+.fr-input-group::before {
+  content: none;
+}
+
+.fr-input-group .fr-label {
+  color: var(--text-label-gray);
+}

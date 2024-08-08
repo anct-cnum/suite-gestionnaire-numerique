@@ -1,4 +1,5 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { matchWithoutMarkup } from '../../testHelper'
@@ -156,6 +157,161 @@ describe('mes informations personnelles', () => {
     expect(emailDuContactLabel).toBeInTheDocument()
     const emailDuContact = within(maStructure).getByText('manon.verminac@example.com')
     expect(emailDuContact).toBeInTheDocument()
+  })
+
+  describe('étant connecté, quand je clique sur la suppression de compte, alors la modale s’ouvre', () => {
+    it('me présentant les instructions à suivre afin de supprimer mon compte', () => {
+      // GIVEN
+      const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)
+      render(<MesInformationsPersonnelles presenter={presenter} />)
+      const supprimerMonCompteButton = screen.getByRole('button', { name: 'Supprimer mon compte' })
+
+      // WHEN
+      fireEvent.click(supprimerMonCompteButton)
+
+      // THEN
+      const supprimerMonCompteModal = screen.getByRole('dialog')
+      expect(supprimerMonCompteModal).toBeVisible()
+
+      const titre = within(supprimerMonCompteModal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
+      expect(titre).toBeInTheDocument()
+
+      const avertissement = within(supprimerMonCompteModal)
+        .getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
+      expect(avertissement).toBeInTheDocument()
+
+      const saisie = within(supprimerMonCompteModal)
+        .getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+      expect(saisie).toBeRequired()
+      expect(saisie).toHaveAttribute('type', 'email')
+      expect(saisie).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(saisie).toHaveAttribute('aria-describedby', 'supprimer-mon-compte-email-message-validation')
+
+      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
+      expect(fermer).toHaveAttribute('type', 'button')
+      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
+
+      const annuler = within(supprimerMonCompteModal).getByRole('button', { name: 'Annuler' })
+      expect(annuler).toHaveAttribute('type', 'button')
+      expect(annuler).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
+
+      const confirmer = within(supprimerMonCompteModal).getByRole('button', { name: 'Confirmer la suppression' })
+      expect(confirmer).toHaveAttribute('type', 'submit')
+      expect(confirmer).toHaveAttribute('formMethod', 'dialog')
+      expect(confirmer).toBeDisabled()
+    })
+
+    it('je peux y renoncer en fermant la modale', () => {
+      // GIVEN
+      render(
+        <MesInformationsPersonnelles presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)} />
+      )
+      fireEvent.click(supprimerMonCompteButton())
+      const supprimerMonCompteModal = screen.getByRole('dialog')
+      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
+
+      // WHEN
+      fireEvent.click(fermer)
+
+      // THEN
+      expect(supprimerMonCompteModal).not.toBeVisible()
+    })
+
+    describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
+      it('je saisis une adresse email invalide', () => {
+        // GIVEN
+        render(
+          <MesInformationsPersonnelles
+            presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
+          />
+        )
+        fireEvent.click(supprimerMonCompteButton())
+
+        // WHEN
+        fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@' } })
+
+        // THEN
+        expect(confirmerSuppressionCompteButton()).toBeDisabled()
+      })
+
+      it('je saisis une adresse email valide mais qui n’est pas la mienne', () => {
+        // GIVEN
+        render(
+          <MesInformationsPersonnelles
+            presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
+          />
+        )
+        fireEvent.click(supprimerMonCompteButton())
+
+        // WHEN
+        fireEvent.input(saisirEmail(), { target: { value: 'deschamps.julien@example.com' } })
+
+        // THEN
+        expect(confirmerSuppressionCompteButton()).toBeDisabled()
+        const messageEmailKo = screen.getByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur')
+        expect(messageEmailKo).toBeInTheDocument()
+      })
+    })
+
+    describe('je peux supprimer mon compte, le bouton de confirmation s’activant si', () => {
+      it(
+        'une fois que j’ai saisi mon adresse email (même avec des espaces en trop en début ou en fin de saisie)',
+        () => {
+          // GIVEN
+          render(
+            <MesInformationsPersonnelles
+              presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
+            />
+          )
+          fireEvent.click(supprimerMonCompteButton())
+
+          // WHEN
+          fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
+
+          // THEN
+          expect(confirmerSuppressionCompteButton()).not.toBeDisabled()
+          const messageEmailOk = screen.getByText('L’adresse électronique saisie est valide')
+          expect(messageEmailOk).toBeInTheDocument()
+        }
+      )
+
+      it(
+        `quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif,
+        il s’inactive et change de contenu, m’informant que la suppression est en cours,
+        puis je suis déconnecté`,
+        () => {
+          // GIVEN
+          render(
+            <MesInformationsPersonnelles
+              presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
+            />
+          )
+          fireEvent.click(supprimerMonCompteButton())
+          fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
+          vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
+
+          // WHEN
+          fireEvent.click(confirmerSuppressionCompteButton())
+
+          // THEN
+          const boutonConfirmationDesactive = screen.getByRole('button', { name: 'Suppression en cours' })
+          expect(boutonConfirmationDesactive).toBeDisabled()
+          expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
+        }
+      )
+    })
+
+    function supprimerMonCompteButton(): HTMLElement {
+      return screen.getByRole('button', { name: 'Supprimer mon compte' })
+    }
+
+    function confirmerSuppressionCompteButton(): HTMLElement {
+      return screen.getByRole('button', { name: 'Confirmer la suppression' })
+    }
+
+    function saisirEmail(): HTMLElement {
+      return screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+    }
   })
 })
 
