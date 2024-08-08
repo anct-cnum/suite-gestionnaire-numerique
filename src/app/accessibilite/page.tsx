@@ -9,7 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function AccessibiliteController(): ReactElement {
-  return (
-    <Accessibilite />
-  )
+  return <Accessibilite />
 }

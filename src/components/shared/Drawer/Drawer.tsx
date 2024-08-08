@@ -11,15 +11,12 @@ export default function Drawer({
   children,
 }: DrawerProps): ReactNode {
   return (
-    <dialog
-      aria-modal="true"
-      className={`fr-modal ${styles['fr-modal']}`}
-      id={id}
-      open={isOpen}
-    >
+    <dialog aria-modal="true" className={`fr-modal ${styles['fr-modal']}`} id={id} open={isOpen}>
       <div className={`fr-container ${styles['fr-container']}`}>
         <div className="fr-grid-row fr-grid-row--right">
-          <div className={`fr-col-4 ${styles['modal-box']} ${isFixedWidth ? styles['modal-box--fixed-width'] : ''}`}>
+          <div
+            className={`fr-col-4 ${styles['modal-box']} ${isFixedWidth ? styles['modal-box--fixed-width'] : ''}`}
+          >
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
               <button
                 aria-controls={id}
@@ -30,9 +27,7 @@ export default function Drawer({
                 title={boutonFermeture}
                 type="button"
               />
-              <div className={`fr-modal__content ${styles['fr-modal__content']}`}>
-                {children}
-              </div>
+              <div className={`fr-modal__content ${styles['fr-modal__content']}`}>{children}</div>
             </div>
           </div>
         </div>
@@ -41,10 +36,12 @@ export default function Drawer({
   )
 }
 
-type DrawerProps = PropsWithChildren<Readonly<{
-  id: string,
-  isOpen: boolean
-  setIsOpen: Dispatch<SetStateAction<boolean>>
-  boutonFermeture: string
-  isFixedWidth: boolean
-}>>
+type DrawerProps = PropsWithChildren<
+  Readonly<{
+    id: string
+    isOpen: boolean
+    setIsOpen: Dispatch<SetStateAction<boolean>>
+    boutonFermeture: string
+    isFixedWidth: boolean
+  }>
+>

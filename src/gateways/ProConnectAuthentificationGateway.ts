@@ -74,7 +74,7 @@ async function getSession(): Promise<Session | null> {
 }
 
 export async function amIConnected(): Promise<boolean> {
-  return await getSession() !== null
+  return (await getSession()) !== null
 }
 
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>

@@ -2,9 +2,9 @@ import { Categorisation, RoleState, TypologieRole } from '@/domain/Role'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 export type SessionUtilisateurViewModel = Readonly<{
-  prenom: string,
-  nom: string,
-  email: string,
+  prenom: string
+  nom: string
+  email: string
   role: RoleViewModel
 }>
 
@@ -34,18 +34,18 @@ export function sessionUtilisateurPresenter(utilisateur: Utilisateur): SessionUt
 }
 
 type RoleViewModel = Readonly<{
-  libelle: string,
-  pictogramme: string,
+  libelle: string
+  pictogramme: string
 }>
-
 
 type LibelleByTypologie = Readonly<Record<TypologieRole, (role: RoleState) => string>>
 
 type PictogrammeByCategorie = Readonly<Record<Categorisation, string>>
 
 const libelleByRole: LibelleByTypologie = {
-  'Administrateur dispositif': ({ territoireOuStructure }) => `Administrateur ${territoireOuStructure}`,
-  'Gestionnaire département': ({ territoireOuStructure } ) => territoireOuStructure,
+  'Administrateur dispositif': ({ territoireOuStructure }) =>
+    `Administrateur ${territoireOuStructure}`,
+  'Gestionnaire département': ({ territoireOuStructure }) => territoireOuStructure,
   'Gestionnaire groupement': ({ territoireOuStructure }) => territoireOuStructure,
   'Gestionnaire région': ({ territoireOuStructure }) => territoireOuStructure,
   'Gestionnaire structure': ({ territoireOuStructure }) => territoireOuStructure,

@@ -16,7 +16,5 @@ export default async function MesInformationsPersonnellesController(): Promise<R
     await mesInformationsPersonnellesQuery.retrieveMesInformationsPersonnelles()
   const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
 
-  return (
-    <MesInformationsPersonnelles presenter={presenter} />
-  )
+  return <MesInformationsPersonnelles presenter={presenter} />
 }

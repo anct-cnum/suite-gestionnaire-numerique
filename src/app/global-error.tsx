@@ -14,14 +14,9 @@ export default function GlobalError({ error }: ErrorProps): ReactElement {
   }, [error])
 
   return (
-    <html
-      dir="ltr"
-      lang="fr"
-    >
+    <html dir="ltr" lang="fr">
       <body>
-        <h1>
-          {'Quelque chose s’est mal passé !'}
-        </h1>
+        <h1>{'Quelque chose s’est mal passé !'}</h1>
       </body>
     </html>
   )

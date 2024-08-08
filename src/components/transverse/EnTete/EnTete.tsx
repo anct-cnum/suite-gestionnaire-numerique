@@ -30,8 +30,7 @@ export default function EnTete(): ReactElement {
         document.body
       )
     )
-  },
-  [drawerId, isOpen])
+  }, [drawerId, isOpen])
 
   return (
     <header className="fr-header">
@@ -41,15 +40,8 @@ export default function EnTete(): ReactElement {
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
                 <div className="fr-header__operator">
-                  <svg
-                    height="40"
-                    width="35"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M17.387 0 0 10v20l17.387 10 17.29-10V10z"
-                      fill="#e1000f"
-                    />
+                  <svg height="40" width="35" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.387 0 0 10v20l17.387 10 17.29-10V10z" fill="#e1000f" />
                     <path
                       d="M22.32 17.122h6.545v-3.805L17.387 6.683 5.812 13.317v13.268l11.575 6.732 11.478-6.732V22.83H22.32z"
                       fill="#fff"
@@ -75,14 +67,9 @@ export default function EnTete(): ReactElement {
                 </div>
               </div>
               <div className="fr-header__service">
-                <Link
-                  href="/"
-                  title="Accueil"
-                >
+                <Link href="/" title="Accueil">
                   <p className="fr-header__service-title">
-                    <span className={styles['libelle-session-utilisateur__prefix']}>
-                      FNE
-                    </span>
+                    <span className={styles['libelle-session-utilisateur__prefix']}>FNE</span>
                     <span className={`${styles['libelle-session-utilisateur__prefix']} color-grey`}>
                       &nbsp;/&nbsp;
                     </span>
@@ -99,32 +86,20 @@ export default function EnTete(): ReactElement {
                   id="menuUtilisateur"
                 >
                   <li>
-                    <Link
-                      className="fr-link fr-icon-search-line"
-                      href="/"
-                    >
+                    <Link className="fr-link fr-icon-search-line" href="/">
                       Rechercher
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      className="fr-link fr-icon-question-line"
-                      href="/"
-                    >
+                    <Link className="fr-link fr-icon-question-line" href="/">
                       Aide
                     </Link>
                   </li>
                   <li>
-                    <Link
-                      className="fr-link fr-icon-notification-3-line"
-                      href="/"
-                    >
+                    <Link className="fr-link fr-icon-notification-3-line" href="/">
                       Notifications
                       {/**/}
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-arrow-down-s-line"
-                      />
+                      <span aria-hidden="true" className="fr-icon-arrow-down-s-line" />
                     </Link>
                   </li>
                   <li>
@@ -138,10 +113,7 @@ export default function EnTete(): ReactElement {
                       type="button"
                     >
                       {`${session.prenom} ${session.nom}`}
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-arrow-down-s-line"
-                      />
+                      <span aria-hidden="true" className="fr-icon-arrow-down-s-line" />
                     </button>
                   </li>
                 </ul>
@@ -150,11 +122,7 @@ export default function EnTete(): ReactElement {
           </div>
         </div>
       </div>
-      <dialog
-        aria-labelledby="button-500"
-        className="fr-header__menu fr-modal"
-        id="modal-499"
-      >
+      <dialog aria-labelledby="button-500" className="fr-header__menu fr-modal" id="modal-499">
         <div className="fr-container">
           <button
             aria-controls="modal-499"

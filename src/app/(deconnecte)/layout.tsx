@@ -11,10 +11,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
 
   return (
     <>
-      <main
-        className="fr-container fr-pt-3w"
-        id="content"
-      >
+      <main className="fr-container fr-pt-3w" id="content">
         {children}
       </main>
       <PiedDePage />

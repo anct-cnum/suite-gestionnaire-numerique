@@ -7,7 +7,7 @@ import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import { amIConnected } from '@/gateways/ProConnectAuthentificationGateway'
 
 export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
-  if (!await amIConnected()) {
+  if (!(await amIConnected())) {
     redirect('/connexion')
   }
 
@@ -15,10 +15,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     <>
       <LienEvitement />
       <EnTete />
-      <main
-        className="fr-container fr-pt-3w"
-        id="content"
-      >
+      <main className="fr-container fr-pt-3w" id="content">
         {children}
       </main>
       <PiedDePage />
