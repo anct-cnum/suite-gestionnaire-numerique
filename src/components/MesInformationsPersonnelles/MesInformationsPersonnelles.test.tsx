@@ -1,9 +1,10 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
+import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { matchWithoutMarkup } from '../../testHelper'
 import { TypologieRole } from '@/domain/Role'
-import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
+import { mesInformationsPersonnellesPresenter, MesInformationsPersonnellesPresenterDTO } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 describe('mes informations personnelles', () => {
   it('étant connecté quand j’affiche mes informations personnelles alors elles s’affichent', () => {
@@ -156,6 +157,143 @@ describe('mes informations personnelles', () => {
     expect(emailDuContactLabel).toBeInTheDocument()
     const emailDuContact = within(maStructure).getByText('manon.verminac@example.com')
     expect(emailDuContact).toBeInTheDocument()
+  })
+
+  describe('étant connecté, quand je clique sur la suppression de compte, alors la modale s’ouvre', () => {
+    it('me présentant les instructions à suivre afin de supprimer mon compte', () => {
+      // GIVEN
+      const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)
+      render(<MesInformationsPersonnelles presenter={presenter} />)
+      const supprimerMonCompteButton = screen.getByRole('button', { name: 'Supprimer mon compte' })
+
+      // WHEN
+      fireEvent.click(supprimerMonCompteButton)
+
+      // THEN
+      const supprimerMonCompteModal = screen.getByRole('dialog')
+      expect(supprimerMonCompteModal).toHaveAttribute('open')
+
+      const titre = within(supprimerMonCompteModal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
+      expect(titre).toBeInTheDocument()
+
+      const avertissement = within(supprimerMonCompteModal)
+        .getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
+      expect(avertissement).toBeInTheDocument()
+
+      const saisie = within(supprimerMonCompteModal)
+        .getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+      expect(saisie).toHaveAttribute('required')
+      expect(saisie).toHaveAttribute('type', 'email')
+      expect(saisie).toHaveAttribute('id', 'supprimer-mon-compte-email-input')
+
+      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
+      expect(fermer).toHaveAttribute('type', 'button')
+      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
+
+      const annuler = within(supprimerMonCompteModal).getByRole('button', { name: 'Annuler' })
+      expect(annuler).toHaveAttribute('type', 'button')
+      expect(annuler).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
+
+      const confirmer = within(supprimerMonCompteModal).getByRole('button', { name: 'Confirmer la suppression' })
+      expect(confirmer).toHaveAttribute('type', 'submit')
+      expect(confirmer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
+      expect(confirmer).toHaveAttribute('formMethod', 'dialog')
+      expect(confirmer).toHaveAttribute('disabled')
+    })
+
+    it('je peux y renoncer en fermant la modale', () => {
+      // GIVEN
+      const { supprimerMonCompteModal, fermer } = setup()
+
+      // WHEN
+      fireEvent.click(fermer)
+
+      // THEN
+      expect(supprimerMonCompteModal).not.toHaveAttribute('open')
+    })
+
+    describe('ou persister', () => {
+      it('pas sans avoir saisi mon adresse email car le bouton est désactivé', () => {
+        // GIVEN
+        const { supprimerMonCompteModal, confirmer } = setup()
+
+        // WHEN
+        fireEvent.click(confirmer)
+
+        // THEN
+        expect(supprimerMonCompteModal).toHaveAttribute('open')
+      })
+
+      it('pas en saisissant une adresse email erronée, car le bouton est désactivé', () => {
+        // GIVEN
+        const { supprimerMonCompteModal, confirmer, saisie } = setup()
+
+        // WHEN
+        fireEvent.input(saisie, { target: { value: 'julien.deschamps@' } })
+        fireEvent.click(confirmer)
+
+        // THEN
+        expect(supprimerMonCompteModal).toHaveAttribute('open')
+      })
+
+      it('pas en saisissant une adresse email incorrecte, car le bouton est désactivé', () => {
+        // GIVEN
+        const { supprimerMonCompteModal, confirmer, saisie } = setup()
+
+        // WHEN
+        fireEvent.input(saisie, { target: { value: 'juliendeschamps@example.net' } })
+        fireEvent.click(confirmer)
+
+        // THEN
+        expect(supprimerMonCompteModal).toHaveAttribute('open')
+      })
+
+
+      it(
+        'en saisissant mon adresse email, même avec des espaces en trop en début ou en fin de '
+          + 'saisie : la modale se ferme et suis déconnecté',
+        () => {
+          // GIVEN
+          const { supprimerMonCompteModal, confirmer, saisie } = setup()
+          vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
+
+          // WHEN
+          fireEvent.input(saisie, { target: { value: '  julien.deschamps@example.com  ' } })
+          fireEvent.click(confirmer)
+
+          // THEN
+          expect(supprimerMonCompteModal).not.toHaveAttribute('open')
+          expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
+        }
+      )
+    })
+
+    function setup(): Readonly<{
+      presenter: MesInformationsPersonnellesPresenterDTO,
+      supprimerMonCompteButton: HTMLElement,
+      supprimerMonCompteModal: HTMLElement,
+      fermer: HTMLElement,
+      confirmer: HTMLElement,
+      saisie: HTMLElement
+    }> {
+
+      const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)
+      render(<MesInformationsPersonnelles presenter={presenter} />)
+      const supprimerMonCompteButton = screen.getByRole('button', { name: 'Supprimer mon compte' })
+      fireEvent.click(supprimerMonCompteButton)
+      const supprimerMonCompteModal = screen.getByRole('dialog')
+
+      return {
+        confirmer: within(supprimerMonCompteModal).getByRole('button', { name: 'Confirmer la suppression' }),
+        fermer: within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' }),
+        presenter,
+        saisie: within(supprimerMonCompteModal)
+          .getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous'),
+        supprimerMonCompteButton,
+        supprimerMonCompteModal,
+
+      }
+    }
   })
 })
 
