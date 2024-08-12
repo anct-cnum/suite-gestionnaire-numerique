@@ -7,10 +7,11 @@
 }
 
 .red-button {
-  background-color: var(--error-425-625) !important;
+  background-color: var(--red-marianne-main-472) !important;
 
     &:disabled {
-      opacity: .5;
+      color: var(--blue-france-975-75);
+      opacity: .3;
     }
 }
 
