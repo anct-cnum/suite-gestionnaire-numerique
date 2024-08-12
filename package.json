@@ -13,7 +13,7 @@
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:ts": "eslint src seeds --ext .tsx,.ts --max-warnings=0 --cache --cache-location node_modules/.cache/eslint",
     "migration:utilisateur": "ts-node -T seeds/utilisateur.ts",
-    "postinstall": "husky || true",
+    "postinstall": "husky || true && ./post-install.sh",
     "prisma:drop:schema": "npx prisma db execute --file=prisma/dropSchema.sql",
     "prisma:generate:fne": "npx prisma generate --schema seeds/fne/schema.prisma",
     "prisma:migrate": "npx prisma migrate dev",

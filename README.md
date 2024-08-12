@@ -12,23 +12,22 @@ nvm install v20.x.x
 
 ## 🚀 Démarrage
 
-D'abord, installez les dépendances
+D'abord, installer les dépendances
 
 ```bash
 yarn install
 ```
 
-Remplissez les variables d'environnement en copiant `.env` en `.env.local`.
-Pour `NEXTAUTH_SECRET`, lancer la commande `openssl rand -base64 32`.
+Remplir les variables d'environnement dans `.env.local`.
 
-Ensuite, lancez le serveur de développement
+Lancer le serveur de développement
 
 ```bash
 yarn db:start
 yarn dev
 ```
 
-Ouvrez votre navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat
+Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat
 
 ## 🧪 Tests
 
@@ -64,7 +63,7 @@ Quand le schéma de SGN est modifié, regénérer les tables à partir des sché
 yarn prisma:migrate
 ```
 
-Quand tu veux repartir de zéro (supprime tout en base) :
+Quand tu veux ré-initialiser la base de données :
 
 ```bash
 yarn prisma:drop:schema
@@ -74,6 +73,18 @@ Quand le schéma de FNE est modifié, regénérer les types FNE pour Prisma Clie
 
 ```bash
 yarn prisma:generate:fne
+```
+
+Quand tu veux enchainer les trois dernières commandes d'affilé :
+
+```bash
+yarn prisma:reset
+```
+
+Quand tu veux importer les utilisateurs :
+
+```bash
+yarn migration:utilisateur
 ```
 
 ## ⬆️ Mise à jour du DSFR
