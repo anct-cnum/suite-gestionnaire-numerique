@@ -3,9 +3,8 @@ import { ReactElement } from 'react'
 
 import Accessibilite from '@/components/Accessibilite/Accessibilite'
 
-const title = 'Déclaration d’accessibilité'
 export const metadata: Metadata = {
-  title,
+  title: 'Déclaration d’accessibilité',
 }
 
 export default function AccessibiliteController(): ReactElement {

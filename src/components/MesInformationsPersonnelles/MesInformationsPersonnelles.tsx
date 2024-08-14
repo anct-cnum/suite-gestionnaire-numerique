@@ -1,13 +1,16 @@
 'use client'
+
 import { ReactElement, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import Role from './Role'
 import SupprimerMonCompte from './SupprimerMonCompte'
 import Titre from './Titre'
-import { MesInformationsPersonnellesPresenterDTO } from '@/presenters/mesInformationsPersonnellesPresenter'
+import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
-export default function MesInformationsPersonnelles({ presenter }: MesInformationsPersonnellesProps): ReactElement {
+export default function MesInformationsPersonnelles(
+  { mesInformationsPersonnellesViewModel }: MesInformationsPersonnellesProps
+): ReactElement {
   const [isOpen, setIsOpen] = useState(false)
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
 
@@ -38,24 +41,24 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
         <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
           <InformationPersonnelle
             label="Nom"
-            value={presenter.informationsPersonnellesNom}
+            value={mesInformationsPersonnellesViewModel.informationsPersonnellesNom}
           />
           <InformationPersonnelle
             label="Prénom"
-            value={presenter.informationsPersonnellesPrenom}
+            value={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
           />
           <InformationPersonnelle
             label="Adresse éclectronique"
-            value={presenter.informationsPersonnellesEmail}
+            value={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
           />
           <InformationPersonnelle
             label="Téléphone professionnel"
-            value={presenter.informationsPersonnellesTelephone}
+            value={mesInformationsPersonnellesViewModel.informationsPersonnellesTelephone}
           />
         </div>
       </section>
       {
-        presenter.isStructure ? (
+        mesInformationsPersonnellesViewModel.isStructure ? (
           <section
             aria-labelledby="maStructure"
             className="fr-card fr-p-4w fr-mb-4w"
@@ -70,11 +73,11 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
             <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
               <InformationPersonnelle
                 label="Raison sociale"
-                value={presenter.structureRaisonSociale}
+                value={mesInformationsPersonnellesViewModel.structureRaisonSociale}
               />
               <InformationPersonnelle
                 label="Type de structure"
-                value={presenter.structureTypeDeStructure}
+                value={mesInformationsPersonnellesViewModel.structureTypeDeStructure}
               />
               <InformationPersonnelle
                 label={
@@ -86,11 +89,11 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
                     </abbr>
                   </>
                 }
-                value={presenter.structureNumeroDeSiret}
+                value={mesInformationsPersonnellesViewModel.structureNumeroDeSiret}
               />
               <InformationPersonnelle
                 label="Adresse"
-                value={presenter.structureAdresse}
+                value={mesInformationsPersonnellesViewModel.structureAdresse}
               />
             </div>
             <hr className="fr-mt-3w" />
@@ -100,19 +103,19 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
             <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
               <InformationPersonnelle
                 label="Nom"
-                value={presenter.contactNom}
+                value={mesInformationsPersonnellesViewModel.contactNom}
               />
               <InformationPersonnelle
                 label="Prénom"
-                value={presenter.contactPrenom}
+                value={mesInformationsPersonnellesViewModel.contactPrenom}
               />
               <InformationPersonnelle
                 label="Fonction dans la structure"
-                value={presenter.contactFonction}
+                value={mesInformationsPersonnellesViewModel.contactFonction}
               />
               <InformationPersonnelle
                 label="Adresse électronique"
-                value={presenter.contactEmail}
+                value={mesInformationsPersonnellesViewModel.contactEmail}
               />
             </div>
           </section>
@@ -141,7 +144,7 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
           {' '}
           pour le modifier.
         </p>
-        <Role role={presenter.role} />
+        <Role role={mesInformationsPersonnellesViewModel.role} />
       </section>
       <section
         aria-labelledby="supprimerMonCompte"
@@ -170,7 +173,7 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
         </button>
       </section>
       <SupprimerMonCompte
-        email={presenter.informationsPersonnellesEmail}
+        email={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
         id={supprimerMonCompteModalId}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
@@ -180,5 +183,5 @@ export default function MesInformationsPersonnelles({ presenter }: MesInformatio
 }
 
 type MesInformationsPersonnellesProps = Readonly<{
-  presenter: MesInformationsPersonnellesPresenterDTO
+  mesInformationsPersonnellesViewModel: MesInformationsPersonnellesViewModel
 }>

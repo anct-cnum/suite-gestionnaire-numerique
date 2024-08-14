@@ -1,9 +1,9 @@
 import { TypologieRole } from '@/domain/Role'
-import { MesInformationsPersonnelles, MesInformationsPersonnellesQuery } from '@/use-cases/queries/MesInformationsPersonnelles'
+import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesQuery } from '@/use-cases/queries/MesInformationsPersonnellesQuery'
 
 export class InMemoryMesInformationsPersonnellesQuery implements MesInformationsPersonnellesQuery {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async retrieveMesInformationsPersonnelles(): Promise<MesInformationsPersonnelles> {
+  async retrieveMesInformationsPersonnelles(): Promise<MesInformationsPersonnellesReadModel> {
     return Promise.resolve({
       contactEmail: 'manon.verminac@example.com',
       contactFonction: 'Chargée de mission',

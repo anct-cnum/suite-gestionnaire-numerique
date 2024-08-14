@@ -1,4 +1,4 @@
-import { type Categorisation, Role, type RoleState } from './Role'
+import { Role, type RoleState } from './Role'
 import { Model } from './shared/Model'
 
 export class Utilisateur implements Model {
@@ -22,15 +22,11 @@ export class Utilisateur implements Model {
       role: this.#role.state(),
     }
   }
-
-  categorie(): Categorisation {
-    return this.#role.categorie()
-  }
 }
 
-type UtilisateurState = Readonly<{
+export type UtilisateurState = Readonly<{
+  email: string
   nom: string
   prenom: string
-  email: string
   role: RoleState
 }>

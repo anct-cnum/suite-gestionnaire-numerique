@@ -9,7 +9,6 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-weather/icons-weather.min.css'
 import '../global.css'
 
-import SessionUtilisateurContext from '../components/shared/SessionUtilisateurContext'
 
 export default function Layout({ children }: PropsWithChildren): ReactElement {
   return (
@@ -38,9 +37,7 @@ export default function Layout({ children }: PropsWithChildren): ReactElement {
         />
       </head>
       <body>
-        <SessionUtilisateurContext>
-          {children}
-        </SessionUtilisateurContext>
+        {children}
       </body>
     </html>
   )

@@ -2,8 +2,8 @@ import { render, screen, within } from '@testing-library/react'
 
 import LienEvitement from './LienEvitement'
 
-describe('lien d’évitement', () => {
-  it('en tant qu’utilisateur quand je navigue au clavier alors je peux aller sur toutes les parties du site rapidement', () => {
+describe('lien d’évitement : en tant qu’utilisateur authentifié', () => {
+  it('quand je navigue au clavier alors je peux aller sur toutes les parties du site rapidement', () => {
     // WHEN
     render(<LienEvitement />)
 

@@ -3,9 +3,8 @@ import { ReactElement } from 'react'
 
 import MentionsLegales from '@/components/MentionsLegales/MentionsLegales'
 
-const title = 'Mentions Légales'
 export const metadata: Metadata = {
-  title,
+  title: 'Mentions Légales',
 }
 
 export default function MentionsLegalesController(): ReactElement {

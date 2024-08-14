@@ -19,6 +19,7 @@ async function migration() {
   const utilisateursRecord = [
     ...transformUtilisateursCoNumToUtilisateurs(utilisateursCoNumRecord),
     ...transformUtilisateursFNEToUtilisateurs(utilisateursFNERecord),
+    ajouterUnUtilisateurDeTest(),
   ]
   console.log(greenColor, `${utilisateursRecord.length} utilisateurs CoNum et FNE sont transformés en utilisateurs`)
 
@@ -178,6 +179,22 @@ function transformUtilisateursFNEToUtilisateurs(
       // telephone: cette notion n'existe pas
     }
   })
+}
+
+function ajouterUnUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
+  const date = new Date()
+
+  return {
+    dateDeCreation: date,
+    derniereConnexion: date,
+    email: 'compte.de.test@example.com',
+    inviteLe: date,
+    nom: 'Test',
+    prenom: 'CompteDe',
+    role: 'administrateur_dispositif',
+    sub: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    telephone: '01020300405',
+  }
 }
 
 async function migrateUtilisateurs(utilisateursRecord: Array<Prisma.UtilisateurRecordUncheckedCreateInput>) {

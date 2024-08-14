@@ -1,14 +1,14 @@
-import { MesInformationsPersonnelles } from '@/use-cases/queries/MesInformationsPersonnelles'
+import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/MesInformationsPersonnellesQuery'
 
 export function mesInformationsPersonnellesPresenter(
-  mesInformationsPersonnelles: MesInformationsPersonnelles
-): MesInformationsPersonnellesPresenterDTO {
+  mesInformationsPersonnellesReadModel: MesInformationsPersonnellesReadModel
+): MesInformationsPersonnellesViewModel {
   return {
-    ...mesInformationsPersonnelles,
-    isStructure: mesInformationsPersonnelles.role === 'Gestionnaire structure' || mesInformationsPersonnelles.role === 'Gestionnaire groupement',
+    ...mesInformationsPersonnellesReadModel,
+    isStructure: mesInformationsPersonnellesReadModel.role === 'Gestionnaire structure' || mesInformationsPersonnellesReadModel.role === 'Gestionnaire groupement',
   }
 }
 
-export type MesInformationsPersonnellesPresenterDTO = MesInformationsPersonnelles & {
+export type MesInformationsPersonnellesViewModel = MesInformationsPersonnellesReadModel & {
   isStructure: boolean
 }

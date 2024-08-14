@@ -4,7 +4,6 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } fr
 import styles from './SupprimerMonCompte.module.css'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
-
   const [emailValidationInfo, setEmailValidationInfo] =
         useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
   const [etatBoutonSuppression, setEtatBoutonSuppression] = useState<EtatBoutonSuppression>({
