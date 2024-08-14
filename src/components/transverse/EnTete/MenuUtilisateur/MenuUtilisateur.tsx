@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { signOut } from 'next-auth/react'
@@ -5,6 +7,7 @@ import { ReactElement, useContext } from 'react'
 
 import styles from './MenuUtilisateur.module.css'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 
 export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
   const { session } = useContext(sessionUtilisateurContext)
@@ -63,6 +66,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           </Link>
         </li>
       </ul>
+      <SelecteurRole />
       <button
         className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion}`}
         name="deconnexion"

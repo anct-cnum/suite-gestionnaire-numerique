@@ -4,8 +4,8 @@ import * as nextAuth from 'next-auth/react'
 import Connexion from './Connexion'
 import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
 
-describe('connexion', () => {
-  it('étant déconnecté quand j’affiche une page quelconque alors je peux m’authentifier', () => {
+describe('connexion : en tant qu’utilisateur non authentifié', () => {
+  it('quand j’affiche une page quelconque alors je peux m’authentifier', () => {
     // GIVEN
     vi.spyOn(nextAuth, 'signIn').mockImplementationOnce(vi.fn())
 

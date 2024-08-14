@@ -6,13 +6,14 @@ import { matchWithoutMarkup } from '../../testHelper'
 import { TypologieRole } from '@/domain/Role'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 
-describe('mes informations personnelles', () => {
-  it('étant connecté quand j’affiche mes informations personnelles alors elles s’affichent', () => {
+describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
+  it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {
     // GIVEN
-    const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)
+    const mesInformationsPersonnellesViewModel =
+      mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
 
     // WHEN
-    render(<MesInformationsPersonnelles presenter={presenter} />)
+    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Mes informations' })
@@ -85,13 +86,13 @@ describe('mes informations personnelles', () => {
   ])
   ('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', ({ role }) => {
     // GIVEN
-    const presenter = mesInformationsPersonnellesPresenter({
-      ...mesInformationsPersonnellesDTO,
+    const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
+      ...mesInformationsPersonnellesReadModel,
       role,
     })
 
     // WHEN
-    render(<MesInformationsPersonnelles presenter={presenter} />)
+    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
 
     // THEN
     const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
@@ -108,13 +109,13 @@ describe('mes informations personnelles', () => {
   ])
   ('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', ({ role }) => {
     // GIVEN
-    const presenter = mesInformationsPersonnellesPresenter({
-      ...mesInformationsPersonnellesDTO,
+    const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
+      ...mesInformationsPersonnellesReadModel,
       role,
     })
 
     // WHEN
-    render(<MesInformationsPersonnelles presenter={presenter} />)
+    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
 
     // THEN
     const maStructure = screen.getByRole('region', { name: 'Ma structure' })
@@ -159,11 +160,14 @@ describe('mes informations personnelles', () => {
     expect(emailDuContact).toBeInTheDocument()
   })
 
-  describe('étant connecté, quand je clique sur la suppression de compte, alors la modale s’ouvre', () => {
+  describe('quand je clique sur la suppression de compte alors la modale s’ouvre', () => {
     it('me présentant les instructions à suivre afin de supprimer mon compte', () => {
       // GIVEN
-      const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)
-      render(<MesInformationsPersonnelles presenter={presenter} />)
+      const mesInformationsPersonnellesViewModel =
+        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
+      render(
+        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
+      )
       const supprimerMonCompteButton = screen.getByRole('button', { name: 'Supprimer mon compte' })
 
       // WHEN
@@ -203,8 +207,10 @@ describe('mes informations personnelles', () => {
 
     it('je peux y renoncer en fermant la modale', () => {
       // GIVEN
+      const mesInformationsPersonnellesViewModel =
+        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
       render(
-        <MesInformationsPersonnelles presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)} />
+        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
       )
       fireEvent.click(supprimerMonCompteButton())
       const supprimerMonCompteModal = screen.getByRole('dialog')
@@ -220,10 +226,10 @@ describe('mes informations personnelles', () => {
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
       it('je saisis une adresse email invalide', () => {
         // GIVEN
+        const mesInformationsPersonnellesViewModel =
+          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
         render(
-          <MesInformationsPersonnelles
-            presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
-          />
+          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
         )
         fireEvent.click(supprimerMonCompteButton())
 
@@ -236,10 +242,10 @@ describe('mes informations personnelles', () => {
 
       it('je saisis une adresse email valide mais qui n’est pas la mienne', () => {
         // GIVEN
+        const mesInformationsPersonnellesViewModel =
+          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
         render(
-          <MesInformationsPersonnelles
-            presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
-          />
+          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
         )
         fireEvent.click(supprimerMonCompteButton())
 
@@ -258,10 +264,10 @@ describe('mes informations personnelles', () => {
         'une fois que j’ai saisi mon adresse email (même avec des espaces en trop en début ou en fin de saisie)',
         () => {
           // GIVEN
+          const mesInformationsPersonnellesViewModel =
+            mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
           render(
-            <MesInformationsPersonnelles
-              presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
-            />
+            <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
           )
           fireEvent.click(supprimerMonCompteButton())
 
@@ -281,10 +287,10 @@ describe('mes informations personnelles', () => {
         puis je suis déconnecté`,
         () => {
           // GIVEN
+          const mesInformationsPersonnellesViewModel =
+            mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
           render(
-            <MesInformationsPersonnelles
-              presenter={mesInformationsPersonnellesPresenter(mesInformationsPersonnellesDTO)}
-            />
+            <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
           )
           fireEvent.click(supprimerMonCompteButton())
           fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
@@ -315,7 +321,7 @@ describe('mes informations personnelles', () => {
   })
 })
 
-const mesInformationsPersonnellesDTO = {
+const mesInformationsPersonnellesReadModel = {
   contactEmail: 'manon.verminac@example.com',
   contactFonction: 'Chargée de mission',
   contactNom: 'Verninac',
