@@ -5,9 +5,8 @@ import { ReactElement } from 'react'
 import Connexion from '@/components/Connexion/Connexion'
 import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
 
-const title = 'Se connecter'
 export const metadata: Metadata = {
-  title,
+  title: 'Se connecter',
 }
 
 export default async function ConnexionController(): Promise<ReactElement> {

@@ -10,7 +10,6 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
     const sousTitre = 'Retrouvez ici, vos préférences de communication et d’affichage.'
 
     it(`alors elle se présente avec pour titre "${titre}"`, () => {
-
       // WHEN
       render(<MesParametres />)
 
@@ -19,7 +18,6 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
     })
 
     it(`et sous-titre "${sousTitre}"`, () => {
-
       // WHEN
       render(<MesParametres />)
 

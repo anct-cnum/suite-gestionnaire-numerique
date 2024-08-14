@@ -2,10 +2,15 @@
 
 import { createContext, Dispatch, SetStateAction, ReactElement, useMemo, useState, PropsWithChildren } from 'react'
 
-import { SessionUtilisateurViewModel, sessionUtilisateurNonAuthentifie } from '@/components/shared/SelecteurRole/session-utilisateur-presenter'
+import { UtilisateurState } from '@/domain/Utilisateur'
+import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
-export default function SessionUtilisateurContext({ children }: PropsWithChildren): ReactElement {
-  const [session, setSession] = useState<SessionUtilisateurViewModel>(sessionUtilisateurNonAuthentifie)
+export default function SessionUtilisateurContext(
+  { children, utilisateurState }: SessionUtilisateurContextProps
+): ReactElement {
+  const [session, setSession] = useState<SessionUtilisateurViewModel>(
+    createSessionUtilisateurPresenter(utilisateurState)
+  )
   const sessionUtilisateurContextProvider = useMemo(
     () => ({ session, setSession }),
     [session, setSession]
@@ -18,17 +23,14 @@ export default function SessionUtilisateurContext({ children }: PropsWithChildre
   )
 }
 
-const initialInfosSessionUtilisateurContext = {
-  session: sessionUtilisateurNonAuthentifie,
-  setSession: () => {
-    return
-  },
-}
-
 export const sessionUtilisateurContext =
-  createContext<InfosSessionUtilisateurContext>(initialInfosSessionUtilisateurContext)
+  createContext<InfosSessionUtilisateurContext>({} as InfosSessionUtilisateurContext)
 
 type InfosSessionUtilisateurContext = Readonly<{
   session: SessionUtilisateurViewModel,
   setSession: Dispatch<SetStateAction<SessionUtilisateurViewModel>>
 }>
+
+type SessionUtilisateurContextProps = PropsWithChildren<Readonly<{
+  utilisateurState: UtilisateurState
+}>>

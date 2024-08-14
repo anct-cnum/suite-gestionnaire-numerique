@@ -69,12 +69,8 @@ const nextAuthOptions = {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 export const handler = NextAuth(nextAuthOptions)
 
-async function getSession(): Promise<Session | null> {
+export async function getSession(): Promise<{ user: Profile } | null> {
   return getServerSession(nextAuthOptions)
-}
-
-export async function amIConnected(): Promise<boolean> {
-  return await getSession() !== null
 }
 
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>

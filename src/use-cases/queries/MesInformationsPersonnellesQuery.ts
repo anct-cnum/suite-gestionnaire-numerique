@@ -1,10 +1,10 @@
 import { TypologieRole } from '@/domain/Role'
 
 export interface MesInformationsPersonnellesQuery {
-  retrieveMesInformationsPersonnelles: () => Promise<MesInformationsPersonnelles>
+  retrieveMesInformationsPersonnelles: () => Promise<MesInformationsPersonnellesReadModel>
 }
 
-export type MesInformationsPersonnelles = Readonly<{
+export type MesInformationsPersonnellesReadModel = Readonly<{
   contactEmail: string
   contactFonction: string
   contactNom: string

@@ -5,18 +5,17 @@ import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelle
 import { InMemoryMesInformationsPersonnellesQuery } from '@/gateways/InMemoryMesInformationsPersonnellesQuery'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 
-const title = 'Mes informations personnelles'
 export const metadata: Metadata = {
-  title,
+  title: 'Mes informations personnelles',
 }
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const mesInformationsPersonnellesQuery = new InMemoryMesInformationsPersonnellesQuery()
   const mesInformationsPersonnelles =
     await mesInformationsPersonnellesQuery.retrieveMesInformationsPersonnelles()
-  const presenter = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
+  const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
 
   return (
-    <MesInformationsPersonnelles presenter={presenter} />
+    <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
   )
 }

@@ -1,6 +1,30 @@
 import { Model } from './shared/Model'
 
-export const ROLES = [
+export class Role implements Model {
+  readonly #territoireOuStructure: string
+  readonly #nom: TypologieRole
+
+  constructor(nom: TypologieRole, territoireOuStructure = '') {
+    this.#territoireOuStructure = territoireOuStructure
+    this.#nom = nom
+  }
+
+  state(): RoleState {
+    return {
+      categorie: categorieByType[this.#nom],
+      nom: this.#nom,
+      territoireOuStructure: this.#territoireOuStructure,
+    }
+  }
+}
+
+export type RoleState = Readonly<{
+  categorie: Categorie
+  nom: TypologieRole
+  territoireOuStructure: string
+}>
+
+export const Roles = [
   'Administrateur dispositif',
   'Gestionnaire département',
   'Gestionnaire groupement',
@@ -11,40 +35,11 @@ export const ROLES = [
   'Support animation',
 ] as const
 
-export type TypologieRole = typeof ROLES[number]
+export type TypologieRole = typeof Roles[number]
 
-export type Categorisation =
-  'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
+export type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 
-export type RoleState = Required<PartialState>
-
-export class Role implements Model {
-  readonly #state: RoleState
-
-  constructor(state: PartialState) {
-    this.#state = {
-      ...state,
-      territoireOuStructure: state.territoireOuStructure ?? perimetreNonApplicable,
-    }
-  }
-
-  state(): RoleState {
-    return this.#state
-  }
-
-  categorie(): Categorisation {
-    return categorieByType[this.#state.typologie]
-  }
-}
-
-type PartialState = Readonly<{
-  typologie: TypologieRole,
-  territoireOuStructure?: string
-}>
-
-const perimetreNonApplicable = ''
-
-const categorieByType: Readonly<Record<TypologieRole, Categorisation>> = {
+export const categorieByType: Readonly<Record<TypologieRole, Categorie>> = {
   'Administrateur dispositif': 'anct',
   'Gestionnaire département': 'maille',
   'Gestionnaire groupement': 'groupement',
