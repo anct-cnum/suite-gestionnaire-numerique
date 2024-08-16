@@ -16,7 +16,7 @@
     "format:check": "prettier -c . \"!**/*.{js,jsx,mjs,mts,ts,tsx}\"",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:ts": "eslint src seeds --ext .tsx,.ts --max-warnings=0 --cache --cache-location node_modules/.cache/eslint",
-    "migration:utilisateur": "ts-node -T seeds/utilisateur.ts",
+    "migration:utilisateur": "npx tsx seeds/utilisateur.ts",
     "postinstall": "husky || true && ./post-install.sh",
     "prisma:drop:schema": "npx prisma db execute --file=prisma/dropSchema.sql",
     "prisma:generate:fne": "npx prisma generate --schema seeds/fne/schema.prisma",
@@ -41,9 +41,7 @@
     "next": "14.2.5",
     "next-auth": "^4.24.7",
     "react": "^18",
-    "react-dom": "^18",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^8.5.0",
@@ -79,6 +77,8 @@
     "stylelint": "^16.8.1",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-order": "^6.0.4",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4",
     "vite-tsconfig-paths": "^5.0.1",
     "vitest": "^2.0.5",
     "vitest-dom": "^0.1.1"
