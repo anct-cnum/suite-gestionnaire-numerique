@@ -83,8 +83,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     {
       role: 'Support animation' as TypologieRole,
     },
-  ])
-  ('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', ({ role }) => {
+  ])('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', ({ role }) => {
     // GIVEN
     const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
       ...mesInformationsPersonnellesReadModel,
@@ -106,8 +105,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     {
       role: 'Gestionnaire groupement' as TypologieRole,
     },
-  ])
-  ('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', ({ role }) => {
+  ])('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', ({ role }) => {
     // GIVEN
     const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
       ...mesInformationsPersonnellesReadModel,

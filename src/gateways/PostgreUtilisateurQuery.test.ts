@@ -77,8 +77,7 @@ describe('postgre utilisateur query', () => {
         territoireOuStructure: '',
       },
     },
-  ])
-  ('quand je cherche un utilisateur $role qui existe par son sub alors je le trouve', async ({ role, roleReadModel }) => {
+  ])('quand je cherche un utilisateur $role qui existe par son sub alors je le trouve', async ({ role, roleReadModel }) => {
     // GIVEN
     const subExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const date = new Date()
