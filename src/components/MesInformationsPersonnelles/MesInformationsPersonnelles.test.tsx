@@ -35,7 +35,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(prenomLabel).toBeInTheDocument()
     const prenom = within(mesInformationsPersonnelles).getByText('Julien')
     expect(prenom).toBeInTheDocument()
-    const emailLabel = within(mesInformationsPersonnelles).getByText('Adresse éclectronique')
+    const emailLabel = within(mesInformationsPersonnelles).getByText('Adresse électronique')
     expect(emailLabel).toBeInTheDocument()
     const email = within(mesInformationsPersonnelles).getByText('julien.deschamps@example.com')
     expect(email).toBeInTheDocument()
@@ -327,7 +327,7 @@ const mesInformationsPersonnellesReadModel = {
   informationsPersonnellesEmail: 'julien.deschamps@example.com',
   informationsPersonnellesNom: 'Deschamps',
   informationsPersonnellesPrenom: 'Julien',
-  informationsPersonnellesTelephone: '04 05 06 07 08',
+  informationsPersonnellesTelephone: '0405060708',
   role: 'Administrateur dispositif' as TypologieRole,
   structureAdresse: '201 bis rue de la plaine, 69000 Lyon',
   structureNumeroDeSiret: '62520260000023',

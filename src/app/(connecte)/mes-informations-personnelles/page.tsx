@@ -1,8 +1,11 @@
 import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../prisma/prismaClient'
 import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelles/MesInformationsPersonnelles'
-import { InMemoryMesInformationsPersonnellesQuery } from '@/gateways/InMemoryMesInformationsPersonnellesQuery'
+import { PostgreMesInformationsPersonnellesQuery } from '@/gateways/PostgreMesInformationsPersonnellesQuery'
+import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export const metadata: Metadata = {
@@ -10,9 +13,15 @@ export const metadata: Metadata = {
 }
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
-  const mesInformationsPersonnellesQuery = new InMemoryMesInformationsPersonnellesQuery()
+  const session = await getSession()
+
+  if (!session) {
+    redirect('/connexion')
+  }
+
+  const mesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
   const mesInformationsPersonnelles =
-    await mesInformationsPersonnellesQuery.retrieveMesInformationsPersonnelles()
+    await mesInformationsPersonnellesQuery.findBySub(session.user.sub)
   const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
 
   return (

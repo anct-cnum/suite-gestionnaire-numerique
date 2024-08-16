@@ -26,6 +26,8 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
 }
 
 function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
+  type Mapping = Readonly<Record<$Enums.Role, { nom: TypologieRole, territoireOuStructure: string }>>
+
   const mapping: Mapping = {
     administrateur_dispositif: {
       nom: 'Administrateur dispositif',
@@ -72,5 +74,3 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
     },
   }
 }
-
-type Mapping = Readonly<Record<$Enums.Role, { nom: TypologieRole, territoireOuStructure: string }>>
