@@ -2,6 +2,8 @@ import { Role } from '@prisma/client'
 
 import { PostgreUtilisateurQuery } from './PostgreUtilisateurQuery'
 import prisma from '../../prisma/prismaClient'
+import { Categorie, TypologieRole } from '@/domain/Role'
+import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
 
 describe('postgre utilisateur query', () => {
   beforeEach(async () => {
@@ -16,68 +18,68 @@ describe('postgre utilisateur query', () => {
     {
       role: 'administrateur_dispositif' as Role,
       roleReadModel: {
-        categorie: 'anct',
-        nom: 'Administrateur dispositif',
+        categorie: 'anct' as Categorie,
+        nom: 'Administrateur dispositif' as TypologieRole,
         territoireOuStructure: 'Dispositif lambda',
       },
     },
     {
       role: 'gestionnaire_departement' as Role,
       roleReadModel: {
-        categorie: 'maille',
-        nom: 'Gestionnaire département',
+        categorie: 'maille' as Categorie,
+        nom: 'Gestionnaire département' as TypologieRole,
         territoireOuStructure: 'Rhône',
       },
     },
     {
       role: 'gestionnaire_groupement' as Role,
       roleReadModel: {
-        categorie: 'groupement',
-        nom: 'Gestionnaire groupement',
+        categorie: 'groupement' as Categorie,
+        nom: 'Gestionnaire groupement' as TypologieRole,
         territoireOuStructure: 'Hubikoop',
       },
     },
     {
       role: 'gestionnaire_region' as Role,
       roleReadModel: {
-        categorie: 'maille',
-        nom: 'Gestionnaire région',
+        categorie: 'maille' as Categorie,
+        nom: 'Gestionnaire région' as TypologieRole,
         territoireOuStructure: 'Auvergne-Rhône-Alpes',
       },
     },
     {
       role: 'gestionnaire_structure' as Role,
       roleReadModel: {
-        categorie: 'structure',
-        nom: 'Gestionnaire structure',
+        categorie: 'structure' as Categorie,
+        nom: 'Gestionnaire structure' as TypologieRole,
         territoireOuStructure: 'Solidarnum',
       },
     },
     {
       role: 'instructeur' as Role,
       roleReadModel: {
-        categorie: 'bdt',
-        nom: 'Instructeur',
+        categorie: 'bdt' as Categorie,
+        nom: 'Instructeur' as TypologieRole,
         territoireOuStructure: '',
       },
     },
     {
       role: 'pilote_politique_publique' as Role,
       roleReadModel: {
-        categorie: 'anct',
-        nom: 'Pilote politique publique',
+        categorie: 'anct' as Categorie,
+        nom: 'Pilote politique publique' as TypologieRole,
         territoireOuStructure: '',
       },
     },
     {
       role: 'support_animation' as Role,
       roleReadModel: {
-        categorie: 'mednum',
-        nom: 'Support animation',
+        categorie: 'mednum' as Categorie,
+        nom: 'Support animation' as TypologieRole,
         territoireOuStructure: '',
       },
     },
-  ])('quand je cherche un utilisateur $role qui existe par son sub alors je le trouve', async ({ role, roleReadModel }) => {
+  ])('quand je cherche un utilisateur $roleReadModel.nom qui existe par son sub alors je le trouve', async ({ role, roleReadModel }) => {
     // GIVEN
     const subExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const date = new Date()
@@ -98,7 +100,7 @@ describe('postgre utilisateur query', () => {
     const utilisateurReadModel = await postgreUtilisateurQuery.findBySub(subExistant)
 
     // THEN
-    expect(utilisateurReadModel).toStrictEqual({
+    expect(utilisateurReadModel).toStrictEqual<UtilisateurReadModel>({
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',

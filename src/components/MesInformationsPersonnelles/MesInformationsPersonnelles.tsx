@@ -48,7 +48,7 @@ export default function MesInformationsPersonnelles(
             value={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
           />
           <InformationPersonnelle
-            label="Adresse éclectronique"
+            label="Adresse électronique"
             value={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
           />
           <InformationPersonnelle
