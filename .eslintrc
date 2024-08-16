@@ -1,6 +1,7 @@
 {
   "extends": [
     "next/core-web-vitals",
+    "eslint:recommended",
     "plugin:@typescript-eslint/all",
     "plugin:react/all",
     "plugin:import/recommended",
@@ -47,6 +48,7 @@
     "id-match": "error",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "jsx-quotes": "error",
+    "key-spacing": "error",
     "keyword-spacing": "error",
     "max-len": [
       "error",
@@ -59,7 +61,7 @@
       }
     ],
     "no-console": "error",
-    "no-multiple-empty-lines": "error",
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
     "no-multi-spaces": "error",
     "no-param-reassign": "error",
     "no-tabs": "error",
@@ -68,11 +70,13 @@
     "object-curly-spacing": ["error", "always"],
     "object-curly-newline": "error",
     "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "one-var": ["error", "never"],
     "prefer-const": "error",
     "quote-props": ["error", "as-needed"],
     "quotes": ["error", "single", { "avoidEscape": true }],
     "semi": ["error", "never"],
     "space-before-blocks": "error",
+    "space-in-parens": "error",
     "space-infix-ops": "error",
     "yoda": "error",
     "import/newline-after-import": "error",

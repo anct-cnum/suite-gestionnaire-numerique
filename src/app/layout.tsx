@@ -9,7 +9,6 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-weather/icons-weather.min.css'
 import '../global.css'
 
-
 export default function Layout({ children }: PropsWithChildren): ReactElement {
   return (
     <html
