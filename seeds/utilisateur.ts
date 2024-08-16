@@ -193,7 +193,7 @@ function ajouterUnUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateIn
     prenom: 'CompteDe',
     role: 'administrateur_dispositif',
     sub: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
-    telephone: '01020300405',
+    telephone: '0102030405',
   }
 }
 
