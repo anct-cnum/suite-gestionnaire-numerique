@@ -87,7 +87,6 @@ describe('postgre utilisateur query', () => {
       data: {
         dateDeCreation: date,
         email: 'martin.tartempion@example.net',
-        id: 0,
         inviteLe: date,
         nom: 'Tartempion',
         prenom: 'Martin',

@@ -2,6 +2,7 @@ import { signOut } from 'next-auth/react'
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
 
 import styles from './SupprimerMonCompte.module.css'
+import { supprimerMonCompteAction } from './supprimerMonCompteAction'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const [emailValidationInfo, setEmailValidationInfo] =
@@ -119,7 +120,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
   async function logout(event: FormEvent<HTMLButtonElement>): Promise<void> {
     event.preventDefault()
     setEtatBoutonSuppression({ enAttente: true, texte: 'Suppression en cours' })
-    return signOut({ callbackUrl: '/connexion' })
+    return supprimerMonCompteAction(email).then(async () => signOut({ callbackUrl: '/connexion' }))
   }
 
   function isConfirmerDisabled(): boolean {
@@ -182,4 +183,3 @@ function validationState(input: HTMLInputElement, email: string): EmailValidatio
   }
   return 'correct'
 }
-

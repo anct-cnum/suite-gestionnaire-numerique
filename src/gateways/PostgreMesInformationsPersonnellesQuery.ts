@@ -56,4 +56,3 @@ function transform(utilisateurRecord: UtilisateurRecord): MesInformationsPersonn
     structureTypeDeStructure: 'Administration',
   }
 }
-
