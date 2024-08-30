@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { matchWithoutMarkup } from '../../testHelper'
 import { TypologieRole } from '@/domain/Role'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
+import { SupprimerMonCompteCommandHandler } from '@/use-cases/commands/SupprimerMonCompteCommand'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {
@@ -283,7 +284,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         `quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif,
         il s’inactive et change de contenu, m’informant que la suppression est en cours,
         puis je suis déconnecté`,
-        () => {
+        async () => {
           // GIVEN
           const mesInformationsPersonnellesViewModel =
             mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
@@ -292,6 +293,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           )
           fireEvent.click(supprimerMonCompteButton())
           fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
+          vi.spyOn(SupprimerMonCompteCommandHandler.prototype, 'execute').mockResolvedValueOnce('OK')
           vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
 
           // WHEN
@@ -300,6 +302,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           // THEN
           const boutonConfirmationDesactive = screen.getByRole('button', { name: 'Suppression en cours' })
           expect(boutonConfirmationDesactive).toBeDisabled()
+          await waitFor(() => {
+            expect(SupprimerMonCompteCommandHandler.prototype.execute)
+              .toHaveBeenCalledWith('julien.deschamps@example.com')
+          })
           expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
         }
       )
