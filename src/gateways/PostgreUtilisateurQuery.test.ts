@@ -131,4 +131,32 @@ describe('postgre utilisateur query', () => {
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
   })
+
+  it(
+    'quand je cherche un utilisateur qui existe par son sub et dont le compte a été supprimé alors je ne le trouve pas',
+    async () => {
+      // GIVEN
+      const subExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const date = new Date(0)
+      await prisma.utilisateurRecord.create({
+        data: {
+          dateDeCreation: date,
+          email: 'martin.tartempion@example.net',
+          inviteLe: date,
+          isSupprime: true,
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          role: 'administrateur_dispositif',
+          sub: subExistant,
+        },
+      })
+      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+
+      // WHEN
+      const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySub(subExistant)
+
+      // THEN
+      await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
+    }
+  )
 })
