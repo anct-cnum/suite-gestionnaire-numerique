@@ -13,6 +13,7 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
   async findBySub(sub: string): Promise<UtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       where: {
+        isSupprime: false,
         sub,
       },
     })
