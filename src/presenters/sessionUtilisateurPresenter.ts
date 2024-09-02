@@ -1,10 +1,12 @@
 import { TypologieRole } from '@/domain/Role'
-import { UtilisateurState } from '@/domain/Utilisateur'
+import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
 
-export function createSessionUtilisateurPresenter(utilisateurState: UtilisateurState): SessionUtilisateurViewModel {
+export function createSessionUtilisateurPresenter(
+  utilisateurReadModel: UtilisateurReadModel
+): SessionUtilisateurViewModel {
   return {
-    ...utilisateurState,
-    role: libelleByRole[utilisateurState.role.nom],
+    ...utilisateurReadModel,
+    role: libelleByRole[utilisateurReadModel.role.nom],
   }
 }
 
