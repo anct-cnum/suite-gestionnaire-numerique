@@ -17,10 +17,10 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   }
 
   const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
-  const utilisateurState = await postgreUtilisateurQuery.findBySub(session.user.sub)
+  const utilisateurReadModel = await postgreUtilisateurQuery.findBySub(session.user.sub)
 
   return (
-    <SessionUtilisateurContext utilisateurState={utilisateurState}>
+    <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>
       <LienEvitement />
       <EnTete />
       <main
