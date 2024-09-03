@@ -49,13 +49,21 @@ Pour lancer les tests avec le coverage :
 yarn test:coverage
 ```
 
-Pour accéder à la base de données selon un environnement :
+Pour accéder à la base de données en CLI selon un environnement :
 
 ```bash
 yarn psql:local
 yarn psql:production (il faut avoir installer la CLI de Scalingo au préalable)
 yarn psql:test
 ```
+
+Pour accéder à la base de données de production avec un outils, il faut lancer un tunnel SSH avant :
+
+```bash
+scalingo -a suite-gestionnaire-numerique db-tunnel -i [CHEMIN_DE_TA_CLE_SSH_SCALINGO] [VAR_ENV_SCALINGO_POSTGRESQL_URL]
+```
+
+Ensuite, dans ton outils, tu configures avec 127.0.0.1:10000 et le reste grâce à la variable d'environnement SCALINGO_POSTGRESQL_URL utilisée juste au dessus.
 
 Quand le schéma de SGN est modifié, regénérer les tables à partir des schémas Prisma, créer les migrations au besoin et générer les types pour Prisma Client :
 
@@ -210,7 +218,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 - Définition : manipulation de données
   - Query : lecture de données qui retourne un `Record` et qui le transforme en `ReadModel` (ex : `InMemoryMesInformationsPersonnellesQuery`)
   - Repository : écriture de données qui ne retourne rien
-  - Gateway : lecture de données qui retourne autre chose que du métier (`DTO`) (ex : `ProConnectAuthentificationGateway`)
+  - Gateway : lecture et écriture de données qui retourne autre chose que du métier (`DTO`) (ex : `ProConnectAuthentificationGateway`)
 - Convention : PascalCase (classe), avec comme préfixe son implémentation et comme suffixe son type de gateway
 - Test : test d'intégration qui commnunique avec la base de données mais en transcation rollbackée pour être plus rapide
 
