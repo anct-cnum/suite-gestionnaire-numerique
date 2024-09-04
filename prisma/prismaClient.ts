@@ -14,26 +14,29 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function prismaClientSingleton(): PrismaClient<Prisma.PrismaClientOptions, never> {
-  const prisma = new PrismaClient({
-    log: [
-      {
-        emit: 'event',
-        level: 'query',
-      },
-      {
-        emit: 'stdout',
-        level: 'error',
-      },
-      {
-        emit: 'stdout',
-        level: 'info',
-      },
-      {
-        emit: 'stdout',
-        level: 'warn',
-      },
-    ],
-  })
+  const prisma = new PrismaClient(
+    {
+      log: process.env.NODE_ENV === 'test'
+        ? []
+        : [
+        {
+          emit: 'event',
+          level: 'query',
+        },
+        {
+          emit: 'stdout',
+          level: 'error',
+        },
+        {
+          emit: 'stdout',
+          level: 'info',
+        },
+        {
+          emit: 'stdout',
+          level: 'warn',
+        },
+      ],
+    })
 
   // A décommenter pour déboguer Prisma
   // prisma.$on('query', (eventType) => {
