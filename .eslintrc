@@ -146,7 +146,9 @@
         "vitest/no-conditional-expect": "off",
         "vitest/no-hooks": "off",
         "vitest/require-hook": "off",
-        "vitest/prefer-expect-assertions": "off"
+        "vitest/prefer-expect-assertions": "off",
+        "vitest/prefer-to-be-falsy": "off",
+        "vitest/prefer-to-be-truthy": "off"
       }
     },
     {
