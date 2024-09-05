@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import { TypologieRole } from '@/domain/Role'
+import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
@@ -35,15 +36,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   })
 
   it('quand je clique sur le bouton affichant mes nom et prénom alors le menu utilisateur s’ouvre', () => {
-    // GIVEN
-    renderComponent(<EnTete />)
-
-    const menu = screen.getByRole('list', { name: 'menu' })
-    const menuItems = within(menu).getAllByRole('listitem')
-    const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
-
     // WHEN
-    fireEvent.click(monCompte)
+    fireEvent.click(monCompte())
 
     // THEN
     const menuUtilisateur = screen.getByRole('dialog')
@@ -105,14 +99,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   describe('le menu utilisateur étant ouvert', () => {
     it('quand je clique sur le bouton de fermeture alors il se ferme', () => {
       // GIVEN
-      renderComponent(<EnTete />)
-
-      const menu = screen.getByRole('list', { name: 'menu' })
-      const menuItems = within(menu).getAllByRole('listitem')
-      const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
-      fireEvent.click(monCompte)
-
-      const menuUtilisateur = screen.getByRole('dialog')
+      const menuUtilisateur = ouvrirLeMenuUtilisateur()
       const fermer = within(menuUtilisateur).getByRole('button', { name: 'Fermer le menu' })
 
       // WHEN
@@ -125,15 +112,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je clique sur le bouton de déconnexion alors je suis déconnecté', () => {
       // GIVEN
       vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
-      renderComponent(<EnTete />)
-
-      const menu = screen.getByRole('list', { name: 'menu' })
-      const menuItems = within(menu).getAllByRole('listitem')
-      const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
-
-      fireEvent.click(monCompte)
-
-      const menuUtilisateur = screen.getByRole('dialog')
+      const menuUtilisateur = ouvrirLeMenuUtilisateur()
       const deconnexion = within(menuUtilisateur).getByRole('button', { name: 'Se déconnecter' })
 
       // WHEN
@@ -141,6 +120,53 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // THEN
       expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
+    })
+
+    it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
+      // GIVEN
+      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      vi.spyOn(ChangerMonRole.prototype, 'execute').mockResolvedValueOnce('OK')
+      const menuUtilisateur = ouvrirLeMenuUtilisateur()
+      const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
+
+      // WHEN
+      fireEvent.change(role, { target: { value: 'Instructeur' } })
+
+      // THEN
+      await waitFor(() => {
+        expect(ChangerMonRole.prototype.execute)
+          .toHaveBeenCalledWith({
+            nouveauRoleState: {
+              nom: 'Instructeur',
+              territoireOuStructure: '',
+            },
+            utilisateurState: {
+              ...sessionUtilisateurContextProvider.session,
+              isSuperAdmin: true,
+              role: {
+                nom: sessionUtilisateurContextProvider.session.role.nom,
+                territoireOuStructure: '',
+              },
+            },
+          })
+      })
+      expect(window.location.reload).toHaveBeenCalledOnce()
+    })
+  })
+
+  it('quand je change de rôle avec un rôle invalide dans le sélecteur de rôle alors il ne se passe rien', async () => {
+    // GIVEN
+    vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+    vi.spyOn(ChangerMonRole.prototype, 'execute').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSonRole')
+    const menuUtilisateur = ouvrirLeMenuUtilisateur()
+    const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
+
+    // WHEN
+    fireEvent.change(role, { target: { value: 'roleInvalide' } })
+
+    // THEN
+    await waitFor(() => {
+      expect(window.location.reload).not.toHaveBeenCalledOnce()
     })
   })
 })
@@ -157,6 +183,20 @@ const sessionUtilisateurContextProvider = {
     },
   },
   setSession: vi.fn(),
+}
+
+function monCompte(): HTMLElement {
+  renderComponent(<EnTete />)
+
+  const menu = screen.getByRole('list', { name: 'menu' })
+  const menuItems = within(menu).getAllByRole('listitem')
+  return within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
+}
+
+function ouvrirLeMenuUtilisateur(): HTMLElement {
+  fireEvent.click(monCompte())
+
+  return screen.getByRole('dialog')
 }
 
 function renderComponent(children: ReactElement) {

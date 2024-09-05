@@ -1,14 +1,14 @@
 'use client'
 
 import { captureException } from '@sentry/nextjs'
-import Error from 'next/error'
 import { ReactElement, useEffect } from 'react'
 
 type ErrorProps = Readonly<{
-  error: Readonly<Error>
+  error: Error & { digest?: string }
+  reset: () => void
 }>
 
-export default function GlobalError({ error }: ErrorProps): ReactElement {
+export default function GlobalError({ error, reset }: ErrorProps): ReactElement {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -19,9 +19,21 @@ export default function GlobalError({ error }: ErrorProps): ReactElement {
       lang="fr"
     >
       <body>
-        <h1>
-          {'Quelque chose s’est mal passé !'}
-        </h1>
+        <p>
+          Message d’erreur :
+          {' '}
+          {error.message}
+          <br />
+          Digest :
+          {' '}
+          {error.digest}
+        </p>
+        <button
+          onClick={reset}
+          type="button"
+        >
+          Try again
+        </button>
       </body>
     </html>
   )

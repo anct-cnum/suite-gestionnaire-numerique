@@ -140,6 +140,8 @@ function transformUtilisateursCoNumToUtilisateurs(
       derniereConnexion: utilisateurCoNumRecord.lastLogin,
       email: utilisateurCoNumRecord.name,
       inviteLe: utilisateurCoNumRecord.mailSentDate,
+      // isSuperAdmin: cette notion n'existe pas
+      // isSupprime: cette notion n'existe pas
       nom: utilisateurCoNumRecord.nom,
       prenom: utilisateurCoNumRecord.prenom,
       role,
@@ -172,6 +174,8 @@ function transformUtilisateursFNEToUtilisateurs(
       // derniereConnexion: cette notion n'existe pas
       email: utilisateurFNERecord.email,
       inviteLe: utilisateurFNERecord.created,
+      // isSuperAdmin: cette notion n'existe pas
+      // isSupprime: cette notion n'existe pas
       nom: utilisateurFNERecord.lastName ?? '',
       prenom: utilisateurFNERecord.firstName ?? '',
       role,
@@ -189,6 +193,8 @@ function ajouterUnUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateIn
     derniereConnexion: date,
     email: 'compte.de.test@example.com',
     inviteLe: date,
+    isSuperAdmin: true,
+    // isSupprime: false --> inutile, par défaut à false
     nom: 'Test',
     prenom: 'CompteDe',
     role: 'administrateur_dispositif',

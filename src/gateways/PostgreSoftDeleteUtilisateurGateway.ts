@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompteCommand'
+import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
 export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisateurGateway {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate

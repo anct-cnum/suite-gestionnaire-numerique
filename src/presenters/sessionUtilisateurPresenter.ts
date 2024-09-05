@@ -10,15 +10,15 @@ export function createSessionUtilisateurPresenter(
   }
 }
 
-export function updateSessionUtilisateurPresenter(
-  session: SessionUtilisateurViewModel,
-  nom: TypologieRole
-): SessionUtilisateurViewModel {
-  return {
-    ...session,
-    role: libelleByRole[nom],
-  }
-}
+// export function updateSessionUtilisateurPresenter(
+//   session: SessionUtilisateurViewModel,
+//   nom: TypologieRole
+// ): SessionUtilisateurViewModel {
+//   return {
+//     ...session,
+//     role: libelleByRole[nom],
+//   }
+// }
 
 export type SessionUtilisateurViewModel = Readonly<{
   email: string

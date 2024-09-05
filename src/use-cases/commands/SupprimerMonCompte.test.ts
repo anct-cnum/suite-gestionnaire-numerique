@@ -1,7 +1,4 @@
-import {
-  SuppressionUtilisateurGateway,
-  SupprimerMonCompteCommandHandler,
-} from './SupprimerMonCompteCommand'
+import { SuppressionUtilisateurGateway, SupprimerMonCompte } from './SupprimerMonCompte'
 
 const gatewayCompteExistant: SuppressionUtilisateurGateway = {
   async delete(): Promise<boolean> {
@@ -15,7 +12,7 @@ const gatewayCompteInexistant: SuppressionUtilisateurGateway = {
   },
 }
 
-describe('suppression de compte utilisateur', () => {
+describe('supprimer mon compte utilisateur', () => {
   it.each([
     {
       desc: 'le compte n’existe pas : pas de suppression possible',
@@ -29,9 +26,11 @@ describe('suppression de compte utilisateur', () => {
     },
   ])('$desc', async ({ gateway, expected }) => {
     // GIVEN
-    const commandHandler = new SupprimerMonCompteCommandHandler(gateway)
+    const commandHandler = new SupprimerMonCompte(gateway)
+
     // WHEN
     const result = await commandHandler.execute('martin.tartempion@example.net')
+
     // THEN
     expect(result).toBe(expected)
   })

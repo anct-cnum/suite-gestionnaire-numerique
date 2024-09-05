@@ -6,7 +6,7 @@ import { supprimerMonCompteAction } from './supprimerMonCompteAction'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const [emailValidationInfo, setEmailValidationInfo] =
-        useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
+    useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
   const [etatBoutonSuppression, setEtatBoutonSuppression] = useState<EtatBoutonSuppression>({
     enAttente: false,
     texte: 'Confirmer la suppression',
@@ -38,9 +38,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
                 </button>
               </div>
               <form>
-                <div
-                  className="fr-modal__content"
-                >
+                <div className="fr-modal__content">
                   <h1
                     className="fr-modal__title"
                     id={modaleTitreId}
@@ -119,8 +117,11 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
 
   async function logout(event: FormEvent<HTMLButtonElement>): Promise<void> {
     event.preventDefault()
+
     setEtatBoutonSuppression({ enAttente: true, texte: 'Suppression en cours' })
-    return supprimerMonCompteAction(email).then(async () => signOut({ callbackUrl: '/connexion' }))
+
+    await supprimerMonCompteAction(email)
+      .then(async () => signOut({ callbackUrl: '/connexion' }))
   }
 
   function isConfirmerDisabled(): boolean {
@@ -129,20 +130,20 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
 }
 
 type SupprimerMonCompteProps = Readonly<{
-    id: string;
-    email: string;
-    isOpen: boolean;
-    setIsOpen: Dispatch<SetStateAction<boolean>>
-}>;
+  id: string
+  email: string
+  isOpen: boolean
+  setIsOpen: Dispatch<SetStateAction<boolean>>
+}>
 
 type EmailValidationState = 'correct' | 'incorrect' | 'invalid'
 
 type EmailValidationInfo = Readonly<{
-    groupClass: string
-    inputClass: string
-    messageClass: string
-    message: string
-    isOk: boolean
+  groupClass: string
+  inputClass: string
+  messageClass: string
+  message: string
+  isOk: boolean
 }>
 
 type EtatBoutonSuppression = Readonly<{
@@ -178,8 +179,10 @@ function validationState(input: HTMLInputElement, email: string): EmailValidatio
   if (!input.checkValidity()) {
     return 'invalid'
   }
+
   if (email !== input.value) {
     return 'incorrect'
   }
+
   return 'correct'
 }

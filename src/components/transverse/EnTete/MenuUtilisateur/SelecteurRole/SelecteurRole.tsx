@@ -2,12 +2,12 @@
 
 import { FormEvent, ReactElement, useContext } from 'react'
 
+import { changerMonRoleAction } from './changerMonRoleAction'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import { Roles, TypologieRole } from '@/domain/Role'
-import { updateSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
 
 export default function SelecteurRole(): ReactElement {
-  const { session, setSession } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(sessionUtilisateurContext)
 
   return (
     <div className="fr-select-group">
@@ -34,10 +34,15 @@ export default function SelecteurRole(): ReactElement {
           ))
         }
       </select>
-    </div >
+    </div>
   )
 
-  function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>) {
-    setSession(updateSessionUtilisateurPresenter(session, currentTarget.value as TypologieRole))
+  async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
+    await changerMonRoleAction(session, currentTarget.value as TypologieRole)
+      .then((result) => {
+        if (result === 'OK') {
+          window.location.reload()
+        }
+      })
   }
 }
