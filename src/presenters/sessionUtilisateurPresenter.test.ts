@@ -4,6 +4,7 @@ import { Utilisateur } from '@/domain/Utilisateur'
 
 const utilisateur = {
   email: 'martin.tartempion@example.net',
+  isSuperAdmin: false,
   nom: 'Tartempion',
   prenom: 'Martin',
 }

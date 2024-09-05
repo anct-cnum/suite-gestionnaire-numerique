@@ -102,6 +102,7 @@ describe('postgre utilisateur query', () => {
     // THEN
     expect(utilisateurReadModel).toStrictEqual<UtilisateurReadModel>({
       email: 'martin.tartempion@example.net',
+      isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleReadModel,

@@ -25,6 +25,7 @@ model UtilisateurRecord {
   sub String @unique @default("")
   telephone String @default("") @db.VarChar(10)
   isSupprime Boolean @default(false)
+  isSuperAdmin Boolean @default(false)
 
   @@map("utilisateur")
 }
