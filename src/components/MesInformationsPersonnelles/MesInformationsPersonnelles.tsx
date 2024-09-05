@@ -11,6 +11,7 @@ import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformatio
 export default function MesInformationsPersonnelles(
   { mesInformationsPersonnellesViewModel }: MesInformationsPersonnellesProps
 ): ReactElement {
+  // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
 

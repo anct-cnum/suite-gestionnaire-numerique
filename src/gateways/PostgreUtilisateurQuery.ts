@@ -66,6 +66,7 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
 
   return {
     email: utilisateurRecord.email,
+    isSuperAdmin: false,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,
     role: {

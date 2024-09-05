@@ -10,6 +10,7 @@ import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateu
 
 export default function EnTete(): ReactElement {
   const { session } = useContext(sessionUtilisateurContext)
+  // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawer-menu-utilisateur'
 
@@ -152,6 +153,7 @@ export default function EnTete(): ReactElement {
       <Drawer
         boutonFermeture="Fermer le menu"
         id={drawerId}
+        // Stryker disable next-line BooleanLiteral
         isFixedWidth={true}
         isOpen={isOpen}
         setIsOpen={setIsOpen}

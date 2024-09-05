@@ -5,7 +5,7 @@ import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { matchWithoutMarkup } from '../../testHelper'
 import { TypologieRole } from '@/domain/Role'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
-import { SupprimerMonCompteCommandHandler } from '@/use-cases/commands/SupprimerMonCompteCommand'
+import { SupprimerMonCompte } from '@/use-cases/commands/SupprimerMonCompte'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {
@@ -293,7 +293,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           )
           fireEvent.click(supprimerMonCompteButton())
           fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
-          vi.spyOn(SupprimerMonCompteCommandHandler.prototype, 'execute').mockResolvedValueOnce('OK')
+          vi.spyOn(SupprimerMonCompte.prototype, 'execute').mockResolvedValueOnce('OK')
           vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
 
           // WHEN
@@ -303,7 +303,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           const boutonConfirmationDesactive = screen.getByRole('button', { name: 'Suppression en cours' })
           expect(boutonConfirmationDesactive).toBeDisabled()
           await waitFor(() => {
-            expect(SupprimerMonCompteCommandHandler.prototype.execute)
+            expect(SupprimerMonCompte.prototype.execute)
               .toHaveBeenCalledWith('julien.deschamps@example.com')
           })
           expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })

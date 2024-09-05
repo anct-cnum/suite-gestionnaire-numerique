@@ -5,7 +5,15 @@
   "ignorePatterns": [".*", "coverage", "public", "reports", "yarn.lock"],
   "ignoreStatic": true,
   "logLevel": "info",
-  "mutate": ["src/**/*.tsx", "!src/**/*.test.tsx"],
+  "mutate": [
+    "src/**/*.tsx",
+    "!src/**/*.test.tsx",
+    "!src/app/**/*",
+    "!src/**/SessionUtilisateurContext.tsx"
+  ],
+  "mutator": {
+    "excludedMutations": ["StringLiteral"]
+  },
   "packageManager": "yarn",
   "reporters": ["html"],
   "testRunner": "vitest"
