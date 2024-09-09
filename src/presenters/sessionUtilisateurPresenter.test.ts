@@ -129,5 +129,5 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
 })
 
 function makeUtilisateur(role: Role): Utilisateur {
-  return new Utilisateur(utilisateur.uid, role, utilisateur.nom, utilisateur.prenom, utilisateur.email)
+  return new Utilisateur(utilisateur.uid, role, utilisateur.nom, utilisateur.prenom, utilisateur.email, false)
 }

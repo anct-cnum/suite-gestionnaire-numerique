@@ -1,8 +1,8 @@
 import { TypologieRole } from '@/domain/Role'
-import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { UtilisateurState } from '@/domain/Utilisateur'
 
 export function createSessionUtilisateurPresenter(
-  utilisateurReadModel: UtilisateurReadModel
+  utilisateurReadModel: UtilisateurState
 ): SessionUtilisateurViewModel {
   return {
     ...utilisateurReadModel,

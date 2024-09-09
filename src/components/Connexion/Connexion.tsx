@@ -6,10 +6,6 @@ import { ReactElement } from 'react'
 import ProConnect from './pro-connect.svg'
 import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
 
-type ConnexionProps = Readonly<{
-  provider: ProConnectProvider['pro-connect']
-}>
-
 export default function Connexion({ provider }: ConnexionProps): ReactElement {
   return (
     <div className="fr-container fr-container--fluid">
@@ -48,3 +44,7 @@ export default function Connexion({ provider }: ConnexionProps): ReactElement {
     </div>
   )
 }
+
+type ConnexionProps = Readonly<{
+  provider: ProConnectProvider['pro-connect']
+}>

@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client'
+import { Prisma, Role } from '@prisma/client'
 
 import { PostgreUtilisateurQuery } from './PostgreUtilisateurQuery'
 import prisma from '../../prisma/prismaClient'
@@ -106,7 +106,6 @@ describe('postgre utilisateur query', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleReadModel,
-      uid: ssoIdExistant,
     })
   })
 
@@ -143,9 +142,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: {
           dateDeCreation: date,
+          derniereConnexion: date,
           email: 'martin.tartempion@example.net',
           inviteLe: date,
-          isSupprime: true,
+          isSuperAdmin: true,
+          isSupprime: false,
           nom: 'Tartempion',
           prenom: 'Martin',
           role: 'administrateur_dispositif',
@@ -158,7 +159,28 @@ describe('postgre utilisateur query', () => {
       const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySsoId(ssoIdExistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
+      expect(totalUtilisateur).toBe(2)
     }
   )
 })
+
+function utilisateurRecordFactory(
+  override: Partial<Prisma.UtilisateurRecordCreateInput>
+): Prisma.UtilisateurRecordCreateInput {
+  const date = new Date('2024-01-01')
+
+  return {
+    dateDeCreation: date,
+    derniereConnexion: date,
+    email: 'martin.tartempion@example.net',
+    inviteLe: date,
+    isSuperAdmin: false,
+    isSupprime: false,
+    nom: 'Tartempion',
+    prenom: 'Martin',
+    role: 'administrateur_dispositif',
+    ssoId: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
+    telephone: '0102030405',
+    ...override,
+  }
+}

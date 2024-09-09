@@ -129,8 +129,7 @@
           "SyntheticEvent",
           "ReactElement",
           "ChartDataset",
-          "ClientSafeProvider",
-          "inventaireModel"
+          "ClientSafeProvider"
         ]
       }
     ],

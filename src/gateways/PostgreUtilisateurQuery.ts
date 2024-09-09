@@ -10,6 +10,27 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
     this.#prisma = prisma
   }
 
+  async count(): Promise<number> {
+    return this.#prisma.utilisateurRecord.count()
+  }
+
+  async findAll(pageCourante = 0, utilisateursParPage = 10): Promise<Array<UtilisateurReadModel>> {
+    const utilisateursRecord = await this.#prisma.utilisateurRecord.findMany({
+      orderBy: {
+        nom: 'asc',
+      },
+      skip: utilisateursParPage * pageCourante,
+      take: utilisateursParPage,
+      where: {
+        isSupprime: false,
+      },
+    })
+
+    return utilisateursRecord.map((utilisateurRecord): UtilisateurReadModel => {
+      return transform(utilisateurRecord)
+    })
+  }
+
   async findBySsoId(ssoId: string): Promise<UtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       where: {
@@ -65,8 +86,11 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
   }
 
   return {
+    derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
     email: utilisateurRecord.email,
-    isSuperAdmin: false,
+    inviteLe: utilisateurRecord.inviteLe,
+    isActive: utilisateurRecord.derniereConnexion !== null ? true : false,
+    isSuperAdmin: utilisateurRecord.isSuperAdmin,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,
     role: {
