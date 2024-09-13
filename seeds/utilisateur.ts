@@ -68,9 +68,9 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
             // = e-mail
             name: 1,
             // Le nom n'est pas forcément renseigné
-            nom: { $ifNull: ['$nom', ''] },
+            nom: { $ifNull: ['$nom', '-'] },
             // Le prénom n'est pas forcément renseigné
-            prenom: { $ifNull: ['$prenom', ''] },
+            prenom: { $ifNull: ['$prenom', '-'] },
             // La région n'est pas forcément renseignée
             region: { $ifNull: ['$region', ''] },
             roles: 1,
