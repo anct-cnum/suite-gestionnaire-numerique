@@ -42,27 +42,27 @@ const libelleByRole: LibelleByTypologie = {
   'Gestionnaire département': {
     libelle: 'Rhône',
     nom: 'Gestionnaire département',
-    pictogramme: 'marianne',
+    pictogramme: 'maille',
   },
   'Gestionnaire groupement': {
     libelle: 'Hubikoop',
     nom: 'Gestionnaire groupement',
-    pictogramme: 'gestionnaire-groupement',
+    pictogramme: 'groupement',
   },
   'Gestionnaire région': {
     libelle: 'Auvergne-Rhône-Alpes',
     nom: 'Gestionnaire région',
-    pictogramme: 'marianne',
+    pictogramme: 'maille',
   },
   'Gestionnaire structure': {
     libelle: 'Solidarnum',
     nom: 'Gestionnaire structure',
-    pictogramme: 'gestionnaire-structure',
+    pictogramme: 'structure',
   },
   Instructeur: {
     libelle: 'Banque des territoires',
     nom: 'Instructeur',
-    pictogramme: 'instructeur',
+    pictogramme: 'bdt',
   },
   'Pilote politique publique': {
     libelle: 'France Numérique Ensemble',
@@ -72,7 +72,7 @@ const libelleByRole: LibelleByTypologie = {
   'Support animation': {
     libelle: 'Mednum',
     nom: 'Support animation',
-    pictogramme: 'support-animation',
+    pictogramme: 'mednum',
   },
 }
 

@@ -19,7 +19,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Banque des territoires',
           nom: 'Instructeur',
-          pictogramme: 'instructeur',
+          pictogramme: 'bdt',
         },
       },
       nom: 'Instructeur' as const,
@@ -41,7 +41,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Mednum',
           nom: 'Support animation',
-          pictogramme: 'support-animation',
+          pictogramme: 'mednum',
         },
       },
       nom: 'Support animation' as const,
@@ -73,7 +73,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Rhône',
           nom: 'Gestionnaire département',
-          pictogramme: 'marianne',
+          pictogramme: 'maille',
         },
       },
       nom: 'Gestionnaire département' as const,
@@ -85,7 +85,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Hubikoop',
           nom: 'Gestionnaire groupement',
-          pictogramme: 'gestionnaire-groupement',
+          pictogramme: 'groupement',
         },
       },
       nom: 'Gestionnaire groupement' as const,
@@ -97,7 +97,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Auvergne-Rhône-Alpes',
           nom: 'Gestionnaire région',
-          pictogramme: 'marianne',
+          pictogramme: 'maille',
         },
       },
       nom: 'Gestionnaire région' as const,
@@ -109,7 +109,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
         role: {
           libelle: 'Solidarnum',
           nom: 'Gestionnaire structure',
-          pictogramme: 'gestionnaire-structure',
+          pictogramme: 'structure',
         },
       },
       nom: 'Gestionnaire structure' as const,

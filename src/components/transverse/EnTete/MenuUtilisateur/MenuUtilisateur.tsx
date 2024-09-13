@@ -17,6 +17,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
       <div className={`fr-mb-8v ${styles['zone-infos']}`}>
         <Image
           alt=""
+          className="grey-border"
           height={80}
           role="img"
           src={`${session.role.pictogramme}.svg`}
