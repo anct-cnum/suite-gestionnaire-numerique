@@ -2,9 +2,9 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { matchWithoutMarkup } from '../../testHelper'
 import { TypologieRole } from '@/domain/Role'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
+import { matchWithoutMarkup } from '@/testHelper'
 import { SupprimerMonCompte } from '@/use-cases/commands/SupprimerMonCompte'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {

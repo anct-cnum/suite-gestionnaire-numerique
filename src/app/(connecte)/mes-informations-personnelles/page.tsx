@@ -1,5 +1,4 @@
 import { Metadata } from 'next'
-import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import prisma from '../../../../prisma/prismaClient'
@@ -15,13 +14,9 @@ export const metadata: Metadata = {
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const session = await getSession()
 
-  if (!session) {
-    redirect('/connexion')
-  }
-
   const mesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
-  const mesInformationsPersonnelles =
-    await mesInformationsPersonnellesQuery.findBySub(session.user.sub)
+  // @ts-expect-error
+  const mesInformationsPersonnelles = await mesInformationsPersonnellesQuery.findBySub(session.user.sub)
   const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
 
   return (

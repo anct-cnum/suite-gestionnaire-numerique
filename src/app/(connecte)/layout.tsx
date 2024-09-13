@@ -24,7 +24,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
       <LienEvitement />
       <EnTete />
       <main
-        className="fr-container fr-pt-3w"
+        className="fr-container--fluid fr-mb-5w fr-mx-5w"
         id="content"
       >
         {children}
