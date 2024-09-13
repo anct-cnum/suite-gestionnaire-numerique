@@ -19,7 +19,6 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           alt=""
           className="grey-border"
           height={80}
-          role="img"
           src={`${session.role.pictogramme}.svg`}
           width={80}
         />

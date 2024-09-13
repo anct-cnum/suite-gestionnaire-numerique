@@ -13,3 +13,7 @@
 .fr-segmented__element > label {
   justify-content: center;
 }
+
+.fr-segmented {
+  display: flex;
+}

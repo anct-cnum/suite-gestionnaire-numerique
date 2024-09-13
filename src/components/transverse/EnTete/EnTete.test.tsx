@@ -51,7 +51,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(deconnexion).toHaveAttribute('name', 'deconnexion')
     expect(deconnexion).toHaveAttribute('type', 'button')
 
-    expect(within(menuUtilisateur).getByRole('img')).toHaveAttribute('alt', '')
+    expect(within(menuUtilisateur).getByRole('presentation')).toHaveAttribute('alt', '')
 
     const prenom = within(menuUtilisateur).getByText('Martin')
     expect(prenom).toBeInTheDocument()
