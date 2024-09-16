@@ -18,24 +18,23 @@ export default function Page({ nombreDeResultat, pageCourante }: PageProps): Rea
           </Link>
         </li>
       )
-    } else {
-      return (
-        <li key={page}>
-          <Link
-            className="fr-pagination__link"
-            href={{
-              pathname: '/mes-utilisateurs',
-              query: {
-                page: page - 1,
-              },
-            }}
-            title={`Page ${page}`}
-          >
-            {page}
-          </Link>
-        </li>
-      )
     }
+    return (
+      <li key={page}>
+        <Link
+          className="fr-pagination__link"
+          href={{
+            pathname: '/mes-utilisateurs',
+            query: {
+              page: page - 1,
+            },
+          }}
+          title={`Page ${page}`}
+        >
+          {page}
+        </Link>
+      </li>
+    )
   })
 }
 

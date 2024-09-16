@@ -89,7 +89,7 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
     email: utilisateurRecord.email,
     inviteLe: utilisateurRecord.inviteLe,
-    isActive: utilisateurRecord.derniereConnexion !== null ? true : false,
+    isActive: utilisateurRecord.derniereConnexion !== null,
     isSuperAdmin: utilisateurRecord.isSuperAdmin,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,

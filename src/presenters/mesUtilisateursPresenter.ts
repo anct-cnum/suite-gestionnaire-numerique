@@ -11,8 +11,9 @@ export function mesUtilisateursPresenter(
     pageCourante,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
-      const statut = monUtilisateur.isActive ? 'Activé' : 'En attente'
-      const categorie = monUtilisateur.isActive ? monUtilisateur.role.categorie : 'inactif'
+      const [statut, categorie] = monUtilisateur.isActive
+        ? ['Activé', monUtilisateur.role.categorie] as const
+        : ['En attente', 'inactif'] as const
 
       return {
         canBeDeleted: sub !== monUtilisateur.sub,
@@ -31,9 +32,8 @@ export function mesUtilisateursPresenter(
 function buildDate(monUtilisateurReadModel: UtilisateurReadModel) {
   if (monUtilisateurReadModel.isActive) {
     return monUtilisateurReadModel.derniereConnexion.toLocaleDateString('fr-FR', options)
-  } else {
-    return `invité le ${monUtilisateurReadModel.inviteLe.toLocaleDateString('fr-FR', options)}`
   }
+  return `invité le ${monUtilisateurReadModel.inviteLe.toLocaleDateString('fr-FR', options)}`
 }
 
 const options: Intl.DateTimeFormatOptions = {
