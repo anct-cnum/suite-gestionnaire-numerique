@@ -1,12 +1,14 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
+import styles from './Tableau.module.css'
+
 export default function Tableau({ children, enTetes, titre }: TableauProps): ReactElement {
   return (
     <div
       className="fr-table--sm fr-table fr-table"
       id="table-sm-component"
     >
-      <div className="fr-table__wrapper">
+      <div className={`fr-table__wrapper ${styles['fr-table__wrapper']}`}>
         <div className="fr-table__container">
           <div className="fr-table__content">
             <table id="table-sm">
