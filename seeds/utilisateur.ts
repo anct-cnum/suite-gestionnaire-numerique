@@ -74,8 +74,9 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
             // La région n'est pas forcément renseignée
             region: { $ifNull: ['$region', ''] },
             roles: 1,
-            // Le sub n'est pas forcément renseigné si l'utilisateur ne s'est jamais connecté
-            sub: { $ifNull: ['$sub', ''] },
+            // Le sub n'est pas forcément renseigné si l'utilisateur ne s'est jamais connecté ; dans ce cas, on met par
+            // par défaut l'email (champ $name).
+            sub: { $ifNull: ['$sub', '$name'] },
           },
         },
       ])
