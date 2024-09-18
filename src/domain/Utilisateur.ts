@@ -1,15 +1,23 @@
 import { Role, type RoleState } from './Role'
-import { Model } from './shared/Model'
+import { Entity } from './shared/Model'
 import { Result } from '@/util/result'
 
-export class Utilisateur implements Model {
+export class Utilisateur extends Entity<UtilisateurId> {
   #role: Role
   readonly #isSuperAdmin: boolean
   readonly #nom: string
   readonly #prenom: string
   readonly #email: string
 
-  constructor(role: Role, nom: string, prenom: string, email: string, isSuperAdmin = false) {
+  constructor(
+    uid: UtilisateurId,
+    role: Role,
+    nom: string,
+    prenom: string,
+    email: string,
+    isSuperAdmin = false
+  ) {
+    super(uid)
     this.#role = role
     this.#nom = nom
     this.#prenom = prenom
@@ -24,6 +32,7 @@ export class Utilisateur implements Model {
       nom: this.#nom,
       prenom: this.#prenom,
       role: this.#role.state(),
+      uid: this.uid,
     }
   }
 
@@ -32,12 +41,14 @@ export class Utilisateur implements Model {
       this.#role = nouveauRole
       return 'OK'
     }
-
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 }
 
+type UtilisateurId = string
+
 export type UtilisateurState = Readonly<{
+  uid: string
   email: string
   isSuperAdmin: boolean
   nom: string

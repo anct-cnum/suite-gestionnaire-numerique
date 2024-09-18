@@ -7,6 +7,7 @@ const utilisateur = {
   isSuperAdmin: false,
   nom: 'Tartempion',
   prenom: 'Martin',
+  uid: 'fooId',
 }
 
 describe(`Affichage des informations de session de l'utilisateur connecté ${utilisateur.prenom}`
@@ -128,5 +129,5 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
 })
 
 function makeUtilisateur(role: Role): Utilisateur {
-  return new Utilisateur(role, utilisateur.nom, utilisateur.prenom, utilisateur.email)
+  return new Utilisateur(utilisateur.uid, role, utilisateur.nom, utilisateur.prenom, utilisateur.email)
 }

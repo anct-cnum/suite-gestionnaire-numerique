@@ -16,7 +16,7 @@ model UtilisateurRecord {
 
   dateDeCreation DateTime
   derniereConnexion DateTime?
-  email String @unique
+  email String
   inviteLe DateTime
   nom String
   prenom String

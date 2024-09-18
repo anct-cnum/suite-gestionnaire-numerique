@@ -181,6 +181,7 @@ const sessionUtilisateurContextProvider = {
       nom: 'Support animation' as TypologieRole,
       pictogramme: 'support-animation',
     },
+    uid: 'fooId',
   },
   setSession: vi.fn(),
 }
