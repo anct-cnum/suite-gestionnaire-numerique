@@ -8,7 +8,7 @@ import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
 
 describe('mes utilisateurs', () => {
   const pageCourante = 0
-  const totalUtilisateur = 10
+  const totalUtilisateur = 11
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
@@ -101,6 +101,7 @@ describe('mes utilisateurs', () => {
         session: {
           ...infosSessionUtilisateurContext.session,
           role: {
+            groupe: 'gestionnaire',
             libelle: 'Rhône',
             nom: role,
             pictogramme: 'maille',
@@ -214,35 +215,45 @@ function getByTable() {
   return { columnsHead, rowsBody }
 }
 
-const mesUtilisateursReadModel: Array<UtilisateurReadModel> = [
+const mesUtilisateursReadModel: ReadonlyArray<UtilisateurReadModel> = [
   {
+    departementCode: null,
     derniereConnexion: new Date('2024-03-05'),
     email: 'martin.tartempion@example.net',
+    groupementId: null,
     inviteLe: new Date('2024-03-01'),
     isActive: true,
     isSuperAdmin: true,
     nom: 'Tartempion',
     prenom: 'Martin',
+    regionCode: null,
     role: {
       categorie: 'anct',
+      groupe: 'admin',
       nom: 'Administrateur dispositif',
       territoireOuStructure: 'Préfecture du Rhône',
     },
-    sub: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    structureId: null,
+    uid: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
   },
   {
+    departementCode: null,
     derniereConnexion: new Date(0),
     email: 'julien.deschamps@example.com',
+    groupementId: null,
     inviteLe: new Date('2024-02-12'),
     isActive: false,
     isSuperAdmin: false,
     nom: 'Deschamps',
     prenom: 'Julien',
+    regionCode: null,
     role: {
       categorie: 'structure',
+      groupe: 'gestionnaire',
       nom: 'Gestionnaire structure',
       territoireOuStructure: 'Hub du Rhône',
     },
-    sub: '123456',
+    structureId: 1,
+    uid: '123456',
   },
 ]

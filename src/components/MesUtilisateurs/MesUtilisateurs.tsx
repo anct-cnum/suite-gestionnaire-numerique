@@ -3,12 +3,12 @@
 import Image from 'next/image'
 import { ReactElement, useContext } from 'react'
 
-import Titre from '../MesInformationsPersonnelles/Titre'
 import Pagination from '../shared/Pagination/Pagination'
 import Rechercher from '../shared/Rechercher/Rechercher'
 import Role from '../shared/Role/Role'
 import Statut from '../shared/Statut/Statut'
 import Tableau from '../shared/Tableau/Tableau'
+import Titre from '../shared/Titre/Titre'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import { MesUtilisateursViewModel } from '@/presenters/mesUtilisateursPresenter'
 
@@ -16,12 +16,6 @@ export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
   const { session } = useContext(sessionUtilisateurContext)
-  const groupeGestionnaire = [
-    'Gestionnaire département',
-    'Gestionnaire région',
-    'Gestionnaire structure',
-    'Gestionnaire groupement',
-  ]
 
   return (
     <>
@@ -37,7 +31,7 @@ export default function MesUtilisateurs(
         </button>
       </div>
       {
-        groupeGestionnaire.includes(session.role.nom) ? (
+        session.role.groupe === 'gestionnaire' ? (
           <p>
             Gérez l’accès à l’espace de gestion
           </p>
@@ -79,7 +73,7 @@ export default function MesUtilisateurs(
                 <Image
                   alt=""
                   height={20}
-                  src={`${unUtilisateurViewModel.categorie}.svg`}
+                  src={`${unUtilisateurViewModel.picto}.svg`}
                   width={20}
                 />
               </td>
@@ -119,12 +113,17 @@ export default function MesUtilisateurs(
           )
         })}
       </Tableau>
-      <div className="fr-grid-row fr-grid-row--center">
-        <Pagination
-          pageCourante={mesUtilisateursViewModel.pageCourante}
-          totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
-        />
-      </div>
+      {
+        mesUtilisateursViewModel.totalUtilisateur > 10 ?
+          (
+            <div className="fr-grid-row fr-grid-row--center">
+              <Pagination
+                pageCourante={mesUtilisateursViewModel.pageCourante}
+                totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
+              />
+            </div>
+          ) : null
+      }
     </>
   )
 }

@@ -12,18 +12,18 @@ export const metadata: Metadata = {
 }
 
 export default async function MesUtilisateursController({ searchParams }: PageProps): Promise<ReactElement> {
-  const session = await getSession()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const session = (await getSession())!
   const pageCourante = Number(searchParams.page ?? 0)
 
   const utilisateurQuery = new PostgreUtilisateurQuery(prisma)
-  const mesUtilisateurs = await utilisateurQuery.findAll(pageCourante)
-  const totalUtilisateur = await utilisateurQuery.count()
+  const { utilisateursCourants, total } =
+    await utilisateurQuery.findMesUtilisateursEtLeTotal(session.user.sub, pageCourante)
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
-    mesUtilisateurs,
-    // @ts-expect-error
+    utilisateursCourants,
     session.user.sub,
     pageCourante,
-    totalUtilisateur
+    total
   )
 
   return (

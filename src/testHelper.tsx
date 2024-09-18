@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react'
 import { ReactElement } from 'react'
 
-import { TypologieRole } from './domain/Role'
+import { Groupe, TypologieRole } from './domain/Role'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export function matchWithoutMarkup(wording: string) {
@@ -16,13 +16,13 @@ export const infosSessionUtilisateurContext = {
     nom: 'Tartempion',
     prenom: 'Martin',
     role: {
+      groupe: 'admin' as Groupe,
       libelle: 'Mednum',
       nom: 'Support animation' as TypologieRole,
       pictogramme: 'support-animation',
     },
     uid: 'fooId',
   },
-  setSession: vi.fn(),
 }
 
 export function renderComponent(

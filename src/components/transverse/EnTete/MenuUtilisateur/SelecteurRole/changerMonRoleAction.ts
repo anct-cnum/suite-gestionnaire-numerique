@@ -16,16 +16,13 @@ export async function changerMonRoleAction(
     .execute({
       nouveauRoleState: {
         nom: nouveauRole,
-        territoireOuStructure: '',
       },
       utilisateurState: {
         ...sessionUtilisateurViewModel,
         isSuperAdmin: true,
         role: {
           nom: sessionUtilisateurViewModel.role.nom,
-          territoireOuStructure: '',
         },
-        uid: sessionUtilisateurViewModel.uid,
       },
     })
 }

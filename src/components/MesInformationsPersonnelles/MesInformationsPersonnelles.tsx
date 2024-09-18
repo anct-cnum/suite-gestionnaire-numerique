@@ -4,8 +4,8 @@ import { ReactElement, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import SupprimerMonCompte from './SupprimerMonCompte'
-import Titre from './Titre'
 import Role from '../shared/Role/Role'
+import Titre from '../shared/Titre/Titre'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles(

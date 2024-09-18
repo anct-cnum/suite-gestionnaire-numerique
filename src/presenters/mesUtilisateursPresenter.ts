@@ -2,8 +2,8 @@ import { Categorie, TypologieRole } from '@/domain/Role'
 import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
 
 export function mesUtilisateursPresenter(
-  mesUtilisateursReadModel: Array<UtilisateurReadModel>,
-  sub: string,
+  mesUtilisateursReadModel: ReadonlyArray<UtilisateurReadModel>,
+  uid: string,
   pageCourante: number,
   totalUtilisateur: number
 ): MesUtilisateursViewModel {
@@ -11,15 +11,15 @@ export function mesUtilisateursPresenter(
     pageCourante,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
-      const [statut, categorie] = monUtilisateur.isActive
+      const [statut, picto] = monUtilisateur.isActive
         ? ['Activé', monUtilisateur.role.categorie] as const
         : ['En attente', 'inactif'] as const
 
       return {
-        canBeDeleted: sub !== monUtilisateur.sub,
-        categorie,
+        canBeDeleted: uid !== monUtilisateur.uid,
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
+        picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
         statut,
@@ -29,17 +29,22 @@ export function mesUtilisateursPresenter(
   }
 }
 
-function buildDate(monUtilisateurReadModel: UtilisateurReadModel) {
-  if (monUtilisateurReadModel.isActive) {
-    return monUtilisateurReadModel.derniereConnexion.toLocaleDateString('fr-FR', options)
+function buildDate(utilisateurReadModel: UtilisateurReadModel): string {
+  if (utilisateurReadModel.isActive) {
+    return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
   }
-  return `invité le ${monUtilisateurReadModel.inviteLe.toLocaleDateString('fr-FR', options)}`
+
+  return `invité le ${buildDateFrancaise(utilisateurReadModel.inviteLe)}`
 }
 
-const options: Intl.DateTimeFormatOptions = {
-  day: 'numeric',
-  month: 'numeric',
-  year: 'numeric',
+function buildDateFrancaise(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: 'numeric',
+    year: 'numeric',
+  }
+
+  return date.toLocaleDateString('fr-FR', options)
 }
 
 export type MesUtilisateursViewModel = Readonly<{
@@ -50,9 +55,9 @@ export type MesUtilisateursViewModel = Readonly<{
 
 type MonUtilisateur = Readonly<{
   canBeDeleted: boolean
-  categorie: Categorie | 'inactif'
   derniereConnexion: string
   email: string
+  picto: Categorie | 'inactif'
   prenomEtNom: string
   role: TypologieRole
   statut: StatutInscription

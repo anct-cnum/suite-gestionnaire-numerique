@@ -1,16 +1,27 @@
 import { UtilisateurState } from '@/domain/Utilisateur'
 
 export interface UtilisateurQuery {
-  count: () => Promise<number>
-  findAll: (pageCourante: number, utilisateursParPage: number) => Promise<Array<UtilisateurReadModel>>
+  findMesUtilisateursEtLeTotal: (
+    ssoId: string,
+    pageCourante: number,
+    utilisateursParPage: number
+  ) => Promise<UtilisateursCourantsEtTotalReadModel>
   findBySsoId: (ssoId: string) => Promise<UtilisateurReadModel>
 }
 
 export type UtilisateurReadModel = UtilisateurState & Readonly<{
+  departementCode: string | null
   derniereConnexion: Date
+  groupementId: number | null
   inviteLe: Date
   isActive: boolean
-  sub: string
+  regionCode: string | null
+  structureId: number | null
+}>
+
+export type UtilisateursCourantsEtTotalReadModel = Readonly<{
+  utilisateursCourants: ReadonlyArray<UtilisateurReadModel>
+  total: number,
 }>
 
 export class UtilisateurNonTrouveError extends Error {
