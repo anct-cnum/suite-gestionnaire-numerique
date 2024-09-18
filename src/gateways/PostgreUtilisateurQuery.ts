@@ -74,5 +74,6 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
       nom: mapping[utilisateurRecord.role].nom,
       territoireOuStructure: mapping[utilisateurRecord.role].territoireOuStructure,
     },
+    uid: utilisateurRecord.sub,
   }
 }

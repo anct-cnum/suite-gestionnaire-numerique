@@ -3,16 +3,15 @@ import { Prisma } from '@prisma/client'
 import { PostgresSoftDeleteUtilisateurGateway } from './PostgreSoftDeleteUtilisateurGateway'
 import prisma from '../../prisma/prismaClient'
 
-const emailUtilisateurExistant = 'martin.tartempion@example.net'
-const emailUtilisateurSupprime = 'tanguy.liauradaisaume@example.net'
+const subUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const subUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
 const utilisateurExistant: Partial<Prisma.UtilisateurRecordCreateInput> = {
-  email: emailUtilisateurExistant,
   isSupprime: false,
+  sub: subUtilisateurExistant,
 }
 const utilisateurSupprime: Partial<Prisma.UtilisateurRecordCreateInput> = {
-  email: emailUtilisateurSupprime,
   isSupprime: true,
-  sub: 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6',
+  sub: subUtilisateurSupprime,
 }
 
 describe('suppression "soft delete" d’un compte utilisateur', () => {
@@ -31,7 +30,7 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
     })
 
     // WHEN
-    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(emailUtilisateurExistant)
+    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(subUtilisateurExistant)
 
     // THEN
     expect(result).toBe(true)
@@ -47,7 +46,7 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
     })
 
     // WHEN
-    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(emailUtilisateurSupprime)
+    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(subUtilisateurSupprime)
 
     // THEN
     expect(result).toBe(false)
@@ -60,7 +59,7 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
     })
 
     // WHEN
-    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(emailUtilisateurExistant)
+    const result = await new PostgresSoftDeleteUtilisateurGateway(prisma).delete(subUtilisateurExistant)
 
     // THEN
     expect(result).toBe(false)
@@ -86,10 +85,10 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
     // WHEN
     const unhandledKnownRequestError =
       new PostgresSoftDeleteUtilisateurGateway(prismaClientKnownRequestErrorOnUpdateStub)
-        .delete(emailUtilisateurExistant)
+        .delete(subUtilisateurExistant)
     const unhandledUnknownRequestError =
       new PostgresSoftDeleteUtilisateurGateway(prismaClientUnknownRequestErrorOnUpdateStub)
-        .delete(emailUtilisateurExistant)
+        .delete(subUtilisateurExistant)
 
     // THEN
     await expect(unhandledKnownRequestError).rejects.toMatchObject({ code: 'P1000' })
@@ -102,7 +101,7 @@ function utilisateurRecordFactory(
 ): Prisma.UtilisateurRecordCreateInput {
   return {
     dateDeCreation: new Date(0),
-    email: emailUtilisateurExistant,
+    email: 'martin.tartempion@example.net',
     inviteLe: new Date(0),
     isSupprime: false,
     nom: 'Tartempion',

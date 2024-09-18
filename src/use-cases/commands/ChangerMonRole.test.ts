@@ -21,6 +21,7 @@ describe('changer mon rôle', () => {
   it('ayant le rôle super admin quand un utilisateur change de rôle alors le rôle est modifié', async () => {
     // GIVEN
     const utilisateur = new Utilisateur(
+      'fooId',
       new Role('Administrateur dispositif'),
       'tartempion',
       'martin',
@@ -50,6 +51,7 @@ describe('changer mon rôle', () => {
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
     // GIVEN
     const utilisateur = new Utilisateur(
+      'fooId',
       new Role('Administrateur dispositif'),
       'tartempion',
       'martin',

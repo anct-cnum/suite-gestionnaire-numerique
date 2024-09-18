@@ -21,6 +21,7 @@ export function createSessionUtilisateurPresenter(
 // }
 
 export type SessionUtilisateurViewModel = Readonly<{
+  uid: string
   email: string
   nom: string
   prenom: string

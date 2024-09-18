@@ -25,6 +25,7 @@ export async function changerMonRoleAction(
           nom: sessionUtilisateurViewModel.role.nom,
           territoireOuStructure: '',
         },
+        uid: sessionUtilisateurViewModel.uid,
       },
     })
 }
