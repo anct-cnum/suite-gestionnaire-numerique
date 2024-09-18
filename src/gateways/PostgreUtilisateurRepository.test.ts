@@ -6,6 +6,7 @@ import { Role } from '@/domain/Role'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 const emailUtilisateur = 'martin.tartempion@example.net'
+const uidUtilisateur = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
 
 describe('utilisateur repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -23,6 +24,7 @@ describe('utilisateur repository', () => {
       // WHEN
       await new PostgreUtilisateurRepository(prisma).update(
         new Utilisateur(
+          uidUtilisateur,
           new Role('Instructeur'),
           'tartempion',
           'martin',
@@ -34,7 +36,7 @@ describe('utilisateur repository', () => {
       // THEN
       const updatedRecord = await prisma.utilisateurRecord.findUnique({
         where: {
-          email: emailUtilisateur,
+          sub: uidUtilisateur,
         },
       })
       expect(updatedRecord?.role).toBe('instructeur')
@@ -45,13 +47,13 @@ describe('utilisateur repository', () => {
 function utilisateurRecordFactory(): Prisma.UtilisateurRecordCreateInput {
   return {
     dateDeCreation: new Date(0),
-    email: emailUtilisateur,
+    email: 'martin.tartempion@example.net',
     inviteLe: new Date(0),
     isSuperAdmin: true,
     nom: 'Tartempion',
     prenom: 'Martin',
     role: 'gestionnaire_region',
-    sub: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
+    sub: uidUtilisateur,
     telephone: '0102030405',
   }
 }

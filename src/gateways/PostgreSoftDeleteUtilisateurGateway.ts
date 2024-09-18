@@ -9,7 +9,7 @@ export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisat
     this.#activeRecord = dbClient.utilisateurRecord
   }
 
-  async delete(email: string): Promise<boolean> {
+  async delete(sub: string): Promise<boolean> {
     return this.#activeRecord.update({
       data: {
         isSupprime: true,
@@ -18,8 +18,8 @@ export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisat
         id: true,
       },
       where: {
-        email,
         isSupprime: false,
+        sub,
       },
     })
       .then(() => true)

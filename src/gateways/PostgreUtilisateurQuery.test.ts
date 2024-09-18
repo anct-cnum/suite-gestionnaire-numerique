@@ -106,6 +106,7 @@ describe('postgre utilisateur query', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleReadModel,
+      uid: subExistant,
     })
   })
 

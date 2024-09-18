@@ -14,6 +14,7 @@ export class ChangerMonRole implements CommandHandler<Command> {
     nouveauRoleState,
   }: Command): ResultAsync<InvariantUtilisateur> {
     const utilisateur = new Utilisateur(
+      utilisateurState.uid,
       new Role(utilisateurState.role.nom, utilisateurState.role.territoireOuStructure),
       utilisateurState.nom,
       utilisateurState.prenom,

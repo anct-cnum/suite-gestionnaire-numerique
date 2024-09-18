@@ -18,7 +18,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
         role: fromTypologieRole(utilisateurState.role.nom),
       },
       where: {
-        email: utilisateurState.email,
+        sub: utilisateurState.uid,
       },
     })
   }
