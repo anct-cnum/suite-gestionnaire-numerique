@@ -36,7 +36,7 @@ describe('utilisateur repository', () => {
       // THEN
       const updatedRecord = await prisma.utilisateurRecord.findUnique({
         where: {
-          sub: uidUtilisateur,
+          ssoId: uidUtilisateur,
         },
       })
       expect(updatedRecord?.role).toBe('instructeur')
@@ -53,7 +53,7 @@ function utilisateurRecordFactory(): Prisma.UtilisateurRecordCreateInput {
     nom: 'Tartempion',
     prenom: 'Martin',
     role: 'gestionnaire_region',
-    sub: uidUtilisateur,
+    ssoId: uidUtilisateur,
     telephone: '0102030405',
   }
 }

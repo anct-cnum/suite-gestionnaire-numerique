@@ -79,9 +79,9 @@ describe('postgre utilisateur query', () => {
         territoireOuStructure: '',
       },
     },
-  ])('quand je cherche un utilisateur $roleReadModel.nom qui existe par son sub alors je le trouve', async ({ role, roleReadModel }) => {
+  ])('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ role, roleReadModel }) => {
     // GIVEN
-    const subExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const date = new Date()
     await prisma.utilisateurRecord.create({
       data: {
@@ -91,13 +91,13 @@ describe('postgre utilisateur query', () => {
         nom: 'Tartempion',
         prenom: 'Martin',
         role,
-        sub: subExistant,
+        ssoId: ssoIdExistant,
       },
     })
     const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
 
     // WHEN
-    const utilisateurReadModel = await postgreUtilisateurQuery.findBySub(subExistant)
+    const utilisateurReadModel = await postgreUtilisateurQuery.findBySsoId(ssoIdExistant)
 
     // THEN
     expect(utilisateurReadModel).toStrictEqual<UtilisateurReadModel>({
@@ -106,13 +106,13 @@ describe('postgre utilisateur query', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleReadModel,
-      uid: subExistant,
+      uid: ssoIdExistant,
     })
   })
 
-  it('quand je cherche un utilisateur qui n’existe pas par son sub alors je ne le trouve pas', async () => {
+  it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
     // GIVEN
-    const subInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const date = new Date()
     await prisma.utilisateurRecord.create({
       data: {
@@ -122,23 +122,23 @@ describe('postgre utilisateur query', () => {
         nom: 'Tartempion',
         prenom: 'Martin',
         role: 'administrateur_dispositif',
-        sub: '1234567890',
+        ssoId: '1234567890',
       },
     })
     const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
 
     // WHEN
-    const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySub(subInexistant)
+    const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySsoId(ssoIdInexistant)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
   })
 
   it(
-    'quand je cherche un utilisateur qui existe par son sub et dont le compte a été supprimé alors je ne le trouve pas',
+    'quand je cherche un utilisateur qui existe par son ssoId et dont le compte a été supprimé alors je ne le trouve pas',
     async () => {
       // GIVEN
-      const subExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const date = new Date(0)
       await prisma.utilisateurRecord.create({
         data: {
@@ -149,13 +149,13 @@ describe('postgre utilisateur query', () => {
           nom: 'Tartempion',
           prenom: 'Martin',
           role: 'administrateur_dispositif',
-          sub: subExistant,
+          ssoId: ssoIdExistant,
         },
       })
       const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
 
       // WHEN
-      const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySub(subExistant)
+      const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySsoId(ssoIdExistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

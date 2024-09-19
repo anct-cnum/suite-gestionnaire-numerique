@@ -1,7 +1,7 @@
 import { UtilisateurState } from '@/domain/Utilisateur'
 
 export interface UtilisateurQuery {
-  findBySub: (sub: string) => Promise<UtilisateurReadModel>
+  findBySsoId: (ssoId: string) => Promise<UtilisateurReadModel>
 }
 
 export type UtilisateurReadModel = UtilisateurState

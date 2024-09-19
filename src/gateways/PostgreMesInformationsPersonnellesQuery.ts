@@ -11,10 +11,10 @@ export class PostgreMesInformationsPersonnellesQuery implements MesInformationsP
     this.#prisma = prisma
   }
 
-  async findBySub(sub: string): Promise<MesInformationsPersonnellesReadModel> {
+  async findBySsoId(ssoId: string): Promise<MesInformationsPersonnellesReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       where: {
-        sub,
+        ssoId,
       },
     })
 

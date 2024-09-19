@@ -22,7 +22,7 @@ model UtilisateurRecord {
   prenom String
   role Role
   // Identifiant fourni par le SSO
-  sub String @unique @default("")
+  ssoId String @unique @default("")
   telephone String @default("") @db.VarChar(10)
   isSupprime Boolean @default(false)
   isSuperAdmin Boolean @default(false)
