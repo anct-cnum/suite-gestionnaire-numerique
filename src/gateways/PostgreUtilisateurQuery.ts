@@ -10,11 +10,11 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
     this.#prisma = prisma
   }
 
-  async findBySub(sub: string): Promise<UtilisateurReadModel> {
+  async findBySsoId(ssoId: string): Promise<UtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       where: {
         isSupprime: false,
-        sub,
+        ssoId,
       },
     })
 
@@ -74,6 +74,6 @@ function transform(utilisateurRecord: UtilisateurRecord): UtilisateurReadModel {
       nom: mapping[utilisateurRecord.role].nom,
       territoireOuStructure: mapping[utilisateurRecord.role].territoireOuStructure,
     },
-    uid: utilisateurRecord.sub,
+    uid: utilisateurRecord.ssoId,
   }
 }

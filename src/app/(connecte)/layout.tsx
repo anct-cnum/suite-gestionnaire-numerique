@@ -17,7 +17,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   }
 
   const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
-  const utilisateurReadModel = await postgreUtilisateurQuery.findBySub(session.user.sub)
+  const utilisateurReadModel = await postgreUtilisateurQuery.findBySsoId(session.user.sub)
 
   return (
     <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>

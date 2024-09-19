@@ -75,7 +75,7 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
             region: { $ifNull: ['$region', ''] },
             roles: 1,
             // Le sub n'est pas forcément renseigné si l'utilisateur ne s'est jamais connecté ; dans ce cas, on met par
-            // par défaut l'email (champ $name).
+            // défaut l'email (champ $name).
             sub: { $ifNull: ['$sub', '$name'] },
           },
         },
@@ -146,7 +146,7 @@ function transformUtilisateursCoNumToUtilisateurs(
       nom: utilisateurCoNumRecord.nom,
       prenom: utilisateurCoNumRecord.prenom,
       role,
-      sub: utilisateurCoNumRecord.sub,
+      ssoId: utilisateurCoNumRecord.sub,
       // telephone: cette notion n'existe pas
     }
   })
@@ -166,7 +166,7 @@ function transformUtilisateursFNEToUtilisateurs(
       role = 'gestionnaire_departement'
     }
 
-    const sub = utilisateurFNERecord.accounts.length > 0
+    const ssoId = utilisateurFNERecord.accounts.length > 0
       ? decodeJwt(utilisateurFNERecord.accounts[0].id_token).sub
       : ''
 
@@ -180,7 +180,7 @@ function transformUtilisateursFNEToUtilisateurs(
       nom: utilisateurFNERecord.lastName ?? '',
       prenom: utilisateurFNERecord.firstName ?? '',
       role,
-      sub,
+      ssoId,
       // telephone: cette notion n'existe pas
     }
   })
@@ -199,7 +199,7 @@ function ajouterUnUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateIn
     nom: 'Test',
     prenom: 'CompteDe',
     role: 'administrateur_dispositif',
-    sub: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
     telephone: '0102030405',
   }
 }
