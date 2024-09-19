@@ -16,7 +16,7 @@ export default async function MesInformationsPersonnellesController(): Promise<R
 
   const mesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
   // @ts-expect-error
-  const mesInformationsPersonnelles = await mesInformationsPersonnellesQuery.findBySub(session.user.sub)
+  const mesInformationsPersonnelles = await mesInformationsPersonnellesQuery.findBySsoId(session.user.sub)
   const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
 
   return (

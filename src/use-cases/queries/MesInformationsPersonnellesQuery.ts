@@ -1,7 +1,7 @@
 import { TypologieRole } from '@/domain/Role'
 
 export interface MesInformationsPersonnellesQuery {
-  findBySub: (sub: string) => Promise<MesInformationsPersonnellesReadModel>
+  findBySsoId: (ssoId: string) => Promise<MesInformationsPersonnellesReadModel>
 }
 
 export type MesInformationsPersonnellesReadModel = Readonly<{
