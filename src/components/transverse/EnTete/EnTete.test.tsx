@@ -136,12 +136,14 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
           .toHaveBeenCalledWith({
             nouveauRoleState: {
               nom: 'Instructeur',
+              territoireOuStructure: '',
             },
             utilisateurState: {
               ...infosSessionUtilisateurContext.session,
               isSuperAdmin: true,
               role: {
                 nom: infosSessionUtilisateurContext.session.role.nom,
+                territoireOuStructure: 'Mednum',
               },
             },
           })

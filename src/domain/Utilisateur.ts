@@ -1,16 +1,16 @@
-import { Role, type RoleState } from './Role'
+import { Role, TypologieRole, type RoleState } from './Role'
 import { Entity } from './shared/Model'
 import { Result } from '@/util/result'
 
-export class Utilisateur extends Entity<UtilisateurId> {
+export class Utilisateur extends Entity<UtilisateurUid> {
   #role: Role
   readonly #isSuperAdmin: boolean
   readonly #nom: string
   readonly #prenom: string
   readonly #email: string
 
-  constructor(
-    uid: UtilisateurId,
+  private constructor(
+    uid: UtilisateurUid,
     role: Role,
     nom: string,
     prenom: string,
@@ -23,6 +23,19 @@ export class Utilisateur extends Entity<UtilisateurId> {
     this.#prenom = prenom
     this.#email = email
     this.#isSuperAdmin = isSuperAdmin
+  }
+
+  static create(
+    utilisateur: UtilisateurParams
+  ): Utilisateur {
+    return new Utilisateur(
+      utilisateur.uid,
+      new Role(utilisateur.role, utilisateur.organisation),
+      utilisateur.nom,
+      utilisateur.prenom,
+      utilisateur.email,
+      utilisateur.isSuperAdmin
+    )
   }
 
   state(): UtilisateurState {
@@ -45,7 +58,7 @@ export class Utilisateur extends Entity<UtilisateurId> {
   }
 }
 
-type UtilisateurId = string
+type UtilisateurUid = string
 
 export type UtilisateurState = Readonly<{
   uid: string
@@ -54,6 +67,16 @@ export type UtilisateurState = Readonly<{
   nom: string
   prenom: string
   role: RoleState
+}>
+
+type UtilisateurParams = Readonly<{
+  uid: string
+  email: string
+  isSuperAdmin: boolean
+  nom: string
+  prenom: string
+  role: TypologieRole,
+  organisation?: string
 }>
 
 export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'

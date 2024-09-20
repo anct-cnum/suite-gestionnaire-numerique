@@ -1,6 +1,6 @@
 import { ChangerMonRole, UtilisateurRepository } from './ChangerMonRole'
-import { Role, RoleState } from '@/domain/Role'
-import { Utilisateur, UtilisateurState } from '@/domain/Utilisateur'
+import { RoleState } from '@/domain/Role'
+import { UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 
 const nullUtilisateur = {} as Utilisateur
 
@@ -20,14 +20,15 @@ describe('changer mon rôle', () => {
 
   it('ayant le rôle super admin quand un utilisateur change de rôle alors le rôle est modifié', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur(
-      'fooId',
-      new Role('Administrateur dispositif'),
-      'tartempion',
-      'martin',
-      'martin.tartempion@example.net',
-      true
-    )
+    const utilisateur = Utilisateur.create({
+      email: 'martin.tartempion@example.net',
+      isSuperAdmin: true,
+      nom: 'tartempion',
+      organisation: 'Dispositif Lambda',
+      prenom: 'martin',
+      role: 'Administrateur dispositif',
+      uid: 'fooId',
+    })
     const nouveauRoleState: Omit<RoleState, 'categorie'> = {
       groupe: 'admin',
       nom: 'Pilote politique publique',
@@ -51,14 +52,15 @@ describe('changer mon rôle', () => {
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
     // GIVEN
-    const utilisateur = new Utilisateur(
-      'fooId',
-      new Role('Administrateur dispositif'),
-      'tartempion',
-      'martin',
-      'martin.tartempion@example.net',
-      false
-    )
+    const utilisateur = Utilisateur.create({
+      email: 'martin.tartempion@example.net',
+      isSuperAdmin: false,
+      nom: 'tartempion',
+      organisation: 'Dispositif Lambda',
+      prenom: 'martin',
+      role: 'Administrateur dispositif',
+      uid: 'fooId',
+    })
     const nouveauRoleState: Omit<RoleState, 'categorie'> = {
       groupe: 'admin',
       nom: 'Pilote politique publique',

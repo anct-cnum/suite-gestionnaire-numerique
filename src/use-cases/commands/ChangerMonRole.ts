@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from './CommandHandler'
 import { Role, RoleState } from '@/domain/Role'
-import { InvariantUtilisateur, Utilisateur, UtilisateurState } from '@/domain/Utilisateur'
+import { InvariantUtilisateur, UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 
 export class ChangerMonRole implements CommandHandler<Command> {
   readonly #utilisateurRepository: UtilisateurRepository
@@ -13,14 +13,16 @@ export class ChangerMonRole implements CommandHandler<Command> {
     utilisateurState,
     nouveauRoleState,
   }: Command): ResultAsync<InvariantUtilisateur> {
-    const utilisateur = new Utilisateur(
-      utilisateurState.uid,
-      new Role(utilisateurState.role.nom),
-      utilisateurState.nom,
-      utilisateurState.prenom,
-      utilisateurState.email,
-      utilisateurState.isSuperAdmin
-    )
+    const utilisateur = Utilisateur.create({
+      email: utilisateurState.email,
+      isSuperAdmin: utilisateurState.isSuperAdmin,
+      nom: utilisateurState.nom,
+      organisation: utilisateurState.role.territoireOuStructure,
+      prenom: utilisateurState.prenom,
+      role: utilisateurState.role.nom,
+      uid: utilisateurState.uid,
+    })
+
     const nouveauRole = new Role(nouveauRoleState.nom)
     const result = utilisateur.changerRole(nouveauRole)
 
@@ -37,6 +39,6 @@ export interface UtilisateurRepository {
 }
 
 type Command = Readonly<{
-  nouveauRoleState: Omit<RoleState, 'categorie' | 'groupe' | 'territoireOuStructure'>
-  utilisateurState: Omit<UtilisateurState, 'role'> & { role: Omit<RoleState, 'categorie' | 'groupe' | 'territoireOuStructure'> }
+  nouveauRoleState: Omit<RoleState, 'categorie' | 'groupe'>
+  utilisateurState: Omit<UtilisateurState, 'role'> & { role: Omit<RoleState, 'categorie' | 'groupe'> }
 }>

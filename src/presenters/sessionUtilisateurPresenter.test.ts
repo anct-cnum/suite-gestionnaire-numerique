@@ -1,5 +1,5 @@
 import { createSessionUtilisateurPresenter } from './sessionUtilisateurPresenter'
-import { Role } from '@/domain/Role'
+import { TypologieRole } from '@/domain/Role'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 const utilisateur = {
@@ -52,6 +52,15 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       nom: 'Support animation' as const,
       territoireOuStructure: 'Mednum',
     },
+  ])('$nom : $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ nom, expected }) => {
+    expect(
+      createSessionUtilisateurPresenter(
+        makeUtilisateur(nom).state()
+      )
+    ).toStrictEqual(expected)
+  })
+
+  it.each([
     {
       expected: {
         ...utilisateur,
@@ -122,16 +131,21 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
     ({ nom, territoireOuStructure, expected }) => {
       expect(
         createSessionUtilisateurPresenter(
-          new Utilisateur(
-            utilisateur.uid,
-            new Role(nom, territoireOuStructure),
-            utilisateur.nom,
-            utilisateur.prenom,
-            utilisateur.email,
-            false
-          ).state()
+          makeUtilisateur(nom, territoireOuStructure).state()
         )
       ).toStrictEqual(expected)
     }
   )
 })
+
+function makeUtilisateur(role: TypologieRole, territoireOuStructure?: string): Utilisateur {
+  return Utilisateur.create({
+    email: utilisateur.email,
+    isSuperAdmin: false,
+    nom: utilisateur.nom,
+    organisation: territoireOuStructure,
+    prenom: utilisateur.prenom,
+    role,
+    uid: 'fooId',
+  })
+}
