@@ -29,6 +29,7 @@ model UserFNE {
   firstName     String? @map("first_name")
   lastName      String? @map("last_name")
   role          UserRoleFNE @default(User)
+  roleScope     String? @map("role_scope")
 
   @@map("users")
 }

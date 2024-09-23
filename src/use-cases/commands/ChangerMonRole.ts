@@ -15,13 +15,13 @@ export class ChangerMonRole implements CommandHandler<Command> {
   }: Command): ResultAsync<InvariantUtilisateur> {
     const utilisateur = new Utilisateur(
       utilisateurState.uid,
-      new Role(utilisateurState.role.nom, utilisateurState.role.territoireOuStructure),
+      new Role(utilisateurState.role.nom),
       utilisateurState.nom,
       utilisateurState.prenom,
       utilisateurState.email,
       utilisateurState.isSuperAdmin
     )
-    const nouveauRole = new Role(nouveauRoleState.nom, nouveauRoleState.territoireOuStructure)
+    const nouveauRole = new Role(nouveauRoleState.nom)
     const result = utilisateur.changerRole(nouveauRole)
 
     if (result === 'OK') {
@@ -37,6 +37,6 @@ export interface UtilisateurRepository {
 }
 
 type Command = Readonly<{
-  utilisateurState: Omit<UtilisateurState, 'role'> & { role: Omit<RoleState, 'categorie'> }
-  nouveauRoleState: Omit<RoleState, 'categorie'>
+  nouveauRoleState: Omit<RoleState, 'categorie' | 'groupe' | 'territoireOuStructure'>
+  utilisateurState: Omit<UtilisateurState, 'role'> & { role: Omit<RoleState, 'categorie' | 'groupe' | 'territoireOuStructure'> }
 }>

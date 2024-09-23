@@ -29,6 +29,7 @@ describe('changer mon rôle', () => {
       true
     )
     const nouveauRoleState: Omit<RoleState, 'categorie'> = {
+      groupe: 'admin',
       nom: 'Pilote politique publique',
       territoireOuStructure: '',
     }
@@ -59,6 +60,7 @@ describe('changer mon rôle', () => {
       false
     )
     const nouveauRoleState: Omit<RoleState, 'categorie'> = {
+      groupe: 'admin',
       nom: 'Pilote politique publique',
       territoireOuStructure: '',
     }

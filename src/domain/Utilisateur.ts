@@ -15,7 +15,7 @@ export class Utilisateur extends Entity<UtilisateurId> {
     nom: string,
     prenom: string,
     email: string,
-    isSuperAdmin = false
+    isSuperAdmin: boolean
   ) {
     super(uid)
     this.#role = role

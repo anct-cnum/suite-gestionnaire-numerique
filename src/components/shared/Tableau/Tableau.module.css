@@ -1,0 +1,3 @@
+.fr-table__wrapper::after {
+  content: initial !important;
+}
