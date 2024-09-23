@@ -2,14 +2,21 @@
   "checkers": ["typescript"],
   "disableTypeChecks": true,
   "htmlReporter": { "fileName": "reports/mutation/mutation-backend.html" },
-  "ignorePatterns": [".*", "coverage", "public", "reports", "yarn.lock"],
+  "ignorePatterns": [
+    ".*",
+    "coverage",
+    "public",
+    "reports",
+    "src/components",
+    "src/presenters",
+    "yarn.lock"
+  ],
   "ignoreStatic": true,
   "logLevel": "info",
   "mutate": [
     "src/**/*.ts",
     "!src/**/*.test.ts",
     "!src/instrumentation.ts",
-    "!src/testHelper.ts",
     "!src/app/api/sentry/route.ts",
     "!src/gateways/ProConnectAuthentificationGateway.ts"
   ],

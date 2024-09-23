@@ -12,12 +12,13 @@ export const metadata: Metadata = {
 }
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
-  const session = await getSession()
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const session = (await getSession())!
 
   const mesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
-  // @ts-expect-error
-  const mesInformationsPersonnelles = await mesInformationsPersonnellesQuery.findBySsoId(session.user.sub)
-  const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter(mesInformationsPersonnelles)
+  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.findBySsoId(session.user.sub)
+  const mesInformationsPersonnellesViewModel =
+    mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
 
   return (
     <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />

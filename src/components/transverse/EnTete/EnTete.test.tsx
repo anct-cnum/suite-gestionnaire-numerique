@@ -1,10 +1,8 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
-import { ReactElement } from 'react'
 
 import EnTete from './EnTete'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
-import { TypologieRole } from '@/domain/Role'
+import { renderComponent, infosSessionUtilisateurContext } from '@/testHelper'
 import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
@@ -74,7 +72,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(mesParametres).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mes utilisateurs' })
-    expect(mesUtilisateurs).toHaveAttribute('href', '/')
+    expect(mesUtilisateurs).toHaveAttribute('href', '/mes-utilisateurs')
     expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
     const roles = screen.getByRole('combobox', { name: 'Rôle' })
@@ -138,14 +136,12 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
           .toHaveBeenCalledWith({
             nouveauRoleState: {
               nom: 'Instructeur',
-              territoireOuStructure: '',
             },
             utilisateurState: {
-              ...sessionUtilisateurContextProvider.session,
+              ...infosSessionUtilisateurContext.session,
               isSuperAdmin: true,
               role: {
-                nom: sessionUtilisateurContextProvider.session.role.nom,
-                territoireOuStructure: '',
+                nom: infosSessionUtilisateurContext.session.role.nom,
               },
             },
           })
@@ -171,21 +167,6 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   })
 })
 
-const sessionUtilisateurContextProvider = {
-  session: {
-    email: 'martin.tartempion@example.net',
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    role: {
-      libelle: 'Mednum',
-      nom: 'Support animation' as TypologieRole,
-      pictogramme: 'support-animation',
-    },
-    uid: 'fooId',
-  },
-  setSession: vi.fn(),
-}
-
 function monCompte(): HTMLElement {
   renderComponent(<EnTete />)
 
@@ -198,12 +179,4 @@ function ouvrirLeMenuUtilisateur(): HTMLElement {
   fireEvent.click(monCompte())
 
   return screen.getByRole('dialog')
-}
-
-function renderComponent(children: ReactElement) {
-  render(
-    <sessionUtilisateurContext.Provider value={sessionUtilisateurContextProvider}>
-      {children}
-    </sessionUtilisateurContext.Provider>
-  )
 }

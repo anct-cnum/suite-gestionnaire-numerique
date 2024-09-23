@@ -12,66 +12,64 @@ const utilisateur = {
 
 describe(`Affichage des informations de session de l'utilisateur connecté ${utilisateur.prenom}`
   + ` ${utilisateur.nom}, qui a pour rôle`, () => {
-
   it.each([
     {
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'admin',
           libelle: 'Banque des territoires',
           nom: 'Instructeur',
           pictogramme: 'bdt',
         },
       },
       nom: 'Instructeur' as const,
+      territoireOuStructure: 'Banque des territoires',
     },
     {
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'admin',
           libelle: 'France Numérique Ensemble',
           nom: 'Pilote politique publique',
           pictogramme: 'anct',
         },
       },
       nom: 'Pilote politique publique' as const,
+      territoireOuStructure: 'France Numérique Ensemble',
     },
     {
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'admin',
           libelle: 'Mednum',
           nom: 'Support animation',
           pictogramme: 'mednum',
         },
       },
       nom: 'Support animation' as const,
+      territoireOuStructure: 'Mednum',
     },
-  ])('$nom : $expected.role.libelle avec le pictogramme $expected.role.pictogramme', ({ nom, expected }) => {
-    expect(
-      createSessionUtilisateurPresenter(
-        makeUtilisateur(new Role(nom)).state()
-      )
-    ).toStrictEqual(expected)
-  })
-
-  it.each([
     {
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'admin',
           libelle: 'Administrateur Dispositif lambda',
           nom: 'Administrateur dispositif',
           pictogramme: 'anct',
         },
       },
       nom: 'Administrateur dispositif' as const,
-      territoireOuStructure: 'Dispositif lambda',
+      territoireOuStructure: 'Administrateur Dispositif lambda',
     },
     {
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'gestionnaire',
           libelle: 'Rhône',
           nom: 'Gestionnaire département',
           pictogramme: 'maille',
@@ -84,6 +82,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'gestionnaire',
           libelle: 'Hubikoop',
           nom: 'Gestionnaire groupement',
           pictogramme: 'groupement',
@@ -96,6 +95,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'gestionnaire',
           libelle: 'Auvergne-Rhône-Alpes',
           nom: 'Gestionnaire région',
           pictogramme: 'maille',
@@ -108,6 +108,7 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
       expected: {
         ...utilisateur,
         role: {
+          groupe: 'gestionnaire',
           libelle: 'Solidarnum',
           nom: 'Gestionnaire structure',
           pictogramme: 'structure',
@@ -121,13 +122,16 @@ describe(`Affichage des informations de session de l'utilisateur connecté ${uti
     ({ nom, territoireOuStructure, expected }) => {
       expect(
         createSessionUtilisateurPresenter(
-          makeUtilisateur(new Role(nom, territoireOuStructure)).state()
+          new Utilisateur(
+            utilisateur.uid,
+            new Role(nom, territoireOuStructure),
+            utilisateur.nom,
+            utilisateur.prenom,
+            utilisateur.email,
+            false
+          ).state()
         )
       ).toStrictEqual(expected)
     }
   )
 })
-
-function makeUtilisateur(role: Role): Utilisateur {
-  return new Utilisateur(utilisateur.uid, role, utilisateur.nom, utilisateur.prenom, utilisateur.email)
-}

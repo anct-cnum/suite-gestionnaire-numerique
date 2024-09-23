@@ -60,7 +60,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           <Link
             aria-controls={ariaControlsId}
             className="fr-text-md fr-link fr-icon-team-line fr-link--icon-left"
-            href="/"
+            href="/mes-utilisateurs"
           >
             Mes utilisateurs
           </Link>

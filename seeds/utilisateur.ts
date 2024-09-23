@@ -17,7 +17,7 @@ async function migration() {
   console.log(greenColor, `${utilisateursFNERecord.length} utilisateurs FNE sont récupérés`)
 
   const utilisateursRecord = [
-    ...transformUtilisateursCoNumToUtilisateurs(utilisateursCoNumRecord),
+    ...await transformUtilisateursCoNumToUtilisateurs(utilisateursCoNumRecord),
     ...transformUtilisateursFNEToUtilisateurs(utilisateursFNERecord),
     ajouterUnUtilisateurDeTest(),
   ]
@@ -57,22 +57,32 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
           },
         },
         {
+          $addFields: {
+            entity: {
+              $arrayElemAt: [{ $objectToArray: '$entity' }, 1],
+            },
+          },
+        },
+        {
           $project: {
             _id: 0,
             createdAt: 1,
             // Le département n'est pas forcément renseigné
             departement: { $ifNull: ['$departement', ''] },
+            entityId: { $toString: '$entity.v' },
+            hub: { $ifNull: ['$hub', ''] },
             // L'utilisateur ne s'est pas forcément connecté
             lastLogin: { $ifNull: ['$lastLogin', null] },
             mailSentDate: 1,
             // = e-mail
             name: 1,
             // Le nom n'est pas forcément renseigné
-            nom: { $ifNull: ['$nom', '-'] },
+            nom: { $ifNull: ['$nom', '~'] },
             // Le prénom n'est pas forcément renseigné
-            prenom: { $ifNull: ['$prenom', '-'] },
+            prenom: { $ifNull: ['$prenom', '~'] },
             // La région n'est pas forcément renseignée
             region: { $ifNull: ['$region', ''] },
+            reseau: { $ifNull: ['$reseau', ''] },
             roles: 1,
             // Le sub n'est pas forcément renseigné si l'utilisateur ne s'est jamais connecté ; dans ce cas, on met par
             // défaut l'email (champ $name).
@@ -109,6 +119,7 @@ async function retrieveUtilisateursFNE(): Promise<Array<UtilisateurFNERecord>> {
       firstName: true,
       lastName: true,
       role: true,
+      roleScope: true,
     },
     where: {
       OR: [{ role: 'PrefectureDepartement' }, { role: 'PrefectureRegion' }],
@@ -116,37 +127,67 @@ async function retrieveUtilisateursFNE(): Promise<Array<UtilisateurFNERecord>> {
   })
 }
 
-function transformUtilisateursCoNumToUtilisateurs(
+async function transformUtilisateursCoNumToUtilisateurs(
   utilisateursCoNumRecord: Array<UtilisateurCoNumRecord>
-): Array<Prisma.UtilisateurRecordUncheckedCreateInput> {
+): Promise<Array<Prisma.UtilisateurRecordUncheckedCreateInput>> {
+  const structures = await retrieveStructures()
+  const groupements = await retrieveGroupements()
+
   return utilisateursCoNumRecord.map((utilisateurCoNumRecord): Prisma.UtilisateurRecordUncheckedCreateInput => {
-    const isGestionnaireGroupement = utilisateurCoNumRecord.roles.includes('grandReseau') || utilisateurCoNumRecord.roles.includes('hub')
+    const isGestionnaireGroupementReseau = utilisateurCoNumRecord.roles.includes('grandReseau')
+    const isGestionnaireGroupementHub = utilisateurCoNumRecord.roles.includes('hub')
     const isGestionnaireStructure = utilisateurCoNumRecord.roles.includes('structure')
     const isGestionnaireRegion = utilisateurCoNumRecord.roles.includes('prefet') && utilisateurCoNumRecord.region !== ''
     const isGestionnaireDepartement = utilisateurCoNumRecord.roles.includes('prefet') && utilisateurCoNumRecord.departement !== ''
     let role: Role = 'gestionnaire_structure'
+    let structureId = null
+    let groupementId = null
+    let departementCode = null
+    let regionCode = null
 
-    if (isGestionnaireGroupement) {
+    if (isGestionnaireGroupementReseau) {
       role = 'gestionnaire_groupement'
+
+      const groupement = groupements.find((groupement) => groupement.nom === utilisateurCoNumRecord.reseau)
+      // @ts-expect-error
+      groupementId = groupement.id
+    } else if (isGestionnaireGroupementHub) {
+      role = 'gestionnaire_groupement'
+
+      const groupement = groupements.find((groupement) => groupement.nom === utilisateurCoNumRecord.hub)
+      // @ts-expect-error
+      groupementId = groupement.id
     } else if (isGestionnaireStructure) {
       role = 'gestionnaire_structure'
+
+      const structure = structures.find((structureId) => structureId.idMongo === utilisateurCoNumRecord.entityId)
+      // @ts-expect-error
+      structureId = structure.id
     } else if (isGestionnaireRegion) {
       role = 'gestionnaire_region'
+
+      regionCode = utilisateurCoNumRecord.region
     } else if (isGestionnaireDepartement) {
       role = 'gestionnaire_departement'
+
+      departementCode = utilisateurCoNumRecord.departement
     }
 
     return {
       dateDeCreation: utilisateurCoNumRecord.createdAt,
+      departementCode,
       derniereConnexion: utilisateurCoNumRecord.lastLogin,
       email: utilisateurCoNumRecord.name,
+      groupementId,
       inviteLe: utilisateurCoNumRecord.mailSentDate,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
       nom: utilisateurCoNumRecord.nom,
       prenom: utilisateurCoNumRecord.prenom,
+      regionCode,
       role,
       ssoId: utilisateurCoNumRecord.sub,
+      structureId,
       // telephone: cette notion n'existe pas
     }
   })
@@ -159,11 +200,17 @@ function transformUtilisateursFNEToUtilisateurs(
     const isGestionnaireRegion = utilisateurFNERecord.role === 'PrefectureRegion'
     const isGestionnaireDepartement = utilisateurFNERecord.role === 'PrefectureDepartement'
     let role: Role = 'gestionnaire_region'
+    let departementCode = null
+    let regionCode = null
 
     if (isGestionnaireRegion) {
       role = 'gestionnaire_region'
+
+      regionCode = utilisateurFNERecord.roleScope
     } else if (isGestionnaireDepartement) {
       role = 'gestionnaire_departement'
+
+      departementCode = utilisateurFNERecord.roleScope
     }
 
     const ssoId = utilisateurFNERecord.accounts.length > 0
@@ -173,14 +220,18 @@ function transformUtilisateursFNEToUtilisateurs(
     return {
       dateDeCreation: utilisateurFNERecord.created,
       // derniereConnexion: cette notion n'existe pas
+      departementCode,
       email: utilisateurFNERecord.email,
+      groupementId: null,
       inviteLe: utilisateurFNERecord.created,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
-      nom: utilisateurFNERecord.lastName ?? '',
-      prenom: utilisateurFNERecord.firstName ?? '',
+      nom: utilisateurFNERecord.lastName ?? '~',
+      prenom: utilisateurFNERecord.firstName ?? '~',
+      regionCode,
       role,
       ssoId,
+      structureId: null,
       // telephone: cette notion n'existe pas
     }
   })
@@ -191,26 +242,28 @@ function ajouterUnUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateIn
 
   return {
     dateDeCreation: date,
+    departementCode: '11',
     derniereConnexion: date,
     email: 'compte.de.test@example.com',
+    groupementId: 18,
     inviteLe: date,
     isSuperAdmin: true,
-    // isSupprime: false --> inutile, par défaut à false
+    isSupprime: false,
     nom: 'Test',
     prenom: 'CompteDe',
+    regionCode: '52',
     role: 'administrateur_dispositif',
     ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    structureId: 292,
     telephone: '0102030405',
   }
 }
 
 async function migrateUtilisateurs(utilisateursRecord: Array<Prisma.UtilisateurRecordUncheckedCreateInput>) {
-  await prisma.$transaction(async (prisma) => {
-    await prisma.utilisateurRecord.createMany({
-      data: utilisateursRecord,
-      // Il peut y avoir des e-mails en commun
-      skipDuplicates: true,
-    })
+  await prisma.utilisateurRecord.createMany({
+    data: utilisateursRecord,
+    // Il peut y avoir des e-mails en commun entre CoNum et FNE
+    skipDuplicates: true,
   })
 }
 
@@ -218,9 +271,30 @@ function decodeJwt(token: string): Token {
   return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Token
 }
 
+async function retrieveStructures(): Promise<Array<Prisma.StructureRecordUncheckedCreateInput>> {
+  return prisma.structureRecord.findMany({
+    select: {
+      id: true,
+      idMongo: true,
+      nom: true,
+    },
+  })
+}
+
+async function retrieveGroupements(): Promise<Array<Prisma.GroupementRecordUncheckedCreateInput>> {
+  return prisma.groupementRecord.findMany({
+    select: {
+      id: true,
+      nom: true,
+    },
+  })
+}
+
 type UtilisateurCoNumRecord = Readonly<{
   createdAt: Date
   departement: string
+  entityId: string
+  hub: string
   lastLogin: Date
   name: string
   mailSentDate: Date
@@ -228,6 +302,7 @@ type UtilisateurCoNumRecord = Readonly<{
   prenom: string
   region: string
   roles: Array<string>
+  reseau: string
   sub: string
 }>
 
@@ -240,6 +315,7 @@ type UtilisateurFNERecord = Readonly<{
   firstName: string | null
   lastName: string | null
   role: string
+  roleScope: string | null
 }>
 
 type Token = Readonly<{
