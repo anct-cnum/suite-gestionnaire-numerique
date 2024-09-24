@@ -120,7 +120,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
 
     setEtatBoutonSuppression({ enAttente: true, texte: 'Suppression en cours' })
 
-    await supprimerMonCompteAction(email)
+    await supprimerMonCompteAction()
       .then(async () => signOut({ callbackUrl: '/connexion' }))
   }
 
