@@ -3,6 +3,7 @@ import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import { TypologieRole } from '@/domain/Role'
+import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { matchWithoutMarkup } from '@/testHelper'
 import { SupprimerMonCompte } from '@/use-cases/commands/SupprimerMonCompte'
@@ -293,6 +294,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           )
           fireEvent.click(supprimerMonCompteButton())
           fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
+          // @ts-expect-error
+          vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub: 'fooId' } })
           vi.spyOn(SupprimerMonCompte.prototype, 'execute').mockResolvedValueOnce('OK')
           vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
 
@@ -304,7 +307,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
           expect(boutonConfirmationDesactive).toBeDisabled()
           await waitFor(() => {
             expect(SupprimerMonCompte.prototype.execute)
-              .toHaveBeenCalledWith('julien.deschamps@example.com')
+              .toHaveBeenCalledWith('fooId')
           })
           expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
         }
