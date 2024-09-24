@@ -1,10 +1,10 @@
 import { PrismaClient, UtilisateurRecord } from '@prisma/client'
 
 import { toTypologieRole } from './roleMapper'
-import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesQuery } from '@/use-cases/queries/MesInformationsPersonnellesQuery'
-import { UtilisateurNonTrouveError } from '@/use-cases/queries/UtilisateurQuery'
+import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
+import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
-export class PostgreMesInformationsPersonnellesQuery implements MesInformationsPersonnellesQuery {
+export class PostgreMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
   readonly #prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {

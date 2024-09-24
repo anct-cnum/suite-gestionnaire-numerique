@@ -3,9 +3,10 @@ import { ReactElement } from 'react'
 
 import prisma from '../../../../prisma/prismaClient'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
-import { PostgreUtilisateurQuery } from '@/gateways/PostgreUtilisateurQuery'
+import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export const metadata: Metadata = {
   title: 'Mes utilisateurs',
@@ -16,9 +17,10 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const session = (await getSession())!
   const pageCourante = Number(searchParams.page ?? 0)
 
-  const utilisateurQuery = new PostgreUtilisateurQuery(prisma)
+  const utilisateurLoader = new PostgreUtilisateurLoader(prisma)
+  const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
-    await utilisateurQuery.findMesUtilisateursEtLeTotal(session.user.sub, pageCourante)
+    await rechercherMesUtilisateurs.get({ pageCourante, ssoId: session.user.sub, utilisateursParPage: 10 })
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
     session.user.sub,

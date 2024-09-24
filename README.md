@@ -171,7 +171,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
  ┃  ┃  ┣ 📂 shared                -> Les composants partagés par toute l'application (LienExterne...)
  ┃  ┃  ┗ 📂 transverse            -> Les composants transverses à toute l'application (EnTete, PiedDePage...)
  ┃  ┣ 📂 domain                   -> Les objets métier
- ┃  ┣ 📂 gateways                 -> Les repositories, queries et gateways
+ ┃  ┣ 📂 gateways                 -> Les repositories, loaders et gateways
  ┃  ┣ 📂 presenters               -> Les presenters
  ┃  ┗ 📂 use-cases                -> Les use cases, queries et commands
  ┣ 📜 .editorconfig               -> Configuration de règles de formattage de base
@@ -216,7 +216,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 ### Gateway
 
 - Définition : manipulation de données
-  - Query : lecture de données qui retourne un `Record` et qui le transforme en `ReadModel` (ex : `InMemoryMesInformationsPersonnellesQuery`)
+  - Loader : lecture de données qui retourne un `Record` et qui le transforme en `ReadModel` (ex : `InMemoryMesInformationsPersonnellesLoader`)
   - Repository : écriture de données qui ne retourne rien
   - Gateway : lecture et écriture de données qui retourne autre chose que du métier (`DTO`) (ex : `ProConnectAuthentificationGateway`)
 - Convention : PascalCase (classe), avec comme préfixe son implémentation et comme suffixe son type de gateway
@@ -232,7 +232,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 
 - Définition :
   - use case : à définir
-  - interface : interface que doit implémenter une gateway (ex : `UtilisateurQuery`)
+  - interface : interface que doit implémenter une gateway (ex : `UnUtilisateurLoader`)
   - read model : read model (type) que doit utiliser une gateway (ex : `UtilisateurReadModel`)
   - erreur : PascalCase (classe), erreur métier (ex : `UtilisateurNonTrouveError`)
 - Convention : PascalCase (classe)

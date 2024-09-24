@@ -1,11 +1,11 @@
 import { Role } from '@prisma/client'
 
-import { PostgreMesInformationsPersonnellesQuery } from './PostgreMesInformationsPersonnellesQuery'
+import { PostgreMesInformationsPersonnellesLoader } from './PostgreMesInformationsPersonnellesLoader'
 import prisma from '../../prisma/prismaClient'
 import { TypologieRole } from '@/domain/Role'
-import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/MesInformationsPersonnellesQuery'
+import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
-describe('postgre mes informations personnelles query', () => {
+describe('postgre mes informations personnelles', () => {
   beforeEach(async () => {
     await prisma.$queryRaw`START TRANSACTION`
   })
@@ -64,11 +64,11 @@ describe('postgre mes informations personnelles query', () => {
           telephone: '0102030405',
         },
       })
-      const postgreMesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
+      const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
 
       // WHEN
       const mesInformationsPersonnellesReadModel =
-        await postgreMesInformationsPersonnellesQuery.findBySsoId(ssoIdExistant)
+        await postgreMesInformationsPersonnellesGateway.findBySsoId(ssoIdExistant)
 
       // THEN
       expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -104,10 +104,10 @@ describe('postgre mes informations personnelles query', () => {
         telephone: '0102030405',
       },
     })
-    const postgreMesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesQuery(prisma)
+    const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
-    const utilisateurReadModel = async () => postgreMesInformationsPersonnellesQuery.findBySsoId(ssoIdInexistant)
+    const utilisateurReadModel = async () => postgreMesInformationsPersonnellesGateway.findBySsoId(ssoIdInexistant)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

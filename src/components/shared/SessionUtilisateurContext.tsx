@@ -3,7 +3,7 @@
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
-import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/RechercherUnUtilisateur'
 
 export default function SessionUtilisateurContext(
   { children, utilisateurReadModel }: SessionUtilisateurContextProps
@@ -30,5 +30,5 @@ type InfosSessionUtilisateurContext = Readonly<{
 }>
 
 type SessionUtilisateurContextProps = PropsWithChildren<Readonly<{
-  utilisateurReadModel: UtilisateurReadModel
+  utilisateurReadModel: UnUtilisateurReadModel
 }>>

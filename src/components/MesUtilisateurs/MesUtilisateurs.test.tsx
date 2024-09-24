@@ -4,7 +4,7 @@ import MesUtilisateurs from './MesUtilisateurs'
 import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { renderComponent, infosSessionUtilisateurContext } from '@/testHelper'
-import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('mes utilisateurs', () => {
   const pageCourante = 0
@@ -215,7 +215,7 @@ function getByTable() {
   return { columnsHead, rowsBody }
 }
 
-const mesUtilisateursReadModel: ReadonlyArray<UtilisateurReadModel> = [
+const mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel> = [
   {
     departementCode: null,
     derniereConnexion: new Date('2024-03-05'),
