@@ -1,17 +1,5 @@
 import { SuppressionUtilisateurGateway, SupprimerMonCompte } from './SupprimerMonCompte'
 
-const gatewayCompteExistant: SuppressionUtilisateurGateway = {
-  async delete(): Promise<boolean> {
-    return Promise.resolve(true)
-  },
-}
-
-const gatewayCompteInexistant: SuppressionUtilisateurGateway = {
-  async delete(): Promise<boolean> {
-    return Promise.resolve(false)
-  },
-}
-
 describe('supprimer mon compte utilisateur', () => {
   it.each([
     {
@@ -35,3 +23,15 @@ describe('supprimer mon compte utilisateur', () => {
     expect(result).toBe(expected)
   })
 })
+
+const gatewayCompteExistant: SuppressionUtilisateurGateway = {
+  async delete(): Promise<boolean> {
+    return Promise.resolve(true)
+  },
+}
+
+const gatewayCompteInexistant: SuppressionUtilisateurGateway = {
+  async delete(): Promise<boolean> {
+    return Promise.resolve(false)
+  },
+}

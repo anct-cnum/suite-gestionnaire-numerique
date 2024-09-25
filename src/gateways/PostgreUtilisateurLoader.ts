@@ -1,9 +1,10 @@
 import { $Enums, DepartementRecord, GroupementRecord, PrismaClient, RegionRecord, StructureRecord, UtilisateurRecord } from '@prisma/client'
 
 import { categorieByType, Groupe, TypologieRole } from '@/domain/Role'
-import { UtilisateurNonTrouveError, UtilisateurQuery, UtilisateurReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { MesUtilisateursLoader, MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import { UnUtilisateurReadModel, UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 
-export class PostgreUtilisateurQuery implements UtilisateurQuery {
+export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
   readonly #prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {
@@ -11,11 +12,10 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
   }
 
   async findMesUtilisateursEtLeTotal(
-    ssoId: string,
-    pageCourante = 0,
-    utilisateursParPage = 10
+    utilisateur: UnUtilisateurReadModel,
+    pageCourante: number,
+    utilisateursParPage: number
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
-    const utilisateur = await this.findBySsoId(ssoId)
     let where: Record<string, string | boolean | number | null> = {}
 
     if (utilisateur.role.nom === 'Gestionnaire structure') {
@@ -59,7 +59,7 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
     }
   }
 
-  async findBySsoId(ssoId: string): Promise<UtilisateurReadModel> {
+  async findBySsoId(ssoId: string): Promise<UnUtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       include: {
         relationDepartements: true,
@@ -81,7 +81,7 @@ export class PostgreUtilisateurQuery implements UtilisateurQuery {
   }
 }
 
-function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UtilisateurReadModel {
+function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesUtilisateursReadModel {
   type Mapping = Readonly<Record<$Enums.Role, { nom: TypologieRole, groupe: Groupe, territoireOuStructure: string }>>
 
   const mapping: Mapping = {

@@ -1,6 +1,6 @@
 import { TypologieRole } from '@/domain/Role'
 
-export interface MesInformationsPersonnellesQuery {
+export interface MesInformationsPersonnellesLoader {
   findBySsoId: (ssoId: string) => Promise<MesInformationsPersonnellesReadModel>
 }
 

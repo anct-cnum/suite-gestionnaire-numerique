@@ -1,4 +1,4 @@
-import { CommandHandler, ResultAsync } from './CommandHandler'
+import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { Role, RoleState } from '@/domain/Role'
 import { InvariantUtilisateur, UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 

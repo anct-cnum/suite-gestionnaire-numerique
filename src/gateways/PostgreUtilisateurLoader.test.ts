@@ -1,9 +1,9 @@
 import { Prisma, Role } from '@prisma/client'
 
-import { PostgreUtilisateurQuery } from './PostgreUtilisateurQuery'
+import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
 import prisma from '../../prisma/prismaClient'
 import { Categorie, Groupe, TypologieRole } from '@/domain/Role'
-import { UtilisateurReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('postgre utilisateur query', () => {
   beforeEach(async () => {
@@ -159,13 +159,13 @@ describe('postgre utilisateur query', () => {
           structureId,
         }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = await postgreUtilisateurQuery.findBySsoId(ssoIdExistant)
+      const utilisateurReadModel = await postgreUtilisateurLoader.findBySsoId(ssoIdExistant)
 
       // THEN
-      expect(utilisateurReadModel).toStrictEqual<UtilisateurReadModel>({
+      expect(utilisateurReadModel).toStrictEqual<MesUtilisateursReadModel>({
         departementCode,
         derniereConnexion: new Date(0),
         email: 'martin.tartempion@example.net',
@@ -197,10 +197,10 @@ describe('postgre utilisateur query', () => {
           ssoId: '1234567890',
         },
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySsoId(ssoIdInexistant)
+      const utilisateurReadModel = async () => postgreUtilisateurLoader.findBySsoId(ssoIdInexistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
@@ -212,10 +212,10 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdExistant }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = async () => postgreUtilisateurQuery.findBySsoId(ssoIdExistant)
+      const utilisateurReadModel = async () => postgreUtilisateurLoader.findBySsoId(ssoIdExistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
@@ -227,17 +227,20 @@ describe('postgre utilisateur query', () => {
       // GIVEN
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const date = new Date(0)
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'dupont', role: 'gestionnaire_departement', ssoId: '123456' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -293,6 +296,16 @@ describe('postgre utilisateur query', () => {
       const regionCode = '84'
       const departementCode = '69'
       const date = new Date(0)
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        departementCode,
+        role: {
+          categorie: 'maille',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire département',
+          territoireOuStructure: 'Rhône',
+        },
+        uid: ssoId,
+      })
       await prisma.regionRecord.create({
         data: {
           code: regionCode,
@@ -315,11 +328,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -374,6 +387,16 @@ describe('postgre utilisateur query', () => {
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const regionCode = '84'
       const date = new Date(0)
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        regionCode,
+        role: {
+          categorie: 'maille',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire région',
+          territoireOuStructure: 'Auvergne-Rhône-Alpes',
+        },
+        uid: ssoId,
+      })
       await prisma.regionRecord.create({
         data: {
           code: regionCode,
@@ -389,11 +412,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -448,6 +471,16 @@ describe('postgre utilisateur query', () => {
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const groupementId = 10
       const date = new Date(0)
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        groupementId,
+        role: {
+          categorie: 'groupement',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire groupement',
+          territoireOuStructure: 'Hubikoop',
+        },
+        uid: ssoId,
+      })
       await prisma.groupementRecord.create({
         data: {
           id: groupementId,
@@ -463,11 +496,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -522,6 +555,16 @@ describe('postgre utilisateur query', () => {
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const structureId = 1
       const date = new Date(0)
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        role: {
+          categorie: 'structure',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire structure',
+          territoireOuStructure: 'Solidarnum',
+        },
+        structureId,
+        uid: ssoId,
+      })
       await prisma.structureRecord.create({
         data: {
           id: structureId,
@@ -538,11 +581,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -595,19 +638,26 @@ describe('postgre utilisateur query', () => {
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
       // GIVEN
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ email: 'martin.tartempion@example.net', nom: 'Tartempion', ssoId }),
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
       })
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ email: 'fabrice.dupont@example.net', nom: 'Dupont', ssoId: '123456' }),
+        data: utilisateurRecordFactory({ nom: 'Tartempion', ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'Dupont', ssoId: '123456' }),
       })
       const pageCourante = 1
       const utilisateursParPage = 1
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel =
-          await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId, pageCourante, utilisateursParPage)
+          await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+            utilisateurAuthentifie,
+            pageCourante,
+            utilisateursParPage
+          )
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -641,16 +691,23 @@ describe('postgre utilisateur query', () => {
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
       // GIVEN
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: false, ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: true, ssoId: '123456' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        0,
+        10
+      )
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -684,16 +741,23 @@ describe('postgre utilisateur query', () => {
     it('quand je cherche mes utilisateurs alors je trouve ceux inactifs', async () => {
       // GIVEN
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: new Date('2024-01-01'), ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: null, ssoId: '123456' }),
       })
-      const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurQuery.findMesUtilisateursEtLeTotal(ssoId)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        0,
+        10
+      )
 
       // THEN
       expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(new Date(0))
@@ -723,6 +787,34 @@ function utilisateurRecordFactory(
     ssoId: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
     structureId: null,
     telephone: '0102030405',
+    ...override,
+  }
+}
+
+function utilisateurReadModelFactory(
+  override: Partial<MesUtilisateursReadModel>
+): MesUtilisateursReadModel {
+  const date = new Date(0)
+
+  return {
+    departementCode: null,
+    derniereConnexion: date,
+    email: 'martin.tartempion@example.net',
+    groupementId: null,
+    inviteLe: date,
+    isActive: true,
+    isSuperAdmin: false,
+    nom: 'Tartempion',
+    prenom: 'Martin',
+    regionCode: null,
+    role: {
+      categorie: 'anct',
+      groupe: 'admin',
+      nom: 'Administrateur dispositif',
+      territoireOuStructure: '',
+    },
+    structureId: null,
+    uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
     ...override,
   }
 }
