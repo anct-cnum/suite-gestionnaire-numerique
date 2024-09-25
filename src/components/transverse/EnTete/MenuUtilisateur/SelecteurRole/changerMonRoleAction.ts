@@ -5,8 +5,8 @@ import { TypologieRole } from '@/domain/Role'
 import { InvariantUtilisateur } from '@/domain/Utilisateur'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
+import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
-import { ResultAsync } from '@/use-cases/commands/CommandHandler'
 
 export async function changerMonRoleAction(
   sessionUtilisateurViewModel: SessionUtilisateurViewModel,

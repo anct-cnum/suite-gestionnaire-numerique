@@ -1,4 +1,4 @@
-import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/MesInformationsPersonnellesQuery'
+import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export function mesInformationsPersonnellesPresenter(
   mesInformationsPersonnellesReadModel: MesInformationsPersonnellesReadModel

@@ -6,7 +6,7 @@ import SessionUtilisateurContext from '@/components/shared/SessionUtilisateurCon
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
-import { PostgreUtilisateurQuery } from '@/gateways/PostgreUtilisateurQuery'
+import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 
 export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
@@ -16,8 +16,8 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     redirect('/connexion')
   }
 
-  const postgreUtilisateurQuery = new PostgreUtilisateurQuery(prisma)
-  const utilisateurReadModel = await postgreUtilisateurQuery.findBySsoId(session.user.sub)
+  const postgreUtilisateurPostgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+  const utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
 
   return (
     <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>

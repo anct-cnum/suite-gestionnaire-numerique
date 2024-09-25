@@ -1,8 +1,8 @@
 import { Categorie, TypologieRole } from '@/domain/Role'
-import { UtilisateurReadModel } from '@/use-cases/queries/UtilisateurQuery'
+import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export function mesUtilisateursPresenter(
-  mesUtilisateursReadModel: ReadonlyArray<UtilisateurReadModel>,
+  mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel>,
   uid: string,
   pageCourante: number,
   totalUtilisateur: number
@@ -29,7 +29,7 @@ export function mesUtilisateursPresenter(
   }
 }
 
-function buildDate(utilisateurReadModel: UtilisateurReadModel): string {
+function buildDate(utilisateurReadModel: MesUtilisateursReadModel): string {
   if (utilisateurReadModel.isActive) {
     return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
   }

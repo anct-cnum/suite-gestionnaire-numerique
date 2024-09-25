@@ -2,17 +2,6 @@ import { ChangerMonRole, UtilisateurRepository } from './ChangerMonRole'
 import { RoleState } from '@/domain/Role'
 import { UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 
-const nullUtilisateur = {} as Utilisateur
-
-let spiedUtilisateur: Utilisateur = nullUtilisateur
-
-const utilisateurRepository: UtilisateurRepository = {
-  async update(utilisateur: Utilisateur): Promise<void> {
-    spiedUtilisateur = utilisateur
-    return Promise.resolve()
-  },
-}
-
 describe('changer mon rôle', () => {
   afterEach(() => {
     spiedUtilisateur = nullUtilisateur
@@ -79,3 +68,14 @@ describe('changer mon rôle', () => {
     expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
   })
 })
+
+const nullUtilisateur = {} as Utilisateur
+
+let spiedUtilisateur: Utilisateur = nullUtilisateur
+
+const utilisateurRepository: UtilisateurRepository = {
+  async update(utilisateur: Utilisateur): Promise<void> {
+    spiedUtilisateur = utilisateur
+    return Promise.resolve()
+  },
+}

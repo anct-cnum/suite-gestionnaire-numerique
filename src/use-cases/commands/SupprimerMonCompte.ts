@@ -1,4 +1,4 @@
-import { CommandHandler, ResultAsync } from './CommandHandler'
+import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class SupprimerMonCompte implements CommandHandler<UtilisateurUid, ErreurSuppressionCompte> {
   readonly #suppressionUtilisateurGateway: SuppressionUtilisateurGateway
@@ -15,7 +15,7 @@ export class SupprimerMonCompte implements CommandHandler<UtilisateurUid, Erreur
 }
 
 export interface SuppressionUtilisateurGateway {
-  delete: (email: string) => Promise<boolean>
+  delete: (uid: UtilisateurUid) => Promise<boolean>
 }
 
 export type UtilisateurUid = string
