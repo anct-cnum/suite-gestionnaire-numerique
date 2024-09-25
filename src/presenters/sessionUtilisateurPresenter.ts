@@ -8,7 +8,7 @@ export function createSessionUtilisateurPresenter(
     ...utilisateurReadModel,
     role: {
       groupe: utilisateurReadModel.role.groupe,
-      libelle: utilisateurReadModel.role.territoireOuStructure,
+      libelle: libelleByRole[utilisateurReadModel.role.nom] ?? utilisateurReadModel.role.territoireOuStructure,
       nom: utilisateurReadModel.role.nom,
       pictogramme: utilisateurReadModel.role.categorie,
     },
@@ -27,3 +27,9 @@ export type SessionUtilisateurViewModel = Readonly<{
   }>
   uid: string
 }>
+
+const libelleByRole: Readonly<Partial<Record<TypologieRole, string>>> = {
+  Instructeur: 'Banque des territoires',
+  'Pilote politique publique': 'France Numérique Ensemble',
+  'Support animation': 'Mednum',
+}
