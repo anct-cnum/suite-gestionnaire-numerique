@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client'
 
 import { PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
 import prisma from '../../prisma/prismaClient'
-import { Role } from '@/domain/Role'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 const emailUtilisateur = 'martin.tartempion@example.net'
@@ -23,14 +22,14 @@ describe('utilisateur repository', () => {
 
       // WHEN
       await new PostgreUtilisateurRepository(prisma).update(
-        new Utilisateur(
-          uidUtilisateur,
-          new Role('Instructeur'),
-          'tartempion',
-          'martin',
-          emailUtilisateur,
-          true
-        )
+        Utilisateur.create({
+          email: emailUtilisateur,
+          isSuperAdmin: true,
+          nom: 'tartempion',
+          prenom: 'martin',
+          role: 'Instructeur',
+          uid: uidUtilisateur,
+        })
       )
 
       // THEN
@@ -53,7 +52,7 @@ function utilisateurRecordFactory(): Prisma.UtilisateurRecordCreateInput {
     nom: 'Tartempion',
     prenom: 'Martin',
     role: 'gestionnaire_region',
-    ssoId: uidUtilisateur,
+    ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
     telephone: '0102030405',
   }
 }
