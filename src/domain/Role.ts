@@ -1,6 +1,5 @@
-import assert from 'node:assert/strict'
-
 import { Model } from './shared/Model'
+import { assertTrue } from '@/util/assertion'
 
 export class Role implements Model {
   readonly #nom: TypologieRole
@@ -13,10 +12,10 @@ export class Role implements Model {
       case 'Gestionnaire groupement':
       case 'Gestionnaire région':
       case 'Gestionnaire structure':
-        assert(territoireOuStructure !== '', invariantByType[nom])
+        assertTrue(territoireOuStructure !== '', invariantByType[nom])
         break
       default:
-        assert(territoireOuStructure === '', invariantByType[nom])
+        assertTrue(territoireOuStructure === '', invariantByType[nom])
     }
     this.#nom = nom
     this.#territoireOuStructure = territoireOuStructure
