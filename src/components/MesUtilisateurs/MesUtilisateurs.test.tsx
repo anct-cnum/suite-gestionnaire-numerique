@@ -1,6 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import MesUtilisateurs from './MesUtilisateurs'
+import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { renderComponent, infosSessionUtilisateurContext } from '@/testHelper'
@@ -54,12 +55,23 @@ describe('mes utilisateurs', () => {
     {
       role: 'Support animation' as TypologieRole,
     },
-  ])('faisant parti du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
+  ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+      ...infosSessionUtilisateurContext,
+      session: {
+        ...infosSessionUtilisateurContext.session,
+        role: {
+          groupe: 'admin',
+          libelle: '',
+          nom: role,
+          pictogramme: '',
+        },
+      },
+    })
 
     // THEN
     const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
@@ -87,7 +99,7 @@ describe('mes utilisateurs', () => {
     {
       role: 'Gestionnaire groupement' as TypologieRole,
     },
-  ])('faisant parti du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', ({ role }) => {
+  ])('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', ({ role }) => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
@@ -186,6 +198,81 @@ describe('mes utilisateurs', () => {
     const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
     expect(supprimer).toHaveAttribute('type', 'button')
     expect(supprimer).toBeEnabled()
+  })
+
+  describe('quand j’escompte supprimer un utilisateur', () => {
+    it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const { rowsBody } = getByTable()
+      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
+      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
+
+      // WHEN
+      fireEvent.click(supprimer)
+
+      // THEN
+      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
+      expect(supprimerUnUtilisateurModal).toBeVisible()
+
+      const titre = within(supprimerUnUtilisateurModal)
+        .getByRole('heading', { level: 1, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      expect(titre).toBeInTheDocument()
+
+      const fermer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Fermer' })
+      expect(fermer).toHaveAttribute('type', 'button')
+      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
+
+      const annuler = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Annuler' })
+      expect(annuler).toHaveAttribute('type', 'button')
+      expect(annuler).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
+
+      const confirmer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Confirmer' })
+      expect(confirmer).toHaveAttribute('type', 'button')
+    })
+
+    it('je me ravise : je ferme la modale', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const { rowsBody } = getByTable()
+      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
+      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
+      fireEvent.click(supprimer)
+      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
+      const fermer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Fermer' })
+
+      // WHEN
+      fireEvent.click(fermer)
+
+      // THEN
+      expect(supprimerUnUtilisateurModal).not.toBeVisible()
+    })
+
+    it('je confirme la suppression', async () => {
+
+      // GIVEN
+      vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const { rowsBody } = getByTable()
+      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
+      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
+      fireEvent.click(supprimer)
+      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
+      const confirmer = await within(supprimerUnUtilisateurModal).findByRole('button', { name: 'Confirmer' })
+
+      // WHEN
+      fireEvent.click(confirmer)
+
+      // THEN
+      const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
+      expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
+      expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith('123456')
+      expect(window.location.reload).toHaveBeenCalledOnce()
+    })
   })
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {

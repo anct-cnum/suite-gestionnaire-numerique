@@ -24,6 +24,7 @@ export function mesUtilisateursPresenter(
         role: monUtilisateur.role.nom,
         statut,
         structure: monUtilisateur.role.territoireOuStructure,
+        uid: monUtilisateur.uid,
       }
     }),
   }
@@ -56,6 +57,7 @@ type MonUtilisateur = Readonly<{
   role: TypologieRole
   statut: StatutInscription
   structure: string
+  uid: string
 }>
 
 export type StatutInscription = 'En attente' | 'Activé'

@@ -56,6 +56,10 @@ export class Utilisateur extends Entity<UtilisateurUid> {
     }
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
+
+  peutSupprimer(autre: Utilisateur): boolean {
+    return this.#role.isAdmin() || this.#role.equals(autre.#role)
+  }
 }
 
 type UtilisateurUid = string

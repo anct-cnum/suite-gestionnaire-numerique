@@ -1,7 +1,3 @@
-.fr-modal__body {
-  border-radius: 1rem;
-}
-
 .fr-input-group::before {
   content: none;
 }
