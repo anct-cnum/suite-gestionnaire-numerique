@@ -1,5 +1,3 @@
-import assert from 'node:assert/strict'
-
 import { Model } from './shared/Model'
 
 export class Role implements Model {
@@ -7,17 +5,6 @@ export class Role implements Model {
   readonly #territoireOuStructure: string
 
   constructor(nom: TypologieRole, territoireOuStructure = '') {
-    switch (nom) {
-      case 'Administrateur dispositif':
-      case 'Gestionnaire département':
-      case 'Gestionnaire groupement':
-      case 'Gestionnaire région':
-      case 'Gestionnaire structure':
-        assert(territoireOuStructure !== '', invariantByType[nom])
-        break
-      default:
-        assert(territoireOuStructure === '', invariantByType[nom])
-    }
     this.#nom = nom
     this.#territoireOuStructure = territoireOuStructure
   }
@@ -54,16 +41,6 @@ export type TypologieRole = (typeof Roles)[number]
 
 export type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 
-export type InvariantRole =
-  | 'roleAdministrateurDispositifDoitAvoirDispositif'
-  | 'roleGestionnaireDepartementDoitAvoirDepartement'
-  | 'roleGestionnaireGroupementDoitAvoirGroupement'
-  | 'roleGestionnaireRegionDoitAvoirRegion'
-  | 'roleGestionnaireStructureDoitAvoirStructure'
-  | 'roleInstructeurNePeutAvoirOrganisation'
-  | 'rolePilotePolitiquePubliqueNePeutAvoirOrganisation'
-  | 'roleSupportAnimationNePeutAvoirOrganisation'
-
 export const categorieByType: Readonly<Record<TypologieRole, Categorie>> = {
   'Administrateur dispositif': 'anct',
   'Gestionnaire département': 'maille',
@@ -87,14 +64,3 @@ const groupe: Readonly<Record<TypologieRole, Groupe>> = {
 }
 
 export type Groupe = 'admin' | 'gestionnaire'
-
-const invariantByType: Readonly<Record<TypologieRole, InvariantRole>> = {
-  'Administrateur dispositif': 'roleAdministrateurDispositifDoitAvoirDispositif',
-  'Gestionnaire département': 'roleGestionnaireDepartementDoitAvoirDepartement',
-  'Gestionnaire groupement': 'roleGestionnaireGroupementDoitAvoirGroupement',
-  'Gestionnaire région': 'roleGestionnaireRegionDoitAvoirRegion',
-  'Gestionnaire structure': 'roleGestionnaireStructureDoitAvoirStructure',
-  Instructeur: 'roleInstructeurNePeutAvoirOrganisation',
-  'Pilote politique publique': 'rolePilotePolitiquePubliqueNePeutAvoirOrganisation',
-  'Support animation': 'roleSupportAnimationNePeutAvoirOrganisation',
-}
