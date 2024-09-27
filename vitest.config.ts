@@ -44,7 +44,6 @@ export default defineConfig({
       },
     },
     environment: 'jsdom',
-    fileParallelism: false,
     globals: true,
     sequence: { shuffle: true },
     setupFiles: ['vitest.setup.ts'],
