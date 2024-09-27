@@ -36,3 +36,7 @@
 .grey-border {
   border: 0.1rem solid var(--grey-900-175);
 }
+
+.modal-body {
+  border-radius: 1rem;
+}

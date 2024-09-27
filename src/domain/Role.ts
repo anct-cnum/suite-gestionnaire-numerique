@@ -3,19 +3,31 @@ import { Model } from './shared/Model'
 export class Role implements Model {
   readonly #nom: TypologieRole
   readonly #territoireOuStructure: string
+  readonly #groupe: Groupe
+  readonly #categorie: Categorie
 
   constructor(nom: TypologieRole, territoireOuStructure = '') {
     this.#nom = nom
     this.#territoireOuStructure = territoireOuStructure
+    this.#groupe = groupe[this.#nom]
+    this.#categorie = categorieByType[this.#nom]
   }
 
   state(): RoleState {
     return {
-      categorie: categorieByType[this.#nom],
-      groupe: groupe[this.#nom],
+      categorie: this.#categorie,
+      groupe: this.#groupe,
       nom: this.#nom,
       territoireOuStructure: this.#territoireOuStructure,
     }
+  }
+
+  isAdmin(): boolean {
+    return this.#groupe === 'admin'
+  }
+
+  equals(autre: Role): boolean {
+    return autre.#nom === this.#nom && autre.#territoireOuStructure === this.#territoireOuStructure
   }
 }
 

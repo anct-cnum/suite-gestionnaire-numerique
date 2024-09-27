@@ -1,6 +1,7 @@
-import { $Enums, DepartementRecord, GroupementRecord, PrismaClient, RegionRecord, StructureRecord, UtilisateurRecord } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
-import { categorieByType, Groupe, TypologieRole } from '@/domain/Role'
+import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { categorieByType } from '@/domain/Role'
 import { MesUtilisateursLoader, MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel, UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 
@@ -82,51 +83,6 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
 }
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesUtilisateursReadModel {
-  type Mapping = Readonly<Record<$Enums.Role, { nom: TypologieRole, groupe: Groupe, territoireOuStructure: string }>>
-
-  const mapping: Mapping = {
-    administrateur_dispositif: {
-      groupe: 'admin',
-      nom: 'Administrateur dispositif',
-      territoireOuStructure: 'Administrateur Dispositif lambda',
-    },
-    gestionnaire_departement: {
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire département',
-      territoireOuStructure: utilisateurRecord.relationDepartements?.nom ?? '',
-    },
-    gestionnaire_groupement: {
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire groupement',
-      territoireOuStructure: utilisateurRecord.relationGroupements?.nom ?? '',
-    },
-    gestionnaire_region: {
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire région',
-      territoireOuStructure: utilisateurRecord.relationRegions?.nom ?? '',
-    },
-    gestionnaire_structure: {
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire structure',
-      territoireOuStructure: utilisateurRecord.relationStructures?.nom ?? '',
-    },
-    instructeur: {
-      groupe: 'admin',
-      nom: 'Instructeur',
-      territoireOuStructure: 'Banque des territoires',
-    },
-    pilote_politique_publique: {
-      groupe: 'admin',
-      nom: 'Pilote politique publique',
-      territoireOuStructure: 'France Numérique Ensemble',
-    },
-    support_animation: {
-      groupe: 'admin',
-      nom: 'Support animation',
-      territoireOuStructure: 'Mednum',
-    },
-  }
-
   return {
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
@@ -139,19 +95,12 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesUtili
     prenom: utilisateurRecord.prenom,
     regionCode: utilisateurRecord.regionCode,
     role: {
-      categorie: categorieByType[mapping[utilisateurRecord.role].nom],
-      groupe: mapping[utilisateurRecord.role].groupe,
-      nom: mapping[utilisateurRecord.role].nom,
-      territoireOuStructure: mapping[utilisateurRecord.role].territoireOuStructure,
+      categorie: categorieByType[roleMapper(utilisateurRecord)[utilisateurRecord.role].nom],
+      groupe: roleMapper(utilisateurRecord)[utilisateurRecord.role].groupe,
+      nom: roleMapper(utilisateurRecord)[utilisateurRecord.role].nom,
+      territoireOuStructure: roleMapper(utilisateurRecord)[utilisateurRecord.role].territoireOuStructure,
     },
     structureId: utilisateurRecord.structureId,
     uid: utilisateurRecord.ssoId,
   }
 }
-
-type UtilisateurEtSesRelationsRecord = UtilisateurRecord & Readonly<{
-  relationDepartements: DepartementRecord | null
-  relationGroupements: GroupementRecord | null
-  relationRegions: RegionRecord | null
-  relationStructures: StructureRecord | null
-}>

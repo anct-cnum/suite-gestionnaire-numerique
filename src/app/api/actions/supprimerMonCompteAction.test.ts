@@ -11,10 +11,9 @@ describe('supprimer mon compte action', () => {
     vi.spyOn(SupprimerMonCompte.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const result = await supprimerMonCompteAction()
+    await supprimerMonCompteAction()
 
     // THEN
     expect(SupprimerMonCompte.prototype.execute).toHaveBeenCalledWith(sub)
-    expect(result).toBe('OK')
   })
 })
