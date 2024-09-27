@@ -1,11 +1,12 @@
+import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { Role, RoleState } from '@/domain/Role'
 import { InvariantUtilisateur, UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 
 export class ChangerMonRole implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
+  readonly #utilisateurRepository: UpdateUtilisateurRepository
 
-  constructor(utilisateurRepository: UtilisateurRepository) {
+  constructor(utilisateurRepository: UpdateUtilisateurRepository) {
     this.#utilisateurRepository = utilisateurRepository
   }
 
@@ -32,10 +33,6 @@ export class ChangerMonRole implements CommandHandler<Command> {
 
     return result
   }
-}
-
-export interface UtilisateurRepository {
-  update: (utilisateur: Utilisateur) => Promise<void>
 }
 
 type Command = Readonly<{

@@ -1,8 +1,9 @@
 'use client'
 
 import Image from 'next/image'
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useState } from 'react'
 
+import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Pagination from '../shared/Pagination/Pagination'
 import Rechercher from '../shared/Rechercher/Rechercher'
 import Role from '../shared/Role/Role'
@@ -16,6 +17,10 @@ export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
   const { session } = useContext(sessionUtilisateurContext)
+  // Stryker disable next-line BooleanLiteral
+  const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
+  const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
+  const modalId = 'supprimer-un-utilisateur'
 
   return (
     <>
@@ -97,8 +102,14 @@ export default function MesUtilisateurs(
               </td>
               <td className="fr-cell--center">
                 <button
+                  aria-controls={modalId}
                   className="fr-btn fr-btn--tertiary"
+                  data-fr-opened="false"
                   disabled={!unUtilisateurViewModel.canBeDeleted}
+                  onClick={() => {
+                    setUtilisateurASupprimer(unUtilisateurViewModel)
+                    setIsModaleSuppressionOpen(true)
+                  }}
                   title="Supprimer"
                   type="button"
                 >
@@ -124,6 +135,13 @@ export default function MesUtilisateurs(
             </div>
           ) : null
       }
+      <SupprimerUnUtilisateur
+        id={modalId}
+        isOpen={isModaleSuppressionOpen}
+        setIsOpen={setIsModaleSuppressionOpen}
+        setUtilisateurASupprimer={setUtilisateurASupprimer}
+        utilisateurASupprimer={utilisateurASupprimer}
+      />
     </>
   )
 }

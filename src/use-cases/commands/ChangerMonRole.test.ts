@@ -1,4 +1,5 @@
-import { ChangerMonRole, UtilisateurRepository } from './ChangerMonRole'
+import { ChangerMonRole } from './ChangerMonRole'
+import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { RoleState } from '@/domain/Role'
 import { UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
 
@@ -73,7 +74,7 @@ const nullUtilisateur = {} as Utilisateur
 
 let spiedUtilisateur: Utilisateur = nullUtilisateur
 
-const utilisateurRepository: UtilisateurRepository = {
+const utilisateurRepository: UpdateUtilisateurRepository = {
   async update(utilisateur: Utilisateur): Promise<void> {
     spiedUtilisateur = utilisateur
     return Promise.resolve()

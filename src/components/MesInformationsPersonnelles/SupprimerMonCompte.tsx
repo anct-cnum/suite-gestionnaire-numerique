@@ -26,7 +26,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
       <div className="fr-container fr-container--fluid fr-container-md">
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-8 fr-col-lg-6">
-            <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
+            <div className="fr-modal__body modal-body">
               <div className="fr-modal__header">
                 <button
                   aria-controls={id}
