@@ -6,13 +6,9 @@ import { Categorie, Groupe, TypologieRole } from '@/domain/Role'
 import { MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('postgre utilisateur query', () => {
-  beforeEach(async () => {
-    await prisma.$queryRaw`START TRANSACTION`
-  })
+  beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
-  afterEach(async () => {
-    await prisma.$queryRaw`ROLLBACK TRANSACTION`
-  })
+  afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
   describe('chercher un utilisateur', () => {
     it.each([
@@ -745,10 +741,10 @@ describe('postgre utilisateur query', () => {
         uid: ssoId,
       })
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: new Date('2024-01-01'), ssoId }),
+        data: utilisateurRecordFactory({ derniereConnexion: new Date('2024-01-01'), nom: 'a', ssoId }),
       })
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: null, ssoId: '123456' }),
+        data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoId: '123456' }),
       })
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 

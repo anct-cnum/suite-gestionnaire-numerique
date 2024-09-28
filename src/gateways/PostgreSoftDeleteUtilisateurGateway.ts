@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
+import { SuppressionUtilisateurGateway, UtilisateurUid } from '@/use-cases/commands/SupprimerMonCompte'
 
 export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisateurGateway {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate
@@ -9,13 +9,10 @@ export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisat
     this.#activeRecord = dbClient.utilisateurRecord
   }
 
-  async delete(ssoId: string): Promise<boolean> {
+  async delete(ssoId: UtilisateurUid): Promise<boolean> {
     return this.#activeRecord.update({
       data: {
         isSupprime: true,
-      },
-      select: {
-        id: true,
       },
       where: {
         isSupprime: false,

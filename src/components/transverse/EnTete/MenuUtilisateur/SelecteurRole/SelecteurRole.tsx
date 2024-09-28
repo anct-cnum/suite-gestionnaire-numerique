@@ -2,7 +2,7 @@
 
 import { FormEvent, ReactElement, useContext } from 'react'
 
-import { changerMonRoleAction } from './changerMonRoleAction'
+import { changerMonRoleAction } from '../../../../../app/api/actions/changerMonRoleAction'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 import { Roles, TypologieRole } from '@/domain/Role'
 
@@ -39,10 +39,8 @@ export default function SelecteurRole(): ReactElement {
 
   async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
     await changerMonRoleAction(session, currentTarget.value as TypologieRole)
-      .then((result) => {
-        if (result === 'OK') {
-          window.location.reload()
-        }
+      .then(() => {
+        window.location.reload()
       })
   }
 }

@@ -15,7 +15,6 @@ const utilisateurSupprime: Partial<Prisma.UtilisateurRecordCreateInput> = {
 }
 
 describe('suppression "soft delete" d’un compte utilisateur', () => {
-
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
@@ -34,6 +33,28 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
 
     // THEN
     expect(result).toBe(true)
+    const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+      where: { ssoId: utilisateurExistant.ssoId },
+    })
+    // @ts-expect-error
+    delete utilisateurModifie?.id
+    expect(utilisateurModifie).toStrictEqual({
+      dateDeCreation: new Date(0),
+      departementCode: null,
+      derniereConnexion: null,
+      email: 'martin.tartempion@example.net',
+      groupementId: null,
+      inviteLe: new Date(0),
+      isSuperAdmin: false,
+      isSupprime: true,
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      regionCode: null,
+      role: 'gestionnaire_region',
+      ssoId: ssoIdUtilisateurExistant,
+      structureId: null,
+      telephone: '0102030405',
+    })
   })
 
   it('compte existant, préalablement supprimé : aucune écriture', async () => {
@@ -50,6 +71,10 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
 
     // THEN
     expect(result).toBe(false)
+    const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+      where: { ssoId: utilisateurExistant.ssoId },
+    })
+    expect(utilisateurModifie?.isSupprime).toBe(false)
   })
 
   it('compte inexistant : aucune écriture', async () => {
@@ -63,6 +88,10 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
 
     // THEN
     expect(result).toBe(false)
+    const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+      where: { ssoId: utilisateurSupprime.ssoId },
+    })
+    expect(utilisateurModifie?.isSupprime).toBe(true)
   })
 
   it('erreur inattendue : non gérée', async () => {

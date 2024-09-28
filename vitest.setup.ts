@@ -10,11 +10,11 @@ function toOpenInNewTab(element: HTMLElement, content: string): { message: () =>
       message: (): string => 'Tout est ok',
       pass: true,
     }
-  } else {
-    return {
-      message: (): string => 'Il manque soit le target, soit le rel ou soit le title',
-      pass: false,
-    }
+  }
+
+  return {
+    message: (): string => 'Il manque soit le target, soit le rel ou soit le title',
+    pass: false,
   }
 }
 
