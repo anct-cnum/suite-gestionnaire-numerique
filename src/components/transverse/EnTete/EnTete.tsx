@@ -13,6 +13,7 @@ export default function EnTete(): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawer-menu-utilisateur'
+  const labelId = 'drawer-menu-utilisateur-titre'
 
   return (
     <>
@@ -154,6 +155,7 @@ export default function EnTete(): ReactElement {
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={true}
         isOpen={isOpen}
+        labelId={labelId}
         setIsOpen={setIsOpen}
       >
         <MenuUtilisateur ariaControlsId={drawerId} />

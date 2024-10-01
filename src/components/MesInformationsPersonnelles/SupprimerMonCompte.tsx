@@ -2,7 +2,7 @@ import { signOut } from 'next-auth/react'
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
 
 import styles from './SupprimerMonCompte.module.css'
-import { supprimerMonCompteAction } from './supprimerMonCompteAction'
+import { supprimerMonCompteAction } from '../../app/api/actions/supprimerMonCompteAction'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const [emailValidationInfo, setEmailValidationInfo] =
@@ -37,7 +37,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
                   Fermer
                 </button>
               </div>
-              <form>
+              <form aria-label="Supprimer">
                 <div className="fr-modal__content">
                   <h1
                     className="fr-modal__title"

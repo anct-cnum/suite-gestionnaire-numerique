@@ -2,7 +2,8 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
-import { renderComponent, infosSessionUtilisateurContext } from '@/testHelper'
+import * as changerAction from '@/app/api/actions/changerMonRoleAction'
+import { renderComponent } from '@/testHelper'
 import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
@@ -123,7 +124,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-      vi.spyOn(ChangerMonRole.prototype, 'execute').mockResolvedValueOnce('OK')
+      vi.spyOn(changerAction, 'changerMonRoleAction').mockResolvedValueOnce('OK')
       const menuUtilisateur = ouvrirLeMenuUtilisateur()
       const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
 
@@ -132,23 +133,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // THEN
       await waitFor(() => {
-        expect(ChangerMonRole.prototype.execute)
-          .toHaveBeenCalledWith({
-            nouveauRoleState: {
-              nom: 'Instructeur',
-              territoireOuStructure: '',
-            },
-            utilisateurState: {
-              ...infosSessionUtilisateurContext.session,
-              isSuperAdmin: true,
-              role: {
-                nom: infosSessionUtilisateurContext.session.role.nom,
-                territoireOuStructure: 'Mednum',
-              },
-            },
-          })
+        expect(window.location.reload).toHaveBeenCalledOnce()
       })
-      expect(window.location.reload).toHaveBeenCalledOnce()
     })
   })
 

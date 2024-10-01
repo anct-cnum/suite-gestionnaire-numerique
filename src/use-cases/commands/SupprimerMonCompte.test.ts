@@ -1,23 +1,24 @@
+
 import { SuppressionUtilisateurGateway, SupprimerMonCompte } from './SupprimerMonCompte'
 
 describe('supprimer mon compte utilisateur', () => {
   it.each([
-    {
-      desc: 'le compte n’existe pas : pas de suppression possible',
-      expected: 'compteInexistant',
-      gateway: gatewayCompteInexistant,
-    },
-    {
-      desc: 'le compte existe : il est supprimé',
-      expected: 'OK',
-      gateway: gatewayCompteExistant,
-    },
-  ])('$desc', async ({ gateway, expected }) => {
+    [
+      'quand le compte n’existe pas alors pas de suppression possible',
+      'compteInexistant',
+      gatewayCompteInexistant,
+    ],
+    [
+      'quand le compte existe alors il est supprimé',
+      'OK',
+      gatewayCompteExistant,
+    ],
+  ])('%s', async (_, expected, gateway) => {
     // GIVEN
     const commandHandler = new SupprimerMonCompte(gateway)
 
     // WHEN
-    const result = await commandHandler.execute('martin.tartempion@example.net')
+    const result = await commandHandler.execute('fooId')
 
     // THEN
     expect(result).toBe(expected)
