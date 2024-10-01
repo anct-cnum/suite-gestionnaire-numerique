@@ -8,6 +8,7 @@ export default function Drawer({
   setIsOpen,
   boutonFermeture,
   isFixedWidth,
+  labelId,
   children,
 }: DrawerProps): ReactNode {
   // istanbul ignore next @preserve
@@ -15,6 +16,7 @@ export default function Drawer({
 
   return (
     <dialog
+      aria-labelledby={labelId}
       aria-modal="true"
       className={`fr-modal ${styles['fr-modal']}`}
       id={id}
@@ -49,5 +51,6 @@ type DrawerProps = PropsWithChildren<Readonly<{
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
   boutonFermeture: string
+  labelId: string
   isFixedWidth: boolean
 }>>

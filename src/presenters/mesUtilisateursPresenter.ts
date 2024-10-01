@@ -38,13 +38,7 @@ function buildDate(utilisateurReadModel: MesUtilisateursReadModel): string {
 }
 
 function buildDateFrancaise(date: Date): string {
-  const options: Intl.DateTimeFormatOptions = {
-    day: 'numeric',
-    month: 'numeric',
-    year: 'numeric',
-  }
-
-  return date.toLocaleDateString('fr-FR', options)
+  return date.toLocaleDateString('fr-FR')
 }
 
 export type MesUtilisateursViewModel = Readonly<{

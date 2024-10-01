@@ -3,7 +3,9 @@
 import { ReactElement, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
+import ModifierMonCompte from './ModifierMonCompte'
 import SupprimerMonCompte from './SupprimerMonCompte'
+import Drawer from '../shared/Drawer/Drawer'
 import Role from '../shared/Role/Role'
 import Titre from '../shared/Titre/Titre'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
@@ -12,8 +14,12 @@ export default function MesInformationsPersonnelles(
   { mesInformationsPersonnellesViewModel }: MesInformationsPersonnellesProps
 ): ReactElement {
   // Stryker disable next-line BooleanLiteral
-  const [isOpen, setIsOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerId = 'drawer-modifier-mon-compte'
+  const labelId = 'drawer-modifier-mon-compte-titre'
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
@@ -33,7 +39,12 @@ export default function MesInformationsPersonnelles(
               Mes informations personnelles
             </h2>
             <button
+              aria-controls={drawerId}
               className="fr-link fr-icon-edit-fill fr-link--icon-right fr-mt-n2w"
+              data-fr-opened="false"
+              onClick={() => {
+                setIsDrawerOpen(true)
+              }}
               type="button"
             >
               Modifier
@@ -167,7 +178,7 @@ export default function MesInformationsPersonnelles(
             className="fr-btn red-button"
             data-fr-opened="false"
             onClick={() => {
-              setIsOpen(true)
+              setIsModalOpen(true)
             }}
             type="button"
           >
@@ -177,10 +188,29 @@ export default function MesInformationsPersonnelles(
         <SupprimerMonCompte
           email={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
           id={supprimerMonCompteModalId}
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
         />
       </div>
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        id={drawerId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+        setIsOpen={setIsDrawerOpen}
+      >
+        <ModifierMonCompte
+          email={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
+          id={drawerId}
+          labelId={labelId}
+          nom={mesInformationsPersonnellesViewModel.informationsPersonnellesNom}
+          prenom={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
+          setIsOpen={setIsDrawerOpen}
+          telephone={mesInformationsPersonnellesViewModel.informationsPersonnellesTelephone}
+        />
+      </Drawer>
     </div>
   )
 }

@@ -6,13 +6,9 @@ import { TypologieRole } from '@/domain/Role'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 describe('postgre mes informations personnelles', () => {
-  beforeEach(async () => {
-    await prisma.$queryRaw`START TRANSACTION`
-  })
+  beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
-  afterEach(async () => {
-    await prisma.$queryRaw`ROLLBACK TRANSACTION`
-  })
+  afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
   it.each([
     {

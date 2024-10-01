@@ -1,21 +1,17 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
+import * as modifierAction from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
+import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
 import { TypologieRole } from '@/domain/Role'
-import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { matchWithoutMarkup } from '@/testHelper'
-import { SupprimerMonCompte } from '@/use-cases/commands/SupprimerMonCompte'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {
-    // GIVEN
-    const mesInformationsPersonnellesViewModel =
-      mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-
     // WHEN
-    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
+    afficherMesInformationsPersonnelles()
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Mes informations' })
@@ -163,19 +159,19 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
   describe('quand je clique sur la suppression de compte alors la modale s’ouvre', () => {
     it('me présentant les instructions à suivre afin de supprimer mon compte', () => {
       // GIVEN
-      const mesInformationsPersonnellesViewModel =
-        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-      render(
-        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-      )
+      afficherMesInformationsPersonnelles()
       const supprimerMonCompteButton = screen.getByRole('button', { name: 'Supprimer mon compte' })
 
       // WHEN
       fireEvent.click(supprimerMonCompteButton)
 
       // THEN
-      const supprimerMonCompteModal = screen.getByRole('dialog')
+      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
       expect(supprimerMonCompteModal).toBeVisible()
+
+      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
+      expect(fermer).toHaveAttribute('type', 'button')
+      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
 
       const titre = within(supprimerMonCompteModal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
       expect(titre).toBeInTheDocument()
@@ -184,22 +180,19 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         .getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
       expect(avertissement).toBeInTheDocument()
 
-      const saisie = within(supprimerMonCompteModal)
+      const formulaire = within(supprimerMonCompteModal).getByRole('form', { name: 'Supprimer' })
+      const saisie = within(formulaire)
         .getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
       expect(saisie).toBeRequired()
       expect(saisie).toHaveAttribute('type', 'email')
       expect(saisie).toHaveAttribute('pattern', '.+@.+\\..{2,}')
       expect(saisie).toHaveAttribute('aria-describedby', 'supprimer-mon-compte-email-message-validation')
 
-      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
-      expect(fermer).toHaveAttribute('type', 'button')
-      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
-
-      const annuler = within(supprimerMonCompteModal).getByRole('button', { name: 'Annuler' })
+      const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })
       expect(annuler).toHaveAttribute('type', 'button')
       expect(annuler).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
 
-      const confirmer = within(supprimerMonCompteModal).getByRole('button', { name: 'Confirmer la suppression' })
+      const confirmer = within(formulaire).getByRole('button', { name: 'Confirmer la suppression' })
       expect(confirmer).toHaveAttribute('type', 'submit')
       expect(confirmer).toHaveAttribute('formMethod', 'dialog')
       expect(confirmer).toBeDisabled()
@@ -207,11 +200,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('je peux y renoncer en fermant la modale', () => {
       // GIVEN
-      const mesInformationsPersonnellesViewModel =
-        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-      render(
-        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-      )
+      afficherMesInformationsPersonnelles()
       fireEvent.click(supprimerMonCompteButton())
       const supprimerMonCompteModal = screen.getByRole('dialog')
       const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
@@ -224,13 +213,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     })
 
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
-      it('je saisis une adresse email invalide', () => {
+      it('je saisis une adresse électronique invalide', () => {
         // GIVEN
-        const mesInformationsPersonnellesViewModel =
-          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-        render(
-          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-        )
+        afficherMesInformationsPersonnelles()
         fireEvent.click(supprimerMonCompteButton())
 
         // WHEN
@@ -240,13 +225,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         expect(confirmerSuppressionCompteButton()).toBeDisabled()
       })
 
-      it('je saisis une adresse email valide mais qui n’est pas la mienne', () => {
+      it('je saisis une adresse électronique valide mais qui n’est pas la mienne', () => {
         // GIVEN
-        const mesInformationsPersonnellesViewModel =
-          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-        render(
-          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-        )
+        afficherMesInformationsPersonnelles()
         fireEvent.click(supprimerMonCompteButton())
 
         // WHEN
@@ -260,58 +241,36 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     })
 
     describe('je peux supprimer mon compte, le bouton de confirmation s’activant si', () => {
-      it(
-        'une fois que j’ai saisi mon adresse email (même avec des espaces en trop en début ou en fin de saisie)',
-        () => {
-          // GIVEN
-          const mesInformationsPersonnellesViewModel =
-            mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-          render(
-            <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-          )
-          fireEvent.click(supprimerMonCompteButton())
+      it('une fois que j’ai saisi mon adresse électronique (même avec des espaces en trop en début ou en fin de saisie)', () => {
+        // GIVEN
+        afficherMesInformationsPersonnelles()
+        fireEvent.click(supprimerMonCompteButton())
 
-          // WHEN
-          fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
+        // WHEN
+        fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
 
-          // THEN
-          expect(confirmerSuppressionCompteButton()).not.toBeDisabled()
-          const messageEmailOk = screen.getByText('L’adresse électronique saisie est valide')
-          expect(messageEmailOk).toBeInTheDocument()
-        }
-      )
+        // THEN
+        expect(confirmerSuppressionCompteButton()).not.toBeDisabled()
+        const messageEmailOk = screen.getByText('L’adresse électronique saisie est valide')
+        expect(messageEmailOk).toBeInTheDocument()
+      })
 
-      it(
-        `quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif,
-        il s’inactive et change de contenu, m’informant que la suppression est en cours,
-        puis je suis déconnecté`,
-        async () => {
-          // GIVEN
-          const mesInformationsPersonnellesViewModel =
-            mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-          render(
-            <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />
-          )
-          fireEvent.click(supprimerMonCompteButton())
-          fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
-          // @ts-expect-error
-          vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub: 'fooId' } })
-          vi.spyOn(SupprimerMonCompte.prototype, 'execute').mockResolvedValueOnce('OK')
-          vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
+      it('quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif, il s’inactive et change de contenu, m’informant que la suppression est en cours, puis je suis déconnecté', async () => {
+        // GIVEN
+        vi.spyOn(supprimerAction, 'supprimerMonCompteAction').mockResolvedValueOnce('OK')
+        vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
+        afficherMesInformationsPersonnelles()
+        fireEvent.click(supprimerMonCompteButton())
+        fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
 
-          // WHEN
-          fireEvent.click(confirmerSuppressionCompteButton())
+        // WHEN
+        fireEvent.click(confirmerSuppressionCompteButton())
 
-          // THEN
-          const boutonConfirmationDesactive = screen.getByRole('button', { name: 'Suppression en cours' })
-          expect(boutonConfirmationDesactive).toBeDisabled()
-          await waitFor(() => {
-            expect(SupprimerMonCompte.prototype.execute)
-              .toHaveBeenCalledWith('fooId')
-          })
-          expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
-        }
-      )
+        // THEN
+        const boutonConfirmationDesactive = await screen.findByRole('button', { name: 'Suppression en cours' })
+        expect(boutonConfirmationDesactive).toBeDisabled()
+        expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
+      })
     })
 
     function supprimerMonCompteButton(): HTMLElement {
@@ -326,7 +285,115 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       return screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
     }
   })
+
+  describe('quand je clique sur modifier mes informations personnelles', () => {
+    it('alors je vois le formulaire de modification prérempli', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles()
+
+      // WHEN
+      ouvrirDrawer()
+
+      // THEN
+      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      expect(modifierMesInfosPersosDrawer).toBeVisible()
+
+      const titre = within(modifierMesInfosPersosDrawer).getByRole('heading', { level: 1, name: 'Mes informations personnelles' })
+      expect(titre).toHaveAttribute('id', 'drawer-modifier-mon-compte-titre')
+
+      const champsObligatoires = within(modifierMesInfosPersosDrawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
+      expect(champsObligatoires).toBeInTheDocument()
+
+      const formulaire = within(modifierMesInfosPersosDrawer).getByRole('form', { name: 'Modifier' })
+      expect(formulaire).toHaveAttribute('method', 'dialog')
+      const nom = within(formulaire).getByLabelText('Nom *')
+      expect(nom).toBeRequired()
+      expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveAttribute('type', 'text')
+      expect(nom).toHaveValue('Deschamps')
+      const prenom = within(formulaire).getByLabelText('Prénom *')
+      expect(prenom).toBeRequired()
+      expect(prenom).toHaveAttribute('name', 'prenom')
+      expect(prenom).toHaveAttribute('type', 'text')
+      expect(prenom).toHaveValue('Julien')
+      const email = within(formulaire).getByLabelText('Adresse électronique * Seuls les gestionnaires verront votre adresse électronique.')
+      expect(email).toBeRequired()
+      expect(email).toHaveAttribute('name', 'email')
+      expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(email).toHaveAttribute('type', 'email')
+      expect(email).toHaveValue('julien.deschamps@example.com')
+      const telephone = within(formulaire).getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Format attendu : 0122334455')
+      expect(telephone).toHaveAttribute('name', 'telephone')
+      expect(telephone).toHaveAttribute('pattern', '0[0-9]{9}')
+      expect(telephone).toHaveAttribute('type', 'tel')
+      expect(telephone).toHaveValue('0405060708')
+
+      const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })
+      expect(annuler).toHaveAttribute('type', 'button')
+      expect(annuler).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+
+      const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      expect(enregistrer).toBeEnabled()
+      expect(enregistrer).toHaveAttribute('type', 'submit')
+    })
+
+    it('et que j’appuie sur annuler alors la modale se ferme', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles()
+      ouvrirDrawer()
+
+      // WHEN
+      const annuler = screen.getByRole('button', { name: 'Annuler' })
+      fireEvent.click(annuler)
+
+      // THEN
+      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
+      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+    })
+
+    it('quand je modifie mes informations personnelles alors elles sont modifiées', async () => {
+      // GIVEN
+      vi.spyOn(modifierAction, 'modifierMesInformationsPersonnellesAction').mockResolvedValueOnce('OK')
+      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+
+      afficherMesInformationsPersonnelles()
+      ouvrirDrawer()
+      const nom = screen.getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = screen.getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = screen.getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const telephone = screen.getByLabelText(/Téléphone professionnel/)
+      fireEvent.change(telephone, { target: { value: '0102030405' } })
+
+      // WHEN
+      const enregistrer = screen.getByRole('button', { name: 'Enregistrer' })
+      fireEvent.click(enregistrer)
+
+      // THEN
+      const boutonModificationDesactive = await screen.findByRole('button', { name: 'Modification en cours' })
+      expect(boutonModificationDesactive).toBeDisabled()
+      expect(window.location.reload).toHaveBeenCalledOnce()
+    })
+
+    function ouvrirDrawer() {
+      const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
+      const modifierMesInfosPersos = within(mesInformationsPersonnelles).getByRole('button', { name: 'Modifier' })
+      fireEvent.click(modifierMesInfosPersos)
+    }
+  })
 })
+
+function afficherMesInformationsPersonnelles() {
+  const mesInformationsPersonnellesViewModel =
+    mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
+  render(
+    <MesInformationsPersonnelles
+      mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel}
+    />
+  )
+}
 
 const mesInformationsPersonnellesReadModel = {
   contactEmail: 'manon.verminac@example.com',

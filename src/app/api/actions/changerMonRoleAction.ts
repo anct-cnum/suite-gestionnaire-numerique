@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '../../../../../../prisma/prismaClient'
+import prisma from '../../../../prisma/prismaClient'
 import { TypologieRole } from '@/domain/Role'
 import { InvariantUtilisateur } from '@/domain/Utilisateur'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
