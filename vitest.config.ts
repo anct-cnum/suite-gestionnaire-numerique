@@ -17,6 +17,9 @@ export default defineConfig({
     },
   ],
   test: {
+    chaiConfig: {
+      truncateThreshold: 0
+    },
     coverage: {
       exclude: [
         '**/global-error.tsx',
