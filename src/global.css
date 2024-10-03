@@ -45,3 +45,30 @@
   justify-content: space-between;
   text-align: center;
 }
+
+.no-hover:hover {
+  background-color: unset !important;
+}
+
+tr {
+  position: relative;
+}
+
+table :any-link.primary,
+table button.primary {
+  position: revert;
+}
+
+table :any-link.primary::before,
+table button.primary::before {
+  content: '';
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+}
+
+table :any-link,
+table button {
+  position: relative;
+  z-index: 2;
+}

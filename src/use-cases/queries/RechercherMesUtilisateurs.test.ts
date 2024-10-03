@@ -76,6 +76,7 @@ const dummyUtilisateur: MesUtilisateursReadModel = {
     territoireOuStructure: '',
   },
   structureId: null,
+  telephone: '',
   uid: '',
 }
 

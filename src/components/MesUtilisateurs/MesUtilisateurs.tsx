@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { ReactElement, useContext, useState } from 'react'
 
+import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
@@ -13,7 +14,7 @@ import Statut from '../shared/Statut/Statut'
 import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
 import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
-import { MesUtilisateursViewModel } from '@/presenters/mesUtilisateursPresenter'
+import { MesUtilisateursViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
@@ -25,8 +26,11 @@ export default function MesUtilisateurs(
   const modalId = 'supprimer-un-utilisateur'
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerId = 'drawer-modifier-mon-compte'
-  const labelId = 'drawer-modifier-mon-compte-titre'
+  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<MonUtilisateur>()
+  const drawerCompteId = 'drawer-modifier-mon-compte'
+  const labelCompteId = 'drawer-modifier-mon-compte-titre'
+  const drawerDetailsId = 'drawer-details-utilisateur'
+  const labelDetailsId = 'drawer-details-utilisateur-nom'
 
   return (
     <>
@@ -43,16 +47,16 @@ export default function MesUtilisateurs(
       </div>
       <Drawer
         boutonFermeture="Fermer les filtres"
-        id={drawerId}
+        id={drawerCompteId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelId}
+        labelId={labelCompteId}
         setIsOpen={setIsDrawerOpen}
       >
         <FiltrerMesUtilisateurs
-          id={drawerId}
-          labelId={labelId}
+          id={drawerCompteId}
+          labelId={labelCompteId}
           setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
@@ -69,7 +73,7 @@ export default function MesUtilisateurs(
             />
             <div>
               <button
-                aria-controls={drawerId}
+                aria-controls={drawerCompteId}
                 className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
                 data-fr-opened="false"
                 onClick={() => {
@@ -109,8 +113,19 @@ export default function MesUtilisateurs(
                 />
               </td>
               <td>
-                <div className="font-weight-700">
-                  {unUtilisateurViewModel.prenomEtNom}
+                <div>
+                  <button
+                    aria-controls={drawerDetailsId}
+                    className="primary font-weight-700 fr-px-0 no-hover"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setIsDrawerOpen(true)
+                      setUtilisateurSelectionne(unUtilisateurViewModel)
+                    }}
+                    type="button"
+                  >
+                    {unUtilisateurViewModel.prenomEtNom}
+                  </button>
                 </div>
                 {unUtilisateurViewModel.structure}
               </td>
@@ -168,6 +183,17 @@ export default function MesUtilisateurs(
         setUtilisateurASupprimer={setUtilisateurASupprimer}
         utilisateurASupprimer={utilisateurASupprimer}
       />
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        id={drawerDetailsId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelDetailsId}
+        setIsOpen={setIsDrawerOpen}
+      >
+        <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
+      </Drawer>
     </>
   )
 }

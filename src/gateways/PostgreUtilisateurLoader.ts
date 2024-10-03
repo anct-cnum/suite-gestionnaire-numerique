@@ -106,6 +106,7 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesUtili
       territoireOuStructure: roleMapper(utilisateurRecord)[utilisateurRecord.role].territoireOuStructure,
     },
     structureId: utilisateurRecord.structureId,
+    telephone: utilisateurRecord.telephone,
     uid: utilisateurRecord.ssoId,
   }
 }
