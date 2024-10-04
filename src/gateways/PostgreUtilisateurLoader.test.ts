@@ -236,7 +236,7 @@ describe('postgre utilisateur query', () => {
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -328,7 +328,7 @@ describe('postgre utilisateur query', () => {
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -412,7 +412,7 @@ describe('postgre utilisateur query', () => {
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -496,7 +496,7 @@ describe('postgre utilisateur query', () => {
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -581,7 +581,7 @@ describe('postgre utilisateur query', () => {
 
       // WHEN
       const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10)
+        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -652,7 +652,8 @@ describe('postgre utilisateur query', () => {
           await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
             utilisateurAuthentifie,
             pageCourante,
-            utilisateursParPage
+            utilisateursParPage,
+            false
           )
 
       // THEN
@@ -702,7 +703,8 @@ describe('postgre utilisateur query', () => {
       const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         0,
-        10
+        10,
+        false
       )
 
       // THEN
@@ -734,7 +736,7 @@ describe('postgre utilisateur query', () => {
       })
     })
 
-    it('quand je cherche mes utilisateurs alors je trouve ceux inactifs', async () => {
+    it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
       const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const utilisateurAuthentifie = utilisateurReadModelFactory({
@@ -752,12 +754,67 @@ describe('postgre utilisateur query', () => {
       const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         0,
-        10
+        10,
+        false
       )
 
       // THEN
       expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(new Date(0))
       expect(mesUtilisateursReadModel.utilisateursCourants[1].isActive).toBe(false)
+    })
+
+    it('quand je cherche mes utilisateurs actifs alors je les trouve tous', async () => {
+      // GIVEN
+      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const derniereConnexion = new Date('2024-01-01')
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ derniereConnexion, nom: 'a', ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoId: '123456' }),
+      })
+      const pageCourante = 0
+      const utilisateursParPage = 10
+      const isActive = true
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
+      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+
+      // WHEN
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
+        total: 1,
+        utilisateursCourants: [
+          {
+            departementCode: null,
+            derniereConnexion,
+            email: 'martin.tartempion@example.net',
+            groupementId: null,
+            inviteLe: new Date(0),
+            isActive: true,
+            isSuperAdmin: false,
+            nom: 'a',
+            prenom: 'Martin',
+            regionCode: null,
+            role: {
+              categorie: 'anct',
+              groupe: 'admin',
+              nom: 'Administrateur dispositif',
+              territoireOuStructure: 'Administrateur Dispositif lambda',
+            },
+            structureId: null,
+            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
+          },
+        ],
+      })
     })
   })
 })

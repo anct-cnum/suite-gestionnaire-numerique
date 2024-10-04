@@ -1,7 +1,7 @@
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
 
 import { modifierMesInformationsPersonnellesAction } from '../../app/api/actions/modifierMesInformationsPersonnellesAction'
-import Input from '../shared/Input/Input'
+import TextInput from '../shared/TextInput/TextInput'
 
 export default function ModifierMonCompte({
   email,
@@ -43,7 +43,7 @@ export default function ModifierMonCompte({
         method="dialog"
         onSubmit={modifierMesInfosPersos}
       >
-        <Input
+        <TextInput
           defaultValue={nom}
           id={nomId}
           name="nom"
@@ -54,8 +54,8 @@ export default function ModifierMonCompte({
           <span className="color-red">
             *
           </span>
-        </Input>
-        <Input
+        </TextInput>
+        <TextInput
           defaultValue={prenom}
           id={prenomId}
           name="prenom"
@@ -66,8 +66,8 @@ export default function ModifierMonCompte({
           <span className="color-red">
             *
           </span>
-        </Input>
-        <Input
+        </TextInput>
+        <TextInput
           defaultValue={email}
           id={emailId}
           name="email"
@@ -84,8 +84,8 @@ export default function ModifierMonCompte({
           <span className="fr-hint-text">
             Seuls les gestionnaires verront votre adresse électronique.
           </span>
-        </Input>
-        <Input
+        </TextInput>
+        <TextInput
           defaultValue={telephone.replaceAll(' ', '')}
           id={telephoneId}
           name="telephone"
@@ -99,8 +99,8 @@ export default function ModifierMonCompte({
             Seuls les gestionnaires verront votre numéro de téléphone.
             Format attendu : 0122334455
           </span>
-        </Input>
-        <div className="fr-btns-group fr-btns-group--center">
+        </TextInput>
+        <div className="fr-btns-group fr-btns-group--space-between">
           <button
             aria-controls={id}
             className="fr-btn fr-btn--secondary fr-col-5"

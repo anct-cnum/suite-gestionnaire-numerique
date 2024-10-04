@@ -1,8 +1,3 @@
-.fr-container {
-  display: flex;
-  flex-direction: column;
-}
-
 .fr-links-group {
   list-style-type: none;
 }

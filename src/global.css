@@ -40,3 +40,8 @@
 .modal-body {
   border-radius: 1rem;
 }
+
+.fr-btns-group--space-between {
+  justify-content: space-between;
+  text-align: center;
+}

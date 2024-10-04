@@ -3,7 +3,9 @@
 import Image from 'next/image'
 import { ReactElement, useContext, useState } from 'react'
 
+import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
+import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
 import Rechercher from '../shared/Rechercher/Rechercher'
 import Role from '../shared/Role/Role'
@@ -21,6 +23,10 @@ export default function MesUtilisateurs(
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
   const modalId = 'supprimer-un-utilisateur'
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerId = 'drawer-modifier-mon-compte'
+  const labelId = 'drawer-modifier-mon-compte-titre'
 
   return (
     <>
@@ -35,6 +41,21 @@ export default function MesUtilisateurs(
           Inviter une personne
         </button>
       </div>
+      <Drawer
+        boutonFermeture="Fermer les filtres"
+        id={drawerId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+        setIsOpen={setIsDrawerOpen}
+      >
+        <FiltrerMesUtilisateurs
+          id={drawerId}
+          labelId={labelId}
+          setIsOpen={setIsDrawerOpen}
+        />
+      </Drawer>
       {
         session.role.groupe === 'gestionnaire' ? (
           <p>
@@ -48,7 +69,12 @@ export default function MesUtilisateurs(
             />
             <div>
               <button
+                aria-controls={drawerId}
                 className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
+                data-fr-opened="false"
+                onClick={() => {
+                  setIsDrawerOpen(true)
+                }}
                 type="button"
               >
                 Filtrer

@@ -19,16 +19,15 @@ export default function Page({ nombreDeResultat, pageCourante }: PageProps): Rea
         </li>
       )
     }
+
+    const urlAvecParametres = new URL(window.location.href)
+    urlAvecParametres.searchParams.set('page', String(page - 1))
+
     return (
       <li key={page}>
         <Link
           className="fr-pagination__link"
-          href={{
-            pathname: '/mes-utilisateurs',
-            query: {
-              page: page - 1,
-            },
-          }}
+          href={urlAvecParametres}
           title={`Page ${page}`}
         >
           {page}
