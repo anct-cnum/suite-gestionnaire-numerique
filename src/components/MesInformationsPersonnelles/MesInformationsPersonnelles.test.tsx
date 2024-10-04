@@ -326,6 +326,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(telephone).toHaveAttribute('name', 'telephone')
       expect(telephone).toHaveAttribute('pattern', '0[0-9]{9}')
       expect(telephone).toHaveAttribute('type', 'tel')
+      expect(telephone).not.toBeRequired()
       expect(telephone).toHaveValue('0405060708')
 
       const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })

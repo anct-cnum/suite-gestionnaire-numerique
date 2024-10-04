@@ -1,6 +1,7 @@
 import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
+import Checkbox from '../shared/Checkbox/Checkbox'
 
 export default function MesParametres(): ReactElement {
 
@@ -35,45 +36,19 @@ export default function MesParametres(): ReactElement {
           >
             Communication et notifications
           </h2>
-          <div className={`fr-toggle fr-pb-2w ${styles['fr-toggle--bb']}`}>
-            <input
-              aria-describedby={`${recevoirNotificationsToggleId}-messages`}
-              className="fr-toggle__input"
-              id={recevoirNotificationsToggleId}
-              type="checkbox"
-            />
-            <label
-              className="fr-toggle__label"
-              htmlFor={recevoirNotificationsToggleId}
-            >
-              Recevoir toutes les notifications sur votre adresse électronique
-            </label>
-            <div
-              aria-live="polite"
-              className="fr-messages-group"
-              id={`${recevoirNotificationsToggleId}-messages`}
-            />
-          </div>
-          <div className="fr-toggle fr-pb-4w fr-mt-2w">
-            <input
-              aria-describedby={`${recevoirRecapHebdoToggleId}-messages`}
-              className="fr-toggle__input"
-              id={recevoirRecapHebdoToggleId}
-              type="checkbox"
-            />
-            <label
-              className="fr-toggle__label"
-              htmlFor={recevoirRecapHebdoToggleId}
-            >
-              Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
-            </label>
-            <div
-              aria-live="polite"
-              className="fr-messages-group"
-              id={`${recevoirRecapHebdoToggleId}-messages`}
-            />
-          </div>
-          <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters" />
+          <Checkbox
+            hasSeparator={true}
+            id={recevoirNotificationsToggleId}
+            name={recevoirNotificationsToggleId}
+          >
+            Recevoir toutes les notifications sur votre adresse électronique
+          </Checkbox>
+          <Checkbox
+            id={recevoirRecapHebdoToggleId}
+            name={recevoirRecapHebdoToggleId}
+          >
+            Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
+          </Checkbox>
         </section>
         <section
           aria-labelledby={affichageHeadingId}

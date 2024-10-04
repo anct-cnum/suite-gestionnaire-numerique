@@ -24,7 +24,7 @@ export default function Drawer({
     >
       <div className={`fr-container ${styles['fr-container']}`}>
         <div className="fr-grid-row fr-grid-row--right">
-          <div className={`fr-col-4 ${styles['modal-box']} ${boxSize}`}>
+          <div className={`fr-col-5 ${styles['modal-box']} ${boxSize}`}>
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
               <button
                 aria-controls={id}

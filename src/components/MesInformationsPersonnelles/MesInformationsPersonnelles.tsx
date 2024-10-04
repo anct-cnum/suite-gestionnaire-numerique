@@ -193,7 +193,7 @@ export default function MesInformationsPersonnelles(
         />
       </div>
       <Drawer
-        boutonFermeture="Fermer le menu"
+        boutonFermeture="Fermer la modification"
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}

@@ -1,10 +1,11 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
-import { renderComponent, infosSessionUtilisateurContext } from '@/testHelper'
+import { renderComponent, infosSessionUtilisateurContext, spiedNextNavigation } from '@/testHelper'
 import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('mes utilisateurs', () => {
@@ -13,6 +14,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
+    spyOnSearchParams(1)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -57,6 +59,7 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -101,6 +104,7 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', ({ role }) => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -139,6 +143,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur actif quand j’affiche mes utilisateurs alors il s’affiche avec ses informations', () => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -158,6 +163,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur inactif quand j’affiche mes utilisateurs alors il s’affiche avec ce statut et sa date d’invitation', () => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -172,6 +178,7 @@ describe('mes utilisateurs', () => {
 
   it('sur ma ligne quand j’affiche mes utilisateurs alors je ne peux pas me supprimer', () => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -187,6 +194,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur quand j’affiche mes utilisateurs alors je peux le supprimer', () => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -203,6 +211,7 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
+      spyOnSearchParams(2)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -234,6 +243,7 @@ describe('mes utilisateurs', () => {
 
     it('je me ravise : je ferme la modale', () => {
       // GIVEN
+      spyOnSearchParams(3)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -251,8 +261,8 @@ describe('mes utilisateurs', () => {
     })
 
     it('je confirme la suppression', async () => {
-
       // GIVEN
+      spyOnSearchParams(3)
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
@@ -277,6 +287,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {
     // GIVEN
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -285,6 +296,96 @@ describe('mes utilisateurs', () => {
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Pagination' })
     expect(navigation).toBeInTheDocument()
+  })
+
+  it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
+    // GIVEN
+    spyOnSearchParams(2)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // WHEN
+    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+    fireEvent.click(filtrer)
+
+    // THEN
+    const drawerFiltrer = screen.getByRole('dialog', { name: 'Filtrer' })
+
+    const titre = within(drawerFiltrer).getByRole('heading', { level: 1, name: 'Filtrer' })
+    expect(titre).toBeInTheDocument()
+
+    const formulaire = within(drawerFiltrer).getByRole('form', { name: 'Filtrer' })
+    expect(formulaire).toHaveAttribute('method', 'dialog')
+
+    const boutonReinitialiser = within(formulaire).getByRole('button', { name: 'Réinitialiser les filtres' })
+    expect(boutonReinitialiser).toHaveAttribute('type', 'reset')
+
+    const boutonAfficher = within(formulaire).getByRole('button', { name: 'Afficher les utilisateurs' })
+    expect(boutonAfficher).toBeEnabled()
+    expect(boutonAfficher).toHaveAttribute('type', 'submit')
+    expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+  })
+
+  it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
+    // GIVEN
+    spyOnSearchParams(2, new URLSearchParams('utilisateursActives=on'))
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // WHEN
+    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+    fireEvent.click(filtrer)
+
+    // THEN
+    const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+    expect(utilisateursActives).toBeChecked()
+  })
+
+  it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
+    // GIVEN
+    spyOnSearchParams(2)
+    vi.spyOn(navigation, 'useRouter')
+      .mockReturnValueOnce(spiedNextNavigation.useRouter)
+      .mockReturnValueOnce(spiedNextNavigation.useRouter)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+    fireEvent.click(filtrer)
+
+    // WHEN
+    const boutonReinitialiser = screen.getByRole('button', { name: 'Réinitialiser les filtres' })
+    fireEvent.click(boutonReinitialiser)
+
+    // THEN
+    expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('/mes-utilisateurs')
+  })
+
+  describe('quand je filtre', () => {
+    it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
+      // GIVEN
+      spyOnSearchParams(3)
+      vi.spyOn(navigation, 'useRouter')
+        .mockReturnValueOnce(spiedNextNavigation.useRouter)
+        .mockReturnValueOnce(spiedNextNavigation.useRouter)
+      afficherLesFiltres()
+      const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+      fireEvent.click(utilisateursActives)
+
+      // WHEN
+      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      fireEvent.click(boutonAfficher)
+
+      // THEN
+      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://localhost:3000/mes-utilisateurs?utilisateursActives=on')
+    })
+
+    function afficherLesFiltres() {
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+      const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+      fireEvent.click(filtrer)
+    }
   })
 })
 
@@ -300,6 +401,13 @@ function getByTable() {
   const rowsBody = within(body).getAllByRole('row')
 
   return { columnsHead, rowsBody }
+}
+
+function spyOnSearchParams(nombreDeSpy: number, spy: URLSearchParams = spiedNextNavigation.useSearchParams) {
+  for (let index = 0; index < nombreDeSpy; index++) {
+    // @ts-expect-error
+    vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spy)
+  }
 }
 
 const mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel> = [

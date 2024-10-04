@@ -49,7 +49,7 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
                 'checkbox',
                 { name: 'Recevoir toutes les notifications sur votre adresse électronique' }
               )
-            expect(receptionNotifsToggle).toBeInTheDocument()
+            expect(receptionNotifsToggle).not.toBeChecked()
           })
 
           it('d’un récapitulatif hebdomadaire', () => {
@@ -62,7 +62,7 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
                 'checkbox',
                 { name: 'Recevoir un récapitulatif hebdomadaire sur votre adresse électronique' }
               )
-            expect(receptionRecapHebdoToggle).toBeInTheDocument()
+            expect(receptionRecapHebdoToggle).not.toBeChecked()
           })
         })
 
