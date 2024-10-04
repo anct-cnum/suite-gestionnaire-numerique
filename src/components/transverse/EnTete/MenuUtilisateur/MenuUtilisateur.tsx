@@ -13,7 +13,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
   const { session } = useContext(sessionUtilisateurContext)
 
   return (
-    <div className={`fr-container ${styles['fr-container']}`}>
+    <>
       <div className={`fr-mb-8v ${styles['zone-infos']}`}>
         <Image
           alt=""
@@ -36,7 +36,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
       </div>
       <ul
         aria-label="liens-menu"
-        className={`fr-mb-8v fr-pb-8v fr-links-group ${styles['fr-links-group']} ${styles['zone-infos']}`}
+        className={`fr-mb-6v fr-pb-6v fr-links-group ${styles['fr-links-group']} ${styles['zone-infos']}`}
       >
         <li>
           <Link
@@ -67,15 +67,17 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
         </li>
       </ul>
       <SelecteurRole />
-      <button
-        className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion}`}
-        name="deconnexion"
-        onClick={async () => signOut({ callbackUrl: '/connexion' })}
-        type="button"
-      >
-        Se déconnecter
-      </button>
-    </div>
+      <div className="fr-btns-group--center">
+        <button
+          className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}
+          name="deconnexion"
+          onClick={async () => signOut({ callbackUrl: '/connexion' })}
+          type="button"
+        >
+          Se déconnecter
+        </button>
+      </div>
+    </>
   )
 }
 

@@ -16,11 +16,17 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const session = (await getSession())!
   const pageCourante = Number(searchParams.page ?? 0)
+  const utilisateursActives = Boolean(searchParams.utilisateursActives)
 
   const utilisateurLoader = new PostgreUtilisateurLoader(prisma)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
-    await rechercherMesUtilisateurs.get({ pageCourante, ssoId: session.user.sub, utilisateursParPage: 10 })
+    await rechercherMesUtilisateurs.get({
+      pageCourante,
+      ssoId: session.user.sub,
+      utilisateursActives,
+      utilisateursParPage: 10,
+    })
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
     session.user.sub,
@@ -36,5 +42,6 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
 type PageProps = Readonly<{
   searchParams: Partial<Readonly<{
     page: string
+    utilisateursActives: string
   }>>
 }>

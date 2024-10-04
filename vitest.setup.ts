@@ -21,3 +21,10 @@ function toOpenInNewTab(element: HTMLElement, content: string): { message: () =>
 expect.extend({
   toOpenInNewTab,
 })
+
+vi.mock('next/navigation', () => {
+  return {
+    useRouter: vi.fn(),
+    useSearchParams: vi.fn(),
+  }
+})

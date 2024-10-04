@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { categorieByType } from '@/domain/Role'
@@ -15,9 +15,10 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
   async findMesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
-    utilisateursParPage: number
+    utilisateursParPage: number,
+    utilisateursActives: boolean
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
-    let where: Record<string, string | boolean | number | null> = {}
+    let where: Prisma.UtilisateurRecordWhereInput = {}
 
     if (utilisateur.role.nom === 'Gestionnaire structure') {
       where = { role: 'gestionnaire_structure', structureId: utilisateur.structureId }
@@ -27,6 +28,10 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       where = { groupementId: utilisateur.groupementId, role: 'gestionnaire_groupement' }
     } else if (utilisateur.role.nom === 'Gestionnaire région') {
       where = { regionCode: utilisateur.regionCode, role: 'gestionnaire_region' }
+    }
+
+    if (utilisateursActives) {
+      where = { ...where, NOT: { derniereConnexion: null } }
     }
 
     const total = await this.#prisma.utilisateurRecord.count({
