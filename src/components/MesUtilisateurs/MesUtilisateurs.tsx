@@ -113,20 +113,18 @@ export default function MesUtilisateurs(
                 />
               </td>
               <td>
-                <div>
-                  <button
-                    aria-controls={drawerDetailsId}
-                    className="primary font-weight-700 fr-px-0 no-hover"
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setIsDrawerOpen(true)
-                      setUtilisateurSelectionne(unUtilisateurViewModel)
-                    }}
-                    type="button"
-                  >
-                    {unUtilisateurViewModel.prenomEtNom}
-                  </button>
-                </div>
+                <button
+                  aria-controls={drawerDetailsId}
+                  className="primary font-weight-700 fr-px-0 no-hover d-block"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setUtilisateurSelectionne(unUtilisateurViewModel)
+                    setIsDrawerOpen(true)
+                  }}
+                  type="button"
+                >
+                  {unUtilisateurViewModel.prenomEtNom}
+                </button>
                 {unUtilisateurViewModel.structure}
               </td>
               <td>
@@ -183,17 +181,18 @@ export default function MesUtilisateurs(
         setUtilisateurASupprimer={setUtilisateurASupprimer}
         utilisateurASupprimer={utilisateurASupprimer}
       />
-      <Drawer
-        boutonFermeture="Fermer le menu"
-        id={drawerDetailsId}
-        // Stryker disable next-line BooleanLiteral
-        isFixedWidth={false}
-        isOpen={isDrawerOpen}
-        labelId={labelDetailsId}
-        setIsOpen={setIsDrawerOpen}
-      >
-        <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
-      </Drawer>
+      {utilisateurSelectionne ?
+        <Drawer
+          boutonFermeture="Fermer le menu"
+          id={drawerDetailsId}
+          // Stryker disable next-line BooleanLiteral
+          isFixedWidth={false}
+          isOpen={isDrawerOpen}
+          labelId={labelDetailsId}
+          setIsOpen={setIsDrawerOpen}
+        >
+          <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
+        </Drawer> : null}
     </>
   )
 }

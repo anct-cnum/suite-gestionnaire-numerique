@@ -824,6 +824,7 @@ describe('postgre utilisateur query', () => {
               territoireOuStructure: 'Administrateur Dispositif lambda',
             },
             structureId: null,
+            telephone: '0102030405',
             uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
           },
         ],

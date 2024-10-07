@@ -50,6 +50,10 @@
   background-color: unset !important;
 }
 
+.d-block {
+  display: block;
+}
+
 tr {
   position: relative;
 }

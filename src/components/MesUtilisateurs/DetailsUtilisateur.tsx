@@ -3,35 +3,35 @@ import { ReactElement } from 'react'
 import { MonUtilisateur } from '../../presenters/mesUtilisateursPresenter'
 
 export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurProps): ReactElement {
-  const champs = [
+  const donneesPersonnelles = [
     {
       label: 'Rôle attribué',
-      value: utilisateur?.role,
+      value: utilisateur.role,
     },
     {
       label: 'Adresse éléctronique',
-      value: utilisateur?.email,
+      value: utilisateur.email,
     },
     {
       label: 'Téléphone professionnel',
-      value: utilisateur?.telephone,
+      value: utilisateur.telephone,
     },
     {
       label: 'Dernière connexion',
-      value: utilisateur?.derniereConnexion,
+      value: utilisateur.derniereConnexion,
     },
     {
       label: 'Structure ou collectivité',
-      value: utilisateur?.structure,
+      value: utilisateur.structure,
     },
   ]
 
   return (
     <div>
-      <h2 className="color-blue-france">
-        {utilisateur?.prenomEtNom}
-      </h2>
-      {champs.map(({ label, value }) => (
+      <h1 className="fr-h2 color-blue-france">
+        {utilisateur.prenomEtNom}
+      </h1>
+      {donneesPersonnelles.map(({ label, value }) => (
         <div
           className="fr-mb-2w"
           key={label}
@@ -49,5 +49,5 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  utilisateur?: MonUtilisateur
+  utilisateur: MonUtilisateur
 }>

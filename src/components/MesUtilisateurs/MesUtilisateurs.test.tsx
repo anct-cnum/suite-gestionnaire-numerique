@@ -218,9 +218,8 @@ describe('mes utilisateurs', () => {
     fireEvent.click(rowPremierUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByRole('dialog')
-    expect(drawerDetailsUtilisateur).toBeInTheDocument()
-    const prenomEtNom = screen.getByRole('heading', { level: 2, name: 'Martin Tartempion' })
+    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
