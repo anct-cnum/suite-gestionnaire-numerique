@@ -6,8 +6,11 @@ import SessionUtilisateurContext from '@/components/shared/SessionUtilisateurCon
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
+import config from '@/config.json'
 import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
+import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { EnregistrerNomPrenomSiAbsents } from '@/use-cases/commands/EnregistrerNomPrenomSiAbsents'
 
 export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
   const session = await getSession()
@@ -17,7 +20,25 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   }
 
   const postgreUtilisateurPostgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
-  const utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  let utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  const correctionNomPrenom = await new EnregistrerNomPrenomSiAbsents(
+    new PostgreUtilisateurRepository(prisma)
+  ).execute({
+    actuels: {
+      nom: utilisateurReadModel.nom,
+      prenom: utilisateurReadModel.prenom,
+    },
+    corriges: {
+      nom: session.user.usual_name,
+      prenom: session.user.given_name,
+    },
+    uid: session.user.sub,
+    valeurNomOuPrenomAbsent: config.absenceNomOuPrenom,
+  })
+
+  if (correctionNomPrenom === 'okAvecMiseAJour') {
+    utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  }
 
   return (
     <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>
