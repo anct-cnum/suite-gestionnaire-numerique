@@ -4,6 +4,7 @@ import { Prisma, Role } from '@prisma/client'
 import { coNumClient } from './co-num/coNumClient'
 import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
+import config from '@/use-cases/config.json'
 
 async function migration() {
   const greenColor = '\x1b[32m%s\x1b[0m'
@@ -77,9 +78,9 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
             // = e-mail
             name: 1,
             // Le nom n'est pas forcément renseigné
-            nom: { $ifNull: ['$nom', '~'] },
+            nom: { $ifNull: ['$nom', config.absenceNomOuPrenom] },
             // Le prénom n'est pas forcément renseigné
-            prenom: { $ifNull: ['$prenom', '~'] },
+            prenom: { $ifNull: ['$prenom', config.absenceNomOuPrenom] },
             // La région n'est pas forcément renseignée
             region: { $ifNull: ['$region', ''] },
             reseau: { $ifNull: ['$reseau', ''] },
@@ -226,8 +227,8 @@ function transformUtilisateursFNEToUtilisateurs(
       inviteLe: utilisateurFNERecord.created,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
-      nom: utilisateurFNERecord.lastName ?? '~',
-      prenom: utilisateurFNERecord.firstName ?? '~',
+      nom: utilisateurFNERecord.lastName ?? config.absenceNomOuPrenom,
+      prenom: utilisateurFNERecord.firstName ?? config.absenceNomOuPrenom,
       regionCode,
       role,
       ssoId,
