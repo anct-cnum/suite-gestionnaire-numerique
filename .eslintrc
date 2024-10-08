@@ -143,6 +143,7 @@
       "extends": ["plugin:vitest/all"],
       "rules": {
         "@typescript-eslint/class-methods-use-this": "off",
+        "@typescript-eslint/init-declarations": "off",
         "@typescript-eslint/unbound-method": "off",
         "vitest/max-expects": "off",
         "vitest/no-conditional-expect": "off",

@@ -7,7 +7,9 @@ import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
+import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
 
 export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
   const session = await getSession()
@@ -17,7 +19,24 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   }
 
   const postgreUtilisateurPostgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
-  const utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  let utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  const correctionNomPrenom = await new CorrigerNomPrenomSiAbsents(
+    new PostgreUtilisateurRepository(prisma)
+  ).execute({
+    actuels: {
+      nom: utilisateurReadModel.nom,
+      prenom: utilisateurReadModel.prenom,
+    },
+    corriges: {
+      nom: session.user.usual_name,
+      prenom: session.user.given_name,
+    },
+    uid: session.user.sub,
+  })
+
+  if (correctionNomPrenom === 'okAvecMiseAJour') {
+    utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  }
 
   return (
     <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>

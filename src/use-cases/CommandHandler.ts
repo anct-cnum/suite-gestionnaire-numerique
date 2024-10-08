@@ -1,7 +1,7 @@
-import { Result } from '@/util/result'
+import { Result, ResultOk } from '@/util/result'
 
-export interface CommandHandler<Command, Failure = string> {
-  execute: (command: Command) => ResultAsync<Failure>
+export interface CommandHandler<Command, Failure = string, Success = ResultOk> {
+  execute: (command: Command) => ResultAsync<Failure, Success>
 }
 
-export type ResultAsync<Failure> = Promise<Result<Failure>>
+export type ResultAsync<Failure, Success = ResultOk> = Promise<Result<Failure, Success>>
