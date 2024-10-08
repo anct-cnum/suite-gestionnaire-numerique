@@ -43,6 +43,7 @@ export type MesUtilisateursReadModel = UtilisateurState & Readonly<{
   isActive: boolean
   regionCode: string | null
   structureId: number | null
+  telephone: string
 }>
 
 export type UtilisateursCourantsEtTotalReadModel = Readonly<{

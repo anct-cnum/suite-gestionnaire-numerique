@@ -24,6 +24,7 @@ export function mesUtilisateursPresenter(
         role: monUtilisateur.role.nom,
         statut,
         structure: monUtilisateur.role.territoireOuStructure,
+        telephone: monUtilisateur.telephone,
         uid: monUtilisateur.uid,
       }
     }),
@@ -48,7 +49,7 @@ export type MesUtilisateursViewModel = Readonly<{
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>
 
-type MonUtilisateur = Readonly<{
+export type MonUtilisateur = Readonly<{
   canBeDeleted: boolean
   derniereConnexion: string
   email: string
@@ -58,6 +59,7 @@ type MonUtilisateur = Readonly<{
   statut: StatutInscription
   structure: string
   uid: string
+  telephone: string
 }>
 
 export type StatutInscription = 'En attente' | 'Activé'
