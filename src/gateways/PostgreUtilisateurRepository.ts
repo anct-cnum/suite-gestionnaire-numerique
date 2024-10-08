@@ -55,6 +55,9 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
     const utilisateurState = utilisateur.state()
     await this.#activeRecord.update({
       data: {
+        email: utilisateurState.email,
+        nom: utilisateurState.nom,
+        prenom: utilisateurState.prenom,
         role: fromTypologieRole(utilisateurState.role.nom),
       },
       where: {

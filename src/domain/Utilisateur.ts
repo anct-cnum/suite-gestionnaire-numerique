@@ -3,11 +3,11 @@ import { Entity } from './shared/Model'
 import { Result } from '@/util/result'
 
 export class Utilisateur extends Entity<UtilisateurState> {
-  #role: Role
   readonly #isSuperAdmin: boolean
-  readonly #nom: string
-  readonly #prenom: string
   readonly #email: string
+  #role: Role
+  #nom: string
+  #prenom: string
 
   private constructor(
     uid: UtilisateurUid,
@@ -47,6 +47,14 @@ export class Utilisateur extends Entity<UtilisateurState> {
       role: this.#role.state(),
       uid: this.uid,
     }
+  }
+
+  changerPrenom(prenom: string): void {
+    this.#prenom = prenom
+  }
+
+  changerNom(nom: string): void {
+    this.#nom = nom
   }
 
   changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
