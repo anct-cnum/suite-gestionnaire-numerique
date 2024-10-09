@@ -5,7 +5,7 @@ import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
-import { renderComponent, infosSessionUtilisateurContext, spiedNextNavigation } from '@/testHelper'
+import { renderComponent, infosSessionUtilisateurContext, spiedNextNavigation, spyOnSearchParams } from '@/testHelper'
 import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('mes utilisateurs', () => {
@@ -14,7 +14,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
-    spyOnSearchParams(1)
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -59,7 +59,7 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
     // GIVEN
-    spyOnSearchParams(2)
+    spyOnSearchParams(3)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -210,6 +210,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur alors ses détails s’affichent dans un drawer', async () => {
     // GIVEN
+    spyOnSearchParams(4)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const rowPremierUtilisateur = screen.getByRole('button', { name: 'Martin Tartempion' })
@@ -250,7 +251,7 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
-      spyOnSearchParams(2)
+      spyOnSearchParams(4)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -282,7 +283,7 @@ describe('mes utilisateurs', () => {
 
     it('je me ravise : je ferme la modale', () => {
       // GIVEN
-      spyOnSearchParams(3)
+      spyOnSearchParams(8)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -301,7 +302,7 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      spyOnSearchParams(3)
+      spyOnSearchParams(4)
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
@@ -339,7 +340,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
-    spyOnSearchParams(2)
+    spyOnSearchParams(4)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
@@ -367,7 +368,7 @@ describe('mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    spyOnSearchParams(2, new URLSearchParams('utilisateursActives=on'))
+    spyOnSearchParams(4, new URLSearchParams('utilisateursActives=on'))
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
@@ -382,7 +383,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
     // GIVEN
-    spyOnSearchParams(2)
+    spyOnSearchParams(4)
     vi.spyOn(navigation, 'useRouter')
       .mockReturnValueOnce(spiedNextNavigation.useRouter)
       .mockReturnValueOnce(spiedNextNavigation.useRouter)
@@ -402,7 +403,7 @@ describe('mes utilisateurs', () => {
   describe('quand je filtre', () => {
     it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
-      spyOnSearchParams(3)
+      spyOnSearchParams(6)
       vi.spyOn(navigation, 'useRouter')
         .mockReturnValueOnce(spiedNextNavigation.useRouter)
         .mockReturnValueOnce(spiedNextNavigation.useRouter)
@@ -415,7 +416,7 @@ describe('mes utilisateurs', () => {
       fireEvent.click(boutonAfficher)
 
       // THEN
-      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://localhost:3000/mes-utilisateurs?utilisateursActives=on')
+      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
     })
 
     function afficherLesFiltres() {
@@ -440,13 +441,6 @@ function getByTable() {
   const rowsBody = within(body).getAllByRole('row')
 
   return { columnsHead, rowsBody }
-}
-
-function spyOnSearchParams(nombreDeSpy: number, spy: URLSearchParams = spiedNextNavigation.useSearchParams) {
-  for (let index = 0; index < nombreDeSpy; index++) {
-    // @ts-expect-error
-    vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spy)
-  }
 }
 
 const mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel> = [

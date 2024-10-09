@@ -1,3 +1,5 @@
+'use client'
+
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useId } from 'react'
 
@@ -66,7 +68,7 @@ export default function FiltrerMesUtilisateurs({
     const form = new FormData(event.currentTarget)
     const utilisateursActives = form.get('utilisateursActives') as string
 
-    const url = new URL('/mes-utilisateurs', window.location.href)
+    const url = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
 
     if (utilisateursActives === 'on') {
       url.searchParams.append('utilisateursActives', utilisateursActives)

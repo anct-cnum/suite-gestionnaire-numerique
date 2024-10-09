@@ -1,16 +1,18 @@
 import { render, screen, within } from '@testing-library/react'
 
 import Pagination from './Pagination'
+import { spyOnSearchParams } from '@/testHelper'
 
 describe('pagination', () => {
   it('quand je suis sur la première page d’une page (< ① >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={0}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={9}
       />
     )
@@ -31,12 +33,13 @@ describe('pagination', () => {
 
   it('quand je suis sur la première page de six pages (< ① 2 3 4 5 >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={0}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />
     )
@@ -65,12 +68,13 @@ describe('pagination', () => {
 
   it('quand je suis sur la deuxième page de six pages (< 1 ② 3 4 5 >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={1}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />
     )
@@ -98,12 +102,13 @@ describe('pagination', () => {
 
   it('quand je suis sur la quatrième page de huit pages (< 2 3 ④ 5 6 >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={3}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={75}
       />
     )
@@ -131,12 +136,13 @@ describe('pagination', () => {
 
   it('quand je suis sur la cinquième page de six pages (< 2 3 4 ⑤ 6 >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={4}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />
     )
@@ -164,12 +170,13 @@ describe('pagination', () => {
 
   it('quand je suis sur la 320 page de 323 pages (< 318 319 ③②⓪ 321 322 >)', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs' })
+    spyOnSearchParams(1)
 
     // WHEN
     render(
       <Pagination
         pageCourante={319}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={3225}
       />
     )
@@ -197,12 +204,14 @@ describe('pagination', () => {
 
   it('quand je suis sur une page quelconque et avec un autre paramètre dans l’url', () => {
     // GIVEN
-    vi.stubGlobal('location', { ...window.location, href: 'http://example.com/mes-utilisateurs?fakeParam=fakeValue' })
+    const urlSearchParams = new URLSearchParams({ fakeParam: 'fakeValue' })
+    spyOnSearchParams(1, urlSearchParams)
 
     // WHEN
     render(
       <Pagination
         pageCourante={3}
+        pathname="/mes-utilisateurs"
         totalUtilisateurs={45}
       />
     )

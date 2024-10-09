@@ -1,3 +1,5 @@
+'use client'
+
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
 
 import { modifierMesInformationsPersonnellesAction } from '../../app/api/actions/modifierMesInformationsPersonnellesAction'

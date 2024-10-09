@@ -169,6 +169,7 @@ export default function MesUtilisateurs(
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination
                 pageCourante={mesUtilisateursViewModel.pageCourante}
+                pathname={'/mes-utilisateurs'}
                 totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
               />
             </div>
