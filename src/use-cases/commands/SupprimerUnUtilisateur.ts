@@ -23,7 +23,7 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
     if (!utilisateurASupprimer) {
       return 'compteASupprimerInexistant'
     }
-    if (!utilisateurCourant.peutSupprimer(utilisateurASupprimer)) {
+    if (!utilisateurCourant.peutGerer(utilisateurASupprimer)) {
       return 'suppressionNonAutorisee'
     }
     return (await this.#repository.drop(utilisateurASupprimer))
