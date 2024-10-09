@@ -12,6 +12,10 @@ export interface UpdateUtilisateurRepository {
   update: (utilisateur: Utilisateur) => Promise<void>
 }
 
+export interface AddUtilisateurRepository extends FindUtilisateurRepository{
+  add: (utilisateur: Utilisateur) => Promise<void>
+}
+
 export interface UtilisateurRepository
   extends FindUtilisateurRepository,
     DropUtilisateurRepository,
