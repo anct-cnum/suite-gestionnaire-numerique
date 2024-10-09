@@ -5,10 +5,10 @@ const securityHeaders = [
    * Content-Security-Policy, see: https://scotthelme.co.uk/content-security-policy-an-introduction/
    * This header define approved sources for content on the site that the browser can load.
    **/
-  {
-    key: 'Content-Security-Policy',
-    value: "default-src https: 'unsafe-inline'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:;",
-  },
+  // {
+  //   key: 'Content-Security-Policy',
+  //   value: "default-src https: 'unsafe-inline'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:;",
+  // },
   /**
    * Permissions-Policy, see: https://scotthelme.co.uk/goodbye-feature-policy-and-hello-permissions-policy/
    * This header provides a mechanism to allow or deny the use of browser features in its own frame, and in content

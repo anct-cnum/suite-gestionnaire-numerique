@@ -3,8 +3,7 @@ import { ReactElement } from 'react'
 
 import { nombreDePage } from './pagination'
 
-export default function DernierePage({ nombreDeResultat }: DernierePageProps): ReactElement {
-  const urlAvecParametres = new URL(window.location.href)
+export default function DernierePage({ nombreDeResultat, urlAvecParametres }: DernierePageProps): ReactElement {
   urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat) - 1))
 
   return (
@@ -19,4 +18,5 @@ export default function DernierePage({ nombreDeResultat }: DernierePageProps): R
 
 type DernierePageProps = Readonly<{
   nombreDeResultat: number
+  urlAvecParametres: URL
 }>

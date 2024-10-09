@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react'
+import * as navigation from 'next/navigation'
 import { ReactElement } from 'react'
 
 import { Groupe, TypologieRole } from './domain/Role'
@@ -46,4 +47,14 @@ export const spiedNextNavigation = {
     replace: vi.fn(),
   },
   useSearchParams: new URLSearchParams(),
+}
+
+export function spyOnSearchParams(
+  nombreDeSpy: number,
+  spy: URLSearchParams = spiedNextNavigation.useSearchParams
+): void {
+  for (let index = 0; index < nombreDeSpy; index++) {
+    // @ts-expect-error
+    vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spy)
+  }
 }
