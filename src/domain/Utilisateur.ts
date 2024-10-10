@@ -4,7 +4,8 @@ import { Result } from '@/util/result'
 
 export class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  readonly #email: string
+  readonly #telephone: string
+  #email: string
   #role: Role
   #nom: string
   #prenom: string
@@ -15,7 +16,8 @@ export class Utilisateur extends Entity<UtilisateurState> {
     nom: string,
     prenom: string,
     email: string,
-    isSuperAdmin: boolean
+    isSuperAdmin: boolean,
+    telephone = ''
   ) {
     super(uid)
     this.#role = role
@@ -23,6 +25,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     this.#prenom = prenom
     this.#email = email
     this.#isSuperAdmin = isSuperAdmin
+    this.#telephone = telephone
   }
 
   static create(
@@ -34,7 +37,8 @@ export class Utilisateur extends Entity<UtilisateurState> {
       utilisateur.nom,
       utilisateur.prenom,
       utilisateur.email,
-      utilisateur.isSuperAdmin
+      utilisateur.isSuperAdmin,
+      utilisateur.telephone
     )
   }
 
@@ -45,6 +49,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
       nom: this.#nom,
       prenom: this.#prenom,
       role: this.#role.state(),
+      telephone: this.#telephone,
       uid: this.uid,
     }
   }
@@ -55,6 +60,10 @@ export class Utilisateur extends Entity<UtilisateurState> {
 
   changerNom(nom: string): void {
     this.#nom = nom
+  }
+
+  changerEmail(email: string): void {
+    this.#email = email
   }
 
   changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
@@ -79,6 +88,7 @@ export type UtilisateurState = Readonly<{
   nom: string
   prenom: string
   role: RoleState
+  telephone: string
 }>
 
 type UtilisateurParams = Readonly<{
@@ -88,7 +98,8 @@ type UtilisateurParams = Readonly<{
   nom: string
   prenom: string
   role: TypologieRole,
-  organisation?: string
+  organisation?: string,
+  telephone?: string,
 }>
 
 export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
