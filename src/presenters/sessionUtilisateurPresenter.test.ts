@@ -1,68 +1,48 @@
 import { createSessionUtilisateurPresenter } from './sessionUtilisateurPresenter'
-import { UnUtilisateurReadModel } from '@/use-cases/queries/RechercherUnUtilisateur'
 
 describe('session utilisateur presenter', () => {
   it('affichage des informations de session de l’utilisateur connecté', () => {
-    const { nom, groupe, territoireOuStructure, categorie } = {
-      categorie: 'mednum',
-      groupe: 'admin',
-      nom: 'Support animation',
-      territoireOuStructure: 'Mednum',
+    // GIVEN
+    const utilisateurReadModel = {
+      departementCode: null,
+      derniereConnexion: new Date(0),
+      email: 'martin.tartempion@example.net',
+      groupementId: null,
+      inviteLe: new Date(0),
+      isActive: true,
+      isSuperAdmin: false,
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      regionCode: null,
+      role: {
+        categorie: 'mednum',
+        groupe: 'admin',
+        nom: 'Support animation',
+        territoireOuStructure: 'Mednum',
+      },
+      structureId: null,
+      telephone: '0102030405',
+      uid: 'fooId',
     }
 
-    expect(
-      createSessionUtilisateurPresenter(
-        makeUtilisateur(
-          nom,
-          territoireOuStructure,
-          groupe,
-          categorie
-        )
-      )
-    ).toStrictEqual({
-      ...utilisateur,
+    // WHEN
+    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
+
+    // THEN
+    const expectedSessionUtilisateurViewModel = {
+      email: 'martin.tartempion@example.net',
+      isSuperAdmin: false,
+      nom: 'Tartempion',
+      prenom: 'Martin',
       role: {
         groupe: 'admin',
         libelle: 'Mednum',
         nom: 'Support animation',
         pictogramme: 'mednum',
       },
-    })
+      telephone: '0102030405',
+      uid: 'fooId',
+    }
+    expect(sessionUtilisateurViewModel).toStrictEqual(expectedSessionUtilisateurViewModel)
   })
 })
-
-const utilisateur = {
-  email: 'martin.tartempion@example.net',
-  isSuperAdmin: false,
-  nom: 'Tartempion',
-  prenom: 'Martin',
-  uid: 'fooId',
-}
-
-function makeUtilisateur(
-  role: string,
-  territoireOuStructure: string,
-  groupe: string,
-  categorie: string
-): UnUtilisateurReadModel {
-  return {
-    departementCode: null,
-    derniereConnexion: new Date(0),
-    email: utilisateur.email,
-    groupementId: null,
-    inviteLe: new Date(0),
-    isActive: true,
-    isSuperAdmin: false,
-    nom: utilisateur.nom,
-    prenom: utilisateur.prenom,
-    regionCode: null,
-    role: {
-      categorie,
-      groupe,
-      nom: role,
-      territoireOuStructure,
-    },
-    structureId: null,
-    uid: 'fooId',
-  }
-}

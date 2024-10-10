@@ -34,6 +34,7 @@ export const clientContextProviderDefaultValue = {
       nom: 'Support animation',
       pictogramme: 'support-animation',
     },
+    telephone: '0102030405',
     uid: 'fooId',
   },
   utilisateursParPage: 10,
