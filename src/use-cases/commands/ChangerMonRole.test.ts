@@ -1,7 +1,6 @@
 import { ChangerMonRole } from './ChangerMonRole'
-import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { RoleState } from '@/domain/Role'
-import { UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
   afterEach(() => {
@@ -10,62 +9,61 @@ describe('changer mon rôle', () => {
 
   it('ayant le rôle super admin quand un utilisateur change de rôle alors le rôle est modifié', async () => {
     // GIVEN
-    const utilisateur = Utilisateur.create({
-      email: 'martin.tartempion@example.net',
-      isSuperAdmin: true,
-      nom: 'tartempion',
-      organisation: 'Dispositif Lambda',
-      prenom: 'martin',
-      role: 'Administrateur dispositif',
-      uid: 'fooId',
-    })
-    const nouveauRoleState: Omit<RoleState, 'categorie'> = {
-      groupe: 'admin',
-      nom: 'Pilote politique publique',
-      territoireOuStructure: '',
-    }
+    const nouveauRole = 'Pilote politique publique'
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN
     const result = await changerMonRole.execute({
-      nouveauRoleState,
-      utilisateurState: utilisateur.state(),
+      nouveauRole,
+      utilisateurUid: 'utilisateurSuperAdminUid',
     })
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateur.state()).toStrictEqual<UtilisateurState>({
-      ...utilisateur.state(),
-      role: { ...nouveauRoleState, categorie: 'anct' },
+    expect(spiedUtilisateur.state()).toStrictEqual({
+      email: 'martin.tartempion@example.net',
+      isSuperAdmin: true,
+      nom: 'tartempion',
+      prenom: 'martin',
+      role: {
+        categorie: 'anct',
+        groupe: 'admin',
+        nom: 'Pilote politique publique',
+        territoireOuStructure: '',
+      },
+      uid: 'utilisateurSuperAdminUid',
     })
   })
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
     // GIVEN
-    const utilisateur = Utilisateur.create({
-      email: 'martin.tartempion@example.net',
-      isSuperAdmin: false,
-      nom: 'tartempion',
-      organisation: 'Dispositif Lambda',
-      prenom: 'martin',
-      role: 'Administrateur dispositif',
-      uid: 'fooId',
-    })
-    const nouveauRoleState: Omit<RoleState, 'categorie'> = {
-      groupe: 'admin',
-      nom: 'Pilote politique publique',
-      territoireOuStructure: '',
-    }
+    const nouveauRole = 'Pilote politique publique'
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN
     const result = await changerMonRole.execute({
-      nouveauRoleState,
-      utilisateurState: utilisateur.state(),
+      nouveauRole,
+      utilisateurUid: 'utilisateurNonSuperAdminUid',
     })
 
     // THEN
     expect(result).toBe('utilisateurNonAutoriseAChangerSonRole')
+    expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
+  })
+
+  it('mon compte est introuvable : pas de modification possible', async () => {
+    // GIVEN
+    const nouveauRole = 'Pilote politique publique'
+    const changerMonRole = new ChangerMonRole(utilisateurRepository)
+
+    // WHEN
+    const result = await changerMonRole.execute({
+      nouveauRole,
+      utilisateurUid: 'utilisateurIntrouvableUid',
+    })
+
+    // THEN
+    expect(result).toBe('compteInexistant')
     expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
   })
 })
@@ -74,9 +72,33 @@ const nullUtilisateur = {} as Utilisateur
 
 let spiedUtilisateur: Utilisateur = nullUtilisateur
 
-const utilisateurRepository: UpdateUtilisateurRepository = {
+const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
+  utilisateurNonSuperAdminUid: Utilisateur.create({
+    email: 'martin.tartempion@example.net',
+    isSuperAdmin: false,
+    nom: 'tartempion',
+    organisation: 'Dispositif Lambda',
+    prenom: 'martin',
+    role: 'Administrateur dispositif',
+    uid: 'utilisateurNonSuperAdminUid',
+  }),
+  utilisateurSuperAdminUid: Utilisateur.create({
+    email: 'martin.tartempion@example.net',
+    isSuperAdmin: true,
+    nom: 'tartempion',
+    organisation: 'Dispositif Lambda',
+    prenom: 'martin',
+    role: 'Administrateur dispositif',
+    uid: 'utilisateurSuperAdminUid',
+  }),
+}
+
+const utilisateurRepository = new class implements FindUtilisateurRepository, UpdateUtilisateurRepository {
+  async find(uid: string): Promise<Utilisateur | null> {
+    return Promise.resolve(utilisateurByUid[uid] ?? null)
+  }
   async update(utilisateur: Utilisateur): Promise<void> {
     spiedUtilisateur = utilisateur
     return Promise.resolve()
-  },
-}
+  }
+}()

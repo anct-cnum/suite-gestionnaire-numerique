@@ -4,7 +4,6 @@ import * as nextAuth from 'next-auth/react'
 import EnTete from './EnTete'
 import * as changerAction from '@/app/api/actions/changerMonRoleAction'
 import { renderComponent } from '@/testHelper'
-import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
@@ -138,10 +137,10 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     })
   })
 
-  it('quand je change de rôle avec un rôle invalide dans le sélecteur de rôle alors il ne se passe rien', async () => {
+  it('quand je change de rôle avec un rôle invalide dans le sélecteur de rôle alors il ne se passe rien', () => {
     // GIVEN
     vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-    vi.spyOn(ChangerMonRole.prototype, 'execute').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSonRole')
+    vi.spyOn(changerAction, 'changerMonRoleAction').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSonRole')
     const menuUtilisateur = ouvrirLeMenuUtilisateur()
     const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
 
@@ -149,9 +148,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     fireEvent.change(role, { target: { value: 'roleInvalide' } })
 
     // THEN
-    await waitFor(() => {
-      expect(window.location.reload).not.toHaveBeenCalledOnce()
-    })
+    expect(window.location.reload).not.toHaveBeenCalledOnce()
   })
 })
 

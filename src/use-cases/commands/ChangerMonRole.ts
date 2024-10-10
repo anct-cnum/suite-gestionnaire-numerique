@@ -1,41 +1,33 @@
-import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { Role, RoleState } from '@/domain/Role'
-import { InvariantUtilisateur, UtilisateurState, Utilisateur } from '@/domain/Utilisateur'
+import { TypologieRole } from '@/domain/Role'
+import { InvariantUtilisateur } from '@/domain/Utilisateur'
 
 export class ChangerMonRole implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UpdateUtilisateurRepository
+  readonly #repository: Repository
 
-  constructor(utilisateurRepository: UpdateUtilisateurRepository) {
-    this.#utilisateurRepository = utilisateurRepository
+  constructor(repository: Repository) {
+    this.#repository = repository
   }
 
-  async execute({
-    utilisateurState,
-    nouveauRoleState,
-  }: Command): ResultAsync<InvariantUtilisateur> {
-    const utilisateur = Utilisateur.create({
-      email: utilisateurState.email,
-      isSuperAdmin: utilisateurState.isSuperAdmin,
-      nom: utilisateurState.nom,
-      organisation: utilisateurState.role.territoireOuStructure,
-      prenom: utilisateurState.prenom,
-      role: utilisateurState.role.nom,
-      uid: utilisateurState.uid,
-    })
-
-    const nouveauRole = new Role(nouveauRoleState.nom)
-    const result = utilisateur.changerRole(nouveauRole)
-
-    if (result === 'OK') {
-      await this.#utilisateurRepository.update(utilisateur)
+  async execute({ nouveauRole, utilisateurUid }: Command): ResultAsync<ChangerMonRoleFailure> {
+    const utilisateur = await this.#repository.find(utilisateurUid)
+    if (!utilisateur) {
+      return 'compteInexistant'
     }
-
+    const result = utilisateur.changerRole(nouveauRole)
+    if (result === 'OK') {
+      await this.#repository.update(utilisateur)
+    }
     return result
   }
 }
 
+export type ChangerMonRoleFailure = InvariantUtilisateur | 'compteInexistant'
+
 type Command = Readonly<{
-  nouveauRoleState: Omit<RoleState, 'categorie' | 'groupe'>
-  utilisateurState: Omit<UtilisateurState, 'role'> & { role: Omit<RoleState, 'categorie' | 'groupe'> }
+  nouveauRole: TypologieRole,
+  utilisateurUid: string,
 }>
+
+interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
