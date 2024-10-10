@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import { MonUtilisateur } from '../../presenters/mesUtilisateursPresenter'
 
 export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurProps): ReactElement {
-  const donneesPersonnelles = [
+  const donneesPersonnelles: Array<DetailUtilisateur> = [
     {
       label: 'Rôle attribué',
       value: utilisateur.role,
@@ -40,7 +40,7 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
             {label}
           </div>
           <div className="font-weight-700">
-            {value}
+            {value === '' ? 'Non reseigné' : value}
           </div>
         </div>
       ))}
@@ -49,5 +49,10 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  utilisateur: MonUtilisateur
+  utilisateur: Partial<MonUtilisateur>
+}>
+
+type DetailUtilisateur = Readonly<{
+  label: string,
+  value: string | undefined
 }>
