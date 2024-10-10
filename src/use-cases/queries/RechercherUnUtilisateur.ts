@@ -20,6 +20,7 @@ export type UnUtilisateurReadModel = Readonly<{
   }>
   regionCode: string | null
   structureId: number | null
+  telephone: string
   uid: string
 }>
 

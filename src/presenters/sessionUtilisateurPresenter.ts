@@ -14,6 +14,7 @@ export function createSessionUtilisateurPresenter(
       nom: utilisateurReadModel.role.nom,
       pictogramme: utilisateurReadModel.role.categorie,
     },
+    telephone: utilisateurReadModel.telephone,
     uid: utilisateurReadModel.uid,
   }
 }
@@ -30,4 +31,5 @@ export type SessionUtilisateurViewModel = Readonly<{
     pictogramme: string
   }>
   uid: string
+  telephone: string
 }>
