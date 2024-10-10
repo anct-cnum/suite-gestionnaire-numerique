@@ -2,29 +2,14 @@
 
 import prisma from '../../../../prisma/prismaClient'
 import { TypologieRole } from '@/domain/Role'
-import { InvariantUtilisateur } from '@/domain/Utilisateur'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
+import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
+import { ChangerMonRole, ChangerMonRoleFailure } from '@/use-cases/commands/ChangerMonRole'
 
-export async function changerMonRoleAction(
-  sessionUtilisateurViewModel: SessionUtilisateurViewModel,
-  nouveauRole: TypologieRole
-): ResultAsync<InvariantUtilisateur> {
+export async function changerMonRoleAction(nouveauRole: TypologieRole): ResultAsync<ChangerMonRoleFailure> {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const utilisateurUid = (await getSession())!.user.sub
   return new ChangerMonRole(new PostgreUtilisateurRepository(prisma))
-    .execute({
-      nouveauRoleState: {
-        nom: nouveauRole,
-        territoireOuStructure: '',
-      },
-      utilisateurState: {
-        ...sessionUtilisateurViewModel,
-        isSuperAdmin: true,
-        role: {
-          nom: sessionUtilisateurViewModel.role.nom,
-          territoireOuStructure: sessionUtilisateurViewModel.role.libelle,
-        },
-      },
-    })
+    .execute({ nouveauRole, utilisateurUid })
 }

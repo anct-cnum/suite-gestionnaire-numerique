@@ -38,7 +38,7 @@ export default function SelecteurRole(): ReactElement {
   )
 
   async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
-    await changerMonRoleAction(session, currentTarget.value as TypologieRole)
+    await changerMonRoleAction(currentTarget.value as TypologieRole)
       .then(() => {
         window.location.reload()
       })

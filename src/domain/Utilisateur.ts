@@ -49,9 +49,9 @@ export class Utilisateur extends Entity<UtilisateurUid> {
     }
   }
 
-  changerRole(nouveauRole: Role): Result<InvariantUtilisateur> {
+  changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
     if (this.#isSuperAdmin) {
-      this.#role = nouveauRole
+      this.#role = new Role(nouveauRole)
       return 'OK'
     }
     return 'utilisateurNonAutoriseAChangerSonRole'
