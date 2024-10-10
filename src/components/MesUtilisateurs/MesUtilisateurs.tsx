@@ -6,6 +6,7 @@ import { ReactElement, useContext, useState } from 'react'
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
+import { TypologieRole } from '../../domain/Role'
 import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
 import Rechercher from '../shared/Rechercher/Rechercher'
@@ -26,7 +27,13 @@ export default function MesUtilisateurs(
   const modalId = 'supprimer-un-utilisateur'
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<MonUtilisateur>()
+  const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<Partial<MonUtilisateur>>({
+    derniereConnexion: '',
+    email: '',
+    role: '' as TypologieRole,
+    structure: '',
+    telephone: '',
+  })
   const drawerCompteId = 'drawer-modifier-mon-compte'
   const labelCompteId = 'drawer-modifier-mon-compte-titre'
   const drawerDetailsId = 'drawer-details-utilisateur'
@@ -182,18 +189,17 @@ export default function MesUtilisateurs(
         setUtilisateurASupprimer={setUtilisateurASupprimer}
         utilisateurASupprimer={utilisateurASupprimer}
       />
-      {utilisateurSelectionne ?
-        <Drawer
-          boutonFermeture="Fermer le menu"
-          id={drawerDetailsId}
-          // Stryker disable next-line BooleanLiteral
-          isFixedWidth={false}
-          isOpen={isDrawerOpen}
-          labelId={labelDetailsId}
-          setIsOpen={setIsDrawerOpen}
-        >
-          <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
-        </Drawer> : null}
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        id={drawerDetailsId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelDetailsId}
+        setIsOpen={setIsDrawerOpen}
+      >
+        <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
+      </Drawer>
     </>
   )
 }
