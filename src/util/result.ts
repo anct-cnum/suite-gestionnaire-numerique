@@ -1,3 +1,3 @@
-export type Result<Failure> = Failure | ResultOk
+export type Result<Failure, Success = ResultOk> = Failure | Success
 
-type ResultOk = 'OK'
+export type ResultOk = 'OK'

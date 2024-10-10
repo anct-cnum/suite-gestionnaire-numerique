@@ -189,14 +189,19 @@ describe('utilisateur repository', () => {
   describe('mise à jour d’un utilisateur', () => {
     const repository = new PostgreUtilisateurRepository(prisma)
 
-    it('changement de rôle', async () => {
+    it('changement du rôle, du nom, du prénom et de l’email', async () => {
       // GIVEN
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory(),
       })
 
       // WHEN
-      await repository.update(utilisateurFactory({ role: 'Instructeur', uid: uidUtilisateur }))
+      await repository.update(utilisateurFactory({
+        email: 'martine.dugenoux@example.org',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        role: 'Instructeur',
+      }))
 
       // THEN
       const updatedRecord = await prisma.utilisateurRecord.findUnique({
@@ -205,6 +210,9 @@ describe('utilisateur repository', () => {
         },
       })
       expect(updatedRecord?.role).toBe('instructeur')
+      expect(updatedRecord?.nom).toBe('Dugenoux')
+      expect(updatedRecord?.prenom).toBe('Martine')
+      expect(updatedRecord?.email).toBe('martine.dugenoux@example.org')
     })
   })
 })
