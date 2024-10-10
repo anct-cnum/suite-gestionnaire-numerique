@@ -1,13 +1,30 @@
-export interface Model {
-  state: () => Readonly<Record<string, unknown>>
-}
+import { Struct } from '@/util/types'
 
-export abstract class Entity<Uid> implements Model {
-  protected readonly uid: Uid
-
-  protected constructor(uid: Uid) {
-    this.uid = uid
+export abstract class Model<S extends Struct> {
+  equals(other: Model<S>): boolean {
+    return this.#isSameType(other) && this.#stateEquals(other)
   }
 
-  abstract state(): Readonly<Record<string, unknown>>
+  #isSameType(other: Model<S>): boolean {
+    return other instanceof this.constructor
+  }
+
+  #stateEquals(other: Model<S>): boolean {
+    return JSON.stringify(other.state()) === JSON.stringify(this.state())
+  }
+
+  abstract state(): S
 }
+
+export abstract class Entity<S extends EntityState> extends Model<S> {
+  protected readonly uid: S['uid']
+
+  protected constructor(uid: S['uid']) {
+    super()
+    this.uid = uid
+  }
+}
+
+type RawUid = string | number;
+
+type EntityState = Readonly<{ uid: RawUid }> & Struct;

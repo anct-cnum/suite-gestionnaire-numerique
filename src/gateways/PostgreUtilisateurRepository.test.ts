@@ -134,9 +134,7 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateur)
 
         // THEN
-        expect(result?.state()).toStrictEqual(
-          utilisateurFactory({ organisation, role, uid: uidUtilisateur }).state()
-        )
+        expect(result?.equals(utilisateurFactory({ organisation, role, uid: uidUtilisateur }))).toBe(true)
       })
     })
   })

@@ -2,7 +2,7 @@ import { Role, TypologieRole, type RoleState } from './Role'
 import { Entity } from './shared/Model'
 import { Result } from '@/util/result'
 
-export class Utilisateur extends Entity<UtilisateurUid> {
+export class Utilisateur extends Entity<UtilisateurState> {
   #role: Role
   readonly #isSuperAdmin: boolean
   readonly #nom: string

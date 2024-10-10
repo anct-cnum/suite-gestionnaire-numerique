@@ -20,19 +20,14 @@ describe('changer mon rôle', () => {
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateur.state()).toStrictEqual({
+    expect(spiedUtilisateur.equals(Utilisateur.create({
       email: 'martin.tartempion@example.net',
       isSuperAdmin: true,
       nom: 'tartempion',
       prenom: 'martin',
-      role: {
-        categorie: 'anct',
-        groupe: 'admin',
-        nom: 'Pilote politique publique',
-        territoireOuStructure: '',
-      },
+      role: 'Pilote politique publique',
       uid: 'utilisateurSuperAdminUid',
-    })
+    }))).toBe(true)
   })
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
