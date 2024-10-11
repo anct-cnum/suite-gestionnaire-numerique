@@ -1,9 +1,9 @@
 import { ReactElement } from 'react'
 
-import { MonUtilisateur } from '../../presenters/mesUtilisateursPresenter'
+import { DetailsUtilisateurViewModel } from '../../presenters/mesUtilisateursPresenter'
 
 export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurProps): ReactElement {
-  const donneesPersonnelles: Array<DetailUtilisateur> = [
+  const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
     {
       label: 'Rôle attribué',
       value: utilisateur.role,
@@ -40,7 +40,7 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
             {label}
           </div>
           <div className="font-weight-700">
-            {value === '' ? 'Non reseigné' : value}
+            {value}
           </div>
         </div>
       ))}
@@ -49,10 +49,10 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  utilisateur: Partial<MonUtilisateur>
+  utilisateur: DetailsUtilisateurViewModel
 }>
 
 type DetailUtilisateur = Readonly<{
   label: string,
-  value: string | undefined
+  value: string
 }>

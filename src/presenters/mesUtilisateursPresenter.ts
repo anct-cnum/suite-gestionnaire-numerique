@@ -24,7 +24,7 @@ export function mesUtilisateursPresenter(
         role: monUtilisateur.role.nom,
         statut,
         structure: monUtilisateur.role.territoireOuStructure,
-        telephone: monUtilisateur.telephone,
+        telephone: monUtilisateur.telephone || 'Non renseigné',
         uid: monUtilisateur.uid,
       }
     }),
@@ -61,5 +61,11 @@ export type MonUtilisateur = Readonly<{
   uid: string
   telephone: string
 }>
+
+export type DetailsUtilisateurViewModel = Readonly<
+  Pick<
+    MonUtilisateur, 'prenomEtNom' | 'derniereConnexion' | 'email' | 'role' | 'structure' | 'telephone'
+  >
+>
 
 export type StatutInscription = 'En attente' | 'Activé'
