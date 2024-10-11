@@ -4,7 +4,7 @@ import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('supprimer un utilisateur', () => {
   afterEach(() => {
-    spiedUidsToFind = []
+    spiedUidsToFind.splice(0, spiedUidsToFind.length)
     spiedUtilisateurToDrop = null
   })
 
@@ -137,7 +137,7 @@ const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
   }),
 }
 
-let spiedUidsToFind: Array<string> = []
+const spiedUidsToFind: Array<string> = []
 let spiedUtilisateurToDrop: Utilisateur | null = null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisateurRepository {

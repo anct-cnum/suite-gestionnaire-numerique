@@ -12,6 +12,9 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return 'KO'
+    }
     const utilisateurACreer = Utilisateur.createWithoutUid({
       email: command.email,
       isSuperAdmin: false,
@@ -20,11 +23,11 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       prenom: command.prenom,
       role: command.role,
     })
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    if (!utilisateurCourant!.peutGerer(utilisateurACreer)) {
+    if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'KO'
     }
-    return this.#repository.add(utilisateurACreer).then(() => 'OK')
+    const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
+    return isUtilisateurCreated ? 'OK' : 'KO'
   }
 }
 
