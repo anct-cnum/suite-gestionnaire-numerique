@@ -248,6 +248,46 @@ describe('mes utilisateurs', () => {
     expect(structure).toBeInTheDocument()
   })
 
+  it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
+    // GIVEN
+    spyOnSearchParams(4)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    const rowDeuxiemeUtilisateur = screen.getByRole('button', { name: 'Julien Deschamps' })
+
+    // WHEN
+    fireEvent.click(rowDeuxiemeUtilisateur)
+
+    // THEN
+    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Julien Deschamps' })
+    expect(prenomEtNom).toBeInTheDocument()
+    const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
+    expect(roleAttribueLabel).toBeInTheDocument()
+    const roleAttribue = within(drawerDetailsUtilisateur).getByText('Gestionnaire structure')
+    expect(roleAttribue).toBeInTheDocument()
+
+    const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse éléctronique')
+    expect(emailLabel).toBeInTheDocument()
+    const email = within(drawerDetailsUtilisateur).getByText('julien.deschamps@example.com')
+    expect(email).toBeInTheDocument()
+
+    const telephoneLabel = within(drawerDetailsUtilisateur).getByText('Téléphone professionnel')
+    expect(telephoneLabel).toBeInTheDocument()
+    const telephone = within(drawerDetailsUtilisateur).getByText('Non renseigné')
+    expect(telephone).toBeInTheDocument()
+
+    const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
+    expect(derniereConnexionLabel).toBeInTheDocument()
+    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('invité le 12/02/2024')
+    expect(derniereConnexion).toBeInTheDocument()
+
+    const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
+    expect(structureLabel).toBeInTheDocument()
+    const structure = within(drawerDetailsUtilisateur).getByText('Hub du Rhône')
+    expect(structure).toBeInTheDocument()
+  })
+
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
@@ -483,7 +523,7 @@ const mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel> = [
       territoireOuStructure: 'Hub du Rhône',
     },
     structureId: 1,
-    telephone: '0102030405',
+    telephone: '',
     uid: '123456',
   },
 ]

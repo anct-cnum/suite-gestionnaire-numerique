@@ -1,9 +1,9 @@
 import { ReactElement } from 'react'
 
-import { MonUtilisateur } from '../../presenters/mesUtilisateursPresenter'
+import { DetailsUtilisateurViewModel } from '../../presenters/mesUtilisateursPresenter'
 
 export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurProps): ReactElement {
-  const donneesPersonnelles = [
+  const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
     {
       label: 'Rôle attribué',
       value: utilisateur.role,
@@ -49,5 +49,10 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  utilisateur: MonUtilisateur
+  utilisateur: DetailsUtilisateurViewModel
+}>
+
+type DetailUtilisateur = Readonly<{
+  label: string,
+  value: string
 }>
