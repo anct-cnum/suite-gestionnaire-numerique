@@ -44,7 +44,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
 
   static createWithoutUid(utilisateur: UtilisateurParamsWithoutUid): Utilisateur {
     return new Utilisateur(
-      temporaryUid,
+      utilisateur.email,
       new Role(utilisateur.role, utilisateur.organisation),
       utilisateur.nom,
       utilisateur.prenom,
@@ -120,5 +120,3 @@ type UtilisateurParams = Readonly<{
 }>
 
 type UtilisateurParamsWithoutUid = Omit<UtilisateurParams, 'uid'>
-
-const temporaryUid = ''

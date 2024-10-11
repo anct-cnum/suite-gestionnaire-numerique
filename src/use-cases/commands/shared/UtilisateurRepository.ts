@@ -13,7 +13,7 @@ export interface UpdateUtilisateurRepository {
 }
 
 export interface AddUtilisateurRepository extends FindUtilisateurRepository{
-  add: (utilisateur: Utilisateur) => Promise<void>
+  add: (utilisateur: Utilisateur) => Promise<boolean>
 }
 
 export interface UtilisateurRepository
