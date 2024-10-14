@@ -367,7 +367,6 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche moins de 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const totalUtilisateur = 5
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 

@@ -1,10 +1,16 @@
+'use client'
+
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import { nombreDePage } from './pagination'
 
-export default function DernierePage({ nombreDeResultat, urlAvecParametres }: DernierePageProps): ReactElement {
-  urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat) - 1))
+export default function DernierePage({
+  nombreDeResultat,
+  urlAvecParametres,
+  utilisateursParPage,
+}: DernierePageProps): ReactElement {
+  urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat, utilisateursParPage) - 1))
 
   return (
     <Link
@@ -19,4 +25,5 @@ export default function DernierePage({ nombreDeResultat, urlAvecParametres }: De
 type DernierePageProps = Readonly<{
   nombreDeResultat: number
   urlAvecParametres: URL
+  utilisateursParPage: number
 }>

@@ -1,17 +1,13 @@
-
-import config from '@/use-cases/config.json'
-
-export function nombreDePage(nombreDeResultat: number): number {
-  const utilisateursParPage = config.nombreDUtilisateurParPage
-
+export function nombreDePage(nombreDeResultat: number, utilisateursParPage: number): number {
   return Math.trunc(nombreDeResultat / utilisateursParPage + 1)
 }
 
 export function pages(
   nombreDeResultat: number,
-  pageCourante: number
+  pageCourante: number,
+  utilisateursParPage: number
 ): Array<number> {
-  const nombreDePages = nombreDePage(nombreDeResultat)
+  const nombreDePages = nombreDePage(nombreDeResultat, utilisateursParPage)
 
   return new Array(nombreDePages)
     .fill('')

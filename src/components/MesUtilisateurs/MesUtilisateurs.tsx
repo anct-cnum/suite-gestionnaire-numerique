@@ -16,12 +16,11 @@ import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
 import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
-import config from '@/use-cases/config.json'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
-  const { session } = useContext(clientContext)
+  const { session, utilisateursParPage } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -173,7 +172,7 @@ export default function MesUtilisateurs(
         })}
       </Tableau>
       {
-        mesUtilisateursViewModel.totalUtilisateur > config.nombreDUtilisateurParPage ?
+        mesUtilisateursViewModel.totalUtilisateur > utilisateursParPage ?
           (
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination

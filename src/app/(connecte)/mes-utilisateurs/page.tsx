@@ -26,7 +26,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
       pageCourante,
       ssoId: session.user.sub,
       utilisateursActives,
-      utilisateursParPage: config.nombreDUtilisateurParPage,
+      utilisateursParPage: config.utilisateursParPage,
     })
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
