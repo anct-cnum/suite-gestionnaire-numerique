@@ -1,15 +1,12 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 
 import Pagination from './Pagination'
-import { spyOnSearchParams } from '@/testHelper'
+import { clientContextProviderDefaultValue, renderComponent } from '@/testHelper'
 
 describe('pagination', () => {
   it('quand je suis sur la première page d’une page (< ① >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={0}
         pathname="/mes-utilisateurs"
@@ -32,11 +29,8 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la première page de six pages (< ① 2 3 4 5 >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={0}
         pathname="/mes-utilisateurs"
@@ -67,11 +61,8 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la deuxième page de six pages (< 1 ② 3 4 5 >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={1}
         pathname="/mes-utilisateurs"
@@ -101,11 +92,8 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la quatrième page de huit pages (< 2 3 ④ 5 6 >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={3}
         pathname="/mes-utilisateurs"
@@ -135,11 +123,8 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la cinquième page de six pages (< 2 3 4 ⑤ 6 >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={4}
         pathname="/mes-utilisateurs"
@@ -169,11 +154,8 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la 320 page de 323 pages (< 318 319 ③②⓪ 321 322 >)', () => {
-    // GIVEN
-    spyOnSearchParams(1)
-
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={319}
         pathname="/mes-utilisateurs"
@@ -204,16 +186,16 @@ describe('pagination', () => {
 
   it('quand je suis sur une page quelconque et avec un autre paramètre dans l’url', () => {
     // GIVEN
-    const urlSearchParams = new URLSearchParams({ fakeParam: 'fakeValue' })
-    spyOnSearchParams(1, urlSearchParams)
+    const searchParams = new URLSearchParams({ fakeParam: 'fakeValue' })
 
     // WHEN
-    render(
+    renderComponent(
       <Pagination
         pageCourante={3}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={45}
-      />
+      />,
+      { ...clientContextProviderDefaultValue, searchParams }
     )
 
     // THEN

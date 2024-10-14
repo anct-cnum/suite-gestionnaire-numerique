@@ -1,17 +1,16 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useId } from 'react'
+import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId } from 'react'
 
 import Checkbox from '../shared/Checkbox/Checkbox'
+import { clientContext } from '../shared/ClientContext'
 
 export default function FiltrerMesUtilisateurs({
   id,
   labelId,
   setIsOpen,
 }: FiltrerMesUtilisateursProps): ReactElement {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const { router, searchParams } = useContext(clientContext)
   const utilisateursActivesToggleId = useId()
 
   return (
@@ -74,7 +73,6 @@ export default function FiltrerMesUtilisateurs({
       url.searchParams.append('utilisateursActives', utilisateursActives)
     }
 
-    // @ts-expect-error à cause de experimental.typedRoutes dans la conf
     router.push(url.toString())
   }
 }

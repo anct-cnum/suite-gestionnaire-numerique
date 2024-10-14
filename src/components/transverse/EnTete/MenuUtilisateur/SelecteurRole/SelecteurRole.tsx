@@ -3,11 +3,11 @@
 import { FormEvent, ReactElement, useContext } from 'react'
 
 import { changerMonRoleAction } from '../../../../../app/api/actions/changerMonRoleAction'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import { clientContext } from '@/components/shared/ClientContext'
 import { Roles, TypologieRole } from '@/domain/Role'
 
 export default function SelecteurRole(): ReactElement {
-  const { session } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(clientContext)
 
   return (
     <div className="fr-select-group">
