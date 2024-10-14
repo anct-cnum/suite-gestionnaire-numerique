@@ -1,5 +1,3 @@
-import { TypologieRole } from '@/domain/Role'
-
 export interface MesInformationsPersonnellesLoader {
   findBySsoId: (ssoId: string) => Promise<MesInformationsPersonnellesReadModel>
 }
@@ -13,7 +11,7 @@ export type MesInformationsPersonnellesReadModel = Readonly<{
   informationsPersonnellesNom: string
   informationsPersonnellesPrenom: string
   informationsPersonnellesTelephone: string
-  role: TypologieRole
+  role: string
   structureAdresse: string
   structureNumeroDeSiret: string
   structureRaisonSociale: string
