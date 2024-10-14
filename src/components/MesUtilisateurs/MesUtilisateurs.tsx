@@ -6,7 +6,6 @@ import { ReactElement, useContext, useState } from 'react'
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
-import { TypologieRole } from '../../domain/Role'
 import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
 import Rechercher from '../shared/Rechercher/Rechercher'
@@ -31,7 +30,7 @@ export default function MesUtilisateurs(
     derniereConnexion: '',
     email: '',
     prenomEtNom: '',
-    role: '' as TypologieRole,
+    role: '',
     structure: '',
     telephone: '',
   })
@@ -177,7 +176,7 @@ export default function MesUtilisateurs(
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination
                 pageCourante={mesUtilisateursViewModel.pageCourante}
-                pathname={'/mes-utilisateurs'}
+                pathname="/mes-utilisateurs"
                 totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
               />
             </div>

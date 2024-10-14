@@ -1,35 +1,33 @@
-import { Groupe, TypologieRole } from '@/domain/Role'
-import { UtilisateurState } from '@/domain/Utilisateur'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/RechercherUnUtilisateur'
 
 export function createSessionUtilisateurPresenter(
-  utilisateurReadModel: UtilisateurState
+  utilisateurReadModel: UnUtilisateurReadModel
 ): SessionUtilisateurViewModel {
   return {
-    ...utilisateurReadModel,
+    email: utilisateurReadModel.email,
+    isSuperAdmin: utilisateurReadModel.isSuperAdmin,
+    nom: utilisateurReadModel.nom,
+    prenom: utilisateurReadModel.prenom,
     role: {
       groupe: utilisateurReadModel.role.groupe,
-      libelle: libelleByRole[utilisateurReadModel.role.nom] ?? utilisateurReadModel.role.territoireOuStructure,
+      libelle: utilisateurReadModel.role.territoireOuStructure,
       nom: utilisateurReadModel.role.nom,
       pictogramme: utilisateurReadModel.role.categorie,
     },
+    uid: utilisateurReadModel.uid,
   }
 }
 
 export type SessionUtilisateurViewModel = Readonly<{
   email: string
+  isSuperAdmin: boolean
   nom: string
   prenom: string
   role: Readonly<{
-    groupe: Groupe
+    groupe: string
     libelle: string
-    nom: TypologieRole
+    nom: string
     pictogramme: string
   }>
   uid: string
 }>
-
-const libelleByRole: Readonly<Partial<Record<TypologieRole, string>>> = {
-  Instructeur: 'Banque des territoires',
-  'Pilote politique publique': 'France Numérique Ensemble',
-  'Support animation': 'Mednum',
-}

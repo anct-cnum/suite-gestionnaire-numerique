@@ -4,7 +4,6 @@ import * as nextAuth from 'next-auth/react'
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import * as modifierAction from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
-import { TypologieRole } from '@/domain/Role'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { matchWithoutMarkup } from '@/testHelper'
 
@@ -63,25 +62,13 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
   })
 
   it.each([
-    {
-      role: 'Administrateur dispositif' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire département' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire région' as TypologieRole,
-    },
-    {
-      role: 'Instructeur' as TypologieRole,
-    },
-    {
-      role: 'Pilote politique publique' as TypologieRole,
-    },
-    {
-      role: 'Support animation' as TypologieRole,
-    },
-  ])('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', ({ role }) => {
+    'Administrateur dispositif',
+    'Gestionnaire département',
+    'Gestionnaire région',
+    'Instructeur',
+    'Pilote politique publique',
+    'Support animation',
+  ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
     // GIVEN
     const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
       ...mesInformationsPersonnellesReadModel,
@@ -97,13 +84,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
   })
 
   it.each([
-    {
-      role: 'Gestionnaire structure' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire groupement' as TypologieRole,
-    },
-  ])('étant un $role quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', ({ role }) => {
+    'Gestionnaire structure',
+    'Gestionnaire groupement',
+  ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
     // GIVEN
     const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
       ...mesInformationsPersonnellesReadModel,
@@ -405,7 +388,7 @@ const mesInformationsPersonnellesReadModel = {
   informationsPersonnellesNom: 'Deschamps',
   informationsPersonnellesPrenom: 'Julien',
   informationsPersonnellesTelephone: '0405060708',
-  role: 'Administrateur dispositif' as TypologieRole,
+  role: 'Administrateur dispositif',
   structureAdresse: '201 bis rue de la plaine, 69000 Lyon',
   structureNumeroDeSiret: '62520260000023',
   structureRaisonSociale: 'Préfecture du Rhône',
