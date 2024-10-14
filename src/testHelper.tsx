@@ -51,10 +51,13 @@ export const spiedNextNavigation = {
 
 export function spyOnSearchParams(
   nombreDeSpy: number,
-  spy: URLSearchParams = spiedNextNavigation.useSearchParams
+  spiedURLSearchParams: URLSearchParams = spiedNextNavigation.useSearchParams
 ): void {
-  for (let index = 0; index < nombreDeSpy; index++) {
+  // @ts-expect-error
+  const spy = vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spiedURLSearchParams)
+
+  for (let index = 0; index < nombreDeSpy - 1; index++) {
     // @ts-expect-error
-    vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spy)
+    spy.mockReturnValueOnce(spiedURLSearchParams)
   }
 }

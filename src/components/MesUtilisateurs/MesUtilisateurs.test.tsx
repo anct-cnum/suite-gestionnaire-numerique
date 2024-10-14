@@ -59,7 +59,7 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
     // GIVEN
-    spyOnSearchParams(3)
+    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -323,7 +323,7 @@ describe('mes utilisateurs', () => {
 
     it('je me ravise : je ferme la modale', () => {
       // GIVEN
-      spyOnSearchParams(8)
+      spyOnSearchParams(6)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -342,7 +342,7 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      spyOnSearchParams(4)
+      spyOnSearchParams(6)
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
