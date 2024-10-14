@@ -5,11 +5,11 @@ import { ReactElement, useContext, useState } from 'react'
 
 import styles from './EnTete.module.css'
 import MenuUtilisateur from './MenuUtilisateur/MenuUtilisateur'
+import { clientContext } from '@/components/shared/ClientContext'
 import Drawer from '@/components/shared/Drawer/Drawer'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
 
 export default function EnTete(): ReactElement {
-  const { session } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawer-menu-utilisateur'

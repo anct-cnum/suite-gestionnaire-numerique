@@ -18,7 +18,7 @@ export default defineConfig({
   ],
   test: {
     chaiConfig: {
-      truncateThreshold: 0
+      truncateThreshold: 0,
     },
     coverage: {
       exclude: [
@@ -31,7 +31,7 @@ export default defineConfig({
         '**/MentionsLegales/**',
         '**/mentions-legales/**',
         '**/ProConnectAuthentificationGateway.ts',
-        '**/SessionUtilisateurContext.tsx',
+        '**/ClientContext.tsx',
         'src/instrumentation.ts',
         'src/**/*.test.tsx',
         'src/**/*.test.ts',

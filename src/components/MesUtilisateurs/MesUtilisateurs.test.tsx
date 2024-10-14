@@ -5,7 +5,7 @@ import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
-import { renderComponent, infosSessionUtilisateurContext, spiedNextNavigation, spyOnSearchParams } from '@/testHelper'
+import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/testHelper'
 import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('mes utilisateurs', () => {
@@ -14,7 +14,6 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -59,14 +58,13 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
     // GIVEN
-    spyOnSearchParams(3)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      ...infosSessionUtilisateurContext,
+      ...clientContextProviderDefaultValue,
       session: {
-        ...infosSessionUtilisateurContext.session,
+        ...clientContextProviderDefaultValue.session,
         role: {
           groupe: 'admin',
           libelle: '',
@@ -104,7 +102,6 @@ describe('mes utilisateurs', () => {
     },
   ])('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', ({ role }) => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -113,9 +110,9 @@ describe('mes utilisateurs', () => {
         mesUtilisateursViewModel={mesUtilisateursViewModel}
       />,
       {
-        ...infosSessionUtilisateurContext,
+        ...clientContextProviderDefaultValue,
         session: {
-          ...infosSessionUtilisateurContext.session,
+          ...clientContextProviderDefaultValue.session,
           role: {
             groupe: 'gestionnaire',
             libelle: 'Rhône',
@@ -143,7 +140,6 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur actif quand j’affiche mes utilisateurs alors il s’affiche avec ses informations', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -163,7 +159,6 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur inactif quand j’affiche mes utilisateurs alors il s’affiche avec ce statut et sa date d’invitation', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -178,7 +173,6 @@ describe('mes utilisateurs', () => {
 
   it('sur ma ligne quand j’affiche mes utilisateurs alors je ne peux pas me supprimer', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -194,7 +188,6 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur quand j’affiche mes utilisateurs alors je peux le supprimer', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -210,7 +203,6 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur alors ses détails s’affichent dans un drawer', async () => {
     // GIVEN
-    spyOnSearchParams(4)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const rowPremierUtilisateur = screen.getByRole('button', { name: 'Martin Tartempion' })
@@ -250,7 +242,6 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
-    spyOnSearchParams(4)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const rowDeuxiemeUtilisateur = screen.getByRole('button', { name: 'Julien Deschamps' })
@@ -291,7 +282,6 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
-      spyOnSearchParams(4)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -323,7 +313,6 @@ describe('mes utilisateurs', () => {
 
     it('je me ravise : je ferme la modale', () => {
       // GIVEN
-      spyOnSearchParams(8)
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -342,7 +331,6 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      spyOnSearchParams(4)
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
@@ -367,7 +355,6 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {
     // GIVEN
-    spyOnSearchParams(2)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN
@@ -380,7 +367,6 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
-    spyOnSearchParams(4)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
@@ -408,9 +394,11 @@ describe('mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    spyOnSearchParams(4, new URLSearchParams('utilisateursActives=on'))
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      { ...clientContextProviderDefaultValue, searchParams: new URLSearchParams('utilisateursActives=on') }
+    )
 
     // WHEN
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
@@ -423,10 +411,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
     // GIVEN
-    spyOnSearchParams(4)
-    vi.spyOn(navigation, 'useRouter')
-      .mockReturnValueOnce(spiedNextNavigation.useRouter)
-      .mockReturnValueOnce(spiedNextNavigation.useRouter)
+    vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
@@ -443,10 +428,7 @@ describe('mes utilisateurs', () => {
   describe('quand je filtre', () => {
     it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
-      spyOnSearchParams(6)
-      vi.spyOn(navigation, 'useRouter')
-        .mockReturnValueOnce(spiedNextNavigation.useRouter)
-        .mockReturnValueOnce(spiedNextNavigation.useRouter)
+      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
       afficherLesFiltres()
       const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
       fireEvent.click(utilisateursActives)
