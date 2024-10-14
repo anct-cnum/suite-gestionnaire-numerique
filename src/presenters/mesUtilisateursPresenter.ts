@@ -1,4 +1,3 @@
-import { Categorie, TypologieRole } from '@/domain/Role'
 import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export function mesUtilisateursPresenter(
@@ -13,7 +12,7 @@ export function mesUtilisateursPresenter(
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
       const [statut, picto] = monUtilisateur.isActive
         ? ['Activé', monUtilisateur.role.categorie] as const
-        : ['En attente', 'inactif'] as const
+        : ['En attente', inactif] as const
 
       return {
         canBeDeleted: uid !== monUtilisateur.uid,
@@ -31,18 +30,6 @@ export function mesUtilisateursPresenter(
   }
 }
 
-function buildDate(utilisateurReadModel: MesUtilisateursReadModel): string {
-  if (utilisateurReadModel.isActive) {
-    return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
-  }
-
-  return `invité le ${buildDateFrancaise(utilisateurReadModel.inviteLe)}`
-}
-
-function buildDateFrancaise(date: Date): string {
-  return date.toLocaleDateString('fr-FR')
-}
-
 export type MesUtilisateursViewModel = Readonly<{
   pageCourante: number
   totalUtilisateur: number
@@ -53,9 +40,9 @@ export type MonUtilisateur = Readonly<{
   canBeDeleted: boolean
   derniereConnexion: string
   email: string
-  picto: Categorie | 'inactif'
+  picto: string
   prenomEtNom: string
-  role: TypologieRole
+  role: string
   statut: StatutInscription
   structure: string
   uid: string
@@ -69,3 +56,17 @@ export type DetailsUtilisateurViewModel = Readonly<
 >
 
 export type StatutInscription = 'En attente' | 'Activé'
+
+const inactif = 'inactif'
+
+function buildDate(utilisateurReadModel: MesUtilisateursReadModel): string {
+  if (utilisateurReadModel.isActive) {
+    return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
+  }
+
+  return `invité le ${buildDateFrancaise(utilisateurReadModel.inviteLe)}`
+}
+
+function buildDateFrancaise(date: Date): string {
+  return date.toLocaleDateString('fr-FR')
+}

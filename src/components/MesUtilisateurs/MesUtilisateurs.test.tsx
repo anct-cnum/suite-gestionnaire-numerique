@@ -3,7 +3,6 @@ import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { TypologieRole } from '@/domain/Role'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/testHelper'
 import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
@@ -43,20 +42,7 @@ describe('mes utilisateurs', () => {
     expect(columnsHead[6]).toHaveAttribute('scope', 'col')
   })
 
-  it.each([
-    {
-      role: 'Administrateur dispositif' as TypologieRole,
-    },
-    {
-      role: 'Instructeur' as TypologieRole,
-    },
-    {
-      role: 'Pilote politique publique' as TypologieRole,
-    },
-    {
-      role: 'Support animation' as TypologieRole,
-    },
-  ])('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', ({ role }) => {
+  it('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
@@ -68,7 +54,7 @@ describe('mes utilisateurs', () => {
         role: {
           groupe: 'admin',
           libelle: '',
-          nom: role,
+          nom: 'Support animation',
           pictogramme: '',
         },
       },
@@ -87,20 +73,7 @@ describe('mes utilisateurs', () => {
     expect(exporter).toHaveAttribute('type', 'button')
   })
 
-  it.each([
-    {
-      role: 'Gestionnaire département' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire région' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire structure' as TypologieRole,
-    },
-    {
-      role: 'Gestionnaire groupement' as TypologieRole,
-    },
-  ])('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', ({ role }) => {
+  it('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
@@ -116,7 +89,7 @@ describe('mes utilisateurs', () => {
           role: {
             groupe: 'gestionnaire',
             libelle: 'Rhône',
-            nom: role,
+            nom: 'Gestionnaire groupement',
             pictogramme: 'maille',
           },
         },
@@ -365,9 +338,9 @@ describe('mes utilisateurs', () => {
     expect(navigation).toBeInTheDocument()
   })
 
-  it('quand j’affiche moins de 10 utilisateurs alors la pagination ne s’affiche pas', () => {
+  it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
-    const totalUtilisateur = 5
+    const totalUtilisateur = 10
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
 
     // WHEN

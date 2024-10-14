@@ -1,7 +1,6 @@
 import { ReactElement } from 'react'
 
 import Badge from '../../shared/Badge/Badge'
-import { TypologieRole } from '@/domain/Role'
 
 export default function Role({ role }: RoleProps): ReactElement {
   return (
@@ -12,5 +11,5 @@ export default function Role({ role }: RoleProps): ReactElement {
 }
 
 type RoleProps = Readonly<{
-  role: TypologieRole
+  role: string
 }>

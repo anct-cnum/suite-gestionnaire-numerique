@@ -1,7 +1,6 @@
 import { render } from '@testing-library/react'
 import { ReactElement } from 'react'
 
-import { Groupe, TypologieRole } from './domain/Role'
 import { clientContext } from '@/components/shared/ClientContext'
 
 export function matchWithoutMarkup(wording: string) {
@@ -26,12 +25,13 @@ export const clientContextProviderDefaultValue = {
   searchParams: new URLSearchParams(),
   session: {
     email: 'martin.tartempion@example.net',
+    isSuperAdmin: true,
     nom: 'Tartempion',
     prenom: 'Martin',
     role: {
-      groupe: 'admin' as Groupe,
+      groupe: 'admin',
       libelle: 'Mednum',
-      nom: 'Support animation' as TypologieRole,
+      nom: 'Support animation',
       pictogramme: 'support-animation',
     },
     uid: 'fooId',
