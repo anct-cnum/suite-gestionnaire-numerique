@@ -1,15 +1,17 @@
 'use server'
 
+import { redirect } from 'next/navigation'
+
 import prisma from '../../../../prisma/prismaClient'
 import { TypologieRole } from '@/domain/Role'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
-import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ChangerMonRole, ChangerMonRoleFailure } from '@/use-cases/commands/ChangerMonRole'
+import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
-export async function changerMonRoleAction(nouveauRole: TypologieRole): ResultAsync<ChangerMonRoleFailure> {
+export async function changerMonRoleAction(nouveauRole: TypologieRole): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const utilisateurUid = (await getSession())!.user.sub
-  return new ChangerMonRole(new PostgreUtilisateurRepository(prisma))
+  await new ChangerMonRole(new PostgreUtilisateurRepository(prisma))
     .execute({ nouveauRole, utilisateurUid })
+    .then(redirect('/'))
 }

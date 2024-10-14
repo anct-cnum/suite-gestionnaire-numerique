@@ -1,5 +1,6 @@
 'use server'
 
+import { redirect, RedirectType } from 'next/navigation'
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
@@ -29,7 +30,7 @@ export async function modifierMesInformationsPersonnellesAction(
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const session = (await getSession())!
 
-  return new ModifierMesInformationsPersonnelles(new PostgreModificationUtilisateurGateway(prisma))
+  new ModifierMesInformationsPersonnelles(new PostgreModificationUtilisateurGateway(prisma))
     .execute({
       modification: {
         email,
@@ -39,6 +40,8 @@ export async function modifierMesInformationsPersonnellesAction(
       },
       uid: session.user.sub,
     })
+  redirect('/mes-informations-personnelles', RedirectType.replace)
+  // revalidatePath('/mes-informations-personnelles')
 }
 
 function modifierMesInformationsPersonnellesValidation() {

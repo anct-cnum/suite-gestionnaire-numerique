@@ -134,14 +134,15 @@ export default function ModifierMonCompte({
     const email = form.get('email') as string
     const telephone = form.get('telephone') as string
 
+    setEtatBoutonEnregistrer({
+      enAttente: true,
+      texte: 'Modification en cours',
+    })
+
     await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
       .then(() => {
-        setEtatBoutonEnregistrer({
-          enAttente: true,
-          texte: 'Modification en cours',
-        })
-
-        window.location.reload()
+        // la modale se ferme et se réouvre...
+        setIsOpen(false)
       })
   }
 }
