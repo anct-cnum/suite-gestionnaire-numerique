@@ -11,7 +11,7 @@
     "src/presenters/**/*.ts",
     "!src/components/**/*.test.tsx",
     "!src/presenters/**/*.test.ts",
-    "!src/**/SessionUtilisateurContext.tsx",
+    "!src/**/ClientContext.tsx",
     "!src/**/Accessibilite.tsx",
     "!src/**/MentionsLegales.tsx",
     "!src/**/MesParametres.tsx"

@@ -1,15 +1,15 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import DernierePage from './DernierePage'
 import Page from './Page'
 import { fullUrl } from './pagination'
 import PremierePage from './PremierePage'
+import { clientContext } from '../ClientContext'
 
 export default function Pagination({ pageCourante, pathname, totalUtilisateurs }: PaginationProps): ReactElement {
-  const searchParams = useSearchParams()
+  const { searchParams } = useContext(clientContext)
   const urlAvecParametres = fullUrl(pathname, searchParams)
 
   return (

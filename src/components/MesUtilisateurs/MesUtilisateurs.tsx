@@ -14,13 +14,13 @@ import Role from '../shared/Role/Role'
 import Statut from '../shared/Statut/Statut'
 import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
-  const { session } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })

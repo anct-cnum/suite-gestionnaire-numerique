@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
 import prisma from '../../../prisma/prismaClient'
-import SessionUtilisateurContext from '@/components/shared/SessionUtilisateurContext'
+import ClientContext from '@/components/shared/ClientContext'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
@@ -20,7 +20,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   const utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
 
   return (
-    <SessionUtilisateurContext utilisateurReadModel={utilisateurReadModel}>
+    <ClientContext utilisateurReadModel={utilisateurReadModel}>
       <LienEvitement />
       <EnTete />
       <main
@@ -30,6 +30,6 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
         {children}
       </main>
       <PiedDePage />
-    </SessionUtilisateurContext>
+    </ClientContext>
   )
 }

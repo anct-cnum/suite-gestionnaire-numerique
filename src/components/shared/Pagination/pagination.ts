@@ -1,4 +1,3 @@
-import { ReadonlyURLSearchParams } from 'next/navigation'
 
 export function nombreDePage(nombreDeResultat: number): number {
   const utilisateursParPage = 10
@@ -43,7 +42,7 @@ export function pages(
     })
 }
 
-export function fullUrl(url: string, searchParams: ReadonlyURLSearchParams): URL {
+export function fullUrl(url: string, searchParams: URLSearchParams): URL {
   const urlAvecParametres = new URL(url, process.env.NEXT_PUBLIC_HOST)
 
   searchParams.forEach((value, name) => {

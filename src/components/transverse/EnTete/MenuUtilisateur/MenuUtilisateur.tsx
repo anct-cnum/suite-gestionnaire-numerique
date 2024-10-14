@@ -6,11 +6,11 @@ import { signOut } from 'next-auth/react'
 import { ReactElement, useContext } from 'react'
 
 import styles from './MenuUtilisateur.module.css'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import { clientContext } from '@/components/shared/ClientContext'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 
 export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
-  const { session } = useContext(sessionUtilisateurContext)
+  const { session } = useContext(clientContext)
 
   return (
     <>

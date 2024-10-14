@@ -1,9 +1,8 @@
 import { render } from '@testing-library/react'
-import * as navigation from 'next/navigation'
 import { ReactElement } from 'react'
 
 import { Groupe, TypologieRole } from './domain/Role'
-import { sessionUtilisateurContext } from '@/components/shared/SessionUtilisateurContext'
+import { clientContext } from '@/components/shared/ClientContext'
 
 export function matchWithoutMarkup(wording: string) {
   return function(_: string, element: Element | null): boolean {
@@ -11,7 +10,20 @@ export function matchWithoutMarkup(wording: string) {
   }
 }
 
-export const infosSessionUtilisateurContext = {
+export const spiedNextNavigation = {
+  useRouter: {
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+    push: vi.fn(),
+    refresh: vi.fn(),
+    replace: vi.fn(),
+  },
+}
+
+export const clientContextProviderDefaultValue = {
+  router: spiedNextNavigation.useRouter,
+  searchParams: new URLSearchParams(),
   session: {
     email: 'martin.tartempion@example.net',
     nom: 'Tartempion',
@@ -28,33 +40,11 @@ export const infosSessionUtilisateurContext = {
 
 export function renderComponent(
   children: ReactElement,
-  sessionUtilisateurContextProvider = infosSessionUtilisateurContext
+  clientContextProviderValue = clientContextProviderDefaultValue
 ): void {
   render(
-    <sessionUtilisateurContext.Provider value={sessionUtilisateurContextProvider}>
+    <clientContext.Provider value={clientContextProviderValue}>
       {children}
-    </sessionUtilisateurContext.Provider>
+    </clientContext.Provider>
   )
-}
-
-export const spiedNextNavigation = {
-  useRouter: {
-    back: vi.fn(),
-    forward: vi.fn(),
-    prefetch: vi.fn(),
-    push: vi.fn(),
-    refresh: vi.fn(),
-    replace: vi.fn(),
-  },
-  useSearchParams: new URLSearchParams(),
-}
-
-export function spyOnSearchParams(
-  nombreDeSpy: number,
-  spy: URLSearchParams = spiedNextNavigation.useSearchParams
-): void {
-  for (let index = 0; index < nombreDeSpy; index++) {
-    // @ts-expect-error
-    vi.spyOn(navigation, 'useSearchParams').mockReturnValueOnce(spy)
-  }
 }
