@@ -16,6 +16,7 @@ import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
 import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
+import config from '@/use-cases/config.json'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
@@ -172,7 +173,7 @@ export default function MesUtilisateurs(
         })}
       </Tableau>
       {
-        mesUtilisateursViewModel.totalUtilisateur > 10 ?
+        mesUtilisateursViewModel.totalUtilisateur > config.nombreDUtilisateurParPage ?
           (
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination

@@ -1,6 +1,8 @@
 
+import config from '@/use-cases/config.json'
+
 export function nombreDePage(nombreDeResultat: number): number {
-  const utilisateursParPage = 10
+  const utilisateursParPage = config.nombreDUtilisateurParPage
 
   return Math.trunc(nombreDeResultat / utilisateursParPage + 1)
 }
