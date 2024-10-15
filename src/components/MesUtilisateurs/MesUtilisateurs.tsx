@@ -5,6 +5,7 @@ import { ReactElement, useContext, useState } from 'react'
 
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
+import InviterUnUtilisateur from './InviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
@@ -38,6 +39,8 @@ export default function MesUtilisateurs(
   const labelCompteId = 'drawer-modifier-mon-compte-titre'
   const drawerDetailsId = 'drawer-details-utilisateur'
   const labelDetailsId = 'drawer-details-utilisateur-nom'
+  const drawerInvitationId = 'drawer-invitation'
+  const labelInvitationId = 'drawer-invitation-nom'
 
   return (
     <>
@@ -46,12 +49,31 @@ export default function MesUtilisateurs(
           Gestion de mes utilisateurs
         </Titre>
         <button
+          aria-controls={drawerInvitationId}
           className="fr-btn fr-btn--icon-left fr-icon-add-line"
+          data-fr-opened="false"
+          onClick={() => {
+            setIsDrawerOpen(true)
+          }}
           type="button"
         >
           Inviter une personne
         </button>
       </div>
+      <Drawer
+        boutonFermeture="Fermer l’invitation"
+        id={drawerInvitationId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelInvitationId}
+        setIsOpen={setIsDrawerOpen}
+      >
+        <InviterUnUtilisateur
+          ariaControls={drawerInvitationId}
+          setIsOpen={setIsDrawerOpen}
+        />
+      </Drawer>
       <Drawer
         boutonFermeture="Fermer les filtres"
         id={drawerCompteId}

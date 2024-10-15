@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, ReactElement } from 'react'
 
-export default function TextInput({ defaultValue, children, id, name, pattern, required, type = 'text' }: InputProps): ReactElement {
+export default function TextInput({ defaultValue = '', children, id, name, pattern, required, type = 'text' }: InputProps): ReactElement {
   return (
     <div className="fr-input-group">
       <label
@@ -10,6 +10,7 @@ export default function TextInput({ defaultValue, children, id, name, pattern, r
         {children}
       </label>
       <input
+        aria-required={required}
         className="fr-input"
         defaultValue={defaultValue}
         id={id}
@@ -23,7 +24,7 @@ export default function TextInput({ defaultValue, children, id, name, pattern, r
 }
 
 type InputProps = PropsWithChildren<Readonly<{
-  defaultValue: string
+  defaultValue?: string
   id: string
   name: string
   pattern?: string
