@@ -365,6 +365,19 @@ describe('mes utilisateurs', () => {
     expect(navigation).toBeInTheDocument()
   })
 
+  it('quand j’affiche moins de 10 utilisateurs alors la pagination ne s’affiche pas', () => {
+    // GIVEN
+    const totalUtilisateur = 5
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+
+    // WHEN
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // THEN
+    const navigation = screen.queryByRole('navigation', { name: 'Pagination' })
+    expect(navigation).not.toBeInTheDocument()
+  })
+
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)

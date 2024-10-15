@@ -6,6 +6,7 @@ import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
 import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import config from '@/use-cases/config.json'
 import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export const metadata: Metadata = {
@@ -25,7 +26,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
       pageCourante,
       ssoId: session.user.sub,
       utilisateursActives,
-      utilisateursParPage: 10,
+      utilisateursParPage: config.utilisateursParPage,
     })
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,

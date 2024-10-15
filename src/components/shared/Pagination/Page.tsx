@@ -7,8 +7,9 @@ export default function Page({
   nombreDeResultat,
   pageCourante,
   urlAvecParametres,
+  utilisateursParPage,
 }: PageProps): ReadonlyArray<ReactElement> {
-  return pages(nombreDeResultat, pageCourante).map((page): ReactElement => {
+  return pages(nombreDeResultat, pageCourante, utilisateursParPage).map((page): ReactElement => {
     if (pageCourante === page - 1) {
       return (
         <li key={page}>
@@ -45,4 +46,5 @@ type PageProps = Readonly<{
   nombreDeResultat: number
   pageCourante: number
   urlAvecParametres: URL
+  utilisateursParPage: number
 }>

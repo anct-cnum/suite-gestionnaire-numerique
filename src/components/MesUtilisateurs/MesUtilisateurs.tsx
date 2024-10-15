@@ -20,7 +20,7 @@ import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/present
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
-  const { session } = useContext(clientContext)
+  const { session, utilisateursParPage } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -172,7 +172,7 @@ export default function MesUtilisateurs(
         })}
       </Tableau>
       {
-        mesUtilisateursViewModel.totalUtilisateur > 10 ?
+        mesUtilisateursViewModel.totalUtilisateur > utilisateursParPage ?
           (
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination
