@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import { pages } from './pagination'
+import { pages } from './calculPagination'
 
 export default function Page({
   nombreDeResultat,
