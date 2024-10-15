@@ -36,6 +36,7 @@ export const clientContextProviderDefaultValue = {
     },
     uid: 'fooId',
   },
+  utilisateursParPage: 10,
 }
 
 export function renderComponent(

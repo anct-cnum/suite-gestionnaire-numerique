@@ -1,15 +1,13 @@
-
-export function nombreDePage(nombreDeResultat: number): number {
-  const utilisateursParPage = 10
-
+export function nombreDePage(nombreDeResultat: number, utilisateursParPage: number): number {
   return Math.trunc(nombreDeResultat / utilisateursParPage + 1)
 }
 
 export function pages(
   nombreDeResultat: number,
-  pageCourante: number
+  pageCourante: number,
+  utilisateursParPage: number
 ): Array<number> {
-  const nombreDePages = nombreDePage(nombreDeResultat)
+  const nombreDePages = nombreDePage(nombreDeResultat, utilisateursParPage)
 
   return new Array(nombreDePages)
     .fill('')
