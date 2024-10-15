@@ -3,7 +3,7 @@ import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/components/testHelper'
+import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
 describe('mes utilisateurs', () => {
@@ -483,6 +483,75 @@ describe('mes utilisateurs', () => {
       const filtrer = screen.getByRole('button', { name: 'Filtrer' })
       fireEvent.click(filtrer)
     }
+  })
+
+  describe('quand j’invite un utilisateur', () => {
+    it('quand je clique sur le bouton inviter, alors le drawer s’ouvre', async () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+
+      // WHEN
+      fireEvent.click(inviter)
+
+      // THEN
+      const titre = await screen.findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      expect(titre).toBeInTheDocument()
+
+      const champsObligatoires = screen.getByText(
+        matchWithoutMarkup('Les champs avec * sont obligatoires.'),
+        { selector: 'p' }
+      )
+      expect(champsObligatoires).toBeInTheDocument()
+
+      const nom = screen.getByLabelText('Nom *')
+      expect(nom).toBeRequired()
+      expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveAttribute('type', 'text')
+
+      const prenom = screen.getByLabelText('Prénom *')
+      expect(prenom).toBeRequired()
+      expect(prenom).toHaveAttribute('name', 'prenom')
+      expect(prenom).toHaveAttribute('type', 'text')
+
+      const email = screen.getByLabelText('Adresse électronique *')
+      expect(email).toBeRequired()
+      expect(email).toHaveAttribute('name', 'email')
+      expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(email).toHaveAttribute('type', 'email')
+
+      const roleQuestion = screen.getByText(
+        matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
+        { selector: 'legend' }
+      )
+      expect(roleQuestion).toBeInTheDocument()
+
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      expect(gestionnaireRegion).toBeRequired()
+      expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireRegion).toHaveAttribute('id', 'gestionnaireRegion')
+
+      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      expect(gestionnaireDepartement).toBeRequired()
+      expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireDepartement).toHaveAttribute('id', 'gestionnaireDepartement')
+
+      const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+      expect(gestionnaireGroupement).toBeRequired()
+      expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireGroupement).toHaveAttribute('id', 'gestionnaireGroupement')
+
+      const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+      expect(gestionnaireStructure).toBeRequired()
+      expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireStructure).toHaveAttribute('id', 'gestionnaireStructure')
+
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    })
+    it.todo('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche')
+    it.todo('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur')
   })
 })
 
