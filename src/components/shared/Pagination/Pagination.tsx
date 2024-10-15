@@ -2,9 +2,9 @@
 
 import { ReactElement, useContext } from 'react'
 
+import { fullUrl } from './calculPagination'
 import DernierePage from './DernierePage'
 import Page from './Page'
-import { fullUrl } from './pagination'
 import PremierePage from './PremierePage'
 import { clientContext } from '../ClientContext'
 
