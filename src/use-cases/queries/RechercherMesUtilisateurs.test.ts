@@ -1,5 +1,5 @@
-import { MesUtilisateursLoader, MesUtilisateursReadModel, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
-import { UnUtilisateurReadModel } from './RechercherUnUtilisateur'
+import { MesUtilisateursLoader, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
+import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
 describe('rechercher mes utilisateurs', () => {
   it('recherchant sans filtre alors je récupère mes utilisateurs et leur nombre total', async () => {
@@ -58,7 +58,7 @@ describe('rechercher mes utilisateurs', () => {
 })
 
 const date = new Date(0)
-const dummyUtilisateur: MesUtilisateursReadModel = {
+const dummyUtilisateur: UnUtilisateurReadModel = {
   departementCode: null,
   derniereConnexion: date,
   email: '',
