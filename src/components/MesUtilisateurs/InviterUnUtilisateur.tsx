@@ -1,7 +1,8 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useState } from 'react'
+import { ReactElement, useContext, useEffect, useId, useState } from 'react'
 
+import { clientContext } from '../shared/ClientContext'
 import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
@@ -29,6 +30,7 @@ export default function InviterUnUtilisateur({
   ariaControls,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
+  const { setBandeauInformations } = useContext(clientContext)
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -39,7 +41,8 @@ export default function InviterUnUtilisateur({
   // TO DELETE
   useEffect(() => {
     setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
-  }, [])
+    setBandeauInformations({ description: 'test2', titre: 'test' })
+  }, [setBandeauInformations])
 
   return (
     <div>
