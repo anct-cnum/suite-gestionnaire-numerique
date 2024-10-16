@@ -571,8 +571,10 @@ describe('mes utilisateurs', () => {
       fireEvent.click(envoyerInvitation)
 
       // THEN
-      // const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-      // expect(erreurEmailDejaExistant).toBeInTheDocument()
+      // const validationInvitationTitre = screen.getByText('Invitation envoyée à ', { selector: 'span' })
+      // expect(validationInvitationTitre).toBeInTheDocument()
+      // const validationInvitationDescription = screen.getByText('martin.tartempion@example.com', { selector: 'span' })
+      // expect(validationInvitationDescription).toBeInTheDocument()
     })
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', () => {
