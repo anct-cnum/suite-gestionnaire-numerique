@@ -66,7 +66,7 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
     }
   }
 
-  async findBySsoId(ssoId: string): Promise<UnUtilisateurReadModel> {
+  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       include: {
         relationDepartements: true,
@@ -76,7 +76,7 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       },
       where: {
         isSupprime: false,
-        ssoId,
+        ssoId: uid,
       },
     })
 
