@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, ReactElement } from 'react'
 
-export default function TextInput({ defaultValue = '', children, id, name, pattern, required, type = 'text' }: InputProps): ReactElement {
+export default function TextInput({ defaultValue = '', children, id, name, pattern, required, type = 'text', erreur }: InputProps): ReactElement {
   return (
-    <div className="fr-input-group">
+    <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : null}`}>
       <label
         className="fr-label"
         htmlFor={id}
@@ -19,6 +19,15 @@ export default function TextInput({ defaultValue = '', children, id, name, patte
         required={required}
         type={type}
       />
+      {
+        (erreur !== undefined) ?
+          <p
+            className="fr-error-text"
+            id="text-input-error-desc-error"
+          >
+            {erreur}
+          </p> : null
+      }
     </div>
   )
 }
@@ -30,4 +39,5 @@ type InputProps = PropsWithChildren<Readonly<{
   pattern?: string
   required: boolean
   type?: 'text' | 'tel' | 'email'
+  erreur?: string
 }>>

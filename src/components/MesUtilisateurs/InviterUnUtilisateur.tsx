@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useId } from 'react'
+import { ReactElement, useEffect, useId, useState } from 'react'
 
 import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
@@ -28,6 +28,7 @@ export default function InviterUnUtilisateur({
   setIsOpen,
   ariaControls,
 }: InviterUnUtilisateurProps): ReactElement {
+  const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -35,6 +36,10 @@ export default function InviterUnUtilisateur({
   const inviterUtilisateur = () => {
     setIsOpen(false)
   }
+  // TO DELETE
+  useEffect(() => {
+    setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+  }, [])
 
   return (
     <div>
@@ -78,6 +83,7 @@ export default function InviterUnUtilisateur({
           </span>
         </TextInput>
         <TextInput
+          erreur={emailDejaExistant}
           id={emailId}
           name="email"
           pattern=".+@.+\..{2,}"

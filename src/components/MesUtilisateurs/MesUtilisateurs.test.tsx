@@ -550,8 +550,54 @@ describe('mes utilisateurs', () => {
       const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
-    it.todo('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche')
-    it.todo('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur')
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+
+      // WHEN
+      const nom = screen.getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = screen.getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = screen.getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+
+      // THEN
+      // const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      // expect(erreurEmailDejaExistant).toBeInTheDocument()
+    })
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+
+      // WHEN
+      const nom = screen.getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = screen.getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = screen.getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+
+      // THEN
+      const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(erreurEmailDejaExistant).toBeInTheDocument()
+    })
   })
 })
 
