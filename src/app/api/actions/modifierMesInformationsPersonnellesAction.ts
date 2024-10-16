@@ -3,7 +3,7 @@
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { PostgreModificationUtilisateurGateway } from '@/gateways/PostgreModificationUtilisateurGateway'
+import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModificationUtilisateurFailure, ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
@@ -29,7 +29,7 @@ export async function modifierMesInformationsPersonnellesAction(
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const session = (await getSession())!
 
-  return new ModifierMesInformationsPersonnelles(new PostgreModificationUtilisateurGateway(prisma))
+  return new ModifierMesInformationsPersonnelles(new PostgreUtilisateurRepository(prisma))
     .execute({
       modification: {
         email,
