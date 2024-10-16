@@ -64,7 +64,7 @@ describe('postgre mes informations personnelles', () => {
 
       // WHEN
       const mesInformationsPersonnellesReadModel =
-        await postgreMesInformationsPersonnellesGateway.findBySsoId(ssoIdExistant)
+        await postgreMesInformationsPersonnellesGateway.findByUid(ssoIdExistant)
 
       // THEN
       expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -103,7 +103,7 @@ describe('postgre mes informations personnelles', () => {
     const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
-    const utilisateurReadModel = async () => postgreMesInformationsPersonnellesGateway.findBySsoId(ssoIdInexistant)
+    const utilisateurReadModel = async () => postgreMesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

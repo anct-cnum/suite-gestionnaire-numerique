@@ -24,7 +24,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.get({
       pageCourante,
-      ssoId: session.user.sub,
+      uid: session.user.sub,
       utilisateursActives,
       utilisateursParPage: config.utilisateursParPage,
     })

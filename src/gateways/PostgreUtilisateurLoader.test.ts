@@ -159,7 +159,7 @@ describe('postgre utilisateur query', () => {
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = await postgreUtilisateurLoader.findBySsoId(ssoIdExistant)
+      const utilisateurReadModel = await postgreUtilisateurLoader.findByUid(ssoIdExistant)
 
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
@@ -198,7 +198,7 @@ describe('postgre utilisateur query', () => {
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = async () => postgreUtilisateurLoader.findBySsoId(ssoIdInexistant)
+      const utilisateurReadModel = async () => postgreUtilisateurLoader.findByUid(ssoIdInexistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
@@ -213,7 +213,7 @@ describe('postgre utilisateur query', () => {
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = async () => postgreUtilisateurLoader.findBySsoId(ssoIdExistant)
+      const utilisateurReadModel = async () => postgreUtilisateurLoader.findByUid(ssoIdExistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

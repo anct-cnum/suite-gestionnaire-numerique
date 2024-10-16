@@ -16,7 +16,7 @@ export default async function MesInformationsPersonnellesController(): Promise<R
   const session = (await getSession())!
 
   const mesInformationsPersonnellesQuery = new PostgreMesInformationsPersonnellesLoader(prisma)
-  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.findBySsoId(session.user.sub)
+  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.findByUid(session.user.sub)
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
 
