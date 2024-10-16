@@ -5,7 +5,7 @@ export function mesInformationsPersonnellesPresenter(
 ): MesInformationsPersonnellesViewModel {
   return {
     ...mesInformationsPersonnellesReadModel,
-    informationsPersonnellesTelephone: mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/g, '$1 $2 $3 $4 $5'),
+    informationsPersonnellesTelephone: mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d)/g, '$1 $2 $3 $4 $5'),
     isStructure: mesInformationsPersonnellesReadModel.role === 'Gestionnaire structure' || mesInformationsPersonnellesReadModel.role === 'Gestionnaire groupement',
   }
 }

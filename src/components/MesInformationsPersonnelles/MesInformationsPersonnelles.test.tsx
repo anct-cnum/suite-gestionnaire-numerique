@@ -206,6 +206,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
         // THEN
         expect(confirmerSuppressionCompteButton()).toBeDisabled()
+        const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur')
+        expect(messageEmailKo).not.toBeInTheDocument()
       })
 
       it('je saisis une adresse électronique valide mais qui n’est pas la mienne', () => {
@@ -230,7 +232,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         fireEvent.click(supprimerMonCompteButton())
 
         // WHEN
-        fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
+        fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
 
         // THEN
         expect(confirmerSuppressionCompteButton()).not.toBeDisabled()
