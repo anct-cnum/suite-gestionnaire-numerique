@@ -4,7 +4,7 @@ import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 describe('rechercher mes utilisateurs', () => {
   it('recherchant sans filtre alors je récupère mes utilisateurs et leur nombre total', async () => {
     // GIVEN
-    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const uid = 'uid'
     const pageCourante = 0
     const utilisateursParPage = 10
     const utilisateursActives = false
@@ -14,13 +14,13 @@ describe('rechercher mes utilisateurs', () => {
     // WHEN
     await rechercherMesUtilisateurs.get({
       pageCourante,
-      ssoId,
+      uid: uid,
       utilisateursActives,
       utilisateursParPage,
     })
 
     // THEN
-    expect(mesUtilisateursLoader.spiedFindBySsoIdArgs).toStrictEqual([ssoId])
+    expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])
     expect(mesUtilisateursLoader.spiedFindMesUtilisateursEtLeTotalArgs).toStrictEqual([
       dummyUtilisateur,
       pageCourante,
@@ -31,7 +31,7 @@ describe('rechercher mes utilisateurs', () => {
 
   it('recherchant en filtrant par utilisateurs activés alors je récupère mes utilisateurs et leur nombre total', async () => {
     // GIVEN
-    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725c'
+    const uid = 'uid'
     const pageCourante = 0
     const utilisateursParPage = 10
     const utilisateursActives = true
@@ -41,13 +41,13 @@ describe('rechercher mes utilisateurs', () => {
     // WHEN
     await rechercherMesUtilisateurs.get({
       pageCourante,
-      ssoId,
+      uid,
       utilisateursActives,
       utilisateursParPage,
     })
 
     // THEN
-    expect(mesUtilisateursLoader.spiedFindBySsoIdArgs).toStrictEqual([ssoId])
+    expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])
     expect(mesUtilisateursLoader.spiedFindMesUtilisateursEtLeTotalArgs).toStrictEqual([
       dummyUtilisateur,
       pageCourante,
@@ -82,7 +82,7 @@ const dummyUtilisateur: UnUtilisateurReadModel = {
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
   spiedFindMesUtilisateursEtLeTotalArgs: Parameters<typeof this.findMesUtilisateursEtLeTotal> | undefined
-  spiedFindBySsoIdArgs: Parameters<typeof this.findBySsoId> | undefined
+  spiedFindByUidIdArgs: Parameters<typeof this.findByUid> | undefined
 
   async findMesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
@@ -97,8 +97,8 @@ class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
     })
   }
 
-  async findBySsoId(ssoId: string): Promise<UnUtilisateurReadModel> {
-    this.spiedFindBySsoIdArgs = [ssoId]
+  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
+    this.spiedFindByUidIdArgs = [uid]
     return Promise.resolve(dummyUtilisateur)
   }
 }

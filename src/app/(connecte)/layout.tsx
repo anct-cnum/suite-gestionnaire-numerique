@@ -22,7 +22,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   }
 
   const postgreUtilisateurPostgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
-  let utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+  let utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findByUid(session.user.sub)
   const correctionNomPrenom = await new CorrigerNomPrenomSiAbsents(
     new PostgreUtilisateurRepository(prisma)
   ).execute({
@@ -38,7 +38,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   })
 
   if (correctionNomPrenom === 'okAvecMiseAJour') {
-    utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
+    utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findByUid(session.user.sub)
   }
 
   const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
