@@ -19,7 +19,7 @@ import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/present
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
-  const { session, utilisateursParPage } = useContext(clientContext)
+  const { sessionUtilisateurViewModel, utilisateursParPage } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -68,7 +68,7 @@ export default function MesUtilisateurs(
         />
       </Drawer>
       {
-        session.role.groupe === 'gestionnaire' ? (
+        sessionUtilisateurViewModel.role.groupe === 'gestionnaire' ? (
           <p>
             Gérez l’accès à l’espace de gestion
           </p>

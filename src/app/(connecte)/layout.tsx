@@ -6,10 +6,13 @@ import ClientContext from '@/components/shared/ClientContext'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
+import { Roles } from '@/domain/Role'
 import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
 import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
+import config from '@/use-cases/config.json'
 
 export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
   const session = await getSession()
@@ -38,8 +41,14 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findBySsoId(session.user.sub)
   }
 
+  const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
+
   return (
-    <ClientContext utilisateurReadModel={utilisateurReadModel}>
+    <ClientContext
+      roles={Roles}
+      sessionUtilisateurViewModel={sessionUtilisateurViewModel}
+      utilisateursParPage={config.utilisateursParPage}
+    >
       <LienEvitement />
       <EnTete />
       <main

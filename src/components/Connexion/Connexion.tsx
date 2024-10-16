@@ -4,9 +4,8 @@ import { signIn } from 'next-auth/react'
 import { ReactElement } from 'react'
 
 import ProConnect from './pro-connect.svg'
-import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
 
-export default function Connexion({ provider }: ConnexionProps): ReactElement {
+export default function Connexion({ idProvider }: ConnexionProps): ReactElement {
   return (
     <div className="fr-container fr-container--fluid">
       <div className="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
@@ -21,7 +20,7 @@ export default function Connexion({ provider }: ConnexionProps): ReactElement {
             <div className="fr-connect-group">
               <button
                 className="btn btn--plain btn--primary"
-                onClick={async () => signIn(provider.id, { callbackUrl: '/' })}
+                onClick={async () => signIn(idProvider, { callbackUrl: '/' })}
                 title="S’identifier avec ProConnect"
                 type="button"
               >
@@ -32,7 +31,7 @@ export default function Connexion({ provider }: ConnexionProps): ReactElement {
                   href="/"
                   rel="external noopener noreferrer"
                   target="_blank"
-                  title="Qu’est ce que ProConnect ? (nouvelle fenêtre)"
+                  title="Qu’est-ce que ProConnect ? (nouvelle fenêtre)"
                 >
                   Qu’est ce que ProConnect ?
                 </a>
@@ -46,5 +45,5 @@ export default function Connexion({ provider }: ConnexionProps): ReactElement {
 }
 
 type ConnexionProps = Readonly<{
-  provider: ProConnectProvider['pro-connect']
+  idProvider: string
 }>

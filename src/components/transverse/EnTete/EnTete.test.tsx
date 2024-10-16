@@ -3,7 +3,7 @@ import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
 import * as changerAction from '@/app/api/actions/changerMonRoleAction'
-import { renderComponent } from '@/testHelper'
+import { renderComponent } from '@/components/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {

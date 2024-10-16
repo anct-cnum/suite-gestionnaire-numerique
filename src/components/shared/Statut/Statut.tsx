@@ -1,7 +1,6 @@
 import { ReactElement } from 'react'
 
 import Badge from '../../shared/Badge/Badge'
-import { StatutInscription } from '@/presenters/mesUtilisateursPresenter'
 
 export default function Statut({ libelle }: StatutProps): ReactElement {
   // Stryker disable next-line all
@@ -15,5 +14,5 @@ export default function Statut({ libelle }: StatutProps): ReactElement {
 }
 
 type StatutProps = Readonly<{
-  libelle: StatutInscription
+  libelle: string
 }>
