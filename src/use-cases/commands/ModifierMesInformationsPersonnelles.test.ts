@@ -32,6 +32,7 @@ describe('modifier mes informations personnelles', () => {
       email: 'martine.dugenoux@example.com',
       nom: 'Dugenoux',
       prenom: 'Martine',
+      telephone: '0102030406',
     })
     expect(result).toBe('OK')
     expect(utilisateurApresMiseAJour.equals(utilisateur)).toBe(true)
@@ -43,7 +44,7 @@ const informationsPersonnellesModifiees = {
     email: 'martine.dugenoux@example.com',
     nom: 'Dugenoux',
     prenom: 'Martine',
-    telephone: '',
+    telephone: '0102030406',
   },
   uid: 'fooId',
 }

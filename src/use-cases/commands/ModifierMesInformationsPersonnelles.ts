@@ -21,6 +21,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<
     utilisateur.changerPrenom(command.modification.prenom)
     utilisateur.changerNom(command.modification.nom)
     utilisateur.changerEmail(command.modification.email)
+    utilisateur.changerTelephone(command.modification.telephone)
     await this.#repository.update(utilisateur)
     return 'OK'
   }
