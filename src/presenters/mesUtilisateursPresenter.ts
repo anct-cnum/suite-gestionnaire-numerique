@@ -1,4 +1,3 @@
-import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function mesUtilisateursPresenter(
@@ -55,7 +54,7 @@ export type DetailsUtilisateurViewModel = Readonly<{
 
 const inactif = 'inactif'
 
-function buildDate(utilisateurReadModel: MesUtilisateursReadModel): string {
+function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
   if (utilisateurReadModel.isActive) {
     return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
   }
