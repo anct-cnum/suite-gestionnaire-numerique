@@ -1,26 +1,29 @@
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class ModifierMesInformationsPersonnelles implements CommandHandler<
   MesInformationsPersonnellesModifiees,
   ModificationUtilisateurFailure
 > {
-  readonly #modificationUtilisateurGateway: ModificationUtilisateurGateway
+  readonly #repository: Repository
 
-  constructor(modificationUtilisateurGateway: ModificationUtilisateurGateway) {
-    this.#modificationUtilisateurGateway = modificationUtilisateurGateway
+  constructor(repository: Repository) {
+    this.#repository = repository
   }
 
   async execute(command: MesInformationsPersonnellesModifiees): ResultAsync<
     ModificationUtilisateurFailure
   > {
-    return this.#modificationUtilisateurGateway
-      .update(command)
-      .then((result) => (result ? 'OK' : 'compteInexistant'))
+    const utilisateur = await this.#repository.find(command.uid)
+    if (!utilisateur) {
+      return 'compteInexistant'
+    }
+    utilisateur.changerPrenom(command.modification.prenom)
+    utilisateur.changerNom(command.modification.nom)
+    utilisateur.changerEmail(command.modification.email)
+    await this.#repository.update(utilisateur)
+    return 'OK'
   }
-}
-
-export interface ModificationUtilisateurGateway {
-  update: (mesInformationsPersonnellesModifiees: MesInformationsPersonnellesModifiees) => Promise<boolean>
 }
 
 export type MesInformationsPersonnellesModifiees = Readonly<{
@@ -34,3 +37,5 @@ export type MesInformationsPersonnellesModifiees = Readonly<{
 }>
 
 export type ModificationUtilisateurFailure = 'compteInexistant'
+
+interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

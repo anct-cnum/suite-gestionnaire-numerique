@@ -1,46 +1,87 @@
-import { ModificationUtilisateurGateway, ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
+import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
+import {
+  FindUtilisateurRepository,
+  UpdateUtilisateurRepository,
+} from './shared/UtilisateurRepository'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('modifier mes informations personnelles', () => {
-  it.each([
-    [
-      'quand le compte n’existe pas alors pas de modification possible',
-      'compteInexistant',
-      gatewayCompteInexistant,
-    ],
-    [
-      'quand le compte existe alors il est modifié',
-      'OK',
-      gatewayCompteExistant,
-    ],
-  ])('%s', async (_, expected, gateway) => {
+  it('quand le compte n’existe pas alors pas de modification possible', async () => {
     // GIVEN
-    const informationsPersonnellesModifiees = {
-      modification: {
-        email: 'martin.tartempion@example.com',
-        nom: 'tartempion',
-        prenom: 'martin',
-        telephone: '0102030405',
-      },
-      uid: 'fooId',
-    }
-    const commandHandler = new ModifierMesInformationsPersonnelles(gateway)
+    const commandHandler = new ModifierMesInformationsPersonnelles(
+      new RepositoryUtilisateurIntrouvableStub()
+    )
 
     // WHEN
     const result = await commandHandler.execute(informationsPersonnellesModifiees)
 
     // THEN
-    expect(result).toBe(expected)
+    expect(result).toBe('compteInexistant')
+  })
+
+  it('quand le compte existe alors il est modifié', async () => {
+    // GIVEN
+    const utilisateur = utilisateurFactory()
+    const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
+
+    // WHEN
+    const result = await commandHandler.execute(informationsPersonnellesModifiees)
+
+    // THEN
+    const utilisateurApresMiseAJour = utilisateurFactory({
+      email: 'martine.dugenoux@example.com',
+      nom: 'Dugenoux',
+      prenom: 'Martine',
+    })
+    expect(result).toBe('OK')
+    expect(utilisateurApresMiseAJour.equals(utilisateur)).toBe(true)
   })
 })
 
-const gatewayCompteExistant: ModificationUtilisateurGateway = {
-  async update(): Promise<boolean> {
-    return Promise.resolve(true)
+const informationsPersonnellesModifiees = {
+  modification: {
+    email: 'martine.dugenoux@example.com',
+    nom: 'Dugenoux',
+    prenom: 'Martine',
+    telephone: '',
   },
+  uid: 'fooId',
 }
 
-const gatewayCompteInexistant: ModificationUtilisateurGateway = {
-  async update(): Promise<boolean> {
-    return Promise.resolve(false)
-  },
+class RepositoryStub implements FindUtilisateurRepository, UpdateUtilisateurRepository {
+  readonly #utilisateur: Utilisateur | null
+
+  constructor(utilisateur: Utilisateur | null = null) {
+    this.#utilisateur = utilisateur
+  }
+
+  async find(): Promise<Utilisateur | null> {
+    return Promise.resolve(this.#utilisateur)
+  }
+
+  async update(): Promise<void> {
+    return Promise.resolve()
+  }
+}
+
+class RepositoryUtilisateurIntrouvableStub extends RepositoryStub {
+  override async find(): Promise<null> {
+    return Promise.resolve(null)
+  }
+}
+
+function utilisateurFactory(
+  override: Partial<Parameters<typeof Utilisateur.create>[0]> = {}
+): Utilisateur {
+  return Utilisateur.create({
+    email: 'michel.tartempion@example.org',
+    isSuperAdmin: false,
+    nom: 'Tartempion',
+    organisation: 'Banque des territoires',
+    prenom: 'Michel',
+    role: 'Instructeur',
+    telephone: '0102030405',
+    uid: 'fooId',
+    ...override,
+  })
 }
