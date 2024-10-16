@@ -59,6 +59,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
         nom: utilisateurState.nom,
         prenom: utilisateurState.prenom,
         role: fromTypologieRole(utilisateurState.role.nom),
+        telephone: utilisateurState.telephone,
       },
       where: {
         ssoId: utilisateurState.uid,

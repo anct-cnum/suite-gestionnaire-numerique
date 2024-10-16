@@ -4,11 +4,11 @@ import { Result } from '@/util/result'
 
 export class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  readonly #telephone: string
-  #email: string
   #role: Role
   #nom: string
   #prenom: string
+  #email: string
+  #telephone: string
 
   private constructor(
     uid: UtilisateurUid,
@@ -64,6 +64,10 @@ export class Utilisateur extends Entity<UtilisateurState> {
 
   changerEmail(email: string): void {
     this.#email = email
+  }
+
+  changerTelephone(telephone: string): void {
+    this.#telephone = telephone
   }
 
   changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
