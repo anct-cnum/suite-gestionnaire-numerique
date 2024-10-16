@@ -9,7 +9,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import Drawer from '@/components/shared/Drawer/Drawer'
 
 export default function EnTete(): ReactElement {
-  const { session } = useContext(clientContext)
+  const { sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawer-menu-utilisateur'
@@ -68,7 +68,7 @@ export default function EnTete(): ReactElement {
                     <span className={`${styles['libelle-session-utilisateur__prefix']} color-grey`}>
                       &nbsp;/&nbsp;
                     </span>
-                    {session.role.libelle}
+                    {sessionUtilisateurViewModel.role.libelle}
                   </p>
                 </Link>
               </div>
@@ -119,7 +119,7 @@ export default function EnTete(): ReactElement {
                       }}
                       type="button"
                     >
-                      {`${session.prenom} ${session.nom}`}
+                      {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
                       <span
                         aria-hidden="true"
                         className="fr-icon-arrow-down-s-line"

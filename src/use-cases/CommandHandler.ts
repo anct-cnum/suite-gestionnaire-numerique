@@ -1,4 +1,4 @@
-import { Result, ResultOk } from '@/util/result'
+import { Result, ResultOk } from '@/shared/result'
 
 export interface CommandHandler<Command, Failure = string, Success = ResultOk> {
   execute: (command: Command) => ResultAsync<Failure, Success>

@@ -10,7 +10,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 
 export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
-  const { session } = useContext(clientContext)
+  const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
     <>
@@ -19,19 +19,19 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           alt=""
           className="grey-border"
           height={80}
-          src={`${session.role.pictogramme}.svg`}
+          src={`${sessionUtilisateurViewModel.role.pictogramme}.svg`}
           width={80}
         />
         <div className="fr-mb-0 fr-h4">
           <span className={`color-blue-france ${styles.nom}`}>
-            {session.prenom}
+            {sessionUtilisateurViewModel.prenom}
           </span>
           <span className={`color-blue-france ${styles.nom}`}>
-            {session.nom}
+            {sessionUtilisateurViewModel.nom}
           </span>
         </div>
         <div className={'fr-text--xs color-blue-france'}>
-          {session.email}
+          {sessionUtilisateurViewModel.email}
         </div>
       </div>
       <ul

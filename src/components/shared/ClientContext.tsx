@@ -4,19 +4,20 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
-import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
-import config from '@/use-cases/config.json'
-import { UnUtilisateurReadModel } from '@/use-cases/queries/RechercherUnUtilisateur'
+import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
-export default function ClientContext({ children, utilisateurReadModel }: ClientContextProps): ReactElement {
-  const session = createSessionUtilisateurPresenter(utilisateurReadModel)
+export default function ClientContext({
+  children,
+  roles,
+  sessionUtilisateurViewModel,
+  utilisateursParPage,
+}: ClientContextProps): ReactElement {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const utilisateursParPage = config.utilisateursParPage
 
   const clientContextProviderValue = useMemo(
-    () => ({ router, searchParams, session, utilisateursParPage }),
-    [router, searchParams, session, utilisateursParPage]
+    () => ({ roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage }),
+    [roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
   )
 
   return (
@@ -29,12 +30,15 @@ export default function ClientContext({ children, utilisateurReadModel }: Client
 export const clientContext = createContext<ClientContextProviderValue>({} as ClientContextProviderValue)
 
 type ClientContextProviderValue = Readonly<{
+  roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
-  session: SessionUtilisateurViewModel
+  sessionUtilisateurViewModel: SessionUtilisateurViewModel
   utilisateursParPage: number
 }>
 
 type ClientContextProps = PropsWithChildren<Readonly<{
-  utilisateurReadModel: UnUtilisateurReadModel
+  roles: ReadonlyArray<string>
+  sessionUtilisateurViewModel: SessionUtilisateurViewModel
+  utilisateursParPage: number
 }>>

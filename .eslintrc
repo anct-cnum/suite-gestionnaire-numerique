@@ -85,6 +85,43 @@
     "import/no-anonymous-default-export": "off",
     "import/no-extraneous-dependencies": "error",
     "import/no-mutable-exports": "error",
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          {
+            "target": ["src/domain"],
+            "from": ["src"],
+            "except": ["domain", "shared"],
+            "message": "Le domain représente le métier, il ne dépend d'aucun élément extérieur."
+          },
+          {
+            "target": ["src/use-cases"],
+            "from": ["src"],
+            "except": ["domain", "use-cases", "shared"],
+            "message": "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs."
+          },
+          {
+            "target": ["src/gateways"],
+            "from": ["src"],
+            "except": ["domain", "use-cases", "gateways", "shared"],
+            "message": "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases."
+          },
+          {
+            "target": ["src/presenters"],
+            "from": ["src"],
+            "except": ["use-cases", "presenters", "shared"],
+            "message": "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways."
+          },
+          {
+            "target": ["src/components"],
+            "from": ["src"],
+            "except": ["app/api/actions", "components", "presenters", "shared"],
+            "message": "Le front ne doit pas avoir la connaissance du back (sauf les server actions)."
+          }
+        ]
+      }
+    ],
     "import/order": [
       "warn",
       {
