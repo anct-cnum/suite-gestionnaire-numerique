@@ -2,8 +2,9 @@ import { Prisma, PrismaClient } from '@prisma/client'
 
 import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { categorieByType } from '@/domain/Role'
-import { MesUtilisateursLoader, MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
-import { UnUtilisateurReadModel, UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
+import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
   readonly #prisma: PrismaClient
@@ -87,7 +88,7 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
   }
 }
 
-function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesUtilisateursReadModel {
+function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
   return {
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),

@@ -1,4 +1,4 @@
-import { UnUtilisateurReadModel } from '@/use-cases/queries/RechercherUnUtilisateur'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function createSessionUtilisateurPresenter(
   utilisateurReadModel: UnUtilisateurReadModel

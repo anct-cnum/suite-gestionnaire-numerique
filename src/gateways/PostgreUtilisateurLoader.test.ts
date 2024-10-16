@@ -3,7 +3,8 @@ import { Prisma, Role } from '@prisma/client'
 import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
 import prisma from '../../prisma/prismaClient'
 import { Categorie, Groupe, TypologieRole } from '@/domain/Role'
-import { MesUtilisateursReadModel, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 describe('postgre utilisateur query', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -161,7 +162,7 @@ describe('postgre utilisateur query', () => {
       const utilisateurReadModel = await postgreUtilisateurLoader.findBySsoId(ssoIdExistant)
 
       // THEN
-      expect(utilisateurReadModel).toStrictEqual<MesUtilisateursReadModel>({
+      expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
         departementCode,
         derniereConnexion: new Date(0),
         email: 'martin.tartempion@example.net',
@@ -859,8 +860,8 @@ function utilisateurRecordFactory(
 }
 
 function utilisateurReadModelFactory(
-  override: Partial<MesUtilisateursReadModel>
-): MesUtilisateursReadModel {
+  override: Partial<UnUtilisateurReadModel>
+): UnUtilisateurReadModel {
   const date = new Date(0)
 
   return {
