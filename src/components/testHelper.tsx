@@ -2,6 +2,8 @@ import { render } from '@testing-library/react'
 import { ReactElement } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
+// eslint-disable-next-line import/no-restricted-paths
+import { Roles } from '@/domain/Role'
 
 export function matchWithoutMarkup(wording: string) {
   return function(_: string, element: Element | null): boolean {
@@ -21,9 +23,10 @@ export const spiedNextNavigation = {
 }
 
 export const clientContextProviderDefaultValue = {
+  roles: Roles,
   router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),
-  session: {
+  sessionUtilisateurViewModel: {
     email: 'martin.tartempion@example.net',
     isSuperAdmin: true,
     nom: 'Tartempion',

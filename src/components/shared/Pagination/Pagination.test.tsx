@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 
 import Pagination from './Pagination'
-import { clientContextProviderDefaultValue, renderComponent } from '@/testHelper'
+import { clientContextProviderDefaultValue, renderComponent } from '@/components/testHelper'
 
 describe('pagination', () => {
   it('quand je suis sur la première page d’une page (< ① >)', () => {

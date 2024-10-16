@@ -36,26 +36,21 @@ export type MesUtilisateursViewModel = Readonly<{
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>
 
-export type MonUtilisateur = Readonly<{
+type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
   canBeDeleted: boolean
-  derniereConnexion: string
-  email: string
   picto: string
-  prenomEtNom: string
-  role: string
-  statut: StatutInscription
-  structure: string
+  statut: 'En attente' | 'Activé'
   uid: string
-  telephone: string
 }>
 
-export type DetailsUtilisateurViewModel = Readonly<
-  Pick<
-    MonUtilisateur, 'prenomEtNom' | 'derniereConnexion' | 'email' | 'role' | 'structure' | 'telephone'
-  >
->
-
-export type StatutInscription = 'En attente' | 'Activé'
+export type DetailsUtilisateurViewModel = Readonly<{
+  derniereConnexion: string
+  email: string
+  prenomEtNom: string
+  role: string
+  structure: string
+  telephone: string
+}>
 
 const inactif = 'inactif'
 

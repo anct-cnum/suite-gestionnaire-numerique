@@ -4,8 +4,8 @@ import * as nextAuth from 'next-auth/react'
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import * as modifierAction from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
+import { matchWithoutMarkup } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
-import { matchWithoutMarkup } from '@/testHelper'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {

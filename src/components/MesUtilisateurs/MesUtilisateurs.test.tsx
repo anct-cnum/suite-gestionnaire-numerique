@@ -3,9 +3,8 @@ import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
+import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
-import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/testHelper'
-import { MesUtilisateursReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 describe('mes utilisateurs', () => {
   const pageCourante = 0
@@ -49,8 +48,8 @@ describe('mes utilisateurs', () => {
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       ...clientContextProviderDefaultValue,
-      session: {
-        ...clientContextProviderDefaultValue.session,
+      sessionUtilisateurViewModel: {
+        ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
         role: {
           groupe: 'admin',
           libelle: '',
@@ -84,8 +83,8 @@ describe('mes utilisateurs', () => {
       />,
       {
         ...clientContextProviderDefaultValue,
-        session: {
-          ...clientContextProviderDefaultValue.session,
+        sessionUtilisateurViewModel: {
+          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
           role: {
             groupe: 'gestionnaire',
             libelle: 'Rhône',
@@ -451,7 +450,7 @@ function getByTable() {
   return { columnsHead, rowsBody }
 }
 
-const mesUtilisateursReadModel: ReadonlyArray<MesUtilisateursReadModel> = [
+const mesUtilisateursReadModel = [
   {
     departementCode: null,
     derniereConnexion: new Date('2024-03-05'),
