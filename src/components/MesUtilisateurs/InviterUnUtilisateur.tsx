@@ -1,7 +1,8 @@
 'use client'
 
-import { ReactElement, useContext, useEffect, useId, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
+import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
 import { clientContext } from '../shared/ClientContext'
 import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
@@ -35,14 +36,27 @@ export default function InviterUnUtilisateur({
   const prenomId = useId()
   const emailId = useId()
 
-  const inviterUtilisateur = () => {
-    setIsOpen(false)
+  const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const form = new FormData(event.currentTarget)
+    const email = form.get('email') as string
+    const utilisateurACreer = {
+      email,
+      nom: form.get('nom') as string,
+      organisation: '',
+      prenom: form.get('prenom') as string,
+      role: form.get('attributionRole') as string,
+      uidUtilisateurCourant: '',
+    }
+    const result = await inviterUnUtilisateurAction(utilisateurACreer)
+    if (result === 'OK') {
+      setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
+      setIsOpen(false)
+    } else {
+      setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+    }
   }
-  // TO DELETE
-  useEffect(() => {
-    setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
-    setBandeauInformations({ description: 'test2', titre: 'test' })
-  }, [setBandeauInformations])
 
   return (
     <div>

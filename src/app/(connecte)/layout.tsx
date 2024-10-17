@@ -54,7 +54,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
       <EnTete />
       <Bandeau />
       <main
-        className="fr-container--fluid fr-mb-5w fr-mx-5w"
+        className="fr-container--fluid fr-m-5w"
         id="content"
       >
         {children}

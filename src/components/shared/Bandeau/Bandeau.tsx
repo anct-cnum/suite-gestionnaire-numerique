@@ -2,26 +2,27 @@
 
 import { ReactElement, useContext } from 'react'
 
+import styles from './Bandeau.module.css'
 import { clientContext } from '../ClientContext'
 
 export interface BandeauInformations {
-  titre: string
-  description: string
+  titre: string | undefined
+  description: string | undefined
 }
 
 export default function Bandeau(): ReactElement | null {
   const { bandeauInformations } = useContext(clientContext)
 
-  const isDisplayed = () => {
-    return bandeauInformations?.titre !== undefined /*&& bandeauInformations.description !== undefined*/
+  const isDisplayed = (): boolean => {
+    return bandeauInformations?.titre !== undefined && bandeauInformations.description !== undefined
   }
 
   return isDisplayed() ? (
-    <div className="fr-notice fr-notice--info fr-mb-5w">
+    <div className={`fr-notice ${styles.success}`}>
       <div className="fr-container">
-        <div className="fr-notice__body">
+        <div className={`fr-notice__body ${styles.center}`}>
           <p>
-            <span className="fr-notice__title">
+            <span className="fr-notice__title fr-icon-success-fill">
               {bandeauInformations?.titre}
             </span>
             <span className="fr-notice__desc">

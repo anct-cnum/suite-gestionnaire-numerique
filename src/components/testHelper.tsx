@@ -41,9 +41,7 @@ export const clientContextProviderDefaultValue = {
     telephone: '0102030405',
     uid: 'fooId',
   },
-  setBandeauInformations: (): void => {
-    // empty
-  },
+  setBandeauInformations: vi.fn(),
   utilisateursParPage: 10,
 }
 
