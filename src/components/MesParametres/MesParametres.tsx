@@ -1,7 +1,7 @@
 import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
-import Checkbox from '../shared/Checkbox/Checkbox'
+import Interrupteur from '../shared/Interrupteur/Interrupteur'
 
 export default function MesParametres(): ReactElement {
 
@@ -36,19 +36,19 @@ export default function MesParametres(): ReactElement {
           >
             Communication et notifications
           </h2>
-          <Checkbox
+          <Interrupteur
             hasSeparator={true}
             id={recevoirNotificationsToggleId}
             name={recevoirNotificationsToggleId}
           >
             Recevoir toutes les notifications sur votre adresse électronique
-          </Checkbox>
-          <Checkbox
+          </Interrupteur>
+          <Interrupteur
             id={recevoirRecapHebdoToggleId}
             name={recevoirRecapHebdoToggleId}
           >
             Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
-          </Checkbox>
+          </Interrupteur>
         </section>
         <section
           aria-labelledby={affichageHeadingId}
