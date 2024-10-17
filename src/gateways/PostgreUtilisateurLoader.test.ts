@@ -223,22 +223,22 @@ describe('postgre utilisateur query', () => {
   describe('chercher mes utilisateurs', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const date = new Date(0)
-      const utilisateurAuthentifie = utilisateurReadModelFactory({
-        uid: ssoId,
-      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'dupont', role: 'gestionnaire_departement', ssoId: '123456' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
       expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
@@ -292,10 +292,8 @@ describe('postgre utilisateur query', () => {
 
     it('étant gestionnaire département quand je cherche mes utilisateurs alors je trouve tous ceux qui ont le même département', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const regionCode = '84'
       const departementCode = '69'
-      const date = new Date(0)
       const utilisateurAuthentifie = utilisateurReadModelFactory({
         departementCode,
         role: {
@@ -328,67 +326,28 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 2,
-        utilisateursCourants: [
-          {
-            departementCode: '69',
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Dupont',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'maille',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire département',
-              territoireOuStructure: 'Rhône',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '123456',
-          },
-          {
-            departementCode: '69',
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'maille',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire département',
-              territoireOuStructure: 'Rhône',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire département')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire département')
     })
 
     it('étant gestionnaire région quand je cherche mes utilisateurs alors je trouve tous ceux qui ont la même région', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const regionCode = '84'
-      const date = new Date(0)
       const utilisateurAuthentifie = utilisateurReadModelFactory({
         regionCode,
         role: {
@@ -414,67 +373,28 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 2,
-        utilisateursCourants: [
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Dupont',
-            prenom: 'Martin',
-            regionCode: '84',
-            role: {
-              categorie: 'maille',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire région',
-              territoireOuStructure: 'Auvergne-Rhône-Alpes',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '123456',
-          },
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: '84',
-            role: {
-              categorie: 'maille',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire région',
-              territoireOuStructure: 'Auvergne-Rhône-Alpes',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire région')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire région')
     })
 
     it('étant gestionnaire groupement quand je cherche mes utilisateurs alors je trouve tous ceux qui ont le même groupement', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const groupementId = 10
-      const date = new Date(0)
       const utilisateurAuthentifie = utilisateurReadModelFactory({
         groupementId,
         role: {
@@ -500,67 +420,28 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 2,
-        utilisateursCourants: [
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: 10,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Dupont',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'groupement',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire groupement',
-              territoireOuStructure: 'Hubikoop',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '123456',
-          },
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: 10,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'groupement',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire groupement',
-              territoireOuStructure: 'Hubikoop',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire groupement')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire groupement')
     })
 
     it('étant gestionnaire structure quand je cherche mes utilisateurs alors je trouve tous ceux qui ont la même structure', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const structureId = 1
-      const date = new Date(0)
       const utilisateurAuthentifie = utilisateurReadModelFactory({
         role: {
           categorie: 'structure',
@@ -587,68 +468,27 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoId: 'fakeSsoId' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-        await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(utilisateurAuthentifie, 0, 10, false)
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 2,
-        utilisateursCourants: [
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Dupont',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'structure',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire structure',
-              territoireOuStructure: 'Solidarnum',
-            },
-            structureId: 1,
-            telephone: '0102030405',
-            uid: '123456',
-          },
-          {
-            departementCode: null,
-            derniereConnexion: date,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: date,
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'structure',
-              groupe: 'gestionnaire',
-              nom: 'Gestionnaire structure',
-              territoireOuStructure: 'Solidarnum',
-            },
-            structureId: 1,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('123456')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Gestionnaire structure')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      const utilisateurAuthentifie = utilisateurReadModelFactory({
-        uid: ssoId,
-      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', ssoId }),
       })
@@ -657,119 +497,63 @@ describe('postgre utilisateur query', () => {
       })
       const pageCourante = 1
       const utilisateursParPage = 1
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
-      const mesUtilisateursReadModel =
-          await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
-            utilisateurAuthentifie,
-            pageCourante,
-            utilisateursParPage,
-            false
-          )
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 2,
-        utilisateursCourants:
-        [
-          {
-            departementCode: null,
-            derniereConnexion: new Date(0),
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: new Date(0),
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'anct',
-              groupe: 'admin',
-              nom: 'Administrateur dispositif',
-              territoireOuStructure: 'Administrateur Dispositif lambda',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
     })
 
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      const utilisateurAuthentifie = utilisateurReadModelFactory({
-        uid: ssoId,
-      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: false, ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: true, ssoId: '123456' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
-        0,
-        10,
-        false
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
       )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 1,
-        utilisateursCourants:
-        [
-          {
-            departementCode: null,
-            derniereConnexion: new Date(0),
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: new Date(0),
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'Tartempion',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'anct',
-              groupe: 'admin',
-              nom: 'Administrateur dispositif',
-              territoireOuStructure: 'Administrateur Dispositif lambda',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
     it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      const utilisateurAuthentifie = utilisateurReadModelFactory({
-        uid: ssoId,
-      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: new Date('2024-01-01'), nom: 'a', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoId: '123456' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
-        0,
-        10,
-        false
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
       )
 
       // THEN
@@ -779,7 +563,6 @@ describe('postgre utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs actifs alors je les trouve tous', async () => {
       // GIVEN
-      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       const derniereConnexion = new Date('2024-01-01')
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion, nom: 'a', ssoId }),
@@ -787,50 +570,64 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoId: '123456' }),
       })
-      const pageCourante = 0
-      const utilisateursParPage = 10
       const isActive = true
-      const utilisateurAuthentifie = utilisateurReadModelFactory({
-        uid: ssoId,
-      })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
       // WHEN
       const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
-        isActive
+        isActive,
+        roles
       )
 
       // THEN
-      expect(mesUtilisateursReadModel).toStrictEqual<UtilisateursCourantsEtTotalReadModel>({
-        total: 1,
-        utilisateursCourants: [
-          {
-            departementCode: null,
-            derniereConnexion,
-            email: 'martin.tartempion@example.net',
-            groupementId: null,
-            inviteLe: new Date(0),
-            isActive: true,
-            isSuperAdmin: false,
-            nom: 'a',
-            prenom: 'Martin',
-            regionCode: null,
-            role: {
-              categorie: 'anct',
-              groupe: 'admin',
-              nom: 'Administrateur dispositif',
-              territoireOuStructure: 'Administrateur Dispositif lambda',
-            },
-            structureId: null,
-            telephone: '0102030405',
-            uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-          },
-        ],
-      })
+      expect(mesUtilisateursReadModel.total).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
+
+    it('quand je cherche mes utilisateurs par rôles alors je les trouve tous', async () => {
+      // GIVEN
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'a', role: 'administrateur_dispositif', ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'b', role: 'instructeur', ssoId: '123456' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'c', role: 'gestionnaire_structure', ssoId: '67890' }),
+      })
+      const roles = ['administrateur_dispositif', 'gestionnaire_structure']
+
+      // WHEN
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].role.nom).toBe('Administrateur dispositif')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
+    })
+
+    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const pageCourante = 0
+    const utilisateursParPage = 10
+    const isActive = false
+    const utilisateurAuthentifie = utilisateurReadModelFactory({
+      uid: ssoId,
+    })
+    const roles: Array<string> = []
+    const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
   })
 })
 

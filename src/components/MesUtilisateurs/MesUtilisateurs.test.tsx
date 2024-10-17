@@ -368,6 +368,23 @@ describe('mes utilisateurs', () => {
     const formulaire = within(drawerFiltrer).getByRole('form', { name: 'Filtrer' })
     expect(formulaire).toHaveAttribute('method', 'dialog')
 
+    const administrateurDispositif = within(formulaire).getByLabelText('Administrateur dispositif')
+    expect(administrateurDispositif).toBeChecked()
+    const gestionnaireDepartement = within(formulaire).getByLabelText('Gestionnaire département')
+    expect(gestionnaireDepartement).toBeChecked()
+    const gestionnaireGroupement = within(formulaire).getByLabelText('Gestionnaire groupement')
+    expect(gestionnaireGroupement).toBeChecked()
+    const gestionnaireRegion = within(formulaire).getByLabelText('Gestionnaire région')
+    expect(gestionnaireRegion).toBeChecked()
+    const gestionnaireStructure = within(formulaire).getByLabelText('Gestionnaire structure')
+    expect(gestionnaireStructure).toBeChecked()
+    const instructeur = within(formulaire).getByLabelText('Instructeur')
+    expect(instructeur).toBeChecked()
+    const pilotePolitiquePublique = within(formulaire).getByLabelText('Pilote politique publique')
+    expect(pilotePolitiquePublique).toBeChecked()
+    const supportAnimation = within(formulaire).getByLabelText('Support animation')
+    expect(supportAnimation).toBeChecked()
+
     const boutonReinitialiser = within(formulaire).getByRole('button', { name: 'Réinitialiser les filtres' })
     expect(boutonReinitialiser).toHaveAttribute('type', 'reset')
 
@@ -382,7 +399,7 @@ describe('mes utilisateurs', () => {
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      { ...clientContextProviderDefaultValue, searchParams: new URLSearchParams('utilisateursActives=on') }
+      { ...clientContextProviderDefaultValue, searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
     )
 
     // WHEN
@@ -392,6 +409,22 @@ describe('mes utilisateurs', () => {
     // THEN
     const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
     expect(utilisateursActives).toBeChecked()
+    const administrateurDispositif = screen.getByLabelText('Administrateur dispositif')
+    expect(administrateurDispositif).not.toBeChecked()
+    const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+    expect(gestionnaireDepartement).not.toBeChecked()
+    const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+    expect(gestionnaireGroupement).toBeChecked()
+    const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+    expect(gestionnaireRegion).not.toBeChecked()
+    const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+    expect(gestionnaireStructure).not.toBeChecked()
+    const instructeur = screen.getByLabelText('Instructeur')
+    expect(instructeur).toBeChecked()
+    const pilotePolitiquePublique = screen.getByLabelText('Pilote politique publique')
+    expect(pilotePolitiquePublique).not.toBeChecked()
+    const supportAnimation = screen.getByLabelText('Support animation')
+    expect(supportAnimation).not.toBeChecked()
   })
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
@@ -424,6 +457,23 @@ describe('mes utilisateurs', () => {
 
       // THEN
       expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
+    })
+
+    it('sur certains rôles alors je n’affiche qu’eux', () => {
+      // GIVEN
+      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
+      afficherLesFiltres()
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      fireEvent.click(gestionnaireDepartement)
+
+      // WHEN
+      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      fireEvent.click(boutonAfficher)
+
+      // THEN
+      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
     })
 
     function afficherLesFiltres() {

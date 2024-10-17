@@ -8,40 +8,15 @@ describe('rechercher mes utilisateurs', () => {
     const pageCourante = 0
     const utilisateursParPage = 10
     const utilisateursActives = false
+    const roles: ReadonlyArray<string> = []
     const mesUtilisateursLoader = new MesUtilisateursLoaderSpy()
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(mesUtilisateursLoader)
 
     // WHEN
     await rechercherMesUtilisateurs.get({
       pageCourante,
+      roles,
       uid: uid,
-      utilisateursActives,
-      utilisateursParPage,
-    })
-
-    // THEN
-    expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])
-    expect(mesUtilisateursLoader.spiedFindMesUtilisateursEtLeTotalArgs).toStrictEqual([
-      dummyUtilisateur,
-      pageCourante,
-      utilisateursParPage,
-      utilisateursActives,
-    ])
-  })
-
-  it('recherchant en filtrant par utilisateurs activés alors je récupère mes utilisateurs et leur nombre total', async () => {
-    // GIVEN
-    const uid = 'uid'
-    const pageCourante = 0
-    const utilisateursParPage = 10
-    const utilisateursActives = true
-    const mesUtilisateursLoader = new MesUtilisateursLoaderSpy()
-    const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(mesUtilisateursLoader)
-
-    // WHEN
-    await rechercherMesUtilisateurs.get({
-      pageCourante,
-      uid,
       utilisateursActives,
       utilisateursParPage,
     })
