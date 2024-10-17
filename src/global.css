@@ -76,3 +76,8 @@ table button {
   position: relative;
   z-index: 2;
 }
+
+.drawer-invitation-button {
+  justify-content: center;
+  width: 100%;
+}

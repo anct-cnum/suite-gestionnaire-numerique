@@ -2,26 +2,26 @@ import { Roles } from './Role'
 import { Utilisateur } from './Utilisateur'
 
 describe('utilisateur', () => {
-  describe("suppression d'un utilisateur", () => {
+  describe("gestion d'un utilisateur", () => {
     describe(
-      'l’utilisateur appartient au groupe "admin" : il peut supprimer n’importe quel autre utilisateur',
+      'l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur',
       () => {
         describe.each([
           'Administrateur dispositif',
           'Instructeur',
           'Pilote politique publique',
           'Support animation',
-        ] as const)('%s peut supprimer', (roleSupprimant) => {
-          it.each(Roles)('%s', (roleASupprimer) => {
+        ] as const)('%s peut gérer', (roleGerant) => {
+          it.each(Roles)('%s', (roleAGerer) => {
             // GIVEN
-            const utilisateurSupprimant = Utilisateur.create({ ...utilisateurProps, role: roleSupprimant })
-            const utilisateurASupprimer = Utilisateur.create({ ...utilisateurProps, role: roleASupprimer })
+            const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role: roleGerant })
+            const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
 
             // WHEN
-            const peutSupprimer = utilisateurSupprimant.peutSupprimer(utilisateurASupprimer)
+            const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
             // THEN
-            expect(peutSupprimer).toBe(true)
+            expect(peutGerer).toBe(true)
           })
         })
       }
@@ -30,72 +30,72 @@ describe('utilisateur', () => {
     describe('l’utilisateur appartient au groupe "gestionnaire"', () => {
       describe.each([
         {
-          nePeutSupprimerDesc: 'ne peut supprimer de gestionnaire d’un autre département que le sien',
+          nePeutGererDesc: 'ne peut gérer de gestionnaire d’un autre département que le sien',
           organisation: 'Rhône',
           organisationAutre: 'Aude',
-          peutSupprimerDesc: 'peut supprimer un gestionnaire du même départment que le sien',
+          peutGererDesc: 'peut gérer un gestionnaire du même départment que le sien',
           role: 'Gestionnaire département' as const,
         },
         {
-          nePeutSupprimerDesc: 'ne peut supprimer de gestionnaire d’un autre groupement que le sien',
+          nePeutGererDesc: 'ne peut gérer de gestionnaire d’un autre groupement que le sien',
           organisation: 'Hubikoop',
           organisationAutre: 'Hubi',
-          peutSupprimerDesc: 'peut supprimer un gestionnaire du même groupement que le sien',
+          peutGererDesc: 'peut gérer un gestionnaire du même groupement que le sien',
           role: 'Gestionnaire groupement' as const,
         },
         {
-          nePeutSupprimerDesc: 'ne peut supprimer de gestionnaire d’une autre région que la sienne',
+          nePeutGererDesc: 'ne peut gérer de gestionnaire d’une autre région que la sienne',
           organisation: 'Auvergne-Rhône-Alpes',
           organisationAutre: 'Normandie',
-          peutSupprimerDesc: 'peut supprimer un gestionnaire de la même région que la sienne',
+          peutGererDesc: 'peut gérer un gestionnaire de la même région que la sienne',
           role: 'Gestionnaire région' as const,
         },
         {
-          nePeutSupprimerDesc: 'ne peut supprimer de gestionnaire de la même structure que la sienne',
+          nePeutGererDesc: 'ne peut gérer de gestionnaire de la même structure que la sienne',
           organisation: 'La Poste',
           organisationAutre: 'SNCF',
-          peutSupprimerDesc: 'peut supprimer un gestionnaire de la même structure que la sienne',
+          peutGererDesc: 'peut gérer un gestionnaire de la même structure que la sienne',
           role: 'Gestionnaire structure' as const,
         },
-      ])('$role', ({ role, nePeutSupprimerDesc, peutSupprimerDesc, organisation, organisationAutre }) => {
-        it.each(Roles.filter((r) => role !== r))('ne peut supprimer %s', (roleASupprimer) => {
+      ])('$role', ({ role, nePeutGererDesc, peutGererDesc, organisation, organisationAutre }) => {
+        it.each(Roles.filter((r) => role !== r))('ne peut gérer %s', (roleAGerer) => {
           // GIVEN
-          const utilisateurSupprimant = Utilisateur.create({ ...utilisateurProps, role })
-          const utilisateurASupprimer = Utilisateur.create({ ...utilisateurProps, role: roleASupprimer })
+          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role })
+          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
 
           // WHEN
-          const peutSupprimer = utilisateurSupprimant.peutSupprimer(utilisateurASupprimer)
+          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
           // THEN
-          expect(peutSupprimer).toBe(false)
+          expect(peutGerer).toBe(false)
         })
 
-        it(nePeutSupprimerDesc, () => {
+        it(nePeutGererDesc, () => {
           // GIVEN
-          const utilisateurSupprimant = Utilisateur.create({ ...utilisateurProps, organisation, role })
-          const utilisateurASupprimer = Utilisateur.create({
+          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, organisation, role })
+          const utilisateurAGerer = Utilisateur.create({
             ...utilisateurProps,
             organisation: organisationAutre,
             role,
           })
 
           // WHEN
-          const peutSupprimer = utilisateurSupprimant.peutSupprimer(utilisateurASupprimer)
+          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
           // THEN
-          expect(peutSupprimer).toBe(false)
+          expect(peutGerer).toBe(false)
         })
 
-        it(peutSupprimerDesc, () => {
+        it(peutGererDesc, () => {
           // GIVEN
-          const utilisateurSupprimant = Utilisateur.create({ ...utilisateurProps, organisation, role })
-          const utilisateurASupprimer = Utilisateur.create({ ...utilisateurProps, organisation, role })
+          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, organisation, role })
+          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, organisation, role })
 
           // WHEN
-          const peutSupprimer = utilisateurSupprimant.peutSupprimer(utilisateurASupprimer)
+          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
           // THEN
-          expect(peutSupprimer).toBe(true)
+          expect(peutGerer).toBe(true)
         })
       })
     })

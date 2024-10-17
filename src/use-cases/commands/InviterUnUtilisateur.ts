@@ -1,0 +1,43 @@
+import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
+import { TypologieRole } from '../../domain/Role'
+import { Utilisateur } from '../../domain/Utilisateur'
+import { CommandHandler, ResultAsync } from '../CommandHandler'
+
+export class InviterUnUtilisateur implements CommandHandler<Command> {
+  readonly #repository: AddUtilisateurRepository
+
+  constructor(repository: AddUtilisateurRepository) {
+    this.#repository = repository
+  }
+
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return 'KO'
+    }
+    const utilisateurACreer = Utilisateur.createWithoutUid({
+      email: command.email,
+      isSuperAdmin: false,
+      nom: command.nom,
+      organisation: command.organisation,
+      prenom: command.prenom,
+      role: command.role,
+    })
+    if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
+      return 'KO'
+    }
+    const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
+    return isUtilisateurCreated ? 'OK' : 'KO'
+  }
+}
+
+type Command = Readonly<{
+  prenom: string
+  nom: string
+  email: string
+  role: TypologieRole
+  organisation?: string
+  uidUtilisateurCourant: string
+}>;
+
+type Failure = 'KO'

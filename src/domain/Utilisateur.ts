@@ -42,6 +42,17 @@ export class Utilisateur extends Entity<UtilisateurState> {
     )
   }
 
+  static createWithoutUid(utilisateur: UtilisateurParamsWithoutUid): Utilisateur {
+    return new Utilisateur(
+      utilisateur.email,
+      new Role(utilisateur.role, utilisateur.organisation),
+      utilisateur.nom,
+      utilisateur.prenom,
+      utilisateur.email,
+      utilisateur.isSuperAdmin
+    )
+  }
+
   state(): UtilisateurState {
     return {
       email: this.#email,
@@ -78,7 +89,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  peutSupprimer(autre: Utilisateur): boolean {
+  peutGerer(autre: Utilisateur): boolean {
     return this.#role.isAdmin() || this.#role.equals(autre.#role)
   }
 }
@@ -95,6 +106,8 @@ export type UtilisateurState = Readonly<{
   telephone: string
 }>
 
+export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
+
 type UtilisateurParams = Readonly<{
   uid: string
   email: string
@@ -106,4 +119,4 @@ type UtilisateurParams = Readonly<{
   telephone?: string,
 }>
 
-export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
+type UtilisateurParamsWithoutUid = Omit<UtilisateurParams, 'uid'>

@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import { PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
+import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
 import prisma from '../../prisma/prismaClient'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
@@ -213,6 +213,68 @@ describe('utilisateur repository', () => {
       expect(updatedRecord?.nom).toBe('Dugenoux')
       expect(updatedRecord?.prenom).toBe('Martine')
       expect(updatedRecord?.email).toBe('martine.dugenoux@example.org')
+    })
+  })
+
+  describe('ajout d’un utilisateur', () => {
+    const repository = new PostgreUtilisateurRepository(
+      prisma,
+      new NullSuppressionUtilisateurGateway(),
+      () => new Date(0)
+    )
+
+    it('dont le ssoId n’existe pas : insertion réussie', async () => {
+      // GIVEN
+      const ssoIdDifferent = '009d2df4-60c7-4704-b8b5-d007b436f681'
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(),
+      })
+      const utilisateur = utilisateurFactory({ uid: ssoIdDifferent })
+
+      // WHEN
+      const resultatCreation = await repository.add(utilisateur)
+
+      // THEN
+      const createdRecord = await prisma.utilisateurRecord.findUnique({
+        where: {
+          ssoId: ssoIdDifferent,
+        },
+      })
+      expect(resultatCreation).toBe(true)
+      const utilisateurRecord = utilisateurRecordFactory({ ssoId: ssoIdDifferent, telephone: '' })
+      expect(createdRecord).toMatchObject(utilisateurRecord)
+    })
+
+    it('qui existe déjà par son ssoId : insertion en échec', async () => {
+      // GIVEN
+      const ssoIdExistant = uidUtilisateur
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ ssoId: ssoIdExistant }),
+      })
+      const utilisateur = utilisateurFactory({ uid: ssoIdExistant })
+
+      // WHEN
+      const resultatCreation = await repository.add(utilisateur)
+
+      // THEN
+      expect(resultatCreation).toBe(false)
+    })
+
+    it('erreur non gérée', async () => {
+      // GIVEN
+      vi.spyOn(repository, 'add')
+        .mockRejectedValueOnce('generic error')
+        .mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError('authentication failed', { clientVersion: '', code: 'P1000' }))
+
+      const utilisateur = utilisateurFactory()
+
+      // WHEN
+      const resultatGenericError = repository.add(utilisateur)
+      const resultatAuthenticationError = repository.add(utilisateur)
+
+      // THEN
+      await expect(resultatGenericError).rejects.toThrow('generic error')
+      await expect(resultatAuthenticationError).rejects.toThrow('authentication failed')
     })
   })
 })
