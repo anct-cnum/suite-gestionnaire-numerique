@@ -1,7 +1,8 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
+import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
@@ -551,10 +552,18 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', () => {
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
       // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const setBandeauInformations = vi.fn()
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+        {
+          ...clientContextProviderDefaultValue,
+          setBandeauInformations,
+        }
+      )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
 
@@ -568,13 +577,17 @@ describe('mes utilisateurs', () => {
       const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
       const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
-      fireEvent.click(envoyerInvitation)
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
+      await act(() => {
+        fireEvent.click(envoyerInvitation)
+      })
 
       // THEN
-      // const validationInvitationTitre = screen.getByText('Invitation envoyée à ', { selector: 'span' })
-      // expect(validationInvitationTitre).toBeInTheDocument()
-      // const validationInvitationDescription = screen.getByText('martin.tartempion@example.com', { selector: 'span' })
-      // expect(validationInvitationDescription).toBeInTheDocument()
+      expect(setBandeauInformations).toHaveBeenCalledWith({
+        description: 'martin.tartempion@example.com',
+        titre: 'Invitation envoyée à ',
+      })
     })
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', () => {

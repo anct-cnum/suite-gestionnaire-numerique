@@ -1,0 +1,8 @@
+.center {
+  text-align: center;
+}
+
+.success {
+  background-color: var(--background-contrast-success);
+  color: var(--text-default-success)
+}
