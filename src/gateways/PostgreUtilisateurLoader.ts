@@ -17,7 +17,8 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,
-    utilisateursActives: boolean
+    utilisateursActives: boolean,
+    roles: ReadonlyArray<string>
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
     let where: Prisma.UtilisateurRecordWhereInput = {}
 
@@ -29,10 +30,15 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       where = { groupementId: utilisateur.groupementId, role: 'gestionnaire_groupement' }
     } else if (utilisateur.role.nom === 'Gestionnaire région') {
       where = { regionCode: utilisateur.regionCode, role: 'gestionnaire_region' }
-    }
+    } else {
+      if (utilisateursActives) {
+        where = { ...where, NOT: { derniereConnexion: null } }
+      }
 
-    if (utilisateursActives) {
-      where = { ...where, NOT: { derniereConnexion: null } }
+      if (roles.length > 0) {
+        // @ts-expect-error
+        where = { ...where, role: { in: roles } }
+      }
     }
 
     const total = await this.#prisma.utilisateurRecord.count({

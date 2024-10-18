@@ -1,16 +1,17 @@
 import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
-import Checkbox from '../shared/Checkbox/Checkbox'
+import Interrupteur from '../shared/Interrupteur/Interrupteur'
 
 export default function MesParametres(): ReactElement {
-
   const communicationEtNotificationsHeadingId = useId()
   const recevoirNotificationsToggleId = useId()
   const recevoirRecapHebdoToggleId = useId()
   const affichageHeadingId = useId()
   const modeClairRadioId = useId()
   const modeSombreRadioId = useId()
+  // Stryker disable next-line BooleanLiteral
+  const hasSeparator = true
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
@@ -36,19 +37,19 @@ export default function MesParametres(): ReactElement {
           >
             Communication et notifications
           </h2>
-          <Checkbox
-            hasSeparator={true}
+          <Interrupteur
+            hasSeparator={hasSeparator}
             id={recevoirNotificationsToggleId}
             name={recevoirNotificationsToggleId}
           >
             Recevoir toutes les notifications sur votre adresse électronique
-          </Checkbox>
-          <Checkbox
+          </Interrupteur>
+          <Interrupteur
             id={recevoirRecapHebdoToggleId}
             name={recevoirRecapHebdoToggleId}
           >
             Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
-          </Checkbox>
+          </Interrupteur>
         </section>
         <section
           aria-labelledby={affichageHeadingId}
