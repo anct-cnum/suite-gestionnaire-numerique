@@ -10,7 +10,7 @@ import {
 } from '../../../use-cases/commands/InviterUnUtilisateur'
 import { Roles } from '@/domain/Role'
 
-type ActionProps = Readonly<{
+type ActionParams = Readonly<{
   prenom: string
   nom: string
   email: string
@@ -19,16 +19,16 @@ type ActionProps = Readonly<{
 }>
 
 export async function inviterUnUtilisateurAction(
-  actionProps: ActionProps
+  actionParams: ActionParams
 ): ResultAsync<InviterUnUtilisateurFailure | Array<ZodIssue>> {
-  const roleValidationResult = roleValidation().safeParse({ role: actionProps.role })
+  const roleValidationResult = roleValidation().safeParse({ role: actionParams.role })
 
   if (roleValidationResult.error) {
     return roleValidationResult.error.issues
   }
 
   return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma)).execute({
-    ...actionProps,
+    ...actionParams,
     role: roleValidationResult.data.role,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     uidUtilisateurCourant: (await getSession())!.user.sub,

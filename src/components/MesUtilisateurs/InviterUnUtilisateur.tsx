@@ -27,14 +27,15 @@ const gestionnaires: Array<RadioOption> = [
 ]
 
 export default function InviterUnUtilisateur({
-  //setIsOpen,
-  ariaControls,
+  setIsOpen,
+  //ariaControls,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
   const { setBandeauInformations } = useContext(clientContext)
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
+  const structureId = useId()
 
   const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -44,16 +45,17 @@ export default function InviterUnUtilisateur({
     const utilisateurACreer = {
       email,
       nom: form.get('nom') as string,
-      organisation: '',
+      organisation: form.get('structure') as string,
       prenom: form.get('prenom') as string,
       role: form.get('attributionRole') as string,
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'OK') {
       setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
-      //setIsOpen(false)
+      setIsOpen(false)
     } else {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+      setIsOpen(false)
     }
   }
 
@@ -126,8 +128,19 @@ export default function InviterUnUtilisateur({
           nomGroupe="attributionRole"
           options={gestionnaires}
         />
+        <TextInput
+          id={structureId}
+          name="structure"
+          required={true}
+        >
+          Structure
+          {' '}
+          <span className="color-red">
+            *
+          </span>
+        </TextInput>
         <button
-          aria-controls={ariaControls}
+          //aria-controls={ariaControls}
           className="fr-btn fr-my-2w drawer-invitation-button"
           data-fr-opened="false"
           type="submit"
@@ -140,6 +153,6 @@ export default function InviterUnUtilisateur({
 }
 
 type InviterUnUtilisateurProps = Readonly<{
-  //setIsOpen: (isOpen: boolean) => void
+  setIsOpen: (isOpen: boolean) => void
   ariaControls: string
 }>
