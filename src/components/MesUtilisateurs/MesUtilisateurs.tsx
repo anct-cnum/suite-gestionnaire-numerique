@@ -71,7 +71,7 @@ export default function MesUtilisateurs(
       >
         <InviterUnUtilisateur
           ariaControls={drawerInvitationId}
-          setIsOpen={setIsDrawerOpen}
+          //setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
       <Drawer

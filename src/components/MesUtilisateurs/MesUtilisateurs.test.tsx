@@ -590,7 +590,7 @@ describe('mes utilisateurs', () => {
       })
     })
 
-    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', () => {
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -607,7 +607,11 @@ describe('mes utilisateurs', () => {
       const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
       const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
-      fireEvent.click(envoyerInvitation)
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
+      await act(() => {
+        fireEvent.click(envoyerInvitation)
+      })
 
       // THEN
       const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })

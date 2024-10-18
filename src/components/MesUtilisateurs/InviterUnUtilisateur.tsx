@@ -27,7 +27,7 @@ const gestionnaires: Array<RadioOption> = [
 ]
 
 export default function InviterUnUtilisateur({
-  setIsOpen,
+  //setIsOpen,
   ariaControls,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
@@ -47,12 +47,11 @@ export default function InviterUnUtilisateur({
       organisation: '',
       prenom: form.get('prenom') as string,
       role: form.get('attributionRole') as string,
-      uidUtilisateurCourant: '',
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'OK') {
       setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
-      setIsOpen(false)
+      //setIsOpen(false)
     } else {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     }
@@ -141,6 +140,6 @@ export default function InviterUnUtilisateur({
 }
 
 type InviterUnUtilisateurProps = Readonly<{
-  setIsOpen: (isOpen: boolean) => void
+  //setIsOpen: (isOpen: boolean) => void
   ariaControls: string
 }>
