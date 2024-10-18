@@ -95,7 +95,7 @@ describe('inviter un utilisateur', () => {
     const result = await inviterUnUtilisateur.execute(command)
 
     // THEN
-    expect(result).toBe('KO')
+    expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
     const utilisateurACreer = Utilisateur.create({
       email: 'martin.tartempion@example.net',

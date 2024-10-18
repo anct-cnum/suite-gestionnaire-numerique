@@ -4,5 +4,5 @@
 
 .success {
   background-color: var(--background-contrast-success);
-  color: var(--text-default-success)
+  color: var(--text-default-success);
 }

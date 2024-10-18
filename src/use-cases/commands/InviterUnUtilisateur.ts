@@ -3,14 +3,14 @@ import { TypologieRole } from '../../domain/Role'
 import { Utilisateur } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
-export class InviterUnUtilisateur implements CommandHandler<Command> {
+export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: AddUtilisateurRepository
 
   constructor(repository: AddUtilisateurRepository) {
     this.#repository = repository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
+  async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
     const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
     if (!utilisateurCourant) {
       return 'KO'
@@ -27,11 +27,11 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       return 'KO'
     }
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
-    return isUtilisateurCreated ? 'OK' : 'KO'
+    return isUtilisateurCreated ? 'OK' : 'emailExistant'
   }
 }
 
-type Command = Readonly<{
+type InviterUnUtilisateurCommand = Readonly<{
   prenom: string
   nom: string
   email: string
@@ -40,4 +40,4 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>;
 
-type Failure = 'KO'
+export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
