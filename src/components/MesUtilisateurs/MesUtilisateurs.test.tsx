@@ -1,9 +1,10 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { act, fireEvent, screen, within } from '@testing-library/react'
 import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
+import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/components/testHelper'
+import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
 describe('mes utilisateurs', () => {
@@ -433,6 +434,162 @@ describe('mes utilisateurs', () => {
       const filtrer = screen.getByRole('button', { name: 'Filtrer' })
       fireEvent.click(filtrer)
     }
+  })
+
+  describe('quand j’invite un utilisateur', () => {
+    it('quand je clique sur le bouton inviter, alors le drawer s’ouvre', async () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+
+      // WHEN
+      fireEvent.click(inviter)
+
+      // THEN
+      const titre = await screen.findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      expect(titre).toBeInTheDocument()
+
+      const champsObligatoires = screen.getByText(
+        matchWithoutMarkup('Les champs avec * sont obligatoires.'),
+        { selector: 'p' }
+      )
+      expect(champsObligatoires).toBeInTheDocument()
+
+      const nom = screen.getByLabelText('Nom *')
+      expect(nom).toBeRequired()
+      expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveAttribute('type', 'text')
+
+      const prenom = screen.getByLabelText('Prénom *')
+      expect(prenom).toBeRequired()
+      expect(prenom).toHaveAttribute('name', 'prenom')
+      expect(prenom).toHaveAttribute('type', 'text')
+
+      const email = screen.getByLabelText('Adresse électronique *')
+      expect(email).toBeRequired()
+      expect(email).toHaveAttribute('name', 'email')
+      expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(email).toHaveAttribute('type', 'email')
+
+      const roleQuestion = screen.getByText(
+        matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
+        { selector: 'legend' }
+      )
+      expect(roleQuestion).toBeInTheDocument()
+
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      expect(gestionnaireRegion).toBeRequired()
+      expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
+
+      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      expect(gestionnaireDepartement).toBeRequired()
+      expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
+
+      const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+      expect(gestionnaireGroupement).toBeRequired()
+      expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
+
+      const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+      expect(gestionnaireStructure).toBeRequired()
+      expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
+
+      const structure = screen.getByLabelText('Structure *')
+      expect(structure).toBeRequired()
+      expect(structure).toHaveAttribute('name', 'structure')
+      expect(structure).toHaveAttribute('type', 'text')
+
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    })
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
+      // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const windowDsfr = window.dsfr
+      window.dsfr = () => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
+      const setBandeauInformations = vi.fn()
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+        {
+          ...clientContextProviderDefaultValue,
+          setBandeauInformations,
+        }
+      )
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+
+      // WHEN
+      const nom = screen.getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = screen.getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = screen.getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const structure = screen.getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
+      await act(() => {
+        fireEvent.click(envoyerInvitation)
+      })
+
+      // THEN
+      expect(setBandeauInformations).toHaveBeenCalledWith({
+        description: 'martin.tartempion@example.com',
+        titre: 'Invitation envoyée à ',
+      })
+      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+      expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+      window.dsfr = windowDsfr
+    })
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
+      // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+
+      // WHEN
+      const nom = screen.getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = screen.getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = screen.getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const structure = screen.getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
+      await act(() => {
+        fireEvent.click(envoyerInvitation)
+      })
+
+      // THEN
+      const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(erreurEmailDejaExistant).toBeInTheDocument()
+      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+      expect(drawerDetailsUtilisateur).toHaveAttribute('open', '')
+    })
   })
 })
 

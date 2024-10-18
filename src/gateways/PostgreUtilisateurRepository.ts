@@ -10,14 +10,45 @@ import {
 
 export class PostgreUtilisateurRepository implements UtilisateurRepository {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate
-  readonly #suppressiongateway: SuppressionUtilisateurGateway
+  readonly #suppressionGateway: SuppressionUtilisateurGateway
+  readonly #dateProvider: () => Date
 
   constructor(
     dbClient: PrismaClient,
-    suppressionGateway: SuppressionUtilisateurGateway = new NullSuppressionUtilisateurGateway()
+    suppressionGateway: SuppressionUtilisateurGateway = new NullSuppressionUtilisateurGateway(),
+    dateProvider: () => Date = () => new Date()
   ) {
     this.#activeRecord = dbClient.utilisateurRecord
-    this.#suppressiongateway = suppressionGateway
+    this.#suppressionGateway = suppressionGateway
+    this.#dateProvider = dateProvider
+  }
+  async add(utilisateur: Utilisateur): Promise<boolean> {
+    const utilisateurState = utilisateur.state()
+    const now = this.#dateProvider()
+    try {
+      await this.#activeRecord.create({
+        data: {
+          dateDeCreation: now,
+          email: utilisateurState.email,
+          inviteLe: now,
+          isSuperAdmin: utilisateurState.isSuperAdmin,
+          isSupprime: false,
+          nom: utilisateurState.nom,
+          prenom: utilisateurState.prenom,
+          role: fromTypologieRole(utilisateurState.role.nom),
+          ssoId: utilisateurState.uid,
+          telephone: '',
+        },
+      })
+      return true
+    } catch (error: unknown) {
+      // https://www.prisma.io/docs/orm/reference/error-reference#p2002
+      // Unique constraint failed on the {constraint}.
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        return false
+      }
+      throw error
+    }
   }
 
   async find(uid: string): Promise<Utilisateur | null> {
@@ -48,7 +79,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {
-    return this.#suppressiongateway.delete(utilisateur.state().uid)
+    return this.#suppressionGateway.delete(utilisateur.state().uid)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
@@ -68,7 +99,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
   }
 }
 
-class NullSuppressionUtilisateurGateway implements SuppressionUtilisateurGateway {
+export class NullSuppressionUtilisateurGateway implements SuppressionUtilisateurGateway {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async delete(): Promise<boolean> {
     return Promise.resolve(false)

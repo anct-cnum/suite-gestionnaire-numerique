@@ -23,6 +23,7 @@ export const spiedNextNavigation = {
 }
 
 export const clientContextProviderDefaultValue = {
+  bandeauInformations: undefined,
   roles: Roles,
   router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),
@@ -40,6 +41,7 @@ export const clientContextProviderDefaultValue = {
     telephone: '0102030405',
     uid: 'fooId',
   },
+  setBandeauInformations: vi.fn(),
   utilisateursParPage: 10,
 }
 
