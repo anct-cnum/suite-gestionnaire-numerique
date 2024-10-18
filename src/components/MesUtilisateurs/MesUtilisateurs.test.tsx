@@ -531,22 +531,22 @@ describe('mes utilisateurs', () => {
       const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
       expect(gestionnaireRegion).toBeRequired()
       expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
-      expect(gestionnaireRegion).toHaveAttribute('id', 'gestionnaireRegion')
+      expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
 
       const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
       expect(gestionnaireDepartement).toBeRequired()
       expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
-      expect(gestionnaireDepartement).toHaveAttribute('id', 'gestionnaireDepartement')
+      expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
 
       const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
       expect(gestionnaireGroupement).toBeRequired()
       expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
-      expect(gestionnaireGroupement).toHaveAttribute('id', 'gestionnaireGroupement')
+      expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
 
       const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
       expect(gestionnaireStructure).toBeRequired()
       expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
-      expect(gestionnaireStructure).toHaveAttribute('id', 'gestionnaireStructure')
+      expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
       const structure = screen.getByLabelText('Structure *')
       expect(structure).toBeRequired()
@@ -560,6 +560,14 @@ describe('mes utilisateurs', () => {
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
       // GIVEN
       vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const windowDsfr = window.dsfr
+      window.dsfr = () => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
       const setBandeauInformations = vi.fn()
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(
@@ -595,10 +603,14 @@ describe('mes utilisateurs', () => {
         description: 'martin.tartempion@example.com',
         titre: 'Invitation envoyée à ',
       })
+      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+      expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+      window.dsfr = windowDsfr
     })
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
       // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
@@ -625,6 +637,8 @@ describe('mes utilisateurs', () => {
       // THEN
       const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       expect(erreurEmailDejaExistant).toBeInTheDocument()
+      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+      expect(drawerDetailsUtilisateur).toHaveAttribute('open', '')
     })
   })
 })

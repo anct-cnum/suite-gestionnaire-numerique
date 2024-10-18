@@ -9,26 +9,26 @@ import TextInput from '../shared/TextInput/TextInput'
 
 const gestionnaires: Array<RadioOption> = [
   {
-    id: 'gestionnaireRegion',
+    id: 'Gestionnaire région',
     label: 'Gestionnaire région',
   },
   {
-    id: 'gestionnaireDepartement',
+    id: 'Gestionnaire département',
     label: 'Gestionnaire département',
   },
   {
-    id: 'gestionnaireGroupement',
+    id: 'Gestionnaire groupement',
     label: 'Gestionnaire groupement',
   },
   {
-    id: 'gestionnaireStructure',
+    id: 'Gestionnaire structure',
     label: 'Gestionnaire structure',
   },
 ]
 
 export default function InviterUnUtilisateur({
   setIsOpen,
-  //ariaControls,
+  drawerId,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
   const { setBandeauInformations } = useContext(clientContext)
@@ -52,10 +52,11 @@ export default function InviterUnUtilisateur({
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'OK') {
       setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      window.dsfr(document.getElementById(drawerId)).modal.conceal()
       setIsOpen(false)
     } else {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
-      setIsOpen(false)
     }
   }
 
@@ -154,5 +155,5 @@ export default function InviterUnUtilisateur({
 
 type InviterUnUtilisateurProps = Readonly<{
   setIsOpen: (isOpen: boolean) => void
-  ariaControls: string
+  drawerId: string
 }>
