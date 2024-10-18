@@ -164,10 +164,10 @@ describe('postgre utilisateur query', () => {
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
         departementCode,
-        derniereConnexion: new Date(0),
+        derniereConnexion: nullDate,
         email: 'martin.tartempion@example.net',
         groupementId,
-        inviteLe: new Date(0),
+        inviteLe: nullDate,
         isActive: true,
         isSuperAdmin: false,
         nom: 'Tartempion',
@@ -223,7 +223,6 @@ describe('postgre utilisateur query', () => {
   describe('chercher mes utilisateurs', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN
-      const date = new Date(0)
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId }),
       })
@@ -246,10 +245,10 @@ describe('postgre utilisateur query', () => {
         utilisateursCourants: [
           {
             departementCode: null,
-            derniereConnexion: date,
+            derniereConnexion: nullDate,
             email: 'martin.tartempion@example.net',
             groupementId: null,
-            inviteLe: date,
+            inviteLe: nullDate,
             isActive: true,
             isSuperAdmin: false,
             nom: 'dupont',
@@ -267,10 +266,10 @@ describe('postgre utilisateur query', () => {
           },
           {
             departementCode: null,
-            derniereConnexion: date,
+            derniereConnexion: nullDate,
             email: 'martin.tartempion@example.net',
             groupementId: null,
-            inviteLe: date,
+            inviteLe: nullDate,
             isActive: true,
             isSuperAdmin: false,
             nom: 'Tartempion',
@@ -557,7 +556,7 @@ describe('postgre utilisateur query', () => {
       )
 
       // THEN
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(new Date(0))
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(nullDate)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].isActive).toBe(false)
     })
 
@@ -631,18 +630,18 @@ describe('postgre utilisateur query', () => {
   })
 })
 
+const nullDate = new Date(0)
+
 function utilisateurRecordFactory(
   override: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
 ): Prisma.UtilisateurRecordUncheckedCreateInput {
-  const date = new Date(0)
-
   return {
-    dateDeCreation: date,
+    dateDeCreation: nullDate,
     departementCode: null,
-    derniereConnexion: date,
+    derniereConnexion: nullDate,
     email: 'martin.tartempion@example.net',
     groupementId: null,
-    inviteLe: date,
+    inviteLe: nullDate,
     isSuperAdmin: false,
     isSupprime: false,
     nom: 'Tartempion',
@@ -659,14 +658,12 @@ function utilisateurRecordFactory(
 function utilisateurReadModelFactory(
   override: Partial<UnUtilisateurReadModel>
 ): UnUtilisateurReadModel {
-  const date = new Date(0)
-
   return {
     departementCode: null,
-    derniereConnexion: date,
+    derniereConnexion: nullDate,
     email: 'martin.tartempion@example.net',
     groupementId: null,
-    inviteLe: date,
+    inviteLe: nullDate,
     isActive: true,
     isSuperAdmin: false,
     nom: 'Tartempion',
