@@ -4,13 +4,14 @@ import styles from './MesParametres.module.css'
 import Interrupteur from '../shared/Interrupteur/Interrupteur'
 
 export default function MesParametres(): ReactElement {
-
   const communicationEtNotificationsHeadingId = useId()
   const recevoirNotificationsToggleId = useId()
   const recevoirRecapHebdoToggleId = useId()
   const affichageHeadingId = useId()
   const modeClairRadioId = useId()
   const modeSombreRadioId = useId()
+  // Stryker disable next-line BooleanLiteral
+  const hasSeparator = true
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
@@ -37,7 +38,7 @@ export default function MesParametres(): ReactElement {
             Communication et notifications
           </h2>
           <Interrupteur
-            hasSeparator={true}
+            hasSeparator={hasSeparator}
             id={recevoirNotificationsToggleId}
             name={recevoirNotificationsToggleId}
           >
