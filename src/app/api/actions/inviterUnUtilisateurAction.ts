@@ -1,3 +1,5 @@
+'use server'
+
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
