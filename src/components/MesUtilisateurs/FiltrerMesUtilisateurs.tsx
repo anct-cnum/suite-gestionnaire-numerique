@@ -11,10 +11,10 @@ export default function FiltrerMesUtilisateurs({
   labelId,
   setIsOpen,
 }: FiltrerMesUtilisateursProps): ReactElement {
-  const { router, searchParams } = useContext(clientContext)
+  const { roles, router, searchParams } = useContext(clientContext)
   const utilisateursActivesToggleId = useId()
-  const isUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
-  const totalDesRoles = 8
+  const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
+  const totalDesRoles = roles.length
 
   return (
     <>
@@ -30,7 +30,7 @@ export default function FiltrerMesUtilisateurs({
         onSubmit={filtrer}
       >
         <Interrupteur
-          defaultChecked={isUtilisateursActivesChecked}
+          defaultChecked={areUtilisateursActivesChecked}
           // Stryker disable next-line BooleanLiteral
           hasSeparator={true}
           id={utilisateursActivesToggleId}
@@ -69,16 +69,18 @@ export default function FiltrerMesUtilisateurs({
     setIsOpen(false)
 
     const form = new FormData(event.currentTarget)
-    const utilisateursActives = form.get('utilisateursActives') as string
-    const roles = form.getAll('roles') as Array<string>
+    const utilisateursActives = form.get('utilisateursActives')
+    const isUtilisateursActivesChecked = utilisateursActives === 'on'
+    const roles = form.getAll('roles')
+    const shouldFilterByRoles = roles.length < totalDesRoles
 
     const url = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
 
-    if (utilisateursActives === 'on') {
+    if (isUtilisateursActivesChecked) {
       url.searchParams.append('utilisateursActives', utilisateursActives)
     }
 
-    if (roles.length < totalDesRoles) {
+    if (shouldFilterByRoles) {
       url.searchParams.append('roles', roles.join(','))
     }
 

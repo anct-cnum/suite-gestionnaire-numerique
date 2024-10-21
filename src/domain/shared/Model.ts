@@ -1,4 +1,4 @@
-import { Struct } from '@/shared/types'
+import { Struct } from '@/shared/lang'
 
 export abstract class Model<S extends Struct> {
   equals(other: Model<S>): boolean {

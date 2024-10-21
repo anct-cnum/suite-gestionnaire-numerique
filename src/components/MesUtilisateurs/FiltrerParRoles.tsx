@@ -9,24 +9,40 @@ export default function FiltrerParRoles(): ReactElement {
   const { searchParams } = useContext(clientContext)
   const roles = searchParams.getAll('roles').at(0)?.split(',')
 
-  let isAdministrateurDispositifChecked = true
-  let isGestionnaireDepartementChecked = true
-  let isGestionnaireGroupementChecked = true
-  let isGestionnaireRegionChecked = true
-  let isGestionnaireStructureChecked = true
-  let isInstructeurChecked = true
-  let isPilotePolitiquePubliqueChecked = true
-  let isSupportAnimationChecked = true
-  if (roles) {
-    isAdministrateurDispositifChecked = roles.includes('administrateur_dispositif')
-    isGestionnaireDepartementChecked = roles.includes('gestionnaire_departement')
-    isGestionnaireGroupementChecked = roles.includes('gestionnaire_groupement')
-    isGestionnaireRegionChecked = roles.includes('gestionnaire_region')
-    isGestionnaireStructureChecked = roles.includes('gestionnaire_structure')
-    isInstructeurChecked = roles.includes('instructeur')
-    isPilotePolitiquePubliqueChecked = roles.includes('pilote_politique_publique')
-    isSupportAnimationChecked = roles.includes('support_animation')
-  }
+  const checkboxes = [
+    {
+      label: 'Administrateur dispositif',
+      value: 'administrateur_dispositif',
+    },
+    {
+      label: 'Gestionnaire département',
+      value: 'gestionnaire_departement',
+    },
+    {
+      label: 'Gestionnaire groupement',
+      value: 'gestionnaire_groupement',
+    },
+    {
+      label: 'Gestionnaire région',
+      value: 'gestionnaire_region',
+    },
+    {
+      label: 'Gestionnaire structure',
+      value: 'gestionnaire_structure',
+    },
+    {
+      label: 'Instructeur',
+      value: 'instructeur',
+    },
+    {
+      label: 'Pilote politique publique',
+      value: 'pilote_politique_publique',
+    },
+    {
+      label: 'Support animation',
+      value: 'support_animation',
+    },
+  ]
 
   return (
     <fieldset
@@ -40,62 +56,20 @@ export default function FiltrerParRoles(): ReactElement {
       >
         Par rôles
       </legend>
-      <Checkbox
-        defaultChecked={isAdministrateurDispositifChecked}
-        id="administrateur_dispositif"
-        label="Administrateur dispositif"
-        name="roles"
-        value="administrateur_dispositif"
-      />
-      <Checkbox
-        defaultChecked={isGestionnaireDepartementChecked}
-        id="gestionnaire_departement"
-        label="Gestionnaire département"
-        name="roles"
-        value="gestionnaire_departement"
-      />
-      <Checkbox
-        defaultChecked={isGestionnaireGroupementChecked}
-        id="gestionnaire_groupement"
-        label="Gestionnaire groupement"
-        name="roles"
-        value="gestionnaire_groupement"
-      />
-      <Checkbox
-        defaultChecked={isGestionnaireRegionChecked}
-        id="gestionnaire_region"
-        label="Gestionnaire région"
-        name="roles"
-        value="gestionnaire_region"
-      />
-      <Checkbox
-        defaultChecked={isGestionnaireStructureChecked}
-        id="gestionnaire_structure"
-        label="Gestionnaire structure"
-        name="roles"
-        value="gestionnaire_structure"
-      />
-      <Checkbox
-        defaultChecked={isInstructeurChecked}
-        id="instructeur"
-        label="Instructeur"
-        name="roles"
-        value="instructeur"
-      />
-      <Checkbox
-        defaultChecked={isPilotePolitiquePubliqueChecked}
-        id="pilote_politique_publique"
-        label="Pilote politique publique"
-        name="roles"
-        value="pilote_politique_publique"
-      />
-      <Checkbox
-        defaultChecked={isSupportAnimationChecked}
-        id="support_animation"
-        label="Support animation"
-        name="roles"
-        value="support_animation"
-      />
+      {
+        checkboxes.map((checkbox) => {
+          return (
+            <Checkbox
+              defaultChecked={roles?.includes(checkbox.value) ?? true}
+              id={checkbox.value}
+              key={checkbox.value}
+              label={checkbox.label}
+              name="roles"
+              value={checkbox.value}
+            />
+          )
+        })
+      }
     </fieldset>
   )
 }
