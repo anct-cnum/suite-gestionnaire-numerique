@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { ReactElement } from 'react'
 
+import { BandeauInformations } from './shared/Bandeau/Bandeau'
 import { clientContext } from '@/components/shared/ClientContext'
 // eslint-disable-next-line import/no-restricted-paths
 import { Roles } from '@/domain/Role'
@@ -23,7 +24,7 @@ export const spiedNextNavigation = {
 }
 
 export const clientContextProviderDefaultValue = {
-  bandeauInformations: undefined,
+  bandeauInformations: undefined as BandeauInformations | undefined,
   roles: Roles,
   router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),

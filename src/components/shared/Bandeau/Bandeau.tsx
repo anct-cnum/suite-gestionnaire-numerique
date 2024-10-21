@@ -14,7 +14,7 @@ export default function Bandeau(): ReactElement | null {
   const { bandeauInformations } = useContext(clientContext)
 
   const isDisplayed = (): boolean => {
-    return bandeauInformations?.titre !== undefined && bandeauInformations.description !== undefined
+    return bandeauInformations?.titre !== undefined || bandeauInformations?.description !== undefined
   }
 
   return isDisplayed() ? (
