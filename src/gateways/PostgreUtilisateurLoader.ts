@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import departements from '../../ressources/departements.json'
 import { categorieByType } from '@/domain/Role'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
@@ -18,8 +19,12 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
     pageCourante: number,
     utilisateursParPage: number,
     utilisateursActives: boolean,
-    roles: ReadonlyArray<string>
+    roles: ReadonlyArray<string>,
+    codeDepartement: string,
+    codeRegion: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
+    const departementInexistant = '0'
+    const regionInexistante = '0'
     let where: Prisma.UtilisateurRecordWhereInput = {}
 
     if (utilisateur.role.nom === 'Gestionnaire structure') {
@@ -38,6 +43,24 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       if (roles.length > 0) {
         // @ts-expect-error
         where = { ...where, role: { in: roles } }
+      }
+
+      if (codeDepartement !== departementInexistant) {
+        where = { ...where, departementCode: codeDepartement }
+      } else if (codeRegion !== regionInexistante) {
+        where = {
+          ...where,
+          OR: [
+            {
+              departementCode: {
+                in: departements
+                  .filter((departement) => departement.regionCode === codeRegion)
+                  .map((departement) => departement.code),
+              },
+            },
+            { regionCode: codeRegion },
+          ],
+        }
       }
     }
 

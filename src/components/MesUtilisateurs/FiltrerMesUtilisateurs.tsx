@@ -1,8 +1,11 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId } from 'react'
+import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useRef } from 'react'
+// eslint-disable-next-line import/no-unresolved
+import Select from 'react-select/dist/declarations/src/Select'
 
 import FiltrerParRoles from './FiltrerParRoles'
+import ZonesGeographiques, { ZoneGeographique } from './FiltrerParZonesGeographiques'
 import { clientContext } from '../shared/ClientContext'
 import Interrupteur from '../shared/Interrupteur/Interrupteur'
 
@@ -12,9 +15,11 @@ export default function FiltrerMesUtilisateurs({
   setIsOpen,
 }: FiltrerMesUtilisateursProps): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
+  const ref = useRef<Select>(null)
   const utilisateursActivesToggleId = useId()
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
   const totalDesRoles = roles.length
+  const toutesLesRegions: ZoneGeographique = { label: 'Toutes les régions', type: 'region', value: 'all' }
 
   return (
     <>
@@ -39,11 +44,18 @@ export default function FiltrerMesUtilisateurs({
           Uniquement les utilisateurs activés
         </Interrupteur>
         <hr />
+        <ZonesGeographiques
+          ref={ref}
+          toutesLesRegions={toutesLesRegions}
+        />
+        <hr />
         <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
           <button
             className="fr-btn fr-btn--secondary fr-col-5"
             onClick={() => {
+              // Stryker disable next-line OptionalChaining
+              ref.current?.setValue(toutesLesRegions, 'select-option')
               router.push('/mes-utilisateurs')
             }}
             type="reset"
@@ -71,6 +83,9 @@ export default function FiltrerMesUtilisateurs({
     const form = new FormData(event.currentTarget)
     const utilisateursActives = form.get('utilisateursActives')
     const isUtilisateursActivesChecked = utilisateursActives === 'on'
+    const zoneGeographique = String(form.get('zoneGeographique'))
+    // Stryker disable next-line ConditionalExpression
+    const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== 'all'
     const roles = form.getAll('roles')
     const shouldFilterByRoles = roles.length < totalDesRoles
 
@@ -78,6 +93,20 @@ export default function FiltrerMesUtilisateurs({
 
     if (isUtilisateursActivesChecked) {
       url.searchParams.append('utilisateursActives', utilisateursActives)
+    }
+
+    if (isZoneGeographiqueSelected) {
+      const isRegion = zoneGeographique.endsWith('00')
+
+      if (isRegion) {
+        const codeRegion = zoneGeographique.slice(0, 2)
+
+        url.searchParams.append('codeRegion', codeRegion)
+      } else {
+        const codeDepartement = zoneGeographique.slice(zoneGeographique.indexOf('_') + 1)
+
+        url.searchParams.append('codeDepartement', codeDepartement)
+      }
     }
 
     if (shouldFilterByRoles) {

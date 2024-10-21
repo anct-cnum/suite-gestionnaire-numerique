@@ -2,8 +2,8 @@
 
 import { Prisma } from '@prisma/client'
 
-import regions from './data/regions.json'
 import prisma from '../prisma/prismaClient'
+import regions from '../ressources/regions.json'
 
 async function migration() {
   const greenColor = '\x1b[32m%s\x1b[0m'
@@ -12,7 +12,12 @@ async function migration() {
 
   console.log(greenColor, `${regions.length} régions CoNum sont récupérés`)
 
-  await migrateRegions(regions)
+  const regionsRecord = [
+    ...regions,
+    ajouterUneRegionDeTest(),
+  ]
+
+  await migrateRegions(regionsRecord)
 
   console.log(greenColor, 'La migration des régions est finie')
 }
@@ -23,4 +28,11 @@ async function migrateRegions(regionsRecord: Array<Prisma.RegionRecordUncheckedC
   await prisma.regionRecord.createMany({
     data: regionsRecord,
   })
+}
+
+function ajouterUneRegionDeTest(): Prisma.RegionRecordUncheckedCreateInput {
+  return {
+    code: 'zz',
+    nom: 'SGN région',
+  }
 }

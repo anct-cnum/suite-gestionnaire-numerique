@@ -3,11 +3,9 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export function mesUtilisateursPresenter(
   mesUtilisateursReadModel: ReadonlyArray<UnUtilisateurReadModel>,
   uid: string,
-  pageCourante: number,
   totalUtilisateur: number
 ): MesUtilisateursViewModel {
   return {
-    pageCourante,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
       const [statut, picto] = monUtilisateur.isActive
@@ -31,7 +29,6 @@ export function mesUtilisateursPresenter(
 }
 
 export type MesUtilisateursViewModel = Readonly<{
-  pageCourante: number
   totalUtilisateur: number
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>

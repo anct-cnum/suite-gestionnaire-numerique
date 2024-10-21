@@ -20,7 +20,8 @@
     "src/presenters/**/*.ts",
     "!src/components/**/*.test.tsx",
     "!src/presenters/**/*.test.ts",
-    "!src/**/ClientContext.tsx"
+    "!src/**/ClientContext.tsx",
+    "!src/**/FiltrerParZonesGeographiques.tsx"
   ],
   "mutator": {
     "excludedMutations": ["StringLiteral"]

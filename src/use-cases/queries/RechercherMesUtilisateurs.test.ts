@@ -8,18 +8,11 @@ describe('rechercher mes utilisateurs', () => {
     const pageCourante = 0
     const utilisateursParPage = 10
     const utilisateursActives = false
-    const roles: ReadonlyArray<string> = []
     const mesUtilisateursLoader = new MesUtilisateursLoaderSpy()
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(mesUtilisateursLoader)
 
     // WHEN
-    await rechercherMesUtilisateurs.get({
-      pageCourante,
-      roles,
-      uid: uid,
-      utilisateursActives,
-      utilisateursParPage,
-    })
+    await rechercherMesUtilisateurs.get({ uid })
 
     // THEN
     expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])

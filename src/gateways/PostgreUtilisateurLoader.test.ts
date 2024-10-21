@@ -27,7 +27,7 @@ describe('postgre utilisateur query', () => {
         structureId: null,
       },
       {
-        departementCode: '69',
+        departementCode: '75',
         groupementId: null,
         regionCode: null,
         role: 'gestionnaire_departement' as Role,
@@ -35,7 +35,7 @@ describe('postgre utilisateur query', () => {
           categorie: 'maille' as Categorie,
           groupe: 'gestionnaire' as Groupe,
           nom: 'Gestionnaire département' as TypologieRole,
-          territoireOuStructure: 'Rhône',
+          territoireOuStructure: 'Paris',
         },
         structureId: null,
       },
@@ -55,13 +55,13 @@ describe('postgre utilisateur query', () => {
       {
         departementCode: null,
         groupementId: null,
-        regionCode: '84',
+        regionCode: '11',
         role: 'gestionnaire_region' as Role,
         roleReadModel: {
           categorie: 'maille' as Categorie,
           groupe: 'gestionnaire' as Groupe,
           nom: 'Gestionnaire région' as TypologieRole,
-          territoireOuStructure: 'Auvergne-Rhône-Alpes',
+          territoireOuStructure: 'Île-de-France',
         },
         structureId: null,
       },
@@ -134,17 +134,10 @@ describe('postgre utilisateur query', () => {
         },
       })
       await prisma.regionRecord.create({
-        data: {
-          code: '84',
-          nom: 'Auvergne-Rhône-Alpes',
-        },
+        data: regionRecordFactory(),
       })
       await prisma.departementRecord.create({
-        data: {
-          code: '69',
-          nom: 'Rhône',
-          regionCode: '84',
-        },
+        data: departementRecordFactory(),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
@@ -236,7 +229,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -304,17 +299,10 @@ describe('postgre utilisateur query', () => {
         uid: ssoId,
       })
       await prisma.regionRecord.create({
-        data: {
-          code: regionCode,
-          nom: 'Auvergne-Rhône-Alpes',
-        },
+        data: regionRecordFactory({ code: regionCode }),
       })
       await prisma.departementRecord.create({
-        data: {
-          code: departementCode,
-          nom: 'Rhône',
-          regionCode,
-        },
+        data: departementRecordFactory({ code: departementCode, regionCode }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ departementCode, nom: 'Tartempion', role: 'gestionnaire_departement', ssoId }),
@@ -332,7 +320,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -358,10 +348,7 @@ describe('postgre utilisateur query', () => {
         uid: ssoId,
       })
       await prisma.regionRecord.create({
-        data: {
-          code: regionCode,
-          nom: 'Auvergne-Rhône-Alpes',
-        },
+        data: regionRecordFactory({ code: regionCode }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', regionCode, role: 'gestionnaire_region', ssoId }),
@@ -379,7 +366,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -426,7 +415,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -474,7 +465,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -503,7 +496,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -527,7 +522,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -552,7 +549,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -560,7 +559,7 @@ describe('postgre utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants[1].isActive).toBe(false)
     })
 
-    it('quand je cherche mes utilisateurs actifs alors je les trouve tous', async () => {
+    it('quand je cherche mes utilisateurs actifs alors je trouve tous ceux qui sont actifs', async () => {
       // GIVEN
       const derniereConnexion = new Date('2024-01-01')
       await prisma.utilisateurRecord.create({
@@ -577,7 +576,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -587,7 +588,7 @@ describe('postgre utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants[0].isActive).toBe(true)
     })
 
-    it('quand je cherche mes utilisateurs par rôles alors je les trouve tous', async () => {
+    it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'a', role: 'administrateur_dispositif', ssoId }),
@@ -606,7 +607,9 @@ describe('postgre utilisateur query', () => {
         pageCourante,
         utilisateursParPage,
         isActive,
-        roles
+        roles,
+        codeDepartement,
+        codeRegion
       )
 
       // THEN
@@ -618,6 +621,91 @@ describe('postgre utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
+    it('quand je cherche mes utilisateurs par un département alors je trouve tous ceux qui ont ce département', async () => {
+      // GIVEN
+      const codeDepartement = '93'
+      await prisma.regionRecord.create({
+        data: regionRecordFactory(),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: codeDepartement }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '75' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: codeDepartement, nom: 'a', ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: '75', nom: 'b', ssoId: '123456' }),
+      })
+
+      // WHEN
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].departementCode).toBe('93')
+    })
+
+    it('quand je cherche mes utilisateurs par une région alors je trouve ceux qui ont cette région et tous les départements liés à cette région', async () => {
+      // GIVEN
+      const codeRegion = '11'
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: codeRegion }),
+      })
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: '21' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '75' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '10', regionCode: '21' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'a', regionCode: codeRegion, ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'b', regionCode: '21', ssoId: '123456' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: '75', nom: 'c', ssoId: '67890' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: '10', nom: 'D', ssoId: 'azerty' }),
+      })
+
+      // WHEN
+      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].regionCode).toBe('11')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].departementCode).toBe('75')
+    })
+
     const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const pageCourante = 0
     const utilisateursParPage = 10
@@ -627,10 +715,33 @@ describe('postgre utilisateur query', () => {
     })
     const roles: Array<string> = []
     const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+    const codeDepartement = '0'
+    const codeRegion = '0'
   })
 })
 
 const nullDate = new Date(0)
+
+function regionRecordFactory(
+  override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
+): Prisma.RegionRecordUncheckedCreateInput {
+  return {
+    code: '11',
+    nom: 'Île-de-France',
+    ...override,
+  }
+}
+
+function departementRecordFactory(
+  override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
+): Prisma.DepartementRecordUncheckedCreateInput {
+  return {
+    code: '75',
+    nom: 'Paris',
+    regionCode: '11',
+    ...override,
+  }
+}
 
 function utilisateurRecordFactory(
   override: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>

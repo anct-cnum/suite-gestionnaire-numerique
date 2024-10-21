@@ -2,8 +2,8 @@
 
 import { Prisma } from '@prisma/client'
 
-import groupements from './data/groupements.json'
 import prisma from '../prisma/prismaClient'
+import groupements from '../ressources/groupements.json'
 
 async function migration() {
   const greenColor = '\x1b[32m%s\x1b[0m'

@@ -8,7 +8,7 @@ import Page from './Page'
 import PremierePage from './PremierePage'
 import { clientContext } from '../ClientContext'
 
-export default function Pagination({ pageCourante, pathname, totalUtilisateurs }: PaginationProps): ReactElement {
+export default function Pagination({ pathname, totalUtilisateurs }: PaginationProps): ReactElement {
   const { searchParams, utilisateursParPage } = useContext(clientContext)
   const urlAvecParametres = fullUrl(pathname, searchParams)
 
@@ -23,7 +23,7 @@ export default function Pagination({ pageCourante, pathname, totalUtilisateurs }
         </li>
         <Page
           nombreDeResultat={totalUtilisateurs}
-          pageCourante={pageCourante}
+          pageCourante={Number(searchParams.get('page') ?? 0)}
           urlAvecParametres={urlAvecParametres}
           utilisateursParPage={utilisateursParPage}
         />
@@ -40,7 +40,6 @@ export default function Pagination({ pageCourante, pathname, totalUtilisateurs }
 }
 
 type PaginationProps = Readonly<{
-  pageCourante: number
   pathname: string
   totalUtilisateurs: number
 }>
