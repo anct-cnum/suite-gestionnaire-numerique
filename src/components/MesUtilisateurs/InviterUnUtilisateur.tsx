@@ -33,9 +33,8 @@ export default function InviterUnUtilisateur({
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'OK') {
       setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      window.dsfr(document.getElementById(drawerId)).modal.conceal()
       setIsOpen(false)
+      window.dsfr(document.getElementById(drawerId)).modal.conceal()
     } else {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     }

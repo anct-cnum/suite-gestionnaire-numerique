@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
@@ -591,19 +591,15 @@ describe('mes utilisateurs', () => {
       fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
-      // eslint-disable-next-line max-len
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
-      await act(() => {
-        fireEvent.click(envoyerInvitation)
-      })
+      const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
 
       // THEN
+      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(setBandeauInformations).toHaveBeenCalledWith({
         description: 'martin.tartempion@example.com',
         titre: 'Invitation envoyée à ',
       })
-      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
       window.dsfr = windowDsfr
     })
@@ -627,15 +623,11 @@ describe('mes utilisateurs', () => {
       fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
-      // eslint-disable-next-line max-len
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression, testing-library/no-unnecessary-act, @typescript-eslint/await-thenable
-      await act(() => {
-        fireEvent.click(envoyerInvitation)
-      })
+      const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
 
       // THEN
-      const erreurEmailDejaExistant = screen.getByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      const erreurEmailDejaExistant = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       expect(erreurEmailDejaExistant).toBeInTheDocument()
       const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(drawerDetailsUtilisateur).toHaveAttribute('open', '')
