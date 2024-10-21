@@ -2,16 +2,19 @@
 
 import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId } from 'react'
 
-import Checkbox from '../shared/Checkbox/Checkbox'
+import FiltrerParRoles from './FiltrerParRoles'
 import { clientContext } from '../shared/ClientContext'
+import Interrupteur from '../shared/Interrupteur/Interrupteur'
 
 export default function FiltrerMesUtilisateurs({
   id,
   labelId,
   setIsOpen,
 }: FiltrerMesUtilisateursProps): ReactElement {
-  const { router, searchParams } = useContext(clientContext)
+  const { roles, router, searchParams } = useContext(clientContext)
   const utilisateursActivesToggleId = useId()
+  const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
+  const totalDesRoles = roles.length
 
   return (
     <>
@@ -26,16 +29,17 @@ export default function FiltrerMesUtilisateurs({
         method="dialog"
         onSubmit={filtrer}
       >
-        <Checkbox
-          defaultChecked={searchParams.get('utilisateursActives') === 'on'}
+        <Interrupteur
+          defaultChecked={areUtilisateursActivesChecked}
           // Stryker disable next-line BooleanLiteral
           hasSeparator={true}
           id={utilisateursActivesToggleId}
           name="utilisateursActives"
         >
           Uniquement les utilisateurs activés
-        </Checkbox>
+        </Interrupteur>
         <hr />
+        <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
           <button
             className="fr-btn fr-btn--secondary fr-col-5"
@@ -65,12 +69,19 @@ export default function FiltrerMesUtilisateurs({
     setIsOpen(false)
 
     const form = new FormData(event.currentTarget)
-    const utilisateursActives = form.get('utilisateursActives') as string
+    const utilisateursActives = form.get('utilisateursActives')
+    const isUtilisateursActivesChecked = utilisateursActives === 'on'
+    const roles = form.getAll('roles')
+    const shouldFilterByRoles = roles.length < totalDesRoles
 
     const url = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
 
-    if (utilisateursActives === 'on') {
+    if (isUtilisateursActivesChecked) {
       url.searchParams.append('utilisateursActives', utilisateursActives)
+    }
+
+    if (shouldFilterByRoles) {
+      url.searchParams.append('roles', roles.join(','))
     }
 
     router.push(url.toString())
