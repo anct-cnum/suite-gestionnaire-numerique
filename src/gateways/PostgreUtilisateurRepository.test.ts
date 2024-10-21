@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 
 import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
 import prisma from '../../prisma/prismaClient'
@@ -262,15 +262,30 @@ describe('utilisateur repository', () => {
 
     it('erreur non gérée', async () => {
       // GIVEN
-      vi.spyOn(repository, 'add')
-        .mockRejectedValueOnce('generic error')
-        .mockRejectedValueOnce(new Prisma.PrismaClientKnownRequestError('authentication failed', { clientVersion: '', code: 'P1000' }))
+      const prismaClientAuthenticationFailedErrorStub = {
+        utilisateurRecord: {
+          async create(): Promise<never> {
+            return Promise.reject(new Prisma.PrismaClientKnownRequestError('authentication failed', { clientVersion: '', code: 'P1000' }))
+          },
+        },
+      } as unknown as PrismaClient
+
+      const prismaClientGenericErrorStub = {
+        utilisateurRecord: {
+          async create(): Promise<never> {
+            return Promise.reject(new Error('generic error'))
+          },
+        },
+      } as unknown as PrismaClient
+
+      const repositoryGenericError = new PostgreUtilisateurRepository(prismaClientGenericErrorStub)
+      const repositoryAuthenticationError = new PostgreUtilisateurRepository(prismaClientAuthenticationFailedErrorStub)
 
       const utilisateur = utilisateurFactory()
 
       // WHEN
-      const resultatGenericError = repository.add(utilisateur)
-      const resultatAuthenticationError = repository.add(utilisateur)
+      const resultatGenericError = repositoryGenericError.add(utilisateur)
+      const resultatAuthenticationError = repositoryAuthenticationError.add(utilisateur)
 
       // THEN
       await expect(resultatGenericError).rejects.toThrow('generic error')
