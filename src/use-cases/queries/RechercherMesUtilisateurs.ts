@@ -13,6 +13,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<
 
   async get({
     uid,
+    roles,
     pageCourante,
     utilisateursActives,
     utilisateursParPage,
@@ -23,13 +24,15 @@ export class RechercherMesUtilisateurs implements QueryHandler<
       utilisateur,
       pageCourante,
       utilisateursParPage,
-      utilisateursActives
+      utilisateursActives,
+      roles
     )
   }
 }
 
 type MesUtilisateursQuery = Readonly<{
   pageCourante: number
+  roles: ReadonlyArray<string>
   uid: string
   utilisateursActives: boolean
   utilisateursParPage: number
@@ -45,6 +48,7 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,
-    utilisateursActives: boolean
+    utilisateursActives: boolean,
+    roles: ReadonlyArray<string>
   ) => Promise<UtilisateursCourantsEtTotalReadModel>
 }

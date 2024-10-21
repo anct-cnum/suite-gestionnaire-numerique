@@ -18,12 +18,14 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const session = (await getSession())!
   const pageCourante = Number(searchParams.page ?? 0)
   const utilisateursActives = Boolean(searchParams.utilisateursActives)
+  const roles = searchParams.roles === undefined || searchParams.roles === '' ? [] : searchParams.roles.split(',')
 
   const utilisateurLoader = new PostgreUtilisateurLoader(prisma)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.get({
       pageCourante,
+      roles,
       uid: session.user.sub,
       utilisateursActives,
       utilisateursParPage: config.utilisateursParPage,
@@ -43,6 +45,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
 type PageProps = Readonly<{
   searchParams: Partial<Readonly<{
     page: string
+    roles: string
     utilisateursActives: string
   }>>
 }>

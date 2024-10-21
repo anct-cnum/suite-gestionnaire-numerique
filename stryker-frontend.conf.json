@@ -2,7 +2,16 @@
   "checkers": ["typescript"],
   "disableTypeChecks": true,
   "htmlReporter": { "fileName": "reports/mutation/mutation-frontend.html" },
-  "ignorePatterns": [".*", "coverage", "public", "reports", "yarn.lock"],
+  "ignorePatterns": [
+    ".*",
+    "coverage",
+    "public",
+    "reports",
+    "seeds",
+    "src/components/Accessibilite",
+    "src/components/MentionsLegales",
+    "yarn.lock"
+  ],
   "ignoreStatic": true,
   "logLevel": "info",
   "mutate": [
@@ -11,10 +20,7 @@
     "src/presenters/**/*.ts",
     "!src/components/**/*.test.tsx",
     "!src/presenters/**/*.test.ts",
-    "!src/**/ClientContext.tsx",
-    "!src/**/Accessibilite.tsx",
-    "!src/**/MentionsLegales.tsx",
-    "!src/**/MesParametres.tsx"
+    "!src/**/ClientContext.tsx"
   ],
   "mutator": {
     "excludedMutations": ["StringLiteral"]
