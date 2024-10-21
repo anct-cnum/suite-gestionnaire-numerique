@@ -2,16 +2,6 @@ import { ReactElement } from 'react'
 
 import Radio from './Radio'
 
-export type RadioOption = Readonly<{
-  id: string
-  label: string
-}>
-
-type RadioGroupProps = Readonly<{
-  nomGroupe: string
-  options: Array<RadioOption>
-}>
-
 export default function RadioGroup({ nomGroupe, options }: RadioGroupProps): ReactElement {
   return (
     <div>
@@ -27,3 +17,13 @@ export default function RadioGroup({ nomGroupe, options }: RadioGroupProps): Rea
     </div>
   )
 }
+
+export type RadioOption = Readonly<{
+  id: string
+  label: string
+}>
+
+type RadioGroupProps = Readonly<{
+  nomGroupe: string
+  options: ReadonlyArray<RadioOption>
+}>

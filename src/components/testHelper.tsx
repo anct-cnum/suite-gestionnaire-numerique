@@ -1,7 +1,6 @@
-import { render } from '@testing-library/react'
+import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
 
-import { BandeauInformations } from './shared/Bandeau/Bandeau'
 import { clientContext } from '@/components/shared/ClientContext'
 // eslint-disable-next-line import/no-restricted-paths
 import { Roles } from '@/domain/Role'
@@ -24,7 +23,7 @@ export const spiedNextNavigation = {
 }
 
 export const clientContextProviderDefaultValue = {
-  bandeauInformations: undefined as BandeauInformations | undefined,
+  bandeauInformations: {},
   roles: Roles,
   router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),
@@ -49,8 +48,8 @@ export const clientContextProviderDefaultValue = {
 export function renderComponent(
   children: ReactElement,
   clientContextProviderValue = clientContextProviderDefaultValue
-): void {
-  render(
+): RenderResult {
+  return render(
     <clientContext.Provider value={clientContextProviderValue}>
       {children}
     </clientContext.Provider>

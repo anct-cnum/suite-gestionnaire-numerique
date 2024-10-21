@@ -7,25 +7,6 @@ import { clientContext } from '../shared/ClientContext'
 import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
-const gestionnaires: Array<RadioOption> = [
-  {
-    id: 'Gestionnaire région',
-    label: 'Gestionnaire région',
-  },
-  {
-    id: 'Gestionnaire département',
-    label: 'Gestionnaire département',
-  },
-  {
-    id: 'Gestionnaire groupement',
-    label: 'Gestionnaire groupement',
-  },
-  {
-    id: 'Gestionnaire structure',
-    label: 'Gestionnaire structure',
-  },
-]
-
 export default function InviterUnUtilisateur({
   setIsOpen,
   drawerId,
@@ -157,3 +138,22 @@ type InviterUnUtilisateurProps = Readonly<{
   setIsOpen: (isOpen: boolean) => void
   drawerId: string
 }>
+
+const gestionnaires: ReadonlyArray<RadioOption> = [
+  {
+    id: 'Gestionnaire région',
+    label: 'Gestionnaire région',
+  },
+  {
+    id: 'Gestionnaire département',
+    label: 'Gestionnaire département',
+  },
+  {
+    id: 'Gestionnaire groupement',
+    label: 'Gestionnaire groupement',
+  },
+  {
+    id: 'Gestionnaire structure',
+    label: 'Gestionnaire structure',
+  },
+]

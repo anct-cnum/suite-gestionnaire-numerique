@@ -1,4 +1,4 @@
-import { screen, render } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 
 import Bandeau from './Bandeau'
 import { clientContextProviderDefaultValue, matchWithoutMarkup, renderComponent } from '../../testHelper'
@@ -25,7 +25,7 @@ describe('bandeau', () => {
     // GIVEN
     const context = {
       ...clientContextProviderDefaultValue,
-      bandeauInformations: { description: undefined, titre: 'foo' },
+      bandeauInformations: { titre: 'foo' },
     }
 
     // WHEN
@@ -40,7 +40,7 @@ describe('bandeau', () => {
     // GIVEN
     const context = {
       ...clientContextProviderDefaultValue,
-      bandeauInformations: { description: 'bar', titre: undefined },
+      bandeauInformations: { description: 'bar' },
     }
 
     // WHEN
@@ -53,7 +53,7 @@ describe('bandeau', () => {
 
   it('quand il n’y a ni titre ni description, alors le bandeau n’est pas affiché', () => {
     // WHEN
-    const { container } = render(<Bandeau />)
+    const { container } = renderComponent(<Bandeau />, clientContextProviderDefaultValue)
 
     // THEN
     expect(container).toBeEmptyDOMElement()

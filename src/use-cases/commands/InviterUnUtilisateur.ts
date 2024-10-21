@@ -15,13 +15,14 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     if (!utilisateurCourant) {
       return 'KO'
     }
-    const utilisateurACreer = Utilisateur.createWithoutUid({
+    const utilisateurACreer = Utilisateur.create({
       email: command.email,
       isSuperAdmin: false,
       nom: command.nom,
       organisation: command.organisation,
       prenom: command.prenom,
       role: command.role,
+      uid: command.email,
     })
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'KO'
@@ -38,6 +39,6 @@ type InviterUnUtilisateurCommand = Readonly<{
   role: TypologieRole
   organisation?: string
   uidUtilisateurCourant: string
-}>;
+}>
 
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'

@@ -28,9 +28,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     this.#telephone = telephone
   }
 
-  static create(
-    utilisateur: UtilisateurParams
-  ): Utilisateur {
+  static create(utilisateur: UtilisateurParams): Utilisateur {
     return new Utilisateur(
       utilisateur.uid,
       new Role(utilisateur.role, utilisateur.organisation),
@@ -39,17 +37,6 @@ export class Utilisateur extends Entity<UtilisateurState> {
       utilisateur.email,
       utilisateur.isSuperAdmin,
       utilisateur.telephone
-    )
-  }
-
-  static createWithoutUid(utilisateur: UtilisateurParamsWithoutUid): Utilisateur {
-    return new Utilisateur(
-      utilisateur.email,
-      new Role(utilisateur.role, utilisateur.organisation),
-      utilisateur.nom,
-      utilisateur.prenom,
-      utilisateur.email,
-      utilisateur.isSuperAdmin
     )
   }
 
@@ -114,9 +101,7 @@ type UtilisateurParams = Readonly<{
   isSuperAdmin: boolean
   nom: string
   prenom: string
-  role: TypologieRole,
-  organisation?: string,
-  telephone?: string,
+  role: TypologieRole
+  organisation?: string
+  telephone?: string
 }>
-
-type UtilisateurParamsWithoutUid = Omit<UtilisateurParams, 'uid'>

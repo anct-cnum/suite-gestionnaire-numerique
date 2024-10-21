@@ -1,10 +1,5 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-type RadioProps = PropsWithChildren<Readonly<{
-  id: string
-  nomGroupe: string
-}>>
-
 export default function Radio({ children, id, nomGroupe }: RadioProps): ReactElement {
   return (
     <div className="fr-fieldset__element">
@@ -26,3 +21,8 @@ export default function Radio({ children, id, nomGroupe }: RadioProps): ReactEle
     </div>
   )
 }
+
+type RadioProps = PropsWithChildren<Readonly<{
+  id: string
+  nomGroupe: string
+}>>
