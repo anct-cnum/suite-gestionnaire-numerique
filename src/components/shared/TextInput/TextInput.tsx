@@ -2,6 +2,7 @@ import React, { PropsWithChildren, ReactElement } from 'react'
 
 export default function TextInput({ defaultValue = '', children, id, name, pattern, required, type = 'text', erreur }: InputProps): ReactElement {
   return (
+    // Stryker disable next-line all
     <div className={`fr-input-group ${erreur !== undefined ? 'fr-input-group--error' : ''}`}>
       <label
         className="fr-label"

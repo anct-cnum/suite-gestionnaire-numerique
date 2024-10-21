@@ -559,7 +559,9 @@ describe('mes utilisateurs', () => {
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
       // GIVEN
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction')
+        .mockResolvedValueOnce('emailExistant')
+        .mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
       window.dsfr = () => {
         return {
@@ -579,6 +581,7 @@ describe('mes utilisateurs', () => {
       )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
+      const roleRadios = screen.getAllByRole('radio')
 
       // WHEN
       const nom = screen.getByLabelText('Nom *')
@@ -593,14 +596,26 @@ describe('mes utilisateurs', () => {
       fireEvent.click(gestionnaireRegion)
       const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
+      const messageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      fireEvent.click(envoyerInvitation)
 
       // THEN
+      expect(messageDErreur).toBeInTheDocument()
+      const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(absenceMessageDErreur).not.toBeInTheDocument()
       const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(setBandeauInformations).toHaveBeenCalledWith({
         description: 'martin.tartempion@example.com',
         titre: 'Invitation envoyée à ',
       })
       expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+      expect(nom).toHaveValue('')
+      expect(prenom).toHaveValue('')
+      expect(email).toHaveValue('')
+      expect(structure).toHaveValue('')
+      roleRadios.forEach((roleRadio) => {
+        expect(roleRadio).not.toBeChecked()
+      })
       window.dsfr = windowDsfr
     })
 
@@ -632,6 +647,52 @@ describe('mes utilisateurs', () => {
       const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(drawerDetailsUtilisateur).toHaveAttribute('open', '')
     })
+  })
+
+  it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
+    // GIVEN
+    vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('KO')
+    const windowDsfr = window.dsfr
+    window.dsfr = () => {
+      return {
+        modal: {
+          conceal: vi.fn(),
+        },
+      }
+    }
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+    fireEvent.click(inviter)
+    const roleRadios = screen.getAllByRole('radio')
+
+    // WHEN
+    const nom = screen.getByLabelText('Nom *')
+    fireEvent.change(nom, { target: { value: 'Tartempion' } })
+    const prenom = screen.getByLabelText('Prénom *')
+    fireEvent.change(prenom, { target: { value: 'Martin' } })
+    const email = screen.getByLabelText(/Adresse électronique/)
+    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+    const structure = screen.getByLabelText('Structure *')
+    fireEvent.change(structure, { target: { value: 'La Poste' } })
+    const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+    fireEvent.click(gestionnaireRegion)
+    const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+    fireEvent.click(envoyerInvitation)
+
+    // THEN
+    const absenceDeMessageDErreur = screen.queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    expect(absenceDeMessageDErreur).not.toBeInTheDocument()
+    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+    expect(nom).toHaveValue('')
+    expect(prenom).toHaveValue('')
+    expect(email).toHaveValue('')
+    expect(structure).toHaveValue('')
+    roleRadios.forEach((roleRadio) => {
+      expect(roleRadio).not.toBeChecked()
+    })
+    window.dsfr = windowDsfr
   })
 })
 

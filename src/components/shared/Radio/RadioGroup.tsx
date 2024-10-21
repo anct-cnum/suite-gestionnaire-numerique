@@ -4,7 +4,7 @@ import Radio from './Radio'
 
 export default function RadioGroup({ nomGroupe, options }: RadioGroupProps): ReactElement {
   return (
-    <div>
+    <div role="radiogroup">
       {options.map(({ id, label }) => (
         <Radio
           id={id}

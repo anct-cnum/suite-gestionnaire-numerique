@@ -31,12 +31,14 @@ export default function InviterUnUtilisateur({
       role: form.get('attributionRole') as string,
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
-    if (result === 'OK') {
-      setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
-      setIsOpen(false)
-      window.dsfr(document.getElementById(drawerId)).modal.conceal()
-    } else {
+    if (result === 'emailExistant') {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+    } else {
+      if (result === 'OK') {
+        setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
+        setEmailDejaExistant(undefined)
+      }
+      fermerEtReinitialiser(event.target as HTMLFormElement)
     }
   }
 
@@ -131,6 +133,12 @@ export default function InviterUnUtilisateur({
       </form>
     </div>
   )
+
+  function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
+    setIsOpen(false)
+    window.dsfr(document.getElementById(drawerId)).modal.conceal()
+    htmlFormElement.reset()
+  }
 }
 
 type InviterUnUtilisateurProps = Readonly<{
