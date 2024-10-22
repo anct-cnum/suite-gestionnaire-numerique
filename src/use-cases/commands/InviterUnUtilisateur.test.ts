@@ -8,15 +8,16 @@ describe('inviter un utilisateur', () => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
   })
-  it('quand j’invite un utilisateur, il est enregistré', async () => {
+  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré', async () => {
     // GIVEN
     const repository = new RepositorySpy()
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: 'Instructeur' as TypologieRole,
+      role: roleUtilisateurAInviter,
       uidUtilisateurCourant: 'utilisateurAdminUid',
     }
 
@@ -37,15 +38,16 @@ describe('inviter un utilisateur', () => {
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
 
-  it('quand j’invite un utilisateur et que je n’ai pas le droit de l’inviter, alors il y a une erreur', async () => {
+  it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: 'Instructeur' as TypologieRole,
+      role: roleUtilisateurAInviter,
       uidUtilisateurCourant: 'utilisateurGestionnaireUid',
     }
 
@@ -58,15 +60,16 @@ describe('inviter un utilisateur', () => {
     expect(spiedUtilisateurToAdd).toBeNull()
   })
 
-  it('quand j’invite un utilisateur et que mon compte n’existe pas, alors il y a une erreur', async () => {
+  it('étant donné que le compte de l’utilisateur courant n’existe plus, quand il invite un autre utilisateur, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: 'Instructeur' as const,
+      role: roleUtilisateurAInviter,
       uidUtilisateurCourant: 'utilisateurInexistantUid',
     }
 
@@ -79,15 +82,16 @@ describe('inviter un utilisateur', () => {
     expect(spiedUtilisateurToAdd).toBeNull()
   })
 
-  it('quand j’invite un utilisateur et qu’il existe déjà, alors il y a une erreur', async () => {
+  it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositoryUtilisateurExisteDejaSpy()
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: 'Instructeur' as const,
+      role: roleUtilisateurAInviter,
       uidUtilisateurCourant: 'utilisateurAdminUid',
     }
 
