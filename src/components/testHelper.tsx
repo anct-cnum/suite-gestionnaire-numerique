@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react'
+import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
@@ -23,6 +23,7 @@ export const spiedNextNavigation = {
 }
 
 export const clientContextProviderDefaultValue = {
+  bandeauInformations: {},
   roles: Roles,
   router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),
@@ -40,14 +41,15 @@ export const clientContextProviderDefaultValue = {
     telephone: '0102030405',
     uid: 'fooId',
   },
+  setBandeauInformations: vi.fn(),
   utilisateursParPage: 10,
 }
 
 export function renderComponent(
   children: ReactElement,
   clientContextProviderValue = clientContextProviderDefaultValue
-): void {
-  render(
+): RenderResult {
+  return render(
     <clientContext.Provider value={clientContextProviderValue}>
       {children}
     </clientContext.Provider>

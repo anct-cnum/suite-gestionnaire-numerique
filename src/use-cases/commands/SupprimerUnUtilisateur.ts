@@ -1,32 +1,31 @@
 import {
   DropUtilisateurRepository,
-  FindUtilisateurRepository,
 } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class SupprimerUnUtilisateur implements CommandHandler<Command> {
-  readonly #repository: Repository
+  readonly #dropUtilisateurRepository: DropUtilisateurRepository
 
-  constructor(repository: Repository) {
-    this.#repository = repository
+  constructor(dropUtilisateurRepository: DropUtilisateurRepository) {
+    this.#dropUtilisateurRepository = dropUtilisateurRepository
   }
 
   async execute({
     utilisateurCourantUid,
     utilisateurASupprimerUid,
   }: Command): ResultAsync<SupprimerUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(utilisateurCourantUid)
+    const utilisateurCourant = await this.#dropUtilisateurRepository.find(utilisateurCourantUid)
     if (!utilisateurCourant) {
       return 'compteConnecteInexistant'
     }
-    const utilisateurASupprimer = await this.#repository.find(utilisateurASupprimerUid)
+    const utilisateurASupprimer = await this.#dropUtilisateurRepository.find(utilisateurASupprimerUid)
     if (!utilisateurASupprimer) {
       return 'compteASupprimerInexistant'
     }
-    if (!utilisateurCourant.peutSupprimer(utilisateurASupprimer)) {
+    if (!utilisateurCourant.peutGerer(utilisateurASupprimer)) {
       return 'suppressionNonAutorisee'
     }
-    return (await this.#repository.drop(utilisateurASupprimer))
+    return (await this.#dropUtilisateurRepository.drop(utilisateurASupprimer))
       ? 'OK'
       : 'compteASupprimerDejaSupprime'
   }
@@ -42,5 +41,3 @@ type Command = Readonly<{
   utilisateurCourantUid: string
   utilisateurASupprimerUid: string
 }>
-
-interface Repository extends FindUtilisateurRepository, DropUtilisateurRepository {}

@@ -17,7 +17,7 @@ export default function EnTete(): ReactElement {
 
   return (
     <>
-      <header className="fr-header fr-mb-5w">
+      <header className="fr-header">
         <div className="fr-header__body">
           <div className="fr-header__body-row fr-px-5w">
             <div className="fr-header__brand fr-enlarge-link">
