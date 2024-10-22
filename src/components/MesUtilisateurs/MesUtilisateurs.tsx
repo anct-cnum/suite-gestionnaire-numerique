@@ -35,12 +35,12 @@ export default function MesUtilisateurs(
     structure: '',
     telephone: '',
   })
-  const drawerCompteId = 'drawer-modifier-mon-compte'
-  const labelCompteId = 'drawer-modifier-mon-compte-titre'
+  const drawerFiltreId = 'drawer-filtre-utilisateurs'
+  const labelFiltreId = 'drawer-filtre-utilisateurs-titre'
   const drawerDetailsId = 'drawer-details-utilisateur'
   const labelDetailsId = 'drawer-details-utilisateur-nom'
   const drawerInvitationId = 'drawer-invitation'
-  const labelInvitationId = 'drawer-invitation-nom'
+  const labelInvitationId = 'drawer-invitation-titre'
 
   return (
     <>
@@ -71,21 +71,22 @@ export default function MesUtilisateurs(
       >
         <InviterUnUtilisateur
           drawerId={drawerInvitationId}
+          labelId={labelInvitationId}
           setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
       <Drawer
         boutonFermeture="Fermer les filtres"
-        id={drawerCompteId}
+        id={drawerFiltreId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelCompteId}
+        labelId={labelFiltreId}
         setIsOpen={setIsDrawerOpen}
       >
         <FiltrerMesUtilisateurs
-          id={drawerCompteId}
-          labelId={labelCompteId}
+          id={drawerFiltreId}
+          labelId={labelFiltreId}
           setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
@@ -102,7 +103,7 @@ export default function MesUtilisateurs(
             />
             <div>
               <button
-                aria-controls={drawerCompteId}
+                aria-controls={drawerFiltreId}
                 className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
                 data-fr-opened="false"
                 onClick={() => {
@@ -220,7 +221,10 @@ export default function MesUtilisateurs(
         labelId={labelDetailsId}
         setIsOpen={setIsDrawerOpen}
       >
-        <DetailsUtilisateur utilisateur={utilisateurSelectionne} />
+        <DetailsUtilisateur
+          labelId={labelDetailsId}
+          utilisateur={utilisateurSelectionne}
+        />
       </Drawer>
     </>
   )

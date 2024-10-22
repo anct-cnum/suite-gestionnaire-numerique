@@ -184,7 +184,7 @@ describe('mes utilisateurs', () => {
     fireEvent.click(rowPremierUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Martin Tartempion' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -223,7 +223,7 @@ describe('mes utilisateurs', () => {
     fireEvent.click(rowDeuxiemeUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Julien Deschamps' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Julien Deschamps' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -392,7 +392,7 @@ describe('mes utilisateurs', () => {
     const boutonAfficher = within(formulaire).getByRole('button', { name: 'Afficher les utilisateurs' })
     expect(boutonAfficher).toBeEnabled()
     expect(boutonAfficher).toHaveAttribute('type', 'submit')
-    expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+    expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-filtre-utilisateurs')
   })
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
@@ -409,9 +409,9 @@ describe('mes utilisateurs', () => {
     const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
 
     // THEN
-    const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+    const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
     expect(utilisateursActives).toBeChecked()
-    const administrateurDispositif = screen.getByLabelText('Administrateur dispositif')
+    const administrateurDispositif = within(filtres).getByLabelText('Administrateur dispositif')
     expect(administrateurDispositif).not.toBeChecked()
     const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
     expect(gestionnaireDepartement).not.toBeChecked()
@@ -421,11 +421,11 @@ describe('mes utilisateurs', () => {
     expect(gestionnaireRegion).not.toBeChecked()
     const gestionnaireStructure = within(filtres).getByLabelText('Gestionnaire structure')
     expect(gestionnaireStructure).not.toBeChecked()
-    const instructeur = screen.getByLabelText('Instructeur')
+    const instructeur = within(filtres).getByLabelText('Instructeur')
     expect(instructeur).toBeChecked()
-    const pilotePolitiquePublique = screen.getByLabelText('Pilote politique publique')
+    const pilotePolitiquePublique = within(filtres).getByLabelText('Pilote politique publique')
     expect(pilotePolitiquePublique).not.toBeChecked()
-    const supportAnimation = screen.getByLabelText('Support animation')
+    const supportAnimation = within(filtres).getByLabelText('Support animation')
     expect(supportAnimation).not.toBeChecked()
   })
 
@@ -450,11 +450,12 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
       afficherLesFiltres()
-      const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
+      const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
       fireEvent.click(utilisateursActives)
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
       fireEvent.click(boutonAfficher)
 
       // THEN
@@ -472,7 +473,7 @@ describe('mes utilisateurs', () => {
       fireEvent.click(gestionnaireDepartement)
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
       fireEvent.click(boutonAfficher)
 
       // THEN
@@ -499,33 +500,33 @@ describe('mes utilisateurs', () => {
       fireEvent.click(inviter)
 
       // THEN
-      const titre = await screen.findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const titre = await within(formulaireInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
       expect(titre).toBeInTheDocument()
 
-      const champsObligatoires = screen.getByText(
+      const champsObligatoires = within(formulaireInvitation).getByText(
         matchWithoutMarkup('Les champs avec * sont obligatoires.'),
         { selector: 'p' }
       )
       expect(champsObligatoires).toBeInTheDocument()
 
-      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
-      const nom = screen.getByLabelText('Nom *')
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
       expect(nom).toHaveAttribute('type', 'text')
 
-      const prenom = screen.getByLabelText('Prénom *')
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
       expect(prenom).toBeRequired()
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
 
-      const email = screen.getByLabelText('Adresse électronique *')
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *')
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
       expect(email).toHaveAttribute('type', 'email')
 
-      const roleQuestion = screen.getByText(
+      const roleQuestion = within(formulaireInvitation).getByText(
         matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
         { selector: 'legend' }
       )
@@ -551,12 +552,12 @@ describe('mes utilisateurs', () => {
       expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
-      const structure = screen.getByLabelText('Structure *')
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
       expect(structure).toBeRequired()
       expect(structure).toHaveAttribute('name', 'structure')
       expect(structure).toHaveAttribute('type', 'text')
 
-      const envoyerInvitation = screen.getByRole('button', { name: 'Envoyer l’invitation' })
+      const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
@@ -584,35 +585,34 @@ describe('mes utilisateurs', () => {
       )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
-      const roleRadios = screen.getAllByRole('radio')
-      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const roleRadios = within(formulaireInvitation).getAllByRole('radio')
 
       // WHEN
-      const nom = screen.getByLabelText('Nom *')
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
       fireEvent.change(nom, { target: { value: 'Tartempion' } })
-      const prenom = screen.getByLabelText('Prénom *')
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
       fireEvent.change(prenom, { target: { value: 'Martin' } })
-      const email = screen.getByLabelText(/Adresse électronique/)
+      const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
       const structure = within(formulaireInvitation).getByLabelText('Structure *')
       fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+      const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
-      const messageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       fireEvent.click(envoyerInvitation)
 
       // THEN
       expect(messageDErreur).toBeInTheDocument()
-      const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       expect(absenceMessageDErreur).not.toBeInTheDocument()
-      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
       expect(setBandeauInformations).toHaveBeenCalledWith({
         description: 'martin.tartempion@example.com',
         titre: 'Invitation envoyée à ',
       })
-      expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+      expect(formulaireInvitation).not.toHaveAttribute('open', '')
       expect(nom).toHaveValue('')
       expect(prenom).toHaveValue('')
       expect(email).toHaveValue('')
@@ -630,27 +630,26 @@ describe('mes utilisateurs', () => {
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
-      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
 
       // WHEN
-      const nom = screen.getByLabelText('Nom *')
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
       fireEvent.change(nom, { target: { value: 'Tartempion' } })
-      const prenom = screen.getByLabelText('Prénom *')
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
       fireEvent.change(prenom, { target: { value: 'Martin' } })
-      const email = screen.getByLabelText(/Adresse électronique/)
+      const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
       const structure = within(formulaireInvitation).getByLabelText('Structure *')
       fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+      const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
 
       // THEN
-      const erreurEmailDejaExistant = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      const erreurEmailDejaExistant = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       expect(erreurEmailDejaExistant).toBeInTheDocument()
-      const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
-      expect(drawerDetailsUtilisateur).toHaveAttribute('open', '')
+      expect(formulaireInvitation).toHaveAttribute('open', '')
     })
   })
 
@@ -669,28 +668,31 @@ describe('mes utilisateurs', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
     fireEvent.click(inviter)
-    const roleRadios = screen.getAllByRole('radio')
-    const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
+    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const roleRadios = within(formulaireInvitation).getAllByRole('radio')
 
     // WHEN
-    const nom = screen.getByLabelText('Nom *')
+    const nom = within(formulaireInvitation).getByLabelText('Nom *')
     fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = screen.getByLabelText('Prénom *')
+    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
     fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = screen.getByLabelText(/Adresse électronique/)
+    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
     fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
     const structure = within(formulaireInvitation).getByLabelText('Structure *')
     fireEvent.change(structure, { target: { value: 'La Poste' } })
     const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
     fireEvent.click(gestionnaireRegion)
-    const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
+    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
     fireEvent.click(envoyerInvitation)
 
     // THEN
-    const absenceDeMessageDErreur = screen.queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const absenceDeMessageDErreur = within(formulaireInvitation).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceDeMessageDErreur).not.toBeInTheDocument()
-    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
-    expect(drawerDetailsUtilisateur).not.toHaveAttribute('open', '')
+    const formulaireInvitationApresInvitationEnEchec = await screen.findByRole(
+      'dialog',
+      { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' }
+    )
+    expect(formulaireInvitationApresInvitationEnEchec).not.toHaveAttribute('open', '')
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')

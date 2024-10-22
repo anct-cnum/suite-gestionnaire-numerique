@@ -10,6 +10,7 @@ import TextInput from '../shared/TextInput/TextInput'
 export default function InviterUnUtilisateur({
   setIsOpen,
   drawerId,
+  labelId,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
   const { setBandeauInformations } = useContext(clientContext)
@@ -44,7 +45,10 @@ export default function InviterUnUtilisateur({
 
   return (
     <div>
-      <h1 className="fr-h2 color-blue-france">
+      <h1
+        className="fr-h2 color-blue-france"
+        id={labelId}
+      >
         Invitez un utilisateur à rejoindre l’espace de gestion
       </h1>
       <p id="champsObligatoires">
@@ -144,6 +148,7 @@ export default function InviterUnUtilisateur({
 type InviterUnUtilisateurProps = Readonly<{
   setIsOpen: (isOpen: boolean) => void
   drawerId: string
+  labelId: string
 }>
 
 const gestionnaires: ReadonlyArray<RadioOption> = [
