@@ -406,19 +406,20 @@ describe('mes utilisateurs', () => {
     // WHEN
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
     fireEvent.click(filtrer)
+    const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
 
     // THEN
     const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
     expect(utilisateursActives).toBeChecked()
     const administrateurDispositif = screen.getByLabelText('Administrateur dispositif')
     expect(administrateurDispositif).not.toBeChecked()
-    const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+    const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
     expect(gestionnaireDepartement).not.toBeChecked()
-    const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+    const gestionnaireGroupement = within(filtres).getByLabelText('Gestionnaire groupement')
     expect(gestionnaireGroupement).toBeChecked()
-    const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+    const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
     expect(gestionnaireRegion).not.toBeChecked()
-    const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+    const gestionnaireStructure = within(filtres).getByLabelText('Gestionnaire structure')
     expect(gestionnaireStructure).not.toBeChecked()
     const instructeur = screen.getByLabelText('Instructeur')
     expect(instructeur).toBeChecked()
@@ -464,9 +465,10 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
       afficherLesFiltres()
-      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
+      const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
       fireEvent.click(gestionnaireDepartement)
 
       // WHEN
@@ -506,6 +508,7 @@ describe('mes utilisateurs', () => {
       )
       expect(champsObligatoires).toBeInTheDocument()
 
+      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
       const nom = screen.getByLabelText('Nom *')
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
@@ -528,22 +531,22 @@ describe('mes utilisateurs', () => {
       )
       expect(roleQuestion).toBeInTheDocument()
 
-      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       expect(gestionnaireRegion).toBeRequired()
       expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
 
-      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
       expect(gestionnaireDepartement).toBeRequired()
       expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
 
-      const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+      const gestionnaireGroupement = within(formulaireInvitation).getByLabelText('Gestionnaire groupement')
       expect(gestionnaireGroupement).toBeRequired()
       expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
 
-      const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+      const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
       expect(gestionnaireStructure).toBeRequired()
       expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
@@ -582,6 +585,7 @@ describe('mes utilisateurs', () => {
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
       const roleRadios = screen.getAllByRole('radio')
+      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
 
       // WHEN
       const nom = screen.getByLabelText('Nom *')
@@ -590,9 +594,9 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = screen.getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const structure = screen.getByLabelText('Structure *')
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
       fireEvent.change(structure, { target: { value: 'La Poste' } })
-      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
       const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
@@ -626,6 +630,7 @@ describe('mes utilisateurs', () => {
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
+      const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
 
       // WHEN
       const nom = screen.getByLabelText('Nom *')
@@ -634,9 +639,9 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = screen.getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const structure = screen.getByLabelText('Structure *')
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
       fireEvent.change(structure, { target: { value: 'La Poste' } })
-      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
       const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
@@ -665,6 +670,7 @@ describe('mes utilisateurs', () => {
     const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
     fireEvent.click(inviter)
     const roleRadios = screen.getAllByRole('radio')
+    const formulaireInvitation = screen.getByTestId('drawer-invitation-nom')
 
     // WHEN
     const nom = screen.getByLabelText('Nom *')
@@ -673,9 +679,9 @@ describe('mes utilisateurs', () => {
     fireEvent.change(prenom, { target: { value: 'Martin' } })
     const email = screen.getByLabelText(/Adresse électronique/)
     fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const structure = screen.getByLabelText('Structure *')
+    const structure = within(formulaireInvitation).getByLabelText('Structure *')
     fireEvent.change(structure, { target: { value: 'La Poste' } })
-    const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+    const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
     fireEvent.click(gestionnaireRegion)
     const envoyerInvitation = await screen.findByRole('button', { name: 'Envoyer l’invitation' })
     fireEvent.click(envoyerInvitation)
