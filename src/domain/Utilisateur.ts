@@ -28,9 +28,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     this.#telephone = telephone
   }
 
-  static create(
-    utilisateur: UtilisateurParams
-  ): Utilisateur {
+  static create(utilisateur: UtilisateurParams): Utilisateur {
     return new Utilisateur(
       utilisateur.uid,
       new Role(utilisateur.role, utilisateur.organisation),
@@ -78,7 +76,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  peutSupprimer(autre: Utilisateur): boolean {
+  peutGerer(autre: Utilisateur): boolean {
     return this.#role.isAdmin() || this.#role.equals(autre.#role)
   }
 }
@@ -95,15 +93,15 @@ export type UtilisateurState = Readonly<{
   telephone: string
 }>
 
+export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
+
 type UtilisateurParams = Readonly<{
   uid: string
   email: string
   isSuperAdmin: boolean
   nom: string
   prenom: string
-  role: TypologieRole,
-  organisation?: string,
-  telephone?: string,
+  role: TypologieRole
+  organisation?: string
+  telephone?: string
 }>
-
-export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'

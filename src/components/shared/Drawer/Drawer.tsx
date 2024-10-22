@@ -19,7 +19,6 @@ export default function Drawer({
       aria-labelledby={labelId}
       aria-modal="true"
       className={`fr-modal ${styles['fr-modal']}`}
-      data-testid={labelId}
       id={id}
       open={isOpen}
     >

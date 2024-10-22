@@ -2,8 +2,9 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
+import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation } from '@/components/testHelper'
+import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
 describe('mes utilisateurs', () => {
@@ -183,7 +184,7 @@ describe('mes utilisateurs', () => {
     fireEvent.click(rowPremierUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Martin Tartempion' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -222,7 +223,7 @@ describe('mes utilisateurs', () => {
     fireEvent.click(rowDeuxiemeUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByTestId('drawer-details-utilisateur-nom')
+    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Julien Deschamps' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Julien Deschamps' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -391,7 +392,7 @@ describe('mes utilisateurs', () => {
     const boutonAfficher = within(formulaire).getByRole('button', { name: 'Afficher les utilisateurs' })
     expect(boutonAfficher).toBeEnabled()
     expect(boutonAfficher).toHaveAttribute('type', 'submit')
-    expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+    expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-filtre-utilisateurs')
   })
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
@@ -405,25 +406,26 @@ describe('mes utilisateurs', () => {
     // WHEN
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
     fireEvent.click(filtrer)
+    const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
 
     // THEN
-    const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+    const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
     expect(utilisateursActives).toBeChecked()
-    const administrateurDispositif = screen.getByLabelText('Administrateur dispositif')
+    const administrateurDispositif = within(filtres).getByLabelText('Administrateur dispositif')
     expect(administrateurDispositif).not.toBeChecked()
-    const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+    const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
     expect(gestionnaireDepartement).not.toBeChecked()
-    const gestionnaireGroupement = screen.getByLabelText('Gestionnaire groupement')
+    const gestionnaireGroupement = within(filtres).getByLabelText('Gestionnaire groupement')
     expect(gestionnaireGroupement).toBeChecked()
-    const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+    const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
     expect(gestionnaireRegion).not.toBeChecked()
-    const gestionnaireStructure = screen.getByLabelText('Gestionnaire structure')
+    const gestionnaireStructure = within(filtres).getByLabelText('Gestionnaire structure')
     expect(gestionnaireStructure).not.toBeChecked()
-    const instructeur = screen.getByLabelText('Instructeur')
+    const instructeur = within(filtres).getByLabelText('Instructeur')
     expect(instructeur).toBeChecked()
-    const pilotePolitiquePublique = screen.getByLabelText('Pilote politique publique')
+    const pilotePolitiquePublique = within(filtres).getByLabelText('Pilote politique publique')
     expect(pilotePolitiquePublique).not.toBeChecked()
-    const supportAnimation = screen.getByLabelText('Support animation')
+    const supportAnimation = within(filtres).getByLabelText('Support animation')
     expect(supportAnimation).not.toBeChecked()
   })
 
@@ -448,11 +450,12 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
       afficherLesFiltres()
-      const utilisateursActives = screen.getByLabelText('Uniquement les utilisateurs activés')
+      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
+      const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
       fireEvent.click(utilisateursActives)
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
       fireEvent.click(boutonAfficher)
 
       // THEN
@@ -463,13 +466,14 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
       afficherLesFiltres()
-      const gestionnaireRegion = screen.getByLabelText('Gestionnaire région')
+      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
+      const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
-      const gestionnaireDepartement = screen.getByLabelText('Gestionnaire département')
+      const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
       fireEvent.click(gestionnaireDepartement)
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
       fireEvent.click(boutonAfficher)
 
       // THEN
@@ -483,6 +487,220 @@ describe('mes utilisateurs', () => {
       const filtrer = screen.getByRole('button', { name: 'Filtrer' })
       fireEvent.click(filtrer)
     }
+  })
+
+  describe('quand j’invite un utilisateur', () => {
+    it('quand je clique sur le bouton inviter, alors le drawer s’ouvre', async () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+
+      // WHEN
+      fireEvent.click(inviter)
+
+      // THEN
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const titre = await within(formulaireInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      expect(titre).toBeInTheDocument()
+
+      const champsObligatoires = within(formulaireInvitation).getByText(
+        matchWithoutMarkup('Les champs avec * sont obligatoires.'),
+        { selector: 'p' }
+      )
+      expect(champsObligatoires).toBeInTheDocument()
+
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
+      expect(nom).toBeRequired()
+      expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveAttribute('type', 'text')
+
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+      expect(prenom).toBeRequired()
+      expect(prenom).toHaveAttribute('name', 'prenom')
+      expect(prenom).toHaveAttribute('type', 'text')
+
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *')
+      expect(email).toBeRequired()
+      expect(email).toHaveAttribute('name', 'email')
+      expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(email).toHaveAttribute('type', 'email')
+
+      const roleQuestion = within(formulaireInvitation).getByText(
+        matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
+        { selector: 'legend' }
+      )
+      expect(roleQuestion).toBeInTheDocument()
+
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
+      expect(gestionnaireRegion).toBeRequired()
+      expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
+
+      const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
+      expect(gestionnaireDepartement).toBeRequired()
+      expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
+
+      const gestionnaireGroupement = within(formulaireInvitation).getByLabelText('Gestionnaire groupement')
+      expect(gestionnaireGroupement).toBeRequired()
+      expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
+
+      const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
+      expect(gestionnaireStructure).toBeRequired()
+      expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
+      expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
+
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      expect(structure).toBeRequired()
+      expect(structure).toHaveAttribute('name', 'structure')
+      expect(structure).toHaveAttribute('type', 'text')
+
+      const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
+      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    })
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
+      // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction')
+        .mockResolvedValueOnce('emailExistant')
+        .mockResolvedValueOnce('OK')
+      const windowDsfr = window.dsfr
+      window.dsfr = () => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
+      const setBandeauInformations = vi.fn()
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+        {
+          ...clientContextProviderDefaultValue,
+          setBandeauInformations,
+        }
+      )
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+
+      // WHEN
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+      const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      fireEvent.click(envoyerInvitation)
+
+      // THEN
+      expect(messageDErreur).toBeInTheDocument()
+      const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(absenceMessageDErreur).not.toBeInTheDocument()
+      expect(setBandeauInformations).toHaveBeenCalledWith({
+        description: 'martin.tartempion@example.com',
+        titre: 'Invitation envoyée à ',
+      })
+      expect(formulaireInvitation).not.toHaveAttribute('open', '')
+      expect(nom).toHaveValue('')
+      expect(prenom).toHaveValue('')
+      expect(email).toHaveValue('')
+      expect(structure).toHaveValue('')
+      roleRadios.forEach((roleRadio) => {
+        expect(roleRadio).not.toBeChecked()
+      })
+      window.dsfr = windowDsfr
+    })
+
+    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
+      // GIVEN
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+
+      // WHEN
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
+      fireEvent.click(gestionnaireRegion)
+      const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+
+      // THEN
+      const erreurEmailDejaExistant = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(erreurEmailDejaExistant).toBeInTheDocument()
+      expect(formulaireInvitation).toHaveAttribute('open', '')
+    })
+  })
+
+  it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
+    // GIVEN
+    vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('KO')
+    const windowDsfr = window.dsfr
+    window.dsfr = () => {
+      return {
+        modal: {
+          conceal: vi.fn(),
+        },
+      }
+    }
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', pageCourante, totalUtilisateur)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+    fireEvent.click(inviter)
+    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+
+    // WHEN
+    const nom = within(formulaireInvitation).getByLabelText('Nom *')
+    fireEvent.change(nom, { target: { value: 'Tartempion' } })
+    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+    fireEvent.change(prenom, { target: { value: 'Martin' } })
+    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
+    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+    const structure = within(formulaireInvitation).getByLabelText('Structure *')
+    fireEvent.change(structure, { target: { value: 'La Poste' } })
+    const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
+    fireEvent.click(gestionnaireRegion)
+    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
+    fireEvent.click(envoyerInvitation)
+
+    // THEN
+    const absenceDeMessageDErreur = within(formulaireInvitation).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    expect(absenceDeMessageDErreur).not.toBeInTheDocument()
+    const formulaireInvitationApresInvitationEnEchec = await screen.findByRole(
+      'dialog',
+      { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' }
+    )
+    expect(formulaireInvitationApresInvitationEnEchec).not.toHaveAttribute('open', '')
+    expect(nom).toHaveValue('')
+    expect(prenom).toHaveValue('')
+    expect(email).toHaveValue('')
+    expect(structure).toHaveValue('')
+    roleRadios.forEach((roleRadio) => {
+      expect(roleRadio).not.toBeChecked()
+    })
+    window.dsfr = windowDsfr
   })
 })
 

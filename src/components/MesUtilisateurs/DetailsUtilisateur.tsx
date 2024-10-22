@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 
 import { DetailsUtilisateurViewModel } from '../../presenters/mesUtilisateursPresenter'
 
-export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurProps): ReactElement {
+export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtilisateurProps): ReactElement {
   const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
     {
       label: 'Rôle attribué',
@@ -28,7 +28,10 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 
   return (
     <div>
-      <h1 className="fr-h2 color-blue-france">
+      <h1
+        className="fr-h2 color-blue-france"
+        id={labelId}
+      >
         {utilisateur.prenomEtNom}
       </h1>
       {donneesPersonnelles.map(({ label, value }) => (
@@ -49,7 +52,8 @@ export default function DetailsUtilisateur({ utilisateur }: DetailsUtilisateurPr
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  utilisateur: DetailsUtilisateurViewModel
+  utilisateur: DetailsUtilisateurViewModel,
+  labelId: string,
 }>
 
 type DetailUtilisateur = Readonly<{

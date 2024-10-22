@@ -21,6 +21,8 @@ export class PostgresSoftDeleteUtilisateurGateway implements SuppressionUtilisat
     })
       .then(() => true)
       .catch((error: unknown) => {
+        // https://www.prisma.io/docs/orm/reference/error-reference#p2025
+        // An operation failed because it depends on one or more records that were required but not found.
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
           return false
         }
