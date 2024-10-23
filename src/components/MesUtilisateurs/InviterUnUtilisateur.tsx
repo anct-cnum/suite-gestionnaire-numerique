@@ -21,7 +21,6 @@ export default function InviterUnUtilisateur({
 
   const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
     const form = new FormData(event.currentTarget)
     const email = form.get('email') as string
     const utilisateurACreer = {
