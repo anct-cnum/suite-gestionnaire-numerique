@@ -2,16 +2,17 @@ import { Model } from './shared/Model'
 
 export class Role extends Model<RoleState> {
   readonly #nom: TypologieRole
-  readonly #territoireOuStructure: string
   readonly #groupe: Groupe
   readonly #categorie: Categorie
+  readonly #organisation: string
 
   constructor(nom: TypologieRole, territoireOuStructure = '') {
     super()
+    const { categorie, groupe, organisation } = classificationParType[nom]
     this.#nom = nom
-    this.#territoireOuStructure = territoireOuStructure
-    this.#groupe = groupe[this.#nom]
-    this.#categorie = categorieByType[this.#nom]
+    this.#groupe = groupe
+    this.#categorie = categorie
+    this.#organisation = organisation ?? territoireOuStructure
   }
 
   state(): RoleState {
@@ -19,7 +20,7 @@ export class Role extends Model<RoleState> {
       categorie: this.#categorie,
       groupe: this.#groupe,
       nom: this.#nom,
-      territoireOuStructure: this.#territoireOuStructure,
+      organisation: this.#organisation,
     }
   }
 
@@ -32,7 +33,7 @@ export type RoleState = Readonly<{
   categorie: Categorie
   groupe: Groupe
   nom: TypologieRole
-  territoireOuStructure: string
+  organisation: string
 }>
 
 export const Roles = [
@@ -48,28 +49,54 @@ export const Roles = [
 
 export type TypologieRole = (typeof Roles)[number]
 
-export type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
+type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 
-export const categorieByType: Readonly<Record<TypologieRole, Categorie>> = {
-  'Administrateur dispositif': 'anct',
-  'Gestionnaire département': 'maille',
-  'Gestionnaire groupement': 'groupement',
-  'Gestionnaire région': 'maille',
-  'Gestionnaire structure': 'structure',
-  Instructeur: 'bdt',
-  'Pilote politique publique': 'anct',
-  'Support animation': 'mednum',
+type Groupe = 'admin' | 'gestionnaire'
+
+type Classification = Readonly<{
+  categorie: Categorie
+  groupe: Groupe
+  organisation?: string
+}>
+
+type ClassificationParType = Readonly<Record<TypologieRole, Classification>>
+
+const classificationParType: ClassificationParType = {
+  'Administrateur dispositif': {
+    categorie: 'anct',
+    groupe: 'admin',
+    // temporaire en attendant de comprendre ce qu'est un dispositif en tant qu'organisation
+    organisation: 'Administrateur dispositif',
+  },
+  'Gestionnaire département': {
+    categorie: 'maille',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire groupement': {
+    categorie: 'groupement',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire région': {
+    categorie: 'maille',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire structure': {
+    categorie: 'structure',
+    groupe: 'gestionnaire',
+  },
+  Instructeur: {
+    categorie: 'bdt',
+    groupe: 'admin',
+    organisation: 'Banque des territoires',
+  },
+  'Pilote politique publique': {
+    categorie: 'anct',
+    groupe: 'admin',
+    organisation: 'France Numérique Ensemble',
+  },
+  'Support animation': {
+    categorie: 'mednum',
+    groupe: 'admin',
+    organisation: 'Mednum',
+  },
 }
-
-const groupe: Readonly<Record<TypologieRole, Groupe>> = {
-  'Administrateur dispositif': 'admin',
-  'Gestionnaire département': 'gestionnaire',
-  'Gestionnaire groupement': 'gestionnaire',
-  'Gestionnaire région': 'gestionnaire',
-  'Gestionnaire structure': 'gestionnaire',
-  Instructeur: 'admin',
-  'Pilote politique publique': 'admin',
-  'Support animation': 'admin',
-}
-
-export type Groupe = 'admin' | 'gestionnaire'
