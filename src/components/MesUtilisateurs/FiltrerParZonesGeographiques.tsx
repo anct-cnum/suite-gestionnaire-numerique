@@ -3,33 +3,11 @@
 import { forwardRef, ReactElement, Ref, useContext } from 'react'
 import Select, { SelectInstance, StylesConfig } from 'react-select'
 
-import departements from '../../../ressources/departements.json'
-import regions from '../../../ressources/regions.json'
 import { clientContext } from '../shared/ClientContext'
+import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/mesUtilisateursPresenter'
 
-export default forwardRef(function FiltrerParZonesGeographiques(
-  { toutesLesRegions }: FiltrerParZonesGeographiquesProps,
-  ref: Ref<SelectInstance>
-): ReactElement {
+function FiltrerParZonesGeographiques(_: unknown, ref: Ref<SelectInstance>): ReactElement {
   const { searchParams } = useContext(clientContext)
-  const zonesGeographiques = [toutesLesRegions]
-
-  regions.forEach((region) => {
-    zonesGeographiques.push({ label: `(${region.code}) ${region.nom}`, type: 'region', value: `${region.code}_00` })
-
-    departements
-      .filter((departement) => departement.regionCode === region.code)
-      .forEach((departement) => {
-        zonesGeographiques.push({ label: `(${departement.code}) ${departement.nom}`, type: 'departement', value: `${region.code}_${departement.code}` })
-      })
-  })
-
-  const zoneGeographiqueParDefaut =
-    zonesGeographiques.find(
-      (zoneGeographique) =>
-        zoneGeographique.value.slice(0, 2) === searchParams.get('codeRegion')
-        || zoneGeographique.value.slice(zoneGeographique.value.indexOf('_') + 1) === searchParams.get('codeDepartement')
-    ) ?? toutesLesRegions
 
   return (
     <div className="fr-select-group">
@@ -41,12 +19,12 @@ export default forwardRef(function FiltrerParZonesGeographiques(
       </label>
       <Select
         components={{ DropdownIndicator }}
-        defaultValue={zoneGeographiqueParDefaut}
+        defaultValue={zoneGeographiqueParDefaut(searchParams.get('codeRegion'), searchParams.get('codeDepartement'))}
         inputId="zoneGeographique"
         instanceId="zoneGeographique"
         isClearable={true}
         name="zoneGeographique"
-        options={zonesGeographiques}
+        options={regionsEtDepartements()}
         placeholder=""
         ref={ref}
         // @ts-expect-error
@@ -54,7 +32,8 @@ export default forwardRef(function FiltrerParZonesGeographiques(
       />
     </div>
   )
-})
+}
+export default forwardRef(FiltrerParZonesGeographiques)
 
 // istanbul ignore next @preserve
 const styles: StylesConfig<ZoneGeographique> = {
@@ -94,13 +73,3 @@ function DropdownIndicator(): ReactElement {
     </svg>
   )
 }
-
-type FiltrerParZonesGeographiquesProps = Readonly<{
-  toutesLesRegions: ZoneGeographique
-}>
-
-export type ZoneGeographique = Readonly<{
-  label: string
-  type: 'region' | 'departement'
-  value: string
-}>

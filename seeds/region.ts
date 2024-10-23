@@ -14,7 +14,7 @@ async function migration() {
 
   const regionsRecord = [
     ...regions,
-    ajouterUneRegionDeTest(),
+    uneRegionDeTest,
   ]
 
   await migrateRegions(regionsRecord)
@@ -24,15 +24,13 @@ async function migration() {
 
 void migration()
 
+const uneRegionDeTest: Prisma.RegionRecordUncheckedCreateInput = {
+  code: 'zz',
+  nom: 'SGN région',
+}
+
 async function migrateRegions(regionsRecord: Array<Prisma.RegionRecordUncheckedCreateInput>) {
   await prisma.regionRecord.createMany({
     data: regionsRecord,
   })
-}
-
-function ajouterUneRegionDeTest(): Prisma.RegionRecordUncheckedCreateInput {
-  return {
-    code: 'zz',
-    nom: 'SGN région',
-  }
 }

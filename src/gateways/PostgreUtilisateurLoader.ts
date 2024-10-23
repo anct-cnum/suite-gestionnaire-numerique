@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 
 import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import departements from '../../ressources/departements.json'
@@ -37,37 +37,33 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       where = { regionCode: utilisateur.regionCode, role: 'gestionnaire_region' }
     } else {
       if (utilisateursActives) {
-        where = { ...where, NOT: { derniereConnexion: null } }
+        where.NOT = { derniereConnexion: null }
       }
 
       if (roles.length > 0) {
-        // @ts-expect-error
-        where = { ...where, role: { in: roles } }
+        where.role = { in: roles as Array<$Enums.Role> }
       }
 
       if (codeDepartement !== departementInexistant) {
-        where = { ...where, departementCode: codeDepartement }
+        where.departementCode = codeDepartement
       } else if (codeRegion !== regionInexistante) {
-        where = {
-          ...where,
-          OR: [
-            {
-              departementCode: {
-                in: departements
-                  .filter((departement) => departement.regionCode === codeRegion)
-                  .map((departement) => departement.code),
-              },
+        where.OR = [
+          {
+            departementCode: {
+              in: departements
+                .filter((departement) => departement.regionCode === codeRegion)
+                .map((departement) => departement.code),
             },
-            { regionCode: codeRegion },
-          ],
-        }
+          },
+          { regionCode: codeRegion },
+        ]
       }
     }
 
     const total = await this.#prisma.utilisateurRecord.count({
       where: {
-        isSupprime: false,
         ...where,
+        isSupprime: false,
       },
     })
 
@@ -84,8 +80,8 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       skip: utilisateursParPage * pageCourante,
       take: utilisateursParPage,
       where: {
-        isSupprime: false,
         ...where,
+        isSupprime: false,
       },
     })
 

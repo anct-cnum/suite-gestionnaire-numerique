@@ -1,10 +1,9 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import * as navigation from 'next/navigation'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { clientContext } from '@/components/shared/ClientContext'
 import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
@@ -486,14 +485,8 @@ describe('mes utilisateurs', () => {
     it('sur un département alors je n’affiche qu’eux', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      const { container } = render(
-        <clientContext.Provider value={clientContextProviderDefaultValue}>
-          <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
-        </clientContext.Provider>
-      )
-      const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-      fireEvent.click(filtrer)
+      const container = afficherLesFiltres()
+
       // @ts-expect-error
       // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
       container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '00_978'
@@ -509,14 +502,7 @@ describe('mes utilisateurs', () => {
     it('sur une région alors je n’affiche qu’eux', () => {
       // GIVEN
       vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      const { container } = render(
-        <clientContext.Provider value={clientContextProviderDefaultValue}>
-          <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />
-        </clientContext.Provider>
-      )
-      const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-      fireEvent.click(filtrer)
+      const container = afficherLesFiltres()
       // @ts-expect-error
       // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
       container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '93_00'
@@ -531,10 +517,12 @@ describe('mes utilisateurs', () => {
 
     function afficherLesFiltres() {
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
       const filtrer = screen.getByRole('button', { name: 'Filtrer' })
       fireEvent.click(filtrer)
+
+      return container
     }
   })
 

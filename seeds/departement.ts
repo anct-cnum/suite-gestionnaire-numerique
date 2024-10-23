@@ -14,7 +14,7 @@ async function migration() {
 
   const departementsRecord = [
     ...departements,
-    ajouterUnDepartementDeTest(),
+    unDepartementDeTest,
   ]
 
   await migrateDepartements(departementsRecord)
@@ -24,16 +24,14 @@ async function migration() {
 
 void migration()
 
+const unDepartementDeTest: Prisma.DepartementRecordUncheckedCreateInput = {
+  code: 'zzz',
+  nom: 'SGN département',
+  regionCode: 'zz',
+}
+
 async function migrateDepartements(departementsRecord: Array<Prisma.DepartementRecordUncheckedCreateInput>) {
   await prisma.departementRecord.createMany({
     data: departementsRecord,
   })
-}
-
-function ajouterUnDepartementDeTest(): Prisma.DepartementRecordUncheckedCreateInput {
-  return {
-    code: 'zzz',
-    nom: 'SGN département',
-    regionCode: 'zz',
-  }
 }

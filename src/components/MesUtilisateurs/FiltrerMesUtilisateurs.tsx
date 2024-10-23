@@ -5,9 +5,10 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, u
 import Select from 'react-select/dist/declarations/src/Select'
 
 import FiltrerParRoles from './FiltrerParRoles'
-import ZonesGeographiques, { ZoneGeographique } from './FiltrerParZonesGeographiques'
+import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import { clientContext } from '../shared/ClientContext'
 import Interrupteur from '../shared/Interrupteur/Interrupteur'
+import { isRegion, laRegionOuLeDepartementSelectionne, toutesLesRegions, valeurParDefautDeToutesLesRegions } from '@/presenters/mesUtilisateursPresenter'
 
 export default function FiltrerMesUtilisateurs({
   id,
@@ -19,7 +20,6 @@ export default function FiltrerMesUtilisateurs({
   const utilisateursActivesToggleId = useId()
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
   const totalDesRoles = roles.length
-  const toutesLesRegions: ZoneGeographique = { label: 'Toutes les régions', type: 'region', value: 'all' }
 
   return (
     <>
@@ -44,10 +44,7 @@ export default function FiltrerMesUtilisateurs({
           Uniquement les utilisateurs activés
         </Interrupteur>
         <hr />
-        <ZonesGeographiques
-          ref={ref}
-          toutesLesRegions={toutesLesRegions}
-        />
+        <ZonesGeographiques ref={ref} />
         <hr />
         <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
@@ -85,7 +82,7 @@ export default function FiltrerMesUtilisateurs({
     const isUtilisateursActivesChecked = utilisateursActives === 'on'
     const zoneGeographique = String(form.get('zoneGeographique'))
     // Stryker disable next-line ConditionalExpression
-    const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== 'all'
+    const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== valeurParDefautDeToutesLesRegions
     const roles = form.getAll('roles')
     const shouldFilterByRoles = roles.length < totalDesRoles
 
@@ -96,15 +93,11 @@ export default function FiltrerMesUtilisateurs({
     }
 
     if (isZoneGeographiqueSelected) {
-      const isRegion = zoneGeographique.endsWith('00')
+      const [codeRegion, codeDepartement] = laRegionOuLeDepartementSelectionne(zoneGeographique)
 
-      if (isRegion) {
-        const codeRegion = zoneGeographique.slice(0, 2)
-
+      if (isRegion(zoneGeographique)) {
         url.searchParams.append('codeRegion', codeRegion)
       } else {
-        const codeDepartement = zoneGeographique.slice(zoneGeographique.indexOf('_') + 1)
-
         url.searchParams.append('codeDepartement', codeDepartement)
       }
     }
