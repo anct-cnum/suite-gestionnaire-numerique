@@ -6,12 +6,22 @@ export class Role extends Model<RoleState> {
   readonly #groupe: Groupe
   readonly #categorie: Categorie
 
-  constructor(nom: TypologieRole, territoireOuStructure = '') {
+  private constructor(nom: TypologieRole, territoireOuStructure = '') {
     super()
+    const { categorie, groupe, organisation } = classificationParType[nom]
     this.#nom = nom
-    this.#territoireOuStructure = territoireOuStructure
-    this.#groupe = groupe[this.#nom]
-    this.#categorie = categorieByType[this.#nom]
+    this.#territoireOuStructure = organisation ?? territoireOuStructure
+    this.#groupe = groupe
+    this.#categorie = categorie
+  }
+
+  static create(nom: TypologieRole, territoireOuStructure = ''): Role {
+    return new Role(nom, territoireOuStructure)
+  }
+
+  static fromOrganisations(nom: TypologieRole, organisations: Organisations): Role {
+    const territoireOuStructure = typologieTerritoireOuStructureParRole[nom]
+    return new Role(nom, territoireOuStructure ? organisations[territoireOuStructure] : '')
   }
 
   state(): RoleState {
@@ -48,28 +58,67 @@ export const Roles = [
 
 export type TypologieRole = (typeof Roles)[number]
 
-export type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
+export type Organisations = Readonly<Partial<Record<TypologieTerriroireOuStructure, string>>>
 
-export const categorieByType: Readonly<Record<TypologieRole, Categorie>> = {
-  'Administrateur dispositif': 'anct',
-  'Gestionnaire département': 'maille',
+type TypologieTerriroireOuStructure = 'departement' | 'region' | 'structure' | 'groupement'
+
+const typologieTerritoireOuStructureParRole: Readonly<
+  Partial<Record<TypologieRole, TypologieTerriroireOuStructure>>
+> = {
+  'Gestionnaire département': 'departement',
   'Gestionnaire groupement': 'groupement',
-  'Gestionnaire région': 'maille',
+  'Gestionnaire région': 'region',
   'Gestionnaire structure': 'structure',
-  Instructeur: 'bdt',
-  'Pilote politique publique': 'anct',
-  'Support animation': 'mednum',
 }
 
-const groupe: Readonly<Record<TypologieRole, Groupe>> = {
-  'Administrateur dispositif': 'admin',
-  'Gestionnaire département': 'gestionnaire',
-  'Gestionnaire groupement': 'gestionnaire',
-  'Gestionnaire région': 'gestionnaire',
-  'Gestionnaire structure': 'gestionnaire',
-  Instructeur: 'admin',
-  'Pilote politique publique': 'admin',
-  'Support animation': 'admin',
-}
+type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 
-export type Groupe = 'admin' | 'gestionnaire'
+type Groupe = 'admin' | 'gestionnaire'
+
+type Classification = Readonly<{
+  categorie: Categorie
+  groupe: Groupe
+  organisation?: string
+}>
+
+type ClassificationParType = Readonly<Record<TypologieRole, Classification>>
+
+const classificationParType: ClassificationParType = {
+  'Administrateur dispositif': {
+    categorie: 'anct',
+    groupe: 'admin',
+    // temporaire en attendant de comprendre ce qu'est un dispositif en tant qu'organisation
+    organisation: 'Administrateur dispositif',
+  },
+  'Gestionnaire département': {
+    categorie: 'maille',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire groupement': {
+    categorie: 'groupement',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire région': {
+    categorie: 'maille',
+    groupe: 'gestionnaire',
+  },
+  'Gestionnaire structure': {
+    categorie: 'structure',
+    groupe: 'gestionnaire',
+  },
+  Instructeur: {
+    categorie: 'bdt',
+    groupe: 'admin',
+    organisation: 'Banque des territoires',
+  },
+  'Pilote politique publique': {
+    categorie: 'anct',
+    groupe: 'admin',
+    organisation: 'France Numérique Ensemble',
+  },
+  'Support animation': {
+    categorie: 'mednum',
+    groupe: 'admin',
+    organisation: 'Mednum',
+  },
+}

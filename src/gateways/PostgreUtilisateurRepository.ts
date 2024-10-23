@@ -1,7 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { fromTypologieRole } from './roleMapper'
-import { roleMapper } from './shared/RoleMapper'
+import { fromTypologieRole, toTypologieRole } from './shared/RoleMapper'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 import {
@@ -67,14 +66,20 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
     if (!record) {
       return null
     }
-    return Utilisateur.create({
+    return Utilisateur.fromOrganisations({
       email: record.email,
       isSuperAdmin: record.isSuperAdmin,
       nom: record.nom,
-      organisation: roleMapper(record)[record.role].territoireOuStructure,
       prenom: record.prenom,
-      role: roleMapper(record)[record.role].nom,
+      role: toTypologieRole(record.role),
       uid: record.ssoId,
+    },
+    {
+      departement: record.relationDepartements?.nom,
+      groupement: record.relationGroupements?.nom,
+      region: record.relationRegions?.nom,
+      structure: record.relationStructures?.nom,
+
     })
   }
 
