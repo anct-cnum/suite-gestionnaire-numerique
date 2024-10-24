@@ -1,4 +1,4 @@
-import { Role, TypologieRole, type RoleState } from './Role'
+import { Organisations, Role, TypologieRole, type RoleState } from './Role'
 import { Entity } from './shared/Model'
 import { Result } from '@/shared/lang'
 
@@ -31,7 +31,19 @@ export class Utilisateur extends Entity<UtilisateurState> {
   static create(utilisateur: UtilisateurParams): Utilisateur {
     return new Utilisateur(
       utilisateur.uid,
-      new Role(utilisateur.role, utilisateur.organisation),
+      Role.create(utilisateur.role, utilisateur.organisation),
+      utilisateur.nom,
+      utilisateur.prenom,
+      utilisateur.email,
+      utilisateur.isSuperAdmin,
+      utilisateur.telephone
+    )
+  }
+
+  static fromOrganisations(utilisateur: UtilisateurParams, organisations: Organisations): Utilisateur {
+    return new Utilisateur(
+      utilisateur.uid,
+      Role.fromOrganisations(utilisateur.role, organisations),
       utilisateur.nom,
       utilisateur.prenom,
       utilisateur.email,
@@ -70,7 +82,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
 
   changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
     if (this.#isSuperAdmin) {
-      this.#role = new Role(nouveauRole)
+      this.#role = Role.create(nouveauRole)
       return 'OK'
     }
     return 'utilisateurNonAutoriseAChangerSonRole'

@@ -1,6 +1,6 @@
 import { PrismaClient, UtilisateurRecord } from '@prisma/client'
 
-import { toTypologieRole } from './roleMapper'
+import { toTypologieRole } from './shared/RoleMapper'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 

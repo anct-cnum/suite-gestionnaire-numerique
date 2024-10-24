@@ -22,7 +22,7 @@ export function mesUtilisateursPresenter(
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
         statut,
-        structure: monUtilisateur.role.territoireOuStructure,
+        structure: monUtilisateur.role.organisation,
         telephone: monUtilisateur.telephone || 'Non renseigné',
         uid: monUtilisateur.uid,
       }
