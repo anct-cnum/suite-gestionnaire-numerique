@@ -132,7 +132,7 @@ export default function MesUtilisateurs(
             <tr
               data-row-key={index}
               id={`table-sm-row-key-${index}`}
-              key={unUtilisateurViewModel.email}
+              key={unUtilisateurViewModel.uid}
             >
               <td className="fr-cell--center">
                 <Image
@@ -198,7 +198,6 @@ export default function MesUtilisateurs(
           (
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination
-                pageCourante={mesUtilisateursViewModel.pageCourante}
                 pathname="/mes-utilisateurs"
                 totalUtilisateurs={mesUtilisateursViewModel.totalUtilisateur}
               />
