@@ -1,6 +1,7 @@
 import { UnUtilisateurLoader } from './RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import { QueryHandler } from '../QueryHandler'
+import config from '@/use-cases/config.json'
 
 export class RechercherMesUtilisateurs implements QueryHandler<
   MesUtilisateursQuery, UtilisateursCourantsEtTotalReadModel
@@ -13,10 +14,12 @@ export class RechercherMesUtilisateurs implements QueryHandler<
 
   async get({
     uid,
-    roles,
-    pageCourante,
-    utilisateursActives,
-    utilisateursParPage,
+    roles = [],
+    pageCourante = 0,
+    utilisateursActives = false,
+    utilisateursParPage = config.utilisateursParPage,
+    codeDepartement = '0',
+    codeRegion = '0',
   }: MesUtilisateursQuery): Promise<UtilisateursCourantsEtTotalReadModel> {
     const utilisateur = await this.#loader.findByUid(uid)
 
@@ -25,22 +28,26 @@ export class RechercherMesUtilisateurs implements QueryHandler<
       pageCourante,
       utilisateursParPage,
       utilisateursActives,
-      roles
+      roles,
+      codeDepartement,
+      codeRegion
     )
   }
 }
 
 type MesUtilisateursQuery = Readonly<{
-  pageCourante: number
-  roles: ReadonlyArray<string>
+  codeDepartement?: string
+  codeRegion?: string
+  pageCourante?: number
+  roles?: ReadonlyArray<string>
   uid: string
-  utilisateursActives: boolean
-  utilisateursParPage: number
+  utilisateursActives?: boolean
+  utilisateursParPage?: number
 }>
 
 export type UtilisateursCourantsEtTotalReadModel = Readonly<{
-  utilisateursCourants: ReadonlyArray<UnUtilisateurReadModel>
   total: number
+  utilisateursCourants: ReadonlyArray<UnUtilisateurReadModel>
 }>
 
 export interface MesUtilisateursLoader extends UnUtilisateurLoader {
@@ -49,6 +56,8 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     pageCourante: number,
     utilisateursParPage: number,
     utilisateursActives: boolean,
-    roles: ReadonlyArray<string>
+    roles: ReadonlyArray<string>,
+    codeDepartement: string,
+    codeRegion: string
   ) => Promise<UtilisateursCourantsEtTotalReadModel>
 }

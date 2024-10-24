@@ -2,8 +2,8 @@
 
 import { Prisma } from '@prisma/client'
 
-import groupements from './data/groupements.json'
 import prisma from '../prisma/prismaClient'
+import groupements from '../ressources/groupements.json'
 
 async function migration() {
   const greenColor = '\x1b[32m%s\x1b[0m'
@@ -12,7 +12,7 @@ async function migration() {
 
   const groupementsRecord = [
     ...groupements,
-    ajouterUnGroupementDeTest(),
+    unGroupementDeTest,
   ]
   console.log(greenColor, `${groupementsRecord.length} groupements CoNum sont récupérés`)
 
@@ -23,11 +23,9 @@ async function migration() {
 
 void migration()
 
-function ajouterUnGroupementDeTest(): Prisma.GroupementRecordUncheckedCreateInput {
-  return {
-    id: 10_000_000,
-    nom: 'SGN Corporation',
-  }
+const unGroupementDeTest: Prisma.GroupementRecordUncheckedCreateInput = {
+  id: 10_000_000,
+  nom: 'SGN Corporation',
 }
 
 async function migrateGroupements(groupementsRecord: Array<Prisma.GroupementRecordUncheckedCreateInput>) {

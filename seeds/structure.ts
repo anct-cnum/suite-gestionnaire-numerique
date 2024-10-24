@@ -15,7 +15,7 @@ async function migration() {
 
   const structuresRecord = [
     ...transformStructuresCoNumToStructures(structuresCoNumRecord),
-    ajouterUneStructureDeTest(),
+    uneStructureDeTest,
   ]
   console.log(greenColor, `${structuresRecord.length} structures CoNum et FNE sont transformés en structures`)
 
@@ -60,12 +60,10 @@ function transformStructuresCoNumToStructures(
   })
 }
 
-function ajouterUneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
-  return {
-    id: 10_000_000,
-    idMongo: 'zzz',
-    nom: 'SGN structure',
-  }
+const uneStructureDeTest: Prisma.StructureRecordUncheckedCreateInput = {
+  id: 10_000_000,
+  idMongo: 'zzz',
+  nom: 'SGN structure',
 }
 
 async function migrateStructures(structuresRecord: Array<Prisma.StructureRecordUncheckedCreateInput>) {

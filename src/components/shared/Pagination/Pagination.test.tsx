@@ -8,7 +8,6 @@ describe('pagination', () => {
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={0}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={9}
       />
@@ -32,7 +31,6 @@ describe('pagination', () => {
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={0}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />
@@ -61,13 +59,16 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la deuxième page de six pages (< 1 ② 3 4 5 >)', () => {
+    // GIVEN
+    const searchParams = new URLSearchParams({ page: '1' })
+
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={1}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
-      />
+      />,
+      { ...clientContextProviderDefaultValue, searchParams }
     )
 
     // THEN
@@ -92,13 +93,16 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la quatrième page de huit pages (< 2 3 ④ 5 6 >)', () => {
+    // GIVEN
+    const searchParams = new URLSearchParams({ page: '3' })
+
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={3}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={75}
-      />
+      />,
+      { ...clientContextProviderDefaultValue, searchParams }
     )
 
     // THEN
@@ -123,13 +127,16 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la cinquième page de six pages (< 2 3 4 ⑤ 6 >)', () => {
+    // GIVEN
+    const searchParams = new URLSearchParams({ page: '4' })
+
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={4}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
-      />
+      />,
+      { ...clientContextProviderDefaultValue, searchParams }
     )
 
     // THEN
@@ -154,13 +161,16 @@ describe('pagination', () => {
   })
 
   it('quand je suis sur la 320 page de 323 pages (< 318 319 ③②⓪ 321 322 >)', () => {
+    // GIVEN
+    const searchParams = new URLSearchParams({ page: '319' })
+
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={319}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={3225}
-      />
+      />,
+      { ...clientContextProviderDefaultValue, searchParams }
     )
 
     // THEN
@@ -186,12 +196,11 @@ describe('pagination', () => {
 
   it('quand je suis sur une page quelconque et avec un autre paramètre dans l’url', () => {
     // GIVEN
-    const searchParams = new URLSearchParams({ fakeParam: 'fakeValue' })
+    const searchParams = new URLSearchParams({ fakeParam: 'fakeValue', page: '3' })
 
     // WHEN
     renderComponent(
       <Pagination
-        pageCourante={3}
         pathname="/mes-utilisateurs"
         totalUtilisateurs={45}
       />,

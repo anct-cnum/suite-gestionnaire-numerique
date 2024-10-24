@@ -1,6 +1,7 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 
 import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import departements from '../../ressources/departements.json'
 import { categorieByType } from '@/domain/Role'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
@@ -18,8 +19,12 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
     pageCourante: number,
     utilisateursParPage: number,
     utilisateursActives: boolean,
-    roles: ReadonlyArray<string>
+    roles: ReadonlyArray<string>,
+    codeDepartement: string,
+    codeRegion: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
+    const departementInexistant = '0'
+    const regionInexistante = '0'
     let where: Prisma.UtilisateurRecordWhereInput = {}
 
     if (utilisateur.role.nom === 'Gestionnaire structure') {
@@ -32,19 +37,33 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       where = { regionCode: utilisateur.regionCode, role: 'gestionnaire_region' }
     } else {
       if (utilisateursActives) {
-        where = { ...where, NOT: { derniereConnexion: null } }
+        where.NOT = { derniereConnexion: null }
       }
 
       if (roles.length > 0) {
-        // @ts-expect-error
-        where = { ...where, role: { in: roles } }
+        where.role = { in: roles as Array<$Enums.Role> }
+      }
+
+      if (codeDepartement !== departementInexistant) {
+        where.departementCode = codeDepartement
+      } else if (codeRegion !== regionInexistante) {
+        where.OR = [
+          {
+            departementCode: {
+              in: departements
+                .filter((departement) => departement.regionCode === codeRegion)
+                .map((departement) => departement.code),
+            },
+          },
+          { regionCode: codeRegion },
+        ]
       }
     }
 
     const total = await this.#prisma.utilisateurRecord.count({
       where: {
-        isSupprime: false,
         ...where,
+        isSupprime: false,
       },
     })
 
@@ -61,8 +80,8 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
       skip: utilisateursParPage * pageCourante,
       take: utilisateursParPage,
       where: {
-        isSupprime: false,
         ...where,
+        isSupprime: false,
       },
     })
 
