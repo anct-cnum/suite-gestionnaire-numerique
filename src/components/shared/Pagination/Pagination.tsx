@@ -2,10 +2,10 @@
 
 import { ReactElement, useContext } from 'react'
 
-import { fullUrl } from './calculPagination'
 import DernierePage from './DernierePage'
 import Page from './Page'
 import PremierePage from './PremierePage'
+import { fullUrl } from '../../../presenters/paginationPresenter'
 import { clientContext } from '../ClientContext'
 
 export default function Pagination({ pathname, totalUtilisateurs }: PaginationProps): ReactElement {

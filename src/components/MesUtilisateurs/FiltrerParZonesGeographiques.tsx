@@ -4,7 +4,7 @@ import { forwardRef, ReactElement, Ref, useContext } from 'react'
 import Select, { SelectInstance, StylesConfig } from 'react-select'
 
 import { clientContext } from '../shared/ClientContext'
-import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/mesUtilisateursPresenter'
+import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/zonesGeographiquesPresenter'
 
 function FiltrerParZonesGeographiques(_: unknown, ref: Ref<SelectInstance>): ReactElement {
   const { searchParams } = useContext(clientContext)

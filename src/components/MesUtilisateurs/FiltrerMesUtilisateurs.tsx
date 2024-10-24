@@ -8,7 +8,7 @@ import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import { clientContext } from '../shared/ClientContext'
 import Interrupteur from '../shared/Interrupteur/Interrupteur'
-import { isRegion, laRegionOuLeDepartementSelectionne, toutesLesRegions, valeurParDefautDeToutesLesRegions } from '@/presenters/mesUtilisateursPresenter'
+import { toutesLesRegions, urlDeFiltrage } from '@/presenters/zonesGeographiquesPresenter'
 
 export default function FiltrerMesUtilisateurs({
   id,
@@ -19,7 +19,6 @@ export default function FiltrerMesUtilisateurs({
   const ref = useRef<Select>(null)
   const utilisateursActivesToggleId = useId()
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
-  const totalDesRoles = roles.length
 
   return (
     <>
@@ -50,11 +49,7 @@ export default function FiltrerMesUtilisateurs({
         <div className="fr-btns-group fr-btns-group--space-between">
           <button
             className="fr-btn fr-btn--secondary fr-col-5"
-            onClick={() => {
-              // Stryker disable next-line OptionalChaining
-              ref.current?.setValue(toutesLesRegions, 'select-option')
-              router.push('/mes-utilisateurs')
-            }}
+            onClick={reinitialiser}
             type="reset"
           >
             Réinitialiser les filtres
@@ -71,6 +66,12 @@ export default function FiltrerMesUtilisateurs({
     </>
   )
 
+  function reinitialiser() {
+    // Stryker disable next-line OptionalChaining
+    ref.current?.setValue(toutesLesRegions, 'select-option')
+    router.push('/mes-utilisateurs')
+  }
+
   function filtrer(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
@@ -78,35 +79,8 @@ export default function FiltrerMesUtilisateurs({
     setIsOpen(false)
 
     const form = new FormData(event.currentTarget)
-    const utilisateursActives = form.get('utilisateursActives')
-    const isUtilisateursActivesChecked = utilisateursActives === 'on'
-    const zoneGeographique = String(form.get('zoneGeographique'))
-    // Stryker disable next-line ConditionalExpression
-    const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== valeurParDefautDeToutesLesRegions
-    const roles = form.getAll('roles')
-    const shouldFilterByRoles = roles.length < totalDesRoles
 
-    const url = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
-
-    if (isUtilisateursActivesChecked) {
-      url.searchParams.append('utilisateursActives', utilisateursActives)
-    }
-
-    if (isZoneGeographiqueSelected) {
-      const [codeRegion, codeDepartement] = laRegionOuLeDepartementSelectionne(zoneGeographique)
-
-      if (isRegion(zoneGeographique)) {
-        url.searchParams.append('codeRegion', codeRegion)
-      } else {
-        url.searchParams.append('codeDepartement', codeDepartement)
-      }
-    }
-
-    if (shouldFilterByRoles) {
-      url.searchParams.append('roles', roles.join(','))
-    }
-
-    router.push(url.toString())
+    router.push(urlDeFiltrage(form, roles.length))
   }
 }
 
