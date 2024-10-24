@@ -10,7 +10,7 @@ export function createSessionUtilisateurPresenter(
     prenom: utilisateurReadModel.prenom,
     role: {
       groupe: utilisateurReadModel.role.groupe,
-      libelle: utilisateurReadModel.role.territoireOuStructure,
+      libelle: utilisateurReadModel.role.organisation,
       nom: utilisateurReadModel.role.nom,
       pictogramme: utilisateurReadModel.role.categorie,
     },

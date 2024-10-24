@@ -48,7 +48,7 @@ const dummyUtilisateur: UnUtilisateurReadModel = {
     categorie: 'anct',
     groupe: 'admin',
     nom: 'Administrateur dispositif',
-    territoireOuStructure: '',
+    organisation: '',
   },
   structureId: null,
   telephone: '',

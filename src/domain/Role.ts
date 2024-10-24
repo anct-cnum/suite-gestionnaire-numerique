@@ -2,21 +2,21 @@ import { Model } from './shared/Model'
 
 export class Role extends Model<RoleState> {
   readonly #nom: TypologieRole
-  readonly #territoireOuStructure: string
+  readonly #organisation: string
   readonly #groupe: Groupe
   readonly #categorie: Categorie
 
-  private constructor(nom: TypologieRole, territoireOuStructure = '') {
+  private constructor(nom: TypologieRole, organisation = '') {
     super()
-    const { categorie, groupe, organisation } = classificationParType[nom]
+    const classification = classificationParType[nom]
     this.#nom = nom
-    this.#territoireOuStructure = organisation ?? territoireOuStructure
-    this.#groupe = groupe
-    this.#categorie = categorie
+    this.#organisation = classification.organisation ?? organisation
+    this.#groupe = classification.groupe
+    this.#categorie = classification.categorie
   }
 
-  static create(nom: TypologieRole, territoireOuStructure = ''): Role {
-    return new Role(nom, territoireOuStructure)
+  static create(nom: TypologieRole, organisation = ''): Role {
+    return new Role(nom, organisation)
   }
 
   static fromOrganisations(nom: TypologieRole, organisations: Organisations): Role {
@@ -29,7 +29,7 @@ export class Role extends Model<RoleState> {
       categorie: this.#categorie,
       groupe: this.#groupe,
       nom: this.#nom,
-      territoireOuStructure: this.#territoireOuStructure,
+      organisation: this.#organisation,
     }
   }
 
@@ -42,7 +42,7 @@ export type RoleState = Readonly<{
   categorie: Categorie
   groupe: Groupe
   nom: TypologieRole
-  territoireOuStructure: string
+  organisation: string
 }>
 
 export const Roles = [

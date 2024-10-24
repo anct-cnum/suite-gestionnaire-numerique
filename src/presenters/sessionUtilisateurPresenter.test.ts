@@ -18,7 +18,7 @@ describe('session utilisateur presenter', () => {
         categorie: 'mednum',
         groupe: 'admin',
         nom: 'Support animation',
-        territoireOuStructure: 'Mednum',
+        organisation: 'Mednum',
       },
       structureId: null,
       telephone: '0102030405',
