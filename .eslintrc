@@ -91,25 +91,25 @@
         "zones": [
           {
             "target": ["src/domain"],
-            "from": ["src"],
+            "from": ["src", "node_modules"],
             "except": ["domain", "shared"],
             "message": "Le domain représente le métier, il ne dépend d'aucun élément extérieur."
           },
           {
             "target": ["src/use-cases"],
-            "from": ["src"],
+            "from": ["src", "node_modules"],
             "except": ["domain", "use-cases", "shared"],
             "message": "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs."
           },
           {
             "target": ["src/gateways"],
-            "from": ["src"],
-            "except": ["domain", "use-cases", "gateways", "shared"],
+            "from": ["src", "node_modules"],
+            "except": ["domain", "use-cases", "gateways", "shared", "@prisma/client", "next-auth"],
             "message": "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases."
           },
           {
             "target": ["src/presenters"],
-            "from": ["src"],
+            "from": ["src", "node_modules"],
             "except": ["use-cases", "presenters", "shared"],
             "message": "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways."
           },

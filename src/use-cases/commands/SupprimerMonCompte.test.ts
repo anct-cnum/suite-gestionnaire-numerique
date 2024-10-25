@@ -1,4 +1,3 @@
-
 import { SuppressionUtilisateurGateway, SupprimerMonCompte } from './SupprimerMonCompte'
 
 describe('supprimer mon compte utilisateur', () => {
