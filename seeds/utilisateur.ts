@@ -20,7 +20,7 @@ async function migration() {
   const utilisateursRecord = [
     ...await transformUtilisateursCoNumToUtilisateurs(utilisateursCoNumRecord),
     ...transformUtilisateursFNEToUtilisateurs(utilisateursFNERecord),
-    unUtilisateurDeTest,
+    unUtilisateurDeTest(),
   ]
   console.log(greenColor, `${utilisateursRecord.length} utilisateurs CoNum et FNE sont transformés en utilisateurs`)
 
@@ -238,23 +238,26 @@ function transformUtilisateursFNEToUtilisateurs(
   })
 }
 
-const now = new Date()
-const unUtilisateurDeTest: Prisma.UtilisateurRecordUncheckedCreateInput = {
-  dateDeCreation: now,
-  departementCode: '11',
-  derniereConnexion: now,
-  email: 'compte.de.test@example.com',
-  groupementId: 18,
-  inviteLe: now,
-  isSuperAdmin: true,
-  isSupprime: false,
-  nom: 'Test',
-  prenom: 'CompteDe',
-  regionCode: '52',
-  role: 'administrateur_dispositif',
-  ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
-  structureId: 292,
-  telephone: '0102030405',
+function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
+  const now = new Date()
+
+  return {
+    dateDeCreation: now,
+    departementCode: '11',
+    derniereConnexion: now,
+    email: 'compte.de.test@example.com',
+    groupementId: 18,
+    inviteLe: now,
+    isSuperAdmin: true,
+    isSupprime: false,
+    nom: 'Test',
+    prenom: 'CompteDe',
+    regionCode: '52',
+    role: 'administrateur_dispositif',
+    ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    structureId: 292,
+    telephone: '0102030405',
+  }
 }
 
 async function migrateUtilisateurs(utilisateursRecord: Array<Prisma.UtilisateurRecordUncheckedCreateInput>) {

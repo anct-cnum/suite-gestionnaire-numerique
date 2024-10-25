@@ -12,7 +12,7 @@ async function migration() {
 
   const groupementsRecord = [
     ...groupements,
-    unGroupementDeTest,
+    unGroupementDeTest(),
   ]
   console.log(greenColor, `${groupementsRecord.length} groupements CoNum sont récupérés`)
 
@@ -23,9 +23,11 @@ async function migration() {
 
 void migration()
 
-const unGroupementDeTest: Prisma.GroupementRecordUncheckedCreateInput = {
-  id: 10_000_000,
-  nom: 'SGN Corporation',
+function unGroupementDeTest(): Prisma.GroupementRecordUncheckedCreateInput {
+  return {
+    id: 10_000_000,
+    nom: 'SGN Corporation',
+  }
 }
 
 async function migrateGroupements(groupementsRecord: Array<Prisma.GroupementRecordUncheckedCreateInput>) {
