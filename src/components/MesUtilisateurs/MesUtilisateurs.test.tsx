@@ -493,10 +493,31 @@ describe('mes utilisateurs', () => {
   })
 
   describe('quand j’invite un utilisateur', () => {
-    it('quand je clique sur le bouton inviter, alors le drawer s’ouvre', async () => {
+    it('en tant qu’administrateur, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous les rôles sélectionnables', async () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        ...clientContextProviderDefaultValue,
+        sessionUtilisateurViewModel: {
+          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+          role: {
+            groupe: 'admin',
+            libelle: 'Rhône',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'maille',
+            rolesGerables: [
+              'Administrateur dispositif',
+              'Gestionnaire département',
+              'Gestionnaire groupement',
+              'Gestionnaire région',
+              'Gestionnaire structure',
+              'Instructeur',
+              'Pilote politique publique',
+              'Support animation',
+            ] as Array<never>,
+          },
+        },
+      })
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
 
       // WHEN
@@ -535,6 +556,11 @@ describe('mes utilisateurs', () => {
       )
       expect(roleQuestion).toBeInTheDocument()
 
+      const administrateurDispositif = within(formulaireInvitation).getByLabelText('Administrateur dispositif')
+      expect(administrateurDispositif).toBeRequired()
+      expect(administrateurDispositif).toHaveAttribute('name', 'attributionRole')
+      expect(administrateurDispositif).toHaveAttribute('id', 'Administrateur dispositif')
+
       const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       expect(gestionnaireRegion).toBeRequired()
       expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
@@ -555,10 +581,89 @@ describe('mes utilisateurs', () => {
       expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
+      const instructeur = within(formulaireInvitation).getByLabelText('Instructeur')
+      expect(instructeur).toBeRequired()
+      expect(instructeur).toHaveAttribute('name', 'attributionRole')
+      expect(instructeur).toHaveAttribute('id', 'Instructeur')
+
+      const pilotePolitiquePublique = within(formulaireInvitation).getByLabelText('Pilote politique publique')
+      expect(pilotePolitiquePublique).toBeRequired()
+      expect(pilotePolitiquePublique).toHaveAttribute('name', 'attributionRole')
+      expect(pilotePolitiquePublique).toHaveAttribute('id', 'Pilote politique publique')
+
+      const supportAnimation = within(formulaireInvitation).getByLabelText('Support animation')
+      expect(supportAnimation).toBeRequired()
+      expect(supportAnimation).toHaveAttribute('name', 'attributionRole')
+      expect(supportAnimation).toHaveAttribute('id', 'Support animation')
+
       const structure = within(formulaireInvitation).getByLabelText('Structure *')
       expect(structure).toBeRequired()
       expect(structure).toHaveAttribute('name', 'structure')
       expect(structure).toHaveAttribute('type', 'text')
+
+      const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
+      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    })
+
+    it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        ...clientContextProviderDefaultValue,
+        sessionUtilisateurViewModel: {
+          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+          role: {
+            groupe: 'gestionnaire',
+            libelle: 'Rhône',
+            nom: 'Gestionnaire département',
+            pictogramme: 'maille',
+            rolesGerables: ['Gestionnaire département'] as Array<never>,
+          },
+        },
+      })
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+
+      // WHEN
+      fireEvent.click(inviter)
+
+      // THEN
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const titre = await within(formulaireInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      expect(titre).toBeInTheDocument()
+
+      const champsObligatoires = within(formulaireInvitation).getByText(
+        matchWithoutMarkup('Les champs avec * sont obligatoires.'),
+        { selector: 'p' }
+      )
+      expect(champsObligatoires).toBeInTheDocument()
+
+      const nom = within(formulaireInvitation).getByLabelText('Nom *')
+      expect(nom).toBeRequired()
+      expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveAttribute('type', 'text')
+
+      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+      expect(prenom).toBeRequired()
+      expect(prenom).toHaveAttribute('name', 'prenom')
+      expect(prenom).toHaveAttribute('type', 'text')
+
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *')
+      expect(email).toBeRequired()
+      expect(email).toHaveAttribute('name', 'email')
+      expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+      expect(email).toHaveAttribute('type', 'email')
+
+      const roleQuestion = within(formulaireInvitation).getByText(
+        matchWithoutMarkup('Rôle attribué à cet utilisateur :'),
+        { selector: 'p' }
+      )
+      expect(roleQuestion).toBeInTheDocument()
+
+      const role = within(formulaireInvitation).getByText(
+        matchWithoutMarkup('Gestionnaire département'),
+        { selector: 'p' }
+      )
+      expect(role).toBeInTheDocument()
 
       const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
@@ -584,6 +689,25 @@ describe('mes utilisateurs', () => {
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
           ...clientContextProviderDefaultValue,
+          sessionUtilisateurViewModel: {
+            ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+            role: {
+              groupe: 'admin',
+              libelle: 'Rhône',
+              nom: 'Administrateur dispositif',
+              pictogramme: 'maille',
+              rolesGerables: [
+                'Administrateur dispositif',
+                'Gestionnaire département',
+                'Gestionnaire groupement',
+                'Gestionnaire région',
+                'Gestionnaire structure',
+                'Instructeur',
+                'Pilote politique publique',
+                'Support animation',
+              ] as Array<never>,
+            },
+          },
           setBandeauInformations,
         }
       )
@@ -631,7 +755,31 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+        {
+          ...clientContextProviderDefaultValue,
+          sessionUtilisateurViewModel: {
+            ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+            role: {
+              groupe: 'admin',
+              libelle: 'Rhône',
+              nom: 'Administrateur dispositif',
+              pictogramme: 'maille',
+              rolesGerables: [
+                'Administrateur dispositif',
+                'Gestionnaire département',
+                'Gestionnaire groupement',
+                'Gestionnaire région',
+                'Gestionnaire structure',
+                'Instructeur',
+                'Pilote politique publique',
+                'Support animation',
+              ] as Array<never>,
+            },
+          },
+        }
+      )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
       const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
@@ -670,7 +818,31 @@ describe('mes utilisateurs', () => {
       }
     }
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      {
+        ...clientContextProviderDefaultValue,
+        sessionUtilisateurViewModel: {
+          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+          role: {
+            groupe: 'admin',
+            libelle: 'Rhône',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'maille',
+            rolesGerables: [
+              'Administrateur dispositif',
+              'Gestionnaire département',
+              'Gestionnaire groupement',
+              'Gestionnaire région',
+              'Gestionnaire structure',
+              'Instructeur',
+              'Pilote politique publique',
+              'Support animation',
+            ] as Array<never>,
+          },
+        },
+      }
+    )
     const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
     fireEvent.click(inviter)
     const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })

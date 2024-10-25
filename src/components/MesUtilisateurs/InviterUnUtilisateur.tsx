@@ -3,8 +3,9 @@
 import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
 import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
+import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
-import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
+import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
 export default function InviterUnUtilisateur({
@@ -13,13 +14,18 @@ export default function InviterUnUtilisateur({
   labelId,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
-  const { setBandeauInformations } = useContext(clientContext)
+  const { setBandeauInformations, sessionUtilisateurViewModel } = useContext(clientContext)
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
   const structureId = useId()
 
-  const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
+    id: roleGerable,
+    label: roleGerable,
+  }))
+
+  async function inviterUtilisateur(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
@@ -101,31 +107,46 @@ export default function InviterUnUtilisateur({
             *
           </span>
         </TextInput>
-        <legend
-          aria-describedby="champsObligatoires"
-          className="fr-mb-2w"
-        >
-          Quel rôle souhaitez-vous lui attribuer ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-        </legend>
-        <RadioGroup
-          nomGroupe="attributionRole"
-          options={gestionnaires}
-        />
-        <TextInput
-          id={structureId}
-          name="structure"
-          required={true}
-        >
-          Structure
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-        </TextInput>
+        {
+          gestionnaires.length > 1 ?
+            <legend
+              aria-describedby="champsObligatoires"
+              className="fr-mb-2w"
+            >
+              Quel rôle souhaitez-vous lui attribuer ?
+              {' '}
+              <span className="color-red">
+                *
+              </span>
+            </legend> :
+            <p className="fr-mb-1w">
+              Rôle attribué à cet utilisateur :
+            </p>
+        }
+        {
+          gestionnaires.length > 1 ?
+            <RadioGroup
+              nomGroupe="attributionRole"
+              options={gestionnaires}
+            /> :
+            <Badge color="purple-glycine">
+              {gestionnaires[0]?.label}
+            </Badge>
+        }
+        {
+          gestionnaires.length > 1 ?
+            <TextInput
+              id={structureId}
+              name="structure"
+              required={true}
+            >
+              Structure
+              {' '}
+              <span className="color-red">
+                *
+              </span>
+            </TextInput> : null
+        }
         <button
           //aria-controls={ariaControls}
           className="fr-btn fr-my-2w drawer-invitation-button"
@@ -150,22 +171,3 @@ type InviterUnUtilisateurProps = Readonly<{
   drawerId: string
   labelId: string
 }>
-
-const gestionnaires: ReadonlyArray<RadioOption> = [
-  {
-    id: 'Gestionnaire région',
-    label: 'Gestionnaire région',
-  },
-  {
-    id: 'Gestionnaire département',
-    label: 'Gestionnaire département',
-  },
-  {
-    id: 'Gestionnaire groupement',
-    label: 'Gestionnaire groupement',
-  },
-  {
-    id: 'Gestionnaire structure',
-    label: 'Gestionnaire structure',
-  },
-]
