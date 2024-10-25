@@ -321,6 +321,18 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(enregistrer).toHaveAttribute('type', 'submit')
     })
 
+    it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, informationsPersonnellesTelephone: '' })
+
+      // WHEN
+      ouvrirDrawer()
+
+      // THEN
+      const telephone = screen.getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Format attendu : 0122334455')
+      expect(telephone).toHaveValue('')
+    })
+
     it('et que j’appuie sur annuler alors la modale se ferme', () => {
       // GIVEN
       afficherMesInformationsPersonnelles()
