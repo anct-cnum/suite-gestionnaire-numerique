@@ -61,6 +61,16 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(boutonSupprimerMonCompte).toHaveAttribute('type', 'button')
   })
 
+  it('quand j’affiche mes informations personnelles mais avec un téléphone non renseigné alors il s’affiche cette notion', () => {
+    // WHEN
+    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, informationsPersonnellesTelephone: '' })
+
+    // THEN
+    const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
+    const telephone = within(mesInformationsPersonnelles).getByText('Non renseigné')
+    expect(telephone).toBeInTheDocument()
+  })
+
   it.each([
     'Administrateur dispositif',
     'Gestionnaire département',
@@ -69,14 +79,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Pilote politique publique',
     'Support animation',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
-    // GIVEN
-    const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
-      ...mesInformationsPersonnellesReadModel,
-      role,
-    })
-
     // WHEN
-    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
+    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, role })
 
     // THEN
     const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
@@ -87,14 +91,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Gestionnaire structure',
     'Gestionnaire groupement',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
-    // GIVEN
-    const mesInformationsPersonnellesViewModel = mesInformationsPersonnellesPresenter({
-      ...mesInformationsPersonnellesReadModel,
-      role,
-    })
-
     // WHEN
-    render(<MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />)
+    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, role })
 
     // THEN
     const maStructure = screen.getByRole('region', { name: 'Ma structure' })
@@ -371,7 +369,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
   })
 })
 
-function afficherMesInformationsPersonnelles() {
+function afficherMesInformationsPersonnelles(
+  mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelParDefaut
+) {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
   render(
@@ -381,7 +381,7 @@ function afficherMesInformationsPersonnelles() {
   )
 }
 
-const mesInformationsPersonnellesReadModel = {
+const mesInformationsPersonnellesReadModelParDefaut = {
   contactEmail: 'manon.verminac@example.com',
   contactFonction: 'Chargée de mission',
   contactNom: 'Verninac',
