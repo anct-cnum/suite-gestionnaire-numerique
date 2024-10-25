@@ -74,6 +74,21 @@ describe('modifier mes informations personnelles action', () => {
     expect(result[0].message).toBe('Le téléphone doit contenir 10 chiffres')
   })
 
+  it('étant donné un téléphone vide quand mes informations personnelles sont modifiées alors cela modifie mon compte', async () => {
+    // GIVEN
+    const sub = 'fooId'
+    // @ts-expect-error
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub } })
+    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
+    const telephone = ''
+
+    // WHEN
+    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+
+    // THEN
+    expect(result).toBe('OK')
+  })
+
   const email = 'martin.tartempion@example.com'
   const nom = 'Tartempion'
   const prenom = 'Martin'
