@@ -106,6 +106,9 @@ export default function InviterUnUtilisateur({
           <span className="color-red">
             *
           </span>
+          <span className="fr-hint-text">
+            Une invitation lui sera envoyée par mail
+          </span>
         </TextInput>
         {
           gestionnaires.length > 1 ?

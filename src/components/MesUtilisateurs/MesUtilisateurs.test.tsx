@@ -544,7 +544,7 @@ describe('mes utilisateurs', () => {
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
 
-      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *')
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par mail')
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
@@ -647,7 +647,7 @@ describe('mes utilisateurs', () => {
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
 
-      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *')
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par mail')
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
