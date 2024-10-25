@@ -9,9 +9,11 @@ export function mesInformationsPersonnellesPresenter(
     ...mesInformationsPersonnellesReadModel,
     informationsPersonnellesTelephone: telephone,
     isStructure: mesInformationsPersonnellesReadModel.role === 'Gestionnaire structure' || mesInformationsPersonnellesReadModel.role === 'Gestionnaire groupement',
+    telephoneBrut: mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone,
   }
 }
 
 export type MesInformationsPersonnellesViewModel = MesInformationsPersonnellesReadModel & {
   isStructure: boolean
+  telephoneBrut: string
 }

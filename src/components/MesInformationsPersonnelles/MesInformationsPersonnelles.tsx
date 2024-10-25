@@ -208,7 +208,7 @@ export default function MesInformationsPersonnelles(
           nom={mesInformationsPersonnellesViewModel.informationsPersonnellesNom}
           prenom={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
           setIsOpen={setIsDrawerOpen}
-          telephone={mesInformationsPersonnellesViewModel.informationsPersonnellesTelephone}
+          telephone={mesInformationsPersonnellesViewModel.telephoneBrut}
         />
       </Drawer>
     </div>
