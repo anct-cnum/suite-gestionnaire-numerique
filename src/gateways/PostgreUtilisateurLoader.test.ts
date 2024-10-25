@@ -186,6 +186,7 @@ describe('postgre utilisateur query', () => {
           prenom: 'Martin',
           role: 'administrateur_dispositif',
           ssoId: '1234567890',
+          telephone: '',
         },
       })
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)

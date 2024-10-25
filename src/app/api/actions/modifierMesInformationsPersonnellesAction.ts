@@ -47,6 +47,7 @@ function modifierMesInformationsPersonnellesValidation() {
       email: z.string().email({ message: 'L’email doit être valide' }),
       nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
       prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
-      telephone: z.string().length(10, { message: 'Le téléphone doit contenir 10 chiffres' }).optional().or(z.literal('')),
+      // Stryker disable next-line Regex
+      telephone: z.string().regex(/^(\+[\d]{11,12}|[\d]{10})$/, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).optional().or(z.literal('')),
     })
 }

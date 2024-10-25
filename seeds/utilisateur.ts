@@ -189,7 +189,7 @@ async function transformUtilisateursCoNumToUtilisateurs(
       role,
       ssoId: utilisateurCoNumRecord.sub,
       structureId,
-      // telephone: cette notion n'existe pas
+      telephone: '',
     }
   })
 }
@@ -233,7 +233,7 @@ function transformUtilisateursFNEToUtilisateurs(
       role,
       ssoId,
       structureId: null,
-      // telephone: cette notion n'existe pas
+      telephone: '',
     }
   })
 }
