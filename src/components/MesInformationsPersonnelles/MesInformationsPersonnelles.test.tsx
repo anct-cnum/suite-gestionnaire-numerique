@@ -305,9 +305,9 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
       expect(email).toHaveAttribute('type', 'email')
       expect(email).toHaveValue('julien.deschamps@example.com')
-      const telephone = within(formulaire).getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Format attendu : 0122334455')
+      const telephone = within(formulaire).getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
       expect(telephone).toHaveAttribute('name', 'telephone')
-      expect(telephone).toHaveAttribute('pattern', '0[0-9]{9}')
+      expect(telephone).toHaveAttribute('pattern', '\\+[0-9]{11,12}|[0-9]{10}')
       expect(telephone).toHaveAttribute('type', 'tel')
       expect(telephone).not.toBeRequired()
       expect(telephone).toHaveValue('0405060708')
@@ -329,7 +329,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       ouvrirDrawer()
 
       // THEN
-      const telephone = screen.getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Format attendu : 0122334455')
+      const telephone = screen.getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
       expect(telephone).toHaveValue('')
     })
 

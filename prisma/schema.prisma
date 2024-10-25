@@ -71,9 +71,8 @@ model UtilisateurRecord {
   regionCode String?
   role Role
   structureId Int?
-  // Identifiant fourni par le SSO
   ssoId String @unique @default("")
-  telephone String @default("") @db.VarChar(10)
+  telephone String @db.VarChar(13)
 
   relationStructures StructureRecord? @relation(fields: [structureId], references: [id])
   relationGroupements GroupementRecord? @relation(fields: [groupementId], references: [id])

@@ -3,7 +3,7 @@ import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
 describe('modifier mes informations personnelles action', () => {
-  it('étant donné des informations personnelles correctes quand mes informations personnelles sont modifiées alors cela modifie mon compte', async () => {
+  it('si les informations personnelles sont correctes alors c’est valide', async () => {
     // GIVEN
     const sub = 'fooId'
     // @ts-expect-error
@@ -26,64 +26,62 @@ describe('modifier mes informations personnelles action', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné un email mal formaté quand mes informations personnelles sont modifiées alors cela ne modifie pas mon compte', async () => {
-    // GIVEN
-    const email = 'emailNonValide'
-
+  it('si l’e-mail est mal formaté alors s’affiche un message d’erreur', async () => {
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction('emailNonValide', nom, prenom, telephone)
 
     // THEN
     // @ts-expect-error
     expect(result[0].message).toBe('L’email doit être valide')
   })
 
-  it('étant donné un nom vide quand mes informations personnelles sont modifiées alors cela ne modifie pas mon compte', async () => {
+  it('si le nom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
     // GIVEN
-    const nom = ''
+    const nomVide = ''
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction(email, nomVide, prenom, telephone)
 
     // THEN
     // @ts-expect-error
     expect(result[0].message).toBe('Le nom doit contenir au moins 1 caractère')
   })
 
-  it('étant donné un prénom vide quand mes informations personnelles sont modifiées alors cela ne modifie pas mon compte', async () => {
+  it('si le prénom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
     // GIVEN
-    const prenom = ''
+    const prenomVide = ''
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenomVide, telephone)
 
     // THEN
     // @ts-expect-error
     expect(result[0].message).toBe('Le prénom doit contenir au moins 1 caractère')
   })
 
-  it('étant donné un téléphone inférieur à 10 caractères quand mes informations personnelles sont modifiées alors cela ne modifie pas mon compte', async () => {
-    // GIVEN
-    const telephone = '1234'
-
+  it.each([
+    '1234',
+    '+1234',
+    '+1234567890123478',
+    '1234567890123478',
+  ])('si le téléphone est mal formaté alors s’affiche un message d’erreur', async (telephoneMalFormate) => {
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephoneMalFormate)
 
     // THEN
     // @ts-expect-error
-    expect(result[0].message).toBe('Le téléphone doit contenir 10 chiffres')
+    expect(result[0].message).toBe('Le téléphone doit être au format 0102030405 ou +33102030405')
   })
 
-  it('étant donné un téléphone vide quand mes informations personnelles sont modifiées alors cela modifie mon compte', async () => {
+  it('si le téléphone est vide alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN
-    const sub = 'fooId'
     // @ts-expect-error
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub } })
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub: 'fooId' } })
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
-    const telephone = ''
+    const telephoneVide = ''
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephoneVide)
 
     // THEN
     expect(result).toBe('OK')

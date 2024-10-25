@@ -91,7 +91,7 @@ export default function ModifierMonCompte({
           defaultValue={telephone}
           id={telephoneId}
           name="telephone"
-          pattern="0[0-9]{9}"
+          pattern="\+[0-9]{11,12}|[0-9]{10}"
           required={false}
           type="tel"
         >
@@ -99,7 +99,7 @@ export default function ModifierMonCompte({
           {' '}
           <span className="fr-hint-text">
             Seuls les gestionnaires verront votre numéro de téléphone.
-            Format attendu : 0122334455
+            Formats attendus : 0122334455 ou +33122334455
           </span>
         </TextInput>
         <div className="fr-btns-group fr-btns-group--space-between">
