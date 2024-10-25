@@ -1,6 +1,7 @@
 import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
 import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { Roles } from '@/domain/Role'
 import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
@@ -19,6 +20,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'admin',
           nom: 'Administrateur dispositif',
           organisation: 'Administrateur dispositif',
+          rolesGerables: Roles,
         },
       },
       {
@@ -28,6 +30,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire département',
           organisation: 'Paris',
+          rolesGerables: ['Gestionnaire département'],
         },
       },
       {
@@ -37,6 +40,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
+          rolesGerables: ['Gestionnaire groupement'],
         },
       },
       {
@@ -46,6 +50,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire région',
           organisation: 'Île-de-France',
+          rolesGerables: ['Gestionnaire région'],
         },
       },
       {
@@ -55,6 +60,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
+          rolesGerables: ['Gestionnaire structure'],
         },
       },
       {
@@ -64,6 +70,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'admin',
           nom: 'Instructeur',
           organisation: 'Banque des territoires',
+          rolesGerables: Roles,
         },
       },
       {
@@ -73,6 +80,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'admin',
           nom: 'Pilote politique publique',
           organisation: 'France Numérique Ensemble',
+          rolesGerables: Roles,
         },
       },
       {
@@ -82,6 +90,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'admin',
           nom: 'Support animation',
           organisation: 'Mednum',
+          rolesGerables: Roles,
         },
       },
     ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ role, roleReadModel }) => {
@@ -224,6 +233,7 @@ describe('postgre utilisateur query', () => {
               groupe: 'gestionnaire',
               nom: 'Gestionnaire département',
               organisation: 'Paris',
+              rolesGerables: ['Gestionnaire département'],
             },
             structureId: null,
             telephone: '0102030405',
@@ -245,6 +255,7 @@ describe('postgre utilisateur query', () => {
               groupe: 'admin',
               nom: 'Administrateur dispositif',
               organisation: 'Administrateur dispositif',
+              rolesGerables: Roles,
             },
             structureId: null,
             telephone: '0102030405',
@@ -265,6 +276,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire département',
           organisation: 'Rhône',
+          rolesGerables: [],
         },
         uid: ssoId,
       })
@@ -314,6 +326,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire région',
           organisation: 'Auvergne-Rhône-Alpes',
+          rolesGerables: [],
         },
         uid: ssoId,
       })
@@ -360,6 +373,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
+          rolesGerables: [],
         },
         uid: ssoId,
       })
@@ -405,6 +419,7 @@ describe('postgre utilisateur query', () => {
           groupe: 'gestionnaire',
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
+          rolesGerables: ['Gestionnaire structure'],
         },
         structureId,
         uid: ssoId,
@@ -682,7 +697,7 @@ describe('postgre utilisateur query', () => {
     const utilisateurAuthentifie = utilisateurReadModelFactory({
       uid: ssoId,
     })
-    const roles: Array<string> = []
+    const roles: ReadonlyArray<string> = []
     const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
     const codeDepartement = '0'
     const codeRegion = '0'

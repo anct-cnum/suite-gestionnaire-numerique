@@ -55,6 +55,7 @@ describe('mes utilisateurs', () => {
           libelle: '',
           nom: 'Support animation',
           pictogramme: '',
+          rolesGerables: [],
         },
       },
     })
@@ -90,6 +91,7 @@ describe('mes utilisateurs', () => {
             libelle: 'Rhône',
             nom: 'Gestionnaire groupement',
             pictogramme: 'maille',
+            rolesGerables: [],
           },
         },
       }
@@ -752,6 +754,7 @@ const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] =
       groupe: 'admin',
       nom: 'Administrateur dispositif',
       organisation: 'Préfecture du Rhône',
+      rolesGerables: [],
     },
     structureId: null,
     telephone: '0102030405',
@@ -773,6 +776,7 @@ const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] =
       groupe: 'gestionnaire',
       nom: 'Gestionnaire structure',
       organisation: 'Hub du Rhône',
+      rolesGerables: [],
     },
     structureId: 1,
     telephone: '',

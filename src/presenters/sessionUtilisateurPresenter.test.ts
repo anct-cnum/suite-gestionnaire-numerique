@@ -10,6 +10,7 @@ describe('session utilisateur presenter', () => {
         groupe: 'admin',
         nom: 'Support animation',
         organisation: 'Mednum',
+        rolesGerables: [],
       },
       uid: 'fooId',
     })
@@ -30,6 +31,7 @@ describe('session utilisateur presenter', () => {
         libelle: 'Mednum',
         nom: 'Support animation',
         pictogramme: 'mednum',
+        rolesGerables: [],
       },
       telephone: '0102030405',
       uid: 'fooId',

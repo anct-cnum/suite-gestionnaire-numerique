@@ -33,6 +33,7 @@ export const clientContextProviderDefaultValue = {
       libelle: 'Mednum',
       nom: 'Support animation',
       pictogramme: 'support-animation',
+      rolesGerables: [],
     },
     telephone: '0102030405',
     uid: 'fooId',

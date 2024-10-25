@@ -1,4 +1,5 @@
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
+import { Roles } from '@/domain/Role'
 
 export function utilisateurReadModelFactory(
   override?: Partial<UnUtilisateurReadModel>
@@ -19,6 +20,7 @@ export function utilisateurReadModelFactory(
       groupe: 'admin',
       nom: 'Administrateur dispositif',
       organisation: '',
+      rolesGerables: Roles,
     },
     structureId: null,
     telephone: '0102030405',
