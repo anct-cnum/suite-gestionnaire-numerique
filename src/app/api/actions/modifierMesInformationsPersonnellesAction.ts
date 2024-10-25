@@ -47,6 +47,6 @@ function modifierMesInformationsPersonnellesValidation() {
       email: z.string().email({ message: 'L’email doit être valide' }),
       nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
       prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
-      telephone: z.string().length(10, { message: 'Le téléphone doit contenir 10 chiffres' }).optional(),
+      telephone: z.string().length(10, { message: 'Le téléphone doit contenir 10 chiffres' }).optional().or(z.literal('')),
     })
 }
