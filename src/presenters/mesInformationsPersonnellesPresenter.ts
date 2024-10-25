@@ -3,9 +3,11 @@ import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/Recupe
 export function mesInformationsPersonnellesPresenter(
   mesInformationsPersonnellesReadModel: MesInformationsPersonnellesReadModel
 ): MesInformationsPersonnellesViewModel {
+  const telephone = mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone === '' ? 'Non renseigné' : mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d)/g, '$1 $2 $3 $4 $5')
+
   return {
     ...mesInformationsPersonnellesReadModel,
-    informationsPersonnellesTelephone: mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d)/g, '$1 $2 $3 $4 $5'),
+    informationsPersonnellesTelephone: telephone,
     isStructure: mesInformationsPersonnellesReadModel.role === 'Gestionnaire structure' || mesInformationsPersonnellesReadModel.role === 'Gestionnaire groupement',
   }
 }
