@@ -88,7 +88,7 @@ export default function ModifierMonCompte({
           </span>
         </TextInput>
         <TextInput
-          defaultValue={telephone.replaceAll(' ', '')}
+          defaultValue={telephone}
           id={telephoneId}
           name="telephone"
           pattern="0[0-9]{9}"
