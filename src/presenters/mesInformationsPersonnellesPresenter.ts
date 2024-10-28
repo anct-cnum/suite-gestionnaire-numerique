@@ -3,20 +3,18 @@ import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/Recupe
 export function mesInformationsPersonnellesPresenter(
   mesInformationsPersonnellesReadModel: MesInformationsPersonnellesReadModel
 ): MesInformationsPersonnellesViewModel {
-  const telephone = mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone === '' ?
+  const telephone = mesInformationsPersonnellesReadModel.telephone === '' ?
     'Non renseigné' :
     // Stryker disable next-line Regex
-    mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone.replace(/(\d{2,3})(\d{2})(\d{2})(\d{2})(\d{2})?(\d{2})$/g, '$1 $2 $3 $4 $5 $6')
+    mesInformationsPersonnellesReadModel.telephone.replace(/(\d{2,3})(\d{2})(\d{2})(\d{2})(\d{2})?(\d{2})$/g, '$1 $2 $3 $4 $5 $6')
 
   return {
     ...mesInformationsPersonnellesReadModel,
-    informationsPersonnellesTelephone: telephone,
-    isStructure: mesInformationsPersonnellesReadModel.role === 'Gestionnaire structure' || mesInformationsPersonnellesReadModel.role === 'Gestionnaire groupement',
-    telephoneBrut: mesInformationsPersonnellesReadModel.informationsPersonnellesTelephone,
+    telephone,
+    telephoneBrut: mesInformationsPersonnellesReadModel.telephone,
   }
 }
 
 export type MesInformationsPersonnellesViewModel = MesInformationsPersonnellesReadModel & {
-  isStructure: boolean
   telephoneBrut: string
 }

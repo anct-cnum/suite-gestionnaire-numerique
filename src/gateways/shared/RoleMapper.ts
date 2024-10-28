@@ -11,10 +11,10 @@ import { Groupe, TypologieRole } from '@/domain/Role'
 
 export type UtilisateurEtSesRelationsRecord = UtilisateurRecord &
   Readonly<{
-    relationDepartements: DepartementRecord | null
-    relationGroupements: GroupementRecord | null
-    relationRegions: RegionRecord | null
-    relationStructures: StructureRecord | null
+    relationDepartement: DepartementRecord | null
+    relationGroupement: GroupementRecord | null
+    relationRegion: RegionRecord | null
+    relationStructure: StructureRecord | null
   }>
 
 export type RoleMapping = Readonly<
@@ -31,22 +31,22 @@ export function roleMapper(utilisateurRecord: UtilisateurEtSesRelationsRecord): 
     gestionnaire_departement: {
       groupe: 'gestionnaire',
       nom: 'Gestionnaire département',
-      territoireOuStructure: utilisateurRecord.relationDepartements?.nom ?? '',
+      territoireOuStructure: utilisateurRecord.relationDepartement?.nom ?? '',
     },
     gestionnaire_groupement: {
       groupe: 'gestionnaire',
       nom: 'Gestionnaire groupement',
-      territoireOuStructure: utilisateurRecord.relationGroupements?.nom ?? '',
+      territoireOuStructure: utilisateurRecord.relationGroupement?.nom ?? '',
     },
     gestionnaire_region: {
       groupe: 'gestionnaire',
       nom: 'Gestionnaire région',
-      territoireOuStructure: utilisateurRecord.relationRegions?.nom ?? '',
+      territoireOuStructure: utilisateurRecord.relationRegion?.nom ?? '',
     },
     gestionnaire_structure: {
       groupe: 'gestionnaire',
       nom: 'Gestionnaire structure',
-      territoireOuStructure: utilisateurRecord.relationStructures?.nom ?? '',
+      territoireOuStructure: utilisateurRecord.relationStructure?.nom ?? '',
     },
     instructeur: {
       groupe: 'admin',

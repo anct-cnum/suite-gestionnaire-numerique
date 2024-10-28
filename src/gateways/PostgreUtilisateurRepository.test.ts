@@ -94,19 +94,6 @@ describe('utilisateur repository', () => {
         },
       ])('$desc', async ({ role, roleDataRepresentation, organisation }) => {
         // GIVEN
-        await prisma.structureRecord.create({
-          data: {
-            id: 10,
-            idMongo: '123456',
-            nom: 'Solidarnum',
-          },
-        })
-        await prisma.groupementRecord.create({
-          data: {
-            id: 10,
-            nom: 'Hubikoop',
-          },
-        })
         await prisma.regionRecord.create({
           data: {
             code: '84',
@@ -118,6 +105,39 @@ describe('utilisateur repository', () => {
             code: '69',
             nom: 'Rhône',
             regionCode: '84',
+          },
+        })
+        await prisma.groupementRecord.create({
+          data: {
+            id: 10,
+            nom: 'Hubikoop',
+          },
+        })
+        await prisma.structureRecord.create({
+          data: {
+            adresse: {
+              code_postal: '',
+              indice_repetition_voie: '',
+              libelle_commune: '',
+              libelle_voie: '',
+              numero_voie: '',
+              type_voie: '',
+            },
+            contact: {
+              email: '',
+              fonction: '',
+              nom: '',
+              prenom: '',
+              telephone: '',
+            },
+            departementCode: '69',
+            id: 10,
+            idMongo: '123456',
+            identifiantEtablissement: '41816609600069',
+            nom: 'Solidarnum',
+            regionCode: '84',
+            statut: 'VALIDATION_COSELEC',
+            type: 'COMMUNE',
           },
         })
         await prisma.utilisateurRecord.create({

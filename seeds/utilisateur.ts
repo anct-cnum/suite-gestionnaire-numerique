@@ -162,8 +162,10 @@ async function transformUtilisateursCoNumToUtilisateurs(
       role = 'gestionnaire_structure'
 
       const structure = structures.find((structureId) => structureId.idMongo === utilisateurCoNumRecord.entityId)
-      // @ts-expect-error
-      structureId = structure.id
+
+      if (structure) {
+        structureId = structure.id
+      }
     } else if (isGestionnaireRegion) {
       role = 'gestionnaire_region'
 
@@ -272,7 +274,7 @@ function decodeJwt(token: string): Token {
   return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Token
 }
 
-async function retrieveStructures(): Promise<Array<Prisma.StructureRecordUncheckedCreateInput>> {
+async function retrieveStructures(): Promise<Array<Partial<Prisma.StructureRecordUncheckedCreateInput>>> {
   return prisma.structureRecord.findMany({
     select: {
       id: true,

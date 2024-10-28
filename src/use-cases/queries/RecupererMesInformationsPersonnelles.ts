@@ -3,17 +3,21 @@ export interface MesInformationsPersonnellesLoader {
 }
 
 export type MesInformationsPersonnellesReadModel = Readonly<{
-  contactEmail: string
-  contactFonction: string
-  contactNom: string
-  contactPrenom: string
-  informationsPersonnellesEmail: string
-  informationsPersonnellesNom: string
-  informationsPersonnellesPrenom: string
-  informationsPersonnellesTelephone: string
+  email: string
+  nom: string
+  prenom: string
   role: string
-  structureAdresse: string
-  structureNumeroDeSiret: string
-  structureRaisonSociale: string
-  structureTypeDeStructure: string
+  structure?: Readonly<{
+    adresse: string
+    contact: Readonly<{
+      email: string
+      fonction: string
+      nom: string
+      prenom: string
+    }>
+    numeroDeSiret: string
+    raisonSociale: string
+    typeDeStructure: string
+  }>
+  telephone: string
 }>

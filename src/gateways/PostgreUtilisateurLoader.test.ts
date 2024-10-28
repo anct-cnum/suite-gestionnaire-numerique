@@ -120,24 +120,20 @@ describe('postgre utilisateur query', () => {
     ])('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ departementCode, groupementId, regionCode, role, roleReadModel, structureId }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      await prisma.regionRecord.create({
+        data: regionRecordFactory(),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory(),
+      })
       await prisma.structureRecord.create({
-        data: {
-          id: 10,
-          idMongo: '123456',
-          nom: 'Solidarnum',
-        },
+        data: structureRecordFactory(),
       })
       await prisma.groupementRecord.create({
         data: {
           id: 10,
           nom: 'Hubikoop',
         },
-      })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory(),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory(),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
@@ -443,12 +439,14 @@ describe('postgre utilisateur query', () => {
         structureId,
         uid: ssoId,
       })
+      await prisma.regionRecord.create({
+        data: regionRecordFactory(),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory(),
+      })
       await prisma.structureRecord.create({
-        data: {
-          id: structureId,
-          idMongo: '123456',
-          nom: 'Solidarnum',
-        },
+        data: structureRecordFactory({ id: structureId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'gestionnaire_structure', ssoId, structureId }),
@@ -740,6 +738,37 @@ function departementRecordFactory(
     code: '75',
     nom: 'Paris',
     regionCode: '11',
+    ...override,
+  }
+}
+
+function structureRecordFactory(
+  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
+): Prisma.StructureRecordUncheckedCreateInput {
+  return {
+    adresse: {
+      code_postal: '',
+      indice_repetition_voie: '',
+      libelle_commune: '',
+      libelle_voie: '',
+      numero_voie: '',
+      type_voie: '',
+    },
+    contact: {
+      email: '',
+      fonction: '',
+      nom: '',
+      prenom: '',
+      telephone: '',
+    },
+    departementCode: '75',
+    id: 10,
+    idMongo: '123456',
+    identifiantEtablissement: '41816609600069',
+    nom: 'Solidarnum',
+    regionCode: '11',
+    statut: 'VALIDATION_COSELEC',
+    type: 'COMMUNE',
     ...override,
   }
 }
