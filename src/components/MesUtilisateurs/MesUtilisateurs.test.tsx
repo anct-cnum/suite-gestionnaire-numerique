@@ -596,13 +596,48 @@ describe('mes utilisateurs', () => {
       expect(supportAnimation).toHaveAttribute('name', 'attributionRole')
       expect(supportAnimation).toHaveAttribute('id', 'Support animation')
 
+      const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
+      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    })
+
+    it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ de structure s’affiche', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        ...clientContextProviderDefaultValue,
+        sessionUtilisateurViewModel: {
+          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+          role: {
+            groupe: 'admin',
+            libelle: 'Rhône',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'maille',
+            rolesGerables: [
+              'Administrateur dispositif',
+              'Gestionnaire département',
+              'Gestionnaire groupement',
+              'Gestionnaire région',
+              'Gestionnaire structure',
+              'Instructeur',
+              'Pilote politique publique',
+              'Support animation',
+            ] as Array<never>,
+          },
+        },
+      })
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+
+      // WHEN
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
+      fireEvent.click(gestionnaireDepartement)
+
+      // THEN
       const structure = within(formulaireInvitation).getByLabelText('Structure *')
       expect(structure).toBeRequired()
       expect(structure).toHaveAttribute('name', 'structure')
       expect(structure).toHaveAttribute('type', 'text')
-
-      const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
-      expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
     it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
@@ -723,10 +758,10 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const structure = within(formulaireInvitation).getByLabelText('Structure *')
-      fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
       const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
@@ -791,10 +826,10 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const structure = within(formulaireInvitation).getByLabelText('Structure *')
-      fireEvent.change(structure, { target: { value: 'La Poste' } })
       const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'La Poste' } })
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
 
@@ -855,10 +890,10 @@ describe('mes utilisateurs', () => {
     fireEvent.change(prenom, { target: { value: 'Martin' } })
     const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
     fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const structure = within(formulaireInvitation).getByLabelText('Structure *')
-    fireEvent.change(structure, { target: { value: 'La Poste' } })
     const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
     fireEvent.click(gestionnaireRegion)
+    const structure = within(formulaireInvitation).getByLabelText('Structure *')
+    fireEvent.change(structure, { target: { value: 'La Poste' } })
     const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
     fireEvent.click(envoyerInvitation)
 

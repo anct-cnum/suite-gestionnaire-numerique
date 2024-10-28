@@ -8,6 +8,8 @@ import { clientContext } from '../shared/ClientContext'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
+const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
+
 export default function InviterUnUtilisateur({
   setIsOpen,
   drawerId,
@@ -15,6 +17,7 @@ export default function InviterUnUtilisateur({
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
   const { setBandeauInformations, sessionUtilisateurViewModel } = useContext(clientContext)
+  const [roleSelectionne, setRoleSelectionne] = useState('')
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -33,9 +36,11 @@ export default function InviterUnUtilisateur({
     const utilisateurACreer = {
       email,
       nom: form.get('nom') as string,
-      organisation: form.get('structure') as string,
+      // A TESTER
+      organisation: form.get('structure') as string || sessionUtilisateurViewModel.role.libelle,
       prenom: form.get('prenom') as string,
-      role: form.get('attributionRole') as string,
+      // A TESTER
+      role: form.get('attributionRole') as string || sessionUtilisateurViewModel.role.nom,
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'emailExistant') {
@@ -47,6 +52,10 @@ export default function InviterUnUtilisateur({
       }
       fermerEtReinitialiser(event.target as HTMLFormElement)
     }
+  }
+
+  const isStructureDisplayed = (): boolean => {
+    return gestionnaires.length > 1 && rolesAvecStructure.includes(roleSelectionne)
   }
 
   return (
@@ -130,6 +139,9 @@ export default function InviterUnUtilisateur({
           gestionnaires.length > 1 ?
             <RadioGroup
               nomGroupe="attributionRole"
+              onChange={(event) => {
+                setRoleSelectionne(event.target.value)
+              }}
               options={gestionnaires}
             /> :
             <Badge color="purple-glycine">
@@ -137,7 +149,7 @@ export default function InviterUnUtilisateur({
             </Badge>
         }
         {
-          gestionnaires.length > 1 ?
+          isStructureDisplayed() ?
             <TextInput
               id={structureId}
               name="structure"
