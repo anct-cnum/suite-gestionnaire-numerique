@@ -8,17 +8,19 @@
     "public",
     "reports",
     "seeds",
-    "src/app",
     "src/app/api/sentry/route.ts",
     "src/components",
-    "src/gateways/ProConnectAuthentificationGateway.ts",
     "src/presenters",
     "src/instrumentation.ts",
     "yarn.lock"
   ],
   "ignoreStatic": true,
   "logLevel": "info",
-  "mutate": ["src/**/*.ts", "!src/**/*.test.ts", "!src/shared/*"],
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "!src/gateways/ProConnectAuthentificationGateway.ts"
+  ],
   "packageManager": "yarn",
   "reporters": ["html"],
   "testRunner": "vitest"
