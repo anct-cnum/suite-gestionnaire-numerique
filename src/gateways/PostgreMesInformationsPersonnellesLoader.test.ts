@@ -5,7 +5,7 @@ import prisma from '../../prisma/prismaClient'
 import { TypologieRole } from '@/domain/Role'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
-describe('postgre mes informations personnelles', () => {
+describe('mes informations personnelles loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
@@ -20,16 +20,8 @@ describe('postgre mes informations personnelles', () => {
       roleLabel: 'Gestionnaire département' as TypologieRole,
     },
     {
-      role: 'gestionnaire_groupement' as Role,
-      roleLabel: 'Gestionnaire groupement' as TypologieRole,
-    },
-    {
       role: 'gestionnaire_region' as Role,
       roleLabel: 'Gestionnaire région' as TypologieRole,
-    },
-    {
-      role: 'gestionnaire_structure' as Role,
-      roleLabel: 'Gestionnaire structure' as TypologieRole,
     },
     {
       role: 'instructeur' as Role,
@@ -43,46 +35,118 @@ describe('postgre mes informations personnelles', () => {
       role: 'support_animation' as Role,
       roleLabel: 'Support animation' as TypologieRole,
     },
-  ])('quand je cherche un utilisateur $roleLabel qui existe par son ssoId alors je retourne ses informations personnelles',
-    async ({ role, roleLabel }) => {
+    {
+      role: 'gestionnaire_groupement' as Role,
+      roleLabel: 'Gestionnaire groupement' as TypologieRole,
+    },
+  ])('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure', async ({ role, roleLabel }) => {
     // GIVEN
-      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      const date = new Date()
-      await prisma.utilisateurRecord.create({
-        data: {
-          dateDeCreation: date,
-          email: 'martin.tartempion@example.net',
-          inviteLe: date,
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          role,
-          ssoId: ssoIdExistant,
+    const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const date = new Date(0)
+    await prisma.utilisateurRecord.create({
+      data: {
+        dateDeCreation: date,
+        email: 'martin.tartempion@example.net',
+        inviteLe: date,
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        role,
+        ssoId: ssoIdExistant,
+        telephone: '0102030405',
+      },
+    })
+    const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
+
+    // WHEN
+    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
+
+    // THEN
+    expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
+      email: 'martin.tartempion@example.net',
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      role: roleLabel,
+      telephone: '0102030405',
+    })
+  })
+
+  it('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
+    // GIVEN
+    const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const date = new Date(0)
+    await prisma.regionRecord.create({
+      data: {
+        code: '84',
+        nom: 'Auvergne-Rhône-Alpes',
+      },
+    })
+    await prisma.departementRecord.create({
+      data: {
+        code: '69',
+        nom: 'Rhône',
+        regionCode: '84',
+      },
+    })
+    await prisma.structureRecord.create({
+      data: {
+        adresse: '3 BIS AVENUE CHARLES DE GAULLE',
+        codePostal: '84200',
+        commune: 'PARIS',
+        contact: {
+          email: 'manon.verminac@example.com',
+          fonction: 'Chargée de mission',
+          nom: 'Verninac',
+          prenom: 'Manon',
           telephone: '0102030405',
         },
-      })
-      const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
-
-      // WHEN
-      const mesInformationsPersonnellesReadModel =
-        await postgreMesInformationsPersonnellesGateway.findByUid(ssoIdExistant)
-
-      // THEN
-      expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
-        contactEmail: 'manon.verminac@example.com',
-        contactFonction: 'Chargée de mission',
-        contactNom: 'Verninac',
-        contactPrenom: 'Manon',
-        informationsPersonnellesEmail: 'martin.tartempion@example.net',
-        informationsPersonnellesNom: 'Tartempion',
-        informationsPersonnellesPrenom: 'Martin',
-        informationsPersonnellesTelephone: '0102030405',
-        role: roleLabel,
-        structureAdresse: '201 bis rue de la plaine, 69000 Lyon',
-        structureNumeroDeSiret: '62520260000023',
-        structureRaisonSociale: 'Préfecture du Rhône',
-        structureTypeDeStructure: 'Administration',
-      })
+        departementCode: '69',
+        id: 10,
+        idMongo: '123456',
+        identifiantEtablissement: '62520260000023',
+        nom: 'Solidarnum',
+        statut: 'VALIDATION_COSELEC',
+        type: 'COMMUNE',
+      },
     })
+    await prisma.utilisateurRecord.create({
+      data: {
+        dateDeCreation: date,
+        email: 'martin.tartempion@example.net',
+        inviteLe: date,
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        role: 'gestionnaire_structure',
+        ssoId: ssoIdExistant,
+        structureId: 10,
+        telephone: '0102030405',
+      },
+    })
+    const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
+
+    // WHEN
+    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
+
+    // THEN
+    expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
+      email: 'martin.tartempion@example.net',
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      role: 'Gestionnaire structure',
+      structure: {
+        adresse: '3 BIS AVENUE CHARLES DE GAULLE, 84200 PARIS',
+        contact: {
+          email: 'manon.verminac@example.com',
+          fonction: 'Chargée de mission',
+          nom: 'Verninac',
+          prenom: 'Manon',
+        },
+        numeroDeSiret: '62520260000023',
+        raisonSociale: 'Solidarnum',
+        typeDeStructure: 'COMMUNE',
+      },
+      telephone: '0102030405',
+    })
+  })
 
   it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
     // GIVEN

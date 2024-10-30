@@ -54,10 +54,10 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
   async find(uid: string): Promise<Utilisateur | null> {
     const record = await this.#activeRecord.findUnique({
       include: {
-        relationDepartements: true,
-        relationGroupements: true,
-        relationRegions: true,
-        relationStructures: true,
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
       },
       where: {
         isSupprime: false,

@@ -69,10 +69,10 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
 
     const utilisateursRecord = await this.#prisma.utilisateurRecord.findMany({
       include: {
-        relationDepartements: true,
-        relationGroupements: true,
-        relationRegions: true,
-        relationStructures: true,
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
       },
       orderBy: {
         nom: 'asc',
@@ -94,10 +94,10 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
   async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
       include: {
-        relationDepartements: true,
-        relationGroupements: true,
-        relationRegions: true,
-        relationStructures: true,
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
       },
       where: {
         isSupprime: false,

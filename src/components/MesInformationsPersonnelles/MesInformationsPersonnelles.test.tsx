@@ -63,7 +63,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
   it('quand j’affiche mes informations personnelles mais avec un téléphone non renseigné alors il s’affiche cette notion', () => {
     // WHEN
-    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, informationsPersonnellesTelephone: '' })
+    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, telephone: '' })
 
     // THEN
     const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
@@ -92,7 +92,22 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Gestionnaire groupement',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
     // WHEN
-    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, role })
+    afficherMesInformationsPersonnelles({
+      ...mesInformationsPersonnellesReadModelParDefaut,
+      role,
+      structure: {
+        adresse: '201 bis rue de la plaine, 69000 Lyon',
+        contact: {
+          email: 'manon.verminac@example.com',
+          fonction: 'Chargée de mission',
+          nom: 'Verninac',
+          prenom: 'Manon',
+        },
+        numeroDeSiret: '62520260000023',
+        raisonSociale: 'Préfecture du Rhône',
+        typeDeStructure: 'Administration',
+      },
+    })
 
     // THEN
     const maStructure = screen.getByRole('region', { name: 'Ma structure' })
@@ -106,10 +121,12 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     expect(typeDeStructureLabel).toBeInTheDocument()
     const typeDeStructure = within(maStructure).getByText('Administration')
     expect(typeDeStructure).toBeInTheDocument()
-    const numeroDeSiretLabel = within(maStructure).getByText(matchWithoutMarkup('Numéro de SIRET'))
+    const numeroDeSiretLabel = within(maStructure).getByText(matchWithoutMarkup('Numéro de SIRET/RIDET'))
     expect(numeroDeSiretLabel).toBeInTheDocument()
     const abreviationSiret = within(numeroDeSiretLabel).getByText('SIRET', { selector: 'abbr' })
     expect(abreviationSiret).toHaveAttribute('title', 'Système d’Identification du Répertoire des ÉTablissements')
+    const abreviationRidet = within(numeroDeSiretLabel).getByText('RIDET', { selector: 'abbr' })
+    expect(abreviationRidet).toHaveAttribute('title', 'Répertoire d’Identification des Entreprises et des ÉTablissements')
     const numeroDeSiret = within(maStructure).getByText('62520260000023')
     expect(numeroDeSiret).toBeInTheDocument()
     const adresseLabel = within(maStructure).getByText('Adresse')
@@ -323,7 +340,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
       // GIVEN
-      afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, informationsPersonnellesTelephone: '' })
+      afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, telephone: '' })
 
       // WHEN
       ouvrirDrawer()
@@ -382,7 +399,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 })
 
 function afficherMesInformationsPersonnelles(
-  mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelParDefaut
+  mesInformationsPersonnellesReadModel: Parameters<typeof mesInformationsPersonnellesPresenter>[0]
+  = mesInformationsPersonnellesReadModelParDefaut
 ) {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
@@ -394,17 +412,9 @@ function afficherMesInformationsPersonnelles(
 }
 
 const mesInformationsPersonnellesReadModelParDefaut = {
-  contactEmail: 'manon.verminac@example.com',
-  contactFonction: 'Chargée de mission',
-  contactNom: 'Verninac',
-  contactPrenom: 'Manon',
-  informationsPersonnellesEmail: 'julien.deschamps@example.com',
-  informationsPersonnellesNom: 'Deschamps',
-  informationsPersonnellesPrenom: 'Julien',
-  informationsPersonnellesTelephone: '0405060708',
+  email: 'julien.deschamps@example.com',
+  nom: 'Deschamps',
+  prenom: 'Julien',
   role: 'Administrateur dispositif',
-  structureAdresse: '201 bis rue de la plaine, 69000 Lyon',
-  structureNumeroDeSiret: '62520260000023',
-  structureRaisonSociale: 'Préfecture du Rhône',
-  structureTypeDeStructure: 'Administration',
+  telephone: '0405060708',
 }

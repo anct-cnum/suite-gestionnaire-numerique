@@ -6,6 +6,16 @@ declare global {
       }
     }
   }
+
+  namespace PrismaJson {
+    type Contact = Readonly<{
+      email: string
+      fonction: string
+      nom: string
+      prenom: string
+      telephone: string
+    }>
+  }
 }
 
 export default global
