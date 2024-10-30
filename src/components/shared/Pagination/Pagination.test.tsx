@@ -73,6 +73,7 @@ describe('pagination', () => {
 
     // THEN
     const pages = listerLesPages()
+    expect(pages).toHaveLength(7)
 
     const page1 = within(pages[1]).getByRole('link', { name: '1' })
     expect(page1).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?page=0')
@@ -107,6 +108,7 @@ describe('pagination', () => {
 
     // THEN
     const pages = listerLesPages()
+    expect(pages).toHaveLength(7)
 
     const page1 = within(pages[1]).getByRole('link', { name: '2' })
     expect(page1).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?page=1')
@@ -141,6 +143,7 @@ describe('pagination', () => {
 
     // THEN
     const pages = listerLesPages()
+    expect(pages).toHaveLength(7)
 
     const page1 = within(pages[1]).getByRole('link', { name: '2' })
     expect(page1).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?page=1')
@@ -175,6 +178,7 @@ describe('pagination', () => {
 
     // THEN
     const pages = listerLesPages()
+    expect(pages).toHaveLength(7)
 
     const page1 = within(pages[1]).getByRole('link', { name: '318' })
     expect(page1).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?page=317')
@@ -209,6 +213,7 @@ describe('pagination', () => {
 
     // THEN
     const pages = listerLesPages()
+    expect(pages).toHaveLength(7)
 
     const premierePage = within(pages[0]).getByRole('link', { name: 'Première page' })
     expect(premierePage).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?fakeParam=fakeValue')
