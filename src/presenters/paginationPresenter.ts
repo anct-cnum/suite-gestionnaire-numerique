@@ -9,34 +9,21 @@ export function pages(
 ): Array<number> {
   const nombreDePages = nombreDePage(nombreDeResultat, utilisateursParPage)
 
-  return new Array(nombreDePages)
-    .fill('')
-    .map((_, index): number => index + 1)
+  return Array
+    .from({ length: nombreDePages }, (_, index) => index + 1)
     .filter((page): boolean => {
-      const debutDePagination = pageCourante < 3
-      const finDePagination = pageCourante > nombreDePages - 4
+      const isDebutDePagination = pageCourante < 3
+      const isFinDePagination = pageCourante > nombreDePages - 4
 
-      if (debutDePagination) {
-        return page === 1
-          || page === 2
-          || page === 3
-          || page === 4
-          || page === 5
+      if (isDebutDePagination) {
+        return page < 6
       }
 
-      if (finDePagination) {
-        return page === nombreDePages - 4
-          || page === nombreDePages - 3
-          || page === nombreDePages - 2
-          || page === nombreDePages - 1
-          || page === nombreDePages
+      if (isFinDePagination) {
+        return page >= nombreDePages - 4
       }
 
-      return pageCourante === page - 1
-        || pageCourante - 1 === page - 1
-        || pageCourante - 2 === page - 1
-        || pageCourante + 1 === page - 1
-        || pageCourante + 2 === page - 1
+      return page >= pageCourante - 1 && page <= pageCourante + 3
     })
 }
 
