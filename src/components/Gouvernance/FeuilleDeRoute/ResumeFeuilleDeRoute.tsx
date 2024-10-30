@@ -27,7 +27,7 @@ export default function ResumeFeuilleDeRoute({
       <hr className={styles['resume-hr']} />
       <Link
         className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${styles['resume-a']}`}
-        href={new URL(link)}
+        href={link}
       >
         {linkLabel}
       </Link>

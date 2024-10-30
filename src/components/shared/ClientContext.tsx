@@ -22,7 +22,7 @@ export default function ClientContext({
   utilisateursParPage,
 }: ClientContextProps): ReactElement {
   const searchParams = useSearchParams()
-  const pathname = usePathname() as __next_route_internal_types__.StaticRoutes
+  const pathname = usePathname()
   const router = useRouter()
 
   const clientContextProviderValue = useMemo(
@@ -57,7 +57,7 @@ export type ClientContextProviderValue = Readonly<{
   changerMonRoleAction: typeof changerMonRoleAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction,
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
-  pathname: __next_route_internal_types__.StaticRoutes
+  pathname: string
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction,
   ajouterUnComiteAction: typeof ajouterUnComiteAction
   roles: ReadonlyArray<string>

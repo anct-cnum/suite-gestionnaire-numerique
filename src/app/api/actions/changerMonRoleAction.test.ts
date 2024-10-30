@@ -40,7 +40,7 @@ describe('changer mon rôle action', () => {
   it('étant donné un path incorrect quand mon rôle est changé alors cela renvoie une erreur', async () => {
     // GIVEN
     const nouveauRole = 'Instructeur'
-    const pathIncorrect = ''as __next_route_internal_types__.StaticRoutes
+    const pathIncorrect = ''
 
     // WHEN
     const messages = await changerMonRoleAction({ nouveauRole, path: pathIncorrect })

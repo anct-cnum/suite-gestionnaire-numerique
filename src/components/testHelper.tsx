@@ -22,7 +22,7 @@ export function renderComponent(
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
-    pathname: '/' as __next_route_internal_types__.StaticRoutes,
+    pathname: '/',
     reinviterUnUtilisateurAction: vi.fn(),
     roles: Roles,
     router: {

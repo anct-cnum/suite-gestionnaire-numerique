@@ -141,7 +141,7 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
       budgetTotalCumule: '0',
       lien: {
         label: '',
-        url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
+        url: '/',
       },
       total: '0',
       wording: 'feuille de route',
@@ -150,10 +150,10 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
 
   const lien = feuillesDeRoute.length === 1 ? {
     label: 'Voir la feuille de route',
-    url: new URL('/feuille-de-route', process.env.NEXT_PUBLIC_HOST).toString(),
+    url: '/feuille-de-route',
   } : {
     label: 'Voir les feuilles de route',
-    url: new URL('/feuilles-de-route', process.env.NEXT_PUBLIC_HOST).toString(),
+    url: '/feuilles-de-route',
   }
 
   const nombreDeFeuillesDeRoute = feuillesDeRoute.length
