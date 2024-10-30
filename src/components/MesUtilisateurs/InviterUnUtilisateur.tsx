@@ -8,6 +8,7 @@ import { clientContext } from '../shared/ClientContext'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
+// A DEPLACER DANS LE DOMAINE
 const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
 
 export default function InviterUnUtilisateur({
@@ -36,10 +37,8 @@ export default function InviterUnUtilisateur({
     const utilisateurACreer = {
       email,
       nom: form.get('nom') as string,
-      // A TESTER
       organisation: form.get('structure') as string || sessionUtilisateurViewModel.role.libelle,
       prenom: form.get('prenom') as string,
-      // A TESTER
       role: form.get('attributionRole') as string || sessionUtilisateurViewModel.role.nom,
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)

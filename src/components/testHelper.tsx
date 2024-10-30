@@ -33,7 +33,7 @@ export const clientContextProviderDefaultValue = {
       libelle: 'Mednum',
       nom: 'Support animation',
       pictogramme: 'support-animation',
-      rolesGerables: [],
+      rolesGerables: [] as ReadonlyArray<string>,
     },
     telephone: '0102030405',
     uid: 'fooId',
