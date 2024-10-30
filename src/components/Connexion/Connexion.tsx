@@ -3,7 +3,7 @@
 import { signIn } from 'next-auth/react'
 import { ReactElement } from 'react'
 
-import ProConnect from './pro-connect.svg'
+import ProConnect from './ProConnect'
 
 export default function Connexion({ idProvider }: ConnexionProps): ReactElement {
   return (

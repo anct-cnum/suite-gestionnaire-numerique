@@ -1,5 +1,7 @@
 import bundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
+import { NextConfig } from 'next'
+import { NextJsWebpackConfig } from 'next/dist/server/config-shared'
 
 const securityHeaders = [
   /**
@@ -64,15 +66,11 @@ const securityHeaders = [
   },
 ]
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    typedRoutes: true,
-    serverComponentsExternalPackages: ["mjml"],
-  },
+  // @ts-expect-error
   headers() {
     return process.env.NODE_ENV !== 'development' ? [
       {
@@ -83,10 +81,11 @@ const nextConfig = {
   },
   poweredByHeader: false,
   reactStrictMode: true,
+  serverExternalPackages: ['mjml'],
   typescript: {
     ignoreBuildErrors: true,
   },
-  webpack(config) {
+  webpack(config): NextJsWebpackConfig | null {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     config.module.rules.push({
       issuer: /\.[jt]sx?$/,

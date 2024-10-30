@@ -31,7 +31,7 @@ export async function supprimerUnUtilisateurAction(
 
 type ActionParams = Readonly<{
   utilisateurASupprimerUid: string
-  path: __next_route_internal_types__.StaticRoutes
+  path: string
 }>
 
 const validator = z.object({

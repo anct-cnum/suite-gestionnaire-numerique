@@ -38,7 +38,7 @@
   "include": [
     "next-env.d.ts",
     "vitest.d.ts",
-    "next.config.mjs",
+    "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
