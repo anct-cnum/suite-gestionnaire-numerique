@@ -21,6 +21,9 @@ describe('rechercher mes utilisateurs', () => {
       pageCourante,
       utilisateursParPage,
       utilisateursActives,
+      [],
+      '0',
+      '0',
     ])
   })
 })
@@ -56,9 +59,20 @@ class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,
-    utilisateursActives: boolean
+    utilisateursActives: boolean,
+    roles: ReadonlyArray<string>,
+    codeDepartement: string,
+    codeRegion: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
-    this.spiedFindMesUtilisateursEtLeTotalArgs = [utilisateur, pageCourante, utilisateursParPage, utilisateursActives]
+    this.spiedFindMesUtilisateursEtLeTotalArgs = [
+      utilisateur,
+      pageCourante,
+      utilisateursParPage,
+      utilisateursActives,
+      roles,
+      codeDepartement,
+      codeRegion,
+    ]
     return Promise.resolve({
       total: 1,
       utilisateursCourants: [],
