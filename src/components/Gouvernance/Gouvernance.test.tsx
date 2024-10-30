@@ -287,7 +287,7 @@ describe('gouvernance', () => {
     const resume = screen.getByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir les feuilles de route' })
-    expect(lienResume).toHaveAttribute('href', 'http://example.com/feuilles-de-route')
+    expect(lienResume).toHaveAttribute('href', '/feuilles-de-route')
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '2 feuilles de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
@@ -345,7 +345,7 @@ describe('gouvernance', () => {
     const resume = screen.getByText(matchWithoutMarkup('1 feuille de route territoriale'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir la feuille de route' })
-    expect(lienResume).toHaveAttribute('href', 'http://example.com/feuille-de-route')
+    expect(lienResume).toHaveAttribute('href', '/feuille-de-route')
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '1 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')

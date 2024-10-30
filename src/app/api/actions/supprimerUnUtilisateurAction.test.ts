@@ -29,7 +29,7 @@ describe('supprimer un utilisateur action', () => {
   it('étant donné un path incorrect, quand la suppression d’un utilisateur est passée, alors cela renvoie une erreur', async () => {
     // GIVEN
     const utilisateurASupprimerUid = 'barId'
-    const pathIncorrect = '' as __next_route_internal_types__.StaticRoutes
+    const pathIncorrect = ''
 
     // WHEN
     const messages = await supprimerUnUtilisateurAction({ path: pathIncorrect, utilisateurASupprimerUid })

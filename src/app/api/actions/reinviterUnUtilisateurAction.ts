@@ -39,7 +39,7 @@ export async function reinviterUnUtilisateurAction(
 
 type ActionParams = Readonly<{
   uidUtilisateurAReinviter: string
-  path: __next_route_internal_types__.StaticRoutes
+  path: string
 }>
 
 const validator = z.object({

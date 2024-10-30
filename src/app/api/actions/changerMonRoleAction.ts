@@ -32,7 +32,7 @@ export async function changerMonRoleAction(
 
 type ActionParams = Readonly<{
   nouveauRole: string
-  path: __next_route_internal_types__.StaticRoutes
+  path: string
 }>
 
 const validator = z.object({

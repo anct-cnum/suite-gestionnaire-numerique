@@ -86,7 +86,6 @@ describe('modifier mes informations personnelles action', () => {
     const messages = await modifierMesInformationsPersonnellesAction({
       emailDeContact,
       nom,
-      // @ts-expect-error
       path: pathIncorrect,
       prenom,
       telephone,

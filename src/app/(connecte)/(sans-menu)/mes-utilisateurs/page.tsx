@@ -18,15 +18,19 @@ export const metadata: Metadata = {
 
 export default async function MesUtilisateursController({ searchParams }: PageProps): Promise<ReactElement> {
   const sub = await getSubSession()
-  const pageCourante = isNullishOrEmpty(searchParams.page) ? {} : { pageCourante: Number(searchParams.page) }
-  const utilisateursActives = Boolean(searchParams.utilisateursActives)
-  const codeDepartement = isNullishOrEmpty(searchParams.codeDepartement)
+  const pageAwaited = (await searchParams).page
+  const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) }
+  const utilisateursActives = Boolean((await searchParams).utilisateursActives)
+  const codeDepartement = isNullishOrEmpty((await searchParams).codeDepartement)
     ? {}
-    : { codeDepartement: searchParams.codeDepartement }
-  const codeRegion = isNullishOrEmpty(searchParams.codeRegion) ? {} : { codeRegion: searchParams.codeRegion }
-  const roles = isNullishOrEmpty(searchParams.roles) ? {} : { roles: searchParams.roles?.split(',') }
+    : { codeDepartement: (await searchParams).codeDepartement }
+  const codeRegionAwaited = (await searchParams).codeRegion
+  const codeRegion = isNullishOrEmpty(codeRegionAwaited) ? {} : { codeRegion: codeRegionAwaited }
+  const rolesAwaited = (await searchParams).roles
+  const roles = isNullishOrEmpty(rolesAwaited) ? {} : { roles: rolesAwaited?.split(',') }
+  const structureAwaited = (await searchParams).structure
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const idStructure = isNullishOrEmpty(searchParams.structure) ? {} : { idStructure: +searchParams.structure! }
+  const idStructure = isNullishOrEmpty(structureAwaited) ? {} : { idStructure: +structureAwaited! }
 
   const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
@@ -73,12 +77,12 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
 }
 
 type PageProps = Readonly<{
-  searchParams: Partial<Readonly<{
+  searchParams: Promise<Partial<Readonly<{
     codeDepartement: string
     codeRegion: string
     page: string
     roles: string
     utilisateursActives: string
     structure: string
-  }>>
+  }>>>
 }>

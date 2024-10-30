@@ -12,11 +12,13 @@ export const metadata: Metadata = {
 }
 
 export default async function GouvernanceController({ params }: PageProps): Promise<ReactElement> {
-  if (params.codeDepartement === undefined) {
+  const codeDepartement = (await params).codeDepartement
+
+  if (codeDepartement === undefined) {
     notFound()
   }
 
-  const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma).find(params.codeDepartement)
+  const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma).find(codeDepartement)
 
   if (gouvernanceReadModel === null) {
     notFound()
@@ -30,7 +32,7 @@ export default async function GouvernanceController({ params }: PageProps): Prom
 }
 
 type PageProps = Readonly<{
-  params: Partial<Readonly<{
+  params: Promise<Partial<Readonly<{
     codeDepartement: string
-  }>>
+  }>>>
 }>
