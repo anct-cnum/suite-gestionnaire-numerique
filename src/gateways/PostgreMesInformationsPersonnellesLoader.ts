@@ -34,7 +34,7 @@ export class PostgreMesInformationsPersonnellesLoader implements MesInformations
 }
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInformationsPersonnellesReadModel {
-  const mesInformationsPersonnelles = {
+  let mesInformationsPersonnelles: MesInformationsPersonnellesReadModel = {
     email: utilisateurRecord.email,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,
@@ -42,19 +42,12 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInfor
     telephone: utilisateurRecord.telephone,
   }
 
-  let structure = {}
   if (utilisateurRecord.relationStructure && utilisateurRecord.role === 'gestionnaire_structure') {
-    const adresse = [
-      utilisateurRecord.relationStructure.adresse.numero_voie,
-      utilisateurRecord.relationStructure.adresse.indice_repetition_voie,
-      utilisateurRecord.relationStructure.adresse.type_voie,
-      utilisateurRecord.relationStructure.adresse.libelle_voie + ',',
-      utilisateurRecord.relationStructure.adresse.code_postal,
-      utilisateurRecord.relationStructure.adresse.libelle_commune,
-    ]
-    structure = {
+    const { adresse, codePostal, commune } = utilisateurRecord.relationStructure
+    mesInformationsPersonnelles = {
+      ...mesInformationsPersonnelles,
       structure: {
-        adresse: adresse.join(' '),
+        adresse: `${adresse}, ${codePostal} ${commune}`,
         contact: {
           email: utilisateurRecord.relationStructure.contact.email,
           fonction: utilisateurRecord.relationStructure.contact.fonction,
@@ -68,8 +61,5 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInfor
     }
   }
 
-  return {
-    ...mesInformationsPersonnelles,
-    ...structure,
-  }
+  return mesInformationsPersonnelles
 }

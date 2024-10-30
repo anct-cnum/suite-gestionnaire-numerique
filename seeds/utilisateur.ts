@@ -163,9 +163,8 @@ async function transformUtilisateursCoNumToUtilisateurs(
 
       const structure = structures.find((structureId) => structureId.idMongo === utilisateurCoNumRecord.entityId)
 
-      if (structure) {
-        structureId = structure.id
-      }
+      // @ts-expect-error
+      structureId = structure.id
     } else if (isGestionnaireRegion) {
       role = 'gestionnaire_region'
 

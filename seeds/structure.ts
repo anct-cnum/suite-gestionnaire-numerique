@@ -36,7 +36,6 @@ async function retrieveStructuresCoNum(): Promise<Array<StructureCoNumRecord>> {
           $project: {
             _id: 1,
             codeDepartement: 1,
-            codeRegion: 1,
             contact: 1,
             insee: 1,
             nom: 1,
@@ -72,17 +71,29 @@ function transformStructuresCoNumToStructures(
   structuresCoNumRecord: Array<StructureCoNumRecord>
 ): Array<Prisma.StructureRecordUncheckedCreateInput> {
   return structuresCoNumRecord.map((structureCoNumRecord): Prisma.StructureRecordUncheckedCreateInput => {
+    const adresse = []
+    if (structureCoNumRecord.insee) {
+      if (structureCoNumRecord.insee.adresse.numero_voie)
+        adresse.push(structureCoNumRecord.insee.adresse.numero_voie)
+      if (structureCoNumRecord.insee.adresse.indice_repetition_voie)
+        adresse.push(structureCoNumRecord.insee.adresse.indice_repetition_voie)
+      if (structureCoNumRecord.insee.adresse.type_voie)
+        adresse.push(structureCoNumRecord.insee.adresse.type_voie)
+      if (structureCoNumRecord.insee.adresse.libelle_voie)
+        adresse.push(structureCoNumRecord.insee.adresse.libelle_voie)
+    }
+
     return {
       // Le champ insee est rempli à partir du moment où la structure est validée par le COSELEC
-      // @ts-expect-error
-      adresse: structureCoNumRecord.insee?.adresse ?? {},
+      adresse: adresse.join(' '),
+      codePostal: structureCoNumRecord.insee?.adresse.code_postal ?? '',
+      commune: structureCoNumRecord.insee?.adresse.libelle_commune ?? '',
       contact: structureCoNumRecord.contact,
       // On ne peut pas changer directement le 00 en 978 en production car beaucoup de logique est basée dessus
       departementCode: structureCoNumRecord.codeDepartement === '00' ? '978' : structureCoNumRecord.codeDepartement,
       idMongo: structureCoNumRecord._id,
       identifiantEtablissement: structureCoNumRecord.siret || structureCoNumRecord.ridet,
       nom: structureCoNumRecord.nom,
-      regionCode: structureCoNumRecord.codeRegion,
       statut: structureCoNumRecord.statut,
       type: structureCoNumRecord.type,
     }
@@ -91,14 +102,9 @@ function transformStructuresCoNumToStructures(
 
 function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
   return {
-    adresse: {
-      code_postal: '84200',
-      indice_repetition_voie: 'BIS',
-      libelle_commune: 'PARIS',
-      libelle_voie: 'CHARLES DE GAULLE',
-      numero_voie: '3',
-      type_voie: 'AVENUE',
-    },
+    adresse: '3 BIS AVENUE CHARLES DE GAULLE',
+    codePostal: '84200',
+    commune: 'PARIS',
     contact: {
       email: 'contact@example.com',
       fonction: 'Président',
@@ -111,7 +117,6 @@ function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
     idMongo: 'zzz',
     identifiantEtablissement: 'toto',
     nom: 'SGN structure',
-    regionCode: 'zz',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
   }
@@ -126,7 +131,6 @@ async function migrateStructures(structuresRecord: Array<Prisma.StructureRecordU
 type StructureCoNumRecord = Readonly<{
   _id: string
   codeDepartement: string
-  codeRegion: string
   contact: {
     email: string
     fonction: string
@@ -135,7 +139,14 @@ type StructureCoNumRecord = Readonly<{
     telephone: string
   }
   insee?: Readonly<{
-    adresse: PrismaJson.Adresse
+    adresse: Readonly<{
+      code_postal: string
+      indice_repetition_voie: string
+      libelle_commune: string
+      libelle_voie: string
+      numero_voie: string
+      type_voie: string
+    }>
   }>
   nom: string
   reseau: string

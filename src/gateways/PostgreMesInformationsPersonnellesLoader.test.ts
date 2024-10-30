@@ -89,14 +89,9 @@ describe('mes informations personnelles loader', () => {
     })
     await prisma.structureRecord.create({
       data: {
-        adresse: {
-          code_postal: '84200',
-          indice_repetition_voie: 'BIS',
-          libelle_commune: 'PARIS',
-          libelle_voie: 'CHARLES DE GAULLE',
-          numero_voie: '3',
-          type_voie: 'AVENUE',
-        },
+        adresse: '3 BIS AVENUE CHARLES DE GAULLE',
+        codePostal: '84200',
+        commune: 'PARIS',
         contact: {
           email: 'manon.verminac@example.com',
           fonction: 'Chargée de mission',
@@ -109,7 +104,6 @@ describe('mes informations personnelles loader', () => {
         idMongo: '123456',
         identifiantEtablissement: '62520260000023',
         nom: 'Solidarnum',
-        regionCode: '84',
         statut: 'VALIDATION_COSELEC',
         type: 'COMMUNE',
       },

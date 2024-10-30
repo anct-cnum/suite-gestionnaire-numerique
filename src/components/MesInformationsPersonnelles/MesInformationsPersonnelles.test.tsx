@@ -95,7 +95,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     afficherMesInformationsPersonnelles({
       ...mesInformationsPersonnellesReadModelParDefaut,
       role,
-      // @ts-expect-error
       structure: {
         adresse: '201 bis rue de la plaine, 69000 Lyon',
         contact: {
@@ -400,7 +399,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 })
 
 function afficherMesInformationsPersonnelles(
-  mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelParDefaut
+  mesInformationsPersonnellesReadModel: Parameters<typeof mesInformationsPersonnellesPresenter>[0]
+  = mesInformationsPersonnellesReadModelParDefaut
 ) {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)

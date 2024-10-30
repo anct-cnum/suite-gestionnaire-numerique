@@ -746,14 +746,9 @@ function structureRecordFactory(
   override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
 ): Prisma.StructureRecordUncheckedCreateInput {
   return {
-    adresse: {
-      code_postal: '',
-      indice_repetition_voie: '',
-      libelle_commune: '',
-      libelle_voie: '',
-      numero_voie: '',
-      type_voie: '',
-    },
+    adresse: '',
+    codePostal: '',
+    commune: '',
     contact: {
       email: '',
       fonction: '',
@@ -766,7 +761,6 @@ function structureRecordFactory(
     idMongo: '123456',
     identifiantEtablissement: '41816609600069',
     nom: 'Solidarnum',
-    regionCode: '11',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
     ...override,
