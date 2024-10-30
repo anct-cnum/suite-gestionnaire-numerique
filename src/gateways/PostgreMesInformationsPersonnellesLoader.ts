@@ -1,6 +1,7 @@
-import { PrismaClient, UtilisateurRecord } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 
 import { toTypologieRole } from './roleMapper'
+import { UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
@@ -13,6 +14,12 @@ export class PostgreMesInformationsPersonnellesLoader implements MesInformations
 
   async findByUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
     const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
+      include: {
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
+      },
       where: {
         ssoId: uid,
       },
@@ -26,20 +33,33 @@ export class PostgreMesInformationsPersonnellesLoader implements MesInformations
   }
 }
 
-function transform(utilisateurRecord: UtilisateurRecord): MesInformationsPersonnellesReadModel {
-  return {
-    contactEmail: 'manon.verminac@example.com',
-    contactFonction: 'Chargée de mission',
-    contactNom: 'Verninac',
-    contactPrenom: 'Manon',
-    informationsPersonnellesEmail: utilisateurRecord.email,
-    informationsPersonnellesNom: utilisateurRecord.nom,
-    informationsPersonnellesPrenom: utilisateurRecord.prenom,
-    informationsPersonnellesTelephone: utilisateurRecord.telephone,
+function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInformationsPersonnellesReadModel {
+  let mesInformationsPersonnelles: MesInformationsPersonnellesReadModel = {
+    email: utilisateurRecord.email,
+    nom: utilisateurRecord.nom,
+    prenom: utilisateurRecord.prenom,
     role: toTypologieRole(utilisateurRecord.role),
-    structureAdresse: '201 bis rue de la plaine, 69000 Lyon',
-    structureNumeroDeSiret: '62520260000023',
-    structureRaisonSociale: 'Préfecture du Rhône',
-    structureTypeDeStructure: 'Administration',
+    telephone: utilisateurRecord.telephone,
   }
+
+  if (utilisateurRecord.relationStructure && utilisateurRecord.role === 'gestionnaire_structure') {
+    const { adresse, codePostal, commune } = utilisateurRecord.relationStructure
+    mesInformationsPersonnelles = {
+      ...mesInformationsPersonnelles,
+      structure: {
+        adresse: `${adresse}, ${codePostal} ${commune}`,
+        contact: {
+          email: utilisateurRecord.relationStructure.contact.email,
+          fonction: utilisateurRecord.relationStructure.contact.fonction,
+          nom: utilisateurRecord.relationStructure.contact.nom,
+          prenom: utilisateurRecord.relationStructure.contact.prenom,
+        },
+        numeroDeSiret: utilisateurRecord.relationStructure.identifiantEtablissement,
+        raisonSociale: utilisateurRecord.relationStructure.nom,
+        typeDeStructure: utilisateurRecord.relationStructure.type,
+      },
+    }
+  }
+
+  return mesInformationsPersonnelles
 }

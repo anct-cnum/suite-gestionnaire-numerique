@@ -4,7 +4,6 @@ import { Prisma, Role } from '@prisma/client'
 import { coNumClient } from './co-num/coNumClient'
 import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
-import config from '@/use-cases/config.json'
 
 async function migration() {
   const greenColor = '\x1b[32m%s\x1b[0m'
@@ -78,9 +77,9 @@ async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord
             // = e-mail
             name: 1,
             // Le nom n'est pas forcément renseigné
-            nom: { $ifNull: ['$nom', config.absenceNomOuPrenom] },
+            nom: { $ifNull: ['$nom', '~'] },
             // Le prénom n'est pas forcément renseigné
-            prenom: { $ifNull: ['$prenom', config.absenceNomOuPrenom] },
+            prenom: { $ifNull: ['$prenom', '~'] },
             // La région n'est pas forcément renseignée
             region: { $ifNull: ['$region', ''] },
             reseau: { $ifNull: ['$reseau', ''] },
@@ -162,6 +161,7 @@ async function transformUtilisateursCoNumToUtilisateurs(
       role = 'gestionnaire_structure'
 
       const structure = structures.find((structureId) => structureId.idMongo === utilisateurCoNumRecord.entityId)
+
       // @ts-expect-error
       structureId = structure.id
     } else if (isGestionnaireRegion) {
@@ -227,8 +227,8 @@ function transformUtilisateursFNEToUtilisateurs(
       inviteLe: utilisateurFNERecord.created,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
-      nom: utilisateurFNERecord.lastName ?? config.absenceNomOuPrenom,
-      prenom: utilisateurFNERecord.firstName ?? config.absenceNomOuPrenom,
+      nom: utilisateurFNERecord.lastName ?? '~',
+      prenom: utilisateurFNERecord.firstName ?? '~',
       regionCode,
       role,
       ssoId,
@@ -272,7 +272,7 @@ function decodeJwt(token: string): Token {
   return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Token
 }
 
-async function retrieveStructures(): Promise<Array<Prisma.StructureRecordUncheckedCreateInput>> {
+async function retrieveStructures(): Promise<Array<Partial<Prisma.StructureRecordUncheckedCreateInput>>> {
   return prisma.structureRecord.findMany({
     select: {
       id: true,

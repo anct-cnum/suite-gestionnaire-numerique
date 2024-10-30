@@ -2957,6 +2957,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@prisma/debug@npm:5.20.0":
+  version: 5.20.0
+  resolution: "@prisma/debug@npm:5.20.0"
+  checksum: 10c0/820e3e2c25f1a046024383a3a83f28707a99af1e04f46016c78d6b6231a901353755202578ce27760e00a654b357b634a3e79b99bfe710ba6d6a7f480fcdf6b9
+  languageName: node
+  linkType: hard
+
 "@prisma/debug@npm:5.21.1":
   version: 5.21.1
   resolution: "@prisma/debug@npm:5.21.1"
@@ -2991,6 +2998,15 @@ __metadata:
     "@prisma/engines-version": "npm:5.21.1-1.bf0e5e8a04cada8225617067eaa03d041e2bba36"
     "@prisma/get-platform": "npm:5.21.1"
   checksum: 10c0/068663fa15cb204d033b166588157915be11571a1584c914372968248faab0f7c236ec1086aaf194929ece3ae2a3d2d0b28e33dac114a1545e0dee1011dc669c
+  languageName: node
+  linkType: hard
+
+"@prisma/generator-helper@npm:5.20.0":
+  version: 5.20.0
+  resolution: "@prisma/generator-helper@npm:5.20.0"
+  dependencies:
+    "@prisma/debug": "npm:5.20.0"
+  checksum: 10c0/3628b960b0c3dad40b781e9f226d6bf79423fcb4708c408852e265735709346cf037ae42cad5624cae3ea3884e6919098a0dfeba70d8d379b8dd1049a7a59fb0
   languageName: node
   linkType: hard
 
@@ -9618,6 +9634,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prisma-json-types-generator@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "prisma-json-types-generator@npm:3.1.1"
+  dependencies:
+    "@prisma/generator-helper": "npm:5.20.0"
+    tslib: "npm:2.7.0"
+  peerDependencies:
+    prisma: ^5.20
+    typescript: ^5.6.2
+  bin:
+    prisma-json-types-generator: index.js
+  checksum: 10c0/d319343fb0611dbe1da269f3a7ea1b795498fabc948522f04fb2f8ee558c3c27620240dd0d71464337fab450b721c7ebdcd5cd58fca5a1a75edf73d5a8980e6b
+  languageName: node
+  linkType: hard
+
 "prisma@npm:^5.21.1":
   version: 5.21.1
   resolution: "prisma@npm:5.21.1"
@@ -10742,6 +10773,7 @@ __metadata:
     next-auth: "npm:^4.24.10"
     prettier: "npm:^3.3.3"
     prisma: "npm:^5.21.1"
+    prisma-json-types-generator: "npm:^3.1.1"
     react: "npm:^18"
     react-dom: "npm:^18"
     react-select: "npm:^5.8.2"

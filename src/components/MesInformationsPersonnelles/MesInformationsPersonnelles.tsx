@@ -54,24 +54,24 @@ export default function MesInformationsPersonnelles(
           <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
             <InformationPersonnelle
               label="Nom"
-              value={mesInformationsPersonnellesViewModel.informationsPersonnellesNom}
+              value={mesInformationsPersonnellesViewModel.nom}
             />
             <InformationPersonnelle
               label="Prénom"
-              value={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
+              value={mesInformationsPersonnellesViewModel.prenom}
             />
             <InformationPersonnelle
               label="Adresse électronique"
-              value={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
+              value={mesInformationsPersonnellesViewModel.email}
             />
             <InformationPersonnelle
               label="Téléphone professionnel"
-              value={mesInformationsPersonnellesViewModel.informationsPersonnellesTelephone}
+              value={mesInformationsPersonnellesViewModel.telephone}
             />
           </div>
         </section>
         {
-          mesInformationsPersonnellesViewModel.isStructure ? (
+          mesInformationsPersonnellesViewModel.structure ? (
             <section
               aria-labelledby="maStructure"
               className="grey-border fr-p-4w fr-mb-4w"
@@ -86,11 +86,11 @@ export default function MesInformationsPersonnelles(
               <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
                 <InformationPersonnelle
                   label="Raison sociale"
-                  value={mesInformationsPersonnellesViewModel.structureRaisonSociale}
+                  value={mesInformationsPersonnellesViewModel.structure.raisonSociale}
                 />
                 <InformationPersonnelle
                   label="Type de structure"
-                  value={mesInformationsPersonnellesViewModel.structureTypeDeStructure}
+                  value={mesInformationsPersonnellesViewModel.structure.typeDeStructure}
                 />
                 <InformationPersonnelle
                   label={
@@ -100,13 +100,19 @@ export default function MesInformationsPersonnelles(
                       <abbr title="Système d’Identification du Répertoire des ÉTablissements">
                         SIRET
                       </abbr>
+                      {/**/}
+                      /
+                      {/**/}
+                      <abbr title="Répertoire d’Identification des Entreprises et des ÉTablissements">
+                        RIDET
+                      </abbr>
                     </>
                   }
-                  value={mesInformationsPersonnellesViewModel.structureNumeroDeSiret}
+                  value={mesInformationsPersonnellesViewModel.structure.numeroDeSiret}
                 />
                 <InformationPersonnelle
                   label="Adresse"
-                  value={mesInformationsPersonnellesViewModel.structureAdresse}
+                  value={mesInformationsPersonnellesViewModel.structure.adresse}
                 />
               </div>
               <hr className="fr-mt-3w" />
@@ -116,19 +122,19 @@ export default function MesInformationsPersonnelles(
               <div className="fr-grid-row fr-grid-row--center fr-grid-row--gutters">
                 <InformationPersonnelle
                   label="Nom"
-                  value={mesInformationsPersonnellesViewModel.contactNom}
+                  value={mesInformationsPersonnellesViewModel.structure.contact.nom}
                 />
                 <InformationPersonnelle
                   label="Prénom"
-                  value={mesInformationsPersonnellesViewModel.contactPrenom}
+                  value={mesInformationsPersonnellesViewModel.structure.contact.prenom}
                 />
                 <InformationPersonnelle
                   label="Fonction dans la structure"
-                  value={mesInformationsPersonnellesViewModel.contactFonction}
+                  value={mesInformationsPersonnellesViewModel.structure.contact.fonction}
                 />
                 <InformationPersonnelle
                   label="Adresse électronique"
-                  value={mesInformationsPersonnellesViewModel.contactEmail}
+                  value={mesInformationsPersonnellesViewModel.structure.contact.email}
                 />
               </div>
             </section>
@@ -186,7 +192,7 @@ export default function MesInformationsPersonnelles(
           </button>
         </section>
         <SupprimerMonCompte
-          email={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
+          email={mesInformationsPersonnellesViewModel.email}
           id={supprimerMonCompteModalId}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
@@ -202,11 +208,11 @@ export default function MesInformationsPersonnelles(
         setIsOpen={setIsDrawerOpen}
       >
         <ModifierMonCompte
-          email={mesInformationsPersonnellesViewModel.informationsPersonnellesEmail}
+          email={mesInformationsPersonnellesViewModel.email}
           id={drawerId}
           labelId={labelId}
-          nom={mesInformationsPersonnellesViewModel.informationsPersonnellesNom}
-          prenom={mesInformationsPersonnellesViewModel.informationsPersonnellesPrenom}
+          nom={mesInformationsPersonnellesViewModel.nom}
+          prenom={mesInformationsPersonnellesViewModel.prenom}
           setIsOpen={setIsDrawerOpen}
           telephone={mesInformationsPersonnellesViewModel.telephoneBrut}
         />
