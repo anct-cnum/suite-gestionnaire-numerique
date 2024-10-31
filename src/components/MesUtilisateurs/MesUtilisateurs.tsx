@@ -28,6 +28,8 @@ export default function MesUtilisateurs(
   const drawerInvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     email: '',
@@ -42,6 +44,8 @@ export default function MesUtilisateurs(
   const labelDetailsId = 'drawer-details-utilisateur-nom'
   const drawerInvitationId = 'drawer-invitation'
   const labelInvitationId = 'drawer-invitation-titre'
+  const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
+  const labelRenvoyerInvitationId = 'drawer-renvoyer-invitation-titre'
 
   return (
     <>
@@ -146,12 +150,16 @@ export default function MesUtilisateurs(
               </td>
               <td>
                 <button
-                  aria-controls={drawerDetailsId}
+                  aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={() => {
-                    setUtilisateurSelectionne(unUtilisateurViewModel)
-                    setIsDrawerOpen(true)
+                    if (unUtilisateurViewModel.statut === 'En attente') {
+                      setIsDrawerRenvoyerInvitationOpen(true)
+                    } else {
+                      setUtilisateurSelectionne(unUtilisateurViewModel)
+                      setIsDrawerOpen(true)
+                    }
                   }}
                   type="button"
                 >
@@ -226,6 +234,22 @@ export default function MesUtilisateurs(
           labelId={labelDetailsId}
           utilisateur={utilisateurSelectionne}
         />
+      </Drawer>
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        id={drawerRenvoyerInvitationId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerRenvoyerInvitationOpen}
+        labelId={labelRenvoyerInvitationId}
+        setIsOpen={setIsDrawerRenvoyerInvitationOpen}
+      >
+        <h1
+          className="fr-h2 color-blue-france"
+          id={labelRenvoyerInvitationId}
+        >
+          Invitation envoyée le 12 février 2024
+        </h1>
       </Drawer>
     </>
   )
