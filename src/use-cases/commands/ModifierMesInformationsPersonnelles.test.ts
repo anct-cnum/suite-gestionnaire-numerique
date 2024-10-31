@@ -1,5 +1,6 @@
 import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { utilisateurFactory } from '../testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('modifier mes informations personnelles', () => {
@@ -66,19 +67,4 @@ class RepositoryUtilisateurIntrouvableStub extends RepositoryStub {
   override async find(): Promise<null> {
     return Promise.resolve(null)
   }
-}
-
-function utilisateurFactory(
-  override: Partial<Parameters<typeof Utilisateur.create>[0]> = {}
-): Utilisateur {
-  return Utilisateur.create({
-    email: 'michel.tartempion@example.org',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Michel',
-    role: 'Instructeur',
-    telephone: '0102030405',
-    uid: 'fooId',
-    ...override,
-  })
 }

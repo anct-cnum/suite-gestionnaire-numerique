@@ -1,18 +1,8 @@
 import { Prisma } from '@prisma/client'
 
 import { PostgresSoftDeleteUtilisateurGateway } from './PostgreSoftDeleteUtilisateurGateway'
+import { utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
-
-const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
-const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
-const utilisateurExistant: Partial<Prisma.UtilisateurRecordCreateInput> = {
-  isSupprime: false,
-  ssoId: ssoIdUtilisateurExistant,
-}
-const utilisateurSupprime: Partial<Prisma.UtilisateurRecordCreateInput> = {
-  isSupprime: true,
-  ssoId: ssoIdUtilisateurSupprime,
-}
 
 describe('suppression "soft delete" d’un compte utilisateur', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -36,25 +26,8 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
     const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
       where: { ssoId: utilisateurExistant.ssoId },
     })
-    // @ts-expect-error
-    delete utilisateurModifie?.id
-    expect(utilisateurModifie).toStrictEqual({
-      dateDeCreation: new Date(0),
-      departementCode: null,
-      derniereConnexion: null,
-      email: 'martin.tartempion@example.net',
-      groupementId: null,
-      inviteLe: new Date(0),
-      isSuperAdmin: false,
-      isSupprime: true,
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      regionCode: null,
-      role: 'gestionnaire_region',
-      ssoId: ssoIdUtilisateurExistant,
-      structureId: null,
-      telephone: '0102030405',
-    })
+    const utilisateurRecord = utilisateurRecordFactory({ isSupprime: true })
+    expect(utilisateurModifie).toMatchObject(utilisateurRecord)
   })
 
   it('compte existant, préalablement supprimé : aucune écriture', async () => {
@@ -125,19 +98,13 @@ describe('suppression "soft delete" d’un compte utilisateur', () => {
   })
 })
 
-function utilisateurRecordFactory(
-  override: Partial<Prisma.UtilisateurRecordCreateInput>
-): Prisma.UtilisateurRecordCreateInput {
-  return {
-    dateDeCreation: new Date(0),
-    email: 'martin.tartempion@example.net',
-    inviteLe: new Date(0),
-    isSupprime: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    role: 'gestionnaire_region',
-    ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
-    telephone: '0102030405',
-    ...override,
-  }
+const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
+const utilisateurExistant: Partial<Prisma.UtilisateurRecordCreateInput> = {
+  isSupprime: false,
+  ssoId: ssoIdUtilisateurExistant,
+}
+const utilisateurSupprime: Partial<Prisma.UtilisateurRecordCreateInput> = {
+  isSupprime: true,
+  ssoId: ssoIdUtilisateurSupprime,
 }

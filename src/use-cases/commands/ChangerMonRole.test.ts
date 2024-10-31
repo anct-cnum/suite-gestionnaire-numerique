@@ -1,5 +1,6 @@
 import { ChangerMonRole } from './ChangerMonRole'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { utilisateurFactory } from '../testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
@@ -20,11 +21,9 @@ describe('changer mon rôle', () => {
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateur.equals(Utilisateur.create({
-      email: 'martin.tartempion@example.net',
+    expect(spiedUtilisateur.equals(utilisateurFactory({
       isSuperAdmin: true,
-      nom: 'tartempion',
-      prenom: 'martin',
+      organisation: '',
       role: 'Pilote politique publique',
       uid: 'utilisateurSuperAdminUid',
     }))).toBe(true)
@@ -68,20 +67,12 @@ const nullUtilisateur = {} as Utilisateur
 let spiedUtilisateur: Utilisateur = nullUtilisateur
 
 const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurNonSuperAdminUid: Utilisateur.create({
-    email: 'martin.tartempion@example.net',
+  utilisateurNonSuperAdminUid: utilisateurFactory({
     isSuperAdmin: false,
-    nom: 'tartempion',
-    prenom: 'martin',
-    role: 'Administrateur dispositif',
     uid: 'utilisateurNonSuperAdminUid',
   }),
-  utilisateurSuperAdminUid: Utilisateur.create({
-    email: 'martin.tartempion@example.net',
+  utilisateurSuperAdminUid: utilisateurFactory({
     isSuperAdmin: true,
-    nom: 'tartempion',
-    prenom: 'martin',
-    role: 'Administrateur dispositif',
     uid: 'utilisateurSuperAdminUid',
   }),
 }

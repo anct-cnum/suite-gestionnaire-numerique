@@ -1,6 +1,5 @@
-import { Prisma } from '@prisma/client'
-
 import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
+import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
@@ -97,10 +96,7 @@ describe('postgre utilisateur query', () => {
         data: structureRecordFactory(),
       })
       await prisma.groupementRecord.create({
-        data: {
-          id: 10,
-          nom: 'Hubikoop',
-        },
+        data: groupementRecordFactory(),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
@@ -120,10 +116,10 @@ describe('postgre utilisateur query', () => {
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
         departementCode: '75',
-        derniereConnexion: nullDate,
+        derniereConnexion: epochTime,
         email: 'martin.tartempion@example.net',
         groupementId: 10,
-        inviteLe: nullDate,
+        inviteLe: epochTime,
         isActive: true,
         isSuperAdmin: false,
         nom: 'Tartempion',
@@ -139,18 +135,8 @@ describe('postgre utilisateur query', () => {
     it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
       // GIVEN
       const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      const date = new Date()
       await prisma.utilisateurRecord.create({
-        data: {
-          dateDeCreation: date,
-          email: 'martin.tartempion@example.net',
-          inviteLe: date,
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          role: 'administrateur_dispositif',
-          ssoId: '1234567890',
-          telephone: '',
-        },
+        data: utilisateurRecordFactory({ ssoId: '1234567890' }),
       })
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
 
@@ -224,10 +210,10 @@ describe('postgre utilisateur query', () => {
         utilisateursCourants: [
           {
             departementCode: '75',
-            derniereConnexion: nullDate,
+            derniereConnexion: epochTime,
             email: 'martin.tartempion@example.net',
             groupementId: null,
-            inviteLe: nullDate,
+            inviteLe: epochTime,
             isActive: true,
             isSuperAdmin: false,
             nom: 'dupont',
@@ -245,10 +231,10 @@ describe('postgre utilisateur query', () => {
           },
           {
             departementCode: null,
-            derniereConnexion: nullDate,
+            derniereConnexion: epochTime,
             email: 'martin.tartempion@example.net',
             groupementId: null,
-            inviteLe: nullDate,
+            inviteLe: epochTime,
             isActive: true,
             isSuperAdmin: false,
             nom: 'Tartempion',
@@ -378,10 +364,7 @@ describe('postgre utilisateur query', () => {
         uid: ssoId,
       })
       await prisma.groupementRecord.create({
-        data: {
-          id: groupementId,
-          nom: 'Hubikoop',
-        },
+        data: groupementRecordFactory({ id: groupementId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ groupementId, nom: 'Tartempion', role: 'gestionnaire_groupement', ssoId }),
@@ -541,7 +524,7 @@ describe('postgre utilisateur query', () => {
       )
 
       // THEN
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(nullDate)
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].derniereConnexion).toStrictEqual(epochTime)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].isActive).toBe(false)
     })
 
@@ -706,86 +689,15 @@ describe('postgre utilisateur query', () => {
   })
 })
 
-const nullDate = new Date(0)
-
-function regionRecordFactory(
-  override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
-): Prisma.RegionRecordUncheckedCreateInput {
-  return {
-    code: '11',
-    nom: 'Île-de-France',
-    ...override,
-  }
-}
-
-function departementRecordFactory(
-  override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
-): Prisma.DepartementRecordUncheckedCreateInput {
-  return {
-    code: '75',
-    nom: 'Paris',
-    regionCode: '11',
-    ...override,
-  }
-}
-
-function structureRecordFactory(
-  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
-): Prisma.StructureRecordUncheckedCreateInput {
-  return {
-    adresse: '',
-    codePostal: '',
-    commune: '',
-    contact: {
-      email: '',
-      fonction: '',
-      nom: '',
-      prenom: '',
-      telephone: '',
-    },
-    departementCode: '75',
-    id: 10,
-    idMongo: '123456',
-    identifiantEtablissement: '41816609600069',
-    nom: 'Solidarnum',
-    statut: 'VALIDATION_COSELEC',
-    type: 'COMMUNE',
-    ...override,
-  }
-}
-
-function utilisateurRecordFactory(
-  override: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
-): Prisma.UtilisateurRecordUncheckedCreateInput {
-  return {
-    dateDeCreation: nullDate,
-    departementCode: null,
-    derniereConnexion: nullDate,
-    email: 'martin.tartempion@example.net',
-    groupementId: null,
-    inviteLe: nullDate,
-    isSuperAdmin: false,
-    isSupprime: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    regionCode: null,
-    role: 'administrateur_dispositif',
-    ssoId: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-    structureId: null,
-    telephone: '0102030405',
-    ...override,
-  }
-}
-
 function utilisateurReadModelFactory(
   override: Partial<UnUtilisateurReadModel>
 ): UnUtilisateurReadModel {
   return {
     departementCode: null,
-    derniereConnexion: nullDate,
+    derniereConnexion: epochTime,
     email: 'martin.tartempion@example.net',
     groupementId: null,
-    inviteLe: nullDate,
+    inviteLe: epochTime,
     isActive: true,
     isSuperAdmin: false,
     nom: 'Tartempion',

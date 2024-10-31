@@ -733,7 +733,7 @@ function getByTable() {
   return { columnsHead, rowsBody }
 }
 
-const mesUtilisateursReadModel = [
+const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] = [
   {
     departementCode: null,
     derniereConnexion: new Date('2024-03-05'),

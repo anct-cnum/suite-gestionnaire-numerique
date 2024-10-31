@@ -1,5 +1,6 @@
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { utilisateurFactory } from '../testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('corriger nom prenom si absents', () => {
@@ -138,8 +139,8 @@ describe('corriger nom prenom si absents', () => {
       desc: 'le nom est absent : il est corrigé',
       nomApresCorrection: 'Dugenoux',
       nomAvantCorrection: valeurNomOuPrenomAbsent,
-      prenomApresCorrection: 'Michel',
-      prenomAvantCorrection: 'Michel',
+      prenomApresCorrection: 'Martin',
+      prenomAvantCorrection: 'Martin',
     },
     {
       correctionNom: valeurNomOuPrenomAbsent,
@@ -225,18 +226,4 @@ implements FindUtilisateurRepository, UpdateUtilisateurRepository {
     spiedUtilisateurToUpdate = utilisateur
     return Promise.resolve()
   }
-}
-
-function utilisateurFactory(
-  override: Partial<Parameters<typeof Utilisateur.create>[0]> = {}
-): Utilisateur {
-  return Utilisateur.create({
-    email: 'michel.tartempion@example.org',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Michel',
-    role: 'Instructeur',
-    uid: 'fooId',
-    ...override,
-  })
 }

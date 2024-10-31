@@ -1,4 +1,5 @@
 import { modifierMesInformationsPersonnellesAction } from './modifierMesInformationsPersonnellesAction'
+import { profileFactory } from './testHelper'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
@@ -6,8 +7,7 @@ describe('modifier mes informations personnelles action', () => {
   it('si les informations personnelles sont correctes alors c’est valide', async () => {
     // GIVEN
     const sub = 'fooId'
-    // @ts-expect-error
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub } })
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(profileFactory({ sub }))
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
@@ -75,8 +75,8 @@ describe('modifier mes informations personnelles action', () => {
 
   it('si le téléphone est vide alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN
-    // @ts-expect-error
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub: 'fooId' } })
+    const sub = 'fooId'
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(profileFactory({ sub }))
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
     const telephoneVide = ''
 
