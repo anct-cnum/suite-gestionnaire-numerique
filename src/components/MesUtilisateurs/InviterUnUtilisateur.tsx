@@ -37,9 +37,9 @@ export default function InviterUnUtilisateur({
     const utilisateurACreer = {
       email,
       nom: form.get('nom') as string,
-      organisation: form.get('structure') as string || sessionUtilisateurViewModel.role.libelle,
+      organisation: form.get('structure') as string,
       prenom: form.get('prenom') as string,
-      role: form.get('attributionRole') as string || sessionUtilisateurViewModel.role.nom,
+      role: form.get('attributionRole') as string,
     }
     const result = await inviterUnUtilisateurAction(utilisateurACreer)
     if (result === 'emailExistant') {

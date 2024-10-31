@@ -704,58 +704,6 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('étant donné que je peux choisir un rôle, dans le drawer d’invitation, quand j’envoie le formulaire, alors les données de formulaire sont complétées avec mon rôle et mon organisation', async () => {
-      // GIVEN
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
-      const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
-          role: {
-            groupe: 'gestionnaire',
-            libelle: 'Rhône',
-            nom: 'Gestionnaire département',
-            pictogramme: 'maille',
-            rolesGerables: ['Gestionnaire département'],
-          },
-        },
-      })
-      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-      fireEvent.click(inviter)
-
-      // WHEN
-      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-      const nom = within(formulaireInvitation).getByLabelText('Nom *')
-      fireEvent.change(nom, { target: { value: 'Tartempion' } })
-      const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-      fireEvent.change(prenom, { target: { value: 'Martin' } })
-      const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-      fireEvent.click(envoyerInvitation)
-
-      // THEN
-      const formulaireInvitationFerme = await screen.findByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-      expect(formulaireInvitationFerme).not.toBeVisible()
-      expect(inviterAction.inviterUnUtilisateurAction).toHaveBeenCalledWith({
-        email: 'martin.tartempion@example.com',
-        nom: 'Tartempion',
-        organisation: 'Rhône',
-        prenom: 'Martin',
-        role: 'Gestionnaire département',
-      })
-      window.dsfr = windowDsfr
-    })
-
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
       // GIVEN
       vi.spyOn(inviterAction, 'inviterUnUtilisateurAction')
@@ -763,7 +711,7 @@ describe('mes utilisateurs', () => {
         .mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
       // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-      window.dsfr = () => {
+      window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
           modal: {
             conceal: vi.fn(),
