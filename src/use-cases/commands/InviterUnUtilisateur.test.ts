@@ -1,5 +1,6 @@
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
+import { utilisateurFactory } from '../testHelper'
 import { TypologieRole } from '@/domain/Role'
 import { Utilisateur } from '@/domain/Utilisateur'
 
@@ -8,13 +9,14 @@ describe('inviter un utilisateur', () => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
   })
+
   it('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré', async () => {
     // GIVEN
     const repository = new RepositorySpy()
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.com',
+      email: 'martin.tartempion@example.org',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -27,13 +29,10 @@ describe('inviter un utilisateur', () => {
     // THEN
     expect(result).toBe('OK')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
-    const utilisateurACreer = Utilisateur.create({
-      email: 'martin.tartempion@example.com',
-      isSuperAdmin: false,
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      role: 'Instructeur' as TypologieRole,
-      uid: 'martin.tartempion@example.com',
+    const utilisateurACreer = utilisateurFactory({
+      organisation: '',
+      telephone: '',
+      uid: 'martin.tartempion@example.org',
     })
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
@@ -44,7 +43,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.com',
+      email: 'martin.tartempion@example.org',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -66,7 +65,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.com',
+      email: 'martin.tartempion@example.org',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -88,7 +87,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.net',
+      email: 'martin.tartempion@example.org',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -101,32 +100,22 @@ describe('inviter un utilisateur', () => {
     // THEN
     expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
-    const utilisateurACreer = Utilisateur.create({
-      email: 'martin.tartempion@example.net',
-      isSuperAdmin: false,
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      role: 'Instructeur' as TypologieRole,
-      uid: 'martin.tartempion@example.net',
+    const utilisateurACreer = utilisateurFactory({
+      organisation: '',
+      telephone: '',
+      uid: 'martin.tartempion@example.org',
     })
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
 })
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurAdminUid: Utilisateur.create({
-    email: 'martin.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    role: 'Instructeur',
+  utilisateurAdminUid: utilisateurFactory({
+    organisation: 'Banque des territoires',
     uid: 'utilisateurAdminUid',
   }),
-  utilisateurGestionnaireUid: Utilisateur.create({
-    email: 'martina.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martine',
+  utilisateurGestionnaireUid: utilisateurFactory({
+    organisation: 'Dispositif lambda',
     role: 'Gestionnaire région',
     uid: 'utilisateurGestionnaireUid',
   }),

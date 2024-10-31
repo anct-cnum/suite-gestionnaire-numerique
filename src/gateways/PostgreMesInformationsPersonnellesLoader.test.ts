@@ -1,6 +1,7 @@
 import { Role } from '@prisma/client'
 
 import { PostgreMesInformationsPersonnellesLoader } from './PostgreMesInformationsPersonnellesLoader'
+import { departementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
@@ -41,18 +42,11 @@ describe('mes informations personnelles loader', () => {
   ])('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure', async ({ role, roleLabel }) => {
     // GIVEN
     const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    const date = new Date(0)
     await prisma.utilisateurRecord.create({
-      data: {
-        dateDeCreation: date,
-        email: 'martin.tartempion@example.net',
-        inviteLe: date,
-        nom: 'Tartempion',
-        prenom: 'Martin',
+      data: utilisateurRecordFactory({
         role,
         ssoId: ssoIdExistant,
-        telephone: '0102030405',
-      },
+      }),
     })
     const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
 
@@ -69,56 +63,25 @@ describe('mes informations personnelles loader', () => {
     })
   })
 
-  it('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
+  it('cherchant un utilisateur "Gestionnaire structure" qui existe par son ssoId alors cela retourne ses informations personnelles avec sa notion de structure', async () => {
     // GIVEN
     const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    const date = new Date(0)
+    const structureId = 10
     await prisma.regionRecord.create({
-      data: {
-        code: '84',
-        nom: 'Auvergne-Rhône-Alpes',
-      },
+      data: regionRecordFactory(),
     })
     await prisma.departementRecord.create({
-      data: {
-        code: '69',
-        nom: 'Rhône',
-        regionCode: '84',
-      },
+      data: departementRecordFactory(),
     })
     await prisma.structureRecord.create({
-      data: {
-        adresse: '3 BIS AVENUE CHARLES DE GAULLE',
-        codePostal: '84200',
-        commune: 'PARIS',
-        contact: {
-          email: 'manon.verminac@example.com',
-          fonction: 'Chargée de mission',
-          nom: 'Verninac',
-          prenom: 'Manon',
-          telephone: '0102030405',
-        },
-        departementCode: '69',
-        id: 10,
-        idMongo: '123456',
-        identifiantEtablissement: '62520260000023',
-        nom: 'Solidarnum',
-        statut: 'VALIDATION_COSELEC',
-        type: 'COMMUNE',
-      },
+      data: structureRecordFactory({ id: structureId }),
     })
     await prisma.utilisateurRecord.create({
-      data: {
-        dateDeCreation: date,
-        email: 'martin.tartempion@example.net',
-        inviteLe: date,
-        nom: 'Tartempion',
-        prenom: 'Martin',
+      data: utilisateurRecordFactory({
         role: 'gestionnaire_structure',
         ssoId: ssoIdExistant,
-        structureId: 10,
-        telephone: '0102030405',
-      },
+        structureId,
+      }),
     })
     const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
 
@@ -139,7 +102,7 @@ describe('mes informations personnelles loader', () => {
           nom: 'Verninac',
           prenom: 'Manon',
         },
-        numeroDeSiret: '62520260000023',
+        numeroDeSiret: '41816609600069',
         raisonSociale: 'Solidarnum',
         typeDeStructure: 'COMMUNE',
       },
@@ -150,18 +113,8 @@ describe('mes informations personnelles loader', () => {
   it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
     // GIVEN
     const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    const date = new Date()
     await prisma.utilisateurRecord.create({
-      data: {
-        dateDeCreation: date,
-        email: 'martin.tartempion@example.net',
-        inviteLe: date,
-        nom: 'Tartempion',
-        prenom: 'Martin',
-        role: 'administrateur_dispositif',
-        ssoId: '1234567890',
-        telephone: '0102030405',
-      },
+      data: utilisateurRecordFactory(),
     })
     const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
 

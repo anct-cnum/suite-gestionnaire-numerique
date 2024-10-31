@@ -1,8 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
+import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
-import { Utilisateur } from '@/domain/Utilisateur'
 import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
 const uidUtilisateur = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
@@ -46,13 +46,13 @@ describe('utilisateur repository', () => {
       it.each([
         {
           desc: 'pour un gestionnaire département : avec la référence au département',
-          organisation: 'Rhône',
+          organisation: 'Paris',
           role: 'Gestionnaire département' as const,
           roleDataRepresentation: 'gestionnaire_departement' as const,
         },
         {
           desc: 'pour un gestionnaire région : avec la référence à la région',
-          organisation: 'Auvergne-Rhône-Alpes',
+          organisation: 'Île-de-France',
           role: 'Gestionnaire région' as const,
           roleDataRepresentation: 'gestionnaire_region' as const,
         },
@@ -94,53 +94,29 @@ describe('utilisateur repository', () => {
         },
       ])('$desc', async ({ role, roleDataRepresentation, organisation }) => {
         // GIVEN
+        const structureId = 10
+        const departementCode = '75'
+        const groupementId = 10
+        const regionCode = '11'
         await prisma.regionRecord.create({
-          data: {
-            code: '84',
-            nom: 'Auvergne-Rhône-Alpes',
-          },
+          data: regionRecordFactory({ code: regionCode }),
         })
         await prisma.departementRecord.create({
-          data: {
-            code: '69',
-            nom: 'Rhône',
-            regionCode: '84',
-          },
+          data: departementRecordFactory({ code: departementCode }),
         })
         await prisma.groupementRecord.create({
-          data: {
-            id: 10,
-            nom: 'Hubikoop',
-          },
+          data: groupementRecordFactory({ id: groupementId }),
         })
         await prisma.structureRecord.create({
-          data: {
-            adresse: '',
-            codePostal: '',
-            commune: '',
-            contact: {
-              email: '',
-              fonction: '',
-              nom: '',
-              prenom: '',
-              telephone: '',
-            },
-            departementCode: '69',
-            id: 10,
-            idMongo: '123456',
-            identifiantEtablissement: '41816609600069',
-            nom: 'Solidarnum',
-            statut: 'VALIDATION_COSELEC',
-            type: 'COMMUNE',
-          },
+          data: structureRecordFactory({ id: structureId }),
         })
         await prisma.utilisateurRecord.create({
           data: utilisateurRecordFactory({
-            departementCode: '69',
-            groupementId: 10,
-            regionCode: '84',
+            departementCode,
+            groupementId,
+            regionCode,
             role: roleDataRepresentation,
-            structureId: 10,
+            structureId,
           }),
         })
 
@@ -234,7 +210,7 @@ describe('utilisateur repository', () => {
     const repository = new PostgreUtilisateurRepository(
       prisma,
       new NullSuppressionUtilisateurGateway(),
-      () => new Date(0)
+      () => epochTime
     )
 
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
@@ -255,7 +231,7 @@ describe('utilisateur repository', () => {
         },
       })
       expect(resultatCreation).toBe(true)
-      const utilisateurRecord = utilisateurRecordFactory({ ssoId: ssoIdDifferent, telephone: '' })
+      const utilisateurRecord = utilisateurRecordFactory({ derniereConnexion: null, ssoId: ssoIdDifferent, telephone: '' })
       expect(createdRecord).toMatchObject(utilisateurRecord)
     })
 
@@ -307,36 +283,3 @@ describe('utilisateur repository', () => {
     })
   })
 })
-
-function utilisateurRecordFactory(
-  override: Partial<Prisma.UtilisateurRecordUncheckedCreateInput> = {}
-): Prisma.UtilisateurRecordUncheckedCreateInput {
-  return {
-    dateDeCreation: new Date(0),
-    email: 'martin.tartempion@example.net',
-    inviteLe: new Date(0),
-    isSuperAdmin: true,
-    isSupprime: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    role: 'support_animation',
-    ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
-    telephone: '0102030405',
-    ...override,
-  }
-}
-
-function utilisateurFactory(
-  override: Partial<Parameters<typeof Utilisateur.create>[0]> = {}
-): Utilisateur {
-  return Utilisateur.create({
-    email: 'martin.tartempion@example.net',
-    isSuperAdmin: true,
-    nom: 'Tartempion',
-    organisation: 'Mednum',
-    prenom: 'Martin',
-    role: 'Support animation',
-    uid: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
-    ...override,
-  })
-}
