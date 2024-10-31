@@ -10,30 +10,80 @@ describe('inviter un utilisateur', () => {
     spiedUtilisateurToAdd = null
   })
 
-  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré', async () => {
-    // GIVEN
-    const repository = new RepositorySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
-    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
-    const command = {
-      email: 'martin.tartempion@example.net',
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      role: roleUtilisateurAInviter,
-      uidUtilisateurCourant: 'utilisateurAdminUid',
-    }
+  describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré', () => {
+    it.each([
+      {
+        command: {
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          role: {
+            organisation: 'HubEst',
+            type: 'Gestionnaire groupement' as const,
+          },
+          uidUtilisateurCourant: 'utilisateurAdminUid',
+        },
+        desc: 'le rôle ainsi que l’organisation sont mentionnées',
+        utilisateurACreer: {
+          email: 'martin.tartempion@example.com',
+          isSuperAdmin: false,
+          nom: 'Tartempion',
+          organisation: 'HubEst',
+          prenom: 'Martin',
+          role: 'Gestionnaire groupement' as const,
+          uid: 'martin.tartempion@example.com',
+        },
+      },
+      {
+        command: {
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          role: {
+            type: 'Instructeur' as const,
+          },
+          uidUtilisateurCourant: 'utilisateurAdminUid',
+        },
+        desc: 'le rôle seul est mentionné',
+        utilisateurACreer: {
+          email: 'martin.tartempion@example.com',
+          isSuperAdmin: false,
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          role: 'Instructeur' as const,
+          uid: 'martin.tartempion@example.com',
+        },
+      },
+      {
+        command: {
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          uidUtilisateurCourant: 'utilisateurGestionnaireUid',
+        },
+        desc: 'ni le rôle ni l’organisation ne sont mentionnées : on prend ceux de l’utilisateur courant',
+        utilisateurACreer: {
+          email: 'martin.tartempion@example.com',
+          isSuperAdmin: false,
+          nom: 'Tartempion',
+          organisation: 'Bretagne',
+          prenom: 'Martin',
+          role: 'Gestionnaire région' as const,
+          uid: 'martin.tartempion@example.com',
+        },
+      },
+    ])('$desc', async ({ command, utilisateurACreer }) => {
+      // GIVEN
+      const repository = new RepositorySpy()
+      const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
 
-    // WHEN
-    const result = await inviterUnUtilisateur.execute(command)
+      // WHEN
+      const result = await inviterUnUtilisateur.execute(command)
 
-    // THEN
-    expect(result).toBe('OK')
-    expect(spiedUidToFind).toBe('utilisateurAdminUid')
-    const utilisateurACreer = utilisateurFactory({
-      telephone: '',
-      uid: 'martin.tartempion@example.net',
+      // THEN
+      expect(result).toBe('OK')
+      expect(spiedUtilisateurToAdd?.equals(Utilisateur.create(utilisateurACreer))).toBe(true)
     })
-    expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
@@ -45,7 +95,7 @@ describe('inviter un utilisateur', () => {
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: roleUtilisateurAInviter,
+      role: { type: roleUtilisateurAInviter },
       uidUtilisateurCourant: 'utilisateurGestionnaireUid',
     }
 
@@ -67,7 +117,7 @@ describe('inviter un utilisateur', () => {
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: roleUtilisateurAInviter,
+      role: { type: roleUtilisateurAInviter },
       uidUtilisateurCourant: 'utilisateurInexistantUid',
     }
 
@@ -89,7 +139,7 @@ describe('inviter un utilisateur', () => {
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
-      role: roleUtilisateurAInviter,
+      role: { type: roleUtilisateurAInviter },
       uidUtilisateurCourant: 'utilisateurAdminUid',
     }
 
@@ -108,10 +158,20 @@ describe('inviter un utilisateur', () => {
 })
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurAdminUid: utilisateurFactory({
+  utilisateurAdminUid: Utilisateur.create({
+    email: 'martin.tartempion@example.net',
+    isSuperAdmin: false,
+    nom: 'Tartempion',
+    prenom: 'Martin',
+    role: 'Instructeur',
     uid: 'utilisateurAdminUid',
   }),
-  utilisateurGestionnaireUid: utilisateurFactory({
+  utilisateurGestionnaireUid: Utilisateur.create({
+    email: 'martina.tartempion@example.net',
+    isSuperAdmin: false,
+    nom: 'Tartempion',
+    organisation: 'Bretagne',
+    prenom: 'Martine',
     role: 'Gestionnaire région',
     uid: 'utilisateurGestionnaireUid',
   }),

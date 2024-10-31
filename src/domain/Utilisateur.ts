@@ -52,6 +52,18 @@ export class Utilisateur extends Entity<UtilisateurState> {
     }
   }
 
+  duMemeRole(params: Omit<UtilisateurParams, 'role'>): Utilisateur {
+    return new Utilisateur(
+      params.uid,
+      this.#role,
+      params.nom,
+      params.prenom,
+      params.email,
+      params.isSuperAdmin,
+      params.telephone
+    )
+  }
+
   changerPrenom(prenom: string): void {
     this.#prenom = prenom
   }

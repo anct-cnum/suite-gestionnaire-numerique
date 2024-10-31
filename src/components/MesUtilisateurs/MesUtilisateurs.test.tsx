@@ -708,7 +708,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
-      window.dsfr = () => {
+      window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
           modal: {
             conceal: vi.fn(),
