@@ -1,9 +1,9 @@
-import { createSessionUtilisateurPresenter } from './sessionUtilisateurPresenter'
+import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 describe('session utilisateur presenter', () => {
   it('affichage des informations de session de l’utilisateur connecté', () => {
     // GIVEN
-    const utilisateurReadModel = {
+    const utilisateurReadModel: Parameters<typeof createSessionUtilisateurPresenter>[0] = {
       departementCode: null,
       derniereConnexion: new Date(0),
       email: 'martin.tartempion@example.net',
@@ -16,7 +16,6 @@ describe('session utilisateur presenter', () => {
       regionCode: null,
       role: {
         categorie: 'mednum',
-        etablissement: '',
         groupe: 'admin',
         nom: 'Support animation',
         organisation: 'Mednum',
@@ -32,7 +31,7 @@ describe('session utilisateur presenter', () => {
     )
 
     // THEN
-    const expectedSessionUtilisateurViewModel = {
+    expect(sessionUtilisateurSansEtablissementViewModel).toStrictEqual<SessionUtilisateurViewModel>({
       email: 'martin.tartempion@example.net',
       isSuperAdmin: false,
       nom: 'Tartempion',
@@ -45,7 +44,6 @@ describe('session utilisateur presenter', () => {
       },
       telephone: '0102030405',
       uid: 'fooId',
-    }
-    expect(sessionUtilisateurSansEtablissementViewModel).toStrictEqual(expectedSessionUtilisateurViewModel)
+    })
   })
 })

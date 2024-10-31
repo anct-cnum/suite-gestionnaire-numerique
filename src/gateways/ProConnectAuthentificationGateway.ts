@@ -75,7 +75,7 @@ export async function getSession(): Promise<{ user: Profile } | null> {
 
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>
 
-type Profile = Readonly<{
+export type Profile = Readonly<{
   id: string
   sub: string
   email: string

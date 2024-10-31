@@ -1,5 +1,6 @@
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUnUtilisateur } from './SupprimerUnUtilisateur'
+import { utilisateurFactory } from '../testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('supprimer un utilisateur', () => {
@@ -108,28 +109,18 @@ describe('supprimer un utilisateur', () => {
 })
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurASupprimerExistantUid: Utilisateur.create({
-    email: 'martin.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
+  utilisateurASupprimerExistantUid: utilisateurFactory({
+    organisation: 'Banque des territoires',
     role: 'Instructeur',
     uid: 'utilisateurASupprimerExistantUid',
   }),
-  utilisateurCourantExistantAutreUid: Utilisateur.create({
-    email: 'martina.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martine',
+  utilisateurCourantExistantAutreUid: utilisateurFactory({
+    organisation: 'Dispositif lambda',
     role: 'Administrateur dispositif',
     uid: 'utilisateurCourantExistantAutreUid',
   }),
-  utilisateurCourantExistantUid: Utilisateur.create({
-    email: 'martine.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
+  utilisateurCourantExistantUid: utilisateurFactory({
     organisation: 'Rhône',
-    prenom: 'Martina',
     role: 'Gestionnaire département',
     uid: 'utilisateurCourantExistantUid',
   }),
