@@ -5,8 +5,9 @@ import MesUtilisateurs from './MesUtilisateurs'
 import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as reinviterUnUtilisateurAction from '@/app/api/actions/reinviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { renderComponent, clientContextProviderDefaultValue, matchWithoutMarkup } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('mes utilisateurs', () => {
@@ -49,17 +50,17 @@ describe('mes utilisateurs', () => {
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      ...clientContextProviderDefaultValue,
-      sessionUtilisateurViewModel: {
-        ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
-        role: {
-          groupe: 'admin',
-          libelle: '',
-          nom: 'Support animation',
-          pictogramme: '',
-          rolesGerables: [],
-        },
-      },
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
+        {
+          role: {
+            groupe: 'admin',
+            libelle: '',
+            nom: 'Support animation',
+            pictogramme: '',
+            rolesGerables: [],
+          },
+        }
+      ),
     })
 
     // THEN
@@ -85,9 +86,7 @@ describe('mes utilisateurs', () => {
         mesUtilisateursViewModel={mesUtilisateursViewModel}
       />,
       {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'gestionnaire',
             libelle: 'Rhône',
@@ -95,7 +94,7 @@ describe('mes utilisateurs', () => {
             pictogramme: 'maille',
             rolesGerables: [],
           },
-        },
+        }),
       }
     )
 
@@ -263,7 +262,7 @@ describe('mes utilisateurs', () => {
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-        { ...clientContextProviderDefaultValue, setBandeauInformations }
+        { setBandeauInformations }
       )
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
@@ -481,7 +480,7 @@ describe('mes utilisateurs', () => {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      { ...clientContextProviderDefaultValue, searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
+      { searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
     )
 
     // WHEN
@@ -596,9 +595,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'admin',
             libelle: 'Rhône',
@@ -615,7 +612,7 @@ describe('mes utilisateurs', () => {
               'Support animation',
             ],
           },
-        },
+        }),
       })
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
 
@@ -703,9 +700,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'admin',
             libelle: 'Rhône',
@@ -722,7 +717,7 @@ describe('mes utilisateurs', () => {
               'Support animation',
             ],
           },
-        },
+        }),
       })
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
       fireEvent.click(inviter)
@@ -743,9 +738,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'gestionnaire',
             libelle: 'Rhône',
@@ -753,7 +746,7 @@ describe('mes utilisateurs', () => {
             pictogramme: 'maille',
             rolesGerables: ['Gestionnaire département'],
           },
-        },
+        }),
       })
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
 
@@ -819,11 +812,8 @@ describe('mes utilisateurs', () => {
       const setBandeauInformations = vi.fn()
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(
-        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-        {
-          ...clientContextProviderDefaultValue,
-          sessionUtilisateurViewModel: {
-            ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+          sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
             role: {
               groupe: 'admin',
               libelle: 'Rhône',
@@ -840,7 +830,7 @@ describe('mes utilisateurs', () => {
                 'Support animation',
               ],
             },
-          },
+          }),
           setBandeauInformations,
         }
       )
@@ -891,9 +881,7 @@ describe('mes utilisateurs', () => {
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
-          ...clientContextProviderDefaultValue,
-          sessionUtilisateurViewModel: {
-            ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+          sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
             role: {
               groupe: 'admin',
               libelle: 'Rhône',
@@ -910,7 +898,7 @@ describe('mes utilisateurs', () => {
                 'Support animation',
               ],
             },
-          },
+          }),
         }
       )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
@@ -954,9 +942,7 @@ describe('mes utilisateurs', () => {
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
-        ...clientContextProviderDefaultValue,
-        sessionUtilisateurViewModel: {
-          ...clientContextProviderDefaultValue.sessionUtilisateurViewModel,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'admin',
             libelle: 'Rhône',
@@ -973,7 +959,7 @@ describe('mes utilisateurs', () => {
               'Support animation',
             ],
           },
-        },
+        }),
       }
     )
     const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
@@ -1017,8 +1003,16 @@ describe('mes utilisateurs', () => {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     const { container } = renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      // @ts-expect-error
-      { ...clientContextProviderDefaultValue, router: { push: spiedRouterPush } }
+      {
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      }
     )
 
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
