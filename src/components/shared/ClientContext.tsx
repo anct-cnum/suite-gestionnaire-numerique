@@ -43,7 +43,7 @@ export type BandeauInformations = Readonly<Partial<{
   description: string
 }>>
 
-type ClientContextProviderValue = Readonly<{
+export type ClientContextProviderValue = Readonly<{
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
