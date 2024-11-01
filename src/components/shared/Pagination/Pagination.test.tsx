@@ -1,7 +1,7 @@
 import { screen, within } from '@testing-library/react'
 
 import Pagination from './Pagination'
-import { clientContextProviderDefaultValue, renderComponent } from '@/components/testHelper'
+import { renderComponent } from '@/components/testHelper'
 
 describe('pagination', () => {
   it('quand je suis sur la première page d’une page (< ① >)', () => {
@@ -68,7 +68,7 @@ describe('pagination', () => {
         pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />,
-      { ...clientContextProviderDefaultValue, searchParams }
+      { searchParams }
     )
 
     // THEN
@@ -103,7 +103,7 @@ describe('pagination', () => {
         pathname="/mes-utilisateurs"
         totalUtilisateurs={75}
       />,
-      { ...clientContextProviderDefaultValue, searchParams }
+      { searchParams }
     )
 
     // THEN
@@ -138,7 +138,7 @@ describe('pagination', () => {
         pathname="/mes-utilisateurs"
         totalUtilisateurs={55}
       />,
-      { ...clientContextProviderDefaultValue, searchParams }
+      { searchParams }
     )
 
     // THEN
@@ -173,7 +173,7 @@ describe('pagination', () => {
         pathname="/mes-utilisateurs"
         totalUtilisateurs={3225}
       />,
-      { ...clientContextProviderDefaultValue, searchParams }
+      { searchParams }
     )
 
     // THEN
@@ -208,7 +208,7 @@ describe('pagination', () => {
         pathname="/mes-utilisateurs"
         totalUtilisateurs={45}
       />,
-      { ...clientContextProviderDefaultValue, searchParams }
+      { searchParams }
     )
 
     // THEN
