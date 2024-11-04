@@ -14,6 +14,6 @@ describe('supprimer mon compte action', () => {
     await supprimerMonCompteAction()
 
     // THEN
-    expect(SupprimerMonCompte.prototype.execute).toHaveBeenCalledWith(sub)
+    expect(SupprimerMonCompte.prototype.execute).toHaveBeenCalledWith({ utilisateurUid: sub })
   })
 })

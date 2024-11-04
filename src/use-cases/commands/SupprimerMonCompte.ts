@@ -1,23 +1,25 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
-export class SupprimerMonCompte implements CommandHandler<UtilisateurUid, SuppressionCompteFailure> {
+export class SupprimerMonCompte implements CommandHandler<Command, SuppressionCompteFailure> {
   readonly #suppressionUtilisateurGateway: SuppressionUtilisateurGateway
 
   constructor(suppressionUtilisateurGateway: SuppressionUtilisateurGateway) {
     this.#suppressionUtilisateurGateway = suppressionUtilisateurGateway
   }
 
-  async execute(command: UtilisateurUid): ResultAsync<SuppressionCompteFailure> {
+  async execute({ utilisateurUid }: Command): ResultAsync<SuppressionCompteFailure> {
     return this.#suppressionUtilisateurGateway
-      .delete(command)
+      .delete(utilisateurUid)
       .then((result) => (result ? 'OK' : 'compteInexistant'))
   }
 }
 
 export interface SuppressionUtilisateurGateway {
-  delete: (uid: UtilisateurUid) => Promise<boolean>
+  delete: (uid: string) => Promise<boolean>
 }
 
-export type UtilisateurUid = string
-
 export type SuppressionCompteFailure = 'compteInexistant'
+
+type Command = Readonly<{
+  utilisateurUid: string
+}>
