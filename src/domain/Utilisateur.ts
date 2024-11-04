@@ -102,6 +102,6 @@ type UtilisateurParams = Readonly<{
   nom: string
   prenom: string
   role: TypologieRole
-  organisation?: string
   telephone?: string
+  organisation?: string
 }>

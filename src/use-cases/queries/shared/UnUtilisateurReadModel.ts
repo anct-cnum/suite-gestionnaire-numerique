@@ -12,7 +12,7 @@ export type UnUtilisateurReadModel = Readonly<{
     categorie: string
     groupe: string
     nom: string
-    territoireOuStructure: string
+    organisation: string
   }>
   regionCode: string | null
   structureId: number | null

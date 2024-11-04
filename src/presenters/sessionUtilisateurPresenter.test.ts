@@ -16,9 +16,10 @@ describe('session utilisateur presenter', () => {
       regionCode: null,
       role: {
         categorie: 'mednum',
+        etablissement: '',
         groupe: 'admin',
         nom: 'Support animation',
-        territoireOuStructure: 'Mednum',
+        organisation: 'Mednum',
       },
       structureId: null,
       telephone: '0102030405',
@@ -26,7 +27,9 @@ describe('session utilisateur presenter', () => {
     }
 
     // WHEN
-    const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
+    const sessionUtilisateurSansEtablissementViewModel = createSessionUtilisateurPresenter(
+      utilisateurReadModel
+    )
 
     // THEN
     const expectedSessionUtilisateurViewModel = {
@@ -43,6 +46,6 @@ describe('session utilisateur presenter', () => {
       telephone: '0102030405',
       uid: 'fooId',
     }
-    expect(sessionUtilisateurViewModel).toStrictEqual(expectedSessionUtilisateurViewModel)
+    expect(sessionUtilisateurSansEtablissementViewModel).toStrictEqual(expectedSessionUtilisateurViewModel)
   })
 })
