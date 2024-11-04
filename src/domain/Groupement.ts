@@ -1,24 +1,26 @@
-import { Model } from './shared/Model'
+import { Entity, Uid } from './shared/Model'
 
-export class Groupement extends Model<GroupementState> {
-  readonly #id: number
+export class Groupement extends Entity<GroupementState> {
   readonly #nom: string
 
-  constructor(id: number, nom: string) {
-    super()
-    this.#id = id
+  constructor(uid: GroupementUid, nom: string) {
+    super(uid)
     this.#nom = nom
   }
 
   state(): GroupementState {
     return {
-      id: this.#id,
       nom: this.#nom,
+      uid: this.uid.state(),
     }
   }
 }
 
 export type GroupementState = Readonly<{
-  id: number
+  uid: GroupementUidState
   nom: string
 }>
+
+type GroupementUidState = Readonly<{value: number, email: string}>
+
+class GroupementUid extends Uid<GroupementUidState> {}

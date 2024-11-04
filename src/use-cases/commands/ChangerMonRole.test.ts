@@ -1,7 +1,7 @@
 import { ChangerMonRole } from './ChangerMonRole'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
   afterEach(() => {
@@ -77,9 +77,10 @@ const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
 }
 
 const utilisateurRepository = new class implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: string): Promise<Utilisateur | null> {
-    return Promise.resolve(utilisateurByUid[uid] ?? null)
+  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
+    return Promise.resolve(utilisateurByUid[uid.state().value] ?? null)
   }
+
   async update(utilisateur: Utilisateur): Promise<void> {
     spiedUtilisateur = utilisateur
     return Promise.resolve()

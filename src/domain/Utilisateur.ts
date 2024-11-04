@@ -1,5 +1,5 @@
 import { Role, TypologieRole, type RoleState } from './Role'
-import { Entity } from './shared/Model'
+import { Entity, Uid } from './shared/Model'
 import { Result } from '@/shared/lang'
 
 export class Utilisateur extends Entity<UtilisateurState> {
@@ -30,7 +30,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
 
   static create(utilisateur: UtilisateurParams): Utilisateur {
     return new Utilisateur(
-      utilisateur.uid,
+      UtilisateurUid.from(utilisateur.uid),
       new Role(utilisateur.role, utilisateur.organisation),
       utilisateur.nom,
       utilisateur.prenom,
@@ -40,7 +40,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     )
   }
 
-  state(): UtilisateurState {
+  override state(): UtilisateurState {
     return {
       email: this.#email,
       isSuperAdmin: this.#isSuperAdmin,
@@ -48,13 +48,13 @@ export class Utilisateur extends Entity<UtilisateurState> {
       prenom: this.#prenom,
       role: this.#role.state(),
       telephone: this.#telephone,
-      uid: this.uid,
+      uid: this.uid.state(),
     }
   }
 
   duMemeRole(params: Omit<UtilisateurParams, 'role'>): Utilisateur {
     return new Utilisateur(
-      params.uid,
+      UtilisateurUid.from(params.uid),
       this.#role,
       params.nom,
       params.prenom,
@@ -93,10 +93,18 @@ export class Utilisateur extends Entity<UtilisateurState> {
   }
 }
 
-type UtilisateurUid = string
+export class UtilisateurUid extends Uid<UtilisateurUidState> {
+  private constructor(state: UtilisateurUidState) {
+    super(state)
+  }
+
+  static from(value: string): UtilisateurUid {
+    return new UtilisateurUid({ value })
+  }
+}
 
 export type UtilisateurState = Readonly<{
-  uid: string
+  uid: UtilisateurUidState
   email: string
   isSuperAdmin: boolean
   nom: string
@@ -106,6 +114,8 @@ export type UtilisateurState = Readonly<{
 }>
 
 export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
+
+type UtilisateurUidState = Readonly<{value: string}>
 
 type UtilisateurParams = Readonly<{
   uid: string

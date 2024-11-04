@@ -1,34 +1,22 @@
-import { Model } from './shared/Model'
+import { ValueObject } from './shared/Model'
 
-export class Role extends Model<RoleState> {
-  readonly #nom: TypologieRole
+export class Role extends ValueObject<RoleState> {
   readonly #groupe: Groupe
-  readonly #categorie: Categorie
-  readonly #organisation: string
-  readonly #rolesGerables: ReadonlyArray<TypologieRole>
 
   constructor(nom: TypologieRole, territoireOuStructure = '') {
-    super()
     const { categorie, groupe, organisation } = classificationParType[nom]
-    this.#nom = nom
+    super({
+      categorie,
+      groupe,
+      nom,
+      organisation: organisation ?? territoireOuStructure,
+      rolesGerables: isAdmin(groupe) ? Roles : [nom],
+    })
     this.#groupe = groupe
-    this.#categorie = categorie
-    this.#organisation = organisation ?? territoireOuStructure
-    this.#rolesGerables = this.isAdmin() ? Roles : [nom]
-  }
-
-  state(): RoleState {
-    return {
-      categorie: this.#categorie,
-      groupe: this.#groupe,
-      nom: this.#nom,
-      organisation: this.#organisation,
-      rolesGerables: this.#rolesGerables,
-    }
   }
 
   isAdmin(): boolean {
-    return this.#groupe === 'admin'
+    return isAdmin(this.#groupe)
   }
 }
 
@@ -52,6 +40,10 @@ export const Roles = [
 ] as const
 
 export type TypologieRole = (typeof Roles)[number]
+
+function isAdmin(groupe: string): boolean {
+  return groupe === 'admin'
+}
 
 type Categorie = 'anct' | 'bdt' | 'groupement' | 'maille' | 'mednum' | 'structure'
 

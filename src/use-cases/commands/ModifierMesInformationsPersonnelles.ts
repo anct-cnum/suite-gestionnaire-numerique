@@ -1,5 +1,6 @@
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ModifierMesInformationsPersonnelles implements CommandHandler<
   MesInformationsPersonnellesModifiees,
@@ -14,7 +15,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<
   async execute(command: MesInformationsPersonnellesModifiees): ResultAsync<
     ModificationUtilisateurFailure
   > {
-    const utilisateur = await this.#repository.find(command.uid)
+    const utilisateur = await this.#repository.find(UtilisateurUid.from(command.uid))
     if (!utilisateur) {
       return 'compteInexistant'
     }
