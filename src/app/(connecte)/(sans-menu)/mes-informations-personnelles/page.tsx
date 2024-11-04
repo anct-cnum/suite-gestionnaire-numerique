@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../prisma/prismaClient'
+import prisma from '../../../../../prisma/prismaClient'
 import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelles/MesInformationsPersonnelles'
 import { PostgreMesInformationsPersonnellesLoader } from '@/gateways/PostgreMesInformationsPersonnellesLoader'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'

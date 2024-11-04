@@ -35,7 +35,7 @@ export default function NotFound(): ReactElement {
             <li>
               <Link
                 className="fr-btn"
-                href="/"
+                href="/tableau-de-bord"
               >
                 Page d’accueil
               </Link>

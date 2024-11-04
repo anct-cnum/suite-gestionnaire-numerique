@@ -10,7 +10,7 @@ describe('pied de page', () => {
     // THEN
     const piedDePage = screen.getByRole('contentinfo')
     const lienAccueil = within(piedDePage).getByRole('link', { name: 'République Française' })
-    expect(lienAccueil).toHaveAttribute('href', '/')
+    expect(lienAccueil).toHaveAttribute('href', '/tableau-de-bord')
     expect(lienAccueil).toHaveAttribute('title', 'Accueil')
 
     const lists = within(piedDePage).getAllByRole('list')

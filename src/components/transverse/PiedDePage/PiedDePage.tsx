@@ -13,7 +13,7 @@ export default function PiedDePage(): ReactElement {
         <div className="fr-footer__body">
           <div className="fr-footer__brand fr-enlarge-link">
             <Link
-              href="/"
+              href="/tableau-de-bord"
               title="Accueil"
             >
               <p className="fr-logo">
