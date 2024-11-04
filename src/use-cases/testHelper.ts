@@ -1,17 +1,30 @@
-import { Utilisateur } from '@/domain/Utilisateur'
+import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 
-export function utilisateurFactory(
-  override?: Partial<Parameters<typeof Utilisateur.create>[0]>
-): Utilisateur {
-  return Utilisateur.create({
-    email: 'martin.tartempion@example.org',
+export function utilisateurReadModelFactory(
+  override?: Partial<UnUtilisateurReadModel>
+): UnUtilisateurReadModel {
+  return {
+    departementCode: null,
+    derniereConnexion: epochTime,
+    email: 'martin.tartempion@example.net',
+    groupementId: null,
+    inviteLe: epochTime,
+    isActive: true,
     isSuperAdmin: false,
     nom: 'Tartempion',
-    organisation: 'Banque des territoires',
     prenom: 'Martin',
-    role: 'Instructeur',
+    regionCode: null,
+    role: {
+      categorie: 'anct',
+      groupe: 'admin',
+      nom: 'Administrateur dispositif',
+      organisation: '',
+    },
+    structureId: null,
     telephone: '0102030405',
     uid: 'fooId',
     ...override,
-  })
+  }
 }
+
+const epochTime = new Date(0)

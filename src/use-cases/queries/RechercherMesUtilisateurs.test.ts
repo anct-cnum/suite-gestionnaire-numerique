@@ -1,5 +1,6 @@
 import { MesUtilisateursLoader, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
+import { utilisateurReadModelFactory } from '../testHelper'
 
 describe('rechercher mes utilisateurs', () => {
   it('recherchant sans filtre alors je récupère mes utilisateurs et leur nombre total', async () => {
@@ -28,28 +29,7 @@ describe('rechercher mes utilisateurs', () => {
   })
 })
 
-const date = new Date(0)
-const dummyUtilisateur: UnUtilisateurReadModel = {
-  departementCode: null,
-  derniereConnexion: date,
-  email: '',
-  groupementId: null,
-  inviteLe: date,
-  isActive: true,
-  isSuperAdmin: false,
-  nom: '',
-  prenom: '',
-  regionCode: null,
-  role: {
-    categorie: 'anct',
-    groupe: 'admin',
-    nom: 'Administrateur dispositif',
-    organisation: 'Administrateur dispositif',
-  },
-  structureId: null,
-  telephone: '',
-  uid: '',
-}
+const dummyUtilisateur = utilisateurReadModelFactory()
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
   spiedFindMesUtilisateursEtLeTotalArgs: Parameters<typeof this.findMesUtilisateursEtLeTotal> | undefined

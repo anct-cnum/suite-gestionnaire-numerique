@@ -1,6 +1,6 @@
 import { supprimerUnUtilisateurAction } from './supprimerUnUtilisateurAction'
-import { profileFactory } from './testHelper'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import { ssoProfileFactory } from '@/gateways/testHelper'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
 
 describe('supprimer un utilisateur action', () => {
@@ -8,7 +8,7 @@ describe('supprimer un utilisateur action', () => {
     // GIVEN
     const sub = 'fooId'
     const utilisateurASupprimerUid = 'barId'
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(profileFactory({ sub }))
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN

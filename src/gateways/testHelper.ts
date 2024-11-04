@@ -1,21 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import { Utilisateur } from '@/domain/Utilisateur'
-
-export function utilisateurFactory(
-  override?: Partial<Parameters<typeof Utilisateur.create>[0]>
-): Utilisateur {
-  return Utilisateur.create({
-    email: 'martin.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    organisation: 'Mednum',
-    prenom: 'Martin',
-    role: 'Gestionnaire région',
-    uid: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
-    ...override,
-  })
-}
+import { Profile } from './ProConnectAuthentificationGateway'
 
 export function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
@@ -85,10 +70,30 @@ export function utilisateurRecordFactory(
     isSupprime: false,
     nom: 'Tartempion',
     prenom: 'Martin',
-    role: 'gestionnaire_region',
+    role: 'instructeur',
     ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
     telephone: '0102030405',
     ...override,
+  }
+}
+
+export function ssoProfileFactory(override?: Partial<Profile>): { user: Profile } {
+  return {
+    user: {
+      aud: '',
+      email: '',
+      exp: 0,
+      given_name: '',
+      iat: 0,
+      id: '',
+      idp_id: '',
+      iss: '',
+      phone_number: '',
+      siret: '',
+      sub: '',
+      usual_name: '',
+      ...override,
+    },
   }
 }
 

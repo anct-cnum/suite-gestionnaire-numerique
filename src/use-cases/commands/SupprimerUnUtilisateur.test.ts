@@ -1,6 +1,6 @@
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUnUtilisateur } from './SupprimerUnUtilisateur'
-import { utilisateurFactory } from '../testHelper'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('supprimer un utilisateur', () => {
@@ -110,17 +110,14 @@ describe('supprimer un utilisateur', () => {
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurASupprimerExistantUid: utilisateurFactory({
-    organisation: 'Banque des territoires',
     role: 'Instructeur',
     uid: 'utilisateurASupprimerExistantUid',
   }),
   utilisateurCourantExistantAutreUid: utilisateurFactory({
-    organisation: 'Dispositif lambda',
     role: 'Administrateur dispositif',
     uid: 'utilisateurCourantExistantAutreUid',
   }),
   utilisateurCourantExistantUid: utilisateurFactory({
-    organisation: 'Rhône',
     role: 'Gestionnaire département',
     uid: 'utilisateurCourantExistantUid',
   }),
