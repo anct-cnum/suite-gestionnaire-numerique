@@ -3,6 +3,7 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } fr
 
 import styles from './SupprimerMonCompte.module.css'
 import { supprimerMonCompteAction } from '../../app/api/actions/supprimerMonCompteAction'
+import Modale from '../shared/Modale/Modale'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const [emailValidationInfo, setEmailValidationInfo] =
@@ -16,94 +17,75 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
   const messageValidationId = 'supprimer-mon-compte-email-message-validation'
 
   return (
-    <dialog
-      aria-labelledby={modaleTitreId}
-      aria-modal="true"
-      className="fr-modal"
+    <Modale
+      close={close}
       id={id}
-      open={isOpen}
+      isOpen={isOpen}
+      labelId={modaleTitreId}
     >
-      <div className="fr-container fr-container--fluid fr-container-md">
-        <div className="fr-grid-row fr-grid-row--center">
-          <div className="fr-col-12 fr-col-md-8 fr-col-lg-6">
-            <div className="fr-modal__body modal-body">
-              <div className="fr-modal__header">
-                <button
-                  aria-controls={id}
-                  className="fr-btn--close fr-btn"
-                  onClick={close}
-                  type="button"
-                >
-                  Fermer
-                </button>
-              </div>
-              <form aria-label="Supprimer">
-                <div className="fr-modal__content">
-                  <h1
-                    className="fr-modal__title"
-                    id={modaleTitreId}
-                  >
-                    Supprimer mon compte
-                  </h1>
-                  <p>
-                    Êtes-vous sûr de vouloir supprimer votre compte ? Cette
-                    action est irréversible.
-                  </p>
-                  <div className={`fr-input-group ${styles['fr-input-group']} ${emailValidationInfo.groupClass}`}>
-                    <label
-                      className={`fr-label ${styles['fr-label']}`}
-                      htmlFor={champEmailId}
-                    >
-                      Saisissez «
-                      {' '}
-                      {email}
-                      {' '}
-                      » dans le champ ci-dessous
-                    </label>
-                    <input
-                      aria-describedby={messageValidationId}
-                      className={`fr-input ${emailValidationInfo.inputClass}`}
-                      id={champEmailId}
-                      onInput={handleInput}
-                      pattern=".+@.+\..{2,}"
-                      required={true}
-                      type="email"
-                    />
-                    <p
-                      className={emailValidationInfo.messageClass}
-                      id={messageValidationId}
-                    >
-                      {emailValidationInfo.message}
-                    </p>
-                  </div>
-                </div>
-                <div className="fr-modal__footer">
-                  <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
-                    <button
-                      aria-controls={id}
-                      className="fr-btn fr-btn--secondary"
-                      onClick={close}
-                      type="button"
-                    >
-                      Annuler
-                    </button>
-                    <button
-                      className="fr-btn red-button"
-                      disabled={isConfirmerDisabled()}
-                      formMethod="dialog"
-                      onClick={logout}
-                      type="submit"
-                    >
-                      {etatBoutonSuppression.texte}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
+      <form aria-label="Supprimer">
+        <div className="fr-modal__content">
+          <h1
+            className="fr-modal__title"
+            id={modaleTitreId}
+          >
+            Supprimer mon compte
+          </h1>
+          <p>
+            Êtes-vous sûr de vouloir supprimer votre compte ? Cette
+            action est irréversible.
+          </p>
+          <div className={`fr-input-group ${styles['fr-input-group']} ${emailValidationInfo.groupClass}`}>
+            <label
+              className={`fr-label ${styles['fr-label']}`}
+              htmlFor={champEmailId}
+            >
+              Saisissez «
+              {' '}
+              {email}
+              {' '}
+              » dans le champ ci-dessous
+            </label>
+            <input
+              aria-describedby={messageValidationId}
+              className={`fr-input ${emailValidationInfo.inputClass}`}
+              id={champEmailId}
+              onInput={handleInput}
+              pattern=".+@.+\..{2,}"
+              required={true}
+              type="email"
+            />
+            <p
+              className={emailValidationInfo.messageClass}
+              id={messageValidationId}
+            >
+              {emailValidationInfo.message}
+            </p>
           </div>
         </div>
-      </div>
-    </dialog>
+        <div className="fr-modal__footer">
+          <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline-lg fr-btns-group--icon-left">
+            <button
+              aria-controls={id}
+              className="fr-btn fr-btn--secondary"
+              onClick={close}
+              type="button"
+            >
+              Annuler
+            </button>
+            <button
+              className="fr-btn red-button"
+              disabled={isConfirmerDisabled()}
+              formMethod="dialog"
+              onClick={logout}
+              type="submit"
+            >
+              {etatBoutonSuppression.texte}
+            </button>
+          </div>
+        </div>
+      </form>
+    </Modale>
   )
 
   function close(): void {

@@ -167,10 +167,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
       expect(supprimerMonCompteModal).toBeVisible()
 
-      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
-      expect(fermer).toHaveAttribute('type', 'button')
-      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-mon-compte')
-
       const titre = within(supprimerMonCompteModal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
       expect(titre).toBeInTheDocument()
 
@@ -194,20 +190,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(confirmer).toHaveAttribute('type', 'submit')
       expect(confirmer).toHaveAttribute('formMethod', 'dialog')
       expect(confirmer).toBeDisabled()
-    })
-
-    it('je peux y renoncer en fermant la modale', () => {
-      // GIVEN
-      afficherMesInformationsPersonnelles()
-      fireEvent.click(supprimerMonCompteButton())
-      const supprimerMonCompteModal = screen.getByRole('dialog')
-      const fermer = within(supprimerMonCompteModal).getByRole('button', { name: 'Fermer' })
-
-      // WHEN
-      fireEvent.click(fermer)
-
-      // THEN
-      expect(supprimerMonCompteModal).not.toBeVisible()
     })
 
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
