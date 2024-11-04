@@ -2,6 +2,7 @@ import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
 import Interrupteur from '../shared/Interrupteur/Interrupteur'
+import Titre from '../shared/Titre/Titre'
 
 export default function MesParametres(): ReactElement {
   const communicationEtNotificationsHeadingId = useId()
@@ -16,14 +17,9 @@ export default function MesParametres(): ReactElement {
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
-        <h1 className="color-blue-france">
-          <span
-            aria-hidden="true"
-            className={'fr-icon-settings-5-line icon-title fr-mr-3w'}
-          />
-          {/**/}
+        <Titre icon="settings-5-line">
           Mes paramètres de compte
-        </h1>
+        </Titre>
         <p className="fr-text--sm color-grey">
           Retrouvez ici, vos préférences de communication et d’affichage.
         </p>
