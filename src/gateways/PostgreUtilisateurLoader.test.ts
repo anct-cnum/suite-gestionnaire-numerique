@@ -2,7 +2,6 @@ import { Prisma, Role } from '@prisma/client'
 
 import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
 import prisma from '../../prisma/prismaClient'
-import { Categorie, Groupe, TypologieRole } from '@/domain/Role'
 import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
@@ -19,9 +18,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'administrateur_dispositif' as Role,
         roleReadModel: {
-          categorie: 'anct' as Categorie,
-          groupe: 'admin' as Groupe,
-          nom: 'Administrateur dispositif' as TypologieRole,
+          categorie: 'anct',
+          groupe: 'admin',
+          nom: 'Administrateur dispositif',
           territoireOuStructure: 'Administrateur Dispositif lambda',
         },
         structureId: null,
@@ -32,9 +31,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'gestionnaire_departement' as Role,
         roleReadModel: {
-          categorie: 'maille' as Categorie,
-          groupe: 'gestionnaire' as Groupe,
-          nom: 'Gestionnaire département' as TypologieRole,
+          categorie: 'maille',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire département',
           territoireOuStructure: 'Paris',
         },
         structureId: null,
@@ -45,9 +44,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'gestionnaire_groupement' as Role,
         roleReadModel: {
-          categorie: 'groupement' as Categorie,
-          groupe: 'gestionnaire' as Groupe,
-          nom: 'Gestionnaire groupement' as TypologieRole,
+          categorie: 'groupement',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire groupement',
           territoireOuStructure: 'Hubikoop',
         },
         structureId: null,
@@ -58,9 +57,9 @@ describe('postgre utilisateur query', () => {
         regionCode: '11',
         role: 'gestionnaire_region' as Role,
         roleReadModel: {
-          categorie: 'maille' as Categorie,
-          groupe: 'gestionnaire' as Groupe,
-          nom: 'Gestionnaire région' as TypologieRole,
+          categorie: 'maille',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire région',
           territoireOuStructure: 'Île-de-France',
         },
         structureId: null,
@@ -71,9 +70,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'gestionnaire_structure' as Role,
         roleReadModel: {
-          categorie: 'structure' as Categorie,
-          groupe: 'gestionnaire' as Groupe,
-          nom: 'Gestionnaire structure' as TypologieRole,
+          categorie: 'structure',
+          groupe: 'gestionnaire',
+          nom: 'Gestionnaire structure',
           territoireOuStructure: 'Solidarnum',
         },
         structureId: 10,
@@ -84,9 +83,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'instructeur' as Role,
         roleReadModel: {
-          categorie: 'bdt' as Categorie,
-          groupe: 'admin' as Groupe,
-          nom: 'Instructeur' as TypologieRole,
+          categorie: 'bdt',
+          groupe: 'admin',
+          nom: 'Instructeur',
           territoireOuStructure: 'Banque des territoires',
         },
         structureId: null,
@@ -97,9 +96,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'pilote_politique_publique' as Role,
         roleReadModel: {
-          categorie: 'anct' as Categorie,
-          groupe: 'admin' as Groupe,
-          nom: 'Pilote politique publique' as TypologieRole,
+          categorie: 'anct',
+          groupe: 'admin',
+          nom: 'Pilote politique publique',
           territoireOuStructure: 'France Numérique Ensemble',
         },
         structureId: null,
@@ -110,9 +109,9 @@ describe('postgre utilisateur query', () => {
         regionCode: null,
         role: 'support_animation' as Role,
         roleReadModel: {
-          categorie: 'mednum' as Categorie,
-          groupe: 'admin' as Groupe,
-          nom: 'Support animation' as TypologieRole,
+          categorie: 'mednum',
+          groupe: 'admin',
+          nom: 'Support animation',
           territoireOuStructure: 'Mednum',
         },
         structureId: null,

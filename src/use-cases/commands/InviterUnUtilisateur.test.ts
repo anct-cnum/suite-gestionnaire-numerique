@@ -1,7 +1,7 @@
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
-import { TypologieRole } from '../../domain/Role'
-import { Utilisateur } from '../../domain/Utilisateur'
+import { TypologieRole } from '@/domain/Role'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('inviter un utilisateur', () => {
   afterEach(() => {

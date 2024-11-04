@@ -3,22 +3,11 @@
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { PostgreUtilisateurRepository } from '../../../gateways/PostgreUtilisateurRepository'
-import { getSession } from '../../../gateways/ProConnectAuthentificationGateway'
-import { ResultAsync } from '../../../use-cases/CommandHandler'
-import {
-  InviterUnUtilisateur,
-  InviterUnUtilisateurFailure,
-} from '../../../use-cases/commands/InviterUnUtilisateur'
 import { Roles } from '@/domain/Role'
-
-type ActionParams = Readonly<{
-  prenom: string
-  nom: string
-  email: string
-  organisation: string
-  role: string
-}>
+import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
+import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { ResultAsync } from '@/use-cases/CommandHandler'
+import { InviterUnUtilisateur, InviterUnUtilisateurFailure } from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
@@ -42,3 +31,11 @@ function roleValidation() {
     role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
   })
 }
+
+type ActionParams = Readonly<{
+  prenom: string
+  nom: string
+  email: string
+  organisation: string
+  role: string
+}>

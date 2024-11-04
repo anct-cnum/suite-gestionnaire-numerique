@@ -1,7 +1,7 @@
 import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
-import { TypologieRole } from '../../domain/Role'
-import { Utilisateur } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { TypologieRole } from '@/domain/Role'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: AddUtilisateurRepository

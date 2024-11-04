@@ -1,8 +1,5 @@
 import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
-import {
-  FindUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('modifier mes informations personnelles', () => {
