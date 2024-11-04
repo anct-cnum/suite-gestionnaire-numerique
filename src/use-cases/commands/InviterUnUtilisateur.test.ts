@@ -1,7 +1,7 @@
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
-import { utilisateurFactory } from '../testHelper'
 import { TypologieRole } from '@/domain/Role'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('inviter un utilisateur', () => {
@@ -16,7 +16,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.org',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -30,9 +30,8 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('OK')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
     const utilisateurACreer = utilisateurFactory({
-      organisation: '',
       telephone: '',
-      uid: 'martin.tartempion@example.org',
+      uid: 'martin.tartempion@example.net',
     })
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
@@ -43,7 +42,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.org',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -65,7 +64,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.org',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -87,7 +86,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.org',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleUtilisateurAInviter,
@@ -101,9 +100,8 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
     const utilisateurACreer = utilisateurFactory({
-      organisation: '',
       telephone: '',
-      uid: 'martin.tartempion@example.org',
+      uid: 'martin.tartempion@example.net',
     })
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
   })
@@ -111,11 +109,9 @@ describe('inviter un utilisateur', () => {
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurAdminUid: utilisateurFactory({
-    organisation: 'Banque des territoires',
     uid: 'utilisateurAdminUid',
   }),
   utilisateurGestionnaireUid: utilisateurFactory({
-    organisation: 'Dispositif lambda',
     role: 'Gestionnaire région',
     uid: 'utilisateurGestionnaireUid',
   }),

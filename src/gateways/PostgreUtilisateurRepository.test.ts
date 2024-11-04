@@ -1,8 +1,9 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
-import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurFactory, utilisateurRecordFactory } from './testHelper'
+import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
 const uidUtilisateur = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
@@ -124,7 +125,7 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateur)
 
         // THEN
-        expect(result?.equals(utilisateurFactory({ organisation, role, uid: uidUtilisateur }))).toBe(true)
+        expect(result?.equals(utilisateurFactory({ organisation, role, telephone: '', uid: uidUtilisateur }))).toBe(true)
       })
     })
   })
@@ -191,6 +192,7 @@ describe('utilisateur repository', () => {
         nom: 'Dugenoux',
         prenom: 'Martine',
         role: 'Instructeur',
+        uid: uidUtilisateur,
       }))
 
       // THEN
