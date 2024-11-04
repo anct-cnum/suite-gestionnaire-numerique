@@ -9,5 +9,5 @@ import { SuppressionCompteFailure, SupprimerMonCompte } from '@/use-cases/comman
 export async function supprimerMonCompteAction(): ResultAsync<SuppressionCompteFailure> {
   return new SupprimerMonCompte(new PostgresSoftDeleteUtilisateurGateway(prisma))
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .execute((await getSession())!.user.sub)
+    .execute({ utilisateurUid: (await getSession())!.user.sub })
 }
