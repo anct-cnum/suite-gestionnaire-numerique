@@ -4,9 +4,7 @@ import { fromTypologieRole } from './roleMapper'
 import { roleMapper } from './shared/RoleMapper'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
-import {
-  SuppressionUtilisateurGateway,
-} from '@/use-cases/commands/SupprimerMonCompte'
+import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
 export class PostgreUtilisateurRepository implements UtilisateurRepository {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate

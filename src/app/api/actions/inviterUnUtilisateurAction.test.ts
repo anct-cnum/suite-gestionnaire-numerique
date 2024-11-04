@@ -1,6 +1,6 @@
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
-import { InviterUnUtilisateur } from '../../../use-cases/commands/InviterUnUtilisateur'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 describe('changer mon rôle action', () => {
   it('étant donné une invitation valide quand on invite un utilisateur alors cela invite l’utilisateur', async () => {
