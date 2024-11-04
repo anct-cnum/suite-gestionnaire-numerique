@@ -1,8 +1,8 @@
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
-import { TypologieRole } from '@/domain/Role'
+import { TypologieRole } from '../../domain/Role'
+import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('inviter un utilisateur', () => {
   afterEach(() => {
@@ -174,9 +174,10 @@ let spiedUidToFind = ''
 let spiedUtilisateurToAdd: Utilisateur | null = null
 
 class RepositorySpy implements AddUtilisateurRepository {
-  async find(uid: string): Promise<Utilisateur | null> {
-    spiedUidToFind = uid
-    return Promise.resolve(utilisateursByUid[uid])
+  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
+    const uidValue = uid.state().value
+    spiedUidToFind = uidValue
+    return Promise.resolve(utilisateursByUid[uidValue])
   }
   async add(utilisateur: Utilisateur): Promise<boolean> {
     spiedUtilisateurToAdd = utilisateur

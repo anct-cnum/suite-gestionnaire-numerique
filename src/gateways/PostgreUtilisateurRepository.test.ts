@@ -4,9 +4,11 @@ import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from 
 import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
+import { UtilisateurUid } from '@/domain/Utilisateur'
 import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
-const uidUtilisateur = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const uidUtilisateur = UtilisateurUid.from(uidUtilisateurValue)
 
 describe('utilisateur repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -125,7 +127,8 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateur)
 
         // THEN
-        expect(result?.equals(utilisateurFactory({ organisation, role, telephone: '', uid: uidUtilisateur }))).toBe(true)
+        expect(result?.equals(utilisateurFactory({ organisation, role, telephone: '', uid: uidUtilisateurValue })))
+          .toBe(true)
       })
     })
   })
@@ -192,13 +195,13 @@ describe('utilisateur repository', () => {
         nom: 'Dugenoux',
         prenom: 'Martine',
         role: 'Instructeur',
-        uid: uidUtilisateur,
+        uid: uidUtilisateurValue,
       }))
 
       // THEN
       const updatedRecord = await prisma.utilisateurRecord.findUnique({
         where: {
-          ssoId: uidUtilisateur,
+          ssoId: uidUtilisateurValue,
         },
       })
       expect(updatedRecord?.role).toBe('instructeur')
@@ -239,7 +242,7 @@ describe('utilisateur repository', () => {
 
     it('qui existe déjà par son ssoId : insertion en échec', async () => {
       // GIVEN
-      const ssoIdExistant = uidUtilisateur
+      const ssoIdExistant = uidUtilisateurValue
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ ssoId: ssoIdExistant }),
       })

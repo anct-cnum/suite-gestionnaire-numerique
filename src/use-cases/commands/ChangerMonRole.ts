@@ -1,7 +1,7 @@
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { TypologieRole } from '@/domain/Role'
-import { InvariantUtilisateur } from '@/domain/Utilisateur'
+import { InvariantUtilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ChangerMonRole implements CommandHandler<Command> {
   readonly #repository: Repository
@@ -11,7 +11,7 @@ export class ChangerMonRole implements CommandHandler<Command> {
   }
 
   async execute({ nouveauRole, utilisateurUid }: Command): ResultAsync<ChangerMonRoleFailure> {
-    const utilisateur = await this.#repository.find(utilisateurUid)
+    const utilisateur = await this.#repository.find(UtilisateurUid.from(utilisateurUid))
     if (!utilisateur) {
       return 'compteInexistant'
     }

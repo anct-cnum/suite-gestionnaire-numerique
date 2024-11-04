@@ -1,30 +1,40 @@
 import { Struct } from '@/shared/lang'
 
-export abstract class Model<State extends Struct> {
-  equals(other: Model<State>): boolean {
-    return this.#isSameType(other) && this.#stateEquals(other)
-  }
-
-  #isSameType(other: Model<State>): boolean {
-    return other instanceof this.constructor
-  }
-
-  #stateEquals(other: Model<State>): boolean {
+abstract class Model {
+  equals(other: this): boolean {
     return JSON.stringify(other.state()) === JSON.stringify(this.state())
   }
 
-  abstract state(): State
+  abstract state(): Struct
 }
 
-export abstract class Entity<State extends EntityState> extends Model<State> {
-  protected readonly uid: State['uid']
+export abstract class ValueObject<State extends Struct> extends Model {
+  readonly #state: State
 
-  protected constructor(uid: State['uid']) {
+  constructor(state: State) {
     super()
-    this.uid = uid
+    this.#state = state
+    Object.freeze(this)
+  }
+
+  override state(): State {
+    return this.#state
   }
 }
 
-type RawUid = string | number;
+export abstract class Uid<State extends UidState> extends ValueObject<State> {}
 
-type EntityState = Readonly<{ uid: RawUid }> & Struct;
+export abstract class Entity<State extends EntityState> extends Model {
+  protected readonly uid: Uid<State['uid']>
+
+  protected constructor(uid: Uid<State['uid']>) {
+    super()
+    this.uid = uid
+  }
+
+  abstract override state(): State
+}
+
+type EntityState = Readonly<{ uid: UidState }> & Struct
+
+type UidState = Readonly<{value: string | number}> & Struct

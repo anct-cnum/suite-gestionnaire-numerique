@@ -1,20 +1,8 @@
-import { Model } from './shared/Model'
+import { ValueObject } from './shared/Model'
 
-export class Region extends Model<RegionState> {
-  readonly #code: string
-  readonly #nom: string
-
+export class Region extends ValueObject<RegionState> {
   constructor(code: string, nom: string) {
-    super()
-    this.#code = code
-    this.#nom = nom
-  }
-
-  state(): RegionState {
-    return {
-      code: this.#code,
-      nom: this.#nom,
-    }
+    super({ code, nom })
   }
 }
 
