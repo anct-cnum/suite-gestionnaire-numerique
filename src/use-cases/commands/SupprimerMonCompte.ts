@@ -1,21 +1,19 @@
+import { DropUtilisateurByUidRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class SupprimerMonCompte implements CommandHandler<Command, SuppressionCompteFailure> {
-  readonly #suppressionUtilisateurGateway: SuppressionUtilisateurGateway
+  readonly #repository: DropUtilisateurByUidRepository
 
-  constructor(suppressionUtilisateurGateway: SuppressionUtilisateurGateway) {
-    this.#suppressionUtilisateurGateway = suppressionUtilisateurGateway
+  constructor(repository: DropUtilisateurByUidRepository) {
+    this.#repository = repository
   }
 
   async execute({ utilisateurUid }: Command): ResultAsync<SuppressionCompteFailure> {
-    return this.#suppressionUtilisateurGateway
-      .delete(utilisateurUid)
+    return this.#repository
+      .dropByUid(UtilisateurUid.from(utilisateurUid))
       .then((result) => (result ? 'OK' : 'compteInexistant'))
   }
-}
-
-export interface SuppressionUtilisateurGateway {
-  delete: (uid: string) => Promise<boolean>
 }
 
 export type SuppressionCompteFailure = 'compteInexistant'

@@ -133,14 +133,14 @@ class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisa
     return Promise.resolve(utilisateursByUid[uidValue])
   }
 
-  async drop(utilisateur: Utilisateur): Promise<boolean> {
-    spiedUtilisateurToDrop = utilisateur
+  async drop(utilisateur: Utilisateur | UtilisateurUid): Promise<boolean> {
+    spiedUtilisateurToDrop = utilisateur as Utilisateur
     return Promise.resolve(Boolean(utilisateur))
   }
 }
 
 class UtilisateursSuppressionConcurrenteRepositorySpy extends UtilisateurRepositorySpy {
-  override async drop(utilisateur: Utilisateur): Promise<boolean> {
+  override async drop(utilisateur: Utilisateur | UtilisateurUid): Promise<boolean> {
     return super.drop(utilisateur).then(() => false)
   }
 }
