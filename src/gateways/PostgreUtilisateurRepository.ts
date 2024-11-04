@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 import { fromTypologieRole, organisation, toTypologieRole } from './shared/RoleMapper'
-import { Utilisateur } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
@@ -33,7 +33,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
           nom: utilisateurState.nom,
           prenom: utilisateurState.prenom,
           role: fromTypologieRole(utilisateurState.role.nom),
-          ssoId: utilisateurState.uid,
+          ssoId: utilisateurState.uid.value,
           telephone: '',
         },
       })
@@ -48,7 +48,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
     }
   }
 
-  async find(uid: string): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
     const record = await this.#activeRecord.findUnique({
       include: {
         relationDepartement: true,
@@ -58,7 +58,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
       },
       where: {
         isSupprime: false,
-        ssoId: uid,
+        ssoId: uid.state().value,
       },
     })
     if (!record) {
@@ -76,7 +76,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {
-    return this.#suppressionGateway.delete(utilisateur.state().uid)
+    return this.#suppressionGateway.delete(utilisateur.state().uid.value)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
@@ -90,7 +90,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
         telephone: utilisateurState.telephone,
       },
       where: {
-        ssoId: utilisateurState.uid,
+        ssoId: utilisateurState.uid.value,
       },
     })
   }

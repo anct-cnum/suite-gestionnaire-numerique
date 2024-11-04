@@ -1,7 +1,7 @@
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUnUtilisateur } from './SupprimerUnUtilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('supprimer un utilisateur', () => {
   afterEach(() => {
@@ -127,9 +127,10 @@ const spiedUidsToFind: Array<string> = []
 let spiedUtilisateurToDrop: Utilisateur | null = null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisateurRepository {
-  async find(uid: string): Promise<Utilisateur | null> {
-    spiedUidsToFind.push(uid)
-    return Promise.resolve(utilisateursByUid[uid])
+  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
+    const uidValue = uid.state().value
+    spiedUidsToFind.push(uidValue)
+    return Promise.resolve(utilisateursByUid[uidValue])
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {

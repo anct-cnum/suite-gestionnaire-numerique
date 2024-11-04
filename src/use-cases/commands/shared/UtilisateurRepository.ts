@@ -1,7 +1,7 @@
-import { Utilisateur } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 export interface FindUtilisateurRepository {
-  find: (uid: string) => Promise<Utilisateur | null>
+  find: (uid: UtilisateurUid) => Promise<Utilisateur | null>
 }
 
 export interface DropUtilisateurRepository extends FindUtilisateurRepository{
