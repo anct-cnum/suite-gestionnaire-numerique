@@ -17,7 +17,7 @@ describe('supprimer mon compte utilisateur', () => {
     const commandHandler = new SupprimerMonCompte(gateway)
 
     // WHEN
-    const result = await commandHandler.execute('fooId')
+    const result = await commandHandler.execute({ utilisateurUid: 'fooId' })
 
     // THEN
     expect(result).toBe(expected)
