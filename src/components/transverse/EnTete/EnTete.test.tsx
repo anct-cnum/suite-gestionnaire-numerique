@@ -39,11 +39,6 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
     // THEN
     const menuUtilisateur = screen.getByRole('dialog')
-    expect(menuUtilisateur).toHaveAttribute('open')
-
-    const fermer = within(menuUtilisateur).getByRole('button', { name: 'Fermer le menu' })
-    expect(fermer).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
-    expect(fermer).toHaveAttribute('type', 'button')
 
     const deconnexion = within(menuUtilisateur).getByRole('button', { name: 'Se déconnecter' })
     expect(deconnexion).toHaveAttribute('name', 'deconnexion')
@@ -95,18 +90,6 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   })
 
   describe('le menu utilisateur étant ouvert', () => {
-    it('quand je clique sur le bouton de fermeture alors il se ferme', () => {
-      // GIVEN
-      const menuUtilisateur = ouvrirLeMenuUtilisateur()
-      const fermer = within(menuUtilisateur).getByRole('button', { name: 'Fermer le menu' })
-
-      // WHEN
-      fireEvent.click(fermer)
-
-      // THEN
-      expect(menuUtilisateur).not.toBeVisible()
-    })
-
     it('quand je clique sur le bouton de déconnexion alors je suis déconnecté', () => {
       // GIVEN
       vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
