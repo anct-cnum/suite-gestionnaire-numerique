@@ -1,6 +1,6 @@
 import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { utilisateurFactory } from '../testHelper'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('modifier mes informations personnelles', () => {

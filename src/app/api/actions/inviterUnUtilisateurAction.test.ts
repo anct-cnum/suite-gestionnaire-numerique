@@ -1,13 +1,13 @@
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
-import { profileFactory } from './testHelper'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import { ssoProfileFactory } from '@/gateways/testHelper'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 describe('inviter un utilisateur action', () => {
   it('étant donné une invitation valide quand on invite un utilisateur alors cela invite l’utilisateur', async () => {
     // GIVEN
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(profileFactory({ sub }))
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
     vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
 
     const inviterUnUtilisateurParams = {
@@ -32,7 +32,7 @@ describe('inviter un utilisateur action', () => {
   it('étant donné une invitation valide quand on invite un utilisateur qui existe déjà alors cela renvoie une erreur', async () => {
     // GIVEN
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(profileFactory({ sub }))
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
     vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('emailExistant')
 
     const inviterUnUtilisateurParams = {

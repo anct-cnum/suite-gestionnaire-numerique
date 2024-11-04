@@ -1,6 +1,6 @@
 import { ChangerMonRole } from './ChangerMonRole'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { utilisateurFactory } from '../testHelper'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
@@ -23,7 +23,6 @@ describe('changer mon rôle', () => {
     expect(result).toBe('OK')
     expect(spiedUtilisateur.equals(utilisateurFactory({
       isSuperAdmin: true,
-      organisation: '',
       role: 'Pilote politique publique',
       uid: 'utilisateurSuperAdminUid',
     }))).toBe(true)

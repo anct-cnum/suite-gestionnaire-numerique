@@ -1,6 +1,6 @@
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { utilisateurFactory } from '../testHelper'
+import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('corriger nom prenom si absents', () => {
@@ -139,8 +139,8 @@ describe('corriger nom prenom si absents', () => {
       desc: 'le nom est absent : il est corrigé',
       nomApresCorrection: 'Dugenoux',
       nomAvantCorrection: valeurNomOuPrenomAbsent,
-      prenomApresCorrection: 'Martin',
-      prenomAvantCorrection: 'Martin',
+      prenomApresCorrection: 'Michel',
+      prenomAvantCorrection: 'Michel',
     },
     {
       correctionNom: valeurNomOuPrenomAbsent,
@@ -206,7 +206,7 @@ let spiedUtilisateurToUpdate: Utilisateur | null = null
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtilisateurRepository {
   async find(uid: string): Promise<Utilisateur> {
     spiedUidToFind = uid
-    return Promise.resolve(utilisateurFactory())
+    return Promise.resolve(utilisateurFactory({ nom: 'Tartempion', prenom: 'Michel' }))
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

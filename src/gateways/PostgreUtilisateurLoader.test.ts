@@ -3,6 +3,7 @@ import { departementRecordFactory, epochTime, groupementRecordFactory, regionRec
 import prisma from '../../prisma/prismaClient'
 import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('postgre utilisateur query', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -167,10 +168,7 @@ describe('postgre utilisateur query', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN
       await prisma.groupementRecord.create({
-        data: {
-          id: 10,
-          nom: 'Hubikoop',
-        },
+        data: groupementRecordFactory(),
       })
       await prisma.regionRecord.create({
         data: regionRecordFactory(),
@@ -688,30 +686,3 @@ describe('postgre utilisateur query', () => {
     const codeRegion = '0'
   })
 })
-
-function utilisateurReadModelFactory(
-  override: Partial<UnUtilisateurReadModel>
-): UnUtilisateurReadModel {
-  return {
-    departementCode: null,
-    derniereConnexion: epochTime,
-    email: 'martin.tartempion@example.net',
-    groupementId: null,
-    inviteLe: epochTime,
-    isActive: true,
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    regionCode: null,
-    role: {
-      categorie: 'anct',
-      groupe: 'admin',
-      nom: 'Administrateur dispositif',
-      organisation: '',
-    },
-    structureId: null,
-    telephone: '0102030405',
-    uid: '7396c91e-b9f2-4f9d-8547-5e7b3302725b',
-    ...override,
-  }
-}
