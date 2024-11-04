@@ -1,20 +1,21 @@
-import { SuppressionUtilisateurGateway, SupprimerMonCompte } from './SupprimerMonCompte'
+import { DropUtilisateurByUidRepository } from './shared/UtilisateurRepository'
+import { SupprimerMonCompte } from './SupprimerMonCompte'
 
 describe('supprimer mon compte utilisateur', () => {
   it.each([
     [
       'quand le compte n’existe pas alors pas de suppression possible',
       'compteInexistant',
-      gatewayCompteInexistant,
+      repositoryCompteInexistant,
     ],
     [
       'quand le compte existe alors il est supprimé',
       'OK',
-      gatewayCompteExistant,
+      repositoryCompteExistant,
     ],
-  ])('%s', async (_, expected, gateway) => {
+  ])('%s', async (_, expected, repository) => {
     // GIVEN
-    const commandHandler = new SupprimerMonCompte(gateway)
+    const commandHandler = new SupprimerMonCompte(repository)
 
     // WHEN
     const result = await commandHandler.execute({ utilisateurUid: 'fooId' })
@@ -24,14 +25,14 @@ describe('supprimer mon compte utilisateur', () => {
   })
 })
 
-const gatewayCompteExistant: SuppressionUtilisateurGateway = {
-  async delete(): Promise<boolean> {
+const repositoryCompteExistant: DropUtilisateurByUidRepository = {
+  async dropByUid(): Promise<boolean> {
     return Promise.resolve(true)
   },
 }
 
-const gatewayCompteInexistant: SuppressionUtilisateurGateway = {
-  async delete(): Promise<boolean> {
+const repositoryCompteInexistant: DropUtilisateurByUidRepository = {
+  async dropByUid(): Promise<boolean> {
     return Promise.resolve(false)
   },
 }

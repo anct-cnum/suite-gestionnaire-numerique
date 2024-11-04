@@ -1,12 +1,12 @@
-import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
+import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
 import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
-  readonly #repository: AddUtilisateurRepository
+  readonly #repository: Repository
 
-  constructor(repository: AddUtilisateurRepository) {
+  constructor(repository: Repository) {
     this.#repository = repository
   }
 
@@ -36,6 +36,8 @@ export type InviterUnUtilisateurCommand = Readonly<{
     organisation?: string
   }>
 }>
+
+interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
 
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
 

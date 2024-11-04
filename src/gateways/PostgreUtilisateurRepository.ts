@@ -3,22 +3,19 @@ import { Prisma, PrismaClient } from '@prisma/client'
 import { fromTypologieRole, organisation, toTypologieRole } from './shared/RoleMapper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
-import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
 
 export class PostgreUtilisateurRepository implements UtilisateurRepository {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate
-  readonly #suppressionGateway: SuppressionUtilisateurGateway
   readonly #dateProvider: () => Date
 
   constructor(
     dbClient: PrismaClient,
-    suppressionGateway: SuppressionUtilisateurGateway = new NullSuppressionUtilisateurGateway(),
     dateProvider: () => Date = () => new Date()
   ) {
     this.#activeRecord = dbClient.utilisateurRecord
-    this.#suppressionGateway = suppressionGateway
     this.#dateProvider = dateProvider
   }
+
   async add(utilisateur: Utilisateur): Promise<boolean> {
     const utilisateurState = utilisateur.state()
     const now = this.#dateProvider()
@@ -76,7 +73,11 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {
-    return this.#suppressionGateway.delete(utilisateur.state().uid.value)
+    return this.#drop(utilisateur.state().uid.value)
+  }
+
+  async dropByUid(uid: UtilisateurUid): Promise<boolean> {
+    return this.#drop(uid.state().value)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
@@ -94,11 +95,25 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
       },
     })
   }
-}
 
-export class NullSuppressionUtilisateurGateway implements SuppressionUtilisateurGateway {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async delete(): Promise<boolean> {
-    return Promise.resolve(false)
+  async #drop(ssoId: string): Promise<boolean> {
+    return this.#activeRecord.update({
+      data: {
+        isSupprime: true,
+      },
+      where: {
+        isSupprime: false,
+        ssoId,
+      },
+    })
+      .then(() => true)
+      .catch((error: unknown) => {
+        // https://www.prisma.io/docs/orm/reference/error-reference#p2025
+        // An operation failed because it depends on one or more records that were required but not found.
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+          return false
+        }
+        throw error
+      })
   }
 }
