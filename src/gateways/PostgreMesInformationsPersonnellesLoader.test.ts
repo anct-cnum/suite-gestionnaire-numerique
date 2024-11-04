@@ -2,7 +2,6 @@ import { Role } from '@prisma/client'
 
 import { PostgreMesInformationsPersonnellesLoader } from './PostgreMesInformationsPersonnellesLoader'
 import prisma from '../../prisma/prismaClient'
-import { TypologieRole } from '@/domain/Role'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 describe('mes informations personnelles loader', () => {
@@ -13,31 +12,31 @@ describe('mes informations personnelles loader', () => {
   it.each([
     {
       role: 'administrateur_dispositif' as Role,
-      roleLabel: 'Administrateur dispositif' as TypologieRole,
+      roleLabel: 'Administrateur dispositif',
     },
     {
       role: 'gestionnaire_departement' as Role,
-      roleLabel: 'Gestionnaire département' as TypologieRole,
+      roleLabel: 'Gestionnaire département',
     },
     {
       role: 'gestionnaire_region' as Role,
-      roleLabel: 'Gestionnaire région' as TypologieRole,
+      roleLabel: 'Gestionnaire région',
     },
     {
       role: 'instructeur' as Role,
-      roleLabel: 'Instructeur' as TypologieRole,
+      roleLabel: 'Instructeur',
     },
     {
       role: 'pilote_politique_publique' as Role,
-      roleLabel: 'Pilote politique publique' as TypologieRole,
+      roleLabel: 'Pilote politique publique',
     },
     {
       role: 'support_animation' as Role,
-      roleLabel: 'Support animation' as TypologieRole,
+      roleLabel: 'Support animation',
     },
     {
       role: 'gestionnaire_groupement' as Role,
-      roleLabel: 'Gestionnaire groupement' as TypologieRole,
+      roleLabel: 'Gestionnaire groupement',
     },
   ])('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure', async ({ role, roleLabel }) => {
     // GIVEN

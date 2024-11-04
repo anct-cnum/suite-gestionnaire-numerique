@@ -5,10 +5,7 @@ import { PostgresSoftDeleteUtilisateurGateway } from '@/gateways/PostgreSoftDele
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import {
-  SupprimerUnUtilisateur,
-  SupprimerUnUtilisateurFailure,
-} from '@/use-cases/commands/SupprimerUnUtilisateur'
+import { SupprimerUnUtilisateur, SupprimerUnUtilisateurFailure } from '@/use-cases/commands/SupprimerUnUtilisateur'
 
 export async function supprimerUnUtilisateurAction(
   utilisateurASupprimerUid: string

@@ -1,7 +1,4 @@
-import {
-  FindUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import config from '@/use-cases/config.json'
 

@@ -1,8 +1,5 @@
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
-import {
-  FindUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Utilisateur } from '@/domain/Utilisateur'
 
 describe('corriger nom prenom si absents', () => {
