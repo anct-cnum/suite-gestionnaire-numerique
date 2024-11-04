@@ -1,4 +1,4 @@
-import { Prisma, Role } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
 import prisma from '../../prisma/prismaClient'
@@ -13,110 +13,78 @@ describe('postgre utilisateur query', () => {
   describe('chercher un utilisateur', () => {
     it.each([
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: null,
-        role: 'administrateur_dispositif' as Role,
+        role: 'administrateur_dispositif',
         roleReadModel: {
           categorie: 'anct',
           groupe: 'admin',
           nom: 'Administrateur dispositif',
-          territoireOuStructure: 'Administrateur Dispositif lambda',
+          organisation: 'Administrateur dispositif',
         },
-        structureId: null,
       },
       {
-        departementCode: '75',
-        groupementId: null,
-        regionCode: null,
-        role: 'gestionnaire_departement' as Role,
+        role: 'gestionnaire_departement',
         roleReadModel: {
           categorie: 'maille',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire département',
-          territoireOuStructure: 'Paris',
+          organisation: 'Paris',
         },
-        structureId: null,
       },
       {
-        departementCode: null,
-        groupementId: 10,
-        regionCode: null,
-        role: 'gestionnaire_groupement' as Role,
+        role: 'gestionnaire_groupement',
         roleReadModel: {
           categorie: 'groupement',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire groupement',
-          territoireOuStructure: 'Hubikoop',
+          organisation: 'Hubikoop',
         },
-        structureId: null,
       },
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: '11',
-        role: 'gestionnaire_region' as Role,
+        role: 'gestionnaire_region',
         roleReadModel: {
           categorie: 'maille',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire région',
-          territoireOuStructure: 'Île-de-France',
+          organisation: 'Île-de-France',
         },
-        structureId: null,
       },
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: null,
-        role: 'gestionnaire_structure' as Role,
+        role: 'gestionnaire_structure',
         roleReadModel: {
           categorie: 'structure',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire structure',
-          territoireOuStructure: 'Solidarnum',
+          organisation: 'Solidarnum',
         },
-        structureId: 10,
       },
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: null,
-        role: 'instructeur' as Role,
+        role: 'instructeur',
         roleReadModel: {
           categorie: 'bdt',
           groupe: 'admin',
           nom: 'Instructeur',
-          territoireOuStructure: 'Banque des territoires',
+          organisation: 'Banque des territoires',
         },
-        structureId: null,
       },
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: null,
-        role: 'pilote_politique_publique' as Role,
+        role: 'pilote_politique_publique',
         roleReadModel: {
           categorie: 'anct',
           groupe: 'admin',
           nom: 'Pilote politique publique',
-          territoireOuStructure: 'France Numérique Ensemble',
+          organisation: 'France Numérique Ensemble',
         },
-        structureId: null,
       },
       {
-        departementCode: null,
-        groupementId: null,
-        regionCode: null,
-        role: 'support_animation' as Role,
+        role: 'support_animation',
         roleReadModel: {
           categorie: 'mednum',
           groupe: 'admin',
           nom: 'Support animation',
-          territoireOuStructure: 'Mednum',
+          organisation: 'Mednum',
         },
-        structureId: null,
       },
-    ])('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ departementCode, groupementId, regionCode, role, roleReadModel, structureId }) => {
+    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await prisma.regionRecord.create({
@@ -136,12 +104,12 @@ describe('postgre utilisateur query', () => {
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
-          departementCode,
-          groupementId,
-          regionCode,
+          departementCode: '75',
+          groupementId: 10,
+          regionCode: '11',
           role,
           ssoId: ssoIdExistant,
-          structureId,
+          structureId: 10,
         }),
       })
       const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
@@ -151,18 +119,18 @@ describe('postgre utilisateur query', () => {
 
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
-        departementCode,
+        departementCode: '75',
         derniereConnexion: nullDate,
         email: 'martin.tartempion@example.net',
-        groupementId,
+        groupementId: 10,
         inviteLe: nullDate,
         isActive: true,
         isSuperAdmin: false,
         nom: 'Tartempion',
         prenom: 'Martin',
-        regionCode,
+        regionCode: '11',
         role: roleReadModel,
-        structureId,
+        structureId: 10,
         telephone: '0102030405',
         uid: ssoIdExistant,
       })
@@ -212,11 +180,31 @@ describe('postgre utilisateur query', () => {
   describe('chercher mes utilisateurs', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN
+      await prisma.groupementRecord.create({
+        data: {
+          id: 10,
+          nom: 'Hubikoop',
+        },
+      })
+      await prisma.regionRecord.create({
+        data: regionRecordFactory(),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory(),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory(),
+      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId }),
       })
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'dupont', role: 'gestionnaire_departement', ssoId: '123456' }),
+        data: utilisateurRecordFactory({
+          departementCode: '75',
+          nom: 'dupont',
+          role: 'gestionnaire_departement',
+          ssoId: '123456',
+        }),
       })
 
       // WHEN
@@ -235,7 +223,7 @@ describe('postgre utilisateur query', () => {
         total: 2,
         utilisateursCourants: [
           {
-            departementCode: null,
+            departementCode: '75',
             derniereConnexion: nullDate,
             email: 'martin.tartempion@example.net',
             groupementId: null,
@@ -249,7 +237,7 @@ describe('postgre utilisateur query', () => {
               categorie: 'maille',
               groupe: 'gestionnaire',
               nom: 'Gestionnaire département',
-              territoireOuStructure: '',
+              organisation: 'Paris',
             },
             structureId: null,
             telephone: '0102030405',
@@ -270,7 +258,7 @@ describe('postgre utilisateur query', () => {
               categorie: 'anct',
               groupe: 'admin',
               nom: 'Administrateur dispositif',
-              territoireOuStructure: 'Administrateur Dispositif lambda',
+              organisation: 'Administrateur dispositif',
             },
             structureId: null,
             telephone: '0102030405',
@@ -290,7 +278,7 @@ describe('postgre utilisateur query', () => {
           categorie: 'maille',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire département',
-          territoireOuStructure: 'Rhône',
+          organisation: 'Rhône',
         },
         uid: ssoId,
       })
@@ -339,7 +327,7 @@ describe('postgre utilisateur query', () => {
           categorie: 'maille',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire région',
-          territoireOuStructure: 'Auvergne-Rhône-Alpes',
+          organisation: 'Auvergne-Rhône-Alpes',
         },
         uid: ssoId,
       })
@@ -385,7 +373,7 @@ describe('postgre utilisateur query', () => {
           categorie: 'groupement',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire groupement',
-          territoireOuStructure: 'Hubikoop',
+          organisation: 'Hubikoop',
         },
         uid: ssoId,
       })
@@ -433,7 +421,7 @@ describe('postgre utilisateur query', () => {
           categorie: 'structure',
           groupe: 'gestionnaire',
           nom: 'Gestionnaire structure',
-          territoireOuStructure: 'Solidarnum',
+          organisation: 'Solidarnum',
         },
         structureId,
         uid: ssoId,
@@ -807,7 +795,7 @@ function utilisateurReadModelFactory(
       categorie: 'anct',
       groupe: 'admin',
       nom: 'Administrateur dispositif',
-      territoireOuStructure: '',
+      organisation: '',
     },
     structureId: null,
     telephone: '0102030405',

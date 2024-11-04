@@ -3,16 +3,17 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export function createSessionUtilisateurPresenter(
   utilisateurReadModel: UnUtilisateurReadModel
 ): SessionUtilisateurViewModel {
+  const role = utilisateurReadModel.role
   return {
     email: utilisateurReadModel.email,
     isSuperAdmin: utilisateurReadModel.isSuperAdmin,
     nom: utilisateurReadModel.nom,
     prenom: utilisateurReadModel.prenom,
     role: {
-      groupe: utilisateurReadModel.role.groupe,
-      libelle: utilisateurReadModel.role.territoireOuStructure,
-      nom: utilisateurReadModel.role.nom,
-      pictogramme: utilisateurReadModel.role.categorie,
+      groupe: role.groupe,
+      libelle: role.organisation,
+      nom: role.nom,
+      pictogramme: role.categorie,
     },
     telephone: utilisateurReadModel.telephone,
     uid: utilisateurReadModel.uid,

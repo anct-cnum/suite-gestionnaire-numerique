@@ -1,8 +1,8 @@
 import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 
-import { roleMapper, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import departements from '../../ressources/departements.json'
-import { categorieByType } from '@/domain/Role'
+import { Utilisateur } from '@/domain/Utilisateur'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
@@ -115,24 +115,23 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
   return {
+    ...Utilisateur.create({
+      email: utilisateurRecord.email,
+      isSuperAdmin: false,
+      nom: utilisateurRecord.nom,
+      organisation: organisation(utilisateurRecord),
+      prenom: utilisateurRecord.prenom,
+      role: toTypologieRole(utilisateurRecord.role),
+      telephone: utilisateurRecord.telephone,
+      uid: utilisateurRecord.ssoId,
+    }).state(),
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
-    email: utilisateurRecord.email,
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
     isActive: utilisateurRecord.derniereConnexion !== null,
-    isSuperAdmin: utilisateurRecord.isSuperAdmin,
-    nom: utilisateurRecord.nom,
-    prenom: utilisateurRecord.prenom,
     regionCode: utilisateurRecord.regionCode,
-    role: {
-      categorie: categorieByType[roleMapper(utilisateurRecord)[utilisateurRecord.role].nom],
-      groupe: roleMapper(utilisateurRecord)[utilisateurRecord.role].groupe,
-      nom: roleMapper(utilisateurRecord)[utilisateurRecord.role].nom,
-      territoireOuStructure: roleMapper(utilisateurRecord)[utilisateurRecord.role].territoireOuStructure,
-    },
     structureId: utilisateurRecord.structureId,
-    telephone: utilisateurRecord.telephone,
     uid: utilisateurRecord.ssoId,
   }
 }

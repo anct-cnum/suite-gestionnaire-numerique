@@ -75,7 +75,6 @@ function utilisateurFactory(
     email: 'michel.tartempion@example.org',
     isSuperAdmin: false,
     nom: 'Tartempion',
-    organisation: 'Banque des territoires',
     prenom: 'Michel',
     role: 'Instructeur',
     telephone: '0102030405',

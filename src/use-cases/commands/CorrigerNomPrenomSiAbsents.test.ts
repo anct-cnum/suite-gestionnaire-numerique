@@ -234,7 +234,6 @@ function utilisateurFactory(
     email: 'michel.tartempion@example.org',
     isSuperAdmin: false,
     nom: 'Tartempion',
-    organisation: 'Banque des terriroires',
     prenom: 'Michel',
     role: 'Instructeur',
     uid: 'fooId',
