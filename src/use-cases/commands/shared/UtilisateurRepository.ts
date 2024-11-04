@@ -4,20 +4,25 @@ export interface FindUtilisateurRepository {
   find: (uid: UtilisateurUid) => Promise<Utilisateur | null>
 }
 
-export interface DropUtilisateurRepository extends FindUtilisateurRepository{
+export interface DropUtilisateurRepository {
   drop: (utilisateur: Utilisateur) => Promise<boolean>
+}
+
+export interface DropUtilisateurByUidRepository {
+  dropByUid: (uid: UtilisateurUid) => Promise<boolean>
 }
 
 export interface UpdateUtilisateurRepository {
   update: (utilisateur: Utilisateur) => Promise<void>
 }
 
-export interface AddUtilisateurRepository extends FindUtilisateurRepository{
+export interface AddUtilisateurRepository {
   add: (utilisateur: Utilisateur) => Promise<boolean>
 }
 
 export interface UtilisateurRepository
   extends FindUtilisateurRepository,
     DropUtilisateurRepository,
+    DropUtilisateurByUidRepository,
     AddUtilisateurRepository,
     UpdateUtilisateurRepository {}

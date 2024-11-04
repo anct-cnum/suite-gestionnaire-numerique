@@ -1,11 +1,11 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { NullSuppressionUtilisateurGateway, PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
+import { PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
 import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
-import { SuppressionUtilisateurGateway } from '@/use-cases/commands/SupprimerMonCompte'
+import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
 const uidUtilisateur = UtilisateurUid.from(uidUtilisateurValue)
@@ -135,48 +135,127 @@ describe('utilisateur repository', () => {
 
   describe('suppression d’un utilisateur', () => {
     const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+    const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
+    const utilisateurExistant = utilisateurRecordFactory({ ssoId: ssoIdUtilisateurExistant })
+    const utilisateurSupprime = utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdUtilisateurSupprime })
 
-    it('la suppression est lancée avec un mécanisme sous-jacent qui réussit, le résultat est en succès', async () => {
-      // GIVEN
-      const suppressionReussieGatewayStub = new (class implements SuppressionUtilisateurGateway {
-        async delete(): Promise<boolean> {
-          return Promise.resolve(true)
-        }
-      })()
-      const repository = new PostgreUtilisateurRepository(prisma, suppressionReussieGatewayStub)
+    describe.each([
+      {
+        desc: 'par identifiant de l’utilisateur',
+        dropFn: async (repository: UtilisateurRepository, uid: string): Promise<boolean> =>
+          repository.dropByUid(UtilisateurUid.from(uid)),
+      },
+      {
+        desc: 'par utilisateur',
+        dropFn: async (repository: UtilisateurRepository, uid: string): Promise<boolean> =>
+          repository.drop(utilisateurFactory({ uid })),
+      },
+    ])('$desc', ({ dropFn }) => {
 
-      // WHEN
-      const result = await repository.drop(utilisateurFactory({ uid: ssoIdUtilisateurExistant }))
+      it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
+        // GIVEN
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory(utilisateurExistant),
+        })
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory(utilisateurSupprime),
+        })
 
-      // THEN
-      expect(result).toBe(true)
-    })
+        // WHEN
+        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
 
-    it('la suppression est lancée avec un mécanisme sous-jacent qui échoue, le résultat est en échec', async () => {
-      // GIVEN
-      const suppressionEchoueeGatewayStub = new (class implements SuppressionUtilisateurGateway {
-        async delete(): Promise<boolean> {
-          return Promise.resolve(false)
-        }
-      })()
-      const repository = new PostgreUtilisateurRepository(prisma, suppressionEchoueeGatewayStub)
+        // THEN
+        expect(result).toBe(true)
+        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+          where: { ssoId: utilisateurExistant.ssoId },
+        })
+        expect(utilisateurModifie).toMatchObject({
+          dateDeCreation: epochTime,
+          departementCode: null,
+          derniereConnexion: epochTime,
+          email: 'martin.tartempion@example.net',
+          groupementId: null,
+          inviteLe: epochTime,
+          isSuperAdmin: false,
+          isSupprime: true,
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          regionCode: null,
+          role: 'instructeur',
+          ssoId: ssoIdUtilisateurExistant,
+          structureId: null,
+          telephone: '0102030405',
+        })
+      })
 
-      // WHEN
-      const result = await repository.drop(utilisateurFactory({ uid: ssoIdUtilisateurExistant }))
+      it('compte existant, préalablement supprimé : aucune écriture', async () => {
+        // GIVEN
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory(utilisateurExistant),
+        })
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory(utilisateurSupprime),
+        })
 
-      // THEN
-      expect(result).toBe(false)
-    })
+        // WHEN
+        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurSupprime)
 
-    it('la suppression sans mécanisme sous-jacent, le résultat est en échec', async () => {
-      // GIVEN
-      const repository = new PostgreUtilisateurRepository(prisma)
+        // THEN
+        expect(result).toBe(false)
+        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+          where: { ssoId: utilisateurExistant.ssoId },
+        })
+        expect(utilisateurModifie?.isSupprime).toBe(false)
+      })
 
-      // WHEN
-      const result = await repository.drop(utilisateurFactory({ uid: ssoIdUtilisateurExistant }))
+      it('compte inexistant : aucune écriture', async () => {
+        // GIVEN
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory(utilisateurSupprime),
+        })
 
-      // THEN
-      expect(result).toBe(false)
+        // WHEN
+        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
+
+        // THEN
+        expect(result).toBe(false)
+        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+          where: { ssoId: utilisateurSupprime.ssoId },
+        })
+        expect(utilisateurModifie?.isSupprime).toBe(true)
+      })
+
+      it('erreur inattendue : non gérée', async () => {
+        // GIVEN
+        const prismaClientKnownRequestErrorOnUpdateStub = {
+          utilisateurRecord: {
+            async update(): Promise<never> {
+              return Promise.reject(new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' }))
+            },
+          },
+        } as unknown as typeof prisma
+        const prismaClientUnknownRequestErrorOnUpdateStub = {
+          utilisateurRecord: {
+            async update(): Promise<never> {
+              return Promise.reject(new Error('error'))
+            },
+          },
+        } as unknown as typeof prisma
+
+        // WHEN
+        const unhandledKnownRequestError = dropFn(
+          new PostgreUtilisateurRepository(prismaClientKnownRequestErrorOnUpdateStub),
+          ssoIdUtilisateurExistant
+        )
+        const unhandledUnknownRequestError = dropFn(
+          new PostgreUtilisateurRepository(prismaClientUnknownRequestErrorOnUpdateStub),
+          ssoIdUtilisateurExistant
+        )
+
+        // THEN
+        await expect(unhandledKnownRequestError).rejects.toMatchObject({ code: 'P1000' })
+        await expect(unhandledUnknownRequestError).rejects.toStrictEqual(new Error('error'))
+      })
     })
   })
 
@@ -212,11 +291,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('ajout d’un utilisateur', () => {
-    const repository = new PostgreUtilisateurRepository(
-      prisma,
-      new NullSuppressionUtilisateurGateway(),
-      () => epochTime
-    )
+    const repository = new PostgreUtilisateurRepository(prisma, () => epochTime)
 
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
       // GIVEN
