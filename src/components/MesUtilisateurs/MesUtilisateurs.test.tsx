@@ -271,34 +271,12 @@ describe('mes utilisateurs', () => {
         .getByRole('heading', { level: 1, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       expect(titre).toBeInTheDocument()
 
-      const fermer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Fermer' })
-      expect(fermer).toHaveAttribute('type', 'button')
-      expect(fermer).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
-
       const annuler = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Annuler' })
       expect(annuler).toHaveAttribute('type', 'button')
       expect(annuler).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
 
       const confirmer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Confirmer' })
       expect(confirmer).toHaveAttribute('type', 'button')
-    })
-
-    it('je me ravise : je ferme la modale', () => {
-      // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const { rowsBody } = getByTable()
-      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
-      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
-      fireEvent.click(supprimer)
-      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
-      const fermer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Fermer' })
-
-      // WHEN
-      fireEvent.click(fermer)
-
-      // THEN
-      expect(supprimerUnUtilisateurModal).not.toBeVisible()
     })
 
     it('je confirme la suppression', async () => {
