@@ -11,8 +11,10 @@ export function matchWithoutMarkup(wording: string) {
   }
 }
 
-export const spiedNextNavigation = {
-  useRouter: {
+export const clientContextProviderDefaultValue = {
+  bandeauInformations: {},
+  roles: Roles,
+  router: {
     back: vi.fn(),
     forward: vi.fn(),
     prefetch: vi.fn(),
@@ -20,12 +22,6 @@ export const spiedNextNavigation = {
     refresh: vi.fn(),
     replace: vi.fn(),
   },
-}
-
-export const clientContextProviderDefaultValue = {
-  bandeauInformations: {},
-  roles: Roles,
-  router: spiedNextNavigation.useRouter,
   searchParams: new URLSearchParams(),
   sessionUtilisateurViewModel: {
     email: 'martin.tartempion@example.net',
