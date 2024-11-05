@@ -9,7 +9,7 @@ export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtil
       value: utilisateur.role,
     },
     {
-      label: 'Adresse éléctronique',
+      label: 'Adresse électronique',
       value: utilisateur.email,
     },
     {
