@@ -259,7 +259,7 @@ describe('mes utilisateurs', () => {
     const roleAttribue = within(drawerDetailsUtilisateur).getByText('Administrateur dispositif')
     expect(roleAttribue).toBeInTheDocument()
 
-    const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse éléctronique')
+    const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse électronique')
     expect(emailLabel).toBeInTheDocument()
     const email = within(drawerDetailsUtilisateur).getByText('paul.provost@example.net')
     expect(email).toBeInTheDocument()
