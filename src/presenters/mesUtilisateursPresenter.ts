@@ -16,6 +16,7 @@ export function mesUtilisateursPresenter(
         canBeDeleted: uid !== monUtilisateur.uid,
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
+        inviteLe: buildDateFrancaise(monUtilisateur.inviteLe),
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
@@ -42,6 +43,7 @@ type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
 
 export type DetailsUtilisateurViewModel = Readonly<{
   derniereConnexion: string
+  inviteLe: string
   email: string
   prenomEtNom: string
   role: string

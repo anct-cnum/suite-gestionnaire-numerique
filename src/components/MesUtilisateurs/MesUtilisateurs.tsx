@@ -6,6 +6,7 @@ import { ReactElement, useContext, useRef, useState } from 'react'
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import InviterUnUtilisateur from './InviterUnUtilisateur'
+import ReinviterUnUtilisateur from './ReinviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
@@ -33,10 +34,15 @@ export default function MesUtilisateurs(
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     email: '',
+    inviteLe: '',
     prenomEtNom: '',
     role: '',
     structure: '',
     telephone: '',
+  })
+  const [utilisateurEnAttenteSelectionne, setUtilisateurEnAttenteSelectionne] = useState({
+    email: '',
+    inviteLe: '',
   })
   const drawerFiltreId = 'drawer-filtre-utilisateurs'
   const labelFiltreId = 'drawer-filtre-utilisateurs-titre'
@@ -46,7 +52,6 @@ export default function MesUtilisateurs(
   const labelInvitationId = 'drawer-invitation-titre'
   const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
   const labelRenvoyerInvitationId = 'drawer-renvoyer-invitation-titre'
-
   return (
     <>
       <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
@@ -155,6 +160,10 @@ export default function MesUtilisateurs(
                   data-fr-opened="false"
                   onClick={() => {
                     if (unUtilisateurViewModel.statut === 'En attente') {
+                      setUtilisateurEnAttenteSelectionne({
+                        email: unUtilisateurViewModel.email,
+                        inviteLe: unUtilisateurViewModel.inviteLe,
+                      })
                       setIsDrawerRenvoyerInvitationOpen(true)
                     } else {
                       setUtilisateurSelectionne(unUtilisateurViewModel)
@@ -244,12 +253,10 @@ export default function MesUtilisateurs(
         labelId={labelRenvoyerInvitationId}
         setIsOpen={setIsDrawerRenvoyerInvitationOpen}
       >
-        <h1
-          className="fr-h2 color-blue-france"
-          id={labelRenvoyerInvitationId}
-        >
-          Invitation envoyée le 12 février 2024
-        </h1>
+        <ReinviterUnUtilisateur
+          labelId={labelRenvoyerInvitationId}
+          utilisateur={utilisateurEnAttenteSelectionne}
+        />
       </Drawer>
     </>
   )

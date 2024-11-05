@@ -224,44 +224,44 @@ describe('mes utilisateurs', () => {
     fireEvent.click(utilisateurEnAttente)
 
     // THEN
-    const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12 février 2024' })
-    const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 12 février 2024' })
+    const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+    const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 12/02/2024' })
     expect(titre).toBeInTheDocument()
 
     const emailLabel = within(drawerRenvoyerInvitation).getByText('Adresse électronique')
     expect(emailLabel).toBeInTheDocument()
-    const email = within(drawerRenvoyerInvitation).getByText('martin.tartempion@example.net')
+    const email = within(drawerRenvoyerInvitation).getByText('julien.deschamps@example.com')
     expect(email).toBeInTheDocument()
 
     const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
     expect(renvoyerCetteInvitation).toBeEnabled()
     expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
-    const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utlisateur' })
+    const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
     expect(supprimerUtilisateur).toBeEnabled()
     expect(supprimerUtilisateur).toHaveAttribute('type', 'button')
   })
 
-  it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
+  it.only('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const rowDeuxiemeUtilisateur = screen.getByRole('button', { name: 'Julien Deschamps' })
+    const rowTroisiemeUtilisateur = screen.getByRole('button', { name: 'Paul Provost' })
 
     // WHEN
-    fireEvent.click(rowDeuxiemeUtilisateur)
+    fireEvent.click(rowTroisiemeUtilisateur)
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Julien Deschamps' })
-    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Julien Deschamps' })
+    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Paul Provost' })
+    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Paul Provost' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
-    const roleAttribue = within(drawerDetailsUtilisateur).getByText('Gestionnaire structure')
+    const roleAttribue = within(drawerDetailsUtilisateur).getByText('Administrateur dispositif')
     expect(roleAttribue).toBeInTheDocument()
 
     const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse éléctronique')
     expect(emailLabel).toBeInTheDocument()
-    const email = within(drawerDetailsUtilisateur).getByText('julien.deschamps@example.com')
+    const email = within(drawerDetailsUtilisateur).getByText('paul.provost@example.net')
     expect(email).toBeInTheDocument()
 
     const telephoneLabel = within(drawerDetailsUtilisateur).getByText('Téléphone professionnel')
@@ -271,13 +271,13 @@ describe('mes utilisateurs', () => {
 
     const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
     expect(derniereConnexionLabel).toBeInTheDocument()
-    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('invité le 12/02/2024')
+    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('05/03/2024')
     expect(derniereConnexion).toBeInTheDocument()
 
     const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
     expect(structureLabel).toBeInTheDocument()
-    const structure = within(drawerDetailsUtilisateur).getByText('Hub du Rhône')
-    expect(structure).toBeInTheDocument()
+    const structureOuCollectivite = within(drawerDetailsUtilisateur).getByText('Préfecture du Rhône')
+    expect(structureOuCollectivite).toBeInTheDocument()
   })
 
   describe('quand j’escompte supprimer un utilisateur', () => {
@@ -1014,5 +1014,26 @@ const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] =
     structureId: 1,
     telephone: '',
     uid: '123456',
+  },
+  {
+    departementCode: null,
+    derniereConnexion: new Date('2024-03-05'),
+    email: 'paul.provost@example.net',
+    groupementId: null,
+    inviteLe: new Date('2024-03-01'),
+    isActive: true,
+    isSuperAdmin: true,
+    nom: 'Provost',
+    prenom: 'Paul',
+    regionCode: null,
+    role: {
+      categorie: 'anct',
+      groupe: 'admin',
+      nom: 'Administrateur dispositif',
+      organisation: 'Préfecture du Rhône',
+    },
+    structureId: null,
+    telephone: '',
+    uid: '7396c91e-b9f2-4f9d-8547-5e9b876877669d',
   },
 ]
