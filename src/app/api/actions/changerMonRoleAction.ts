@@ -10,7 +10,7 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMonRole, ChangerMonRoleFailure } from '@/use-cases/commands/ChangerMonRole'
 
 export async function changerMonRoleAction(nouveauRole: string): ResultAsync<ChangerMonRoleFailure | Array<ZodIssue>> {
-  const changerMonRoleParsed = changerMonRoleValidation()
+  const changerMonRoleParsed = changerMonRoleValidation
     .safeParse({
       nouveauRole,
     })
@@ -25,9 +25,7 @@ export async function changerMonRoleAction(nouveauRole: string): ResultAsync<Cha
     .execute({ nouveauRole: changerMonRoleParsed.data.nouveauRole, utilisateurUid })
 }
 
-function changerMonRoleValidation() {
-  return z
-    .object({
-      nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
-    })
-}
+const changerMonRoleValidation = z
+  .object({
+    nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
+  })

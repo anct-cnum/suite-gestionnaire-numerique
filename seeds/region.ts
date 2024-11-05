@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import prisma from '../prisma/prismaClient'
 import regions from '../ressources/regions.json'
 
-async function migration() {
+async function migration(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des régions commence')
@@ -31,7 +31,7 @@ function uneRegionDeTest(): Prisma.RegionRecordUncheckedCreateInput {
   }
 }
 
-async function migrateRegions(regionsRecord: Array<Prisma.RegionRecordUncheckedCreateInput>) {
+async function migrateRegions(regionsRecord: Array<Prisma.RegionRecordUncheckedCreateInput>): Promise<void> {
   await prisma.regionRecord.createMany({
     data: regionsRecord,
   })

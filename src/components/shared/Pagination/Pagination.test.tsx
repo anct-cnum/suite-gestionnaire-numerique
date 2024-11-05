@@ -232,7 +232,7 @@ describe('pagination', () => {
     expect(dernierePage).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?fakeParam=fakeValue&page=4')
   })
 
-  function listerLesPages() {
+  function listerLesPages(): ReadonlyArray<HTMLElement> {
     const navigation = screen.getByRole('navigation', { name: 'Pagination' })
     const pagination = within(navigation).getByRole('list')
     return within(pagination).getAllByRole('listitem')

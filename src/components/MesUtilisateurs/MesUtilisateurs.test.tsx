@@ -568,6 +568,7 @@ describe('mes utilisateurs', () => {
         .mockResolvedValueOnce('emailExistant')
         .mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
+      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       window.dsfr = () => {
         return {
           modal: {
@@ -658,6 +659,7 @@ describe('mes utilisateurs', () => {
     // GIVEN
     vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('KO')
     const windowDsfr = window.dsfr
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     window.dsfr = () => {
       return {
         modal: {
@@ -719,7 +721,7 @@ describe('mes utilisateurs', () => {
   }
 })
 
-function getByTable() {
+function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>, rowsBody: ReadonlyArray<HTMLElement> } {
   const mesUtilisateurs = screen.getByRole('table', { name: 'Mes utilisateurs' })
   const rowsGroup = within(mesUtilisateurs).getAllByRole('rowgroup')
 

@@ -12,7 +12,7 @@ import { InviterUnUtilisateur, InviterUnUtilisateurFailure } from '@/use-cases/c
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
 ): ResultAsync<InviterUnUtilisateurFailure | Array<ZodIssue>> {
-  const roleValidationResult = roleValidation().safeParse({ role: actionParams.role })
+  const roleValidationResult = roleValidation.safeParse({ role: actionParams.role })
 
   if (roleValidationResult.error) {
     return roleValidationResult.error.issues
@@ -26,11 +26,9 @@ export async function inviterUnUtilisateurAction(
   })
 }
 
-function roleValidation() {
-  return z.object({
-    role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
-  })
-}
+const roleValidation = z.object({
+  role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
+})
 
 type ActionParams = Readonly<{
   prenom: string

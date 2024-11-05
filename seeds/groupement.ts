@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import prisma from '../prisma/prismaClient'
 import groupements from '../ressources/groupements.json'
 
-async function migration() {
+async function migration(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des groupements commence')
@@ -30,7 +30,9 @@ function unGroupementDeTest(): Prisma.GroupementRecordUncheckedCreateInput {
   }
 }
 
-async function migrateGroupements(groupementsRecord: Array<Prisma.GroupementRecordUncheckedCreateInput>) {
+async function migrateGroupements(
+  groupementsRecord: Array<Prisma.GroupementRecordUncheckedCreateInput>
+): Promise<void> {
   await prisma.groupementRecord.createMany({
     data: groupementsRecord,
   })
