@@ -1,10 +1,10 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import * as navigation from 'next/navigation'
+import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
-import { renderComponent, clientContextProviderDefaultValue, spiedNextNavigation, matchWithoutMarkup } from '@/components/testHelper'
+import { renderComponent, clientContextProviderDefaultValue, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
 describe('mes utilisateurs', () => {
@@ -411,25 +411,22 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
     // GIVEN
-    vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-    fireEvent.click(filtrer)
+    const spiedRouterPush = vi.fn()
+    afficherLesFiltres(spiedRouterPush)
 
     // WHEN
     const boutonReinitialiser = screen.getByRole('button', { name: 'Réinitialiser les filtres' })
     fireEvent.click(boutonReinitialiser)
 
     // THEN
-    expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('/mes-utilisateurs')
+    expect(spiedRouterPush).toHaveBeenCalledWith('/mes-utilisateurs')
   })
 
   describe('quand je filtre', () => {
     it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
-      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      afficherLesFiltres()
+      const spiedRouterPush = vi.fn()
+      afficherLesFiltres(spiedRouterPush)
       const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
       const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
       fireEvent.click(utilisateursActives)
@@ -439,13 +436,13 @@ describe('mes utilisateurs', () => {
       fireEvent.click(boutonAfficher)
 
       // THEN
-      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
     })
 
     it('sur certains rôles alors je n’affiche qu’eux', () => {
       // GIVEN
-      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      afficherLesFiltres()
+      const spiedRouterPush = vi.fn()
+      afficherLesFiltres(spiedRouterPush)
       const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
       const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
       fireEvent.click(gestionnaireRegion)
@@ -457,16 +454,15 @@ describe('mes utilisateurs', () => {
       fireEvent.click(boutonAfficher)
 
       // THEN
-      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
     })
 
     it('sur un département alors je n’affiche qu’eux', () => {
       // GIVEN
-      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      const container = afficherLesFiltres()
-
+      const spiedRouterPush = vi.fn()
+      const container = afficherLesFiltres(spiedRouterPush)
       // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+      // eslint-disable-next-line testing-library/no-node-access
       container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '00_978'
 
       // WHEN
@@ -474,15 +470,15 @@ describe('mes utilisateurs', () => {
       fireEvent.click(boutonAfficher)
 
       // THEN
-      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeDepartement=978')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeDepartement=978')
     })
 
     it('sur une région alors je n’affiche qu’eux', () => {
       // GIVEN
-      vi.spyOn(navigation, 'useRouter').mockReturnValueOnce(spiedNextNavigation.useRouter)
-      const container = afficherLesFiltres()
+      const spiedRouterPush = vi.fn()
+      const container = afficherLesFiltres(spiedRouterPush)
       // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-container, testing-library/no-node-access
+      // eslint-disable-next-line testing-library/no-node-access
       container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '93_00'
 
       // WHEN
@@ -490,18 +486,8 @@ describe('mes utilisateurs', () => {
       fireEvent.click(boutonAfficher)
 
       // THEN
-      expect(spiedNextNavigation.useRouter.push).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
     })
-
-    function afficherLesFiltres() {
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-
-      const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-      fireEvent.click(filtrer)
-
-      return container
-    }
   })
 
   describe('quand j’invite un utilisateur', () => {
@@ -717,6 +703,20 @@ describe('mes utilisateurs', () => {
     })
     window.dsfr = windowDsfr
   })
+
+  function afficherLesFiltres(spiedRouterPush: Mock): HTMLElement {
+    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const { container } = renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      // @ts-expect-error
+      { ...clientContextProviderDefaultValue, router: { push: spiedRouterPush } }
+    )
+
+    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+    fireEvent.click(filtrer)
+
+    return container
+  }
 })
 
 function getByTable() {
