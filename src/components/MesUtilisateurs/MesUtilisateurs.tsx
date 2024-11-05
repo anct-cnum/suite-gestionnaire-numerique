@@ -16,7 +16,7 @@ import Statut from '../shared/Statut/Statut'
 import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
 import { clientContext } from '@/components/shared/ClientContext'
-import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
+import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
@@ -43,6 +43,7 @@ export default function MesUtilisateurs(
   const [utilisateurEnAttenteSelectionne, setUtilisateurEnAttenteSelectionne] = useState({
     email: '',
     inviteLe: '',
+    uid: '',
   })
   const drawerFiltreId = 'drawer-filtre-utilisateurs'
   const labelFiltreId = 'drawer-filtre-utilisateurs-titre'
@@ -158,18 +159,7 @@ export default function MesUtilisateurs(
                   aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
-                  onClick={() => {
-                    if (unUtilisateurViewModel.statut === 'En attente') {
-                      setUtilisateurEnAttenteSelectionne({
-                        email: unUtilisateurViewModel.email,
-                        inviteLe: unUtilisateurViewModel.inviteLe,
-                      })
-                      setIsDrawerRenvoyerInvitationOpen(true)
-                    } else {
-                      setUtilisateurSelectionne(unUtilisateurViewModel)
-                      setIsDrawerOpen(true)
-                    }
-                  }}
+                  onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
                   type="button"
                 >
                   {unUtilisateurViewModel.prenomEtNom}
@@ -254,12 +244,30 @@ export default function MesUtilisateurs(
         setIsOpen={setIsDrawerRenvoyerInvitationOpen}
       >
         <ReinviterUnUtilisateur
+          drawerId={drawerRenvoyerInvitationId}
           labelId={labelRenvoyerInvitationId}
+          setIsOpen={setIsDrawerRenvoyerInvitationOpen}
           utilisateur={utilisateurEnAttenteSelectionne}
         />
       </Drawer>
     </>
   )
+
+  function afficherLeBonDrawer(unUtilisateurViewModel: MonUtilisateur) {
+    return () => {
+      if (unUtilisateurViewModel.statut === 'En attente') {
+        setUtilisateurEnAttenteSelectionne({
+          email: unUtilisateurViewModel.email,
+          inviteLe: unUtilisateurViewModel.inviteLe,
+          uid: unUtilisateurViewModel.uid,
+        })
+        setIsDrawerRenvoyerInvitationOpen(true)
+      } else {
+        setUtilisateurSelectionne(unUtilisateurViewModel)
+        setIsDrawerOpen(true)
+      }
+    }
+  }
 }
 
 type MesUtilisateursProps = Readonly<{

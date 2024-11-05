@@ -1,8 +1,9 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
+import * as reinviterUnUtilisateurAction from '@/app/api/actions/reInviterUnUtilisateurAction'
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { renderComponent, clientContextProviderDefaultValue, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
@@ -214,41 +215,117 @@ describe('mes utilisateurs', () => {
     expect(structure).toBeInTheDocument()
   })
 
-  it('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', async () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
+  describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
+    it('contenant les informations d’invitation ainsi que les boutons pour réinviter ou supprimer l’accès', async () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
 
-    // WHEN
-    fireEvent.click(utilisateurEnAttente)
+      // WHEN
+      fireEvent.click(utilisateurEnAttente)
 
-    // THEN
-    const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
-    const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 12/02/2024' })
-    expect(titre).toBeInTheDocument()
+      // THEN
+      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 12/02/2024' })
+      expect(titre).toBeInTheDocument()
 
-    const emailLabel = within(drawerRenvoyerInvitation).getByText('Adresse électronique')
-    expect(emailLabel).toBeInTheDocument()
-    const email = within(drawerRenvoyerInvitation).getByText('julien.deschamps@example.com')
-    expect(email).toBeInTheDocument()
+      const emailLabel = within(drawerRenvoyerInvitation).getByText('Adresse électronique')
+      expect(emailLabel).toBeInTheDocument()
+      const email = within(drawerRenvoyerInvitation).getByText('julien.deschamps@example.com')
+      expect(email).toBeInTheDocument()
 
-    const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
-    expect(renvoyerCetteInvitation).toBeEnabled()
-    expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
-    const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
-    expect(supprimerUtilisateur).toBeEnabled()
-    expect(supprimerUtilisateur).toHaveAttribute('type', 'button')
+      const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
+      expect(renvoyerCetteInvitation).toBeEnabled()
+      expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
+      const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
+      expect(supprimerUtilisateur).toBeEnabled()
+      expect(supprimerUtilisateur).toHaveAttribute('type', 'button')
+    })
+
+    it('quand je clique sur le bouton "Renvoyer cette invitation" alors l’invitation est renvoyée et le drawer se ferme', async () => {
+      // GIVEN
+      vi.spyOn(reinviterUnUtilisateurAction, 'reinviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
+      fireEvent.click(utilisateurEnAttente)
+
+      // WHEN
+      const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
+      fireEvent.click(renvoyerCetteInvitation)
+
+      // THEN
+      await waitFor(() => {
+        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ email: 'julien.deschamps@example.com' })
+      })
+      const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
+      expect(window.location.reload).toHaveBeenCalledOnce()
+    })
+
+    it('quand je clique sur le bouton "Supprimer l’accès à cet utilisateur" alors l’utilisateur est supprimé', async () => {
+      // GIVEN
+      vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
+      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
+      fireEvent.click(utilisateurEnAttente)
+
+      // WHEN
+      const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
+      fireEvent.click(supprimerUtilisateur)
+
+      // THEN
+      await waitFor(() => {
+        expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith('123456')
+      })
+      const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
+      expect(window.location.reload).toHaveBeenCalledOnce()
+    })
+
+    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const utilisateurEnAttente = screen.getByRole('button', { name: 'Sebastien Palat' })
+
+      // WHEN
+      fireEvent.click(utilisateurEnAttente)
+
+      // THEN
+      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée aujourd’hui' })
+      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée aujourd’hui' })
+      expect(titre).toBeInTheDocument()
+    })
+
+    it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async() => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      const utilisateurEnAttente = screen.getByRole('button', { name: 'Stephane Raymond' })
+
+      // WHEN
+      fireEvent.click(utilisateurEnAttente)
+
+      // THEN
+      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée hier' })
+      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée hier' })
+      expect(titre).toBeInTheDocument()
+    })
   })
 
   it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const rowTroisiemeUtilisateur = screen.getByRole('button', { name: 'Paul Provost' })
+    const utilisateurSansTelephone = screen.getByRole('button', { name: 'Paul Provost' })
 
     // WHEN
-    fireEvent.click(rowTroisiemeUtilisateur)
+    fireEvent.click(utilisateurSansTelephone)
 
     // THEN
     const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Paul Provost' })
@@ -970,6 +1047,7 @@ function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>, rowsBody: Read
   return { columnsHead, rowsBody }
 }
 
+const date = new Date()
 const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] = [
   {
     departementCode: null,
@@ -1035,5 +1113,47 @@ const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] =
     structureId: null,
     telephone: '',
     uid: '7396c91e-b9f2-4f9d-8547-5e9b876877669d',
+  },
+  {
+    departementCode: null,
+    derniereConnexion: new Date(0),
+    email: 'sebastien.palat@example.net',
+    groupementId: null,
+    inviteLe: new Date(),
+    isActive: false,
+    isSuperAdmin: false,
+    nom: 'Palat',
+    prenom: 'Sebastien',
+    regionCode: null,
+    role: {
+      categorie: 'structure',
+      groupe: 'gestionnaire',
+      nom: 'Gestionnaire structure',
+      organisation: 'Hub du Rhône',
+    },
+    structureId: null,
+    telephone: '',
+    uid: '7396c91e-b9f2-4f9d-8547-87u7654rt678r5',
+  },
+  {
+    departementCode: null,
+    derniereConnexion: new Date(0),
+    email: 'stephane.raymond@example.net',
+    groupementId: null,
+    inviteLe: new Date(date.setDate(date.getDate() - 1)),
+    isActive: false,
+    isSuperAdmin: false,
+    nom: 'Raymond',
+    prenom: 'Stephane',
+    regionCode: null,
+    role: {
+      categorie: 'structure',
+      groupe: 'gestionnaire',
+      nom: 'Gestionnaire structure',
+      organisation: 'Hub du Rhône',
+    },
+    structureId: null,
+    telephone: '',
+    uid: '7396c91e-b9f2-4f9d-8547-8765t54rf6',
   },
 ]

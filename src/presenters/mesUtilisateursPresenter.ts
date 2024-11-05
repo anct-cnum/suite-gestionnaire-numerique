@@ -16,7 +16,7 @@ export function mesUtilisateursPresenter(
         canBeDeleted: uid !== monUtilisateur.uid,
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
-        inviteLe: buildDateFrancaise(monUtilisateur.inviteLe),
+        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe),
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
@@ -34,7 +34,7 @@ export type MesUtilisateursViewModel = Readonly<{
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>
 
-type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
+export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
   canBeDeleted: boolean
   picto: string
   statut: 'En attente' | 'Activé'
@@ -63,4 +63,20 @@ function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
 
 function buildDateFrancaise(date: Date): string {
   return date.toLocaleDateString('fr-FR')
+}
+
+function buildDateFrancaiseEnAttente(date: Date): string {
+  const now = new Date()
+  const today = buildDateFrancaise(now)
+  const yesterday = buildDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
+
+  if (buildDateFrancaise(date) === today) {
+    return 'Invitation envoyée aujourd’hui'
+  }
+
+  if (buildDateFrancaise(date) === yesterday) {
+    return 'Invitation envoyée hier'
+  }
+
+  return `Invitation envoyée le ${buildDateFrancaise(date)}`
 }
