@@ -3,8 +3,10 @@
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { InviterUnUtilisateurCommand,
-  InviterUnUtilisateur, InviterUnUtilisateurFailure } from '../../../use-cases/commands/InviterUnUtilisateur'
+import {
+  InviterUnUtilisateurCommand,
+  InviterUnUtilisateur, InviterUnUtilisateurFailure,
+} from '../../../use-cases/commands/InviterUnUtilisateur'
 import { Roles } from '@/domain/Role'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
@@ -12,27 +14,27 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
-): ResultAsync<InviterUnUtilisateurFailure | Array<ZodIssue>> {
-  const roleValidationResult = roleValidation.safeParse({ role: actionParams.role })
+): ResultAsync<InviterUnUtilisateurFailure | ReadonlyArray<ZodIssue>> {
+  const validationResult = validator.safeParse(actionParams)
 
-  if (roleValidationResult.error) {
-    return roleValidationResult.error.issues
+  if (validationResult.error) {
+    return validationResult.error.issues
   }
 
   let command: InviterUnUtilisateurCommand = {
-    email: actionParams.email,
-    nom: actionParams.nom,
-    prenom: actionParams.prenom,
+    email: validationResult.data.email,
+    nom: validationResult.data.nom,
+    prenom: validationResult.data.prenom,
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     uidUtilisateurCourant: (await getSession())!.user.sub,
   }
 
-  if (roleValidationResult.data.role) {
+  if (validationResult.data.role) {
     command = {
       ...command,
       role: {
-        organisation: actionParams.organisation,
-        type: roleValidationResult.data.role,
+        organisation: validationResult.data.organisation,
+        type: validationResult.data.role,
       },
     }
   }
@@ -40,14 +42,18 @@ export async function inviterUnUtilisateurAction(
   return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma)).execute(command)
 }
 
-const roleValidation = z.object({
-  role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),
-})
-
-type ActionParams = Readonly<{
+export type ActionParams = Partial<Readonly<{
   prenom: string
   nom: string
   email: string
   organisation?: string
   role?: string
-}>
+}>>
+
+const validator = z.object({
+  email: z.string().email({ message: 'L’email doit être valide' }),
+  nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
+  organisation: z.string().min(1, { message: 'L’organisation doit être renseignée' }).optional(),
+  prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
+  role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),
+})

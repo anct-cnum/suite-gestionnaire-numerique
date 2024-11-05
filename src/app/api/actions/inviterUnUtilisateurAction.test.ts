@@ -1,3 +1,5 @@
+import { ZodIssue } from 'zod'
+
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { ssoProfileFactory } from '@/gateways/testHelper'
@@ -96,21 +98,60 @@ describe('inviter un utilisateur action', () => {
     expect(result).toBe('emailExistant')
   })
 
-  it('étant donné une invitation avec un rôle invalide quand on invite un utilisateur alors cela renvoie une erreur', async () => {
-    // GIVEN
-    const inviterUnUtilisateurParams = {
-      email: 'martin.tartempion@example.com',
-      nom: 'Tartempion',
-      organisation: 'La Poste',
-      prenom: 'Martin',
-      role: 'Rôle bidon',
-    }
+  describe('étant donné une invitation avec des données invalides, quand on invite un utilisateur alors cela renvoie une erreur', () => {
+    it.each([
+      {
+        desc: 'nom vide',
+        email: 'martin.tartempion@example.com',
+        expectedError: 'Le nom doit contenir au moins 1 caractère',
+        nom: '',
+        prenom: 'Martin',
+      },
+      {
+        desc: 'prénom vide',
+        email: 'martin.tartempion@example.com',
+        expectedError: 'Le prénom doit contenir au moins 1 caractère',
+        nom: 'Tartempion',
+        prenom: '',
+      },
+      {
+        desc: 'email vide',
+        email: '',
+        expectedError: 'L’email doit être valide',
+        nom: 'Tartempion',
+        prenom: 'Martin',
+      },
+      {
+        desc: 'rôle invalide',
+        email: 'martin.tartempion@example.com',
+        expectedError: 'Le rôle n’est pas correct',
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        role: 'Rôle bidon',
+      },
+      {
+        desc: 'organisation vide',
+        email: 'martin.tartempion@example.com',
+        expectedError: 'L’organisation doit être renseignée',
+        nom: 'Tartempion',
+        organisation: '',
+        prenom: 'Martin',
+      },
+    ])('$desc', async ({ email, nom, prenom, role, organisation, expectedError }) => {
+      // GIVEN
+      const inviterUnUtilisateurParams = {
+        email,
+        nom,
+        organisation,
+        prenom,
+        role,
+      }
 
-    // WHEN
-    const result = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
+      // WHEN
+      const result = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
 
-    // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('Le rôle n’est pas correct')
+      // THEN
+      expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe(expectedError)
+    })
   })
 })
