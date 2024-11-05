@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import prisma from '../prisma/prismaClient'
 import departements from '../ressources/departements.json'
 
-async function migration() {
+async function migration(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des departements commence')
@@ -32,7 +32,9 @@ function unDepartementDeTest(): Prisma.DepartementRecordUncheckedCreateInput {
   }
 }
 
-async function migrateDepartements(departementsRecord: Array<Prisma.DepartementRecordUncheckedCreateInput>) {
+async function migrateDepartements(
+  departementsRecord: Array<Prisma.DepartementRecordUncheckedCreateInput>
+): Promise<void> {
   await prisma.departementRecord.createMany({
     data: departementsRecord,
   })

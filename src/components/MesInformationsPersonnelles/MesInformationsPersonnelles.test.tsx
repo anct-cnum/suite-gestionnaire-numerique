@@ -372,7 +372,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(window.location.reload).toHaveBeenCalledOnce()
     })
 
-    function ouvrirDrawer() {
+    function ouvrirDrawer(): void {
       const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
       const modifierMesInfosPersos = within(mesInformationsPersonnelles).getByRole('button', { name: 'Modifier' })
       fireEvent.click(modifierMesInfosPersos)
@@ -383,7 +383,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 function afficherMesInformationsPersonnelles(
   mesInformationsPersonnellesReadModel: Parameters<typeof mesInformationsPersonnellesPresenter>[0]
   = mesInformationsPersonnellesReadModelParDefaut
-) {
+): void {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
   render(
