@@ -66,13 +66,13 @@ export default function FiltrerMesUtilisateurs({
     </>
   )
 
-  function reinitialiser() {
+  function reinitialiser(): void {
     // Stryker disable next-line OptionalChaining
     ref.current?.setValue(toutesLesRegions, 'select-option')
     router.push('/mes-utilisateurs')
   }
 
-  function filtrer(event: FormEvent<HTMLFormElement>) {
+  function filtrer(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
 
     // Stryker disable next-line BooleanLiteral

@@ -19,7 +19,7 @@ export default function InviterUnUtilisateur({
   const emailId = useId()
   const structureId = useId()
 
-  const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>) => {
+  const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

@@ -119,7 +119,9 @@ describe('mes informations personnelles loader', () => {
     const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
-    const utilisateurReadModel = async () => postgreMesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
+    const utilisateurReadModel =
+      async (): Promise<MesInformationsPersonnellesReadModel> =>
+        postgreMesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

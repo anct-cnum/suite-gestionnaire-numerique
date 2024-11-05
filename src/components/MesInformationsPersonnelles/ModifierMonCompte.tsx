@@ -125,7 +125,7 @@ export default function ModifierMonCompte({
     </>
   )
 
-  async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>) {
+  async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)

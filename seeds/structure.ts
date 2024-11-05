@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 import { coNumClient } from './co-num/coNumClient'
 import prisma from '../prisma/prismaClient'
 
-async function migration() {
+async function migration(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des structures commence')
@@ -122,7 +122,7 @@ function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
   }
 }
 
-async function migrateStructures(structuresRecord: Array<Prisma.StructureRecordUncheckedCreateInput>) {
+async function migrateStructures(structuresRecord: Array<Prisma.StructureRecordUncheckedCreateInput>): Promise<void> {
   await prisma.structureRecord.createMany({
     data: structuresRecord,
   })

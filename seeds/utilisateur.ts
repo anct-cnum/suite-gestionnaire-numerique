@@ -5,7 +5,7 @@ import { coNumClient } from './co-num/coNumClient'
 import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
 
-async function migration() {
+async function migration(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des utilisateurs commence')
@@ -260,7 +260,9 @@ function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
   }
 }
 
-async function migrateUtilisateurs(utilisateursRecord: Array<Prisma.UtilisateurRecordUncheckedCreateInput>) {
+async function migrateUtilisateurs(
+  utilisateursRecord: Array<Prisma.UtilisateurRecordUncheckedCreateInput>
+): Promise<void> {
   await prisma.utilisateurRecord.createMany({
     data: utilisateursRecord,
     // Il peut y avoir des e-mails en commun entre CoNum et FNE
