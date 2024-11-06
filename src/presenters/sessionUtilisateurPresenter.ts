@@ -5,6 +5,7 @@ export function createSessionUtilisateurPresenter(
 ): SessionUtilisateurViewModel {
   const role = utilisateurReadModel.role
   return {
+    codeDepartement: utilisateurReadModel.departementCode,
     email: utilisateurReadModel.email,
     isSuperAdmin: utilisateurReadModel.isSuperAdmin,
     nom: utilisateurReadModel.nom,
@@ -22,6 +23,7 @@ export function createSessionUtilisateurPresenter(
 }
 
 export type SessionUtilisateurViewModel = Readonly<{
+  codeDepartement: string | null
   email: string
   isSuperAdmin: boolean
   nom: string

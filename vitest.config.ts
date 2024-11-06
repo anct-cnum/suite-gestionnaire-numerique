@@ -30,7 +30,7 @@ export default defineConfig({
         '**/accessibilite/**',
         '**/MentionsLegales/**',
         '**/mentions-legales/**',
-        '**/ProConnectAuthentificationGateway.ts',
+        '**/NextAuthAuthentificationGateway.ts',
         '**/ClientContext.tsx',
         'src/instrumentation.ts',
         'src/**/*.test.tsx',

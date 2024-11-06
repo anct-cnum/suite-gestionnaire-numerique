@@ -4,6 +4,7 @@ export function sessionUtilisateurViewModelFactory(
   override?: Partial<SessionUtilisateurViewModel>
 ): SessionUtilisateurViewModel {
   return {
+    codeDepartement: '93',
     email: 'martin.tartempion@example.net',
     isSuperAdmin: true,
     nom: 'Tartempion',
