@@ -62,6 +62,21 @@ describe('inviter un utilisateur action', () => {
           uidUtilisateurCourant: sub,
         },
       },
+      {
+        actionParams: {
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          organisation: 'La Poste',
+          prenom: 'Martin',
+        },
+        desc: 'avec organisation spécifiée sans rôle : ignorée',
+        expectedCommand: {
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          uidUtilisateurCourant: sub,
+        },
+      },
     ])('$desc', async ({ actionParams, expectedCommand }) => {
       // GIVEN
       // @ts-expect-error

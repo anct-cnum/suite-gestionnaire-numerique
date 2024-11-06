@@ -544,7 +544,7 @@ describe('mes utilisateurs', () => {
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
 
-      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par mail')
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
@@ -682,7 +682,7 @@ describe('mes utilisateurs', () => {
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
 
-      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par mail')
+      const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
@@ -710,7 +710,6 @@ describe('mes utilisateurs', () => {
         .mockResolvedValueOnce('emailExistant')
         .mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
-      // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
           modal: {

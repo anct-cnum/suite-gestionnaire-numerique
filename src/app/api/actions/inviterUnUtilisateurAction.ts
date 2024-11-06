@@ -3,14 +3,14 @@
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import {
-  InviterUnUtilisateurCommand,
-  InviterUnUtilisateur, InviterUnUtilisateurFailure,
-} from '../../../use-cases/commands/InviterUnUtilisateur'
 import { Roles } from '@/domain/Role'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
+import {
+  InviterUnUtilisateurCommand,
+  InviterUnUtilisateur, InviterUnUtilisateurFailure,
+} from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
@@ -42,13 +42,13 @@ export async function inviterUnUtilisateurAction(
   return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma)).execute(command)
 }
 
-export type ActionParams = Partial<Readonly<{
+type ActionParams = Readonly<{
   prenom: string
   nom: string
   email: string
   organisation?: string
   role?: string
-}>>
+}>
 
 const validator = z.object({
   email: z.string().email({ message: 'L’email doit être valide' }),

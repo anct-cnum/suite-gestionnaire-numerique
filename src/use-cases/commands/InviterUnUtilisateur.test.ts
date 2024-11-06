@@ -158,18 +158,11 @@ describe('inviter un utilisateur', () => {
 })
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurAdminUid: Utilisateur.create({
-    email: 'martin.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    role: 'Instructeur',
+  utilisateurAdminUid: utilisateurFactory({
     uid: 'utilisateurAdminUid',
   }),
-  utilisateurGestionnaireUid: Utilisateur.create({
+  utilisateurGestionnaireUid: utilisateurFactory({
     email: 'martina.tartempion@example.net',
-    isSuperAdmin: false,
-    nom: 'Tartempion',
     organisation: 'Bretagne',
     prenom: 'Martine',
     role: 'Gestionnaire région',
