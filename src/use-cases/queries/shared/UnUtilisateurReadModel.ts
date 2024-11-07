@@ -13,6 +13,7 @@ export type UnUtilisateurReadModel = Readonly<{
     groupe: string
     nom: string
     organisation: string
+    rolesGerables: ReadonlyArray<string>
   }>
   regionCode: string | null
   structureId: number | null

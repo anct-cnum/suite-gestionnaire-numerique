@@ -1,8 +1,10 @@
-import { Dispatch, PropsWithChildren, ReactNode, SetStateAction } from 'react'
+import { Dispatch, forwardRef, PropsWithChildren, ReactNode, Ref, SetStateAction } from 'react'
 
 import styles from './Drawer.module.css'
 
-export default function Drawer({
+export default forwardRef(Drawer)
+
+function Drawer({
   id,
   isOpen,
   setIsOpen,
@@ -10,7 +12,8 @@ export default function Drawer({
   isFixedWidth,
   labelId,
   children,
-}: DrawerProps): ReactNode {
+}: DrawerProps,
+ref: Ref<HTMLDialogElement>): ReactNode {
   // istanbul ignore next @preserve
   const boxSize = isFixedWidth ? styles['modal-box--fixed-width'] : ''
 
@@ -21,6 +24,7 @@ export default function Drawer({
       className={`fr-modal ${styles['fr-modal']}`}
       id={id}
       open={isOpen}
+      ref={ref}
     >
       <div className={`fr-container ${styles['fr-container']}`}>
         <div className="fr-grid-row fr-grid-row--right">

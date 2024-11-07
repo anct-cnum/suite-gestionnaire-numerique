@@ -1,8 +1,8 @@
-import { ReactElement } from 'react'
+import { ChangeEventHandler, ReactElement } from 'react'
 
 import Radio from './Radio'
 
-export default function RadioGroup({ nomGroupe, options }: RadioGroupProps): ReactElement {
+export default function RadioGroup({ nomGroupe, options, onChange }: RadioGroupProps): ReactElement {
   return (
     <div role="radiogroup">
       {options.map(({ id, label }) => (
@@ -10,6 +10,7 @@ export default function RadioGroup({ nomGroupe, options }: RadioGroupProps): Rea
           id={id}
           key={id}
           nomGroupe={nomGroupe}
+          onChange={onChange}
         >
           {label}
         </Radio>
@@ -26,4 +27,5 @@ export type RadioOption = Readonly<{
 type RadioGroupProps = Readonly<{
   nomGroupe: string
   options: ReadonlyArray<RadioOption>
+  onChange: ChangeEventHandler<HTMLInputElement>
 }>
