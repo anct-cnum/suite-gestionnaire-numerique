@@ -3849,6 +3849,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^6":
+  version: 6.4.16
+  resolution: "@types/nodemailer@npm:6.4.16"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/63a9e9ad8916675aeb0828dd969e6def6e24344c1bd2b93674ad1933160d532c6d9c2a56ec3f2efc1a866cacaa468a2969be33447304fb94af507d6cd3b94e83
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.2
   resolution: "@types/parse-json@npm:4.0.2"
@@ -8833,6 +8842,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nodemailer@npm:^6.9.16":
+  version: 6.9.16
+  resolution: "nodemailer@npm:6.9.16"
+  checksum: 10c0/9fd73ab4ab5b81544c3c9820afbe386369aba442f997b2f58d171222a898a7aed580fc100bfe6eebc194f18ba6e169d67ee40ca64d32d69022d89e575cef97a4
+  languageName: node
+  linkType: hard
+
 "nopt@npm:^7.0.0":
   version: 7.2.1
   resolution: "nopt@npm:7.2.1"
@@ -10598,6 +10614,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.0.1"
     "@types/node": "npm:^22.8.7"
+    "@types/nodemailer": "npm:^6"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18"
     "@typescript-eslint/eslint-plugin": "npm:^7.10.0"
@@ -10622,6 +10639,7 @@ __metadata:
     mongodb: "npm:^6.10.0"
     next: "npm:14.2.15"
     next-auth: "npm:^4.24.10"
+    nodemailer: "npm:^6.9.16"
     prettier: "npm:^3.3.3"
     prisma: "npm:^5.21.1"
     prisma-json-types-generator: "npm:^3.1.1"

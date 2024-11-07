@@ -104,7 +104,15 @@
           {
             "target": ["src/gateways"],
             "from": ["src", "node_modules"],
-            "except": ["domain", "use-cases", "gateways", "shared", "@prisma/client", "next-auth"],
+            "except": [
+              "domain",
+              "use-cases",
+              "gateways",
+              "shared",
+              "@prisma/client",
+              "next-auth",
+              "nodemailer"
+            ],
             "message": "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases."
           },
           {
