@@ -7,13 +7,15 @@ import * as reinviterUnUtilisateurAction from '@/app/api/actions/reInviterUnUtil
 import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { renderComponent, clientContextProviderDefaultValue, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+// eslint-disable-next-line import/no-restricted-paths
+import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('mes utilisateurs', () => {
   const totalUtilisateur = 11
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -44,7 +46,7 @@ describe('mes utilisateurs', () => {
 
   it('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -76,7 +78,7 @@ describe('mes utilisateurs', () => {
 
   it('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(
@@ -115,7 +117,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur actif quand j’affiche mes utilisateurs alors il s’affiche avec ses informations', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -126,6 +128,9 @@ describe('mes utilisateurs', () => {
     expect(columnsBody).toHaveLength(7)
     expect(within(columnsBody[0]).getByRole('presentation')).toHaveAttribute('alt', '')
     expect(columnsBody[1].textContent).toBe('Martin TartempionPréfecture du Rhône')
+    const boutonDrawer = within(columnsBody[1]).getByRole('button', { name: 'Martin Tartempion' })
+    expect(boutonDrawer).toHaveAttribute('type', 'button')
+    expect(boutonDrawer).toHaveAttribute('aria-controls', 'drawer-details-utilisateur')
     expect(columnsBody[2].textContent).toBe('martin.tartempion@example.net')
     expect(columnsBody[3].textContent).toBe('Administrateur dispositif')
     expect(columnsBody[4].textContent).toBe('05/03/2024')
@@ -134,21 +139,24 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur inactif quand j’affiche mes utilisateurs alors il s’affiche avec ce statut et sa date d’invitation', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // THEN
     const { rowsBody } = getByTable()
-    const columnsBody = within(rowsBody[1]).getAllByRole('cell')
+    const columnsBody = within(rowsBody[0]).getAllByRole('cell')
+    const boutonDrawer = within(columnsBody[1]).getByRole('button', { name: 'Julien Deschamps' })
+    expect(boutonDrawer).toHaveAttribute('type', 'button')
+    expect(boutonDrawer).toHaveAttribute('aria-controls', 'drawer-renvoyer-invitation')
     expect(columnsBody[4].textContent).toBe('invité le 12/02/2024')
     expect(columnsBody[5].textContent).toBe('En attente')
   })
 
   it('sur ma ligne quand j’affiche mes utilisateurs alors je ne peux pas me supprimer', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -163,7 +171,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur quand j’affiche mes utilisateurs alors je peux le supprimer', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -178,7 +186,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur actif alors ses détails s’affichent dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const utilisateurActif = screen.getByRole('button', { name: 'Martin Tartempion' })
 
@@ -218,7 +226,7 @@ describe('mes utilisateurs', () => {
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
     it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
 
@@ -237,6 +245,7 @@ describe('mes utilisateurs', () => {
 
       const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
       expect(renvoyerCetteInvitation).toBeEnabled()
+      expect(renvoyerCetteInvitation).toHaveAttribute('aria-controls', 'drawer-renvoyer-invitation')
       expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
     })
 
@@ -244,7 +253,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(reinviterUnUtilisateurAction, 'reinviterUnUtilisateurAction').mockResolvedValueOnce('OK')
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
@@ -264,7 +273,7 @@ describe('mes utilisateurs', () => {
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDAujourdhuiReadModel], '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Sebastien Palat' })
 
@@ -279,7 +288,7 @@ describe('mes utilisateurs', () => {
 
     it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async() => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDHierReadModel], '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Stephane Raymond' })
 
@@ -295,7 +304,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifSansTelephoneVideReadModel], '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const utilisateurSansTelephone = screen.getByRole('button', { name: 'Paul Provost' })
 
@@ -335,10 +344,10 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
-      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
+      const columnsBody = within(rowsBody[0]).getAllByRole('cell')
       const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
 
       // WHEN
@@ -363,7 +372,7 @@ describe('mes utilisateurs', () => {
     it('je confirme la suppression', async () => {
       // GIVEN
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
@@ -386,7 +395,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -399,7 +408,7 @@ describe('mes utilisateurs', () => {
   it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
     const totalUtilisateur = 10
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -411,7 +420,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // WHEN
@@ -458,7 +467,7 @@ describe('mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       { ...clientContextProviderDefaultValue, searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
@@ -574,7 +583,7 @@ describe('mes utilisateurs', () => {
   describe('quand j’invite un utilisateur', () => {
     it('en tant qu’administrateur, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous les rôles sélectionnables', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         ...clientContextProviderDefaultValue,
         sessionUtilisateurViewModel: {
@@ -681,7 +690,7 @@ describe('mes utilisateurs', () => {
 
     it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ de structure s’affiche', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         ...clientContextProviderDefaultValue,
         sessionUtilisateurViewModel: {
@@ -721,7 +730,7 @@ describe('mes utilisateurs', () => {
 
     it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         ...clientContextProviderDefaultValue,
         sessionUtilisateurViewModel: {
@@ -797,7 +806,7 @@ describe('mes utilisateurs', () => {
         }
       }
       const setBandeauInformations = vi.fn()
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
@@ -867,7 +876,7 @@ describe('mes utilisateurs', () => {
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
       // GIVEN
       vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
@@ -930,7 +939,7 @@ describe('mes utilisateurs', () => {
         },
       }
     }
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
@@ -994,7 +1003,7 @@ describe('mes utilisateurs', () => {
   })
 
   function afficherLesFiltres(spiedRouterPush: Mock): HTMLElement {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
     const { container } = renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       // @ts-expect-error
@@ -1022,113 +1031,57 @@ function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>, rowsBody: Read
   return { columnsHead, rowsBody }
 }
 
+const utilisateurActifReadModel = utilisateurReadModelFactory({
+  derniereConnexion: new Date('2024-03-05'),
+  inviteLe: new Date('2024-03-01'),
+  isSuperAdmin: true,
+  role: {
+    categorie: 'anct',
+    groupe: 'admin',
+    nom: 'Administrateur dispositif',
+    organisation: 'Préfecture du Rhône',
+    rolesGerables: [],
+  },
+  uid: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+})
+
+const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
+  email: 'julien.deschamps@example.com',
+  inviteLe: new Date('2024-02-12'),
+  isActive: false,
+  nom: 'Deschamps',
+  prenom: 'Julien',
+  uid: '123456',
+})
+
+const utilisateurEnAttenteDAujourdhuiReadModel = utilisateurReadModelFactory({
+  email: 'sebastien.palat@example.net',
+  inviteLe: new Date(),
+  isActive: false,
+  nom: 'Palat',
+  prenom: 'Sebastien',
+})
+
 const date = new Date()
-const mesUtilisateursReadModel: Parameters<typeof mesUtilisateursPresenter>[0] = [
-  {
-    departementCode: null,
-    derniereConnexion: new Date('2024-03-05'),
-    email: 'martin.tartempion@example.net',
-    groupementId: null,
-    inviteLe: new Date('2024-03-01'),
-    isActive: true,
-    isSuperAdmin: true,
-    nom: 'Tartempion',
-    prenom: 'Martin',
-    regionCode: null,
-    role: {
-      categorie: 'anct',
-      groupe: 'admin',
-      nom: 'Administrateur dispositif',
-      organisation: 'Préfecture du Rhône',
-      rolesGerables: [],
-    },
-    structureId: null,
-    telephone: '0102030405',
-    uid: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+const utilisateurEnAttenteDHierReadModel = utilisateurReadModelFactory({
+  email: 'stephane.raymond@example.net',
+  inviteLe: new Date(date.setDate(date.getDate() - 1)),
+  isActive: false,
+  nom: 'Raymond',
+  prenom: 'Stephane',
+})
+
+const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
+  derniereConnexion: new Date('2024-03-05'),
+  email: 'paul.provost@example.net',
+  nom: 'Provost',
+  prenom: 'Paul',
+  role: {
+    categorie: 'anct',
+    groupe: 'admin',
+    nom: 'Administrateur dispositif',
+    organisation: 'Préfecture du Rhône',
+    rolesGerables: [],
   },
-  {
-    departementCode: null,
-    derniereConnexion: new Date(0),
-    email: 'julien.deschamps@example.com',
-    groupementId: null,
-    inviteLe: new Date('2024-02-12'),
-    isActive: false,
-    isSuperAdmin: false,
-    nom: 'Deschamps',
-    prenom: 'Julien',
-    regionCode: null,
-    role: {
-      categorie: 'structure',
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire structure',
-      organisation: 'Hub du Rhône',
-      rolesGerables: [],
-    },
-    structureId: 1,
-    telephone: '',
-    uid: '123456',
-  },
-  {
-    departementCode: null,
-    derniereConnexion: new Date('2024-03-05'),
-    email: 'paul.provost@example.net',
-    groupementId: null,
-    inviteLe: new Date('2024-03-01'),
-    isActive: true,
-    isSuperAdmin: true,
-    nom: 'Provost',
-    prenom: 'Paul',
-    regionCode: null,
-    role: {
-      categorie: 'anct',
-      groupe: 'admin',
-      nom: 'Administrateur dispositif',
-      organisation: 'Préfecture du Rhône',
-    },
-    structureId: null,
-    telephone: '',
-    uid: '7396c91e-b9f2-4f9d-8547-5e9b876877669d',
-  },
-  {
-    departementCode: null,
-    derniereConnexion: new Date(0),
-    email: 'sebastien.palat@example.net',
-    groupementId: null,
-    inviteLe: new Date(),
-    isActive: false,
-    isSuperAdmin: false,
-    nom: 'Palat',
-    prenom: 'Sebastien',
-    regionCode: null,
-    role: {
-      categorie: 'structure',
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire structure',
-      organisation: 'Hub du Rhône',
-    },
-    structureId: null,
-    telephone: '',
-    uid: '7396c91e-b9f2-4f9d-8547-87u7654rt678r5',
-  },
-  {
-    departementCode: null,
-    derniereConnexion: new Date(0),
-    email: 'stephane.raymond@example.net',
-    groupementId: null,
-    inviteLe: new Date(date.setDate(date.getDate() - 1)),
-    isActive: false,
-    isSuperAdmin: false,
-    nom: 'Raymond',
-    prenom: 'Stephane',
-    regionCode: null,
-    role: {
-      categorie: 'structure',
-      groupe: 'gestionnaire',
-      nom: 'Gestionnaire structure',
-      organisation: 'Hub du Rhône',
-    },
-    structureId: null,
-    telephone: '',
-    uid: '7396c91e-b9f2-4f9d-8547-8765t54rf6',
-  },
-]
+  telephone: '',
+})

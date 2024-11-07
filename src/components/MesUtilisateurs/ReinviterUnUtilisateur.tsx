@@ -2,8 +2,6 @@ import { Dispatch, ReactElement, SetStateAction } from 'react'
 
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
 
-// import { reInviterAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
-
 export default function ReinviterUnUtilisateur({
   utilisateur,
   labelId,
