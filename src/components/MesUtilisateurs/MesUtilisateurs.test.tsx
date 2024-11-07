@@ -216,7 +216,7 @@ describe('mes utilisateurs', () => {
   })
 
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
-    it('contenant les informations d’invitation ainsi que les boutons pour réinviter ou supprimer l’accès', async () => {
+    it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -238,9 +238,6 @@ describe('mes utilisateurs', () => {
       const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
       expect(renvoyerCetteInvitation).toBeEnabled()
       expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
-      const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
-      expect(supprimerUtilisateur).toBeEnabled()
-      expect(supprimerUtilisateur).toHaveAttribute('type', 'button')
     })
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors l’invitation est renvoyée et le drawer se ferme', async () => {
@@ -259,28 +256,6 @@ describe('mes utilisateurs', () => {
       // THEN
       await waitFor(() => {
         expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ email: 'julien.deschamps@example.com' })
-      })
-      const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
-      expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
-      expect(window.location.reload).toHaveBeenCalledOnce()
-    })
-
-    it('quand je clique sur le bouton "Supprimer l’accès à cet utilisateur" alors l’utilisateur est supprimé', async () => {
-      // GIVEN
-      vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
-      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-      const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
-      fireEvent.click(utilisateurEnAttente)
-
-      // WHEN
-      const supprimerUtilisateur = screen.getByRole('button', { name: 'Supprimer l’accès à cet utilisateur' })
-      fireEvent.click(supprimerUtilisateur)
-
-      // THEN
-      await waitFor(() => {
-        expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith('123456')
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()

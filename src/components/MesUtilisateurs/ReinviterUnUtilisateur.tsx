@@ -1,7 +1,8 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react'
 
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
-import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
+
+// import { reInviterAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
 
 export default function ReinviterUnUtilisateur({
   utilisateur,
@@ -25,36 +26,20 @@ export default function ReinviterUnUtilisateur({
           {utilisateur.email}
         </div>
       </div>
-      <ul className="fr-btns-group">
-        <li>
-          <button
-            aria-controls={drawerId}
-            className="fr-btn fr-btn--secondary"
-            data-fr-opened="false"
-            onClick={async () => {
-              await reinviterUnUtilisateurAction({ email: utilisateur.email })
-              close()
-            }}
-            type="button"
-          >
-            Renvoyer cette invitation
-          </button>
-        </li>
-        <li>
-          <button
-            aria-controls={drawerId}
-            className="fr-btn red-button"
-            data-fr-opened="false"
-            onClick={async () => {
-              await supprimerUnUtilisateurAction(utilisateur.uid)
-              close()
-            }}
-            type="button"
-          >
-            Supprimer l’accès à cet utilisateur
-          </button>
-        </li>
-      </ul>
+      <div className="fr-btns-group">
+        <button
+          aria-controls={drawerId}
+          className="fr-btn fr-btn--secondary"
+          data-fr-opened="false"
+          onClick={async () => {
+            await reinviterUnUtilisateurAction({ email: utilisateur.email })
+            close()
+          }}
+          type="button"
+        >
+          Renvoyer cette invitation
+        </button>
+      </div>
     </div>
   )
 
