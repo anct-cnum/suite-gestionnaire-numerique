@@ -249,12 +249,23 @@ describe('mes utilisateurs', () => {
       expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
     })
 
-    it('quand je clique sur le bouton "Renvoyer cette invitation" alors l’invitation est renvoyée et le drawer se ferme', async () => {
+    it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
+      const setBandeauInformations = vi.fn()
       vi.spyOn(reinviterUnUtilisateurAction, 'reinviterUnUtilisateurAction').mockResolvedValueOnce('OK')
-      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      const windowDsfr = window.dsfr
+      window.dsfr = (): {modal: {conceal: Mock}} => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(
+        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+        { ...clientContextProviderDefaultValue, setBandeauInformations }
+      )
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
 
@@ -268,7 +279,8 @@ describe('mes utilisateurs', () => {
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
-      expect(window.location.reload).toHaveBeenCalledOnce()
+      expect(setBandeauInformations).toHaveBeenCalledWith({ description: 'julien.deschamps@example.com', titre: 'Invitation envoyée à ' })
+      window.dsfr = windowDsfr
     })
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {

@@ -1,5 +1,6 @@
-import { Dispatch, ReactElement, SetStateAction } from 'react'
+import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'react'
 
+import { clientContext } from '../shared/ClientContext'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
 
 export default function ReinviterUnUtilisateur({
@@ -7,7 +8,10 @@ export default function ReinviterUnUtilisateur({
   labelId,
   drawerId,
   setIsOpen,
+  dialogRef,
 }: DetailsUtilisateurProps): ReactElement {
+  const { setBandeauInformations } = useContext(clientContext)
+
   return (
     <div>
       <h1
@@ -32,6 +36,7 @@ export default function ReinviterUnUtilisateur({
           onClick={async () => {
             await reinviterUnUtilisateurAction({ email: utilisateur.email })
             close()
+            setBandeauInformations({ description: utilisateur.email, titre: 'Invitation envoyée à ' })
           }}
           type="button"
         >
@@ -43,11 +48,12 @@ export default function ReinviterUnUtilisateur({
 
   function close(): void {
     setIsOpen(false)
-    window.location.reload()
+    window.dsfr(dialogRef.current).modal.conceal()
   }
 }
 
 type DetailsUtilisateurProps = Readonly<{
+  dialogRef: RefObject<HTMLDialogElement>
   utilisateur: Readonly<{
     email: string
     inviteLe: string

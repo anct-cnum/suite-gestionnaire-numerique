@@ -27,6 +27,7 @@ export default function MesUtilisateurs(
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
   const modalId = 'supprimer-un-utilisateur'
   const drawerInvitationRef = useRef<HTMLDialogElement>(null)
+  const drawerReinvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // Stryker disable next-line BooleanLiteral
@@ -241,9 +242,11 @@ export default function MesUtilisateurs(
         isFixedWidth={false}
         isOpen={isDrawerRenvoyerInvitationOpen}
         labelId={labelRenvoyerInvitationId}
+        ref={drawerReinvitationRef}
         setIsOpen={setIsDrawerRenvoyerInvitationOpen}
       >
         <ReinviterUnUtilisateur
+          dialogRef={drawerReinvitationRef}
           drawerId={drawerRenvoyerInvitationId}
           labelId={labelRenvoyerInvitationId}
           setIsOpen={setIsDrawerRenvoyerInvitationOpen}
