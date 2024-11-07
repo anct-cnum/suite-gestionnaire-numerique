@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { z, ZodIssue } from 'zod'
 
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -14,7 +15,10 @@ export async function reinviterUnUtilisateurAction(actionParams: ActionParams): 
     return reinviterUnUtilisateurResult.error.issues
   }
 
-  return Promise.resolve(actionParams.email).then(() => 'OK')
+  return Promise.resolve(actionParams.email).then(() => {
+    revalidatePath('/mes-utilisateurs')
+    return 'OK'
+  })
 }
 
 type ActionParams = Readonly<{

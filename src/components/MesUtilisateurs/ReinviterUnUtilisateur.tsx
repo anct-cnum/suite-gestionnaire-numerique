@@ -33,11 +33,7 @@ export default function ReinviterUnUtilisateur({
           aria-controls={drawerId}
           className="fr-btn fr-btn--secondary"
           data-fr-opened="false"
-          onClick={async () => {
-            await reinviterUnUtilisateurAction({ email: utilisateur.email })
-            close()
-            setBandeauInformations({ description: utilisateur.email, titre: 'Invitation envoyée à ' })
-          }}
+          onClick={Reinviter}
           type="button"
         >
           Renvoyer cette invitation
@@ -45,6 +41,12 @@ export default function ReinviterUnUtilisateur({
       </div>
     </div>
   )
+
+  async function Reinviter(): Promise<void> {
+    await reinviterUnUtilisateurAction({ email: utilisateur.email })
+    close()
+    setBandeauInformations({ description: utilisateur.email, titre: 'Invitation envoyée à ' })
+  }
 
   function close(): void {
     setIsOpen(false)
