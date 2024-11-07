@@ -25,6 +25,20 @@ services:
         source: postgres_data_test
         target: /var/lib/postgresql/data
 
+  mailpit-dev:
+    extends:
+      file: common-services.yml
+      service: mailpit
+    container_name: sgn_mailpit_dev
+    ports:
+      - 8025:8025
+      - 1025:1025
+    volumes:
+      - type: volume
+        source: mailpit_data_dev
+        target: /data
+
 volumes:
   postgres_data:
   postgres_data_test:
+  mailpit_data_dev:
