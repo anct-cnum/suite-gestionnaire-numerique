@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { ReactElement, useContext, useState } from 'react'
+import { ReactElement, useContext, useRef, useState } from 'react'
 
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
@@ -25,6 +25,7 @@ export default function MesUtilisateurs(
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
   const modalId = 'supprimer-un-utilisateur'
+  const drawerInvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
@@ -67,10 +68,11 @@ export default function MesUtilisateurs(
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelInvitationId}
+        ref={drawerInvitationRef}
         setIsOpen={setIsDrawerOpen}
       >
         <InviterUnUtilisateur
-          drawerId={drawerInvitationId}
+          dialogRef={drawerInvitationRef}
           labelId={labelInvitationId}
           setIsOpen={setIsDrawerOpen}
         />

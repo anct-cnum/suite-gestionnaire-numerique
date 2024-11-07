@@ -5,6 +5,7 @@ export class Role extends Model<RoleState> {
   readonly #groupe: Groupe
   readonly #categorie: Categorie
   readonly #organisation: string
+  readonly #rolesGerables: ReadonlyArray<TypologieRole>
 
   constructor(nom: TypologieRole, territoireOuStructure = '') {
     super()
@@ -13,6 +14,7 @@ export class Role extends Model<RoleState> {
     this.#groupe = groupe
     this.#categorie = categorie
     this.#organisation = organisation ?? territoireOuStructure
+    this.#rolesGerables = this.isAdmin() ? Roles : [nom]
   }
 
   state(): RoleState {
@@ -21,6 +23,7 @@ export class Role extends Model<RoleState> {
       groupe: this.#groupe,
       nom: this.#nom,
       organisation: this.#organisation,
+      rolesGerables: this.#rolesGerables,
     }
   }
 
@@ -34,6 +37,7 @@ export type RoleState = Readonly<{
   groupe: Groupe
   nom: TypologieRole
   organisation: string
+  rolesGerables: ReadonlyArray<TypologieRole>
 }>
 
 export const Roles = [

@@ -1,47 +1,32 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
+import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
 import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
+import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
-import RadioGroup, { RadioOption } from '../shared/Radio/RadioGroup'
+import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
+
+// A DEPLACER DANS LE DOMAINE
+const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
 
 export default function InviterUnUtilisateur({
   setIsOpen,
-  drawerId,
   labelId,
+  dialogRef,
 }: InviterUnUtilisateurProps): ReactElement {
-  const [emailDejaExistant, setEmailDejaExistant] = useState<string | undefined>()
-  const { setBandeauInformations } = useContext(clientContext)
+  const [emailDejaExistant, setEmailDejaExistant] = useState('')
+  const { setBandeauInformations, sessionUtilisateurViewModel } = useContext(clientContext)
+  const [roleSelectionne, setRoleSelectionne] = useState('')
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
   const structureId = useId()
-
-  const inviterUtilisateur = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault()
-
-    const form = new FormData(event.currentTarget)
-    const email = form.get('email') as string
-    const utilisateurACreer = {
-      email,
-      nom: form.get('nom') as string,
-      organisation: form.get('structure') as string,
-      prenom: form.get('prenom') as string,
-      role: form.get('attributionRole') as string,
-    }
-    const result = await inviterUnUtilisateurAction(utilisateurACreer)
-    if (result === 'emailExistant') {
-      setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
-    } else {
-      if (result === 'OK') {
-        setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
-        setEmailDejaExistant(undefined)
-      }
-      fermerEtReinitialiser(event.target as HTMLFormElement)
-    }
-  }
+  const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
+    id: roleGerable,
+    label: roleGerable,
+  }))
 
   return (
     <div>
@@ -100,34 +85,55 @@ export default function InviterUnUtilisateur({
           <span className="color-red">
             *
           </span>
-        </TextInput>
-        <legend
-          aria-describedby="champsObligatoires"
-          className="fr-mb-2w"
-        >
-          Quel rôle souhaitez-vous lui attribuer ?
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-        </legend>
-        <RadioGroup
-          nomGroupe="attributionRole"
-          options={gestionnaires}
-        />
-        <TextInput
-          id={structureId}
-          name="structure"
-          required={true}
-        >
-          Structure
-          {' '}
-          <span className="color-red">
-            *
+          <span className="fr-hint-text">
+            Une invitation lui sera envoyée par e-mail
           </span>
         </TextInput>
+        {
+          gestionnaires.length > 1 ?
+            <>
+              <legend
+                aria-describedby="champsObligatoires"
+                className="fr-mb-2w"
+              >
+                Quel rôle souhaitez-vous lui attribuer ?
+                {' '}
+                <span className="color-red">
+                  *
+                </span>
+              </legend>
+              <RadioGroup
+                nomGroupe="attributionRole"
+                onChange={(event) => {
+                  setRoleSelectionne(event.target.value)
+                }}
+                options={gestionnaires}
+              />
+            </>
+            :
+            <>
+              <p className="fr-mb-1w">
+                Rôle attribué à cet utilisateur :
+              </p>
+              <Badge color="purple-glycine">
+                {gestionnaires[0]?.label}
+              </Badge>
+            </>
+        }
+        {
+          isStructureDisplayed() ?
+            <TextInput
+              id={structureId}
+              name="structure"
+              required={true}
+            >
+              {'Structure '}
+              <span className="color-red">
+                *
+              </span>
+            </TextInput> : null
+        }
         <button
-          //aria-controls={ariaControls}
           className="fr-btn fr-my-2w drawer-invitation-button"
           data-fr-opened="false"
           type="submit"
@@ -138,34 +144,36 @@ export default function InviterUnUtilisateur({
     </div>
   )
 
+  async function inviterUtilisateur(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault()
+
+    const form = new FormData(event.currentTarget)
+    const [nom, prenom, email, role, organisation] = [...form.values()].map((value) => value as string)
+    const result = await inviterUnUtilisateurAction({ email, nom, organisation, prenom, role })
+    if (result === 'emailExistant') {
+      setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+    } else {
+      if (result === 'OK') {
+        setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
+        setEmailDejaExistant('')
+      }
+      fermerEtReinitialiser(event.target as HTMLFormElement)
+    }
+  }
+
+  function isStructureDisplayed(): boolean {
+    return gestionnaires.length > 1 && rolesAvecStructure.includes(roleSelectionne)
+  }
+
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
     setIsOpen(false)
-    window.dsfr(document.getElementById(drawerId)).modal.conceal()
+    window.dsfr(dialogRef.current).modal.conceal()
     htmlFormElement.reset()
   }
 }
 
 type InviterUnUtilisateurProps = Readonly<{
-  setIsOpen: (isOpen: boolean) => void
-  drawerId: string
+  setIsOpen: Dispatch<SetStateAction<boolean>>
   labelId: string
+  dialogRef: RefObject<HTMLDialogElement>
 }>
-
-const gestionnaires: ReadonlyArray<RadioOption> = [
-  {
-    id: 'Gestionnaire région',
-    label: 'Gestionnaire région',
-  },
-  {
-    id: 'Gestionnaire département',
-    label: 'Gestionnaire département',
-  },
-  {
-    id: 'Gestionnaire groupement',
-    label: 'Gestionnaire groupement',
-  },
-  {
-    id: 'Gestionnaire structure',
-    label: 'Gestionnaire structure',
-  },
-]

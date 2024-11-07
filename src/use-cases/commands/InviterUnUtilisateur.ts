@@ -15,15 +15,9 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     if (!utilisateurCourant) {
       return 'KO'
     }
-    const utilisateurACreer = Utilisateur.create({
-      email: command.email,
-      isSuperAdmin: false,
-      nom: command.nom,
-      organisation: command.organisation,
-      prenom: command.prenom,
-      role: command.role,
-      uid: command.email,
-    })
+    const utilisateurACreer = command.role
+      ? Utilisateur.create(toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>))
+      : utilisateurCourant.duMemeRole(toUtilisateurDuMemeRoleParams(command))
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'KO'
     }
@@ -32,13 +26,41 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
   }
 }
 
-type InviterUnUtilisateurCommand = Readonly<{
+export type InviterUnUtilisateurCommand = Readonly<{
   prenom: string
   nom: string
   email: string
-  role: TypologieRole
-  organisation?: string
   uidUtilisateurCourant: string
+  role?: Readonly<{
+    type: TypologieRole
+    organisation?: string
+  }>
 }>
 
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
+
+type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
+
+type UtilisateurDuMemeRoleParam = Parameters<typeof Utilisateur.prototype.duMemeRole>[0]
+
+function toUtilisateurParams(
+  command: Required<InviterUnUtilisateurCommand>
+): UtilisateurCreateParam {
+  return {
+    ...toUtilisateurDuMemeRoleParams(command),
+    organisation: command.role.organisation,
+    role: command.role.type,
+  }
+}
+
+function toUtilisateurDuMemeRoleParams(
+  command: InviterUnUtilisateurCommand
+): UtilisateurDuMemeRoleParam {
+  return {
+    email: command.email,
+    isSuperAdmin: false,
+    nom: command.nom,
+    prenom: command.prenom,
+    uid: command.email,
+  }
+}

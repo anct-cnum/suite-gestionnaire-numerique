@@ -1,25 +1,25 @@
 import { Struct } from '@/shared/lang'
 
-export abstract class Model<S extends Struct> {
-  equals(other: Model<S>): boolean {
+export abstract class Model<State extends Struct> {
+  equals(other: Model<State>): boolean {
     return this.#isSameType(other) && this.#stateEquals(other)
   }
 
-  #isSameType(other: Model<S>): boolean {
+  #isSameType(other: Model<State>): boolean {
     return other instanceof this.constructor
   }
 
-  #stateEquals(other: Model<S>): boolean {
+  #stateEquals(other: Model<State>): boolean {
     return JSON.stringify(other.state()) === JSON.stringify(this.state())
   }
 
-  abstract state(): S
+  abstract state(): State
 }
 
-export abstract class Entity<S extends EntityState> extends Model<S> {
-  protected readonly uid: S['uid']
+export abstract class Entity<State extends EntityState> extends Model<State> {
+  protected readonly uid: State['uid']
 
-  protected constructor(uid: S['uid']) {
+  protected constructor(uid: State['uid']) {
     super()
     this.uid = uid
   }
