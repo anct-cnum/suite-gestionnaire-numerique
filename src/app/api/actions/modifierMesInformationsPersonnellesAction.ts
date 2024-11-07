@@ -14,16 +14,15 @@ export async function modifierMesInformationsPersonnellesAction(
   prenom: string,
   telephone: string
 ): ResultAsync<ModificationUtilisateurFailure | Array<ZodIssue>> {
-  const modifierMesInformationsPersonnellesParsed = modifierMesInformationsPersonnellesValidation
-    .safeParse({
-      email,
-      nom,
-      prenom,
-      telephone,
-    })
+  const validationResult = validator.safeParse({
+    email,
+    nom,
+    prenom,
+    telephone,
+  })
 
-  if (modifierMesInformationsPersonnellesParsed.error) {
-    return modifierMesInformationsPersonnellesParsed.error.issues
+  if (validationResult.error) {
+    return validationResult.error.issues
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -41,11 +40,10 @@ export async function modifierMesInformationsPersonnellesAction(
     })
 }
 
-const modifierMesInformationsPersonnellesValidation = z
-  .object({
-    email: z.string().email({ message: 'L’email doit être valide' }),
-    nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
-    prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
-    // Stryker disable next-line Regex
-    telephone: z.string().regex(/^(\+[\d]{11,12}|[\d]{10})$/, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).optional().or(z.literal('')),
-  })
+const validator = z.object({
+  email: z.string().email({ message: 'L’email doit être valide' }),
+  nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
+  prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
+  // Stryker disable next-line Regex
+  telephone: z.string().regex(/^(\+[\d]{11,12}|[\d]{10})$/, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).optional().or(z.literal('')),
+})

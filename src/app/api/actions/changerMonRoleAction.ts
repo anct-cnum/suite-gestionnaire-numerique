@@ -10,22 +10,18 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMonRole, ChangerMonRoleFailure } from '@/use-cases/commands/ChangerMonRole'
 
 export async function changerMonRoleAction(nouveauRole: string): ResultAsync<ChangerMonRoleFailure | Array<ZodIssue>> {
-  const changerMonRoleParsed = changerMonRoleValidation
-    .safeParse({
-      nouveauRole,
-    })
+  const validationResult = validator.safeParse({ nouveauRole })
 
-  if (changerMonRoleParsed.error) {
-    return changerMonRoleParsed.error.issues
+  if (validationResult.error) {
+    return validationResult.error.issues
   }
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const utilisateurUid = (await getSession())!.user.sub
   return new ChangerMonRole(new PostgreUtilisateurRepository(prisma))
-    .execute({ nouveauRole: changerMonRoleParsed.data.nouveauRole, utilisateurUid })
+    .execute({ nouveauRole: validationResult.data.nouveauRole, utilisateurUid })
 }
 
-const changerMonRoleValidation = z
-  .object({
-    nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
-  })
+const validator = z.object({
+  nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
+})
