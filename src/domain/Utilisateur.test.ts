@@ -107,5 +107,6 @@ const utilisateurProps = {
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',
+  role: 'Instructeur',
   uid: 'fooId',
 }
