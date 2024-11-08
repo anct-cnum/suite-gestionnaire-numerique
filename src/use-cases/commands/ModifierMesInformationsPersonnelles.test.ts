@@ -17,23 +17,64 @@ describe('modifier mes informations personnelles', () => {
     expect(result).toBe('compteInexistant')
   })
 
-  it('quand le compte existe alors il est modifié', async () => {
-    // GIVEN
-    const utilisateur = utilisateurFactory()
-    const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
+  describe('quand le compte existe', () => {
+    describe('il n’est pas modifié si les modifications sont invalides', () => {
+      it.each([
+        {
+          desc: 'le prénom doit être renseigné',
+          expectedResult: 'prenomAbsent',
+          modification: { prenom: '' },
+        },
+        {
+          desc: 'le nom doit être renseigné',
+          expectedResult: 'nomAbsent',
+          modification: { nom: '' },
+        },
+        {
+          desc: 'l’email, si renseigné, doit être valide',
+          expectedResult: 'emailInvalide',
+          modification: { email: 'example@example' },
+        },
+        {
+          desc: 'le téléphone, si renseigné, doit être valide',
+          expectedResult: 'telephoneInvalide',
+          modification: { telephone: '000' },
+        },
+      ])('$desc', async ({ modification, expectedResult }) => {
+        // GIVEN
+        const utilisateur = utilisateurFactory()
+        const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
 
-    // WHEN
-    const result = await commandHandler.execute(informationsPersonnellesModifiees)
+        // WHEN
+        const result = await commandHandler.execute({ ...informationsPersonnellesModifiees,
+          modification: {
+            ...informationsPersonnellesModifiees.modification,
+            ...modification,
+          } })
 
-    // THEN
-    const utilisateurApresMiseAJour = utilisateurFactory({
-      email: 'martine.dugenoux@example.com',
-      nom: 'Dugenoux',
-      prenom: 'Martine',
-      telephone: '0102030406',
+        // THEN
+        expect(result).toBe(expectedResult)
+      })
     })
-    expect(result).toBe('OK')
-    expect(utilisateurApresMiseAJour.equals(utilisateur)).toBe(true)
+
+    it('il et modifié si les modifications sont valides', async () => {
+      // GIVEN
+      const utilisateur = utilisateurFactory()
+      const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
+
+      // WHEN
+      const result = await commandHandler.execute(informationsPersonnellesModifiees)
+
+      // THEN
+      const utilisateurApresMiseAJour = utilisateurFactory({
+        email: 'martine.dugenoux@example.com',
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        telephone: '0102030406',
+      })
+      expect(result).toBe('OK')
+      expect(utilisateurApresMiseAJour.equals(utilisateur)).toBe(true)
+    })
   })
 })
 
