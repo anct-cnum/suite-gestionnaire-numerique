@@ -1,6 +1,7 @@
 import * as nextCache from 'next/cache'
+import { ZodIssue } from 'zod'
 
-import { reinviterUnUtilisateurAction } from './reInviterUnUtilisateurAction'
+import { reinviterUnUtilisateurAction } from './reinviterUnUtilisateurAction'
 
 describe('reinviter un utilisateur action', () => {
   it('étant donné un email valide quand la réinvitation est demandée alors elle est renvoyée', async () => {
@@ -28,7 +29,6 @@ describe('reinviter un utilisateur action', () => {
     const result = await reinviterUnUtilisateurAction(actionParams)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('L’email doit être valide')
+    expect((result[0] as ZodIssue).message).toBe('L’email doit être valide')
   })
 })

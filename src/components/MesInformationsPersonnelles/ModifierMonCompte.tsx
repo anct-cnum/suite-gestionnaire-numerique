@@ -129,10 +129,7 @@ export default function ModifierMonCompte({
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
-    const nom = form.get('nom') as string
-    const prenom = form.get('prenom') as string
-    const email = form.get('email') as string
-    const telephone = form.get('telephone') as string
+    const [nom, prenom, email, telephone] = [...form.values()].map((value) => value as string)
 
     await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
       .then(() => {

@@ -15,10 +15,8 @@ export async function reinviterUnUtilisateurAction(actionParams: ActionParams): 
     return reinviterUnUtilisateurResult.error.issues
   }
 
-  return Promise.resolve(actionParams.email).then(() => {
-    revalidatePath('/mes-utilisateurs')
-    return 'OK'
-  })
+  revalidatePath('/mes-utilisateurs')
+  return Promise.resolve('OK')
 }
 
 type ActionParams = Readonly<{

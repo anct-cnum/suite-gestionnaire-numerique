@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
-import { reinviterUnUtilisateurAction } from '@/app/api/actions/reInviterUnUtilisateurAction'
+import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 
 export default function ReinviterUnUtilisateur({
   utilisateur,

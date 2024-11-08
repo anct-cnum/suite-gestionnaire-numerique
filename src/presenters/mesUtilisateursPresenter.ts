@@ -3,7 +3,8 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export function mesUtilisateursPresenter(
   mesUtilisateursReadModel: ReadonlyArray<UnUtilisateurReadModel>,
   uid: string,
-  totalUtilisateur: number
+  totalUtilisateur: number,
+  now = (): Date => new Date()
 ): MesUtilisateursViewModel {
   return {
     totalUtilisateur,
@@ -16,7 +17,7 @@ export function mesUtilisateursPresenter(
         canBeDeleted: uid !== monUtilisateur.uid,
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
-        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe),
+        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
@@ -65,18 +66,17 @@ function buildDateFrancaise(date: Date): string {
   return date.toLocaleDateString('fr-FR')
 }
 
-function buildDateFrancaiseEnAttente(date: Date): string {
-  const now = new Date()
+function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
   const today = buildDateFrancaise(now)
   const yesterday = buildDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
 
-  if (buildDateFrancaise(date) === today) {
+  if (buildDateFrancaise(dateDInvitation) === today) {
     return 'Invitation envoyée aujourd’hui'
   }
 
-  if (buildDateFrancaise(date) === yesterday) {
+  if (buildDateFrancaise(dateDInvitation) === yesterday) {
     return 'Invitation envoyée hier'
   }
 
-  return `Invitation envoyée le ${buildDateFrancaise(date)}`
+  return `Invitation envoyée le ${buildDateFrancaise(dateDInvitation)}`
 }
