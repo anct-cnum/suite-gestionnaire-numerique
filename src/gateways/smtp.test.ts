@@ -1,12 +1,12 @@
-import nodemailer from 'nodemailer'
-import { mailSender } from './shared/mailSender'
 import mjml2html from 'mjml'
+
+import { mailSender } from './shared/mailSender'
 
 describe('smtp', () => {
   it('test temporaire', async () => {
     await mailSender.sendMail({
       from: process.env.SMTP_FROM,
-      html: mjml2html(html),
+      html: mjml2html(html).html,
       subject: 'Hello ✔',
       to: 'bar@example.com, baz@example.com',
     })
@@ -45,7 +45,7 @@ const html = `
         padding-left="10px"
         width="256px"
         alt="En-tête Conseiller numérique"
-        src="${"header_default.png"}"
+        src="header_default.png"
       />
     </mj-section>
     <mj-section padding="8px"></mj-section>
@@ -71,7 +71,7 @@ const html = `
             Un système d'authentification unique (SSO - Single Sign-on), une méthode
             d’identification et d’authentification permettant à un utilisateur d'accéder à plusieurs
             applications ou sites web en ne procédant qu'à une seule authentification.<br />
-            Pour faire simple : vous créez un seul compte, sur une solution « centrale », qui vous
+            Pour faire simple : vous créez un seul compte, sur une solution « centrale », qui vous
             facilitera l’accès à plusieurs sites ou application web.
           </mj-text>
           <mj-text font-weight="bold">
@@ -85,8 +85,8 @@ const html = `
           <mj-text font-weight="bold" color="#4A86E8"> 2. Création du compte </mj-text>
           <mj-text>
             Une fois redirigé sur Inclusion Connect, cliquez sur le bouton «Créer un compte » en bas
-            du formulaire de connexion, renseignez vos informations et cliquez sur «Créer un
-            compte ».
+            du formulaire de connexion, renseignez vos informations et cliquez sur « Créer un
+            compte ».
           </mj-text>
           <mj-text>
             Si au bout de 10 minutes vous n’avez pas reçu d’e-mail pour activer votre compte,
@@ -95,7 +95,7 @@ const html = `
           <mj-text font-weight="bold" color="#4A86E8"> 3. Validation </mj-text>
           <mj-text>
             En cliquant sur le lien reçu par e- mail,vous êtes connecté automatiquement sur
-            Inclusion Connect  et redirigé vers le tableau de pilotage.
+            Inclusion Connect et redirigé vers le tableau de pilotage.
           </mj-text>
           <mj-text font-weight="bold"> 👉 Si vous avez déjà un compte Inclusion Connect : </mj-text>
           <mj-text font-weight="bold" color="#4A86E8"> 1. Connexion </mj-text>
@@ -118,7 +118,7 @@ const html = `
       <mj-section css-class="box" padding-top="0" padding-left="100px" padding-right="100px">
         <mj-column border="1px solid #C8CBCE">
           <mj-button
-            href="${"link"}"
+            href="link"
             background-color="#24303A"
             color="#F4F4F5"
             font-size="16px"
@@ -135,7 +135,7 @@ const html = `
       <mj-column width="600px">
         <mj-button
           font-size="14px"
-          href="mailto:${"mailto"}"
+          href="mailto:mailto"
           text-decoration="underline"
           background-color
           color="#24303A"

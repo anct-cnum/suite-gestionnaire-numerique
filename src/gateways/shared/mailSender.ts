@@ -14,16 +14,16 @@ const {
 
 export const mailSender = sender({
   host: SMTP_HOST,
+  pass: SMTP_PASSWORD,
   port: SMTP_PORT,
   user: SMTP_USER,
-  pass: SMTP_PASSWORD,
 })
 
 export const mailTestAccountSender = sender({
   host: SMTP_TEST_ACCOUNT_HOST,
+  pass: SMTP_TEST_ACCOUNT_PASSWORD,
   port: SMTP_TEST_ACCOUNT_PORT,
   user: SMTP_TEST_ACCOUNT_USER,
-  pass: SMTP_TEST_ACCOUNT_PASSWORD,
 })
 
 function sender({
