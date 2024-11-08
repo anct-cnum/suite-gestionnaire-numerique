@@ -1,23 +1,24 @@
 import { Role, TypologieRole, type RoleState } from './Role'
-import { Entity, Uid } from './shared/Model'
-import { Result } from '@/shared/lang'
+import { Exception } from './shared/Exception'
+import { Entity, Uid, ValueObject } from './shared/Model'
+import { isEmpty, Result } from '@/shared/lang'
 
 export class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
   #role: Role
-  #nom: string
-  #prenom: string
-  #email: string
-  #telephone: string
+  #nom: Nom
+  #prenom: Prenom
+  #email: Email
+  #telephone: Telephone
 
   private constructor(
     uid: UtilisateurUid,
     role: Role,
-    nom: string,
-    prenom: string,
-    email: string,
+    nom: Nom,
+    prenom: Prenom,
+    email: Email,
     isSuperAdmin: boolean,
-    telephone = ''
+    telephone: Telephone
   ) {
     super(uid)
     this.#role = role
@@ -32,22 +33,22 @@ export class Utilisateur extends Entity<UtilisateurState> {
     return new Utilisateur(
       UtilisateurUid.from(utilisateur.uid),
       new Role(utilisateur.role, utilisateur.organisation),
-      utilisateur.nom,
-      utilisateur.prenom,
-      utilisateur.email,
+      new Nom(utilisateur.nom),
+      new Prenom(utilisateur.prenom),
+      new Email(utilisateur.email),
       utilisateur.isSuperAdmin,
-      utilisateur.telephone
+      new Telephone(utilisateur.telephone ?? '')
     )
   }
 
   override state(): UtilisateurState {
     return {
-      email: this.#email,
+      email: this.#email.state().value,
       isSuperAdmin: this.#isSuperAdmin,
-      nom: this.#nom,
-      prenom: this.#prenom,
+      nom: this.#nom.state().value,
+      prenom: this.#prenom.state().value,
       role: this.#role.state(),
-      telephone: this.#telephone,
+      telephone: this.#telephone.state().value,
       uid: this.uid.state(),
     }
   }
@@ -56,31 +57,39 @@ export class Utilisateur extends Entity<UtilisateurState> {
     return new Utilisateur(
       UtilisateurUid.from(params.uid),
       this.#role,
-      params.nom,
-      params.prenom,
-      params.email,
+      new Nom(params.nom),
+      new Prenom(params.prenom),
+      new Email(params.email),
       params.isSuperAdmin,
-      params.telephone
+      new Telephone(params.telephone ?? '')
     )
   }
 
-  changerPrenom(prenom: string): void {
-    this.#prenom = prenom
+  changerPrenom(prenom: string): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#prenom = new Prenom(prenom)
+    })
   }
 
-  changerNom(nom: string): void {
-    this.#nom = nom
+  changerNom(nom: string): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#nom = new Nom(nom)
+    })
   }
 
-  changerEmail(email: string): void {
-    this.#email = email
+  changerEmail(email: string): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#email = new Email(email)
+    })
   }
 
-  changerTelephone(telephone: string): void {
-    this.#telephone = telephone
+  changerTelephone(telephone: string): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#telephone = new Telephone(telephone)
+    })
   }
 
-  changerRole(nouveauRole: TypologieRole): Result<InvariantUtilisateur> {
+  changerRole(nouveauRole: TypologieRole): Result<UtilisateurFailure> {
     if (this.#isSuperAdmin) {
       this.#role = new Role(nouveauRole)
       return 'OK'
@@ -113,9 +122,56 @@ export type UtilisateurState = Readonly<{
   telephone: string
 }>
 
-export type InvariantUtilisateur = 'utilisateurNonAutoriseAChangerSonRole'
+export type UtilisateurFailure =
+  | 'utilisateurNonAutoriseAChangerSonRole'
+  | 'prenomAbsent'
+  | 'nomAbsent'
+  | 'emailInvalide'
+  | 'telephoneInvalide'
 
-type UtilisateurUidState = Readonly<{value: string}>
+const emailPattern = /.+@.+\..{2,}/
+
+const telephonePattern = /\+[0-9]{11,12}|[0-9]{10}/
+
+class Nom extends ValueObject<AttributUtilisateurState> {
+  constructor(value: string) {
+    if (isEmpty(value)) {
+      throw Exception.of('nomAbsent')
+    }
+    super({ value })
+  }
+}
+
+class Prenom extends ValueObject<AttributUtilisateurState> {
+  constructor(value: string) {
+    if (isEmpty(value)) {
+      throw Exception.of('prenomAbsent')
+    }
+    super({ value })
+  }
+}
+
+class Email extends ValueObject<AttributUtilisateurState> {
+  constructor(value: string) {
+    if (!emailPattern.test(value)) {
+      throw Exception.of('emailInvalide')
+    }
+    super({ value })
+  }
+}
+
+class Telephone extends ValueObject<AttributUtilisateurState> {
+  constructor(value: string) {
+    if (!(isEmpty(value) || telephonePattern.test(value))) {
+      throw Exception.of('telephoneInvalide')
+    }
+    super({ value })
+  }
+}
+
+type AttributUtilisateurState = Readonly<{ value: string }>
+
+type UtilisateurUidState = Readonly<{ value: string }>
 
 type UtilisateurParams = Readonly<{
   uid: string
