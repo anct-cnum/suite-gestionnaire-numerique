@@ -2,7 +2,6 @@
 
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
-import { modifierMesInformationsPersonnellesAction } from '../../app/api/actions/modifierMesInformationsPersonnellesAction'
 import { clientContext } from '../shared/ClientContext'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
@@ -17,7 +16,7 @@ export default function ModifierMonCompte({
   setIsOpen,
   telephone,
 }: ModifierMonCompteProps): ReactElement {
-  const { pathname } = useContext(clientContext)
+  const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
   const [etatBoutonEnregistrer, setEtatBoutonEnregistrer] = useState({
     enAttente: false,
     texte: 'Enregistrer',

@@ -1,5 +1,4 @@
 import * as nextCache from 'next/cache'
-import { ZodIssue } from 'zod'
 
 import { reinviterUnUtilisateurAction } from './reinviterUnUtilisateurAction'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
@@ -15,7 +14,7 @@ describe('reinviter un utilisateur action', () => {
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
     // WHEN
-    const result = await reinviterUnUtilisateurAction({
+    const messages = await reinviterUnUtilisateurAction({
       path,
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
     })
@@ -26,17 +25,17 @@ describe('reinviter un utilisateur action', () => {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
       uidUtilisateurCourant: 'uidUtilisateurCourant',
     })
-    expect(result).toBe('OK')
+    expect(messages).toStrictEqual(['OK'])
   })
 
   it('étant donné que l’uid utilisateur a réinviter est invalide quand la réinvitation est demandée alors cela renvoie un message d’erreur', async () => {
     // WHEN
-    const result = await reinviterUnUtilisateurAction({
+    const messages = await reinviterUnUtilisateurAction({
       path: '/',
       uidUtilisateurAReinviter: '',
     })
 
     // THEN
-    expect((result[0] as ZodIssue).message).toBe('L’identifiant de l’utilisateur à réinviter doit être renseigné')
+    expect(messages).toStrictEqual(['L’identifiant de l’utilisateur à réinviter doit être renseigné'])
   })
 })

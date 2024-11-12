@@ -1,31 +1,33 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z, ZodIssue } from 'zod'
+import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ChangerMonRole, ChangerMonRoleFailure } from '@/use-cases/commands/ChangerMonRole'
+import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 export async function changerMonRoleAction(
   actionParams: ActionParams
-): ResultAsync<ChangerMonRoleFailure | Array<ZodIssue>> {
+): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
-    return validationResult.error.issues
+    return validationResult.error.issues.map(({ message }) => message)
   }
 
   revalidatePath(actionParams.path)
 
-  return new ChangerMonRole(new PrismaUtilisateurRepository(prisma))
+  const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma))
     .execute({
       nouveauRole: validationResult.data.nouveauRole,
       utilisateurUid: await getSubSession(),
     })
+
+  return [message]
 }
 
 type ActionParams = Readonly<{

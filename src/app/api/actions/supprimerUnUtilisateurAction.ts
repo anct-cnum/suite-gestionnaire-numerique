@@ -1,30 +1,32 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z, ZodIssue } from 'zod'
+import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { SupprimerUnUtilisateur, SupprimerUnUtilisateurFailure } from '@/use-cases/commands/SupprimerUnUtilisateur'
+import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
 
 export async function supprimerUnUtilisateurAction(
   actionParams: ActionParams
-): ResultAsync<SupprimerUnUtilisateurFailure | Array<ZodIssue>> {
+): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
-    return validationResult.error.issues
+    return validationResult.error.issues.map(({ message }) => message)
   }
 
   revalidatePath(actionParams.path)
 
-  return new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma))
+  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma))
     .execute({
       utilisateurASupprimerUid: actionParams.utilisateurASupprimerUid,
       utilisateurCourantUid: await getSubSession(),
     })
+
+  return [message]
 }
 
 type ActionParams = Readonly<{

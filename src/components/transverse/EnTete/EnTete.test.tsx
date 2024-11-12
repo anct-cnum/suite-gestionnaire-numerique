@@ -2,7 +2,6 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
-import * as changerAction from '@/app/api/actions/changerMonRoleAction'
 import { renderComponent } from '@/components/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
@@ -105,8 +104,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
-      vi.spyOn(changerAction, 'changerMonRoleAction').mockResolvedValueOnce('OK')
-      const menuUtilisateur = ouvrirLeMenuUtilisateur()
+      const changerMonRoleAction = vi.fn(async () => Promise.resolve(['OK']))
+      const menuUtilisateur = ouvrirLeMenuUtilisateur(changerMonRoleAction)
       const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
 
       // WHEN
@@ -114,22 +113,22 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // THEN
       await waitFor(() => {
-        expect(changerAction.changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Instructeur', path: '/' })
+        expect(changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Instructeur', path: '/' })
       })
     })
   })
 })
 
-function monCompte(): HTMLElement {
-  renderComponent(<EnTete />)
+function monCompte(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
+  renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction })
 
   const menu = screen.getByRole('list', { name: 'menu' })
   const menuItems = within(menu).getAllByRole('listitem')
   return within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
 }
 
-function ouvrirLeMenuUtilisateur(): HTMLElement {
-  fireEvent.click(monCompte())
+function ouvrirLeMenuUtilisateur(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
+  fireEvent.click(monCompte(spiedChangerMonRoleAction))
 
   return screen.getByRole('dialog')
 }

@@ -1,5 +1,4 @@
 import * as nextCache from 'next/cache'
-import { ZodIssue } from 'zod'
 
 import { supprimerUnUtilisateurAction } from './supprimerUnUtilisateurAction'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
@@ -16,7 +15,7 @@ describe('supprimer un utilisateur action', () => {
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const result = await supprimerUnUtilisateurAction({ path, utilisateurASupprimerUid })
+    const messages = await supprimerUnUtilisateurAction({ path, utilisateurASupprimerUid })
 
     // THEN
     expect(SupprimerUnUtilisateur.prototype.execute).toHaveBeenCalledWith({
@@ -24,19 +23,18 @@ describe('supprimer un utilisateur action', () => {
       utilisateurCourantUid: sub,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
-    expect(result).toBe('OK')
+    expect(messages).toStrictEqual(['OK'])
   })
 
   it('étant donné un path incorrect, quand la suppression d’un utilisateur est passée, alors cela renvoie une erreur', async () => {
     // GIVEN
     const utilisateurASupprimerUid = 'barId'
-    const pathIncorrect = ''
+    const pathIncorrect = '' as __next_route_internal_types__.StaticRoutes
 
     // WHEN
-    // @ts-expect-error
-    const result = await supprimerUnUtilisateurAction({ path: pathIncorrect, utilisateurASupprimerUid })
+    const messages = await supprimerUnUtilisateurAction({ path: pathIncorrect, utilisateurASupprimerUid })
 
     // THEN
-    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le chemin n’est pas correct')
+    expect(messages).toStrictEqual(['Le chemin n’est pas correct'])
   })
 })
