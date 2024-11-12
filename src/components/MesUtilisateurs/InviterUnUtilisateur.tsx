@@ -6,7 +6,6 @@ import OrganisationInput from './OrganisationInput'
 import departements from '../../../ressources/departements.json'
 import groupements from '../../../ressources/groupements.json'
 import regions from '../../../ressources/regions.json'
-import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import { Notification } from '../shared/Notification/Notification'
@@ -40,7 +39,7 @@ export default function InviterUnUtilisateur({
   dialogRef,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
-  const { sessionUtilisateurViewModel } = useContext(clientContext)
+  const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
   const [organisation, setOrganisation] = useState<string>('')
   const nomId = useId()
@@ -169,11 +168,11 @@ export default function InviterUnUtilisateur({
 
     const form = new FormData(event.currentTarget)
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
-    const result = await inviterUnUtilisateurAction({ codeOrganisation, email, nom, prenom, role })
-    if (result === 'emailExistant') {
+    const messages = await inviterUnUtilisateurAction({ codeOrganisation, email, nom, prenom, role })
+    if (messages[0] === 'emailExistant') {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     } else {
-      if (result === 'OK') {
+      if (messages[0] === 'OK') {
         Notification('success', { description: email, title: 'Invitation envoyée à ' })
         setEmailDejaExistant('')
       }

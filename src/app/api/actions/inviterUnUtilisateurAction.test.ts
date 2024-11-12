@@ -1,6 +1,5 @@
 import * as nextCache from 'next/cache'
 import nodemailer from 'nodemailer'
-import { ZodIssue } from 'zod'
 
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -88,12 +87,12 @@ describe('inviter un utilisateur action', () => {
       vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
       // WHEN
-      const result = await inviterUnUtilisateurAction(actionParams)
+      const messages = await inviterUnUtilisateurAction(actionParams)
 
       // THEN
       expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
       expect(InviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith(expectedCommand)
-      expect(result).toBe('OK')
+      expect(messages).toStrictEqual(['OK'])
     })
   })
 
@@ -112,10 +111,10 @@ describe('inviter un utilisateur action', () => {
     }
 
     // WHEN
-    const result = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
+    const messages = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
 
     // THEN
-    expect(result).toBe('emailExistant')
+    expect(messages).toStrictEqual(['emailExistant'])
   })
 
   describe('étant donné une invitation avec des données invalides, quand on invite un utilisateur alors cela renvoie une erreur', () => {
@@ -168,10 +167,10 @@ describe('inviter un utilisateur action', () => {
       }
 
       // WHEN
-      const result = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
+      const messages = await inviterUnUtilisateurAction(inviterUnUtilisateurParams)
 
       // THEN
-      expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe(expectedError)
+      expect(messages).toStrictEqual([expectedError])
     })
   })
 

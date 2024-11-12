@@ -1,27 +1,27 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z, ZodIssue } from 'zod'
+import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { telephonePattern } from '@/shared/patterns'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ModificationUtilisateurFailure, ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
+import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
 export async function modifierMesInformationsPersonnellesAction(
   actionParams: ActionParams
-): ResultAsync<ModificationUtilisateurFailure | Array<ZodIssue>> {
+): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
-    return validationResult.error.issues
+    return validationResult.error.issues.map(({ message }) => message)
   }
 
   revalidatePath(actionParams.path)
 
-  return new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
+  const message = await new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
     .execute({
       modification: {
         email: validationResult.data.email,
@@ -31,6 +31,8 @@ export async function modifierMesInformationsPersonnellesAction(
       },
       uid: await getSubSession(),
     })
+
+  return [message]
 }
 
 type ActionParams = Readonly<{

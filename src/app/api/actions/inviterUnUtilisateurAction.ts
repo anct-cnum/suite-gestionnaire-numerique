@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z, ZodIssue } from 'zod'
+import { z } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
@@ -12,16 +12,15 @@ import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   InviterUnUtilisateurCommand,
   InviterUnUtilisateur,
-  InviterUnUtilisateurFailure,
 } from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
-): ResultAsync<InviterUnUtilisateurFailure | ReadonlyArray<ZodIssue>> {
+): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
-    return validationResult.error.issues
+    return validationResult.error.issues.map(({ message }) => message)
   }
 
   let command: InviterUnUtilisateurCommand = {
@@ -49,7 +48,7 @@ export async function inviterUnUtilisateurAction(
     revalidatePath('/mes-utilisateurs')
   }
 
-  return result
+  return [result]
 }
 
 type ActionParams = Readonly<{

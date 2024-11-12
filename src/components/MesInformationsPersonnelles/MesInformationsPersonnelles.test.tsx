@@ -3,8 +3,6 @@ import * as nextAuth from 'next-auth/react'
 import { Mock } from 'vitest'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import * as modifierAction from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
-import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
 import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
@@ -254,9 +252,14 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       it('quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif, il s’inactive et change de contenu, m’informant que la suppression est en cours, puis je suis déconnecté', async () => {
         // GIVEN
-        vi.spyOn(supprimerAction, 'supprimerMonCompteAction').mockResolvedValueOnce('OK')
+        const supprimerMonCompteAction = vi.fn(async () => Promise.resolve(['OK']))
         vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
-        afficherMesInformationsPersonnelles()
+        const mesInformationsPersonnellesViewModel =
+          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
+        renderComponent(
+          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
+          { supprimerMonCompteAction }
+        )
         fireEvent.click(supprimerMonCompteButton())
         fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
 
@@ -267,6 +270,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         const boutonConfirmationDesactive = await screen.findByRole('button', { name: 'Suppression en cours' })
         expect(boutonConfirmationDesactive).toBeDisabled()
         expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
+        expect(supprimerMonCompteAction).toHaveBeenCalledWith()
       })
     })
 
@@ -363,7 +367,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
       // GIVEN
-      vi.spyOn(modifierAction, 'modifierMesInformationsPersonnellesAction').mockResolvedValueOnce('OK')
+      const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -373,7 +377,12 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         }
       }
 
-      afficherMesInformationsPersonnelles()
+      const mesInformationsPersonnellesViewModel =
+        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
+      renderComponent(
+        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
+        { modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' }
+      )
       ouvrirDrawer()
       const nom = screen.getByLabelText('Nom *')
       fireEvent.change(nom, { target: { value: 'Tartempion' } })
@@ -391,7 +400,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       // THEN
       const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationDesactive).toBeDisabled()
-      expect(modifierAction.modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ email: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
+      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ email: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
       const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationActive).toBeEnabled()
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
