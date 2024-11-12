@@ -40,11 +40,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
               className={`fr-label ${styles['fr-label']}`}
               htmlFor={champEmailId}
             >
-              Saisissez «
-              {' '}
-              {email}
-              {' '}
-              » dans le champ ci-dessous
+              {`Saisissez « ${email} » dans le champ ci-dessous`}
             </label>
             <input
               aria-describedby={messageValidationId}

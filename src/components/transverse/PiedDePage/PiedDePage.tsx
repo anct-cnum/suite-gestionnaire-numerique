@@ -97,9 +97,7 @@ export default function PiedDePage(): ReactElement {
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
-              Sauf mention explicite de propriété intellectuelle détenue par des tiers,
-              les contenus de ce site sont proposés sous
-              {' '}
+              {'Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous '}
               <LienExterne
                 href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
                 title="licence etalab-2.0"

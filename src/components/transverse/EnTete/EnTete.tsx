@@ -101,8 +101,7 @@ export default function EnTete(): ReactElement {
                       className="fr-link fr-icon-notification-3-line"
                       href="/tableau-de-bord"
                     >
-                      Notifications
-                      {/**/}
+                      {'Notifications'}
                       <span
                         aria-hidden="true"
                         className="fr-icon-arrow-down-s-line"

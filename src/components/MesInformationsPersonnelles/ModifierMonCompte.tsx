@@ -32,13 +32,11 @@ export default function ModifierMonCompte({
         Mes informations personnelles
       </h1>
       <p>
-        Les champs avec
-        {' '}
+        {'Les champs avec '}
         <span className="color-red">
           *
         </span>
-        {' '}
-        sont obligatoires.
+        {' sont obligatoires.'}
       </p>
       <form
         aria-label="Modifier"
@@ -51,8 +49,7 @@ export default function ModifierMonCompte({
           name="nom"
           required={true}
         >
-          Nom
-          {' '}
+          {'Nom '}
           <span className="color-red">
             *
           </span>
@@ -63,8 +60,7 @@ export default function ModifierMonCompte({
           name="prenom"
           required={true}
         >
-          Prénom
-          {' '}
+          {'Prénom '}
           <span className="color-red">
             *
           </span>
@@ -77,14 +73,12 @@ export default function ModifierMonCompte({
           required={true}
           type="email"
         >
-          Adresse électronique
-          {' '}
+          {'Adresse électronique '}
           <span className="color-red">
             *
           </span>
-          {' '}
           <span className="fr-hint-text">
-            Seuls les gestionnaires verront votre adresse électronique.
+            {' Seuls les gestionnaires verront votre adresse électronique.'}
           </span>
         </TextInput>
         <TextInput
@@ -95,8 +89,7 @@ export default function ModifierMonCompte({
           required={false}
           type="tel"
         >
-          Téléphone professionnel
-          {' '}
+          {'Téléphone professionnel '}
           <span className="fr-hint-text">
             Seuls les gestionnaires verront votre numéro de téléphone.
             Formats attendus : 0122334455 ou +33122334455

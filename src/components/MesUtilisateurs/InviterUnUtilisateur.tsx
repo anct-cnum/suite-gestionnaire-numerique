@@ -37,13 +37,11 @@ export default function InviterUnUtilisateur({
         Invitez un utilisateur à rejoindre l’espace de gestion
       </h1>
       <p id="champsObligatoires">
-        Les champs avec
-        {' '}
+        {'Les champs avec '}
         <span className="color-red">
           *
         </span>
-        {' '}
-        sont obligatoires.
+        {' sont obligatoires.'}
       </p>
       <form
         aria-label="Modifier"
@@ -55,8 +53,7 @@ export default function InviterUnUtilisateur({
           name="nom"
           required={true}
         >
-          Nom
-          {' '}
+          {'Nom '}
           <span className="color-red">
             *
           </span>
@@ -66,8 +63,7 @@ export default function InviterUnUtilisateur({
           name="prenom"
           required={true}
         >
-          Prénom
-          {' '}
+          {'Prénom '}
           <span className="color-red">
             *
           </span>
@@ -80,8 +76,7 @@ export default function InviterUnUtilisateur({
           required={true}
           type="email"
         >
-          Adresse électronique
-          {' '}
+          {'Adresse électronique '}
           <span className="color-red">
             *
           </span>
@@ -96,8 +91,7 @@ export default function InviterUnUtilisateur({
                 aria-describedby="champsObligatoires"
                 className="fr-mb-2w"
               >
-                Quel rôle souhaitez-vous lui attribuer ?
-                {' '}
+                {'Quel rôle souhaitez-vous lui attribuer ? '}
                 <span className="color-red">
                   *
                 </span>

@@ -95,14 +95,11 @@ export default function MesInformationsPersonnelles(
                 <InformationPersonnelle
                   label={
                     <>
-                      Numéro de
-                      {' '}
+                      {'Numéro de '}
                       <abbr title="Système d’Identification du Répertoire des ÉTablissements">
                         SIRET
                       </abbr>
-                      {/**/}
-                      /
-                      {/**/}
+                      {'/'}
                       <abbr title="Répertoire d’Identification des Entreprises et des ÉTablissements">
                         RIDET
                       </abbr>
@@ -151,8 +148,7 @@ export default function MesInformationsPersonnelles(
             Mon rôle
           </h2>
           <p className="fr-text--sm color-grey">
-            Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques.
-            {' '}
+            {'Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques. '}
             <a
               href="https://aide.conseiller-numerique.gouv.fr/fr/"
               rel="external noopener noreferrer"
@@ -160,8 +156,7 @@ export default function MesInformationsPersonnelles(
             >
               Contacter le support
             </a>
-            {' '}
-            pour le modifier.
+            {' pour le modifier.'}
           </p>
           <Role role={mesInformationsPersonnellesViewModel.role} />
         </section>

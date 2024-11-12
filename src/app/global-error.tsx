@@ -15,12 +15,10 @@ export default function GlobalError({ error, reset }: ErrorProps): ReactElement 
     >
       <body>
         <p>
-          Message d’erreur :
-          {' '}
+          {'Message d’erreur : '}
           {error.message}
           <br />
-          Digest :
-          {' '}
+          {'Digest : '}
           {error.digest}
         </p>
         <button

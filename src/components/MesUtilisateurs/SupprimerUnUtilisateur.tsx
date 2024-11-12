@@ -23,11 +23,7 @@ export default function SupprimerUnUtilisateur({
           className="fr-modal__title"
           id={modaleTitreId}
         >
-          Retirer
-          {' '}
-          {utilisateurASupprimer.prenomEtNom}
-          {' '}
-          de mon équipe d’utilisateurs ?
+          {`Retirer ${utilisateurASupprimer.prenomEtNom} de mon équipe d’utilisateurs ?`}
         </h1>
         <p>
           En cliquant sur confirmer, cet utilisateur n’aura plus accès à votre espace de

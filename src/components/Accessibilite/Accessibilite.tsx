@@ -67,18 +67,14 @@ export default function Accessibilite(): ReactElement {
         Améliorations et contact
       </h2>
       <p>
-        L’équipe de Conseiller Numérique reste à votre écoute et entière disposition, si vous souhaitez
-        nous signaler un défaut de conception. Vous pouvez nous aider à améliorer l’accessibilité du site
-        en nous signalant les problèmes éventuels que vous rencontrez :
-        {' '}
+        {'L’équipe de Conseiller Numérique reste à votre écoute et entière disposition, si vous souhaitez nous signaler un défaut de conception. Vous pouvez nous aider à améliorer l’accessibilité du site en nous signalant les problèmes éventuels que vous rencontrez : '}
         <LienExterne
           href="https://aide.conseiller-numerique.gouv.fr/fr/"
           title="Contactez-nous"
         >
           Contactez-nous
         </LienExterne>
-        {''}
-        .
+        {'.'}
       </p>
     </>
   )
