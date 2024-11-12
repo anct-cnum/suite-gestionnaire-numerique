@@ -35,10 +35,12 @@
     "test:mutation:frontend": "yarn dotenv:test -- stryker run stryker-frontend.conf.json",
     "test:mutation:backend": "yarn dotenv:test -- stryker run stryker-backend.conf.json",
     "test:watch": "yarn dotenv:test -- vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "bundle:analyze": "ANALYZE=true yarn build"
   },
   "dependencies": {
     "@gouvfr/dsfr": "^1.12.1",
+    "@next/bundle-analyzer": "^15.0.3",
     "@prisma/client": "^5.21.1",
     "@sentry/nextjs": "^8",
     "mongodb": "^6.10.0",
