@@ -3,7 +3,8 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export function mesUtilisateursPresenter(
   mesUtilisateursReadModel: ReadonlyArray<UnUtilisateurReadModel>,
   uid: string,
-  totalUtilisateur: number
+  totalUtilisateur: number,
+  now = (): Date => new Date()
 ): MesUtilisateursViewModel {
   return {
     totalUtilisateur,
@@ -16,6 +17,7 @@ export function mesUtilisateursPresenter(
         canBeDeleted: uid !== monUtilisateur.uid,
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
+        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
@@ -33,7 +35,7 @@ export type MesUtilisateursViewModel = Readonly<{
   utilisateurs: ReadonlyArray<MonUtilisateur>
 }>
 
-type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
+export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
   canBeDeleted: boolean
   picto: string
   statut: 'En attente' | 'Activé'
@@ -42,6 +44,7 @@ type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
 
 export type DetailsUtilisateurViewModel = Readonly<{
   derniereConnexion: string
+  inviteLe: string
   email: string
   prenomEtNom: string
   role: string
@@ -61,4 +64,19 @@ function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
 
 function buildDateFrancaise(date: Date): string {
   return date.toLocaleDateString('fr-FR')
+}
+
+function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
+  const today = buildDateFrancaise(now)
+  const yesterday = buildDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
+
+  if (buildDateFrancaise(dateDInvitation) === today) {
+    return 'Invitation envoyée aujourd’hui'
+  }
+
+  if (buildDateFrancaise(dateDInvitation) === yesterday) {
+    return 'Invitation envoyée hier'
+  }
+
+  return `Invitation envoyée le ${buildDateFrancaise(dateDInvitation)}`
 }

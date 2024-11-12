@@ -6,6 +6,7 @@ import { ReactElement, useContext, useRef, useState } from 'react'
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import InviterUnUtilisateur from './InviterUnUtilisateur'
+import ReinviterUnUtilisateur from './ReinviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
 import Pagination from '../shared/Pagination/Pagination'
@@ -15,7 +16,7 @@ import Statut from '../shared/Statut/Statut'
 import Tableau from '../shared/Tableau/Tableau'
 import Titre from '../shared/Titre/Titre'
 import { clientContext } from '@/components/shared/ClientContext'
-import { MesUtilisateursViewModel, DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
+import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
@@ -26,15 +27,24 @@ export default function MesUtilisateurs(
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
   const modalId = 'supprimer-un-utilisateur'
   const drawerInvitationRef = useRef<HTMLDialogElement>(null)
+  const drawerRenvoyerInvitationRef = useRef<HTMLDialogElement>(null)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     email: '',
+    inviteLe: '',
     prenomEtNom: '',
     role: '',
     structure: '',
     telephone: '',
+  })
+  const [utilisateurEnAttenteSelectionne, setUtilisateurEnAttenteSelectionne] = useState({
+    email: '',
+    inviteLe: '',
+    uid: '',
   })
   const drawerFiltreId = 'drawer-filtre-utilisateurs'
   const labelFiltreId = 'drawer-filtre-utilisateurs-titre'
@@ -42,7 +52,8 @@ export default function MesUtilisateurs(
   const labelDetailsId = 'drawer-details-utilisateur-nom'
   const drawerInvitationId = 'drawer-invitation'
   const labelInvitationId = 'drawer-invitation-titre'
-
+  const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
+  const labelRenvoyerInvitationId = 'drawer-renvoyer-invitation-titre'
   return (
     <>
       <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
@@ -146,13 +157,10 @@ export default function MesUtilisateurs(
               </td>
               <td>
                 <button
-                  aria-controls={drawerDetailsId}
+                  aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
-                  onClick={() => {
-                    setUtilisateurSelectionne(unUtilisateurViewModel)
-                    setIsDrawerOpen(true)
-                  }}
+                  onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
                   type="button"
                 >
                   {unUtilisateurViewModel.prenomEtNom}
@@ -227,8 +235,42 @@ export default function MesUtilisateurs(
           utilisateur={utilisateurSelectionne}
         />
       </Drawer>
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        id={drawerRenvoyerInvitationId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerRenvoyerInvitationOpen}
+        labelId={labelRenvoyerInvitationId}
+        ref={drawerRenvoyerInvitationRef}
+        setIsOpen={setIsDrawerRenvoyerInvitationOpen}
+      >
+        <ReinviterUnUtilisateur
+          dialogRef={drawerRenvoyerInvitationRef}
+          drawerId={drawerRenvoyerInvitationId}
+          labelId={labelRenvoyerInvitationId}
+          setIsOpen={setIsDrawerRenvoyerInvitationOpen}
+          utilisateur={utilisateurEnAttenteSelectionne}
+        />
+      </Drawer>
     </>
   )
+
+  function afficherLeBonDrawer(unUtilisateurViewModel: MonUtilisateur) {
+    return () => {
+      if (unUtilisateurViewModel.statut === 'En attente') {
+        setUtilisateurEnAttenteSelectionne({
+          email: unUtilisateurViewModel.email,
+          inviteLe: unUtilisateurViewModel.inviteLe,
+          uid: unUtilisateurViewModel.uid,
+        })
+        setIsDrawerRenvoyerInvitationOpen(true)
+      } else {
+        setUtilisateurSelectionne(unUtilisateurViewModel)
+        setIsDrawerOpen(true)
+      }
+    }
+  }
 }
 
 type MesUtilisateursProps = Readonly<{

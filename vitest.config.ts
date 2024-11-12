@@ -49,6 +49,11 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     sequence: { shuffle: true },
+    server: {
+      deps: {
+        inline: ['next/cache'],
+      },
+    },
     setupFiles: ['vitest.setup.ts'],
     unstubEnvs: true,
     unstubGlobals: true,

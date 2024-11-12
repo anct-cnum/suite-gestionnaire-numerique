@@ -1,3 +1,5 @@
+import { ZodIssue } from 'zod'
+
 import { changerMonRoleAction } from './changerMonRoleAction'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { ssoProfileFactory } from '@/gateways/testHelper'
@@ -35,7 +37,6 @@ describe('changer mon rôle action', () => {
     const result = await changerMonRoleAction(nouveauRole)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('Le rôle n’est pas correct')
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le rôle n’est pas correct')
   })
 })
