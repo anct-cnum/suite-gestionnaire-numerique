@@ -5,13 +5,17 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: Repository
+  readonly #emailGateway: EmailGateway
 
-  constructor(repository: Repository) {
+  constructor(repository: Repository, emailGateway: EmailGateway) {
     this.#repository = repository
+    this.#emailGateway = emailGateway
   }
 
   async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(UtilisateurUid.from(command.uidUtilisateurCourant))
+    const utilisateurCourant = await this.#repository.find(
+      UtilisateurUid.from(command.uidUtilisateurCourant)
+    )
     if (!utilisateurCourant) {
       return 'KO'
     }
@@ -22,7 +26,11 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       return 'KO'
     }
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
-    return isUtilisateurCreated ? 'OK' : 'emailExistant'
+    if (isUtilisateurCreated) {
+      await this.#emailGateway.send(command.email)
+      return 'OK'
+    }
+    return 'emailExistant'
   }
 }
 
@@ -38,6 +46,10 @@ export type InviterUnUtilisateurCommand = Readonly<{
 }>
 
 interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
+
+export interface EmailGateway {
+  send: (destinataire: string) => Promise<void>
+}
 
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
 
