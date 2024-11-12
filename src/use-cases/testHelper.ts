@@ -1,3 +1,4 @@
+import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 
@@ -25,6 +26,19 @@ export function utilisateurReadModelFactory(
     structureId: null,
     telephone: '0102030405',
     uid: 'fooId',
+    ...override,
+  }
+}
+
+export function mesInformationsPersonnellesReadModelFactory(
+  override?: Partial<MesInformationsPersonnellesReadModel>
+): MesInformationsPersonnellesReadModel {
+  return {
+    email: 'julien.deschamps@example.com',
+    nom: 'Deschamps',
+    prenom: 'Julien',
+    role: 'Administrateur dispositif',
+    telephone: '0405060708',
     ...override,
   }
 }
