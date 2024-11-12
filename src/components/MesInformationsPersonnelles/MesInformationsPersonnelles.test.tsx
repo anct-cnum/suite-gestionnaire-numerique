@@ -6,6 +6,7 @@ import * as modifierAction from '@/app/api/actions/modifierMesInformationsPerson
 import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
 import { matchWithoutMarkup } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
+import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
 describe('mes informations personnelles : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche mes informations personnelles alors elles s’affichent', () => {
@@ -63,7 +64,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
   it('quand j’affiche mes informations personnelles mais avec un téléphone non renseigné alors il s’affiche cette notion', () => {
     // WHEN
-    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, telephone: '' })
+    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
 
     // THEN
     const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
@@ -80,7 +81,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Support animation',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
     // WHEN
-    afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, role })
+    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ role }))
 
     // THEN
     const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
@@ -92,8 +93,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Gestionnaire groupement',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
     // WHEN
-    afficherMesInformationsPersonnelles({
-      ...mesInformationsPersonnellesReadModelParDefaut,
+    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({
       role,
       structure: {
         adresse: '201 bis rue de la plaine, 69000 Lyon',
@@ -107,7 +107,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         raisonSociale: 'Préfecture du Rhône',
         typeDeStructure: 'Administration',
       },
-    })
+    }))
 
     // THEN
     const maStructure = screen.getByRole('region', { name: 'Ma structure' })
@@ -322,7 +322,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
       // GIVEN
-      afficherMesInformationsPersonnelles({ ...mesInformationsPersonnellesReadModelParDefaut, telephone: '' })
+      afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
 
       // WHEN
       ouvrirDrawer()
@@ -381,8 +381,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 })
 
 function afficherMesInformationsPersonnelles(
-  mesInformationsPersonnellesReadModel: Parameters<typeof mesInformationsPersonnellesPresenter>[0]
-  = mesInformationsPersonnellesReadModelParDefaut
+  mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelFactory()
 ): void {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
@@ -391,12 +390,4 @@ function afficherMesInformationsPersonnelles(
       mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel}
     />
   )
-}
-
-const mesInformationsPersonnellesReadModelParDefaut = {
-  email: 'julien.deschamps@example.com',
-  nom: 'Deschamps',
-  prenom: 'Julien',
-  role: 'Administrateur dispositif',
-  telephone: '0405060708',
 }
