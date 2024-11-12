@@ -1,3 +1,4 @@
+import bundleAnalyzer from '@next/bundle-analyzer'
 import { withSentryConfig } from '@sentry/nextjs'
 
 const securityHeaders = [
@@ -104,4 +105,8 @@ const SentryBuildOptions = {
   widenClientFileUpload: true,
 }
 
-export default withSentryConfig(nextConfig, SentryBuildOptions)
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withBundleAnalyzer(withSentryConfig(nextConfig, SentryBuildOptions))
