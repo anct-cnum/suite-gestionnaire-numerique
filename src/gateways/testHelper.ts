@@ -1,7 +1,5 @@
 import { Prisma } from '@prisma/client'
 
-import { Profile } from './ProConnectAuthentificationGateway'
-
 export function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
@@ -74,26 +72,6 @@ export function utilisateurRecordFactory(
     ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
     telephone: '0102030405',
     ...override,
-  }
-}
-
-export function ssoProfileFactory(override?: Partial<Profile>): { user: Profile } {
-  return {
-    user: {
-      aud: '',
-      email: '',
-      exp: 0,
-      given_name: '',
-      iat: 0,
-      id: '',
-      idp_id: '',
-      iss: '',
-      phone_number: '',
-      siret: '',
-      sub: '',
-      usual_name: '',
-      ...override,
-    },
   }
 }
 

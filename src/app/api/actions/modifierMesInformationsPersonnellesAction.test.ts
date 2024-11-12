@@ -2,14 +2,13 @@ import { ZodIssue } from 'zod'
 
 import { modifierMesInformationsPersonnellesAction } from './modifierMesInformationsPersonnellesAction'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
-import { ssoProfileFactory } from '@/gateways/testHelper'
 import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
 describe('modifier mes informations personnelles action', () => {
   it('si les informations personnelles sont correctes alors c’est valide', async () => {
     // GIVEN
     const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
+    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
@@ -74,7 +73,7 @@ describe('modifier mes informations personnelles action', () => {
   it('si le téléphone est vide alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN
     const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
+    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
     const telephoneVide = ''
 
