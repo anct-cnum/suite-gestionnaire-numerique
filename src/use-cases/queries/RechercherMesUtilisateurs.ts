@@ -1,6 +1,6 @@
 import { UnUtilisateurLoader } from './RechercherUnUtilisateur'
-import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import { QueryHandler } from '../QueryHandler'
+import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import config from '@/use-cases/config.json'
 
 export class RechercherMesUtilisateurs implements QueryHandler<
