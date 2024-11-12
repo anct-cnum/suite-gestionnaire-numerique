@@ -1,5 +1,5 @@
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ModifierMesInformationsPersonnelles implements CommandHandler<

@@ -49,7 +49,7 @@
     "prisma-json-types-generator": "^3.1.1",
     "react": "^18",
     "react-dom": "^18",
-    "react-select": "^5.8.2",
+    "react-select": "^5.8.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -80,7 +80,7 @@
     "eslint-plugin-vitest": "^0.4.1",
     "husky": "^9.1.6",
     "jsdom": "^25.0.1",
-    "knip": "^5.36.2",
+    "knip": "^5.36.7",
     "prettier": "^3.3.3",
     "prisma": "^5.21.1",
     "stylelint": "^16.10.0",
@@ -88,7 +88,7 @@
     "stylelint-order": "^6.0.4",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
-    "vite-tsconfig-paths": "^5.1.0",
+    "vite-tsconfig-paths": "^5.1.2",
     "vitest": "^2.1.4",
     "vitest-dom": "^0.1.1"
   },

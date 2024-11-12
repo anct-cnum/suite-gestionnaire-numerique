@@ -1,6 +1,6 @@
 import { MesUtilisateursLoader, RechercherMesUtilisateurs, UtilisateursCourantsEtTotalReadModel } from './RechercherMesUtilisateurs'
-import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import { utilisateurReadModelFactory } from '../testHelper'
+import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
 describe('rechercher mes utilisateurs', () => {
   it('recherchant sans filtre alors je récupère mes utilisateurs et leur nombre total', async () => {
