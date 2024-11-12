@@ -1,5 +1,5 @@
-import { InviterUnUtilisateur } from './InviterUnUtilisateur'
-import { AddUtilisateurRepository } from './shared/UtilisateurRepository'
+import { EmailGateway, InviterUnUtilisateur, InviterUnUtilisateurCommand } from './InviterUnUtilisateur'
+import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
 import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -8,88 +8,140 @@ describe('inviter un utilisateur', () => {
   afterEach(() => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
+    spiedDestinataire = ''
+    spiedIsSuperAdmin = null
   })
 
-  describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré', () => {
+  describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter', () => {
     it.each([
       {
-        command: {
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          role: {
-            organisation: 'HubEst',
-            type: 'Gestionnaire groupement' as const,
-          },
-          uidUtilisateurCourant: 'utilisateurAdminUid',
-        },
-        desc: 'le rôle ainsi que l’organisation sont mentionnées',
-        utilisateurACreer: {
-          email: 'martin.tartempion@example.com',
-          isSuperAdmin: false,
-          nom: 'Tartempion',
-          organisation: 'HubEst',
-          prenom: 'Martin',
-          role: 'Gestionnaire groupement' as const,
-          uid: 'martin.tartempion@example.com',
-        },
-      },
-      {
-        command: {
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          role: {
-            type: 'Instructeur' as const,
-          },
-          uidUtilisateurCourant: 'utilisateurAdminUid',
-        },
-        desc: 'le rôle seul est mentionné',
-        utilisateurACreer: {
-          email: 'martin.tartempion@example.com',
-          isSuperAdmin: false,
-          nom: 'Tartempion',
-          prenom: 'Martin',
+        desc: 'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est'
+          + ' enregistré avec un compte super admin et un rôle admin choisi par l’utilisateur courant',
+        utilisateurAInviter: {
           role: 'Instructeur' as const,
-          uid: 'martin.tartempion@example.com',
+        },
+        utilisateurCourant: {
+          isSuperAdmin: true,
+          role: 'Support animation' as const,
+          uid: 'utilisateurAdminUid',
         },
       },
       {
-        command: {
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          uidUtilisateurCourant: 'utilisateurGestionnaireUid',
+        desc: 'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci'
+          + ' est enregistré avec un compte super admin, un rôle gestionnaire et une organisation choisis par l’'
+          + ' utilisateur courant',
+        utilisateurAInviter: {
+          organisation: 'HubEst',
+          role: 'Gestionnaire groupement' as const,
         },
-        desc: 'ni le rôle ni l’organisation ne sont mentionnées : on prend ceux de l’utilisateur courant',
-        utilisateurACreer: {
-          email: 'martin.tartempion@example.com',
-          isSuperAdmin: false,
-          nom: 'Tartempion',
-          organisation: 'Bretagne',
-          prenom: 'Martin',
-          role: 'Gestionnaire région' as const,
-          uid: 'martin.tartempion@example.com',
+        utilisateurCourant: {
+          isSuperAdmin: true,
+          role: 'Support animation' as const,
+          uid: 'utilisateurAdminUid',
         },
       },
-    ])('$desc', async ({ command, utilisateurACreer }) => {
-      // GIVEN
-      const repository = new RepositorySpy()
-      const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+      {
+        desc: 'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors'
+          + ' celui-ci est enregistré avec un compte super admin, un rôle et une organisation identiques à ceux de'
+          + ' l’utilisateur courant',
+        utilisateurAInviter: {
+          organisation: 'Bretagne',
+          role: 'Gestionnaire région' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: true,
+          organisation: 'Bretagne',
+          role: 'Gestionnaire région' as const,
+          uid: 'utilisateurGestionnaireUid',
+        },
+      },
+      {
+        desc: 'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci'
+          + ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
+        utilisateurAInviter: {
+          role: 'Instructeur' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: false,
+          role: 'Support animation' as const,
+          uid: 'utilisateurAdminUid',
+        },
+      },
+      {
+        desc: 'qu’il n’est pas super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors'
+          + ' celui-ci est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisis par l’'
+          + 'utilisateur courant',
+        utilisateurAInviter: {
+          organisation: 'HubEst',
+          role: 'Gestionnaire groupement' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: false,
+          role: 'Support animation' as const,
+          uid: 'utilisateurAdminUid',
+        },
+      },
+      {
+        desc: 'qu’il n’est pas super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite,'
+          + ' alors celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de'
+          + ' l’utilisateur courant',
+        utilisateurAInviter: {
+          organisation: 'Bretagne',
+          role: 'Gestionnaire région' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: false,
+          organisation: 'Bretagne',
+          role: 'Gestionnaire région' as const,
+          uid: 'utilisateurGestionnaireUid',
+        },
+      },
+    ])('$desc puis un e-mail lui est envoyé',
+      async ({ utilisateurCourant, utilisateurAInviter }) => {
+        // GIVEN
+        const command = inviterUnUtilisateurCommandFactory({
+          role: {
+            organisation: utilisateurAInviter.organisation,
+            type: utilisateurAInviter.role,
+          },
+          uidUtilisateurCourant: utilisateurCourant.uid,
+        })
+        const repository = new RepositorySpy(
+          utilisateurFactory({
+            isSuperAdmin: utilisateurCourant.isSuperAdmin,
+            organisation: utilisateurCourant.organisation,
+            role: utilisateurCourant.role,
+          })
+        )
+        const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactorySpy)
 
-      // WHEN
-      const result = await inviterUnUtilisateur.execute(command)
+        // WHEN
+        const result = await inviterUnUtilisateur.execute(command)
 
-      // THEN
-      expect(result).toBe('OK')
-      expect(spiedUtilisateurToAdd?.equals(Utilisateur.create(utilisateurACreer))).toBe(true)
-    })
+        // THEN
+        const expectedUtilisateurInvite = utilisateurFactory({
+          email: 'martine.dugenoux@example.com',
+          isSuperAdmin: utilisateurCourant.isSuperAdmin,
+          nom: 'Dugenoux',
+          organisation: utilisateurAInviter.organisation,
+          prenom: 'Martine',
+          role: utilisateurAInviter.role,
+          telephone: '',
+          uid: 'martine.dugenoux@example.com',
+        })
+        expect(result).toBe('OK')
+        expect(spiedUidToFind).toBe(command.uidUtilisateurCourant)
+        expect(spiedUtilisateurToAdd?.state()).toStrictEqual(expectedUtilisateurInvite.state())
+        expect(spiedDestinataire).toBe('martine.dugenoux@example.com')
+        expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
+      })
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
     // GIVEN
-    const repository = new RepositorySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const repository = new RepositorySpy(utilisateurFactory({ role: 'Gestionnaire structure' }))
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -106,12 +158,15 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('KO')
     expect(spiedUidToFind).toBe('utilisateurGestionnaireUid')
     expect(spiedUtilisateurToAdd).toBeNull()
+    expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 
   it('étant donné que le compte de l’utilisateur courant n’existe plus, quand il invite un autre utilisateur, alors il y a une erreur', async () => {
     // GIVEN
-    const repository = new RepositorySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const repository = new RepositorySpy(null)
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -128,12 +183,19 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('KO')
     expect(spiedUidToFind).toBe('utilisateurInexistantUid')
     expect(spiedUtilisateurToAdd).toBeNull()
+    expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
-    const repository = new RepositoryUtilisateurExisteDejaSpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository)
+    const utilisateurACreer = utilisateurFactory({
+      telephone: '',
+      uid: 'martin.tartempion@example.net',
+    })
+    const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -149,45 +211,60 @@ describe('inviter un utilisateur', () => {
     // THEN
     expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
-    const utilisateurACreer = utilisateurFactory({
-      telephone: '',
-      uid: 'martin.tartempion@example.net',
-    })
-    expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
+    expect(spiedUtilisateurToAdd?.state()).toStrictEqual(utilisateurACreer.state())
+    expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 })
 
-const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
-  utilisateurAdminUid: utilisateurFactory({
-    uid: 'utilisateurAdminUid',
-  }),
-  utilisateurGestionnaireUid: utilisateurFactory({
-    email: 'martina.tartempion@example.net',
-    organisation: 'Bretagne',
-    prenom: 'Martine',
-    role: 'Gestionnaire région',
-    uid: 'utilisateurGestionnaireUid',
-  }),
-}
-
 let spiedUidToFind = ''
 let spiedUtilisateurToAdd: Utilisateur | null = null
+let spiedDestinataire = ''
+let spiedIsSuperAdmin: boolean | null = null
 
-class RepositorySpy implements AddUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    const uidValue = uid.state().value
-    spiedUidToFind = uidValue
-    return Promise.resolve(utilisateursByUid[uidValue])
+class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurRepository {
+  readonly #utilisateurCourant: Utilisateur | null
+
+  constructor(utilisateurCourant: Utilisateur | null) {
+    this.#utilisateurCourant = utilisateurCourant
   }
+
+  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
+    spiedUidToFind = uid.state().value
+    return Promise.resolve(this.#utilisateurCourant)
+  }
+
   async add(utilisateur: Utilisateur): Promise<boolean> {
     spiedUtilisateurToAdd = utilisateur
     return Promise.resolve(true)
   }
 }
 
-class RepositoryUtilisateurExisteDejaSpy extends RepositorySpy {
+class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
   override async add(utilisateur: Utilisateur): Promise<boolean> {
     spiedUtilisateurToAdd = utilisateur
     return Promise.resolve(false)
+  }
+}
+
+function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
+  spiedIsSuperAdmin = isSuperAdmin
+  return new class implements EmailGateway {
+    async send(destinataire: string): Promise<void> {
+      spiedDestinataire = destinataire
+      return Promise.resolve()
+    }
+  }()
+}
+
+function inviterUnUtilisateurCommandFactory(
+  override: Readonly<Partial<InviterUnUtilisateurCommand>>
+): InviterUnUtilisateurCommand {
+  return {
+    email: 'martine.dugenoux@example.com',
+    nom: 'Dugenoux',
+    prenom: 'Martine',
+    uidUtilisateurCourant: 'utilisateurAdminUid',
+    ...override,
   }
 }
