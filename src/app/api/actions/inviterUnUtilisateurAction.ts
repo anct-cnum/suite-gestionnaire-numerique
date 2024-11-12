@@ -5,7 +5,7 @@ import { z, ZodIssue } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   InviterUnUtilisateurCommand,
@@ -25,8 +25,7 @@ export async function inviterUnUtilisateurAction(
     email: validationResult.data.email,
     nom: validationResult.data.nom,
     prenom: validationResult.data.prenom,
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    uidUtilisateurCourant: (await getSession())!.user.sub,
+    uidUtilisateurCourant: await getSubSession(),
   }
 
   if (validationResult.data.role) {

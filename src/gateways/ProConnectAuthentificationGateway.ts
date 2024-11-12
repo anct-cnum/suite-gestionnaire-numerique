@@ -73,6 +73,11 @@ export async function getSession(): Promise<{ user: Profile } | null> {
   return getServerSession(nextAuthOptions)
 }
 
+export async function getSubSession(): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return (await getSession())!.user.sub
+}
+
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>
 
 export type Profile = Readonly<{

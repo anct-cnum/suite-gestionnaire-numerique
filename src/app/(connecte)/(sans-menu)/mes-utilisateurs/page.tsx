@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import prisma from '../../../../../prisma/prismaClient'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
 import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
-import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
@@ -13,8 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function MesUtilisateursController({ searchParams }: PageProps): Promise<ReactElement> {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const session = (await getSession())!
+  const sub = await getSubSession()
   const pageCourante = searchParams.page !== undefined ? { pageCourante: Number(searchParams.page) } : {}
   const utilisateursActives = Boolean(searchParams.utilisateursActives)
   const codeDepartement =
@@ -26,7 +25,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.get({
-      uid: session.user.sub,
+      uid: sub,
       utilisateursActives,
       ...codeDepartement,
       ...codeRegion,
@@ -35,7 +34,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
     })
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
-    session.user.sub,
+    sub,
     total
   )
 
