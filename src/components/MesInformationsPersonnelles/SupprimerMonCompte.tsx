@@ -1,12 +1,13 @@
 import { signOut } from 'next-auth/react'
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
+import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useState } from 'react'
 
 import styles from './SupprimerMonCompte.module.css'
-import { supprimerMonCompteAction } from '../../app/api/actions/supprimerMonCompteAction'
+import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
 import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
+  const { supprimerMonCompteAction } = useContext(clientContext)
   const [emailValidationInfo, setEmailValidationInfo] =
     useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
   const [etatBoutonSuppression, setEtatBoutonSuppression] = useState<EtatBoutonSuppression>({

@@ -2,11 +2,10 @@
 
 import { FormEvent, ReactElement, useContext } from 'react'
 
-import { changerMonRoleAction } from '../../../../../app/api/actions/changerMonRoleAction'
 import { clientContext } from '@/components/shared/ClientContext'
 
 export default function SelecteurRole({ ariaControlsId }: SelecteurRoleProps): ReactElement {
-  const { pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
+  const { changerMonRoleAction, pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
     <div className="fr-select-group">

@@ -18,8 +18,11 @@ export function renderComponent(
   clientContextProviderValueOverride?: Partial<ClientContextProviderValue>
 ): RenderResult {
   const clientContextProviderDefaultValue = {
-    bandeauInformations: {},
+    changerMonRoleAction: vi.fn(),
+    inviterUnUtilisateurAction: vi.fn(),
+    modifierMesInformationsPersonnellesAction: vi.fn(),
     pathname: '/' as __next_route_internal_types__.StaticRoutes,
+    reinviterUnUtilisateurAction: vi.fn(),
     roles: Roles,
     router: {
       back: vi.fn(),
@@ -31,7 +34,8 @@ export function renderComponent(
     },
     searchParams: new URLSearchParams(),
     sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(),
-    setBandeauInformations: vi.fn(),
+    supprimerMonCompteAction: vi.fn(),
+    supprimerUnUtilisateurAction: vi.fn(),
     utilisateursParPage: 10,
   }
 

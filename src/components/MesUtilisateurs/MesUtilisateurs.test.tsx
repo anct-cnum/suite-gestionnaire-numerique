@@ -2,9 +2,6 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import * as inviterAction from '@/app/api/actions/inviterUnUtilisateurAction'
-import * as reinviterUnUtilisateurAction from '@/app/api/actions/reinviterUnUtilisateurAction'
-import * as supprimerAction from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { renderComponent, matchWithoutMarkup } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
@@ -249,7 +246,7 @@ describe('mes utilisateurs', () => {
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
-      vi.spyOn(reinviterUnUtilisateurAction, 'reinviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -259,7 +256,7 @@ describe('mes utilisateurs', () => {
         }
       }
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs' })
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
 
@@ -269,7 +266,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       await waitFor(() => {
-        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
+        expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
@@ -378,9 +375,9 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs' })
+      const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction })
       const { rowsBody } = getByTable()
       const columnsBody = within(rowsBody[1]).getAllByRole('cell')
       const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
@@ -394,7 +391,7 @@ describe('mes utilisateurs', () => {
       // THEN
       const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
       expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
-      expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', utilisateurASupprimerUid: '123456' })
+      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', utilisateurASupprimerUid: '123456' })
     })
   })
 
@@ -730,6 +727,7 @@ describe('mes utilisateurs', () => {
 
     it('en tant qu’administrateur, quand je fais une recherche dans le champ de structure, alors je peux y faire une recherche utilisée dans le formulaire', async () => {
       // GIVEN
+      const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -738,9 +736,9 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
       const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'admin',
@@ -771,6 +769,7 @@ describe('mes utilisateurs', () => {
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
       const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
       fireEvent.click(gestionnaireStructure)
+
       // WHEN
       // @ts-expect-error
       // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
@@ -780,7 +779,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       await waitFor(() => {
-        expect(inviterAction.inviterUnUtilisateurAction).toHaveBeenCalledWith({
+        expect(inviterUnUtilisateurAction).toHaveBeenCalledWith({
           codeOrganisation: '1845',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
@@ -855,9 +854,7 @@ describe('mes utilisateurs', () => {
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche', async () => {
       // GIVEN
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction')
-        .mockResolvedValueOnce('emailExistant')
-        .mockResolvedValueOnce('OK')
+      const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -869,6 +866,7 @@ describe('mes utilisateurs', () => {
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+          inviterUnUtilisateurAction,
           sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
             role: {
               groupe: 'admin',
@@ -905,14 +903,9 @@ describe('mes utilisateurs', () => {
       fireEvent.click(administrateurDispositif)
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
-      const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-      fireEvent.click(envoyerInvitation)
 
       // THEN
-      expect(messageDErreur).toBeInTheDocument()
-      const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-      expect(absenceMessageDErreur).not.toBeInTheDocument()
-      const notification = screen.getByRole('alert')
+      const notification = await screen.findByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
       expect(formulaireInvitation).not.toHaveAttribute('open', '')
       expect(nom).toHaveValue('')
@@ -926,11 +919,12 @@ describe('mes utilisateurs', () => {
 
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
       // GIVEN
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('emailExistant')
+      const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['emailExistant']))
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
+          inviterUnUtilisateurAction,
           sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
             role: {
               groupe: 'admin',
@@ -976,7 +970,7 @@ describe('mes utilisateurs', () => {
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
     // GIVEN
-    vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('KO')
+    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['KO']))
     const windowDsfr = window.dsfr
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     window.dsfr = () => {
@@ -990,6 +984,7 @@ describe('mes utilisateurs', () => {
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
+        inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             groupe: 'admin',

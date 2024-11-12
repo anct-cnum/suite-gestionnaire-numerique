@@ -1,25 +1,25 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z, ZodIssue } from 'zod'
+import { z } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import { ReinviterUnUtilisateur, ReinviterUnUtilisateurFailure } from '@/use-cases/commands/ReinviterUnUtilisateur'
+import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisateur'
 
 export async function reinviterUnUtilisateurAction(
   actionParams: ActionParams
-): ResultAsync<ReinviterUnUtilisateurFailure | Array<ZodIssue>> {
+): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator
     .safeParse({
       uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
     })
 
   if (validationResult.error) {
-    return validationResult.error.issues
+    return validationResult.error.issues.map(({ message }) => message)
   }
 
   const command = {
@@ -29,10 +29,12 @@ export async function reinviterUnUtilisateurAction(
 
   revalidatePath(actionParams.path)
 
-  return new ReinviterUnUtilisateur(
+  const message = await new ReinviterUnUtilisateur(
     new PrismaUtilisateurRepository(prisma),
     emailInvitationGatewayFactory
   ).execute(command)
+
+  return [message]
 }
 
 type ActionParams = Readonly<{

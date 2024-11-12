@@ -2,7 +2,6 @@ import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'r
 
 import { clientContext } from '../shared/ClientContext'
 import { Notification } from '../shared/Notification/Notification'
-import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 
 export default function ReinviterUnUtilisateur({
   utilisateur,
@@ -11,7 +10,7 @@ export default function ReinviterUnUtilisateur({
   setIsOpen,
   dialogRef,
 }: DetailsUtilisateurProps): ReactElement {
-  const { pathname } = useContext(clientContext)
+  const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
 
   return (
     <div>
