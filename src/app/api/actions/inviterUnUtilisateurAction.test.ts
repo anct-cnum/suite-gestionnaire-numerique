@@ -1,6 +1,10 @@
+import nodemailer from 'nodemailer'
 import { ZodIssue } from 'zod'
 
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
+import { utilisateurFactory } from '@/domain/testHelper'
+import * as invitationEmail from '@/gateways/invitationEmail'
+import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
@@ -167,4 +171,52 @@ describe('inviter un utilisateur action', () => {
       expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe(expectedError)
     })
   })
+
+  describe(
+    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de'
+    + ' l’invitation est ou n’est pas un "super admin"', () => {
+      it.each([
+        {
+          desc: 'quand l’email est envoyé par un super admin',
+          expectedParams: {
+            auth: undefined,
+            host: '0.0.0.0',
+            port: '1025',
+            secure: false,
+          },
+          isSuperAdmin: true,
+        },
+        {
+          desc: 'quand l’email est envoyé par un utilisateur qui n’est pas un super admin',
+          expectedParams: {
+            auth: undefined,
+            host: '0.0.0.0',
+            port: '1025',
+            secure: false,
+          },
+
+          isSuperAdmin: false,
+        },
+      ])('$desc, alors l’email est envoyé avec le paramétrage approprié', async ({ expectedParams, isSuperAdmin }) => {
+        // GIVEN
+        vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(('sub'))
+        vi.spyOn(PostgreUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
+        vi.spyOn(PostgreUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
+        const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
+        const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
+
+        // WHEN
+        await inviterUnUtilisateurAction({
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          organisation: 'La Poste',
+          prenom: 'Martin',
+        })
+
+        // THEN
+        expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
+        expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
+      })
+    }
+  )
 })

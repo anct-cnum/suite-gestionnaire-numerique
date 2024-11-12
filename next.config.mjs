@@ -71,6 +71,7 @@ const nextConfig = {
   },
   experimental: {
     typedRoutes: true,
+    serverComponentsExternalPackages: ["mjml"],
   },
   headers() {
     return process.env.NODE_ENV !== 'development' ? [
