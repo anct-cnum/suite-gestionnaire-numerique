@@ -1,3 +1,5 @@
+import { ZodIssue } from 'zod'
+
 import { modifierMesInformationsPersonnellesAction } from './modifierMesInformationsPersonnellesAction'
 import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 import { ssoProfileFactory } from '@/gateways/testHelper'
@@ -31,8 +33,7 @@ describe('modifier mes informations personnelles action', () => {
     const result = await modifierMesInformationsPersonnellesAction('emailNonValide', nom, prenom, telephone)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('L’email doit être valide')
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('L’email doit être valide')
   })
 
   it('si le nom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
@@ -43,8 +44,7 @@ describe('modifier mes informations personnelles action', () => {
     const result = await modifierMesInformationsPersonnellesAction(email, nomVide, prenom, telephone)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('Le nom doit contenir au moins 1 caractère')
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le nom doit contenir au moins 1 caractère')
   })
 
   it('si le prénom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
@@ -55,8 +55,7 @@ describe('modifier mes informations personnelles action', () => {
     const result = await modifierMesInformationsPersonnellesAction(email, nom, prenomVide, telephone)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('Le prénom doit contenir au moins 1 caractère')
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le prénom doit contenir au moins 1 caractère')
   })
 
   it.each([
@@ -69,8 +68,7 @@ describe('modifier mes informations personnelles action', () => {
     const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephoneMalFormate)
 
     // THEN
-    // @ts-expect-error
-    expect(result[0].message).toBe('Le téléphone doit être au format 0102030405 ou +33102030405')
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le téléphone doit être au format 0102030405 ou +33102030405')
   })
 
   it('si le téléphone est vide alors c’est valide car il n’est pas obligatoire', async () => {

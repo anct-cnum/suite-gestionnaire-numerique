@@ -116,7 +116,13 @@
           {
             "target": ["src/components"],
             "from": ["src"],
-            "except": ["app/api/actions", "components", "presenters", "shared"],
+            "except": [
+              "app/api/actions",
+              "components",
+              "presenters",
+              "shared",
+              "use-cases/testHelper.ts"
+            ],
             "message": "Le front ne doit pas avoir la connaissance du back (sauf les server actions)."
           }
         ]

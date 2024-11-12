@@ -79,8 +79,7 @@ describe('inviter un utilisateur action', () => {
       },
     ])('$desc', async ({ actionParams, expectedCommand }) => {
       // GIVEN
-      // @ts-expect-error
-      vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: { sub } })
+      vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(ssoProfileFactory({ sub }))
       vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
 
       // WHEN
