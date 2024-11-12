@@ -9,7 +9,9 @@ import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   InviterUnUtilisateurCommand,
-  InviterUnUtilisateur, InviterUnUtilisateurFailure,
+  InviterUnUtilisateur,
+  InviterUnUtilisateurFailure,
+  EmailGateway,
 } from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(
@@ -38,7 +40,16 @@ export async function inviterUnUtilisateurAction(
     }
   }
 
-  return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma)).execute(command)
+  const emailGateway = new (class implements EmailGateway {
+    // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+    async send(): Promise<void> {
+      return Promise.resolve()
+    }
+  })()
+
+  return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma), emailGateway).execute(
+    command
+  )
 }
 
 type ActionParams = Readonly<{
