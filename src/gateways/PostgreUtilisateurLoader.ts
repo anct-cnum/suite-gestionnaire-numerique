@@ -116,7 +116,9 @@ export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
   return {
     ...Utilisateur.create({
+      derniereConnexion: utilisateurRecord.derniereConnexion,
       email: utilisateurRecord.email,
+      inviteLe: utilisateurRecord.inviteLe,
       isSuperAdmin: false,
       nom: utilisateurRecord.nom,
       organisation: organisation(utilisateurRecord),
@@ -129,7 +131,6 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
-    isActive: utilisateurRecord.derniereConnexion !== null,
     regionCode: utilisateurRecord.regionCode,
     structureId: utilisateurRecord.structureId,
     uid: utilisateurRecord.ssoId,

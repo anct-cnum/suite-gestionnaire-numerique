@@ -291,7 +291,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('ajout d’un utilisateur', () => {
-    const repository = new PostgreUtilisateurRepository(prisma, () => epochTime)
+    const repository = new PostgreUtilisateurRepository(prisma)
 
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
       // GIVEN
