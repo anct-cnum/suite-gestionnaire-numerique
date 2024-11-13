@@ -192,6 +192,20 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(confirmer).toBeDisabled()
     })
 
+    it('et que j’appuie sur annuler alors la modale se ferme', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles()
+      fireEvent.click(supprimerMonCompteButton())
+
+      // WHEN
+      const annuler = screen.getByRole('button', { name: 'Annuler' })
+      fireEvent.click(annuler)
+
+      // THEN
+      const supprimerMonCompteDrawer = screen.queryByRole('dialog', { name: 'Supprimer mon compte' })
+      expect(supprimerMonCompteDrawer).not.toBeInTheDocument()
+    })
+
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
       it('je saisis une adresse électronique invalide', () => {
         // GIVEN

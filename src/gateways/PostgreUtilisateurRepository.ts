@@ -6,25 +6,20 @@ import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRe
 
 export class PostgreUtilisateurRepository implements UtilisateurRepository {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate
-  readonly #dateProvider: () => Date
 
-  constructor(
-    dbClient: PrismaClient,
-    dateProvider: () => Date = () => new Date()
-  ) {
+  constructor(dbClient: PrismaClient) {
     this.#activeRecord = dbClient.utilisateurRecord
-    this.#dateProvider = dateProvider
   }
 
   async add(utilisateur: Utilisateur): Promise<boolean> {
     const utilisateurState = utilisateur.state()
-    const now = this.#dateProvider()
+
     try {
       await this.#activeRecord.create({
         data: {
-          dateDeCreation: now,
+          dateDeCreation: utilisateurState.inviteLe,
           email: utilisateurState.email,
-          inviteLe: now,
+          inviteLe: utilisateurState.inviteLe,
           isSuperAdmin: utilisateurState.isSuperAdmin,
           isSupprime: false,
           nom: utilisateurState.nom,
@@ -62,7 +57,9 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
       return null
     }
     return Utilisateur.create({
+      derniereConnexion: record.derniereConnexion,
       email: record.email,
+      inviteLe: record.inviteLe,
       isSuperAdmin: record.isSuperAdmin,
       nom: record.nom,
       organisation: organisation(record),

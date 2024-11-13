@@ -103,7 +103,9 @@ describe('utilisateur', () => {
 })
 
 const utilisateurProps = {
+  derniereConnexion: null,
   email: 'martin.tartempion@example.net',
+  inviteLe: new Date(0),
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',

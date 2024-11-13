@@ -25,5 +25,5 @@ type ActionParams = Readonly<{
 
 const validator = z
   .object({
-    email: z.string().email({ message: 'L’email doit être valide' }),
+    email: z.string().email({ message: 'L’e-mail doit être valide' }),
   })
