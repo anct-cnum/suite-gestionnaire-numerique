@@ -1,3 +1,4 @@
+import * as nextCache from 'next/cache'
 import { ZodIssue } from 'zod'
 
 import { modifierMesInformationsPersonnellesAction } from './modifierMesInformationsPersonnellesAction'
@@ -7,12 +8,14 @@ import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/Modifi
 describe('modifier mes informations personnelles action', () => {
   it('si les informations personnelles sont correctes alors c’est valide', async () => {
     // GIVEN
+    const path = '/mes-informations-personnelles'
     const sub = 'fooId'
     vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction({ email, nom, path, prenom, telephone })
 
     // THEN
     expect(ModifierMesInformationsPersonnelles.prototype.execute).toHaveBeenCalledWith({
@@ -24,12 +27,13 @@ describe('modifier mes informations personnelles action', () => {
       },
       uid: sub,
     })
+    expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
     expect(result).toBe('OK')
   })
 
   it('si l’e-mail est mal formaté alors s’affiche un message d’erreur', async () => {
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction('emailNonValide', nom, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction({ email: 'emailNonValide', nom, path, prenom, telephone })
 
     // THEN
     expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('L’email doit être valide')
@@ -40,7 +44,7 @@ describe('modifier mes informations personnelles action', () => {
     const nomVide = ''
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nomVide, prenom, telephone)
+    const result = await modifierMesInformationsPersonnellesAction({ email, nom: nomVide, path, prenom, telephone })
 
     // THEN
     expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le nom doit contenir au moins 1 caractère')
@@ -51,10 +55,28 @@ describe('modifier mes informations personnelles action', () => {
     const prenomVide = ''
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenomVide, telephone)
+    const result = await modifierMesInformationsPersonnellesAction({ email, nom, path, prenom: prenomVide, telephone })
 
     // THEN
     expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le prénom doit contenir au moins 1 caractère')
+  })
+
+  it('si le path est vide alors cela renvoie une erreur car il doit contenir au moins un caractère', async () => {
+    // GIVEN
+    const pathIncorrect = ''
+
+    // WHEN
+    const result = await modifierMesInformationsPersonnellesAction({
+      email,
+      nom,
+      // @ts-expect-error
+      path: pathIncorrect,
+      prenom,
+      telephone,
+    })
+
+    // THEN
+    expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le chemin n’est pas correct')
   })
 
   it.each([
@@ -64,7 +86,13 @@ describe('modifier mes informations personnelles action', () => {
     '1234567890123478',
   ])('si le téléphone est mal formaté alors s’affiche un message d’erreur', async (telephoneMalFormate) => {
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephoneMalFormate)
+    const result = await modifierMesInformationsPersonnellesAction({
+      email,
+      nom,
+      path,
+      prenom,
+      telephone: telephoneMalFormate,
+    })
 
     // THEN
     expect((result as ReadonlyArray<ZodIssue>)[0].message).toBe('Le téléphone doit être au format 0102030405 ou +33102030405')
@@ -73,12 +101,19 @@ describe('modifier mes informations personnelles action', () => {
   it('si le téléphone est vide alors c’est valide car il n’est pas obligatoire', async () => {
     // GIVEN
     const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
-    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
     const telephoneVide = ''
+    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
+    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const result = await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephoneVide)
+    const result = await modifierMesInformationsPersonnellesAction({
+      email,
+      nom,
+      path,
+      prenom,
+      telephone: telephoneVide,
+    })
 
     // THEN
     expect(result).toBe('OK')
@@ -88,4 +123,5 @@ describe('modifier mes informations personnelles action', () => {
   const nom = 'Tartempion'
   const prenom = 'Martin'
   const telephone = '0102030405'
+  const path = '/'
 })

@@ -27,7 +27,7 @@ export async function reinviterUnUtilisateurAction(
     uidUtilisateurCourant: await getSubSession(),
   }
 
-  revalidatePath('/mes-utilisateurs')
+  revalidatePath(actionParams.path)
 
   return new ReinviterUnUtilisateur(
     new PrismaUtilisateurRepository(prisma),
@@ -37,6 +37,7 @@ export async function reinviterUnUtilisateurAction(
 
 type ActionParams = Readonly<{
   uidUtilisateurAReinviter: string
+  path: __next_route_internal_types__.StaticRoutes
 }>
 
 const validator = z.object({

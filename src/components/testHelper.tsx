@@ -19,6 +19,7 @@ export function renderComponent(
 ): RenderResult {
   const clientContextProviderDefaultValue = {
     bandeauInformations: {},
+    pathname: '/' as __next_route_internal_types__.StaticRoutes,
     roles: Roles,
     router: {
       back: vi.fn(),

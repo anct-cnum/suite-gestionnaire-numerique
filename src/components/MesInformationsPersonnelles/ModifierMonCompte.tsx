@@ -1,13 +1,15 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } from 'react'
+import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
 import { modifierMesInformationsPersonnellesAction } from '../../app/api/actions/modifierMesInformationsPersonnellesAction'
+import { clientContext } from '../shared/ClientContext'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export default function ModifierMonCompte({
   email,
+  dialogRef,
   id,
   labelId,
   nom,
@@ -15,6 +17,7 @@ export default function ModifierMonCompte({
   setIsOpen,
   telephone,
 }: ModifierMonCompteProps): ReactElement {
+  const { pathname } = useContext(clientContext)
   const [etatBoutonEnregistrer, setEtatBoutonEnregistrer] = useState({
     enAttente: false,
     texte: 'Enregistrer',
@@ -132,19 +135,26 @@ export default function ModifierMonCompte({
     const form = new FormData(event.currentTarget)
     const [nom, prenom, email, telephone] = [...form.values()].map((value) => value as string)
 
-    await modifierMesInformationsPersonnellesAction(email, nom, prenom, telephone)
+    setEtatBoutonEnregistrer({
+      enAttente: true,
+      texte: 'Modification en cours',
+    })
+
+    await modifierMesInformationsPersonnellesAction({ email, nom, path: pathname, prenom, telephone })
       .then(() => {
         setEtatBoutonEnregistrer({
-          enAttente: true,
-          texte: 'Modification en cours',
+          enAttente: false,
+          texte: 'Enregistrer',
         })
-
-        window.location.reload()
       })
+
+    setIsOpen(false)
+    window.dsfr(dialogRef.current).modal.conceal()
   }
 }
 
 type ModifierMonCompteProps = Readonly<{
+  dialogRef: RefObject<HTMLDialogElement>
   email: string
   id: string
   labelId: string

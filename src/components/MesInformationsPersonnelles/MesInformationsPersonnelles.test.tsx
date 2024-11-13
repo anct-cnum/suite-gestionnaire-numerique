@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
+import { Mock } from 'vitest'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
 import * as modifierAction from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import * as supprimerAction from '@/app/api/actions/supprimerMonCompteAction'
-import { matchWithoutMarkup } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -360,10 +361,17 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
     })
 
-    it('quand je modifie mes informations personnelles alors elles sont modifiées', async () => {
+    it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
       // GIVEN
       vi.spyOn(modifierAction, 'modifierMesInformationsPersonnellesAction').mockResolvedValueOnce('OK')
-      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
+      const windowDsfr = window.dsfr
+      window.dsfr = (): {modal: {conceal: Mock}} => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
 
       afficherMesInformationsPersonnelles()
       ouvrirDrawer()
@@ -381,9 +389,14 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       fireEvent.click(enregistrer)
 
       // THEN
-      const boutonModificationDesactive = await screen.findByRole('button', { name: 'Modification en cours' })
+      const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationDesactive).toBeDisabled()
-      expect(window.location.reload).toHaveBeenCalledOnce()
+      expect(modifierAction.modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ email: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
+      const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours' })
+      expect(boutonModificationActive).toBeEnabled()
+      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
+      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+      window.dsfr = windowDsfr
     })
 
     function ouvrirDrawer(): void {
@@ -399,9 +412,10 @@ function afficherMesInformationsPersonnelles(
 ): void {
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
-  render(
+  renderComponent(
     <MesInformationsPersonnelles
       mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel}
-    />
+    />,
+    { pathname: '/mes-informations-personnelles' }
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
@@ -13,17 +13,19 @@ export default function ClientContext({
   utilisateursParPage,
 }: ClientContextProps): ReactElement {
   const searchParams = useSearchParams()
+  const pathname = usePathname() as __next_route_internal_types__.StaticRoutes
   const router = useRouter()
 
   const clientContextProviderValue = useMemo(
     () => ({
+      pathname,
       roles,
       router,
       searchParams,
       sessionUtilisateurViewModel,
       utilisateursParPage,
     }),
-    [roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
+    [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
   )
 
   return (
@@ -36,6 +38,7 @@ export default function ClientContext({
 export const clientContext = createContext<ClientContextProviderValue>({} as ClientContextProviderValue)
 
 export type ClientContextProviderValue = Readonly<{
+  pathname: __next_route_internal_types__.StaticRoutes,
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
