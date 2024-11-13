@@ -6,11 +6,13 @@ import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
+  readonly #derniereConnexion: Date | null
   #role: Role
   #nom: Nom
   #prenom: Prenom
   #email: Email
   #telephone: Telephone
+  #inviteLe: Date
 
   private constructor(
     uid: UtilisateurUid,
@@ -19,6 +21,8 @@ export class Utilisateur extends Entity<UtilisateurState> {
     prenom: Prenom,
     email: Email,
     isSuperAdmin: boolean,
+    inviteLe: Date,
+    derniereConnexion: Date | null,
     telephone: Telephone
   ) {
     super(uid)
@@ -26,8 +30,10 @@ export class Utilisateur extends Entity<UtilisateurState> {
     this.#nom = nom
     this.#prenom = prenom
     this.#email = email
+    this.#derniereConnexion = derniereConnexion
     this.#isSuperAdmin = isSuperAdmin
     this.#telephone = telephone
+    this.#inviteLe = inviteLe
   }
 
   static create(utilisateur: UtilisateurParams): Utilisateur {
@@ -38,13 +44,18 @@ export class Utilisateur extends Entity<UtilisateurState> {
       new Prenom(utilisateur.prenom),
       new Email(utilisateur.email),
       utilisateur.isSuperAdmin,
+      utilisateur.inviteLe,
+      utilisateur.derniereConnexion,
       new Telephone(utilisateur.telephone ?? '')
     )
   }
 
   override state(): UtilisateurState {
     return {
+      derniereConnexion: this.#derniereConnexion ? this.#derniereConnexion.toJSON() : new Date(0).toJSON(),
       email: this.#email.state().value,
+      inviteLe: this.#inviteLe.toJSON(),
+      isActive: this.#derniereConnexion !== null,
       isSuperAdmin: this.#isSuperAdmin,
       nom: this.#nom.state().value,
       prenom: this.#prenom.state().value,
@@ -62,6 +73,8 @@ export class Utilisateur extends Entity<UtilisateurState> {
       new Prenom(params.prenom),
       new Email(params.email),
       params.isSuperAdmin,
+      params.inviteLe,
+      params.derniereConnexion,
       new Telephone(params.telephone ?? '')
     )
   }
@@ -90,6 +103,10 @@ export class Utilisateur extends Entity<UtilisateurState> {
     })
   }
 
+  changerLaDateDInvitation(inviteLe: Date): void {
+    this.#inviteLe = inviteLe
+  }
+
   changerRole(nouveauRole: TypologieRole): Result<UtilisateurFailure> {
     if (this.#isSuperAdmin) {
       this.#role = new Role(nouveauRole)
@@ -115,7 +132,10 @@ export class UtilisateurUid extends Uid<UtilisateurUidState> {
 
 export type UtilisateurState = Readonly<{
   uid: UtilisateurUidState
+  derniereConnexion: string
   email: string
+  inviteLe: string
+  isActive: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string
@@ -172,7 +192,9 @@ type UtilisateurUidState = Readonly<{ value: string }>
 
 type UtilisateurParams = Readonly<{
   uid: string
+  derniereConnexion: Date | null
   email: string
+  inviteLe: Date
   isSuperAdmin: boolean
   nom: string
   prenom: string

@@ -6,10 +6,12 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: Repository
   readonly #emailGatewayFactory: EmailGatewayFactory
+  readonly #date: Date
 
-  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory) {
+  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory, date: Date = new Date()) {
     this.#repository = repository
     this.#emailGatewayFactory = emailGatewayFactory
+    this.#date = date
   }
 
   async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
@@ -19,7 +21,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     if (!utilisateurCourant) {
       return 'KO'
     }
-    const utilisateurACreer = creerUtilisateurAInviter(command, utilisateurCourant)
+    const utilisateurACreer = this.#creerUtilisateurAInviter(command, utilisateurCourant)
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'KO'
     }
@@ -30,6 +32,38 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       return 'OK'
     }
     return 'emailExistant'
+  }
+
+  #creerUtilisateurAInviter(command: InviterUnUtilisateurCommand, utilisateurCourant: Utilisateur): Utilisateur {
+    const isSuperAdmin = utilisateurCourant.state().isSuperAdmin
+    return command.role
+      ? Utilisateur.create(this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin))
+      : utilisateurCourant.duMemeRole(this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin))
+  }
+  #toUtilisateurParams(
+    command: Required<InviterUnUtilisateurCommand>,
+    isSuperAdmin: boolean
+  ): UtilisateurCreateParam {
+    return {
+      ...this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin),
+      organisation: command.role.organisation,
+      role: command.role.type,
+    }
+  }
+
+  #toUtilisateurDuMemeRoleParams(
+    command: InviterUnUtilisateurCommand,
+    isSuperAdmin: boolean
+  ): UtilisateurDuMemeRoleParam {
+    return {
+      derniereConnexion: null,
+      email: command.email,
+      inviteLe: this.#date,
+      isSuperAdmin,
+      nom: command.nom,
+      prenom: command.prenom,
+      uid: command.email,
+    }
   }
 }
 
@@ -58,33 +92,3 @@ type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
 
 type UtilisateurDuMemeRoleParam = Parameters<typeof Utilisateur.prototype.duMemeRole>[0]
 
-function creerUtilisateurAInviter(command: InviterUnUtilisateurCommand, utilisateurCourant: Utilisateur): Utilisateur {
-  const isSuperAdmin = utilisateurCourant.state().isSuperAdmin
-  return command.role
-    ? Utilisateur.create(toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin))
-    : utilisateurCourant.duMemeRole(toUtilisateurDuMemeRoleParams(command, isSuperAdmin))
-}
-
-function toUtilisateurParams(
-  command: Required<InviterUnUtilisateurCommand>,
-  isSuperAdmin: boolean
-): UtilisateurCreateParam {
-  return {
-    ...toUtilisateurDuMemeRoleParams(command, isSuperAdmin),
-    organisation: command.role.organisation,
-    role: command.role.type,
-  }
-}
-
-function toUtilisateurDuMemeRoleParams(
-  command: InviterUnUtilisateurCommand,
-  isSuperAdmin: boolean
-): UtilisateurDuMemeRoleParam {
-  return {
-    email: command.email,
-    isSuperAdmin,
-    nom: command.nom,
-    prenom: command.prenom,
-    uid: command.email,
-  }
-}
