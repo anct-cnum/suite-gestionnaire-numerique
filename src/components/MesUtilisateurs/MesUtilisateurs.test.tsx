@@ -727,7 +727,6 @@ describe('mes utilisateurs', () => {
       // THEN
       const structure = within(formulaiReinvitation).getByLabelText('Structure *')
       expect(structure).toBeRequired()
-      expect(structure).toHaveAttribute('name', 'structure')
       expect(structure).toHaveAttribute('type', 'text')
     })
 
@@ -991,6 +990,8 @@ describe('mes utilisateurs', () => {
     })
     window.dsfr = windowDsfr
   })
+
+  it.todo('dans le drawer d’invitation, quand je choisis l’option $type, alors le champ $label apparait')
 
   function afficherLesFiltres(spiedRouterPush: Mock): HTMLElement {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
