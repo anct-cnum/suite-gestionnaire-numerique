@@ -259,7 +259,7 @@ describe('mes utilisateurs', () => {
         }
       }
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs' })
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
 
@@ -269,7 +269,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       await waitFor(() => {
-        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ uidUtilisateurAReinviter: '123456' })
+        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
@@ -380,8 +380,7 @@ describe('mes utilisateurs', () => {
       // GIVEN
       vi.spyOn(supprimerAction, 'supprimerUnUtilisateurAction').mockResolvedValueOnce('OK')
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
-      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs' })
       const { rowsBody } = getByTable()
       const columnsBody = within(rowsBody[1]).getAllByRole('cell')
       const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
@@ -395,8 +394,7 @@ describe('mes utilisateurs', () => {
       // THEN
       const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
       expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
-      expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith('123456')
-      expect(window.location.reload).toHaveBeenCalledOnce()
+      expect(supprimerAction.supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', utilisateurASupprimerUid: '123456' })
     })
   })
 

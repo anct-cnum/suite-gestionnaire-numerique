@@ -5,8 +5,8 @@ import { FormEvent, ReactElement, useContext } from 'react'
 import { changerMonRoleAction } from '../../../../../app/api/actions/changerMonRoleAction'
 import { clientContext } from '@/components/shared/ClientContext'
 
-export default function SelecteurRole(): ReactElement {
-  const { roles, sessionUtilisateurViewModel } = useContext(clientContext)
+export default function SelecteurRole({ ariaControlsId }: SelecteurRoleProps): ReactElement {
+  const { pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
     <div className="fr-select-group">
@@ -25,6 +25,7 @@ export default function SelecteurRole(): ReactElement {
         {
           roles.map((nom): ReactElement => (
             <option
+              aria-controls={ariaControlsId}
               key={nom}
               value={nom}
             >
@@ -37,9 +38,10 @@ export default function SelecteurRole(): ReactElement {
   )
 
   async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
-    await changerMonRoleAction(currentTarget.value)
-      .then(() => {
-        window.location.reload()
-      })
+    await changerMonRoleAction({ nouveauRole: currentTarget.value, path: pathname })
   }
 }
+
+type SelecteurRoleProps = Readonly<{
+  ariaControlsId: string
+}>

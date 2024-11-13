@@ -72,19 +72,19 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
     const roles = screen.getByRole('combobox', { name: 'Rôle' })
     const admin = within(roles).getByRole('option', { name: 'Administrateur dispositif' })
-    expect(admin).toBeInTheDocument()
+    expect(admin).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const gestionnaireDepartement = within(roles).getByRole('option', { name: 'Gestionnaire département' })
-    expect(gestionnaireDepartement).toBeInTheDocument()
+    expect(gestionnaireDepartement).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const gestionnaireGroupement = within(roles).getByRole('option', { name: 'Gestionnaire groupement' })
-    expect(gestionnaireGroupement).toBeInTheDocument()
+    expect(gestionnaireGroupement).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const gestionnaireRegion = within(roles).getByRole('option', { name: 'Gestionnaire région' })
-    expect(gestionnaireRegion).toBeInTheDocument()
+    expect(gestionnaireRegion).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const gestionnaireStructure = within(roles).getByRole('option', { name: 'Gestionnaire structure' })
-    expect(gestionnaireStructure).toBeInTheDocument()
+    expect(gestionnaireStructure).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const instructeur = within(roles).getByRole('option', { name: 'Instructeur' })
-    expect(instructeur).toBeInTheDocument()
+    expect(instructeur).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const pilotePolitiquePublique = within(roles).getByRole('option', { name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toBeInTheDocument()
+    expect(pilotePolitiquePublique).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const supportAnimation = within(roles).getByRole('option', { name: 'Support animation' })
     expect(supportAnimation).toHaveAttribute('selected', '')
   })
@@ -105,7 +105,6 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
-      vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
       vi.spyOn(changerAction, 'changerMonRoleAction').mockResolvedValueOnce('OK')
       const menuUtilisateur = ouvrirLeMenuUtilisateur()
       const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
@@ -115,23 +114,9 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // THEN
       await waitFor(() => {
-        expect(window.location.reload).toHaveBeenCalledOnce()
+        expect(changerAction.changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Instructeur', path: '/' })
       })
     })
-  })
-
-  it('quand je change de rôle avec un rôle invalide dans le sélecteur de rôle alors il ne se passe rien', () => {
-    // GIVEN
-    vi.stubGlobal('location', { ...window.location, reload: vi.fn() })
-    vi.spyOn(changerAction, 'changerMonRoleAction').mockResolvedValueOnce('utilisateurNonAutoriseAChangerSonRole')
-    const menuUtilisateur = ouvrirLeMenuUtilisateur()
-    const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
-
-    // WHEN
-    fireEvent.change(role, { target: { value: 'roleInvalide' } })
-
-    // THEN
-    expect(window.location.reload).not.toHaveBeenCalledOnce()
   })
 })
 
