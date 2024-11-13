@@ -66,7 +66,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           </Link>
         </li>
       </ul>
-      <SelecteurRole />
+      <SelecteurRole ariaControlsId={ariaControlsId} />
       <div className="fr-btns-group--center">
         <button
           className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}

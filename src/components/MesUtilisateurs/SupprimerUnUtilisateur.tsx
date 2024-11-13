@@ -1,5 +1,6 @@
-import { Dispatch, ReactElement, SetStateAction, useId } from 'react'
+import { Dispatch, ReactElement, SetStateAction, useContext, useId } from 'react'
 
+import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 
@@ -9,6 +10,7 @@ export default function SupprimerUnUtilisateur({
   utilisateurASupprimer,
   setIsOpen,
 }: SupprimerUnUtilisateurProps): ReactElement {
+  const { pathname } = useContext(clientContext)
   const modaleTitreId = useId()
 
   return (
@@ -61,10 +63,9 @@ export default function SupprimerUnUtilisateur({
     setIsOpen(false)
   }
 
-  async function supprimer(utilisateurASupprimerId: string): Promise<void> {
-    await supprimerUnUtilisateurAction(utilisateurASupprimerId)
+  async function supprimer(utilisateurASupprimerUid: string): Promise<void> {
+    await supprimerUnUtilisateurAction({ path: pathname, utilisateurASupprimerUid })
     close()
-    window.location.reload()
   }
 }
 
