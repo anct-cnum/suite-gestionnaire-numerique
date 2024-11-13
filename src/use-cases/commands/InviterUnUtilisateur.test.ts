@@ -1,4 +1,4 @@
-import { InviterUnUtilisateur } from './InviterUnUtilisateur'
+import { EmailGateway, InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
 import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
@@ -9,6 +9,7 @@ describe('inviter un utilisateur', () => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
     spiedDestinataire = ''
+    spiedIsSuperAdmin = null
   })
 
   describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter, quand il l’invite, celui-ci est enregistré et un e-mail lui est envoyé', () => {
@@ -76,8 +77,8 @@ describe('inviter un utilisateur', () => {
     ])('$desc', async ({ command, utilisateurACreer }) => {
       // GIVEN
       const repository = new RepositorySpy()
-      const emailGateway = new EmailGatewaySpy()
-      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGateway)
+      const emailGatewayFactory = emailGatewayFactorySpy
+      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
 
       // WHEN
       const result = await inviterUnUtilisateur.execute(command)
@@ -85,6 +86,8 @@ describe('inviter un utilisateur', () => {
       // THEN
       expect(result).toBe('OK')
       expect(spiedUtilisateurToAdd?.equals(Utilisateur.create(utilisateurACreer))).toBe(true)
+      expect(spiedDestinataire).toBe('martin.tartempion@example.com')
+      expect(spiedIsSuperAdmin).toBe(false)
     })
 
     it('un e-mail est envoyé à l’utilisateur', async () => {
@@ -96,22 +99,23 @@ describe('inviter un utilisateur', () => {
         uidUtilisateurCourant: 'utilisateurGestionnaireUid',
       }
       const repository = new RepositoryDummy()
-      const emailGateway = new EmailGatewaySpy()
-      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGateway)
+      const emailGatewayFactory = emailGatewayFactorySpy
+      const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
 
       // WHEN
       await inviterUnUtilisateur.execute(command)
 
       // THEN
       expect(spiedDestinataire).toBe('martin.tartempion@example.com')
+      expect(spiedIsSuperAdmin).toBe(false)
     })
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const emailGateway = new EmailGatewaySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGateway)
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -129,13 +133,14 @@ describe('inviter un utilisateur', () => {
     expect(spiedUidToFind).toBe('utilisateurGestionnaireUid')
     expect(spiedUtilisateurToAdd).toBeNull()
     expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 
   it('étant donné que le compte de l’utilisateur courant n’existe plus, quand il invite un autre utilisateur, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const emailGateway = new EmailGatewaySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGateway)
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -153,13 +158,14 @@ describe('inviter un utilisateur', () => {
     expect(spiedUidToFind).toBe('utilisateurInexistantUid')
     expect(spiedUtilisateurToAdd).toBeNull()
     expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositoryUtilisateurExisteDejaSpy()
-    const emailGateway = new EmailGatewaySpy()
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGateway)
+    const emailGatewayFactory = emailGatewayFactorySpy
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
       email: 'martin.tartempion@example.net',
@@ -181,6 +187,7 @@ describe('inviter un utilisateur', () => {
     })
     expect(spiedUtilisateurToAdd?.equals(utilisateurACreer)).toBe(true)
     expect(spiedDestinataire).toBe('')
+    expect(spiedIsSuperAdmin).toBeNull()
   })
 })
 
@@ -200,6 +207,7 @@ const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
 let spiedUidToFind = ''
 let spiedUtilisateurToAdd: Utilisateur | null = null
 let spiedDestinataire = ''
+let spiedIsSuperAdmin: boolean | null = null
 
 class RepositorySpy implements AddUtilisateurRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
@@ -231,9 +239,12 @@ class RepositoryDummy implements AddUtilisateurRepository, FindUtilisateurReposi
   }
 }
 
-class EmailGatewaySpy {
-  async send(destinataire: string): Promise<void> {
-    spiedDestinataire = destinataire
-    return Promise.resolve()
-  }
+function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
+  spiedIsSuperAdmin = isSuperAdmin
+  return new class implements EmailGateway {
+    async send(destinataire: string): Promise<void> {
+      spiedDestinataire = destinataire
+      return Promise.resolve()
+    }
+  }()
 }

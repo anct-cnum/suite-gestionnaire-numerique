@@ -1,6 +1,8 @@
 export const smtpFrom = 'communication@email.conseiller-numerique.gouv.fr'
+
 export const smtpReplyTo = 'conseiller-numerique@anct.gouv.fr'
-export function makeHtml(link: string): string {
+
+export function makeMjml(link: string): string {
   return `
     <mjml>
       <mj-head>
@@ -125,5 +127,5 @@ export function makeHtml(link: string): string {
         </mj-wrapper>
       </mj-body>
     </mjml>
-  `.trim()
+  `
 }

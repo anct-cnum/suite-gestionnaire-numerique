@@ -5,11 +5,11 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: Repository
-  readonly #emailGateway: EmailGateway
+  readonly #emailGatewayFactory: EmailGatewayFactory
 
-  constructor(repository: Repository, emailGateway: EmailGateway) {
+  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory) {
     this.#repository = repository
-    this.#emailGateway = emailGateway
+    this.#emailGatewayFactory = emailGatewayFactory
   }
 
   async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
@@ -27,7 +27,8 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     }
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
-      await this.#emailGateway.send(command.email)
+      const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
+      await emailGateway.send(command.email)
       return 'OK'
     }
     return 'emailExistant'
@@ -45,13 +46,15 @@ export type InviterUnUtilisateurCommand = Readonly<{
   }>
 }>
 
-interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
-
 export interface EmailGateway {
   send: (destinataire: string) => Promise<void>
 }
 
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
+
+interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
+
+type EmailGatewayFactory = (isSuperAdmin: boolean) => EmailGateway
 
 type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
 
