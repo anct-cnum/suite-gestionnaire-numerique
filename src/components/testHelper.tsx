@@ -1,5 +1,6 @@
 import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
+import { ToastContainer } from 'react-toastify'
 
 import { clientContext, ClientContextProviderValue } from '@/components/shared/ClientContext'
 // eslint-disable-next-line import/no-restricted-paths
@@ -39,6 +40,7 @@ export function renderComponent(
       ...clientContextProviderValueOverride,
     }}
     >
+      <ToastContainer />
       {children}
     </clientContext.Provider>
   )

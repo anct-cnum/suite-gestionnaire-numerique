@@ -1,6 +1,6 @@
-import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'react'
+import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react'
 
-import { clientContext } from '../shared/ClientContext'
+import { Notification } from '../shared/Notification/Notification'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 
 export default function ReinviterUnUtilisateur({
@@ -10,8 +10,6 @@ export default function ReinviterUnUtilisateur({
   setIsOpen,
   dialogRef,
 }: DetailsUtilisateurProps): ReactElement {
-  const { setBandeauInformations } = useContext(clientContext)
-
   return (
     <div>
       <h1
@@ -45,7 +43,7 @@ export default function ReinviterUnUtilisateur({
   async function Reinviter(): Promise<void> {
     await reinviterUnUtilisateurAction({ email: utilisateur.email })
     close()
-    setBandeauInformations({ description: utilisateur.email, titre: 'Invitation envoyée à ' })
+    Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
   }
 
   function close(): void {
