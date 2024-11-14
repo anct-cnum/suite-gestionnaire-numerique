@@ -1,6 +1,7 @@
 import Script from 'next/script'
 import { PropsWithChildren, ReactElement } from 'react'
 
+import 'react-toastify/dist/ReactToastify.css'
 import '@gouvfr/dsfr/dist/dsfr.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css'

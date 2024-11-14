@@ -5,6 +5,7 @@ import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContex
 import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
+import { Notification } from '../shared/Notification/Notification'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
@@ -17,7 +18,7 @@ export default function InviterUnUtilisateur({
   dialogRef,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
-  const { setBandeauInformations, sessionUtilisateurViewModel } = useContext(clientContext)
+  const { sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
   const nomId = useId()
   const prenomId = useId()
@@ -154,7 +155,7 @@ export default function InviterUnUtilisateur({
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     } else {
       if (result === 'OK') {
-        setBandeauInformations({ description: email, titre: 'Invitation envoyée à ' })
+        Notification('success', { description: email, title: 'Invitation envoyée à ' })
         setEmailDejaExistant('')
       }
       fermerEtReinitialiser(event.target as HTMLFormElement)

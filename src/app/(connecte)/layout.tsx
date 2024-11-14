@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
+import { ToastContainer } from 'react-toastify'
 
 import prisma from '../../../prisma/prismaClient'
-import Bandeau from '@/components/shared/Bandeau/Bandeau'
 import ClientContext from '@/components/shared/ClientContext'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
@@ -51,8 +51,8 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
       utilisateursParPage={config.utilisateursParPage}
     >
       <LienEvitement />
+      <ToastContainer style={{ width: '30rem' }} />
       <EnTete />
-      <Bandeau />
       <main
         className="fr-container--fluid fr-mx-5w"
         id="content"

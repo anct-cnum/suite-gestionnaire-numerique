@@ -1,0 +1,11 @@
+.toastify-success {
+  --toastify-color-light: var(--background-contrast-success);
+  --toastify-text-color-light: var(--text-default-success);
+  --toastify-color-progress-light: var(--text-default-success);
+}
+
+.toastify-error {
+  --toastify-color-light: var(--background-contrast-error);
+  --toastify-text-color-light: var(--text-default-error);
+  --toastify-color-progress-light: var(--text-default-error);
+}

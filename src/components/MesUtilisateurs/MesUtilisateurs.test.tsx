@@ -249,7 +249,6 @@ describe('mes utilisateurs', () => {
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
-      const setBandeauInformations = vi.fn()
       vi.spyOn(reinviterUnUtilisateurAction, 'reinviterUnUtilisateurAction').mockResolvedValueOnce('OK')
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
@@ -260,10 +259,7 @@ describe('mes utilisateurs', () => {
         }
       }
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
-      renderComponent(
-        <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-        { setBandeauInformations }
-      )
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
 
@@ -277,7 +273,8 @@ describe('mes utilisateurs', () => {
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
-      expect(setBandeauInformations).toHaveBeenCalledWith({ description: 'julien.deschamps@example.com', titre: 'Invitation envoyée à ' })
+      const notification = screen.getByRole('alert')
+      expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
       window.dsfr = windowDsfr
     })
 
@@ -809,7 +806,6 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      const setBandeauInformations = vi.fn()
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], '7396c91e-b9f2-4f9d-8547-5e9b3332725b', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -831,7 +827,6 @@ describe('mes utilisateurs', () => {
               ],
             },
           }),
-          setBandeauInformations,
         }
       )
       const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
@@ -859,10 +854,8 @@ describe('mes utilisateurs', () => {
       expect(messageDErreur).toBeInTheDocument()
       const absenceMessageDErreur = await within(formulaiReinvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       expect(absenceMessageDErreur).not.toBeInTheDocument()
-      expect(setBandeauInformations).toHaveBeenCalledWith({
-        description: 'martin.tartempion@example.com',
-        titre: 'Invitation envoyée à ',
-      })
+      const notification = screen.getByRole('alert')
+      expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
       expect(formulaiReinvitation).not.toHaveAttribute('open', '')
       expect(nom).toHaveValue('')
       expect(prenom).toHaveValue('')
