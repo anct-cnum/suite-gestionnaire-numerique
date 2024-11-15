@@ -99,7 +99,7 @@ describe('inviter un utilisateur', () => {
     ])('$desc puis un e-mail lui est envoyé',
       async ({ utilisateurCourant, utilisateurAInviter }) => {
         // GIVEN
-        const date = new Date()
+        const date = new Date('2024-01-01')
         const command = inviterUnUtilisateurCommandFactory({
           role: {
             organisation: utilisateurAInviter.organisation,
@@ -194,7 +194,7 @@ describe('inviter un utilisateur', () => {
 
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
-    const date = new Date()
+    const date = new Date('2024-01-01')
     const utilisateurACreer = utilisateurFactory({
       derniereConnexion: null,
       inviteLe: date,

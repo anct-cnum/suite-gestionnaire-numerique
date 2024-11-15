@@ -12,7 +12,7 @@ export interface DropUtilisateurByUidRepository {
   dropByUid: (uid: UtilisateurUid) => Promise<boolean>
 }
 
-export interface UpdateUtilisateurRepository extends FindUtilisateurRepository {
+export interface UpdateUtilisateurRepository {
   update: (utilisateur: Utilisateur) => Promise<void>
 }
 

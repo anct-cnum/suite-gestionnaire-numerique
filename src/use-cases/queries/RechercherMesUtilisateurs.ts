@@ -1,5 +1,5 @@
-import { UnUtilisateurLoader } from './RechercherUnUtilisateur'
 import { QueryHandler } from '../QueryHandler'
+import { UnUtilisateurLoader } from './RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import config from '@/use-cases/config.json'
 

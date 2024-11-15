@@ -262,8 +262,9 @@ describe('utilisateur repository', () => {
   describe('mise à jour d’un utilisateur', () => {
     const repository = new PostgreUtilisateurRepository(prisma)
 
-    it('changement du rôle, du nom, du prénom et de l’email', async () => {
+    it('changement du rôle, du nom, du prénom, de la date d’invitation et de l’email', async () => {
       // GIVEN
+      const date = new Date(0)
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory(),
       })
@@ -271,6 +272,7 @@ describe('utilisateur repository', () => {
       // WHEN
       await repository.update(utilisateurFactory({
         email: 'martine.dugenoux@example.org',
+        inviteLe: date,
         nom: 'Dugenoux',
         prenom: 'Martine',
         role: 'Instructeur',
@@ -287,6 +289,7 @@ describe('utilisateur repository', () => {
       expect(updatedRecord?.nom).toBe('Dugenoux')
       expect(updatedRecord?.prenom).toBe('Martine')
       expect(updatedRecord?.email).toBe('martine.dugenoux@example.org')
+      expect(updatedRecord?.inviteLe).toStrictEqual(date)
     })
   })
 
