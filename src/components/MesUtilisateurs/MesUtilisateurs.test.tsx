@@ -728,9 +728,8 @@ describe('mes utilisateurs', () => {
       fireEvent.click(gestionnaireDepartement)
 
       // THEN
-      const structure = within(formulaiReinvitation).getByLabelText('Structure *')
+      const structure = within(formulaiReinvitation).getByLabelText('Département *')
       expect(structure).toBeRequired()
-      expect(structure).toHaveAttribute('name', 'structure')
       expect(structure).toHaveAttribute('type', 'text')
     })
 
@@ -846,10 +845,8 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = within(formulaiReinvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const gestionnaireRegion = within(formulaiReinvitation).getByLabelText('Gestionnaire région')
-      fireEvent.click(gestionnaireRegion)
-      const structure = within(formulaiReinvitation).getByLabelText('Structure *')
-      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const administrateurDispositif = within(formulaiReinvitation).getByLabelText('Administrateur dispositif')
+      fireEvent.click(administrateurDispositif)
       const envoyerInvitation = await within(formulaiReinvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
       const messageDErreur = await within(formulaiReinvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
@@ -867,7 +864,6 @@ describe('mes utilisateurs', () => {
       expect(nom).toHaveValue('')
       expect(prenom).toHaveValue('')
       expect(email).toHaveValue('')
-      expect(structure).toHaveValue('')
       roleRadios.forEach((roleRadio) => {
         expect(roleRadio).not.toBeChecked()
       })
@@ -912,10 +908,8 @@ describe('mes utilisateurs', () => {
       fireEvent.change(prenom, { target: { value: 'Martin' } })
       const email = within(formulaiReinvitation).getByLabelText(/Adresse électronique/)
       fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const gestionnaireRegion = within(formulaiReinvitation).getByLabelText('Gestionnaire région')
-      fireEvent.click(gestionnaireRegion)
-      const structure = within(formulaiReinvitation).getByLabelText('Structure *')
-      fireEvent.change(structure, { target: { value: 'La Poste' } })
+      const administrateurDispositif = within(formulaiReinvitation).getByLabelText('Administrateur dispositif')
+      fireEvent.click(administrateurDispositif)
       const envoyerInvitation = await within(formulaiReinvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
 
@@ -974,10 +968,8 @@ describe('mes utilisateurs', () => {
     fireEvent.change(prenom, { target: { value: 'Martin' } })
     const email = within(formulaiReinvitation).getByLabelText(/Adresse électronique/)
     fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const gestionnaireRegion = within(formulaiReinvitation).getByLabelText('Gestionnaire région')
-    fireEvent.click(gestionnaireRegion)
-    const structure = within(formulaiReinvitation).getByLabelText('Structure *')
-    fireEvent.change(structure, { target: { value: 'La Poste' } })
+    const administrateurDispositif = within(formulaiReinvitation).getByLabelText('Administrateur dispositif')
+    fireEvent.click(administrateurDispositif)
     const envoyerInvitation = await within(formulaiReinvitation).findByRole('button', { name: 'Envoyer l’invitation' })
     fireEvent.click(envoyerInvitation)
 
@@ -992,7 +984,6 @@ describe('mes utilisateurs', () => {
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
-    expect(structure).toHaveValue('')
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })

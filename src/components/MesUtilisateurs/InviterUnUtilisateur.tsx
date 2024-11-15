@@ -2,14 +2,35 @@
 
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
+import StructureInput from './StructureInput'
+import departements from '../../../ressources/departements.json'
+import groupements from '../../../ressources/groupements.json'
+import regions from '../../../ressources/regions.json'
 import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 
-// A DEPLACER DANS LE DOMAINE
-const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
+// TODO: A DEPLACER DANS LE DOMAINE
+const rolesAvecStructure: RolesAvecStructure = {
+  'Gestionnaire département': {
+    label: 'Département',
+    options: departements.map((departement) => ({ id: departement.code, label: departement.nom })),
+  },
+  'Gestionnaire groupement': {
+    label: 'Groupement',
+    options: groupements.map((groupement) => ({ id: groupement.nom, label: groupement.nom })),
+  },
+  'Gestionnaire région': {
+    label: 'Région',
+    options: regions.map((region) => ({ id: region.code, label: region.nom })),
+  },
+  'Gestionnaire structure': {
+    label: 'Structure',
+    options: [],
+  },
+}
 
 export default function InviterUnUtilisateur({
   setIsOpen,
@@ -122,16 +143,11 @@ export default function InviterUnUtilisateur({
         }
         {
           isStructureDisplayed() ?
-            <TextInput
-              id={structureId}
-              name="structure"
-              required={true}
-            >
-              {'Structure '}
-              <span className="color-red">
-                *
-              </span>
-            </TextInput> : null
+            <StructureInput
+              label={rolesAvecStructure[roleSelectionne].label}
+              options={rolesAvecStructure[roleSelectionne].options}
+              structureId={structureId}
+            /> : null
         }
         <button
           className="fr-btn fr-my-2w drawer-invitation-button"
@@ -162,7 +178,7 @@ export default function InviterUnUtilisateur({
   }
 
   function isStructureDisplayed(): boolean {
-    return gestionnaires.length > 1 && rolesAvecStructure.includes(roleSelectionne)
+    return gestionnaires.length > 1 && Object.keys(rolesAvecStructure).includes(roleSelectionne)
   }
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
@@ -177,3 +193,8 @@ type InviterUnUtilisateurProps = Readonly<{
   labelId: string
   dialogRef: RefObject<HTMLDialogElement>
 }>
+
+type RolesAvecStructure = Readonly<Record<string, {
+  label: string,
+  options: Array<{id: string, label: string}>
+}>>
