@@ -1,12 +1,12 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisateurCommand> {
-  readonly #repository: UpdateUtilisateurRepository
+  readonly #repository: Repository
   readonly #date: Date
 
-  constructor(repository: UpdateUtilisateurRepository, date: Date = new Date()) {
+  constructor(repository: Repository, date: Date = new Date()) {
     this.#repository = repository
     this.#date = date
   }
@@ -44,3 +44,5 @@ export type ReinviterUnUtilisateurCommand = Readonly<{
   uidUtilisateurAReinviter: string
   uidUtilisateurCourant: string
 }>
+
+interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

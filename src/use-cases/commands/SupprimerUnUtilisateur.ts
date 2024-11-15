@@ -1,8 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import {
-  DropUtilisateurRepository,
-  FindUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class SupprimerUnUtilisateur implements CommandHandler<Command> {
