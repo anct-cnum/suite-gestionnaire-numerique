@@ -1,12 +1,25 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect } from 'react'
 import Select, { StylesConfig } from 'react-select'
 
-export default function StructureInput({ structureId, label, options }: StructureInputProps): ReactElement {
-  const [value, setValue] = useState<unknown>()
+export default function StructureInput({
+  structureId,
+  label,
+  options,
+  organisation,
+  setOrganisation,
+}: StructureInputProps): ReactElement {
+  useEffect(() => {
+    setOrganisation(undefined)
+  }, [label, setOrganisation])
 
   useEffect(() => {
-    setValue(null)
-  }, [label])
+    const getStructures = async (): Promise<void> => {
+      // const structures = await fetch('/api/structures?search=abc')
+      // console.log('==============', structures)
+    }
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    getStructures()
+  }, [])
 
   return (
     <div className="fr-select-group">
@@ -25,13 +38,15 @@ export default function StructureInput({ structureId, label, options }: Structur
         inputId={structureId}
         instanceId={structureId}
         isClearable={true}
+        menuPlacement="auto"
         name={structureId}
-        onChange={setValue}
+        noOptionsMessage={() => 'Pas de résultat'}
+        onChange={setOrganisation as (organisation: unknown) => void}
         options={options}
         placeholder=""
         required={true}
         styles={styles}
-        value={value}
+        value={organisation}
       />
     </div>
   )
@@ -41,6 +56,8 @@ type StructureInputProps = Readonly<{
   structureId: string
   label: string
   options: Array<{id: string, label: string}>
+  organisation: OrganisationOption | undefined
+  setOrganisation: (organisation: OrganisationOption | undefined) => void
 }>
 
 const styles: StylesConfig = {
@@ -53,17 +70,13 @@ const styles: StylesConfig = {
     color: 'var(--text-default-grey)',
     cursor: 'pointer',
   }),
-  option: (styles, { isFocused, isSelected }) => {
-    const backgroundColor = isSelected ? '#bbb' : isFocused ? '#dfdfdf' : undefined
-
-    return {
-      ...styles,
-      backgroundColor,
-      borderBottom: '1px solid #ddd',
-      color: '#222',
-      cursor: 'pointer',
-    }
-  },
+  option: (styles, { isFocused }) => ({
+    ...styles,
+    backgroundColor: isFocused ? '#dfdfdf' : undefined,
+    borderBottom: '1px solid #ddd',
+    color: '#222',
+    cursor: 'pointer',
+  }),
 }
 
 function DropdownIndicator(): ReactElement {
@@ -77,3 +90,8 @@ function DropdownIndicator(): ReactElement {
     </svg>
   )
 }
+
+export type OrganisationOption = Readonly<{
+  id: string
+  label: string
+}>
