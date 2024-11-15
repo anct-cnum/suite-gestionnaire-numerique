@@ -4,6 +4,7 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } fr
 import styles from './SupprimerMonCompte.module.css'
 import { supprimerMonCompteAction } from '../../app/api/actions/supprimerMonCompteAction'
 import Modale from '../shared/Modale/Modale'
+import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const [emailValidationInfo, setEmailValidationInfo] =
@@ -51,7 +52,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
               className={`fr-input ${emailValidationInfo.inputClass}`}
               id={champEmailId}
               onInput={handleInput}
-              pattern=".+@.+\..{2,}"
+              pattern={emailPattern.source}
               required={true}
               type="email"
             />

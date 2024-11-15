@@ -2,6 +2,7 @@ import { Role, TypologieRole, type RoleState } from './Role'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { isEmpty, Result } from '@/shared/lang'
+import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
@@ -128,10 +129,6 @@ export type UtilisateurFailure =
   | 'nomAbsent'
   | 'emailInvalide'
   | 'telephoneInvalide'
-
-const emailPattern = /.+@.+\..{2,}/
-
-const telephonePattern = /\+[0-9]{11,12}|[0-9]{10}/
 
 class Nom extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {
