@@ -19,6 +19,7 @@
   "mutate": [
     "src/**/*.ts",
     "!src/**/*.test.ts",
+    "!src/**/testHelper.ts",
     "!src/gateways/ProConnectAuthentificationGateway.ts"
   ],
   "packageManager": "yarn",

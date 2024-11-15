@@ -1,5 +1,5 @@
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
-import { UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
@@ -9,9 +9,9 @@ describe('réinviter un utilisateur', () => {
     spiedUtilisateurToUpdate = null
   })
 
-  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à réinviter, quand il le réinvite, la date d’invitation a été mise à jour', async () => {
+  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à réinviter, quand il le réinvite, la date d’invitation est mise à jour', async () => {
     // GIVEN
-    const date = new Date()
+    const date = new Date('2024-01-01')
     const repository = new RepositorySpy()
     const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, date)
     const command = {
@@ -131,7 +131,7 @@ const utilisateursByUid: Record<string, Utilisateur> = {
 let spiedUidToFind = ''
 let spiedUtilisateurToUpdate: Utilisateur | null = null
 
-class RepositorySpy implements UpdateUtilisateurRepository {
+class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
     const uidValue = uid.state().value
     spiedUidToFind = uidValue

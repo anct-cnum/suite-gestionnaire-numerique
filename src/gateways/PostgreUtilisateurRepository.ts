@@ -82,6 +82,7 @@ export class PostgreUtilisateurRepository implements UtilisateurRepository {
     await this.#activeRecord.update({
       data: {
         email: utilisateurState.email,
+        inviteLe: utilisateurState.inviteLe,
         nom: utilisateurState.nom,
         prenom: utilisateurState.prenom,
         role: fromTypologieRole(utilisateurState.role.nom),
