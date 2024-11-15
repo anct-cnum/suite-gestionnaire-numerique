@@ -4,6 +4,7 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } fr
 
 import { modifierMesInformationsPersonnellesAction } from '../../app/api/actions/modifierMesInformationsPersonnellesAction'
 import TextInput from '../shared/TextInput/TextInput'
+import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export default function ModifierMonCompte({
   email,
@@ -73,7 +74,7 @@ export default function ModifierMonCompte({
           defaultValue={email}
           id={emailId}
           name="email"
-          pattern=".+@.+\..{2,}"
+          pattern={emailPattern.source}
           required={true}
           type="email"
         >
@@ -91,7 +92,7 @@ export default function ModifierMonCompte({
           defaultValue={telephone}
           id={telephoneId}
           name="telephone"
-          pattern="\+[0-9]{11,12}|[0-9]{10}"
+          pattern={telephonePattern.source}
           required={false}
           type="tel"
         >

@@ -8,6 +8,7 @@ import { clientContext } from '../shared/ClientContext'
 import { Notification } from '../shared/Notification/Notification'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
+import { emailPattern } from '@/shared/patterns'
 
 // A DEPLACER DANS LE DOMAINE
 const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
@@ -77,7 +78,7 @@ export default function InviterUnUtilisateur({
           erreur={emailDejaExistant}
           id={emailId}
           name="email"
-          pattern=".+@.+\..{2,}"
+          pattern={emailPattern.source}
           required={true}
           type="email"
         >
