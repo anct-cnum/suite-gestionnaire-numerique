@@ -1,64 +1,67 @@
 import { Roles } from './Role'
-import { Utilisateur } from './Utilisateur'
+import { utilisateurFactory } from './testHelper'
 
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
-    describe('l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur', () => {
-      describe.each([
-        'Administrateur dispositif',
-        'Instructeur',
-        'Pilote politique publique',
-        'Support animation',
-      ] as const)('%s peut gérer', (roleGerant) => {
-        it.each(Roles)('%s', (roleAGerer) => {
-          // GIVEN
-          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role: roleGerant })
-          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
+    describe(
+      'l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur',
+      () => {
+        describe.each([
+          'Administrateur dispositif',
+          'Instructeur',
+          'Pilote politique publique',
+          'Support animation',
+        ] as const)('%s peut gérer', (roleGerant) => {
+          it.each(Roles)('%s', (roleAGerer) => {
+            // GIVEN
+            const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role: roleGerant })
+            const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, role: roleAGerer })
 
-          // WHEN
-          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
+            // WHEN
+            const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
-          // THEN
-          expect(peutGerer).toBe(true)
+            // THEN
+            expect(peutGerer).toBe(true)
+          })
         })
-      })
-    })
+      }
+    )
 
     describe('l’utilisateur appartient au groupe "gestionnaire"', () => {
       describe.each([
         {
+          codeOrganisation: 'Rhône',
+          codeOrganisationAutre: 'Aude',
           nePeutGererDesc: 'ne peut gérer de gestionnaire d’un autre département que le sien',
-          organisation: 'Rhône',
-          organisationAutre: 'Aude',
           peutGererDesc: 'peut gérer un gestionnaire du même départment que le sien',
           role: 'Gestionnaire département' as const,
         },
         {
+          codeOrganisation: '21',
+          codeOrganisationAutre: '14',
           nePeutGererDesc: 'ne peut gérer de gestionnaire d’un autre groupement que le sien',
-          organisation: 'Hubikoop',
-          organisationAutre: 'Hubi',
           peutGererDesc: 'peut gérer un gestionnaire du même groupement que le sien',
           role: 'Gestionnaire groupement' as const,
         },
         {
+          codeOrganisation: 'Auvergne-Rhône-Alpes',
+          codeOrganisationAutre: 'Normandie',
           nePeutGererDesc: 'ne peut gérer de gestionnaire d’une autre région que la sienne',
-          organisation: 'Auvergne-Rhône-Alpes',
-          organisationAutre: 'Normandie',
           peutGererDesc: 'peut gérer un gestionnaire de la même région que la sienne',
           role: 'Gestionnaire région' as const,
         },
         {
+          codeOrganisation: '781',
+          codeOrganisationAutre: '782',
           nePeutGererDesc: 'ne peut gérer de gestionnaire de la même structure que la sienne',
-          organisation: 'La Poste',
-          organisationAutre: 'SNCF',
           peutGererDesc: 'peut gérer un gestionnaire de la même structure que la sienne',
           role: 'Gestionnaire structure' as const,
         },
-      ])('$role', ({ role, nePeutGererDesc, peutGererDesc, organisation, organisationAutre }) => {
+      ])('$role', ({ role, nePeutGererDesc, peutGererDesc, codeOrganisation, codeOrganisationAutre }) => {
         it.each(Roles.filter((r) => role !== r))('ne peut gérer %s', (roleAGerer) => {
           // GIVEN
-          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role })
-          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
+          const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role })
+          const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, role: roleAGerer })
 
           // WHEN
           const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
@@ -69,14 +72,10 @@ describe('utilisateur', () => {
 
         it(nePeutGererDesc, () => {
           // GIVEN
-          const utilisateurGerant = Utilisateur.create({
+          const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, codeOrganisation, role })
+          const utilisateurAGerer = utilisateurFactory({
             ...utilisateurProps,
-            codeOrganisation: organisation,
-            role,
-          })
-          const utilisateurAGerer = Utilisateur.create({
-            ...utilisateurProps,
-            codeOrganisation: organisationAutre,
+            codeOrganisation: codeOrganisationAutre,
             role,
           })
 
@@ -89,16 +88,8 @@ describe('utilisateur', () => {
 
         it(peutGererDesc, () => {
           // GIVEN
-          const utilisateurGerant = Utilisateur.create({
-            ...utilisateurProps,
-            codeOrganisation: organisation,
-            role,
-          })
-          const utilisateurAGerer = Utilisateur.create({
-            ...utilisateurProps,
-            codeOrganisation: organisation,
-            role,
-          })
+          const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, codeOrganisation, role })
+          const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, codeOrganisation, role })
 
           // WHEN
           const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
@@ -112,7 +103,6 @@ describe('utilisateur', () => {
 })
 
 const utilisateurProps = {
-  derniereConnexion: null,
   email: 'martin.tartempion@example.net',
   inviteLe: new Date(0),
   isSuperAdmin: false,

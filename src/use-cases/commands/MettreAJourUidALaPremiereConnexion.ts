@@ -1,6 +1,7 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { UtilisateurUid } from '@/domain/Utilisateur'
+import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Command> {
   readonly #repository: Repository
@@ -16,7 +17,7 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
       return 'comptePremiereConnexionInexistant'
     }
 
-    const utilisateurAvecNouvelUid = utilisateurAvecUidEgalEmail.avecNouvelUid(command.uid)
+    const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurAvecUidEgalEmail, command.uid)
     await this.#repository.updateUid(utilisateurAvecNouvelUid)
     return 'ok'
   }
