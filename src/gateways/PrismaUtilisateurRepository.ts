@@ -1,7 +1,9 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { fromTypologieRole, organisation, toTypologieRole } from './shared/RoleMapper'
+import { fromTypologieRole, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { DepartementState } from '@/domain/Departement'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
@@ -56,17 +58,20 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     if (!record) {
       return null
     }
-    return Utilisateur.create({
-      codeOrganisation: organisation(record),
-      derniereConnexion: record.derniereConnexion,
+    return new UtilisateurFactory({
+      departement: mapDepartement(record.relationDepartement),
+      derniereConnexion: record.derniereConnexion ?? undefined,
       email: record.email,
+      groupementUid: record.relationGroupement?.id,
       inviteLe: record.inviteLe,
       isSuperAdmin: record.isSuperAdmin,
       nom: record.nom,
       prenom: record.prenom,
-      role: toTypologieRole(record.role),
+      region: record.relationRegion ?? undefined,
+      structureUid: record.relationStructure?.id,
+      telephone: record.telephone,
       uid: record.ssoId,
-    })
+    }).create(toTypologieRole(record.role))
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {
@@ -129,4 +134,15 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         throw error
       })
   }
+}
+
+function mapDepartement(relationDepartement: UtilisateurEtSesRelationsRecord['relationDepartement']): DepartementState | undefined {
+  if (relationDepartement) {
+    return {
+      code: relationDepartement.code,
+      codeRegion: relationDepartement.regionCode,
+      nom: relationDepartement.nom,
+    }
+  }
+  return undefined
 }

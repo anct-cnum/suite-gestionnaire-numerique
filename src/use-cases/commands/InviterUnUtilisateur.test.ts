@@ -118,7 +118,6 @@ describe('inviter un utilisateur', () => {
         const repository = new RepositorySpy(
           utilisateurFactory({
             codeOrganisation: utilisateurCourant.codeOrganisation,
-            derniereConnexion: null,
             inviteLe: date,
             isSuperAdmin: utilisateurCourant.isSuperAdmin,
             role: utilisateurCourant.role,
@@ -136,7 +135,6 @@ describe('inviter un utilisateur', () => {
         // THEN
         const expectedUtilisateurInvite = utilisateurFactory({
           codeOrganisation: utilisateurAInviter.codeOrganisation,
-          derniereConnexion: null,
           email: 'martine.dugenoux@example.com',
           inviteLe: date,
           isSuperAdmin: utilisateurCourant.isSuperAdmin,
@@ -209,7 +207,6 @@ describe('inviter un utilisateur', () => {
     // GIVEN
     const date = new Date('2024-01-01')
     const utilisateurACreer = utilisateurFactory({
-      derniereConnexion: null,
       inviteLe: date,
       telephone: '',
       uid: 'martin.tartempion@example.net',

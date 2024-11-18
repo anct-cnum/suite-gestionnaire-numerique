@@ -1,27 +1,11 @@
-import { Entity, Uid } from './shared/Model'
-
-export class Structure extends Entity<StructureState> {
-  readonly #nom: string
-
-  constructor(uid: StructureUid, nom: string) {
-    super(uid)
-    this.#nom = nom
-  }
-
-  state(): StructureState {
-    return {
-      nom: this.#nom,
-      uid: this.uid.state(),
-    }
-  }
-}
+import { Uid } from './shared/Model'
 
 export type StructureState = Readonly<{
   uid: StructureUidState
   nom: string
 }>
 
-class StructureUid extends Uid<StructureUidState> {}
+export class StructureUid extends Uid<StructureUidState> {}
 
 type StructureUidState = Readonly<{ value: number }>
 

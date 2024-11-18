@@ -53,61 +53,105 @@ describe('utilisateur repository', () => {
     })
 
     describe('l’utilisateur existe : les données utilisateur sont reçues', () => {
+      const structureId = 10
+      const departementCode = '75'
+      const groupementId = 10
+      const regionCode = '11'
+
       it.each([
         {
-          codeOrganisation: 'Paris',
+          createRecordWith: {
+            departementCode,
+            role: 'gestionnaire_departement' as const,
+          },
           desc: 'pour un gestionnaire département : avec la référence au département',
-          role: 'Gestionnaire département' as const,
-          roleDataRepresentation: 'gestionnaire_departement' as const,
+          expected: {
+            departement: {
+              code: departementCode,
+              codeRegion: regionCode,
+              nom: 'Paris',
+            },
+            role: 'Gestionnaire département' as const,
+          },
         },
         {
-          codeOrganisation: 'Île-de-France',
+          createRecordWith: {
+            regionCode,
+            role: 'gestionnaire_region' as const,
+          },
           desc: 'pour un gestionnaire région : avec la référence à la région',
-          role: 'Gestionnaire région' as const,
-          roleDataRepresentation: 'gestionnaire_region' as const,
+          expected: {
+            region: {
+              code: regionCode,
+              nom: 'Île-de-France',
+            },
+            role: 'Gestionnaire région' as const,
+          },
         },
         {
-          codeOrganisation: 'Solidarnum',
+          createRecordWith: {
+            role: 'gestionnaire_structure' as const,
+            structureId,
+          },
           desc: 'pour un gestionnaire structure : avec la référence à la structure',
-          role: 'Gestionnaire structure' as const,
-          roleDataRepresentation: 'gestionnaire_structure' as const,
+          expected: {
+            role: 'Gestionnaire structure' as const,
+            structureUid: structureId,
+          },
         },
         {
-          codeOrganisation: 'Hubikoop',
+          createRecordWith: {
+            groupementId,
+            role: 'gestionnaire_groupement' as const,
+          },
           desc: 'pour un gestionnaire groupement : avec la référence au groupement',
-          role: 'Gestionnaire groupement' as const,
-          roleDataRepresentation: 'gestionnaire_groupement' as const,
+          expected: {
+            groupementUid: groupementId,
+            role: 'Gestionnaire groupement' as const,
+          },
         },
         {
-          codeOrganisation: 'Administrateur Dispositif lambda',
+          createRecordWith: {
+            role: 'administrateur_dispositif' as const,
+          },
           desc: 'pour un administrateur dispositif',
-          role: 'Administrateur dispositif' as const,
-          roleDataRepresentation: 'administrateur_dispositif' as const,
+          expected: {
+            organisation: 'Administrateur Dispositif lambda',
+            role: 'Administrateur dispositif' as const,
+          },
         },
         {
-          codeOrganisation: 'Banque des territoires',
+          createRecordWith: {
+            role: 'instructeur' as const,
+          },
           desc: 'pour un instructeur',
-          role: 'Instructeur' as const,
-          roleDataRepresentation: 'instructeur' as const,
+          expected: {
+            organisation: 'Banque des territoires',
+            role: 'Instructeur' as const,
+          },
         },
         {
-          codeOrganisation: 'Mednum',
+          createRecordWith: {
+            role: 'support_animation' as const,
+          },
           desc: 'pour un support animation',
-          role: 'Support animation' as const,
-          roleDataRepresentation: 'support_animation' as const,
+          expected: {
+            organisation: 'Mednum',
+            role: 'Support animation' as const,
+          },
         },
         {
-          codeOrganisation: 'France Numérique Ensemble',
+          createRecordWith: {
+            role: 'pilote_politique_publique' as const,
+          },
           desc: 'pour un pilote politique publique',
-          role: 'Pilote politique publique' as const,
-          roleDataRepresentation: 'pilote_politique_publique' as const,
+          expected: {
+            organisation: 'France Numérique Ensemble',
+            role: 'Pilote politique publique' as const,
+          },
         },
-      ])('$desc', async ({ role, roleDataRepresentation, codeOrganisation }) => {
+      ])('$desc', async ({ createRecordWith, expected }) => {
         // GIVEN
-        const structureId = 10
-        const departementCode = '75'
-        const groupementId = 10
-        const regionCode = '11'
         await prisma.regionRecord.create({
           data: regionRecordFactory({ code: regionCode }),
         })
@@ -122,11 +166,7 @@ describe('utilisateur repository', () => {
         })
         await prisma.utilisateurRecord.create({
           data: utilisateurRecordFactory({
-            departementCode,
-            groupementId,
-            regionCode,
-            role: roleDataRepresentation,
-            structureId,
+            ...createRecordWith,
           }),
         })
 
@@ -136,12 +176,47 @@ describe('utilisateur repository', () => {
         // THEN
         expect(result?.state()).toStrictEqual(
           utilisateurFactory({
-            codeOrganisation,
-            role,
-            telephone: '',
             uid: uidUtilisateurValue,
+            ...expected,
           }).state()
         )
+      })
+
+      it.each([
+        {
+          derniereConnexion: null,
+          desc: 'un utilisateur ne s’étant jamais connecté est marqué inactif',
+          expectedIsActive: false,
+        },
+        {
+          derniereConnexion: new Date(1),
+          desc: 'un utilisateur s’étant déjà connecté est marqué actif',
+          expectedIsActive: true,
+        },
+      ])('$desc', async ({ derniereConnexion, expectedIsActive }) => {
+
+        // GIVEN
+        await prisma.regionRecord.create({
+          data: regionRecordFactory({ code: regionCode }),
+        })
+        await prisma.departementRecord.create({
+          data: departementRecordFactory({ code: departementCode }),
+        })
+        await prisma.groupementRecord.create({
+          data: groupementRecordFactory({ id: groupementId }),
+        })
+        await prisma.structureRecord.create({
+          data: structureRecordFactory({ id: structureId }),
+        })
+        await prisma.utilisateurRecord.create({
+          data: utilisateurRecordFactory({ derniereConnexion }),
+        })
+
+        // WHEN
+        const result = await repository.find(uidUtilisateur)
+
+        // THEN
+        expect(result?.state().isActive).toBe(expectedIsActive)
       })
     })
   })
