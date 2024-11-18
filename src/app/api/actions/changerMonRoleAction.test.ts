@@ -1,7 +1,7 @@
 import { ZodIssue } from 'zod'
 
 import { changerMonRoleAction } from './changerMonRoleAction'
-import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
 
 describe('changer mon rôle action', () => {

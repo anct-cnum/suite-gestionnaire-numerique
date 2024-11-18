@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ReinviterUnUtilisateur, ReinviterUnUtilisateurFailure } from '@/use-cases/commands/ReinviterUnUtilisateur'
 
@@ -28,7 +28,7 @@ export async function reinviterUnUtilisateurAction(
 
   revalidatePath('/mes-utilisateurs')
 
-  return new ReinviterUnUtilisateur(new PostgreUtilisateurRepository(prisma)).execute(command)
+  return new ReinviterUnUtilisateur(new PrismaUtilisateurRepository(prisma)).execute(command)
 }
 
 type ActionParams = Readonly<{

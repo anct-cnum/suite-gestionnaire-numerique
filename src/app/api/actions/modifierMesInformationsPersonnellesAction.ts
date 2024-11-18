@@ -3,8 +3,8 @@
 import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModificationUtilisateurFailure, ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
@@ -25,7 +25,7 @@ export async function modifierMesInformationsPersonnellesAction(
     return validationResult.error.issues
   }
 
-  return new ModifierMesInformationsPersonnelles(new PostgreUtilisateurRepository(prisma))
+  return new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
     .execute({
       modification: {
         email,

@@ -4,9 +4,9 @@ import { z, ZodIssue } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
+import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { NodemailerEmailInvitationGateway } from '@/gateways/NodemailerEmailInvitationGateway'
-import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import {
   InviterUnUtilisateurCommand,
@@ -41,7 +41,7 @@ export async function inviterUnUtilisateurAction(
     }
   }
 
-  return new InviterUnUtilisateur(new PostgreUtilisateurRepository(prisma), emailInvitationGatewayFactory).execute(
+  return new InviterUnUtilisateur(new PrismaUtilisateurRepository(prisma), emailInvitationGatewayFactory).execute(
     command
   )
 }

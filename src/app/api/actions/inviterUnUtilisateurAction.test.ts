@@ -4,8 +4,8 @@ import { ZodIssue } from 'zod'
 import { inviterUnUtilisateurAction } from './inviterUnUtilisateurAction'
 import { utilisateurFactory } from '@/domain/testHelper'
 import * as invitationEmail from '@/gateways/invitationEmail'
-import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 describe('inviter un utilisateur action', () => {
@@ -200,8 +200,8 @@ describe('inviter un utilisateur action', () => {
       ])('$desc, alors l’email est envoyé avec le paramétrage approprié', async ({ expectedParams, isSuperAdmin }) => {
         // GIVEN
         vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(('sub'))
-        vi.spyOn(PostgreUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
-        vi.spyOn(PostgreUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
+        vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
+        vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
         const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
         const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
