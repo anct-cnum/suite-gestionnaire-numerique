@@ -269,7 +269,7 @@ describe('mes utilisateurs', () => {
 
       // THEN
       await waitFor(() => {
-        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ uidUtilisateurAReinviter: '123456', uidUtilisateurCourant: 'fooId' })
+        expect(reinviterUnUtilisateurAction.reinviterUnUtilisateurAction).toHaveBeenCalledWith({ uidUtilisateurAReinviter: '123456' })
       })
       const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
