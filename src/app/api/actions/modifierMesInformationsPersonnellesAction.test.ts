@@ -1,7 +1,7 @@
 import { ZodIssue } from 'zod'
 
 import { modifierMesInformationsPersonnellesAction } from './modifierMesInformationsPersonnellesAction'
-import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
 describe('modifier mes informations personnelles action', () => {

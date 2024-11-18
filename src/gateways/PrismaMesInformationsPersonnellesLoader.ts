@@ -4,7 +4,7 @@ import { UtilisateurEtSesRelationsRecord, toTypologieRole } from './shared/RoleM
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
-export class PostgreMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
+export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
   readonly #prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {

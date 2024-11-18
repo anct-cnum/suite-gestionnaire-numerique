@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client'
 
-import { PostgreMesInformationsPersonnellesLoader } from './PostgreMesInformationsPersonnellesLoader'
+import { PrismaMesInformationsPersonnellesLoader } from './PrismaMesInformationsPersonnellesLoader'
 import { departementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
@@ -48,7 +48,7 @@ describe('mes informations personnelles loader', () => {
         ssoId: ssoIdExistant,
       }),
     })
-    const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
     const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
@@ -83,7 +83,7 @@ describe('mes informations personnelles loader', () => {
         structureId,
       }),
     })
-    const mesInformationsPersonnellesLoader = new PostgreMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
     const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
@@ -116,12 +116,12 @@ describe('mes informations personnelles loader', () => {
     await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory(),
     })
-    const postgreMesInformationsPersonnellesGateway = new PostgreMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma)
 
     // WHEN
     const utilisateurReadModel =
       async (): Promise<MesInformationsPersonnellesReadModel> =>
-        postgreMesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
+        mesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

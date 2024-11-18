@@ -8,9 +8,9 @@ import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import { Roles } from '@/domain/Role'
-import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
-import { PostgreUtilisateurRepository } from '@/gateways/PostgreUtilisateurRepository'
-import { getSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
 import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
 import config from '@/use-cases/config.json'
@@ -22,10 +22,10 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     redirect('/connexion')
   }
 
-  const postgreUtilisateurPostgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
-  let utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+  let utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
   const correctionNomPrenom = await new CorrigerNomPrenomSiAbsents(
-    new PostgreUtilisateurRepository(prisma)
+    new PrismaUtilisateurRepository(prisma)
   ).execute({
     actuels: {
       nom: utilisateurReadModel.nom,
@@ -39,7 +39,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
   })
 
   if (correctionNomPrenom === 'okAvecMiseAJour') {
-    utilisateurReadModel = await postgreUtilisateurPostgreUtilisateurLoader.findByUid(session.user.sub)
+    utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
   }
 
   const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)

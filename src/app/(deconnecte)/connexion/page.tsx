@@ -3,7 +3,7 @@ import { getProviders } from 'next-auth/react'
 import { ReactElement } from 'react'
 
 import Connexion from '@/components/Connexion/Connexion'
-import { ProConnectProvider } from '@/gateways/ProConnectAuthentificationGateway'
+import { ProConnectProvider } from '@/gateways/NextAuthAuthentificationGateway'
 
 export const metadata: Metadata = {
   title: 'Se connecter',
