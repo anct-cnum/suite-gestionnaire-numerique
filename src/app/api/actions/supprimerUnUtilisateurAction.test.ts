@@ -1,5 +1,5 @@
 import { supprimerUnUtilisateurAction } from './supprimerUnUtilisateurAction'
-import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
 
 describe('supprimer un utilisateur action', () => {

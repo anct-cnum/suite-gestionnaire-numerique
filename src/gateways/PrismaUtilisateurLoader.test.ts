@@ -1,4 +1,4 @@
-import { PostgreUtilisateurLoader } from './PostgreUtilisateurLoader'
+import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
 import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
@@ -6,7 +6,7 @@ import { UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/Recher
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
-describe('postgre utilisateur query', () => {
+describe('prisma utilisateur query', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
@@ -118,10 +118,10 @@ describe('postgre utilisateur query', () => {
           structureId: 10,
         }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
 
       // WHEN
-      const utilisateurReadModel = await postgreUtilisateurLoader.findByUid(ssoIdExistant)
+      const utilisateurReadModel = await utilisateurLoader.findByUid(ssoIdExistant)
 
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
@@ -148,11 +148,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ ssoId: '1234567890' }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
 
       // WHEN
       const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => postgreUtilisateurLoader.findByUid(ssoIdInexistant)
+        async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdInexistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
@@ -164,11 +164,11 @@ describe('postgre utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdExistant }),
       })
-      const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
 
       // WHEN
       const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => postgreUtilisateurLoader.findByUid(ssoIdExistant)
+        async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdExistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
@@ -203,7 +203,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -297,7 +297,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -344,7 +344,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -391,7 +391,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -444,7 +444,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -475,7 +475,7 @@ describe('postgre utilisateur query', () => {
       const utilisateursParPage = 1
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -501,7 +501,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -528,7 +528,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -555,7 +555,7 @@ describe('postgre utilisateur query', () => {
       const isActive = true
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -586,7 +586,7 @@ describe('postgre utilisateur query', () => {
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -625,7 +625,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -671,7 +671,7 @@ describe('postgre utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await postgreUtilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -698,7 +698,7 @@ describe('postgre utilisateur query', () => {
       uid: ssoId,
     })
     const roles: ReadonlyArray<string> = []
-    const postgreUtilisateurLoader = new PostgreUtilisateurLoader(prisma)
+    const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
     const codeDepartement = '0'
     const codeRegion = '0'
   })

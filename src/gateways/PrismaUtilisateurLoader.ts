@@ -7,7 +7,7 @@ import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/u
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
-export class PostgreUtilisateurLoader implements MesUtilisateursLoader {
+export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {

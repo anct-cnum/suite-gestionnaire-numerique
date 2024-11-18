@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
-import { PostgreUtilisateurRepository } from './PostgreUtilisateurRepository'
+import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
 import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -16,7 +16,7 @@ describe('utilisateur repository', () => {
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
   describe('recherche d’un utilisateur', () => {
-    const repository = new PostgreUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma)
 
     it('l’utilisateur n’existe pas : pas de donnée', async () => {
       // GIVEN
@@ -162,7 +162,7 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
+        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
 
         // THEN
         expect(result).toBe(true)
@@ -198,7 +198,7 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurSupprime)
+        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurSupprime)
 
         // THEN
         expect(result).toBe(false)
@@ -215,7 +215,7 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PostgreUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
+        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
 
         // THEN
         expect(result).toBe(false)
@@ -244,11 +244,11 @@ describe('utilisateur repository', () => {
 
         // WHEN
         const unhandledKnownRequestError = dropFn(
-          new PostgreUtilisateurRepository(prismaClientKnownRequestErrorOnUpdateStub),
+          new PrismaUtilisateurRepository(prismaClientKnownRequestErrorOnUpdateStub),
           ssoIdUtilisateurExistant
         )
         const unhandledUnknownRequestError = dropFn(
-          new PostgreUtilisateurRepository(prismaClientUnknownRequestErrorOnUpdateStub),
+          new PrismaUtilisateurRepository(prismaClientUnknownRequestErrorOnUpdateStub),
           ssoIdUtilisateurExistant
         )
 
@@ -260,7 +260,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('mise à jour d’un utilisateur', () => {
-    const repository = new PostgreUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma)
 
     it('changement du rôle, du nom, du prénom, de la date d’invitation et de l’email', async () => {
       // GIVEN
@@ -294,7 +294,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('ajout d’un utilisateur', () => {
-    const repository = new PostgreUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma)
 
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
       // GIVEN
@@ -351,8 +351,8 @@ describe('utilisateur repository', () => {
         },
       } as unknown as PrismaClient
 
-      const repositoryGenericError = new PostgreUtilisateurRepository(prismaClientGenericErrorStub)
-      const repositoryAuthenticationError = new PostgreUtilisateurRepository(prismaClientAuthenticationFailedErrorStub)
+      const repositoryGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub)
+      const repositoryAuthenticationError = new PrismaUtilisateurRepository(prismaClientAuthenticationFailedErrorStub)
 
       const utilisateur = utilisateurFactory()
 

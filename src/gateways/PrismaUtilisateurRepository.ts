@@ -4,7 +4,7 @@ import { fromTypologieRole, organisation, toTypologieRole } from './shared/RoleM
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
-export class PostgreUtilisateurRepository implements UtilisateurRepository {
+export class PrismaUtilisateurRepository implements UtilisateurRepository {
   readonly #activeRecord: Prisma.UtilisateurRecordDelegate
 
   constructor(dbClient: PrismaClient) {

@@ -3,8 +3,8 @@ import { ReactElement } from 'react'
 
 import prisma from '../../../../../prisma/prismaClient'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
-import { PostgreUtilisateurLoader } from '@/gateways/PostgreUtilisateurLoader'
-import { getSubSession } from '@/gateways/ProConnectAuthentificationGateway'
+import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
@@ -21,7 +21,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const codeRegion = searchParams.codeRegion !== undefined ? { codeRegion: searchParams.codeRegion } : {}
   const roles = searchParams.roles === undefined || searchParams.roles === '' ? {} : { roles: searchParams.roles.split(',') }
 
-  const utilisateurLoader = new PostgreUtilisateurLoader(prisma)
+  const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.get({
