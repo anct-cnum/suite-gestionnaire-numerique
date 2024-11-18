@@ -1,13 +1,16 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { EmailGatewayFactory } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisateurCommand> {
   readonly #repository: Repository
+  readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
 
-  constructor(repository: Repository, date: Date = new Date()) {
+  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory, date: Date = new Date()) {
     this.#repository = repository
+    this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date
   }
 
@@ -30,6 +33,8 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
 
     utilisateurAReinviter.changerLaDateDInvitation(this.#date)
     await this.#repository.update(utilisateurAReinviter)
+    const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
+    await emailGateway.send(utilisateurAReinviter.state().email)
     return 'OK'
   }
 }
@@ -46,3 +51,4 @@ export type ReinviterUnUtilisateurCommand = Readonly<{
 }>
 
 interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+

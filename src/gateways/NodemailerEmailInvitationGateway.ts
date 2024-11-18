@@ -2,7 +2,7 @@ import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
 import { smtpFrom, smtpReplyTo, makeMjml } from './invitationEmail'
-import { EmailGateway } from '../use-cases/commands/InviterUnUtilisateur'
+import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
 export class NodemailerEmailInvitationGateway implements EmailGateway {
   readonly #host: string

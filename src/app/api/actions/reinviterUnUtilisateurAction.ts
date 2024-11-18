@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z, ZodIssue } from 'zod'
 
+import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -28,7 +29,10 @@ export async function reinviterUnUtilisateurAction(
 
   revalidatePath('/mes-utilisateurs')
 
-  return new ReinviterUnUtilisateur(new PrismaUtilisateurRepository(prisma)).execute(command)
+  return new ReinviterUnUtilisateur(
+    new PrismaUtilisateurRepository(prisma),
+    emailInvitationGatewayFactory
+  ).execute(command)
 }
 
 type ActionParams = Readonly<{

@@ -2,6 +2,7 @@ import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/Ut
 import { TypologieRole } from '../../domain/Role'
 import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
+import { EmailGatewayFactory } from './shared/EmailGateway'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: Repository
@@ -78,15 +79,9 @@ export type InviterUnUtilisateurCommand = Readonly<{
   }>
 }>
 
-export interface EmailGateway {
-  send: (destinataire: string) => Promise<void>
-}
-
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
 
 interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
-
-type EmailGatewayFactory = (isSuperAdmin: boolean) => EmailGateway
 
 type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
 
