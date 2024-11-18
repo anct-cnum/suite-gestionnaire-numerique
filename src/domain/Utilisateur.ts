@@ -1,12 +1,16 @@
+import { DepartementState } from './Departement'
+import { GroupementState } from './Groupement'
+import { RegionState } from './Region'
 import { Role, TypologieRole, type RoleState } from './Role'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
+import { StructureState } from './Structure'
 import { isEmpty, Result } from '@/shared/lang'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
-export class Utilisateur extends Entity<UtilisateurState> {
+export abstract class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  readonly #derniereConnexion: Date | null
+  readonly #derniereConnexion: Date
   #role: Role
   #nom: Nom
   #prenom: Prenom
@@ -14,7 +18,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
   #telephone: Telephone
   #inviteLe: Date
 
-  private constructor(
+  constructor(
     uid: UtilisateurUid,
     role: Role,
     nom: Nom,
@@ -22,7 +26,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     email: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
-    derniereConnexion: Date | null,
+    derniereConnexion: Date,
     telephone: Telephone
   ) {
     super(uid)
@@ -36,26 +40,12 @@ export class Utilisateur extends Entity<UtilisateurState> {
     this.#inviteLe = inviteLe
   }
 
-  static create(utilisateur: UtilisateurParams): Utilisateur {
-    return new Utilisateur(
-      UtilisateurUid.from(utilisateur.uid),
-      new Role(utilisateur.role, utilisateur.codeOrganisation),
-      new Nom(utilisateur.nom),
-      new Prenom(utilisateur.prenom),
-      new Email(utilisateur.email),
-      utilisateur.isSuperAdmin,
-      utilisateur.inviteLe,
-      utilisateur.derniereConnexion,
-      new Telephone(utilisateur.telephone ?? '')
-    )
-  }
-
   override state(): UtilisateurState {
     return {
-      derniereConnexion: this.#derniereConnexion ? this.#derniereConnexion.toJSON() : new Date(0).toJSON(),
+      derniereConnexion: this.#derniereConnexion.toJSON(),
       email: this.#email.state().value,
       inviteLe: this.#inviteLe.toJSON(),
-      isActive: this.#derniereConnexion !== null,
+      isActive: this.#derniereConnexion.getTime() !== 0,
       isSuperAdmin: this.#isSuperAdmin,
       nom: this.#nom.state().value,
       prenom: this.#prenom.state().value,
@@ -63,34 +53,6 @@ export class Utilisateur extends Entity<UtilisateurState> {
       telephone: this.#telephone.state().value,
       uid: this.uid.state(),
     }
-  }
-
-  duMemeRole(params: Omit<UtilisateurParams, 'role'>): Utilisateur {
-    return new Utilisateur(
-      UtilisateurUid.from(params.uid),
-      this.#role,
-      new Nom(params.nom),
-      new Prenom(params.prenom),
-      new Email(params.email),
-      params.isSuperAdmin,
-      params.inviteLe,
-      params.derniereConnexion,
-      new Telephone(params.telephone ?? '')
-    )
-  }
-
-  avecNouvelUid(uid: string): Utilisateur {
-    return new Utilisateur(
-      UtilisateurUid.from(uid),
-      this.#role,
-      this.#nom,
-      this.#prenom,
-      this.#email,
-      this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#derniereConnexion,
-      this.#telephone
-    )
   }
 
   changerPrenom(prenom: string): Result<UtilisateurFailure> {
@@ -129,9 +91,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  peutGerer(autre: Utilisateur): boolean {
-    return this.#role.isAdmin() || this.#role.equals(autre.#role)
-  }
+  abstract peutGerer(autre: Utilisateur): boolean
 }
 
 export class UtilisateurUid extends Uid<UtilisateurUidState> {
@@ -155,6 +115,10 @@ export type UtilisateurState = Readonly<{
   prenom: string
   role: RoleState
   telephone: string
+  departement?: DepartementState
+  groupementUid?: GroupementState['uid']
+  region?: RegionState
+  structureUid?: StructureState['uid']
 }>
 
 export type UtilisateurFailure =
@@ -164,7 +128,7 @@ export type UtilisateurFailure =
   | 'emailInvalide'
   | 'telephoneInvalide'
 
-class Nom extends ValueObject<AttributUtilisateurState> {
+export class Nom extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {
     if (isEmpty(value)) {
       throw Exception.of('nomAbsent')
@@ -173,7 +137,7 @@ class Nom extends ValueObject<AttributUtilisateurState> {
   }
 }
 
-class Prenom extends ValueObject<AttributUtilisateurState> {
+export class Prenom extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {
     if (isEmpty(value)) {
       throw Exception.of('prenomAbsent')
@@ -182,7 +146,7 @@ class Prenom extends ValueObject<AttributUtilisateurState> {
   }
 }
 
-class Email extends ValueObject<AttributUtilisateurState> {
+export class Email extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {
     if (!emailPattern.test(value)) {
       throw Exception.of('emailInvalide')
@@ -191,7 +155,7 @@ class Email extends ValueObject<AttributUtilisateurState> {
   }
 }
 
-class Telephone extends ValueObject<AttributUtilisateurState> {
+export class Telephone extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {
     if (!(isEmpty(value) || telephonePattern.test(value))) {
       throw Exception.of('telephoneInvalide')
@@ -203,16 +167,3 @@ class Telephone extends ValueObject<AttributUtilisateurState> {
 type AttributUtilisateurState = Readonly<{ value: string }>
 
 type UtilisateurUidState = Readonly<{ value: string }>
-
-type UtilisateurParams = Readonly<{
-  uid: string
-  derniereConnexion: Date | null
-  email: string
-  inviteLe: Date
-  isSuperAdmin: boolean
-  nom: string
-  prenom: string
-  role: TypologieRole
-  telephone?: string
-  codeOrganisation?: string
-}>

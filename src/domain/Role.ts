@@ -1,8 +1,6 @@
 import { ValueObject } from './shared/Model'
 
 export class Role extends ValueObject<RoleState> {
-  readonly #groupe: Groupe
-
   constructor(nom: TypologieRole, territoireOuStructure = '') {
     const { categorie, groupe, organisation } = classificationParType[nom]
     super({
@@ -12,11 +10,6 @@ export class Role extends ValueObject<RoleState> {
       organisation: organisation ?? territoireOuStructure,
       rolesGerables: isAdmin(groupe) ? Roles : [nom],
     })
-    this.#groupe = groupe
-  }
-
-  isAdmin(): boolean {
-    return isAdmin(this.#groupe)
   }
 }
 

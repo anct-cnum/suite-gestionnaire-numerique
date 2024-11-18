@@ -1,8 +1,9 @@
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
-import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
+import { UtilisateurUid } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
+import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
   readonly #repository: Repository
@@ -26,7 +27,23 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     if (!utilisateurCourant) {
       return 'KO'
     }
-    const utilisateurACreer = this.#creerUtilisateurAInviter(command, utilisateurCourant)
+    const utilisateurCourantState = utilisateurCourant.state()
+    const utilisateurACreer = new UtilisateurFactory({
+      departement: utilisateurCourantState.departement,
+      email: command.email,
+      groupementUid: utilisateurCourantState.groupementUid?.value,
+      inviteLe: this.#date,
+      isSuperAdmin: utilisateurCourantState.isSuperAdmin,
+      nom: command.nom,
+      prenom: command.prenom,
+      region: utilisateurCourantState.region,
+      structureUid: utilisateurCourantState.structureUid?.value,
+      telephone: '',
+      uid: command.email,
+    }).create(
+      command.role?.type ?? utilisateurCourantState.role.nom,
+      command.role?.codeOrganisation
+    )
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
       return 'KO'
     }
@@ -37,43 +54,6 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       return 'OK'
     }
     return 'emailExistant'
-  }
-
-  #creerUtilisateurAInviter(
-    command: InviterUnUtilisateurCommand,
-    utilisateurCourant: Utilisateur
-  ): Utilisateur {
-    const isSuperAdmin = utilisateurCourant.state().isSuperAdmin
-    return command.role
-      ? Utilisateur.create(
-        this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin)
-      )
-      : utilisateurCourant.duMemeRole(this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin))
-  }
-  #toUtilisateurParams(
-    command: Required<InviterUnUtilisateurCommand>,
-    isSuperAdmin: boolean
-  ): UtilisateurCreateParam {
-    return {
-      ...this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin),
-      codeOrganisation: command.role.codeOrganisation,
-      role: command.role.type,
-    }
-  }
-
-  #toUtilisateurDuMemeRoleParams(
-    command: InviterUnUtilisateurCommand,
-    isSuperAdmin: boolean
-  ): UtilisateurDuMemeRoleParam {
-    return {
-      derniereConnexion: null,
-      email: command.email,
-      inviteLe: this.#date,
-      isSuperAdmin,
-      nom: command.nom,
-      prenom: command.prenom,
-      uid: command.email,
-    }
   }
 }
 
@@ -91,7 +71,3 @@ export type InviterUnUtilisateurCommand = Readonly<{
 export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
 
 interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
-
-type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
-
-type UtilisateurDuMemeRoleParam = Parameters<typeof Utilisateur.prototype.duMemeRole>[0]
