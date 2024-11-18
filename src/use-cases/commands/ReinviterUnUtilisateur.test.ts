@@ -1,4 +1,5 @@
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
+import { EmailGateway } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
@@ -9,11 +10,11 @@ describe('réinviter un utilisateur', () => {
     spiedUtilisateurToUpdate = null
   })
 
-  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à réinviter, quand il le réinvite, la date d’invitation est mise à jour', async () => {
+  it('étant donné que l’utilisateur courant peut gérer l’utilisateur à réinviter, quand il le réinvite, la date d’invitation est mise à jour puis un e-mail lui est envoyé', async () => {
     // GIVEN
     const date = new Date('2024-01-01')
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, date)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, date)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecMemeRole',
@@ -30,12 +31,13 @@ describe('réinviter un utilisateur', () => {
       role: 'Gestionnaire structure',
       uid: 'uidUtilisateurAReinviterInactif',
     }).state())
+    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state().email)
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
@@ -53,7 +55,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que le compte de l’utilisateur courant est inexistant, quand il réinvite un autre utilisateur, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
       uidUtilisateurCourant: 'utilisateurInexistantUid',
@@ -71,7 +73,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterActif',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
@@ -89,7 +91,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que le compte de l’utilisateur est inexistant, quand il est réinvite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInexistant',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
@@ -130,6 +132,7 @@ const utilisateursByUid: Record<string, Utilisateur> = {
 
 let spiedUidToFind = ''
 let spiedUtilisateurToUpdate: Utilisateur | null = null
+let spiedDestinataire = ''
 
 class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
@@ -142,4 +145,13 @@ class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepos
     spiedUtilisateurToUpdate = utilisateur
     return Promise.resolve()
   }
+}
+
+function emailGatewayFactorySpy(): EmailGateway {
+  return new class implements EmailGateway {
+    async send(destinataire: string): Promise<void> {
+      spiedDestinataire = destinataire
+      return Promise.resolve()
+    }
+  }()
 }
