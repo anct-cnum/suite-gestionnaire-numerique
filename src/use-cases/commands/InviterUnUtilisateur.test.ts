@@ -1,4 +1,5 @@
-import { EmailGateway, InviterUnUtilisateur, InviterUnUtilisateurCommand } from './InviterUnUtilisateur'
+import { InviterUnUtilisateur, InviterUnUtilisateurCommand } from './InviterUnUtilisateur'
+import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
 import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
