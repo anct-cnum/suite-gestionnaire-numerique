@@ -5,6 +5,7 @@ import { z, ZodIssue } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
+import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ReinviterUnUtilisateur, ReinviterUnUtilisateurFailure } from '@/use-cases/commands/ReinviterUnUtilisateur'
@@ -15,7 +16,6 @@ export async function reinviterUnUtilisateurAction(
   const validationResult = validator
     .safeParse({
       uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
-      uidUtilisateurCourant: actionParams.uidUtilisateurCourant,
     })
 
   if (validationResult.error) {
@@ -24,7 +24,7 @@ export async function reinviterUnUtilisateurAction(
 
   const command = {
     uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
-    uidUtilisateurCourant: validationResult.data.uidUtilisateurCourant,
+    uidUtilisateurCourant: await getSubSession(),
   }
 
   revalidatePath('/mes-utilisateurs')
@@ -37,10 +37,8 @@ export async function reinviterUnUtilisateurAction(
 
 type ActionParams = Readonly<{
   uidUtilisateurAReinviter: string
-  uidUtilisateurCourant: string
 }>
 
 const validator = z.object({
   uidUtilisateurAReinviter: z.string().min(1, 'L’identifiant de l’utilisateur à réinviter doit être renseigné'),
-  uidUtilisateurCourant: z.string().min(1, 'L’identifiant de l’utilisateur courant doit être renseigné'),
 })
