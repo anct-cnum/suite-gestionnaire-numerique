@@ -1,12 +1,12 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Modale({
+export default function Modal({
   children,
   close,
   id,
   isOpen,
   labelId,
-}: ModaleProps): ReactElement {
+}: ModalProps): ReactElement {
   return (
     <dialog
       aria-labelledby={labelId}
@@ -38,7 +38,7 @@ export default function Modale({
   )
 }
 
-type ModaleProps = PropsWithChildren<Readonly<{
+type ModalProps = PropsWithChildren<Readonly<{
   id: string,
   isOpen: boolean
   close: () => void

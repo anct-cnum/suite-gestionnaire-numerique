@@ -1,19 +1,19 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
-import Modale from './Modale'
+import Modal from './Modal'
 
-describe('modale', () => {
+describe('modal', () => {
   it('quand j’appelle la modale alors j’affiche le bouton fermer et son contenu', () => {
     // WHEN
     render(
-      <Modale
+      <Modal
         close={vi.fn()}
         id="modaleId"
         isOpen={true}
         labelId="labelId"
       >
         contenu
-      </Modale>
+      </Modal>
     )
 
     // THEN
@@ -33,14 +33,14 @@ describe('modale', () => {
     // GIVEN
     const setIsOpen = vi.fn()
     render(
-      <Modale
+      <Modal
         close={setIsOpen}
         id="modaleId"
         isOpen={true}
         labelId="labelId"
       >
         contenu
-      </Modale>
+      </Modal>
     )
     const modale = screen.getByRole('dialog')
     const boutonFermer = within(modale).getByRole('button', { name: 'Fermer' })
