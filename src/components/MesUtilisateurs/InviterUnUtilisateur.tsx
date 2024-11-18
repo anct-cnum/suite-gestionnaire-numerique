@@ -2,7 +2,7 @@
 
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
-import StructureInput, { OrganisationOption } from './StructureInput'
+import OrganisationInput, { OrganisationOption } from './OrganisationInput'
 import departements from '../../../ressources/departements.json'
 import groupements from '../../../ressources/groupements.json'
 import regions from '../../../ressources/regions.json'
@@ -42,7 +42,7 @@ export default function InviterUnUtilisateur({
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
   const { sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
-  const [organisation, setOrganisation] = useState<OrganisationOption | undefined>()
+  const [organisation, setOrganisation] = useState<OrganisationOption | null>(null)
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -146,7 +146,7 @@ export default function InviterUnUtilisateur({
         }
         {
           isStructureDisplayed() ?
-            <StructureInput
+            <OrganisationInput
               label={rolesAvecStructure[roleSelectionne].label}
               options={rolesAvecStructure[roleSelectionne].options}
               organisation={organisation}

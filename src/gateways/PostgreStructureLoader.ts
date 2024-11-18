@@ -14,6 +14,7 @@ export class PostgreStructureLoader implements StructuresLoader {
       orderBy: {
         nom: 'asc',
       },
+      take: 10,
       where: {
         nom: { contains: search },
       },
