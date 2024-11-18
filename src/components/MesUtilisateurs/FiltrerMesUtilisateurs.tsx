@@ -7,7 +7,7 @@ import Select from 'react-select/dist/declarations/src/Select'
 import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import { clientContext } from '../shared/ClientContext'
-import Interrupteur from '../shared/Interrupteur/Interrupteur'
+import Toggle from '../shared/Toggle/Toggle'
 import { toutesLesRegions, urlDeFiltrage } from '@/presenters/zonesGeographiquesPresenter'
 
 export default function FiltrerMesUtilisateurs({
@@ -33,7 +33,7 @@ export default function FiltrerMesUtilisateurs({
         method="dialog"
         onSubmit={filtrer}
       >
-        <Interrupteur
+        <Toggle
           defaultChecked={areUtilisateursActivesChecked}
           // Stryker disable next-line BooleanLiteral
           hasSeparator={true}
@@ -41,7 +41,7 @@ export default function FiltrerMesUtilisateurs({
           name="utilisateursActives"
         >
           Uniquement les utilisateurs activés
-        </Interrupteur>
+        </Toggle>
         <hr />
         <ZonesGeographiques ref={ref} />
         <hr />

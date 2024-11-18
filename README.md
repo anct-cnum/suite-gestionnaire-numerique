@@ -168,7 +168,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
  ┃  ┣ 📂 app                      -> Les controllers
  ┃  ┣ 📂 components
  ┃  ┃  ┣ 📂 [UnComposant]         -> Un composant de type page et ses enfants qui en découlent
- ┃  ┃  ┣ 📂 shared                -> Les composants partagés par toute l'application (LienExterne...)
+ ┃  ┃  ┣ 📂 shared                -> Les composants partagés par toute l'application (ExternalLink...)
  ┃  ┃  ┗ 📂 transverse            -> Les composants transverses à toute l'application (EnTete, PiedDePage...)
  ┃  ┣ 📂 domain                   -> Les objets métier
  ┃  ┣ 📂 gateways                 -> Les repositories, loaders et gateways

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Titre({ children, icon }: TitreProps): ReactElement {
+export default function Title({ children, icon }: TitleProps): ReactElement {
   return (
     <h1 className="color-blue-france fr-mt-5w">
       <span
@@ -12,6 +12,6 @@ export default function Titre({ children, icon }: TitreProps): ReactElement {
   )
 }
 
-type TitreProps = PropsWithChildren<Readonly<{
+type TitleProps = PropsWithChildren<Readonly<{
   icon: string
 }>>

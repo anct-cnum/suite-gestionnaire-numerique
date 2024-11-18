@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import LienExterne from '../../shared/LienExterne/LienExterne'
+import ExternalLink from '../../shared/ExternalLink/ExternalLink'
 
 export default function PiedDePage(): ReactElement {
   return (
@@ -29,40 +29,40 @@ export default function PiedDePage(): ReactElement {
             </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
-                <LienExterne
+                <ExternalLink
                   className="fr-footer__content-link"
                   href="https://legifrance.gouv.fr"
                   title="legifrance.gouv.fr"
                 >
                   legifrance.gouv.fr
-                </LienExterne>
+                </ExternalLink>
               </li>
               <li className="fr-footer__content-item">
-                <LienExterne
+                <ExternalLink
                   className="fr-footer__content-link"
                   href="https://gouvernement.fr"
                   title="gouvernement.fr"
                 >
                   gouvernement.fr
-                </LienExterne>
+                </ExternalLink>
               </li>
               <li className="fr-footer__content-item">
-                <LienExterne
+                <ExternalLink
                   className="fr-footer__content-link"
                   href="https://service-public.fr"
                   title="service-public.fr"
                 >
                   service-public.fr
-                </LienExterne>
+                </ExternalLink>
               </li>
               <li className="fr-footer__content-item">
-                <LienExterne
+                <ExternalLink
                   className="fr-footer__content-link"
                   href="https://data.gouv.fr"
                   title="data.gouv.fr"
                 >
                   data.gouv.fr
-                </LienExterne>
+                </ExternalLink>
               </li>
             </ul>
           </div>
@@ -86,13 +86,13 @@ export default function PiedDePage(): ReactElement {
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
-              <LienExterne
+              <ExternalLink
                 className="fr-footer__bottom-link"
                 href="https://cdn.conseiller-numerique.gouv.fr/CGU-Données_personnellesConseiller_Numérique.pdf"
                 title="Données personnelles"
               >
                 Données personnelles
-              </LienExterne>
+              </ExternalLink>
             </li>
           </ul>
           <div className="fr-footer__bottom-copy">
@@ -100,12 +100,12 @@ export default function PiedDePage(): ReactElement {
               Sauf mention explicite de propriété intellectuelle détenue par des tiers,
               les contenus de ce site sont proposés sous
               {' '}
-              <LienExterne
+              <ExternalLink
                 href="https://github.com/etalab/licence-ouverte/blob/master/LO.md"
                 title="licence etalab-2.0"
               >
                 licence etalab-2.0
-              </LienExterne>
+              </ExternalLink>
             </p>
           </div>
         </div>

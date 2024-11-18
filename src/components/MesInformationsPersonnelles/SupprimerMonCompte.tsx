@@ -3,7 +3,7 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useId, useState } fr
 
 import styles from './SupprimerMonCompte.module.css'
 import { supprimerMonCompteAction } from '../../app/api/actions/supprimerMonCompteAction'
-import Modale from '../shared/Modale/Modale'
+import Modal from '../shared/Modal/Modal'
 import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
@@ -18,7 +18,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
   const messageValidationId = 'supprimer-mon-compte-email-message-validation'
 
   return (
-    <Modale
+    <Modal
       close={close}
       id={id}
       isOpen={isOpen}
@@ -86,7 +86,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
           </div>
         </div>
       </form>
-    </Modale>
+    </Modal>
   )
 
   function close(): void {

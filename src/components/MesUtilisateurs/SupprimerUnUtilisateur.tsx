@@ -1,6 +1,6 @@
 import { Dispatch, ReactElement, SetStateAction, useId } from 'react'
 
-import Modale from '../shared/Modale/Modale'
+import Modal from '../shared/Modal/Modal'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 
 export default function SupprimerUnUtilisateur({
@@ -12,7 +12,7 @@ export default function SupprimerUnUtilisateur({
   const modaleTitreId = useId()
 
   return (
-    <Modale
+    <Modal
       close={close}
       id={id}
       isOpen={isOpen}
@@ -54,7 +54,7 @@ export default function SupprimerUnUtilisateur({
           </button>
         </div>
       </div>
-    </Modale>
+    </Modal>
   )
 
   function close(): void {

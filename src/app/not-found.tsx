@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import LienExterne from '@/components/shared/LienExterne/LienExterne'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export const metadata: Metadata = {
   title: 'Page non trouvée',
@@ -41,13 +41,13 @@ export default function NotFound(): ReactElement {
               </Link>
             </li>
             <li>
-              <LienExterne
+              <ExternalLink
                 className="fr-btn fr-btn--secondary"
                 href="https://aide.conseiller-numerique.gouv.fr/fr/"
                 title="Contactez-nous"
               >
                 Contactez-nous
-              </LienExterne>
+              </ExternalLink>
             </li>
           </ul>
         </div>

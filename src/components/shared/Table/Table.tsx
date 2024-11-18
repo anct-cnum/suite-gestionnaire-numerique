@@ -1,8 +1,8 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-import styles from './Tableau.module.css'
+import styles from './Table.module.css'
 
-export default function Tableau({ children, enTetes, titre }: TableauProps): ReactElement {
+export default function Table({ children, enTetes, titre }: TableProps): ReactElement {
   return (
     <div
       className="fr-table--sm fr-table fr-table"
@@ -44,7 +44,7 @@ export default function Tableau({ children, enTetes, titre }: TableauProps): Rea
   )
 }
 
-type TableauProps = PropsWithChildren<Readonly<{
+type TableProps = PropsWithChildren<Readonly<{
   titre: string
-  enTetes: Array<string>
+  enTetes: ReadonlyArray<string>
 }>>

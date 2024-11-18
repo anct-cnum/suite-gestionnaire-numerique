@@ -1,8 +1,8 @@
 import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
-import Interrupteur from '../shared/Interrupteur/Interrupteur'
-import Titre from '../shared/Titre/Titre'
+import Title from '../shared/Title/Title'
+import Toggle from '../shared/Toggle/Toggle'
 
 export default function MesParametres(): ReactElement {
   const communicationEtNotificationsHeadingId = useId()
@@ -17,9 +17,9 @@ export default function MesParametres(): ReactElement {
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
-        <Titre icon="settings-5-line">
+        <Title icon="settings-5-line">
           Mes paramètres de compte
-        </Titre>
+        </Title>
         <p className="fr-text--sm color-grey">
           Retrouvez ici, vos préférences de communication et d’affichage.
         </p>
@@ -33,19 +33,19 @@ export default function MesParametres(): ReactElement {
           >
             Communication et notifications
           </h2>
-          <Interrupteur
+          <Toggle
             hasSeparator={hasSeparator}
             id={recevoirNotificationsToggleId}
             name={recevoirNotificationsToggleId}
           >
             Recevoir toutes les notifications sur votre adresse électronique
-          </Interrupteur>
-          <Interrupteur
+          </Toggle>
+          <Toggle
             id={recevoirRecapHebdoToggleId}
             name={recevoirRecapHebdoToggleId}
           >
             Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
-          </Interrupteur>
+          </Toggle>
         </section>
         <section
           aria-labelledby={affichageHeadingId}

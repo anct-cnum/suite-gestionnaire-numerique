@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function Rechercher({ labelBouton, placeholder }: RechercherProps): ReactElement {
+export default function Search({ labelBouton, placeholder }: SearchProps): ReactElement {
   return (
     <div
       className="fr-search-bar"
@@ -31,7 +31,7 @@ export default function Rechercher({ labelBouton, placeholder }: RechercherProps
   )
 }
 
-type RechercherProps = Readonly<{
+type SearchProps = Readonly<{
   labelBouton: string
   placeholder: string
 }>
