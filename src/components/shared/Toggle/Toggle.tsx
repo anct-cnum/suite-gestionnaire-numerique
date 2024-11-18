@@ -1,15 +1,15 @@
 import React, { PropsWithChildren, ReactElement } from 'react'
 
-import styles from './Interrupteur.module.css'
+import styles from './Toggle.module.css'
 
-export default function Interrupteur({
+export default function Toggle({
   defaultChecked = false,
   children,
   // Stryker disable next-line BooleanLiteral
   hasSeparator = false,
   id,
   name,
-}: InterrupteurProps): ReactElement {
+}: ToggleProps): ReactElement {
   const className = hasSeparator ? `fr-pb-2w ${styles['fr-toggle--bb']}` : 'fr-mt-2w'
 
   return (
@@ -37,7 +37,7 @@ export default function Interrupteur({
   )
 }
 
-type InterrupteurProps = PropsWithChildren<Readonly<{
+type ToggleProps = PropsWithChildren<Readonly<{
   defaultChecked?: boolean
   hasSeparator?: boolean
   id: string

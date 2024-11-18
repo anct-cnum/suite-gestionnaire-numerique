@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-import LienExterne from '../shared/LienExterne/LienExterne'
+import ExternalLink from '../shared/ExternalLink/ExternalLink'
 
 export default function Accessibilite(): ReactElement {
   return (
@@ -71,12 +71,12 @@ export default function Accessibilite(): ReactElement {
         nous signaler un défaut de conception. Vous pouvez nous aider à améliorer l’accessibilité du site
         en nous signalant les problèmes éventuels que vous rencontrez :
         {' '}
-        <LienExterne
+        <ExternalLink
           href="https://aide.conseiller-numerique.gouv.fr/fr/"
           title="Contactez-nous"
         >
           Contactez-nous
-        </LienExterne>
+        </ExternalLink>
         {''}
         .
       </p>
