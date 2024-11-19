@@ -17,9 +17,9 @@ export default function OrganisationInput({
     if (search.length < 3) {
       return []
     }
-    const searchResults = await fetch(`/api/structures?search=${search}`)
-    const result = await searchResults.json() as Array<{ uid: string, nom: string }>
-    return result.map(({ uid, nom }) => ({ label: nom, value: uid }))
+    const result = await fetch(`/api/structures?search=${search}`)
+    const structures = await result.json() as Array<{ uid: string, nom: string }>
+    return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
   }
 
   return (

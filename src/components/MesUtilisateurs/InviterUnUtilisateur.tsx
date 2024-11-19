@@ -46,7 +46,7 @@ export default function InviterUnUtilisateur({
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
-  const structureId = useId()
+  const organisationId = useId()
   const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
     id: roleGerable,
     label: roleGerable,
@@ -151,7 +151,7 @@ export default function InviterUnUtilisateur({
               options={rolesAvecStructure[roleSelectionne].options}
               organisation={organisation}
               setOrganisation={setOrganisation}
-              structureId={structureId}
+              structureId={organisationId}
             /> : null
         }
         <button
