@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 
-import { StructuresLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
+import { StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
-export class PostgreStructureLoader implements StructuresLoader {
+export class PrismaStructureLoader implements StructureLoader {
   readonly #prisma: PrismaClient
 
   constructor(prisma: PrismaClient) {
@@ -20,9 +20,15 @@ export class PostgreStructureLoader implements StructuresLoader {
       },
     })
 
-    return structuresRecord.map(({ nom, id }) => ({
-      nom,
-      uid: id.toString(),
-    }))
+    return transform(structuresRecord)
   }
+}
+
+function transform(
+  structuresRecord: ReadonlyArray<{ id: number; nom: string }>
+): ReadonlyArray<{ nom: string; uid: string }> {
+  return structuresRecord.map(({ nom, id }) => ({
+    nom,
+    uid: id.toString(),
+  }))
 }

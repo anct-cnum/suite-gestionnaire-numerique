@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { z, ZodIssue } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
@@ -39,10 +40,16 @@ export async function inviterUnUtilisateurAction(
       },
     }
   }
+  const result = await new InviterUnUtilisateur(
+    new PrismaUtilisateurRepository(prisma),
+    emailInvitationGatewayFactory
+  ).execute(command)
 
-  return new InviterUnUtilisateur(new PrismaUtilisateurRepository(prisma), emailInvitationGatewayFactory).execute(
-    command
-  )
+  if (result === 'OK') {
+    revalidatePath('/mes-utilisateurs')
+  }
+
+  return result
 }
 
 type ActionParams = Readonly<{
@@ -60,4 +67,3 @@ const validator = z.object({
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
   role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),
 })
-

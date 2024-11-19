@@ -1,6 +1,6 @@
 export type StructuresReadModel = ReadonlyArray<UneStructureReadModel>
 
-export interface StructuresLoader {
+export interface StructureLoader {
   findStructures: (search: string) => Promise<StructuresReadModel>
 }
 type UneStructureReadModel = Readonly<{

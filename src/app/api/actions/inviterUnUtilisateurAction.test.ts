@@ -1,3 +1,4 @@
+import * as nextCache from 'next/cache'
 import nodemailer from 'nodemailer'
 import { ZodIssue } from 'zod'
 
@@ -84,11 +85,13 @@ describe('inviter un utilisateur action', () => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
       vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+      vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
       // WHEN
       const result = await inviterUnUtilisateurAction(actionParams)
 
       // THEN
+      expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
       expect(InviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith(expectedCommand)
       expect(result).toBe('OK')
     })
@@ -173,8 +176,9 @@ describe('inviter un utilisateur action', () => {
   })
 
   describe(
-    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de'
-    + ' l’invitation est ou n’est pas un "super admin"', () => {
+    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de' +
+      ' l’invitation est ou n’est pas un "super admin"',
+    () => {
       it.each([
         {
           desc: 'quand l’email est envoyé par un super admin',
@@ -197,26 +201,33 @@ describe('inviter un utilisateur action', () => {
 
           isSuperAdmin: false,
         },
-      ])('$desc, alors l’email est envoyé avec le paramétrage approprié', async ({ expectedParams, isSuperAdmin }) => {
-        // GIVEN
-        vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(('sub'))
-        vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
-        vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
-        const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
-        const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
+      ])(
+        '$desc, alors l’email est envoyé avec le paramétrage approprié',
+        async ({ expectedParams, isSuperAdmin }) => {
+          // GIVEN
+          vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+          vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce('sub')
+          vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(
+            utilisateurFactory({ isSuperAdmin })
+          )
+          vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
+          const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
+          const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
-        // WHEN
-        await inviterUnUtilisateurAction({
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          organisation: 'La Poste',
-          prenom: 'Martin',
-        })
+          // WHEN
+          await inviterUnUtilisateurAction({
+            email: 'martin.tartempion@example.com',
+            nom: 'Tartempion',
+            organisation: 'La Poste',
+            prenom: 'Martin',
+          })
 
-        // THEN
-        expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
-        expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
-      })
+          // THEN
+          expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
+          expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
+          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
+        }
+      )
     }
   )
 })

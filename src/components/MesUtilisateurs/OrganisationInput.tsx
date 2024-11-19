@@ -8,13 +8,16 @@ export default function OrganisationInput({
   options,
   organisation,
   setOrganisation,
-}: StructureInputProps): ReactElement {
+}: OrganisationInputProps): ReactElement {
   useEffect(() => {
     setOrganisation(null)
   }, [label, setOrganisation])
 
-  const onSearch = async (value: string): Promise<Array<{label: string, value: string}>> => {
-    const searchResults = await fetch(`/api/structures?search=${value}`)
+  const onSearch = async (search: string): Promise<Array<{label: string, value: string}>> => {
+    if (search.length < 3) {
+      return []
+    }
+    const searchResults = await fetch(`/api/structures?search=${search}`)
     const result = await searchResults.json() as Array<{ uid: string, nom: string }>
     return result.map(({ uid, nom }) => ({ label: nom, value: uid }))
   }
@@ -39,7 +42,7 @@ export default function OrganisationInput({
           instanceId={structureId}
           isClearable={true}
           loadOptions={onSearch}
-          menuPlacement="auto"
+          menuPlacement="top"
           name={structureId}
           noOptionsMessage={() => 'Rechercher une structure'}
           onChange={setOrganisation as (organisation: unknown) => void}
@@ -67,7 +70,7 @@ export default function OrganisationInput({
   )
 }
 
-type StructureInputProps = Readonly<{
+type OrganisationInputProps = Readonly<{
   structureId: string
   label: string
   options: Array<{id: string, label: string}>

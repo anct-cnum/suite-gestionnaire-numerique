@@ -145,7 +145,7 @@ export default function InviterUnUtilisateur({
             </>
         }
         {
-          isStructureDisplayed() ?
+          isOrganisationDisplayed() ?
             <OrganisationInput
               label={rolesAvecStructure[roleSelectionne].label}
               options={rolesAvecStructure[roleSelectionne].options}
@@ -182,7 +182,7 @@ export default function InviterUnUtilisateur({
     }
   }
 
-  function isStructureDisplayed(): boolean {
+  function isOrganisationDisplayed(): boolean {
     return gestionnaires.length > 1 && Object.keys(rolesAvecStructure).includes(roleSelectionne)
   }
 
