@@ -6,6 +6,7 @@ import { z, ZodIssue } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { telephonePattern } from '@/shared/patterns'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ModificationUtilisateurFailure, ModifierMesInformationsPersonnelles } from '@/use-cases/commands/ModifierMesInformationsPersonnelles'
 
@@ -46,5 +47,5 @@ const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin n’est pas correct' }),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
   // Stryker disable next-line Regex
-  telephone: z.string().regex(/^(\+[\d]{11,12}|[\d]{10})$/, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
+  telephone: z.string().regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
 })

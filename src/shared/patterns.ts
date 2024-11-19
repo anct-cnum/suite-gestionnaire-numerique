@@ -1,3 +1,3 @@
 export const emailPattern = /.+@.+\..{2,}/
 
-export const telephonePattern = /\+[0-9]{11,12}|[0-9]{10}/
+export const telephonePattern = /^(\+[\d]{11,12}|[\d]{10})$/

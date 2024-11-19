@@ -321,7 +321,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(email).toHaveValue('julien.deschamps@example.com')
       const telephone = within(formulaire).getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
       expect(telephone).toHaveAttribute('name', 'telephone')
-      expect(telephone).toHaveAttribute('pattern', '\\+[0-9]{11,12}|[0-9]{10}')
+      expect(telephone).toHaveAttribute('pattern', '^(\\+[\\d]{11,12}|[\\d]{10})$')
       expect(telephone).toHaveAttribute('type', 'tel')
       expect(telephone).not.toBeRequired()
       expect(telephone).toHaveValue('0405060708')
