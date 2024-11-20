@@ -293,6 +293,33 @@ describe('utilisateur repository', () => {
     })
   })
 
+  describe('mise à jour de l’identifiant unique d’un utilisateur', () => {
+    it('changement de l’identifiant unique', async () => {
+      // GIVEN
+      const repository = new PrismaUtilisateurRepository(prisma)
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          email: 'martine.dugenoux@example.org',
+          ssoId: 'martine.dugenoux@example.org',
+        }),
+      })
+
+      // WHEN
+      await repository.updateUid(utilisateurFactory({
+        email: 'martine.dugenoux@example.org',
+        uid: uidUtilisateurValue,
+      }))
+
+      // THEN
+      const updatedRecord = await prisma.utilisateurRecord.findUnique({
+        where: {
+          ssoId: uidUtilisateurValue,
+        },
+      })
+      expect(updatedRecord?.ssoId).toBe(uidUtilisateurValue)
+    })
+  })
+
   describe('ajout d’un utilisateur', () => {
     const repository = new PrismaUtilisateurRepository(prisma)
 
