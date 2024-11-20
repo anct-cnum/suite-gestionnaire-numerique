@@ -194,11 +194,10 @@ describe('corriger nom prenom si absents', () => {
       // THEN
       expect(result).toBe('okAvecMiseAJour')
       expect(spiedUidToFind).toBe('fooId')
-      expect(
-        spiedUtilisateurToUpdate?.equals(
-          utilisateurFactory({ nom: nomApresCorrection, prenom: prenomApresCorrection })
-        )
-      ).toBe(true)
+      expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({
+        nom: nomApresCorrection,
+        prenom: prenomApresCorrection,
+      }).state())
     }
   )
 })

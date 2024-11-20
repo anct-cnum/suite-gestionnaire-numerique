@@ -73,7 +73,7 @@ describe('modifier mes informations personnelles', () => {
         telephone: '0102030406',
       })
       expect(result).toBe('OK')
-      expect(utilisateurApresMiseAJour.equals(utilisateur)).toBe(true)
+      expect(utilisateurApresMiseAJour.state()).toStrictEqual(utilisateur.state())
     })
   })
 })
