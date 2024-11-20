@@ -79,6 +79,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
   async update(utilisateur: Utilisateur): Promise<void> {
     const utilisateurState = utilisateur.state()
+
     await this.#activeRecord.update({
       data: {
         email: utilisateurState.email,
@@ -90,6 +91,19 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       },
       where: {
         ssoId: utilisateurState.uid.value,
+      },
+    })
+  }
+
+  async updateUid(utilisateur: Utilisateur): Promise<void> {
+    const utilisateurState = utilisateur.state()
+
+    await this.#activeRecord.update({
+      data: {
+        ssoId: utilisateurState.uid.value,
+      },
+      where: {
+        ssoId: utilisateurState.email,
       },
     })
   }
