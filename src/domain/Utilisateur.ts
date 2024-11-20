@@ -79,6 +79,20 @@ export class Utilisateur extends Entity<UtilisateurState> {
     )
   }
 
+  avecNouvelUid(uid: string): Utilisateur {
+    return new Utilisateur(
+      UtilisateurUid.from(uid),
+      this.#role,
+      this.#nom,
+      this.#prenom,
+      this.#email,
+      this.#isSuperAdmin,
+      this.#inviteLe,
+      this.#derniereConnexion,
+      this.#telephone
+    )
+  }
+
   changerPrenom(prenom: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
       this.#prenom = new Prenom(prenom)
