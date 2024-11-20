@@ -21,11 +21,11 @@ describe('changer mon rôle', () => {
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateur.equals(utilisateurFactory({
+    expect(spiedUtilisateur.state()).toStrictEqual(utilisateurFactory({
       isSuperAdmin: true,
       role: 'Pilote politique publique',
       uid: 'utilisateurSuperAdminUid',
-    }))).toBe(true)
+    }).state())
   })
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
