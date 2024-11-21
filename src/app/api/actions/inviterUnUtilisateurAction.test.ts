@@ -1,3 +1,4 @@
+import * as nextCache from 'next/cache'
 import nodemailer from 'nodemailer'
 import { ZodIssue } from 'zod'
 
@@ -47,9 +48,9 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
+          codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
-          organisation: 'La Poste',
           prenom: 'Martin',
           role: 'Gestionnaire structure',
         },
@@ -59,7 +60,7 @@ describe('inviter un utilisateur action', () => {
           nom: 'Tartempion',
           prenom: 'Martin',
           role: {
-            organisation: 'La Poste',
+            codeOrganisation: '21',
             type: 'Gestionnaire structure',
           },
           uidUtilisateurCourant: sub,
@@ -67,12 +68,12 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
+          codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
-          organisation: 'La Poste',
           prenom: 'Martin',
         },
-        desc: 'avec organisation spécifiée sans rôle : ignorée',
+        desc: 'avec code organisation spécifiée sans rôle : ignorée',
         expectedCommand: {
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
@@ -84,11 +85,13 @@ describe('inviter un utilisateur action', () => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
       vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+      vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
       // WHEN
       const result = await inviterUnUtilisateurAction(actionParams)
 
       // THEN
+      expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
       expect(InviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith(expectedCommand)
       expect(result).toBe('OK')
     })
@@ -101,9 +104,9 @@ describe('inviter un utilisateur action', () => {
     vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('emailExistant')
 
     const inviterUnUtilisateurParams = {
+      codeOrganisation: '21',
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
-      organisation: 'La Poste',
       prenom: 'Martin',
       role: 'Gestionnaire département',
     }
@@ -147,19 +150,19 @@ describe('inviter un utilisateur action', () => {
         role: 'Rôle bidon',
       },
       {
-        desc: 'organisation vide',
+        codeOrganisation: '',
+        desc: 'code organisation vide',
         email: 'martin.tartempion@example.com',
-        expectedError: 'L’organisation doit être renseignée',
+        expectedError: 'Le code organisation doit être renseigné',
         nom: 'Tartempion',
-        organisation: '',
         prenom: 'Martin',
       },
-    ])('$desc', async ({ email, nom, prenom, role, organisation, expectedError }) => {
+    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, expectedError }) => {
       // GIVEN
       const inviterUnUtilisateurParams = {
+        codeOrganisation,
         email,
         nom,
-        organisation,
         prenom,
         role,
       }
@@ -173,8 +176,9 @@ describe('inviter un utilisateur action', () => {
   })
 
   describe(
-    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de'
-    + ' l’invitation est ou n’est pas un "super admin"', () => {
+    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de' +
+      ' l’invitation est ou n’est pas un "super admin"',
+    () => {
       it.each([
         {
           desc: 'quand l’email est envoyé par un super admin',
@@ -197,26 +201,33 @@ describe('inviter un utilisateur action', () => {
 
           isSuperAdmin: false,
         },
-      ])('$desc, alors l’email est envoyé avec le paramétrage approprié', async ({ expectedParams, isSuperAdmin }) => {
-        // GIVEN
-        vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(('sub'))
-        vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(utilisateurFactory({ isSuperAdmin }))
-        vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
-        const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
-        const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
+      ])(
+        '$desc, alors l’email est envoyé avec le paramétrage approprié',
+        async ({ expectedParams, isSuperAdmin }) => {
+          // GIVEN
+          vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+          vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce('sub')
+          vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(
+            utilisateurFactory({ isSuperAdmin })
+          )
+          vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)
+          const spiedMailerTransport = vi.spyOn(nodemailer, 'createTransport')
+          const spiedMakeMjml = vi.spyOn(invitationEmail, 'makeMjml')
 
-        // WHEN
-        await inviterUnUtilisateurAction({
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          organisation: 'La Poste',
-          prenom: 'Martin',
-        })
+          // WHEN
+          await inviterUnUtilisateurAction({
+            codeOrganisation: '21',
+            email: 'martin.tartempion@example.com',
+            nom: 'Tartempion',
+            prenom: 'Martin',
+          })
 
-        // THEN
-        expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
-        expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
-      })
+          // THEN
+          expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
+          expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
+          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
+        }
+      )
     }
   )
 })

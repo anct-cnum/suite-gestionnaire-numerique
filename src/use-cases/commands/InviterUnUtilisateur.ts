@@ -9,7 +9,11 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
   readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
 
-  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory, date: Date = new Date()) {
+  constructor(
+    repository: Repository,
+    emailGatewayFactory: EmailGatewayFactory,
+    date: Date = new Date()
+  ) {
     this.#repository = repository
     this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date
@@ -35,10 +39,15 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     return 'emailExistant'
   }
 
-  #creerUtilisateurAInviter(command: InviterUnUtilisateurCommand, utilisateurCourant: Utilisateur): Utilisateur {
+  #creerUtilisateurAInviter(
+    command: InviterUnUtilisateurCommand,
+    utilisateurCourant: Utilisateur
+  ): Utilisateur {
     const isSuperAdmin = utilisateurCourant.state().isSuperAdmin
     return command.role
-      ? Utilisateur.create(this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin))
+      ? Utilisateur.create(
+        this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin)
+      )
       : utilisateurCourant.duMemeRole(this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin))
   }
   #toUtilisateurParams(
@@ -47,7 +56,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
   ): UtilisateurCreateParam {
     return {
       ...this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin),
-      organisation: command.role.organisation,
+      codeOrganisation: command.role.codeOrganisation,
       role: command.role.type,
     }
   }
@@ -75,7 +84,7 @@ export type InviterUnUtilisateurCommand = Readonly<{
   uidUtilisateurCourant: string
   role?: Readonly<{
     type: TypologieRole
-    organisation?: string
+    codeOrganisation?: string
   }>
 }>
 
@@ -86,4 +95,3 @@ interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository
 type UtilisateurCreateParam = Parameters<typeof Utilisateur.create>[0]
 
 type UtilisateurDuMemeRoleParam = Parameters<typeof Utilisateur.prototype.duMemeRole>[0]
-

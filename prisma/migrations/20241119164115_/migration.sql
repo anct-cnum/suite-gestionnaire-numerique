@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "structure" ALTER COLUMN "nom" SET DATA TYPE CITEXT;
