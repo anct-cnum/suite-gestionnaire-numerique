@@ -3,7 +3,6 @@ import Select, { StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
 export default function OrganisationInput({
-  structureId,
   label,
   options,
   organisation,
@@ -22,7 +21,7 @@ export default function OrganisationInput({
     <div className="fr-select-group">
       <label
         className="fr-label"
-        htmlFor={structureId}
+        htmlFor="organisation"
       >
         {label}
         {' '}
@@ -34,13 +33,13 @@ export default function OrganisationInput({
         <AsyncSelect
           cacheOptions={true}
           components={{ DropdownIndicator }}
-          inputId={structureId}
-          instanceId={structureId}
+          inputId="organisation"
+          instanceId="organisation"
           isClearable={true}
           loadOptions={onSearch}
           loadingMessage={() => 'Chargement des structures...'}
           menuPlacement="top"
-          name={structureId}
+          name="organisation"
           noOptionsMessage={() => 'Rechercher une structure'}
           onChange={setOrganisation as (organisation: unknown) => void}
           placeholder=""
@@ -50,11 +49,11 @@ export default function OrganisationInput({
         /> :
         <Select
           components={{ DropdownIndicator }}
-          inputId={structureId}
-          instanceId={structureId}
+          inputId="organisation"
+          instanceId="organisation"
           isClearable={true}
           menuPlacement="top"
-          name={structureId}
+          name="organisation"
           noOptionsMessage={() => 'Pas de résultat'}
           onChange={setOrganisation as (organisation: unknown) => void}
           options={options}
@@ -68,9 +67,8 @@ export default function OrganisationInput({
 }
 
 type OrganisationInputProps = Readonly<{
-  structureId: string
   label: string
-  options: Array<{id: string, label: string}>
+  options: ReadonlyArray<{value: string, label: string}>
   organisation: string
   setOrganisation: (organisation: string) => void
 }>

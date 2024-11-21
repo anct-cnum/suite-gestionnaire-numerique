@@ -18,15 +18,15 @@ import { emailPattern } from '@/shared/patterns'
 const rolesAvecStructure: RolesAvecStructure = {
   'Gestionnaire département': {
     label: 'Département',
-    options: departements.map((departement) => ({ id: departement.code, label: departement.nom })),
+    options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
   },
   'Gestionnaire groupement': {
     label: 'Groupement',
-    options: groupements.map((groupement) => ({ id: `${groupement.id}}`, label: groupement.nom })),
+    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}}` })),
   },
   'Gestionnaire région': {
     label: 'Région',
-    options: regions.map((region) => ({ id: region.code, label: region.nom })),
+    options: regions.map((region) => ({ label: region.nom, value: region.code })),
   },
   'Gestionnaire structure': {
     label: 'Structure',
@@ -46,7 +46,6 @@ export default function InviterUnUtilisateur({
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
-  const organisationId = useId()
   const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
     id: roleGerable,
     label: roleGerable,
@@ -152,7 +151,6 @@ export default function InviterUnUtilisateur({
               options={rolesAvecStructure[roleSelectionne].options}
               organisation={organisation}
               setOrganisation={setOrganisation}
-              structureId={organisationId}
             /> : null
         }
         <button
@@ -202,5 +200,5 @@ type InviterUnUtilisateurProps = Readonly<{
 
 type RolesAvecStructure = Readonly<Record<string, {
   label: string,
-  options: Array<{id: string, label: string}>
+  options: ReadonlyArray<{value: string, label: string}>
 }>>
