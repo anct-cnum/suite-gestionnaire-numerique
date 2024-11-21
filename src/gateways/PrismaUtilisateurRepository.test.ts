@@ -10,7 +10,7 @@ import {
   utilisateurRecordFactory,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
-import { utilisateurFactory } from '@/domain/testHelper'
+import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
@@ -425,14 +425,32 @@ describe('utilisateur repository', () => {
 
   describe('ajout d’un utilisateur', () => {
     const repository = new PrismaUtilisateurRepository(prisma)
+    const structureId = 10
+    const departementCode = '75'
+    const groupementId = 10
+    const regionCode = '11'
 
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
       // GIVEN
       const ssoIdDifferent = '009d2df4-60c7-4704-b8b5-d007b436f681'
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(),
+
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: regionCode }),
       })
-      const utilisateur = utilisateurFactory({ uid: ssoIdDifferent })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: departementCode }),
+      })
+      await prisma.groupementRecord.create({
+        data: groupementRecordFactory({ id: groupementId }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({ id: structureId }),
+      })
+      const utilisateur = utilisateurFactory({
+        departement: departementFactory({ code: departementCode }).state(),
+        role: 'Gestionnaire département',
+        uid: ssoIdDifferent,
+      })
 
       // WHEN
       const resultatCreation = await repository.add(utilisateur)
@@ -445,7 +463,9 @@ describe('utilisateur repository', () => {
       })
       expect(resultatCreation).toBe(true)
       const utilisateurRecord = utilisateurRecordFactory({
+        departementCode,
         derniereConnexion: null,
+        role: 'gestionnaire_departement',
         ssoId: ssoIdDifferent,
         telephone: '',
       })

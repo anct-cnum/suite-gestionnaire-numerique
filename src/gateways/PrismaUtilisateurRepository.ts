@@ -20,14 +20,18 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       await this.#activeRecord.create({
         data: {
           dateDeCreation: utilisateurState.inviteLe,
+          departementCode: utilisateurState.departement?.code,
           email: utilisateurState.email,
+          groupementId: utilisateurState.groupementUid?.value,
           inviteLe: utilisateurState.inviteLe,
           isSuperAdmin: utilisateurState.isSuperAdmin,
           isSupprime: false,
           nom: utilisateurState.nom,
           prenom: utilisateurState.prenom,
+          regionCode: utilisateurState.region?.code,
           role: fromTypologieRole(utilisateurState.role.nom),
           ssoId: utilisateurState.uid.value,
+          structureId: utilisateurState.structureUid?.value,
           telephone: '',
         },
       })
