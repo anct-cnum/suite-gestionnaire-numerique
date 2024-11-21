@@ -1,3 +1,79 @@
 .center {
   text-align: center;
 }
+
+.resume-membres {
+  background-color: var(--info-950-100);
+  background-image: none !important;
+  border-radius: 1rem;
+}
+
+.resume-membres span {
+  display: block;
+}
+
+.resume-membres span::first-letter {
+  text-transform: capitalize;
+}
+
+.resume-a {
+  background-image: none;
+}
+
+.resume-feuilles-de-route {
+  background-color: var(--purple-glycine-950-100);
+  background-image: none !important;
+  border-radius: 1rem;
+}
+
+.resume-feuilles-de-route span {
+  display: block;
+}
+
+.resume-feuilles-de-route span::first-letter {
+  text-transform: capitalize;
+}
+
+.resume-hr {
+  border-top: 0.1rem solid var(--grey-1000-50);
+  margin: 0 0 0.5rem;
+  padding: 0;
+}
+
+.resume-note-de-contexte {
+  background-color: var(--green-tilleul-verveine-975-75);
+  background-image: none !important;
+  border-radius: 1rem;
+}
+
+.article div {
+  margin: 0;
+  padding: 0;
+}
+
+.header div:last-child {
+  text-align: right;
+}
+
+.article table {
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+}
+
+.article tbody td {
+  background-image: linear-gradient(var(--grey-900-175), var(--grey-900-175)) !important;
+  padding: 1rem !important;
+}
+
+.article tbody td:first-child {
+  width: 3rem;
+}
+
+.article tbody td:last-child {
+  width: 3rem;
+}
+
+.collapse {
+  height: 5rem;
+  overflow: hidden;
+}

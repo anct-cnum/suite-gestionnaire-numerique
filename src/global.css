@@ -47,7 +47,6 @@
 
 .fr-btns-group--space-between {
   justify-content: space-between;
-  text-align: center;
 }
 
 .no-hover:hover {
