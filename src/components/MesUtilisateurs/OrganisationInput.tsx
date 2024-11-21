@@ -8,7 +8,7 @@ export default function OrganisationInput({
   organisation,
   setOrganisation,
 }: OrganisationInputProps): ReactElement {
-  const onSearch = async (search: string): Promise<Array<{label: string, value: string}>> => {
+  const onSearch = async (search: string): Promise<ReadonlyArray<{label: string, value: string}>> => {
     if (search.length < 3) {
       return []
     }

@@ -46,7 +46,7 @@ export default function InviterUnUtilisateur({
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
-  const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
+  const rolesGerables = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
     id: roleGerable,
     label: roleGerable,
   }))
@@ -113,7 +113,7 @@ export default function InviterUnUtilisateur({
           </span>
         </TextInput>
         {
-          gestionnaires.length > 1 ?
+          rolesGerables.length > 1 ?
             <>
               <legend
                 aria-describedby="champsObligatoires"
@@ -131,7 +131,7 @@ export default function InviterUnUtilisateur({
                   setRoleSelectionne(event.target.value)
                   setOrganisation('')
                 }}
-                options={gestionnaires}
+                options={rolesGerables}
               />
             </>
             :
@@ -140,7 +140,7 @@ export default function InviterUnUtilisateur({
                 Rôle attribué à cet utilisateur :
               </p>
               <Badge color="purple-glycine">
-                {gestionnaires[0]?.label}
+                {rolesGerables[0]?.label}
               </Badge>
             </>
         }
