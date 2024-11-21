@@ -775,7 +775,6 @@ describe('mes utilisateurs', () => {
       // @ts-expect-error
       // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
       container.querySelector<HTMLInputElement>('input[aria-hidden="true"]').value = '1845'
-      //expect(container.querySelectorAll<HTMLInputElement>('input[type="hidden"]')).toBe('')
       const envoyerInvitation = await within(formulaiReinvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
 
