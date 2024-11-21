@@ -38,6 +38,7 @@ export default function OrganisationInput({
           instanceId={structureId}
           isClearable={true}
           loadOptions={onSearch}
+          loadingMessage={() => 'Chargement des structures...'}
           menuPlacement="top"
           name={structureId}
           noOptionsMessage={() => 'Rechercher une structure'}
@@ -52,7 +53,7 @@ export default function OrganisationInput({
           inputId={structureId}
           instanceId={structureId}
           isClearable={true}
-          menuPlacement="auto"
+          menuPlacement="top"
           name={structureId}
           noOptionsMessage={() => 'Pas de résultat'}
           onChange={setOrganisation as (organisation: unknown) => void}
@@ -74,6 +75,7 @@ type OrganisationInputProps = Readonly<{
   setOrganisation: (organisation: string) => void
 }>
 
+// istanbul ignore next @preserve
 const styles: StylesConfig = {
   control: (styles) => ({
     ...styles,

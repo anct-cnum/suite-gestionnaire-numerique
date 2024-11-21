@@ -691,7 +691,7 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ de structure s’affiche', () => {
+    it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -723,9 +723,73 @@ describe('mes utilisateurs', () => {
       fireEvent.click(gestionnaireDepartement)
 
       // THEN
-      const structure = within(formulaiReinvitation).getByLabelText('Département *')
-      expect(structure).toBeRequired()
-      expect(structure).toHaveAttribute('type', 'text')
+      const organisation = within(formulaiReinvitation).getByLabelText('Département *')
+      expect(organisation).toBeRequired()
+      expect(organisation).toHaveAttribute('type', 'text')
+    })
+
+    it('en tant qu’administrateur, quand je fais une recherche dans le champ de structure, alors je peux y faire une recherche utilisée dans le formulaire', async () => {
+      // GIVEN
+      const windowDsfr = window.dsfr
+      window.dsfr = (): {modal: {conceal: Mock}} => {
+        return {
+          modal: {
+            conceal: vi.fn(),
+          },
+        }
+      }
+      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction').mockResolvedValueOnce('OK')
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          role: {
+            groupe: 'admin',
+            libelle: 'Rhône',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'maille',
+            rolesGerables: [
+              'Administrateur dispositif',
+              'Gestionnaire département',
+              'Gestionnaire groupement',
+              'Gestionnaire région',
+              'Gestionnaire structure',
+              'Instructeur',
+              'Pilote politique publique',
+              'Support animation',
+            ],
+          },
+        }),
+      })
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+      const formulaiReinvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const nom = within(formulaiReinvitation).getByLabelText('Nom *')
+      fireEvent.change(nom, { target: { value: 'Tartempion' } })
+      const prenom = within(formulaiReinvitation).getByLabelText('Prénom *')
+      fireEvent.change(prenom, { target: { value: 'Martin' } })
+      const email = within(formulaiReinvitation).getByLabelText(/Adresse électronique/)
+      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
+      const gestionnaireStructure = within(formulaiReinvitation).getByLabelText('Gestionnaire structure')
+      fireEvent.click(gestionnaireStructure)
+      // WHEN
+      // @ts-expect-error
+      // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
+      container.querySelector<HTMLInputElement>('input[aria-hidden="true"]').value = '1845'
+      //expect(container.querySelectorAll<HTMLInputElement>('input[type="hidden"]')).toBe('')
+      const envoyerInvitation = await within(formulaiReinvitation).findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+
+      // THEN
+      await waitFor(() => {
+        expect(inviterAction.inviterUnUtilisateurAction).toHaveBeenCalledWith({
+          codeOrganisation: '1845',
+          email: 'martin.tartempion@example.com',
+          nom: 'Tartempion',
+          prenom: 'Martin',
+          role: 'Gestionnaire structure',
+        })
+      })
+      window.dsfr = windowDsfr
     })
 
     it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {

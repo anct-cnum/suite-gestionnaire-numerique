@@ -184,7 +184,7 @@ export default function InviterUnUtilisateur({
   }
 
   function isOrganisationDisplayed(): boolean {
-    return gestionnaires.length > 1 && Object.keys(rolesAvecStructure).includes(roleSelectionne)
+    return Object.keys(rolesAvecStructure).includes(roleSelectionne)
   }
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
