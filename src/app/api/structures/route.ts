@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../prisma/prismaClient'
+import { getSession } from '../../../gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureLoader } from '../../../gateways/PrismaStructureLoader'
-import { getSession } from '../../../gateways/ProConnectAuthentificationGateway'
 import { isNullish } from '../../../shared/lang'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {

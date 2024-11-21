@@ -46,8 +46,8 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     const isSuperAdmin = utilisateurCourant.state().isSuperAdmin
     return command.role
       ? Utilisateur.create(
-          this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin)
-        )
+        this.#toUtilisateurParams(command as Required<InviterUnUtilisateurCommand>, isSuperAdmin)
+      )
       : utilisateurCourant.duMemeRole(this.#toUtilisateurDuMemeRoleParams(command, isSuperAdmin))
   }
   #toUtilisateurParams(
