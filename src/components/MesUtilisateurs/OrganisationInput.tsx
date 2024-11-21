@@ -14,7 +14,7 @@ export default function OrganisationInput({
       return []
     }
     const result = await fetch(`/api/structures?search=${search}`)
-    const structures = await result.json() as Array<{ uid: string, nom: string }>
+    const structures = await result.json() as ReadonlyArray<{ uid: string, nom: string }>
     return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
   }
 

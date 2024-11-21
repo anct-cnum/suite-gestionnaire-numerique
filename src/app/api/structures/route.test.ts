@@ -1,42 +1,61 @@
-import { createMocks } from 'node-mocks-http'
+import { NextRequest } from 'next/server'
 
 import { GET } from './route'
+import { PrismaStructureLoader } from '../../../gateways/PrismaStructureLoader'
+import * as ssoGateway from '@/gateways/ProConnectAuthentificationGateway'
 
-// eslint-disable-next-line vitest/prefer-lowercase-title
 describe('route /structures', () => {
-  it.skip('devrait retourner une erreur 403 quand on quand l’utilisateur n’est pas authentifié', async () => {
+  it('devrait retourner une erreur 403 quand on quand l’utilisateur n’est pas authentifié', async () => {
     // GIVEN
-    // const source = '/tests/login.test.ts'
-    // const nextUrl = new URL(source, process.env.HOST)
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce(null)
 
-    // // WHEN
-    // const request = createRequest({ method: 'GET', url: '/api/structures' })
-    // const response = await GET({ ...request, nextUrl })
-    const { req, res } = createMocks({
-      method: 'GET',
-    })
-
-    await GET(req)
-    // THEN
-    //expect(response.status).toBe(403)
-    expect(res._getStatusCode()).toBe(403) // Vérifie le statut HTTP
-  })
-
-  it('devrait retourner la liste des structures qui correspondent à la recherche', () => {
-    // GIVEN
+    const req = {
+      nextUrl: {
+        searchParams: new Map([['search', 'abc']]),
+      },
+    } as unknown as NextRequest
 
     // WHEN
+    const result = await GET(req)
 
     // THEN
-    expect(true).toBe(true)
+    expect(result.status).toBe(403)
   })
 
-  it('devrait retourner une liste vide quand aucune structure ne correspond à la recherche', () => {
+  it('devrait retourner une erreur 400 quand on quand aucune recherche n’est spécifiée', async () => {
     // GIVEN
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
+
+    const req = {
+      nextUrl: {
+        searchParams: new Map(),
+      },
+    } as unknown as NextRequest
 
     // WHEN
+    const result = await GET(req)
 
     // THEN
-    expect(true).toBe(true)
+    expect(result.status).toBe(400)
+  })
+
+  it('devrait retourner la liste des structures qui correspondent à la recherche', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
+    vi.spyOn(PrismaStructureLoader.prototype, 'findStructures').mockResolvedValueOnce([{ nom: 'La Poste', uid: '21' }])
+
+    const req = {
+      nextUrl: {
+        searchParams: new Map([['search', 'abc']]),
+      },
+    } as unknown as NextRequest
+
+    // WHEN
+    const result = await GET(req)
+
+    // THEN
+    const response = (await result.json()) as unknown
+    expect(response).toStrictEqual([{ nom: 'La Poste', uid: '21' }])
+    expect(result.status).toBe(200)
   })
 })
