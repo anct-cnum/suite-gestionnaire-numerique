@@ -57,12 +57,12 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       return null
     }
     return Utilisateur.create({
+      codeOrganisation: organisation(record),
       derniereConnexion: record.derniereConnexion,
       email: record.email,
       inviteLe: record.inviteLe,
       isSuperAdmin: record.isSuperAdmin,
       nom: record.nom,
-      organisation: organisation(record),
       prenom: record.prenom,
       role: toTypologieRole(record.role),
       uid: record.ssoId,
@@ -109,15 +109,16 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async #drop(ssoId: string): Promise<boolean> {
-    return this.#activeRecord.update({
-      data: {
-        isSupprime: true,
-      },
-      where: {
-        isSupprime: false,
-        ssoId,
-      },
-    })
+    return this.#activeRecord
+      .update({
+        data: {
+          isSupprime: true,
+        },
+        where: {
+          isSupprime: false,
+          ssoId,
+        },
+      })
       .then(() => true)
       .catch((error: unknown) => {
         // https://www.prisma.io/docs/orm/reference/error-reference#p2025

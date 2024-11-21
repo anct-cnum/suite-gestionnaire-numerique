@@ -1,4 +1,4 @@
-import { ReactElement, useEffect } from 'react'
+import { ReactElement } from 'react'
 import Select, { StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
@@ -9,10 +9,6 @@ export default function OrganisationInput({
   organisation,
   setOrganisation,
 }: OrganisationInputProps): ReactElement {
-  useEffect(() => {
-    setOrganisation(null)
-  }, [label, setOrganisation])
-
   const onSearch = async (search: string): Promise<Array<{label: string, value: string}>> => {
     if (search.length < 3) {
       return []
@@ -74,8 +70,8 @@ type OrganisationInputProps = Readonly<{
   structureId: string
   label: string
   options: Array<{id: string, label: string}>
-  organisation: OrganisationOption | null
-  setOrganisation: (organisation: OrganisationOption | null) => void
+  organisation: string
+  setOrganisation: (organisation: string) => void
 }>
 
 const styles: StylesConfig = {
@@ -108,8 +104,3 @@ function DropdownIndicator(): ReactElement {
     </svg>
   )
 }
-
-export type OrganisationOption = Readonly<{
-  id: string
-  label: string
-}>

@@ -2,7 +2,7 @@
 
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
-import OrganisationInput, { OrganisationOption } from './OrganisationInput'
+import OrganisationInput from './OrganisationInput'
 import departements from '../../../ressources/departements.json'
 import groupements from '../../../ressources/groupements.json'
 import regions from '../../../ressources/regions.json'
@@ -22,7 +22,7 @@ const rolesAvecStructure: RolesAvecStructure = {
   },
   'Gestionnaire groupement': {
     label: 'Groupement',
-    options: groupements.map((groupement) => ({ id: groupement.nom, label: groupement.nom })),
+    options: groupements.map((groupement) => ({ id: `${groupement.id}}`, label: groupement.nom })),
   },
   'Gestionnaire région': {
     label: 'Région',
@@ -42,7 +42,7 @@ export default function InviterUnUtilisateur({
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
   const { sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
-  const [organisation, setOrganisation] = useState<OrganisationOption | null>(null)
+  const [organisation, setOrganisation] = useState<string>('')
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -130,6 +130,7 @@ export default function InviterUnUtilisateur({
                 nomGroupe="attributionRole"
                 onChange={(event) => {
                   setRoleSelectionne(event.target.value)
+                  setOrganisation('')
                 }}
                 options={gestionnaires}
               />
@@ -169,8 +170,8 @@ export default function InviterUnUtilisateur({
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
-    const [nom, prenom, email, role] = [...form.values()].map((value) => value as string)
-    const result = await inviterUnUtilisateurAction({ email, nom, organisation: organisation?.label, prenom, role })
+    const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
+    const result = await inviterUnUtilisateurAction({ codeOrganisation, email, nom, prenom, role })
     if (result === 'emailExistant') {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     } else {

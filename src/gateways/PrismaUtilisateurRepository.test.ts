@@ -1,7 +1,14 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
-import { departementRecordFactory, epochTime, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
+import {
+  departementRecordFactory,
+  epochTime,
+  groupementRecordFactory,
+  regionRecordFactory,
+  structureRecordFactory,
+  utilisateurRecordFactory,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
@@ -48,54 +55,54 @@ describe('utilisateur repository', () => {
     describe('l’utilisateur existe : les données utilisateur sont reçues', () => {
       it.each([
         {
+          codeOrganisation: 'Paris',
           desc: 'pour un gestionnaire département : avec la référence au département',
-          organisation: 'Paris',
           role: 'Gestionnaire département' as const,
           roleDataRepresentation: 'gestionnaire_departement' as const,
         },
         {
+          codeOrganisation: 'Île-de-France',
           desc: 'pour un gestionnaire région : avec la référence à la région',
-          organisation: 'Île-de-France',
           role: 'Gestionnaire région' as const,
           roleDataRepresentation: 'gestionnaire_region' as const,
         },
         {
+          codeOrganisation: 'Solidarnum',
           desc: 'pour un gestionnaire structure : avec la référence à la structure',
-          organisation: 'Solidarnum',
           role: 'Gestionnaire structure' as const,
           roleDataRepresentation: 'gestionnaire_structure' as const,
         },
         {
+          codeOrganisation: 'Hubikoop',
           desc: 'pour un gestionnaire groupement : avec la référence au groupement',
-          organisation: 'Hubikoop',
           role: 'Gestionnaire groupement' as const,
           roleDataRepresentation: 'gestionnaire_groupement' as const,
         },
         {
+          codeOrganisation: 'Administrateur Dispositif lambda',
           desc: 'pour un administrateur dispositif',
-          organisation: 'Administrateur Dispositif lambda',
           role: 'Administrateur dispositif' as const,
           roleDataRepresentation: 'administrateur_dispositif' as const,
         },
         {
+          codeOrganisation: 'Banque des territoires',
           desc: 'pour un instructeur',
-          organisation: 'Banque des territoires',
           role: 'Instructeur' as const,
           roleDataRepresentation: 'instructeur' as const,
         },
         {
+          codeOrganisation: 'Mednum',
           desc: 'pour un support animation',
-          organisation: 'Mednum',
           role: 'Support animation' as const,
           roleDataRepresentation: 'support_animation' as const,
         },
         {
+          codeOrganisation: 'France Numérique Ensemble',
           desc: 'pour un pilote politique publique',
-          organisation: 'France Numérique Ensemble',
           role: 'Pilote politique publique' as const,
           roleDataRepresentation: 'pilote_politique_publique' as const,
         },
-      ])('$desc', async ({ role, roleDataRepresentation, organisation }) => {
+      ])('$desc', async ({ role, roleDataRepresentation, codeOrganisation }) => {
         // GIVEN
         const structureId = 10
         const departementCode = '75'
@@ -127,12 +134,14 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateur)
 
         // THEN
-        expect(result?.state()).toStrictEqual(utilisateurFactory({
-          organisation,
-          role,
-          telephone: '',
-          uid: uidUtilisateurValue,
-        }).state())
+        expect(result?.state()).toStrictEqual(
+          utilisateurFactory({
+            codeOrganisation,
+            role,
+            telephone: '',
+            uid: uidUtilisateurValue,
+          }).state()
+        )
       })
     })
   })
@@ -141,7 +150,10 @@ describe('utilisateur repository', () => {
     const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
     const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
     const utilisateurExistant = utilisateurRecordFactory({ ssoId: ssoIdUtilisateurExistant })
-    const utilisateurSupprime = utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdUtilisateurSupprime })
+    const utilisateurSupprime = utilisateurRecordFactory({
+      isSupprime: true,
+      ssoId: ssoIdUtilisateurSupprime,
+    })
 
     describe.each([
       {
@@ -155,7 +167,6 @@ describe('utilisateur repository', () => {
           repository.drop(utilisateurFactory({ uid })),
       },
     ])('$desc', ({ dropFn }) => {
-
       it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
         // GIVEN
         await prisma.utilisateurRecord.create({
@@ -166,7 +177,10 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
+        const result = await dropFn(
+          new PrismaUtilisateurRepository(prisma),
+          ssoIdUtilisateurExistant
+        )
 
         // THEN
         expect(result).toBe(true)
@@ -202,7 +216,10 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurSupprime)
+        const result = await dropFn(
+          new PrismaUtilisateurRepository(prisma),
+          ssoIdUtilisateurSupprime
+        )
 
         // THEN
         expect(result).toBe(false)
@@ -219,7 +236,10 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await dropFn(new PrismaUtilisateurRepository(prisma), ssoIdUtilisateurExistant)
+        const result = await dropFn(
+          new PrismaUtilisateurRepository(prisma),
+          ssoIdUtilisateurExistant
+        )
 
         // THEN
         expect(result).toBe(false)
@@ -234,7 +254,9 @@ describe('utilisateur repository', () => {
         const prismaClientKnownRequestErrorOnUpdateStub = {
           utilisateurRecord: {
             async update(): Promise<never> {
-              return Promise.reject(new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' }))
+              return Promise.reject(
+                new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
+              )
             },
           },
         } as unknown as typeof prisma
@@ -274,14 +296,16 @@ describe('utilisateur repository', () => {
       })
 
       // WHEN
-      await repository.update(utilisateurFactory({
-        email: 'martine.dugenoux@example.org',
-        inviteLe: date,
-        nom: 'Dugenoux',
-        prenom: 'Martine',
-        role: 'Instructeur',
-        uid: uidUtilisateurValue,
-      }))
+      await repository.update(
+        utilisateurFactory({
+          email: 'martine.dugenoux@example.org',
+          inviteLe: date,
+          nom: 'Dugenoux',
+          prenom: 'Martine',
+          role: 'Instructeur',
+          uid: uidUtilisateurValue,
+        })
+      )
 
       // THEN
       const updatedRecord = await prisma.utilisateurRecord.findUnique({
@@ -345,7 +369,11 @@ describe('utilisateur repository', () => {
         },
       })
       expect(resultatCreation).toBe(true)
-      const utilisateurRecord = utilisateurRecordFactory({ derniereConnexion: null, ssoId: ssoIdDifferent, telephone: '' })
+      const utilisateurRecord = utilisateurRecordFactory({
+        derniereConnexion: null,
+        ssoId: ssoIdDifferent,
+        telephone: '',
+      })
       expect(createdRecord).toMatchObject(utilisateurRecord)
     })
 
@@ -369,7 +397,12 @@ describe('utilisateur repository', () => {
       const prismaClientAuthenticationFailedErrorStub = {
         utilisateurRecord: {
           async create(): Promise<never> {
-            return Promise.reject(new Prisma.PrismaClientKnownRequestError('authentication failed', { clientVersion: '', code: 'P1000' }))
+            return Promise.reject(
+              new Prisma.PrismaClientKnownRequestError('authentication failed', {
+                clientVersion: '',
+                code: 'P1000',
+              })
+            )
           },
         },
       } as unknown as PrismaClient
@@ -383,7 +416,9 @@ describe('utilisateur repository', () => {
       } as unknown as PrismaClient
 
       const repositoryGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub)
-      const repositoryAuthenticationError = new PrismaUtilisateurRepository(prismaClientAuthenticationFailedErrorStub)
+      const repositoryAuthenticationError = new PrismaUtilisateurRepository(
+        prismaClientAuthenticationFailedErrorStub
+      )
 
       const utilisateur = utilisateurFactory()
 

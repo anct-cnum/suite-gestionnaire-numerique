@@ -48,9 +48,9 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
+          codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
-          organisation: 'La Poste',
           prenom: 'Martin',
           role: 'Gestionnaire structure',
         },
@@ -60,7 +60,7 @@ describe('inviter un utilisateur action', () => {
           nom: 'Tartempion',
           prenom: 'Martin',
           role: {
-            organisation: 'La Poste',
+            codeOrganisation: '21',
             type: 'Gestionnaire structure',
           },
           uidUtilisateurCourant: sub,
@@ -68,12 +68,12 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
+          codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
-          organisation: 'La Poste',
           prenom: 'Martin',
         },
-        desc: 'avec organisation spécifiée sans rôle : ignorée',
+        desc: 'avec code organisation spécifiée sans rôle : ignorée',
         expectedCommand: {
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
@@ -104,9 +104,9 @@ describe('inviter un utilisateur action', () => {
     vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('emailExistant')
 
     const inviterUnUtilisateurParams = {
+      codeOrganisation: '21',
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
-      organisation: 'La Poste',
       prenom: 'Martin',
       role: 'Gestionnaire département',
     }
@@ -150,19 +150,19 @@ describe('inviter un utilisateur action', () => {
         role: 'Rôle bidon',
       },
       {
-        desc: 'organisation vide',
+        codeOrganisation: '',
+        desc: 'code organisation vide',
         email: 'martin.tartempion@example.com',
-        expectedError: 'L’organisation doit être renseignée',
+        expectedError: 'Le code organisation doit être renseigné',
         nom: 'Tartempion',
-        organisation: '',
         prenom: 'Martin',
       },
-    ])('$desc', async ({ email, nom, prenom, role, organisation, expectedError }) => {
+    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, expectedError }) => {
       // GIVEN
       const inviterUnUtilisateurParams = {
+        codeOrganisation,
         email,
         nom,
-        organisation,
         prenom,
         role,
       }
@@ -216,9 +216,9 @@ describe('inviter un utilisateur action', () => {
 
           // WHEN
           await inviterUnUtilisateurAction({
+            codeOrganisation: '21',
             email: 'martin.tartempion@example.com',
             nom: 'Tartempion',
-            organisation: 'La Poste',
             prenom: 'Martin',
           })
 

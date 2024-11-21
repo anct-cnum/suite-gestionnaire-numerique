@@ -35,7 +35,7 @@ export async function inviterUnUtilisateurAction(
     command = {
       ...command,
       role: {
-        organisation: validationResult.data.organisation,
+        codeOrganisation: validationResult.data.codeOrganisation,
         type: validationResult.data.role,
       },
     }
@@ -56,14 +56,17 @@ type ActionParams = Readonly<{
   prenom: string
   nom: string
   email: string
-  organisation?: string
+  codeOrganisation?: string
   role?: string
 }>
 
 const validator = z.object({
+  codeOrganisation: z
+    .string()
+    .min(1, { message: 'Le code organisation doit être renseigné' })
+    .optional(),
   email: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
-  organisation: z.string().min(1, { message: 'L’organisation doit être renseignée' }).optional(),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
   role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),
 })

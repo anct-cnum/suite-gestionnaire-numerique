@@ -3,29 +3,26 @@ import { Utilisateur } from './Utilisateur'
 
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
-    describe(
-      'l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur',
-      () => {
-        describe.each([
-          'Administrateur dispositif',
-          'Instructeur',
-          'Pilote politique publique',
-          'Support animation',
-        ] as const)('%s peut gérer', (roleGerant) => {
-          it.each(Roles)('%s', (roleAGerer) => {
-            // GIVEN
-            const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role: roleGerant })
-            const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
+    describe('l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur', () => {
+      describe.each([
+        'Administrateur dispositif',
+        'Instructeur',
+        'Pilote politique publique',
+        'Support animation',
+      ] as const)('%s peut gérer', (roleGerant) => {
+        it.each(Roles)('%s', (roleAGerer) => {
+          // GIVEN
+          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, role: roleGerant })
+          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, role: roleAGerer })
 
-            // WHEN
-            const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
+          // WHEN
+          const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)
 
-            // THEN
-            expect(peutGerer).toBe(true)
-          })
+          // THEN
+          expect(peutGerer).toBe(true)
         })
-      }
-    )
+      })
+    })
 
     describe('l’utilisateur appartient au groupe "gestionnaire"', () => {
       describe.each([
@@ -72,10 +69,14 @@ describe('utilisateur', () => {
 
         it(nePeutGererDesc, () => {
           // GIVEN
-          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, organisation, role })
+          const utilisateurGerant = Utilisateur.create({
+            ...utilisateurProps,
+            codeOrganisation: organisation,
+            role,
+          })
           const utilisateurAGerer = Utilisateur.create({
             ...utilisateurProps,
-            organisation: organisationAutre,
+            codeOrganisation: organisationAutre,
             role,
           })
 
@@ -88,8 +89,16 @@ describe('utilisateur', () => {
 
         it(peutGererDesc, () => {
           // GIVEN
-          const utilisateurGerant = Utilisateur.create({ ...utilisateurProps, organisation, role })
-          const utilisateurAGerer = Utilisateur.create({ ...utilisateurProps, organisation, role })
+          const utilisateurGerant = Utilisateur.create({
+            ...utilisateurProps,
+            codeOrganisation: organisation,
+            role,
+          })
+          const utilisateurAGerer = Utilisateur.create({
+            ...utilisateurProps,
+            codeOrganisation: organisation,
+            role,
+          })
 
           // WHEN
           const peutGerer = utilisateurGerant.peutGerer(utilisateurAGerer)

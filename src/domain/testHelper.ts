@@ -9,7 +9,7 @@ export function utilisateurFactory(
     inviteLe: new Date(0),
     isSuperAdmin: false,
     nom: 'Tartempion',
-    organisation: 'Banque des territoires',
+    codeOrganisation: 'Banque des territoires',
     prenom: 'Martin',
     role: 'Instructeur',
     telephone: '0102030405',
