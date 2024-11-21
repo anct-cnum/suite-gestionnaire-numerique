@@ -1437,15 +1437,15 @@ __metadata:
   linkType: hard
 
 "@emotion/cache@npm:^11.13.0, @emotion/cache@npm:^11.4.0":
-  version: 11.13.1
-  resolution: "@emotion/cache@npm:11.13.1"
+  version: 11.13.5
+  resolution: "@emotion/cache@npm:11.13.5"
   dependencies:
     "@emotion/memoize": "npm:^0.9.0"
     "@emotion/sheet": "npm:^1.4.0"
-    "@emotion/utils": "npm:^1.4.0"
+    "@emotion/utils": "npm:^1.4.2"
     "@emotion/weak-memoize": "npm:^0.4.0"
     stylis: "npm:4.2.0"
-  checksum: 10c0/321e97d8980885737de13b47e41fd4febfbd83086f10c620f865fcbddb29b8fe198adec7e1c69cc7b137638ea9242d7c475c57f954f7ca229157fa92e368f473
+  checksum: 10c0/fc669bf2add27ddff7b1f341b54e7124379156285095f0b38fb846efe90c64c70d2826f73bc734358a4fce04578229774a38ff4de2599d286461bfca57ba7d23
   languageName: node
   linkType: hard
 
@@ -1520,10 +1520,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/utils@npm:^1.4.0, @emotion/utils@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@emotion/utils@npm:1.4.1"
-  checksum: 10c0/f4704e0bdf48062fd6eb9c64771c88f521aab1e108a48cb23d65b6438597c63a6945301cef4c43611e79e0e76a304ec5481c31025ea8f573d7ad5423d747602c
+"@emotion/utils@npm:^1.4.0, @emotion/utils@npm:^1.4.1, @emotion/utils@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "@emotion/utils@npm:1.4.2"
+  checksum: 10c0/7d0010bf60a2a8c1a033b6431469de4c80e47aeb8fd856a17c1d1f76bbc3a03161a34aeaa78803566e29681ca551e7bf9994b68e9c5f5c796159923e44f78d9a
   languageName: node
   linkType: hard
 
@@ -2408,7 +2408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/core@npm:1.27.0, @opentelemetry/core@npm:^1.1.0, @opentelemetry/core@npm:^1.25.1, @opentelemetry/core@npm:^1.8.0":
+"@opentelemetry/core@npm:1.27.0":
   version: 1.27.0
   resolution: "@opentelemetry/core@npm:1.27.0"
   dependencies:
@@ -2416,6 +2416,17 @@ __metadata:
   peerDependencies:
     "@opentelemetry/api": ">=1.0.0 <1.10.0"
   checksum: 10c0/0f9dea15f146c04debb3f30b133d4d0886b2bae3f3d9696362b2c0b0c4ec89c1da759477f5bce0c50e7c6d57572a7215ec4feb38a6dc2c25ae61089f51f23134
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/core@npm:1.28.0, @opentelemetry/core@npm:^1.1.0, @opentelemetry/core@npm:^1.25.1, @opentelemetry/core@npm:^1.8.0":
+  version: 1.28.0
+  resolution: "@opentelemetry/core@npm:1.28.0"
+  dependencies:
+    "@opentelemetry/semantic-conventions": "npm:1.27.0"
+  peerDependencies:
+    "@opentelemetry/api": ">=1.0.0 <1.10.0"
+  checksum: 10c0/4f87318ca59bc4c2f4302decfdbc3b3672604e4bbc7cb40d09f0ecbbe9e5a8b7db527a1c7ee17a93c3f9ca69c1dd88cc24cb07398b7828efc30ea9fcb8adbc4d
   languageName: node
   linkType: hard
 
@@ -2776,7 +2787,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/resources@npm:1.27.0, @opentelemetry/resources@npm:^1.26.0":
+"@opentelemetry/resources@npm:1.27.0":
   version: 1.27.0
   resolution: "@opentelemetry/resources@npm:1.27.0"
   dependencies:
@@ -2785,6 +2796,18 @@ __metadata:
   peerDependencies:
     "@opentelemetry/api": ">=1.0.0 <1.10.0"
   checksum: 10c0/a5ddb80f36dd094d6bd67e045e3a0e464fe533dde47f03c18da73720e99e48b67503d66a642e7cb6ce15e96bf0fa8416b976ec82ffbaf96d0a65396ab69eb39d
+  languageName: node
+  linkType: hard
+
+"@opentelemetry/resources@npm:^1.26.0":
+  version: 1.28.0
+  resolution: "@opentelemetry/resources@npm:1.28.0"
+  dependencies:
+    "@opentelemetry/core": "npm:1.28.0"
+    "@opentelemetry/semantic-conventions": "npm:1.27.0"
+  peerDependencies:
+    "@opentelemetry/api": ">=1.0.0 <1.10.0"
+  checksum: 10c0/84fae85d3e26d338b8e31c765a42da637d4e626e564b8d86108f87963a5a07f58793eab8041a602e74b8144bbdea851825b22e3fd4222977bf59bcd42ae1bab4
   languageName: node
   linkType: hard
 
@@ -3890,12 +3913,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.5.5, @types/node@npm:^22.8.7":
-  version: 22.9.0
-  resolution: "@types/node@npm:22.9.0"
+"@types/node@npm:*, @types/node@npm:^22.5.5, @types/node@npm:^22.9.1":
+  version: 22.9.1
+  resolution: "@types/node@npm:22.9.1"
   dependencies:
     undici-types: "npm:~6.19.8"
-  checksum: 10c0/3f46cbe0a49bab4ba30494025e4c8a6e699b98ac922857aa1f0209ce11a1313ee46e6808b8f13fe5b8b960a9d7796b77c8d542ad4e9810e85ef897d5593b5d51
+  checksum: 10c0/ea489ae603aa8874e4e88980aab6f2dad09c755da779c88dd142983bfe9609803c89415ca7781f723072934066f63daf2b3339ef084a8ad1a8079cf3958be243
   languageName: node
   linkType: hard
 
@@ -11444,7 +11467,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.0.1"
     "@types/mjml": "npm:^4"
-    "@types/node": "npm:^22.8.7"
+    "@types/node": "npm:^22.9.1"
     "@types/nodemailer": "npm:^6"
     "@types/react": "npm:^18.3.12"
     "@types/react-dom": "npm:^18"

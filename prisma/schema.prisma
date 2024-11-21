@@ -61,7 +61,7 @@ model StructureRecord {
   identifiantEtablissement String
   // TODO: à supprimer après la migration finale
   idMongo String
-  nom String
+  nom String @db.Citext
   statut String
   type String
 

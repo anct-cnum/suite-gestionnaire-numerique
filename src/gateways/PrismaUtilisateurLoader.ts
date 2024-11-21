@@ -3,7 +3,10 @@ import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import departements from '../../ressources/departements.json'
 import { Utilisateur } from '@/domain/Utilisateur'
-import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
+import {
+  MesUtilisateursLoader,
+  UtilisateursCourantsEtTotalReadModel,
+} from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
@@ -116,12 +119,12 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
   return {
     ...Utilisateur.create({
+      codeOrganisation: organisation(utilisateurRecord),
       derniereConnexion: utilisateurRecord.derniereConnexion,
       email: utilisateurRecord.email,
       inviteLe: utilisateurRecord.inviteLe,
       isSuperAdmin: false,
       nom: utilisateurRecord.nom,
-      organisation: organisation(utilisateurRecord),
       prenom: utilisateurRecord.prenom,
       role: toTypologieRole(utilisateurRecord.role),
       telephone: utilisateurRecord.telephone,

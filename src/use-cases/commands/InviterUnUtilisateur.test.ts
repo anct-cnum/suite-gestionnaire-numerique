@@ -16,8 +16,9 @@ describe('inviter un utilisateur', () => {
   describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter', () => {
     it.each([
       {
-        desc: 'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est'
-          + ' enregistré avec un compte super admin et un rôle admin choisi par l’utilisateur courant',
+        desc:
+          'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est' +
+          ' enregistré avec un compte super admin et un rôle admin choisi par l’utilisateur courant',
         utilisateurAInviter: {
           role: 'Instructeur' as const,
         },
@@ -28,11 +29,12 @@ describe('inviter un utilisateur', () => {
         },
       },
       {
-        desc: 'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci'
-          + ' est enregistré avec un compte super admin, un rôle gestionnaire et une organisation choisis par l’'
-          + ' utilisateur courant',
+        desc:
+          'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci' +
+          ' est enregistré avec un compte super admin, un rôle gestionnaire et une organisation choisis par l’' +
+          ' utilisateur courant',
         utilisateurAInviter: {
-          organisation: 'HubEst',
+          codeOrganisation: '15',
           role: 'Gestionnaire groupement' as const,
         },
         utilisateurCourant: {
@@ -42,23 +44,25 @@ describe('inviter un utilisateur', () => {
         },
       },
       {
-        desc: 'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors'
-          + ' celui-ci est enregistré avec un compte super admin, un rôle et une organisation identiques à ceux de'
-          + ' l’utilisateur courant',
+        desc:
+          'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors' +
+          ' celui-ci est enregistré avec un compte super admin, un rôle et une organisation identiques à ceux de' +
+          ' l’utilisateur courant',
         utilisateurAInviter: {
-          organisation: 'Bretagne',
+          codeOrganisation: '53',
           role: 'Gestionnaire région' as const,
         },
         utilisateurCourant: {
+          codeOrganisation: '53',
           isSuperAdmin: true,
-          organisation: 'Bretagne',
           role: 'Gestionnaire région' as const,
           uid: 'utilisateurGestionnaireUid',
         },
       },
       {
-        desc: 'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci'
-          + ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci' +
+          ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
         utilisateurAInviter: {
           role: 'Instructeur' as const,
         },
@@ -69,11 +73,12 @@ describe('inviter un utilisateur', () => {
         },
       },
       {
-        desc: 'qu’il n’est pas super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors'
-          + ' celui-ci est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisis par l’'
-          + 'utilisateur courant',
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors' +
+          ' celui-ci est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisis par l’' +
+          'utilisateur courant',
         utilisateurAInviter: {
-          organisation: 'HubEst',
+          codeOrganisation: '15',
           role: 'Gestionnaire groupement' as const,
         },
         utilisateurCourant: {
@@ -83,53 +88,59 @@ describe('inviter un utilisateur', () => {
         },
       },
       {
-        desc: 'qu’il n’est pas super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite,'
-          + ' alors celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de'
-          + ' l’utilisateur courant',
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite,' +
+          ' alors celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
+          ' l’utilisateur courant',
         utilisateurAInviter: {
-          organisation: 'Bretagne',
+          codeOrganisation: '53',
           role: 'Gestionnaire région' as const,
         },
         utilisateurCourant: {
+          codeOrganisation: '53',
           isSuperAdmin: false,
-          organisation: 'Bretagne',
           role: 'Gestionnaire région' as const,
           uid: 'utilisateurGestionnaireUid',
         },
       },
-    ])('$desc puis un e-mail lui est envoyé',
+    ])(
+      '$desc puis un e-mail lui est envoyé',
       async ({ utilisateurCourant, utilisateurAInviter }) => {
         // GIVEN
         const date = new Date('2024-01-01')
         const command = inviterUnUtilisateurCommandFactory({
           role: {
-            organisation: utilisateurAInviter.organisation,
+            codeOrganisation: utilisateurAInviter.codeOrganisation,
             type: utilisateurAInviter.role,
           },
           uidUtilisateurCourant: utilisateurCourant.uid,
         })
         const repository = new RepositorySpy(
           utilisateurFactory({
+            codeOrganisation: utilisateurCourant.codeOrganisation,
             derniereConnexion: null,
             inviteLe: date,
             isSuperAdmin: utilisateurCourant.isSuperAdmin,
-            organisation: utilisateurCourant.organisation,
             role: utilisateurCourant.role,
           })
         )
-        const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactorySpy, date)
+        const inviterUnUtilisateur = new InviterUnUtilisateur(
+          repository,
+          emailGatewayFactorySpy,
+          date
+        )
 
         // WHEN
         const result = await inviterUnUtilisateur.execute(command)
 
         // THEN
         const expectedUtilisateurInvite = utilisateurFactory({
+          codeOrganisation: utilisateurAInviter.codeOrganisation,
           derniereConnexion: null,
           email: 'martine.dugenoux@example.com',
           inviteLe: date,
           isSuperAdmin: utilisateurCourant.isSuperAdmin,
           nom: 'Dugenoux',
-          organisation: utilisateurAInviter.organisation,
           prenom: 'Martine',
           role: utilisateurAInviter.role,
           telephone: '',
@@ -140,7 +151,8 @@ describe('inviter un utilisateur', () => {
         expect(spiedUtilisateurToAdd?.state()).toStrictEqual(expectedUtilisateurInvite.state())
         expect(spiedDestinataire).toBe('martine.dugenoux@example.com')
         expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
-      })
+      }
+    )
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à inviter, quand il l’invite, alors il y a une erreur', async () => {
@@ -258,12 +270,12 @@ class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
 
 function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
   spiedIsSuperAdmin = isSuperAdmin
-  return new class implements EmailGateway {
+  return new (class implements EmailGateway {
     async send(destinataire: string): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }
-  }()
+  })()
 }
 
 function inviterUnUtilisateurCommandFactory(

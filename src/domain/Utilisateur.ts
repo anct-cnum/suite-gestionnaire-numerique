@@ -39,7 +39,7 @@ export class Utilisateur extends Entity<UtilisateurState> {
   static create(utilisateur: UtilisateurParams): Utilisateur {
     return new Utilisateur(
       UtilisateurUid.from(utilisateur.uid),
-      new Role(utilisateur.role, utilisateur.organisation),
+      new Role(utilisateur.role, utilisateur.codeOrganisation),
       new Nom(utilisateur.nom),
       new Prenom(utilisateur.prenom),
       new Email(utilisateur.email),
@@ -214,5 +214,5 @@ type UtilisateurParams = Readonly<{
   prenom: string
   role: TypologieRole
   telephone?: string
-  organisation?: string
+  codeOrganisation?: string
 }>

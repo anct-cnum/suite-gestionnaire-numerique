@@ -1,7 +1,9 @@
 {
   "checkers": ["typescript"],
   "disableTypeChecks": true,
-  "htmlReporter": { "fileName": "reports/mutation/mutation-frontend.html" },
+  "htmlReporter": {
+    "fileName": "reports/mutation/mutation-frontend.html"
+  },
   "ignorePatterns": [
     ".*",
     "coverage",
@@ -26,7 +28,8 @@
     "!src/presenters/**/*.test.ts",
     "!src/presenters/testHelper.ts",
     "!src/**/ClientContext.tsx",
-    "!src/**/FiltrerParZonesGeographiques.tsx"
+    "!src/**/FiltrerParZonesGeographiques.tsx",
+    "!src/**/OrganisationInput.tsx"
   ],
   "mutator": {
     "excludedMutations": ["StringLiteral"]

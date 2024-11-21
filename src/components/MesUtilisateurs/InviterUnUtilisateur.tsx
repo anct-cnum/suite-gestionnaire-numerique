@@ -2,6 +2,10 @@
 
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
+import OrganisationInput from './OrganisationInput'
+import departements from '../../../ressources/departements.json'
+import groupements from '../../../ressources/groupements.json'
+import regions from '../../../ressources/regions.json'
 import { inviterUnUtilisateurAction } from '../../app/api/actions/inviterUnUtilisateurAction'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
@@ -10,8 +14,25 @@ import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern } from '@/shared/patterns'
 
-// A DEPLACER DANS LE DOMAINE
-const rolesAvecStructure = ['Gestionnaire département', 'Gestionnaire région', 'Gestionnaire groupement', 'Gestionnaire structure']
+// TODO: A DEPLACER DANS LE DOMAINE
+const rolesAvecStructure: RolesAvecStructure = {
+  'Gestionnaire département': {
+    label: 'Département',
+    options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
+  },
+  'Gestionnaire groupement': {
+    label: 'Groupement',
+    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}}` })),
+  },
+  'Gestionnaire région': {
+    label: 'Région',
+    options: regions.map((region) => ({ label: region.nom, value: region.code })),
+  },
+  'Gestionnaire structure': {
+    label: 'Structure',
+    options: [],
+  },
+}
 
 export default function InviterUnUtilisateur({
   setIsOpen,
@@ -21,11 +42,11 @@ export default function InviterUnUtilisateur({
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
   const { sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
+  const [organisation, setOrganisation] = useState<string>('')
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
-  const structureId = useId()
-  const gestionnaires = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
+  const rolesGerables = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
     id: roleGerable,
     label: roleGerable,
   }))
@@ -92,7 +113,7 @@ export default function InviterUnUtilisateur({
           </span>
         </TextInput>
         {
-          gestionnaires.length > 1 ?
+          rolesGerables.length > 1 ?
             <>
               <legend
                 aria-describedby="champsObligatoires"
@@ -108,8 +129,9 @@ export default function InviterUnUtilisateur({
                 nomGroupe="attributionRole"
                 onChange={(event) => {
                   setRoleSelectionne(event.target.value)
+                  setOrganisation('')
                 }}
-                options={gestionnaires}
+                options={rolesGerables}
               />
             </>
             :
@@ -118,22 +140,18 @@ export default function InviterUnUtilisateur({
                 Rôle attribué à cet utilisateur :
               </p>
               <Badge color="purple-glycine">
-                {gestionnaires[0]?.label}
+                {rolesGerables[0]?.label}
               </Badge>
             </>
         }
         {
-          isStructureDisplayed() ?
-            <TextInput
-              id={structureId}
-              name="structure"
-              required={true}
-            >
-              {'Structure '}
-              <span className="color-red">
-                *
-              </span>
-            </TextInput> : null
+          isOrganisationDisplayed() ?
+            <OrganisationInput
+              label={rolesAvecStructure[roleSelectionne].label}
+              options={rolesAvecStructure[roleSelectionne].options}
+              organisation={organisation}
+              setOrganisation={setOrganisation}
+            /> : null
         }
         <button
           className="fr-btn fr-my-2w drawer-invitation-button"
@@ -150,8 +168,8 @@ export default function InviterUnUtilisateur({
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
-    const [nom, prenom, email, role, organisation] = [...form.values()].map((value) => value as string)
-    const result = await inviterUnUtilisateurAction({ email, nom, organisation, prenom, role })
+    const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
+    const result = await inviterUnUtilisateurAction({ codeOrganisation, email, nom, prenom, role })
     if (result === 'emailExistant') {
       setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
     } else {
@@ -163,8 +181,8 @@ export default function InviterUnUtilisateur({
     }
   }
 
-  function isStructureDisplayed(): boolean {
-    return gestionnaires.length > 1 && rolesAvecStructure.includes(roleSelectionne)
+  function isOrganisationDisplayed(): boolean {
+    return Object.keys(rolesAvecStructure).includes(roleSelectionne)
   }
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
@@ -179,3 +197,8 @@ type InviterUnUtilisateurProps = Readonly<{
   labelId: string
   dialogRef: RefObject<HTMLDialogElement>
 }>
+
+type RolesAvecStructure = Readonly<Record<string, {
+  label: string,
+  options: ReadonlyArray<{value: string, label: string}>
+}>>
