@@ -5,7 +5,6 @@ import { ClientSafeProvider } from 'next-auth/react'
 
 const providerId = 'pro-connect'
 const providerName = 'Pro Connect'
-const providerScope = 'openid given_name usual_name siret phone email'
 const nextAuthOptions = {
   callbacks: {
     jwt({ token, profile }): JWT {
@@ -30,7 +29,7 @@ const nextAuthOptions = {
   providers: [
     {
       authorization: {
-        params: { scope: providerScope },
+        params: { scope: process.env.PRO_CONNECT_SCOPE },
       },
       clientId: process.env.PRO_CONNECT_CLIENT_ID,
       clientSecret: process.env.PRO_CONNECT_CLIENT_SECRET,
