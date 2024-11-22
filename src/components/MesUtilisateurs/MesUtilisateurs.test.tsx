@@ -582,6 +582,24 @@ describe('mes utilisateurs', () => {
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
     })
+
+    it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', () => {
+      // GIVEN
+      const spiedRouterPush = vi.fn()
+      const container = afficherLesFiltres(spiedRouterPush)
+      const filtreParStructure = within(container).queryByLabelText('Par structure')
+      // @ts-expect-error
+      // eslint-disable-next-line testing-library/no-node-access
+      container.querySelectorAll('input[type="hidden"]')[1].value = 'tetris'
+
+      // WHEN
+      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      fireEvent.click(boutonAfficher)
+
+      // THEN
+      expect(filtreParStructure).toBeInTheDocument()
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=tetris')
+    })
   })
 
   describe('quand j’invite un utilisateur', () => {

@@ -15,7 +15,11 @@ export function isEmpty(s: string): boolean {
 }
 
 export function isNullish(value: unknown): boolean {
-  return value === undefined || value === null || isEmpty(value as string)
+  return value === undefined || value === null
+}
+
+export function isNullishOrEmpty(s: string | undefined | null): boolean {
+  return isNullish(s) || isEmpty(s as string)
 }
 
 type JsonPrimitive = boolean | number | string

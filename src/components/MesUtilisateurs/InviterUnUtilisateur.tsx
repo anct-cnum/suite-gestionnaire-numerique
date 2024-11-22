@@ -128,6 +128,7 @@ export default function InviterUnUtilisateur({
               label={rolesAvecStructure[roleSelectionne].label}
               options={rolesAvecStructure[roleSelectionne].options}
               organisation={organisation}
+              required={true}
               setOrganisation={setOrganisation}
             /> : null
         }
