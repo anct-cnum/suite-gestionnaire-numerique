@@ -3,6 +3,7 @@ import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import departements from '../../ressources/departements.json'
 import { Role } from '@/domain/Role'
+import { isNullish } from '@/shared/lang'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
@@ -21,7 +22,8 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     utilisateursActives: boolean,
     roles: ReadonlyArray<string>,
     codeDepartement: string,
-    codeRegion: string
+    codeRegion: string,
+    idStructure?: number
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
     const departementInexistant = '0'
     const regionInexistante = '0'
@@ -56,6 +58,14 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
             },
           },
           { regionCode: codeRegion },
+        ]
+      }
+
+      if (!isNullish(idStructure)) {
+        where.AND = [
+          {
+            structureId: idStructure,
+          },
         ]
       }
     }

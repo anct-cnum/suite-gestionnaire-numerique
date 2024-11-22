@@ -1,14 +1,16 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useRef } from 'react'
+import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useRef, useState } from 'react'
 // eslint-disable-next-line import/no-unresolved
 import Select from 'react-select/dist/declarations/src/Select'
 
 import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
+import OrganisationInput from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
 import Toggle from '../shared/Toggle/Toggle'
 import { toutesLesRegions, urlDeFiltrage } from '@/presenters/zonesGeographiquesPresenter'
+import { isEmpty } from '@/shared/lang'
 
 export default function FiltrerMesUtilisateurs({
   id,
@@ -19,6 +21,7 @@ export default function FiltrerMesUtilisateurs({
   const ref = useRef<Select>(null)
   const utilisateursActivesToggleId = useId()
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
+  const [structure, setStructure] = useState('')
 
   return (
     <>
@@ -45,6 +48,13 @@ export default function FiltrerMesUtilisateurs({
         <hr />
         <ZonesGeographiques ref={ref} />
         <hr />
+        <OrganisationInput
+          label="Par structure"
+          options={[]}
+          organisation={structure}
+          required={false}
+          setOrganisation={setStructure}
+        />
         <FiltrerParRoles />
         <div className="fr-btns-group fr-btns-group--space-between">
           <button
@@ -69,6 +79,7 @@ export default function FiltrerMesUtilisateurs({
   function reinitialiser(): void {
     // Stryker disable next-line OptionalChaining
     ref.current?.setValue(toutesLesRegions, 'select-option')
+    setStructure('')
     router.push('/mes-utilisateurs')
   }
 
@@ -80,7 +91,14 @@ export default function FiltrerMesUtilisateurs({
 
     const form = new FormData(event.currentTarget)
 
-    router.push(urlDeFiltrage(form, roles.length))
+    const url = urlDeFiltrage(form, roles.length)
+    const selectedStructure = form.get('organisation')?.toString()
+
+    if (!isEmpty(selectedStructure)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      url.searchParams.append('structure', selectedStructure!)
+    }
+    router.push(url.toString())
   }
 }
 
