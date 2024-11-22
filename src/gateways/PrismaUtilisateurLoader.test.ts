@@ -690,6 +690,73 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants[1].departementCode).toBe('75')
     })
 
+    it('quand des utilisateurs sont recherchés par structure, alors tous ceux qui lui appartiennent sont trouvés', async () => {
+      // GIVEN
+      const structureId = 14
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' }),
+      })
+      await prisma.regionRecord.create({ data: regionRecordFactory() })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '93', nom: 'Seine-Saint-Denis' }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '06',
+          id: structureId,
+          nom: 'TETRIS',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '93',
+          id: 416,
+          nom: 'GRAND PARIS GRAND EST',
+        }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'Tartempion', prenom: 'Martin', structureId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          nom: 'Dugenoux',
+          prenom: 'Martine',
+          ssoId: 'd6895238-e15b-43a6-9868-5d21ae29490e',
+          structureId: 416,
+        }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          nom: 'Duchmolle',
+          prenom: 'Martine',
+          ssoId: '31512478-64eb-4993-af47-a728ec4d8e06',
+          structureId,
+        }),
+      })
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('31512478-64eb-4993-af47-a728ec4d8e06')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('8e39c6db-2f2a-45cf-ba65-e2831241cbe4')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].structureId).toBe(structureId)
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(structureId)
+    })
+
     const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const pageCourante = 0
     const utilisateursParPage = 10

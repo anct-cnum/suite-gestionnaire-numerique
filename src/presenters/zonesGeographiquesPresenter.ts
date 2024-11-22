@@ -1,7 +1,7 @@
 import departements from '../../ressources/departements.json'
 import regions from '../../ressources/regions.json'
 
-export function urlDeFiltrage(form: FormData, totalDesRoles: number): string {
+export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
   const utilisateursActives = form.get('utilisateursActives')
   const isUtilisateursActivesChecked = utilisateursActives === 'on'
   const zoneGeographique = String(form.get('zoneGeographique'))
@@ -30,7 +30,7 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): string {
     url.searchParams.append('roles', roles.join(','))
   }
 
-  return url.toString()
+  return url
 }
 
 export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {

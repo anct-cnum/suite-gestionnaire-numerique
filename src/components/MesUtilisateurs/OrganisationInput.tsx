@@ -8,6 +8,7 @@ export default function OrganisationInput({
   options,
   organisation,
   setOrganisation,
+  required,
 }: OrganisationInputProps): ReactElement {
   const onSearch = async (search: string): Promise<ReadonlyArray<{label: string, value: string}>> => {
     if (search.length < 3) {
@@ -28,12 +29,16 @@ export default function OrganisationInput({
         htmlFor="organisation"
       >
         {label}
-        {' '}
-        <span className="color-red">
-          *
-        </span>
+        {required ?
+          <>
+            {' '}
+            <span className="color-red">
+              *
+            </span>
+          </> :
+          ''}
       </label>
-      {label === 'Structure' ?
+      {!options.length ?
         <AsyncSelect
           cacheOptions={true}
           components={{ DropdownIndicator }}
@@ -47,7 +52,7 @@ export default function OrganisationInput({
           noOptionsMessage={() => 'Rechercher une structure'}
           onChange={setOrganisation as (organisation: unknown) => void}
           placeholder=""
-          required={true}
+          required={required}
           styles={styles}
           value={organisation}
         /> :
@@ -62,7 +67,7 @@ export default function OrganisationInput({
           onChange={setOrganisation as (organisation: unknown) => void}
           options={options}
           placeholder=""
-          required={true}
+          required={required}
           styles={styles}
           value={organisation}
         />}
@@ -75,6 +80,7 @@ type OrganisationInputProps = Readonly<{
   options: ReadonlyArray<{value: string, label: string}>
   organisation: string
   setOrganisation: (organisation: string) => void
+  required: boolean
 }>
 
 // istanbul ignore next @preserve
