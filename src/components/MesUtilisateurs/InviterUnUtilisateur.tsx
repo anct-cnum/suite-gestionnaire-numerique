@@ -22,7 +22,7 @@ const rolesAvecStructure: RolesAvecStructure = {
   },
   'Gestionnaire groupement': {
     label: 'Groupement',
-    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}}` })),
+    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
   },
   'Gestionnaire région': {
     label: 'Région',
