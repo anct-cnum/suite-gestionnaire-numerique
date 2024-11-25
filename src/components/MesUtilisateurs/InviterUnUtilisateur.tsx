@@ -3,40 +3,19 @@
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
 import OrganisationInput from './OrganisationInput'
-import departements from '../../../ressources/departements.json'
-import groupements from '../../../ressources/groupements.json'
-import regions from '../../../ressources/regions.json'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import { Notification } from '../shared/Notification/Notification'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
+import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { emailPattern } from '@/shared/patterns'
-
-// TODO: A DEPLACER DANS LE DOMAINE
-const rolesAvecStructure: RolesAvecStructure = {
-  'Gestionnaire département': {
-    label: 'Département',
-    options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
-  },
-  'Gestionnaire groupement': {
-    label: 'Groupement',
-    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
-  },
-  'Gestionnaire région': {
-    label: 'Région',
-    options: regions.map((region) => ({ label: region.nom, value: region.code })),
-  },
-  'Gestionnaire structure': {
-    label: 'Structure',
-    options: [],
-  },
-}
 
 export default function InviterUnUtilisateur({
   setIsOpen,
   labelId,
   dialogRef,
+  rolesAvecStructure,
 }: InviterUnUtilisateurProps): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState('')
   const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
@@ -144,7 +123,7 @@ export default function InviterUnUtilisateur({
             </>
         }
         {
-          isOrganisationDisplayed() ?
+          isOrganisationDisplayed(roleSelectionne, rolesAvecStructure) ?
             <OrganisationInput
               label={rolesAvecStructure[roleSelectionne].label}
               options={rolesAvecStructure[roleSelectionne].options}
@@ -180,10 +159,6 @@ export default function InviterUnUtilisateur({
     }
   }
 
-  function isOrganisationDisplayed(): boolean {
-    return Object.keys(rolesAvecStructure).includes(roleSelectionne)
-  }
-
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
     setIsOpen(false)
     setRoleSelectionne('')
@@ -192,13 +167,13 @@ export default function InviterUnUtilisateur({
   }
 }
 
+export function isOrganisationDisplayed(roleSelectionne:string, rolesAvecStructure:RolesAvecStructure): boolean {
+  return Object.keys(rolesAvecStructure).includes(roleSelectionne)
+}
+
 type InviterUnUtilisateurProps = Readonly<{
   setIsOpen: Dispatch<SetStateAction<boolean>>
   labelId: string
   dialogRef: RefObject<HTMLDialogElement>
+  rolesAvecStructure: RolesAvecStructure
 }>
-
-type RolesAvecStructure = Readonly<Record<string, {
-  label: string,
-  options: ReadonlyArray<{value: string, label: string}>
-}>>
