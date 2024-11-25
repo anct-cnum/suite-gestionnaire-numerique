@@ -16,7 +16,10 @@ export class PrismaStructureLoader implements StructureLoader {
       },
       take: 10,
       where: {
-        nom: { contains: search },
+        nom: {
+          contains: search,
+          mode: 'insensitive',
+        },
       },
     })
 
@@ -29,6 +32,6 @@ function transform(
 ): ReadonlyArray<{ nom: string; uid: string }> {
   return structuresRecord.map(({ nom, id }) => ({
     nom,
-    uid: id.toString(),
+    uid: `${id}`,
   }))
 }
