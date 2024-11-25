@@ -3732,7 +3732,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^10.4.0":
+"@testing-library/dom@npm:>=7, @testing-library/dom@npm:^10.4.0":
   version: 10.4.0
   resolution: "@testing-library/dom@npm:10.4.0"
   dependencies:
@@ -10425,6 +10425,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-select-event@npm:^5.5.1":
+  version: 5.5.1
+  resolution: "react-select-event@npm:5.5.1"
+  dependencies:
+    "@testing-library/dom": "npm:>=7"
+  checksum: 10c0/908b4961b0c981223b2731ecf28e707b600fb71e9681c9be7185693623663b5e319cd2b77a8bdae471aa27f2b7838773e593982fea1523bde5fd5485dd9b154a
+  languageName: node
+  linkType: hard
+
 "react-select@npm:^5.8.3":
   version: 5.8.3
   resolution: "react-select@npm:5.8.3"
@@ -11494,6 +11503,7 @@ __metadata:
     react: "npm:^18"
     react-dom: "npm:^18"
     react-select: "npm:^5.8.3"
+    react-select-event: "npm:^5.5.1"
     react-toastify: "npm:^10.0.6"
     stylelint: "npm:^16.10.0"
     stylelint-config-standard: "npm:^36.0.1"
