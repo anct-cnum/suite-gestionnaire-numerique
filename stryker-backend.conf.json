@@ -16,12 +16,7 @@
   ],
   "ignoreStatic": true,
   "logLevel": "info",
-  "mutate": [
-    "src/**/*.ts",
-    "!src/**/*.test.ts",
-    "!src/**/testHelper.ts",
-    "!src/gateways/ProConnectAuthentificationGateway.ts"
-  ],
+  "mutate": ["src/**/*.ts", "!src/**/*.test.ts"],
   "packageManager": "yarn",
   "reporters": ["html"],
   "testRunner": "vitest"

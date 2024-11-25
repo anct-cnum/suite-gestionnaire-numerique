@@ -1,3 +1,4 @@
+// Stryker disable all
 import { Utilisateur } from '@/domain/Utilisateur'
 
 export function utilisateurFactory(

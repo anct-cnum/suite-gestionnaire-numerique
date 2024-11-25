@@ -25,11 +25,7 @@
     "src/components/**/*.tsx",
     "src/presenters/**/*.ts",
     "!src/components/**/*.test.tsx",
-    "!src/presenters/**/*.test.ts",
-    "!src/presenters/testHelper.ts",
-    "!src/**/ClientContext.tsx",
-    "!src/**/FiltrerParZonesGeographiques.tsx",
-    "!src/**/OrganisationInput.tsx"
+    "!src/presenters/**/*.test.ts"
   ],
   "mutator": {
     "excludedMutations": ["StringLiteral"]

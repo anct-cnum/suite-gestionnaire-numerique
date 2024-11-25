@@ -1,3 +1,4 @@
+// Stryker disable all
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
