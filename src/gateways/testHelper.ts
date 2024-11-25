@@ -1,3 +1,4 @@
+// Stryker disable all
 import { Prisma } from '@prisma/client'
 
 export function regionRecordFactory(

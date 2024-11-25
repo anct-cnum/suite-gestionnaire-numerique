@@ -1,3 +1,4 @@
+// Stryker disable all
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 export function sessionUtilisateurViewModelFactory(

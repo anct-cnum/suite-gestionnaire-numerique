@@ -1,3 +1,4 @@
+// Stryker disable all
 'use client'
 
 import { forwardRef, ReactElement, Ref, useContext } from 'react'

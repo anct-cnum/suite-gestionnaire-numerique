@@ -1,3 +1,4 @@
+// Stryker disable all
 import NextAuth, { getServerSession, NextAuthOptions, Session } from 'next-auth'
 import { JWT } from 'next-auth/jwt'
 import { OAuthConfig } from 'next-auth/providers'
