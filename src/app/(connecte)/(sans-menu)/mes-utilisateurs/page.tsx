@@ -2,10 +2,13 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import prisma from '../../../../../prisma/prismaClient'
+import departements from '../../../../../ressources/departements.json'
+import groupements from '../../../../../ressources/groupements.json'
+import regions from '../../../../../ressources/regions.json'
 import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export const metadata: Metadata = {
@@ -32,10 +35,31 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
       ...pageCourante,
       ...roles,
     })
+
+  const rolesAvecStructure: RolesAvecStructure = {
+    'Gestionnaire département': {
+      label: 'Département',
+      options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
+    },
+    'Gestionnaire groupement': {
+      label: 'Groupement',
+      options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
+    },
+    'Gestionnaire région': {
+      label: 'Région',
+      options: regions.map((region) => ({ label: region.nom, value: region.code })),
+    },
+    'Gestionnaire structure': {
+      label: 'Structure',
+      options: [],
+    },
+  }
+
   const mesUtilisateursViewModel = mesUtilisateursPresenter(
     utilisateursCourants,
     sub,
-    total
+    total,
+    rolesAvecStructure
   )
 
   return (

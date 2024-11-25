@@ -5,9 +5,11 @@ export function mesUtilisateursPresenter(
   mesUtilisateursReadModel: ReadonlyArray<UnUtilisateurReadModel>,
   uid: string,
   totalUtilisateur: number,
+  rolesAvecStructure: RolesAvecStructure,
   now = (): Date => new Date()
 ): MesUtilisateursViewModel {
   return {
+    rolesAvecStructure,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
       const [statut, picto] = monUtilisateur.isActive
@@ -34,6 +36,7 @@ export function mesUtilisateursPresenter(
 export type MesUtilisateursViewModel = Readonly<{
   totalUtilisateur: number
   utilisateurs: ReadonlyArray<MonUtilisateur>
+  rolesAvecStructure: RolesAvecStructure
 }>
 
 export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
@@ -77,3 +80,8 @@ function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
 
   return `Invitation envoyée le ${formaterEnDateFrancaise(dateDInvitation)}`
 }
+
+export type RolesAvecStructure = Readonly<Record<string, {
+  label: string,
+  options: ReadonlyArray<{value: string, label: string}>
+}>>
