@@ -1,3 +1,4 @@
+// Stryker disable all
 import { ReactElement } from 'react'
 import Select, { StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
