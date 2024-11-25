@@ -186,6 +186,7 @@ export default function InviterUnUtilisateur({
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
     setIsOpen(false)
+    setRoleSelectionne('')
     window.dsfr(dialogRef.current).modal.conceal()
     htmlFormElement.reset()
   }

@@ -88,6 +88,7 @@
     "knip": "^5.37.2",
     "prettier": "^3.3.3",
     "prisma": "^5.21.1",
+    "react-select-event": "^5.5.1",
     "stylelint": "^16.10.0",
     "stylelint-config-standard": "^36.0.1",
     "stylelint-order": "^6.0.4",
