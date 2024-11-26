@@ -1,8 +1,14 @@
+export interface StructureLoader {
+  findStructures: (query: RechercherStruturesQuery) => Promise<StructuresReadModel>
+}
+
 export type StructuresReadModel = ReadonlyArray<UneStructureReadModel>
 
-export interface StructureLoader {
-  findStructures: (search: string) => Promise<StructuresReadModel>
-}
+export type RechercherStruturesQuery = Readonly<{
+  match: string,
+  zone?: ['departement' | 'region', string]
+}>
+
 type UneStructureReadModel = Readonly<{
   nom: string
   uid: string

@@ -600,6 +600,27 @@ describe('mes utilisateurs', () => {
       expect(filtreParStructure).toBeInTheDocument()
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=tetris')
     })
+
+    it('sur une zone géographique et une structure, alors je n’affiche que les utilisateurs liés à cette structure', () => {
+      // GIVEN
+      const spiedRouterPush = vi.fn()
+      const container = afficherLesFiltres(spiedRouterPush)
+      const filtreParStructure = within(container).queryByLabelText('Par structure')
+      // @ts-expect-error
+      // eslint-disable-next-line testing-library/no-node-access
+      container.querySelectorAll('input[type="hidden"]')[0].value = '93_00'
+      // @ts-expect-error
+      // eslint-disable-next-line testing-library/no-node-access
+      container.querySelectorAll('input[type="hidden"]')[1].value = 'tetris'
+
+      // WHEN
+      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+      fireEvent.click(boutonAfficher)
+
+      // THEN
+      expect(filtreParStructure).toBeInTheDocument()
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93&structure=tetris')
+    })
   })
 
   describe('quand j’invite un utilisateur', () => {
