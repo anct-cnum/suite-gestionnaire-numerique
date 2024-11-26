@@ -165,10 +165,10 @@ export default function InviterUnUtilisateur({
     window.dsfr(dialogRef.current).modal.conceal()
     htmlFormElement.reset()
   }
-}
 
-export function isOrganisationDisplayed(roleSelectionne:string, rolesAvecStructure:RolesAvecStructure): boolean {
-  return Object.keys(rolesAvecStructure).includes(roleSelectionne)
+  function isOrganisationDisplayed(roleSelectionne: string, rolesAvecStructure: RolesAvecStructure): boolean {
+    return Object.keys(rolesAvecStructure).includes(roleSelectionne)
+  }
 }
 
 type InviterUnUtilisateurProps = Readonly<{
