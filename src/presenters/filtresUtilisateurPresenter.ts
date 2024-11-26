@@ -1,10 +1,12 @@
 import departements from '../../ressources/departements.json'
 import regions from '../../ressources/regions.json'
+import { isNullishOrEmpty } from '@/shared/lang'
 
 export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
   const utilisateursActives = form.get('utilisateursActives')
   const isUtilisateursActivesChecked = utilisateursActives === 'on'
   const zoneGeographique = String(form.get('zoneGeographique'))
+  const selectedStructure = form.get('organisation')?.toString()
   // Stryker disable next-line ConditionalExpression
   const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== valeurParDefautDeToutesLesRegions
   const roles = form.getAll('roles')
@@ -28,6 +30,11 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
 
   if (shouldFilterByRoles) {
     url.searchParams.append('roles', roles.join(','))
+  }
+
+  if (!isNullishOrEmpty(selectedStructure)) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    url.searchParams.append('structure', selectedStructure!)
   }
 
   return url
@@ -68,12 +75,26 @@ export function zoneGeographiqueParDefaut(codeRegion: string | null, codeDeparte
   ) ?? toutesLesRegions
 }
 
+export function zoneGeographiqueToURLSearchParams(zoneGeographique: ZoneGeographique): URLSearchParams {
+  const searchParams: Array<Array<string>> = []
+  if (!isZoneParDefaut(zoneGeographique)) {
+    const isDepartement = zoneGeographique.type === 'departement'
+    const codesZone = laRegionOuLeDepartementSelectionne(zoneGeographique.value)
+    searchParams.push([zoneGeographique.type, codesZone[+isDepartement]])
+  }
+  return new URLSearchParams(searchParams)
+}
+
 function laRegionOuLeDepartementSelectionne(zoneGeographique: string): ReadonlyArray<string> {
-  return zoneGeographique.split('_')
+  return zoneGeographique.split(regionDepartementSeparator)
 }
 
 function isRegion(zoneGeographique: string): boolean {
   return zoneGeographique.endsWith(codeDepartementParDefautDuneRegion)
+}
+
+function isZoneParDefaut(zoneGeographique: ZoneGeographique): boolean {
+  return JSON.stringify(toutesLesRegions) === JSON.stringify(zoneGeographique)
 }
 
 const valeurParDefautDeToutesLesRegions = 'all'

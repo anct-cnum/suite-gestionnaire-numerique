@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
-import { StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
+import { RechercherStruturesQuery, StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
 export class PrismaStructureLoader implements StructureLoader {
   readonly #prisma: PrismaClient
@@ -9,7 +9,9 @@ export class PrismaStructureLoader implements StructureLoader {
     this.#prisma = prisma
   }
 
-  async findStructures(search: string): Promise<StructuresReadModel> {
+  async findStructures(query: RechercherStruturesQuery): Promise<StructuresReadModel> {
+    const departementOuRegion = query.zone?.[0]
+    const code = query.zone?.[1]
     const structuresRecord = await this.#prisma.structureRecord.findMany({
       orderBy: {
         nom: 'asc',
@@ -17,12 +19,22 @@ export class PrismaStructureLoader implements StructureLoader {
       take: 10,
       where: {
         nom: {
-          contains: search,
+          contains: query.match,
           mode: 'insensitive',
         },
+        ...(departementOuRegion === 'departement' ? { departementCode: { equals: code } } : {}),
+        ...(departementOuRegion === 'region'
+          ? {
+            relationDepartement: {
+              regionCode: {
+                equals: code,
+              },
+            },
+          }
+          : {}
+        ),
       },
     })
-
     return transform(structuresRecord)
   }
 }

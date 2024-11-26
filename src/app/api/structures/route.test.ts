@@ -39,23 +39,49 @@ describe('route /structures', () => {
     expect(result.status).toBe(400)
   })
 
-  it('devrait retourner la liste des structures qui correspondent à la recherche', async () => {
-    // GIVEN
-    vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
-    vi.spyOn(PrismaStructureLoader.prototype, 'findStructures').mockResolvedValueOnce([{ nom: 'La Poste', uid: '21' }])
-
-    const req = {
-      nextUrl: {
-        searchParams: new Map([['search', 'abc']]),
+  describe('retourne la liste des structures qui correspondent à la recherche', () => {
+    it.each([
+      {
+        desc: 'sur un nom de structure',
+        expectedFindParams: { match: 'la poste' },
+        searchParams: new Map([['search', 'la poste']]),
       },
-    } as unknown as NextRequest
+      {
+        desc: 'sur un nom de structure et un code de département',
+        expectedFindParams: { match: 'la poste', zone: ['departement', '06'] },
+        searchParams: new Map([
+          ['search', 'la poste'],
+          ['departement', '06'],
+        ]),
+      },
+      {
+        desc: 'sur un nom de structure et un code de région',
+        expectedFindParams: { match: 'la poste', zone: ['region', '93'] },
+        searchParams: new Map([
+          ['search', 'la poste'],
+          ['region', '93'],
+        ]),
+      },
+    ])('$desc', async ({ searchParams, expectedFindParams }) => {
+      // GIVEN
+      vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
+      const spiedFind = vi.spyOn(PrismaStructureLoader.prototype, 'findStructures')
+        .mockResolvedValueOnce([{ nom: 'La Poste', uid: '21' }])
 
-    // WHEN
-    const result = await GET(req)
+      const req = {
+        nextUrl: {
+          searchParams,
+        },
+      } as unknown as NextRequest
 
-    // THEN
-    const response = (await result.json()) as unknown
-    expect(response).toStrictEqual([{ nom: 'La Poste', uid: '21' }])
-    expect(result.status).toBe(200)
+      // WHEN
+      const result = await GET(req)
+
+      // THEN
+      const response = (await result.json()) as unknown
+      expect(spiedFind).toHaveBeenCalledWith(expectedFindParams)
+      expect(result.status).toBe(200)
+      expect(response).toStrictEqual([{ nom: 'La Poste', uid: '21' }])
+    })
   })
 })
