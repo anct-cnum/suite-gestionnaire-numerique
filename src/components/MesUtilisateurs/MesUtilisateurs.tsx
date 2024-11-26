@@ -85,6 +85,7 @@ export default function MesUtilisateurs(
         <InviterUnUtilisateur
           dialogRef={drawerInvitationRef}
           labelId={labelInvitationId}
+          rolesAvecStructure={mesUtilisateursViewModel.rolesAvecStructure}
           setIsOpen={setIsDrawerOpen}
         />
       </Drawer>

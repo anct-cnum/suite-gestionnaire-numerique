@@ -3,8 +3,11 @@ import selectEvent from 'react-select-event'
 import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
+import departements from '../../../ressources/departements.json'
+import groupements from '../../../ressources/groupements.json'
+import regions from '../../../ressources/regions.json'
 import { renderComponent, matchWithoutMarkup } from '@/components/testHelper'
-import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
@@ -13,7 +16,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -44,7 +47,7 @@ describe('mes utilisateurs', () => {
 
   it('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -76,7 +79,7 @@ describe('mes utilisateurs', () => {
 
   it('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(
@@ -113,7 +116,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur actif quand j’affiche mes utilisateurs alors il s’affiche avec ses informations', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -135,7 +138,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur inactif quand j’affiche mes utilisateurs alors il s’affiche avec ce statut et sa date d’invitation', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -152,7 +155,7 @@ describe('mes utilisateurs', () => {
 
   it('sur ma ligne quand j’affiche mes utilisateurs alors je ne peux pas me supprimer', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -167,7 +170,7 @@ describe('mes utilisateurs', () => {
 
   it('sur la ligne d’un utilisateur quand j’affiche mes utilisateurs alors je peux le supprimer', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -182,7 +185,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur actif alors ses détails s’affichent dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const utilisateurActif = screen.getByRole('button', { name: 'Martin Tartempion' })
 
@@ -222,7 +225,7 @@ describe('mes utilisateurs', () => {
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
     it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
 
@@ -256,7 +259,7 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
       fireEvent.click(utilisateurEnAttente)
@@ -278,7 +281,7 @@ describe('mes utilisateurs', () => {
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDAujourdhuiReadModel], '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDAujourdhuiReadModel], '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Sebastien Palat' })
 
@@ -293,7 +296,7 @@ describe('mes utilisateurs', () => {
 
     it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async() => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDHierReadModel], '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDHierReadModel], '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Stephane Raymond' })
 
@@ -309,7 +312,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifSansTelephoneVideReadModel], '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifSansTelephoneVideReadModel], '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
     const utilisateurSansTelephone = screen.getByRole('button', { name: 'Paul Provost' })
 
@@ -349,7 +352,7 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
       const { rowsBody } = getByTable()
       const columnsBody = within(rowsBody[0]).getAllByRole('cell')
@@ -376,7 +379,7 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction })
       const { rowsBody } = getByTable()
@@ -398,7 +401,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -411,7 +414,7 @@ describe('mes utilisateurs', () => {
   it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
     const totalUtilisateur = 10
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -423,7 +426,7 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // WHEN
@@ -470,7 +473,7 @@ describe('mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       { searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
@@ -586,7 +589,7 @@ describe('mes utilisateurs', () => {
   describe('quand j’invite un utilisateur', () => {
     it('en tant qu’administrateur, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous les rôles sélectionnables', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
@@ -691,7 +694,7 @@ describe('mes utilisateurs', () => {
 
     it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
@@ -737,7 +740,7 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
@@ -793,7 +796,7 @@ describe('mes utilisateurs', () => {
 
     it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
@@ -864,7 +867,7 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
           inviterUnUtilisateurAction,
@@ -935,7 +938,7 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
           inviterUnUtilisateurAction,
@@ -999,7 +1002,7 @@ describe('mes utilisateurs', () => {
     it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['emailExistant']))
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
         {
@@ -1059,7 +1062,7 @@ describe('mes utilisateurs', () => {
         },
       }
     }
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
@@ -1119,7 +1122,7 @@ describe('mes utilisateurs', () => {
   })
 
   function afficherLesFiltres(spiedRouterPush: Mock): HTMLElement {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     const { container } = renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
@@ -1209,3 +1212,22 @@ const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
   },
   telephone: '',
 })
+
+const rolesAvecStructure: RolesAvecStructure = {
+  'Gestionnaire département': {
+    label: 'Département',
+    options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
+  },
+  'Gestionnaire groupement': {
+    label: 'Groupement',
+    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
+  },
+  'Gestionnaire région': {
+    label: 'Région',
+    options: regions.map((region) => ({ label: region.nom, value: region.code })),
+  },
+  'Gestionnaire structure': {
+    label: 'Structure',
+    options: [],
+  },
+}
