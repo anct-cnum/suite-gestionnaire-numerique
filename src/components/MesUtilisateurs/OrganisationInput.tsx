@@ -9,12 +9,19 @@ export default function OrganisationInput({
   organisation,
   setOrganisation,
   required,
+  additionalSearchParams,
 }: OrganisationInputProps): ReactElement {
   const onSearch = async (search: string): Promise<ReadonlyArray<{label: string, value: string}>> => {
     if (search.length < 3) {
       return []
     }
-    const result = await fetch(`/api/structures?search=${search}`)
+    const url = new URL('/api/structures/', process.env.NEXT_PUBLIC_HOST)
+    const additionalSearchParamEntries = additionalSearchParams ? [...additionalSearchParams.entries()] : []
+    const searchParams = new URLSearchParams([['search', search], ...additionalSearchParamEntries])
+    searchParams.entries().forEach(([searchParam, searchValue]) => {
+      url.searchParams.append(searchParam, searchValue)
+    })
+    const result = await fetch(url, { cache: 'no-cache' })
     const structures = await result.json() as ReadonlyArray<{ uid: string, nom: string }>
     return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
   }
@@ -36,7 +43,7 @@ export default function OrganisationInput({
               *
             </span>
           </> :
-          ''}
+          null}
       </label>
       {!options.length ?
         <AsyncSelect
@@ -81,6 +88,7 @@ type OrganisationInputProps = Readonly<{
   organisation: string
   setOrganisation: (organisation: string) => void
   required: boolean
+  additionalSearchParams?: URLSearchParams
 }>
 
 // istanbul ignore next @preserve

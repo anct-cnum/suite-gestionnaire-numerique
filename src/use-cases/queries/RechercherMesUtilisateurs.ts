@@ -20,7 +20,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<
     utilisateursParPage = config.utilisateursParPage,
     codeDepartement = '0',
     codeRegion = '0',
-    idStructure,
+    idStructure = Infinity,
   }: MesUtilisateursQuery): Promise<UtilisateursCourantsEtTotalReadModel> {
     const utilisateur = await this.#loader.findByUid(uid)
 
@@ -61,6 +61,6 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
-    idStructure?: number
+    idStructure: number
   ) => Promise<UtilisateursCourantsEtTotalReadModel>
 }

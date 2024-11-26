@@ -9,8 +9,8 @@ import MesUtilisateurs from '@/components/MesUtilisateurs/MesUtilisateurs'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
-import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { isNullishOrEmpty } from '@/shared/lang'
+import { RechercherMesUtilisateurs } from '@/use-cases/queries/RechercherMesUtilisateurs'
 
 export const metadata: Metadata = {
   title: 'Mes utilisateurs',
@@ -20,7 +20,9 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   const sub = await getSubSession()
   const pageCourante = isNullishOrEmpty(searchParams.page) ? {} : { pageCourante: Number(searchParams.page) }
   const utilisateursActives = Boolean(searchParams.utilisateursActives)
-  const codeDepartement = isNullishOrEmpty(searchParams.codeDepartement) ? {} : { codeDepartement: searchParams.codeDepartement }
+  const codeDepartement = isNullishOrEmpty(searchParams.codeDepartement)
+    ? {}
+    : { codeDepartement: searchParams.codeDepartement }
   const codeRegion = isNullishOrEmpty(searchParams.codeRegion) ? {} : { codeRegion: searchParams.codeRegion }
   const roles = isNullishOrEmpty(searchParams.roles) ? {} : { roles: searchParams.roles?.split(',') }
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

@@ -5,9 +5,12 @@ import { forwardRef, ReactElement, Ref, useContext } from 'react'
 import Select, { SelectInstance, StylesConfig } from 'react-select'
 
 import { clientContext } from '../shared/ClientContext'
-import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/zonesGeographiquesPresenter'
+import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/filtresUtilisateurPresenter'
 
-function FiltrerParZonesGeographiques(_: unknown, ref: Ref<SelectInstance>): ReactElement {
+function FiltrerParZonesGeographiques(
+  { setZoneGeographique }: FiltrerParZonesGeographiquesProps,
+  ref: Ref<SelectInstance>
+): ReactElement {
   const { searchParams } = useContext(clientContext)
 
   return (
@@ -25,6 +28,9 @@ function FiltrerParZonesGeographiques(_: unknown, ref: Ref<SelectInstance>): Rea
         instanceId="zoneGeographique"
         isClearable={true}
         name="zoneGeographique"
+        onChange={(zone) => {
+          setZone(zone as ZoneGeographique)
+        }}
         options={regionsEtDepartements()}
         placeholder=""
         ref={ref}
@@ -33,6 +39,12 @@ function FiltrerParZonesGeographiques(_: unknown, ref: Ref<SelectInstance>): Rea
       />
     </div>
   )
+
+  function setZone(zoneGeographique?: ZoneGeographique): void {
+    if (zoneGeographique) {
+      setZoneGeographique(zoneGeographique)
+    }
+  }
 }
 export default forwardRef(FiltrerParZonesGeographiques)
 
@@ -74,3 +86,7 @@ function DropdownIndicator(): ReactElement {
     </svg>
   )
 }
+
+type FiltrerParZonesGeographiquesProps = Readonly<{
+  setZoneGeographique: (zoneGeographique: ZoneGeographique) => void
+}>

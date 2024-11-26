@@ -19,7 +19,8 @@ export function isNullish(value: unknown): boolean {
 }
 
 export function isNullishOrEmpty(s: string | undefined | null): boolean {
-  return isNullish(s) || isEmpty(s as string)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return isNullish(s) || isEmpty(s!)
 }
 
 type JsonPrimitive = boolean | number | string
