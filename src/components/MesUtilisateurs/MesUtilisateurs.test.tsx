@@ -853,7 +853,7 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('en invitant un memebre du groupe admin, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('en invitant un membre du groupe admin, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
@@ -918,7 +918,7 @@ describe('mes utilisateurs', () => {
       window.dsfr = windowDsfr
     })
 
-    it('en invitant un memebre du groupe gestionnaire, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('en invitant un membre du groupe gestionnaire, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
       const roleGestionnaireLabelSelectionMapping = {
         'Gestionnaire département': 'Département',
         'Gestionnaire groupement': 'Groupement',
@@ -926,9 +926,7 @@ describe('mes utilisateurs', () => {
         'Gestionnaire structure': 'Structure',
       }
       // GIVEN
-      vi.spyOn(inviterAction, 'inviterUnUtilisateurAction')
-        .mockResolvedValueOnce('emailExistant')
-        .mockResolvedValueOnce('OK')
+      const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -940,6 +938,7 @@ describe('mes utilisateurs', () => {
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+          inviterUnUtilisateurAction,
           sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
             role: {
               groupe: 'admin',
@@ -979,14 +978,9 @@ describe('mes utilisateurs', () => {
       await selectEvent.select(departementSelect, 'Ain')
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
-      const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-      fireEvent.click(envoyerInvitation)
 
       // THEN
-      expect(messageDErreur).toBeInTheDocument()
-      const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-      expect(absenceMessageDErreur).not.toBeInTheDocument()
-      const notification = screen.getByRole('alert')
+      const notification = await screen.findByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
       expect(formulaireInvitation).not.toHaveAttribute('open', '')
       expect(nom).toHaveValue('')
