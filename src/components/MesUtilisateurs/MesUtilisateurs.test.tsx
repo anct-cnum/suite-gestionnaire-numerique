@@ -853,7 +853,7 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('en invitant un memebre du groupe admin, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
@@ -918,7 +918,7 @@ describe('mes utilisateurs', () => {
       window.dsfr = windowDsfr
     })
 
-    it('en invitant un gestionnaire, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('en invitant un memebre du groupe gestionnaire, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
       const roleGestionnaireLabelSelectionMapping = {
         'Gestionnaire département': 'Département',
         'Gestionnaire groupement': 'Groupement',
