@@ -1,0 +1,3 @@
+.badge::before {
+  content: none;
+}

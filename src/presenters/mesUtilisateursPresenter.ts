@@ -1,3 +1,4 @@
+import { formaterEnDateFrancaise } from './shared/date'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function mesUtilisateursPresenter(
@@ -56,27 +57,23 @@ const inactif = 'inactif'
 
 function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
   if (utilisateurReadModel.isActive) {
-    return buildDateFrancaise(utilisateurReadModel.derniereConnexion)
+    return formaterEnDateFrancaise(utilisateurReadModel.derniereConnexion)
   }
 
-  return `invité le ${buildDateFrancaise(utilisateurReadModel.inviteLe)}`
-}
-
-function buildDateFrancaise(date: Date): string {
-  return date.toLocaleDateString('fr-FR')
+  return `invité le ${formaterEnDateFrancaise(utilisateurReadModel.inviteLe)}`
 }
 
 function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
-  const today = buildDateFrancaise(now)
-  const yesterday = buildDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
+  const today = formaterEnDateFrancaise(now)
+  const yesterday = formaterEnDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
 
-  if (buildDateFrancaise(dateDInvitation) === today) {
+  if (formaterEnDateFrancaise(dateDInvitation) === today) {
     return 'Invitation envoyée aujourd’hui'
   }
 
-  if (buildDateFrancaise(dateDInvitation) === yesterday) {
+  if (formaterEnDateFrancaise(dateDInvitation) === yesterday) {
     return 'Invitation envoyée hier'
   }
 
-  return `Invitation envoyée le ${buildDateFrancaise(dateDInvitation)}`
+  return `Invitation envoyée le ${formaterEnDateFrancaise(dateDInvitation)}`
 }
