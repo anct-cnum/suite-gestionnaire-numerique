@@ -5,7 +5,7 @@ import Gouvernance from './Gouvernance'
 describe('gouvernance', () => {
   it('quand j’affiche la gouvernance vide alors elle s’affiche avec toutes les sections à vide', () => {
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={{ nom: 'Rhône' }} />)
+    render(<Gouvernance gouvernanceViewModel={{ departement: 'Rhône' }} />)
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Inclusion numérique · Rhône' })
@@ -13,9 +13,9 @@ describe('gouvernance', () => {
     const sousTitre = screen.getByText('Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.', { selector: 'p' })
     expect(sousTitre).toBeInTheDocument()
 
-    const comitologie = screen.getByRole('region', { name: 'Comitologie · Rhône' })
+    const comitologie = screen.getByRole('region', { name: 'Comitologie' })
     const enTeteComitologie = within(comitologie).getByRole('banner')
-    const titreComitologie = within(enTeteComitologie).getByRole('heading', { level: 2, name: 'Comitologie · Rhône' })
+    const titreComitologie = within(enTeteComitologie).getByRole('heading', { level: 2, name: 'Comitologie' })
     expect(titreComitologie).toBeInTheDocument()
     const contenuComitologie = within(comitologie).getByRole('article')
     const contenuTitreComitologie = within(contenuComitologie).getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
@@ -25,9 +25,9 @@ describe('gouvernance', () => {
     const ajouterUnComite = screen.getByRole('button', { name: 'Ajouter un comité' })
     expect(ajouterUnComite).toHaveAttribute('type', 'button')
 
-    const membre = screen.getByRole('region', { name: '0 membre · Rhône' })
+    const membre = screen.getByRole('region', { name: '0 membre' })
     const enTeteMembre = within(membre).getByRole('banner')
-    const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '0 membre · Rhône' })
+    const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '0 membre' })
     expect(titreMembre).toBeInTheDocument()
     const contenuMembre = within(membre).getByRole('article')
     const contenuTitreMembre = within(contenuMembre).getByText('Actuellement, il n’y a aucun membre dans la gouvernance', { selector: 'p' })
@@ -36,12 +36,13 @@ describe('gouvernance', () => {
     expect(informationMembre).toBeInTheDocument()
     const lienMembre = screen.getByRole('link', { name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance' })
     expect(lienMembre).toHaveAttribute('href', 'https://inclusion-numerique.anct.gouv.fr/gouvernance')
+    expect(lienMembre).toHaveAttribute('title', 'Formulaire d’invitation à la gouvernance - nouvelle fenêtre')
     const ajouterDesMembres = screen.getByRole('button', { name: 'Ajouter des membres' })
     expect(ajouterDesMembres).toHaveAttribute('type', 'button')
 
-    const feuilleDeRoute = screen.getByRole('region', { name: '0 feuille de route · Rhône' })
+    const feuilleDeRoute = screen.getByRole('region', { name: '0 feuille de route' })
     const enTeteFeuilleDeRoute = within(feuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '0 feuille de route · Rhône' })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '0 feuille de route' })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
     const contenuFeuilleDeRoute = within(feuilleDeRoute).getAllByRole('article')
     const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Aucune feuille de route', { selector: 'p' })
@@ -50,16 +51,10 @@ describe('gouvernance', () => {
     expect(informationFeuilleDeRoute).toBeInTheDocument()
     const ajouterDesFeuilleDeRoutes = screen.getByRole('button', { name: 'Ajouter une feuille de route' })
     expect(ajouterDesFeuilleDeRoutes).toHaveAttribute('type', 'button')
-    const contenuTitreFormation = within(contenuFeuilleDeRoute[1]).getByText('Actuellement, vous n’avez pas de formation', { selector: 'p' })
-    expect(contenuTitreFormation).toBeInTheDocument()
-    const informationFormation = within(contenuFeuilleDeRoute[1]).getByText('Commencez par créer des porteurs au sein de la gouvernance pour définir votre première feuille de route.', { selector: 'p' })
-    expect(informationFormation).toBeInTheDocument()
-    const ajouterDesFormations = screen.getByRole('button', { name: 'Ajouter une formation' })
-    expect(ajouterDesFormations).toHaveAttribute('type', 'button')
 
-    const noteDeContexte = screen.getByRole('region', { name: 'Note de contexte · Rhône' })
+    const noteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(noteDeContexte).getByRole('banner')
-    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte · Rhône' })
+    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const contenuNoteDeContexte = within(noteDeContexte).getByRole('article')
     const contenuTitreNoteDeContexte = within(contenuNoteDeContexte).getByText('Aucune note de contexte', { selector: 'p' })

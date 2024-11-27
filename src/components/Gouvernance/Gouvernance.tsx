@@ -1,7 +1,7 @@
-import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import styles from './Gouvernance.module.css'
+import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import Title from '../shared/Title/Title'
 
 export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps): ReactElement {
@@ -10,7 +10,7 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
       <Title icon="compass-3-line">
         Inclusion numérique ·
         {' '}
-        {gouvernanceViewModel.nom}
+        {gouvernanceViewModel.departement}
       </Title>
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
@@ -21,9 +21,7 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             className="color-blue-france"
             id="comitologie"
           >
-            Comitologie ·
-            {' '}
-            {gouvernanceViewModel.nom}
+            Comitologie
           </h2>
         </header>
         <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
@@ -47,9 +45,7 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             className="color-blue-france"
             id="membre"
           >
-            0 membre ·
-            {' '}
-            {gouvernanceViewModel.nom}
+            0 membre
           </h2>
         </header>
         <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
@@ -61,9 +57,12 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             de participer et/ou de porter une feuille de route territoriale en leur partageant
             ce lien vers les formulaires prévus à cet effet :
             <br />
-            <Link href="https://inclusion-numerique.anct.gouv.fr/gouvernance">
+            <ExternalLink
+              href="https://inclusion-numerique.anct.gouv.fr/gouvernance"
+              title="Formulaire d’invitation à la gouvernance"
+            >
               https://inclusion-numerique.anct.gouv.fr/gouvernance
-            </Link>
+            </ExternalLink>
           </p>
           <button
             className="fr-btn fr-btn--icon-left fr-icon-add-line"
@@ -79,9 +78,7 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             className="color-blue-france"
             id="feuilleDeRoute"
           >
-            0 feuille de route ·
-            {' '}
-            {gouvernanceViewModel.nom}
+            0 feuille de route
           </h2>
         </header>
         <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
@@ -98,20 +95,6 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             Ajouter une feuille de route
           </button>
         </article>
-        <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
-          <p className="fr-h6">
-            Actuellement, vous n’avez pas de formation
-          </p>
-          <p>
-            Commencez par créer des porteurs au sein de la gouvernance pour définir votre première feuille de route.
-          </p>
-          <button
-            className="fr-btn fr-btn--icon-left fr-icon-add-line"
-            type="button"
-          >
-            Ajouter une formation
-          </button>
-        </article>
       </section>
       <section aria-labelledby="noteDeContexte">
         <header>
@@ -119,9 +102,7 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
             className="color-blue-france"
             id="noteDeContexte"
           >
-            Note de contexte ·
-            {' '}
-            {gouvernanceViewModel.nom}
+            Note de contexte
           </h2>
         </header>
         <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
@@ -146,5 +127,5 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
 }
 
 type GouvernanceProps = Readonly<{
-  gouvernanceViewModel: Readonly<{ nom: string }>
+  gouvernanceViewModel: Readonly<{ departement: string }>
 }>

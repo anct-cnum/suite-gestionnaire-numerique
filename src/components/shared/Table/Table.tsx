@@ -2,7 +2,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import styles from './Table.module.css'
 
-export default function Table({ children, enTetes, titre }: TableProps): ReactElement {
+export default function Table({ children, enTetes, titre, hasHead = true }: TableProps): ReactElement {
   return (
     <div
       className="fr-table--sm fr-table fr-table"
@@ -12,10 +12,10 @@ export default function Table({ children, enTetes, titre }: TableProps): ReactEl
         <div className="fr-table__container">
           <div className="fr-table__content">
             <table id="table-sm">
-              <caption className="fr-hidden">
+              <caption className="fr-sr-only">
                 {titre}
               </caption>
-              <thead>
+              <thead className={hasHead ? '' : 'fr-sr-only'}>
                 <tr>
                   {enTetes.map((enTete) => {
                     return (
@@ -45,6 +45,7 @@ export default function Table({ children, enTetes, titre }: TableProps): ReactEl
 }
 
 type TableProps = PropsWithChildren<Readonly<{
-  titre: string
+  hasHead?: boolean
   enTetes: ReadonlyArray<string>
+  titre: string
 }>>
