@@ -373,7 +373,7 @@ describe('utilisateur repository', () => {
       // WHEN
       await repository.update(
         utilisateurFactory({
-          email: 'martine.dugenoux@example.org',
+          emailDeContact: 'martine.dugenoux@example.org',
           inviteLe: date,
           nom: 'Dugenoux',
           prenom: 'Martine',
@@ -409,7 +409,7 @@ describe('utilisateur repository', () => {
 
       // WHEN
       await repository.updateUid(utilisateurFactory({
-        email: 'martine.dugenoux@example.org',
+        emailDeContact: 'martine.dugenoux@example.org',
         uid: uidUtilisateurValue,
       }))
 

@@ -84,7 +84,7 @@ export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvid
 export type Profile = Readonly<{
   id: string
   sub: string
-  email: string
+  emailDeContact: string
   given_name: string
   usual_name: string
   siret: string

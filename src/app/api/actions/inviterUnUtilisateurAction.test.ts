@@ -15,13 +15,13 @@ describe('inviter un utilisateur action', () => {
     it.each([
       {
         actionParams: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
         },
         desc: 'sans rôle spécifié',
         expectedCommand: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           uidUtilisateurCourant: sub,
@@ -29,14 +29,14 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           role: 'Instructeur',
         },
         desc: 'avec rôle spécifié',
         expectedCommand: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           role: {
@@ -48,14 +48,14 @@ describe('inviter un utilisateur action', () => {
       {
         actionParams: {
           codeOrganisation: '21',
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           role: 'Gestionnaire structure',
         },
         desc: 'avec rôle et organisation spécifiés',
         expectedCommand: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           role: {
@@ -68,13 +68,13 @@ describe('inviter un utilisateur action', () => {
       {
         actionParams: {
           codeOrganisation: '21',
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
         },
         desc: 'avec code organisation spécifiée sans rôle : ignorée',
         expectedCommand: {
-          email: 'martin.tartempion@example.com',
+          emailDeContact: 'martin.tartempion@example.com',
           nom: 'Tartempion',
           prenom: 'Martin',
           uidUtilisateurCourant: sub,
@@ -104,7 +104,7 @@ describe('inviter un utilisateur action', () => {
 
     const inviterUnUtilisateurParams = {
       codeOrganisation: '21',
-      email: 'martin.tartempion@example.com',
+      emailDeContact: 'martin.tartempion@example.com',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: 'Gestionnaire département',
@@ -121,28 +121,28 @@ describe('inviter un utilisateur action', () => {
     it.each([
       {
         desc: 'nom vide',
-        email: 'martin.tartempion@example.com',
+        emailDeContact: 'martin.tartempion@example.com',
         expectedError: 'Le nom doit contenir au moins 1 caractère',
         nom: '',
         prenom: 'Martin',
       },
       {
         desc: 'prénom vide',
-        email: 'martin.tartempion@example.com',
+        emailDeContact: 'martin.tartempion@example.com',
         expectedError: 'Le prénom doit contenir au moins 1 caractère',
         nom: 'Tartempion',
         prenom: '',
       },
       {
         desc: 'email vide',
-        email: '',
+        emailDeContact: '',
         expectedError: 'L’email doit être valide',
         nom: 'Tartempion',
         prenom: 'Martin',
       },
       {
         desc: 'rôle invalide',
-        email: 'martin.tartempion@example.com',
+        emailDeContact: 'martin.tartempion@example.com',
         expectedError: 'Le rôle n’est pas correct',
         nom: 'Tartempion',
         prenom: 'Martin',
@@ -151,16 +151,16 @@ describe('inviter un utilisateur action', () => {
       {
         codeOrganisation: '',
         desc: 'code organisation vide',
-        email: 'martin.tartempion@example.com',
+        emailDeContact: 'martin.tartempion@example.com',
         expectedError: 'Le code organisation doit être renseigné',
         nom: 'Tartempion',
         prenom: 'Martin',
       },
-    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, expectedError }) => {
+    ])('$desc', async ({ emailDeContact: emailDeContact, nom, prenom, role, codeOrganisation, expectedError }) => {
       // GIVEN
       const inviterUnUtilisateurParams = {
         codeOrganisation,
-        email,
+        emailDeContact: emailDeContact,
         nom,
         prenom,
         role,
@@ -216,7 +216,7 @@ describe('inviter un utilisateur action', () => {
           // WHEN
           await inviterUnUtilisateurAction({
             codeOrganisation: '21',
-            email: 'martin.tartempion@example.com',
+            emailDeContact: 'martin.tartempion@example.com',
             nom: 'Tartempion',
             prenom: 'Martin',
           })

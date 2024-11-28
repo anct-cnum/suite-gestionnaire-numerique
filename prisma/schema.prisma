@@ -78,7 +78,7 @@ model UtilisateurRecord {
   dateDeCreation DateTime
   departementCode String?
   derniereConnexion DateTime?
-  email String
+  emailDeContact String
   groupementId Int?
   inviteLe DateTime
   isSuperAdmin Boolean @default(false)

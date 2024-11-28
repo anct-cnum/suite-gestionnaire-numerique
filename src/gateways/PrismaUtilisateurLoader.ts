@@ -129,7 +129,7 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
   return {
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
-    email: utilisateurRecord.email,
+    emailDeContact: utilisateurRecord.email,
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
     isActive: utilisateurRecord.derniereConnexion !== null,

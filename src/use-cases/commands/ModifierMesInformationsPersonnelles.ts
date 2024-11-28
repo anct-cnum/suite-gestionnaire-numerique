@@ -19,7 +19,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<
     command: MesInformationsPersonnellesModifiees
   ): ResultAsync<ModificationUtilisateurFailure> {
     const {
-      modification: { nom, prenom, email, telephone },
+      modification: { nom, prenom, emailDeContact: email, telephone },
       uid,
     } = command
     const utilisateur = await this.#repository.find(UtilisateurUid.from(uid))
@@ -49,7 +49,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<
 
 export type MesInformationsPersonnellesModifiees = Readonly<{
   modification: Readonly<{
-    email: string
+    emailDeContact: string
     nom: string
     prenom: string
     telephone: string

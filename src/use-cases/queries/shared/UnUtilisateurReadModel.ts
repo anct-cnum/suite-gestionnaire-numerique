@@ -1,7 +1,7 @@
 export type UnUtilisateurReadModel = Readonly<{
   departementCode: string | null
   derniereConnexion: Date
-  email: string
+  emailDeContact: string
   groupementId: number | null
   inviteLe: Date
   isActive: boolean

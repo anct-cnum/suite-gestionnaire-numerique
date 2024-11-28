@@ -55,7 +55,7 @@ describe('mes informations personnelles loader', () => {
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: roleLabel,
@@ -90,7 +90,7 @@ describe('mes informations personnelles loader', () => {
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: 'Gestionnaire structure',

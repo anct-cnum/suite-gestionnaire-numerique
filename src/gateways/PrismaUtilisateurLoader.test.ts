@@ -135,7 +135,7 @@ describe('prisma utilisateur query', () => {
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
         departementCode: '75',
         derniereConnexion: epochTime,
-        email: 'martin.tartempion@example.net',
+        emailDeContact: 'martin.tartempion@example.net',
         groupementId: 10,
         inviteLe: epochTime,
         isActive: true,
@@ -229,7 +229,7 @@ describe('prisma utilisateur query', () => {
           {
             departementCode: '75',
             derniereConnexion: epochTime,
-            email: 'martin.tartempion@example.net',
+            emailDeContact: 'martin.tartempion@example.net',
             groupementId: null,
             inviteLe: epochTime,
             isActive: true,
@@ -252,7 +252,7 @@ describe('prisma utilisateur query', () => {
           {
             departementCode: null,
             derniereConnexion: epochTime,
-            email: 'martin.tartempion@example.net',
+            emailDeContact: 'martin.tartempion@example.net',
             groupementId: null,
             inviteLe: epochTime,
             isActive: true,

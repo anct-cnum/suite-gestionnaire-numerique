@@ -30,7 +30,7 @@ describe('réinviter un utilisateur', () => {
       role: 'Gestionnaire structure',
       uid: 'uidUtilisateurAReinviterInactif',
     }).state())
-    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state().email)
+    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state().emailDeContact)
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {

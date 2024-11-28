@@ -21,7 +21,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         data: {
           dateDeCreation: utilisateurState.inviteLe,
           departementCode: utilisateurState.departement?.code,
-          email: utilisateurState.email,
+          emailDeContact: utilisateurState.emailDeContact,
           groupementId: utilisateurState.groupementUid?.value,
           inviteLe: utilisateurState.inviteLe,
           isSuperAdmin: utilisateurState.isSuperAdmin,
@@ -65,7 +65,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return new UtilisateurFactory({
       departement: mapDepartement(record.relationDepartement),
       derniereConnexion: record.derniereConnexion ?? undefined,
-      email: record.email,
+      emailDeContact: record.emailDeContact,
       groupementUid: record.relationGroupement?.id,
       inviteLe: record.inviteLe,
       isSuperAdmin: record.isSuperAdmin,
@@ -91,7 +91,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
     await this.#activeRecord.update({
       data: {
-        email: utilisateurState.email,
+        emailDeContact: utilisateurState.emailDeContact,
         inviteLe: utilisateurState.inviteLe,
         nom: utilisateurState.nom,
         prenom: utilisateurState.prenom,
@@ -112,7 +112,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ssoId: utilisateurState.uid.value,
       },
       where: {
-        ssoId: utilisateurState.email,
+        ssoId: utilisateurState.emailDeContact,
       },
     })
   }

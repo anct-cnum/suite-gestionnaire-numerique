@@ -25,7 +25,7 @@ export default function ReinviterUnUtilisateur({
           Adresse électronique
         </div>
         <div className="font-weight-700">
-          {utilisateur.email}
+          {utilisateur.emailDeContact}
         </div>
       </div>
       <div className="fr-btns-group">
@@ -48,7 +48,7 @@ export default function ReinviterUnUtilisateur({
       uidUtilisateurAReinviter: utilisateur.uid,
     })
     close()
-    Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
+    Notification('success', { description: utilisateur.emailDeContact, title: 'Invitation envoyée à ' })
   }
 
   function close(): void {
@@ -60,7 +60,7 @@ export default function ReinviterUnUtilisateur({
 type DetailsUtilisateurProps = Readonly<{
   dialogRef: RefObject<HTMLDialogElement>
   utilisateur: Readonly<{
-    email: string
+    emailDeContact: string
     inviteLe: string
     uid: string
   }>

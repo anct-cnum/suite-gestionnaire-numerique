@@ -7,7 +7,7 @@ export function sessionUtilisateurViewModelFactory(
   return {
     codeDepartement: '93',
     displayLiensGouvernance: false,
-    email: 'martin.tartempion@example.net',
+    emailDeContact: 'martin.tartempion@example.net',
     nom: 'Tartempion',
     prenom: 'Martin',
     role: {

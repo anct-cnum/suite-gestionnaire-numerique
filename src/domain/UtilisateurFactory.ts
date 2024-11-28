@@ -14,7 +14,7 @@ export class UtilisateurFactory {
   readonly #uid: UtilisateurUid
   readonly #nom: Nom
   readonly #prenom: Prenom
-  readonly #email: Email
+  readonly #emailDeContact: Email
   readonly #isSuperAdmin: boolean
   readonly #inviteLe: Date
   readonly #derniereConnexion: Date
@@ -28,7 +28,7 @@ export class UtilisateurFactory {
     this.#uid = UtilisateurUid.from(params.uid)
     this.#nom = new Nom(params.nom)
     this.#prenom = new Prenom(params.prenom)
-    this.#email = new Email(params.email)
+    this.#emailDeContact = new Email(params.emailDeContact)
     this.#isSuperAdmin = params.isSuperAdmin
     this.#inviteLe = params.inviteLe
     this.#derniereConnexion = params.derniereConnexion ?? new Date(0)
@@ -45,7 +45,7 @@ export class UtilisateurFactory {
     return new UtilisateurFactory({
       departement: state.departement,
       derniereConnexion: new Date(state.derniereConnexion),
-      email: state.email,
+      emailDeContact: state.emailDeContact,
       groupementUid: state.groupementUid?.value,
       inviteLe: new Date(state.inviteLe),
       isSuperAdmin: state.isSuperAdmin,
@@ -79,7 +79,7 @@ export class UtilisateurFactory {
       this.#uid,
       this.#nom,
       this.#prenom,
-      this.#email,
+      this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
       this.#derniereConnexion,
@@ -94,7 +94,7 @@ export class UtilisateurFactory {
       this.#uid,
       this.#nom,
       this.#prenom,
-      this.#email,
+      this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
       this.#derniereConnexion,
@@ -109,7 +109,7 @@ export class UtilisateurFactory {
       this.#uid,
       this.#nom,
       this.#prenom,
-      this.#email,
+      this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
       this.#derniereConnexion,
@@ -124,7 +124,7 @@ export class UtilisateurFactory {
       this.#uid,
       this.#nom,
       this.#prenom,
-      this.#email,
+      this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
       this.#derniereConnexion,
@@ -139,7 +139,7 @@ export class UtilisateurFactory {
       role,
       this.#nom,
       this.#prenom,
-      this.#email,
+      this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
       this.#derniereConnexion,
@@ -151,7 +151,7 @@ export class UtilisateurFactory {
 type UtilisateurFactoryParams = Readonly<{
   uid: string
   derniereConnexion?: Date
-  email: string
+  emailDeContact: string
   inviteLe: Date,
   isSuperAdmin: boolean
   nom: string

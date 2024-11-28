@@ -135,7 +135,7 @@ describe('inviter un utilisateur', () => {
         // THEN
         const expectedUtilisateurInvite = utilisateurFactory({
           codeOrganisation: utilisateurAInviter.codeOrganisation,
-          email: 'martine.dugenoux@example.com',
+          emailDeContact: 'martine.dugenoux@example.com',
           inviteLe: date,
           isSuperAdmin: utilisateurCourant.isSuperAdmin,
           nom: 'Dugenoux',
@@ -160,7 +160,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -185,7 +185,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -216,7 +216,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, date)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -279,7 +279,7 @@ function inviterUnUtilisateurCommandFactory(
   override: Readonly<Partial<InviterUnUtilisateurCommand>>
 ): InviterUnUtilisateurCommand {
   return {
-    email: 'martine.dugenoux@example.com',
+    emailDeContact: 'martine.dugenoux@example.com',
     nom: 'Dugenoux',
     prenom: 'Martine',
     uidUtilisateurCourant: 'utilisateurAdminUid',

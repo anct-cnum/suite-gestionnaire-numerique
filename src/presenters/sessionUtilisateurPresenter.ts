@@ -7,7 +7,7 @@ export function createSessionUtilisateurPresenter(
   return {
     codeDepartement: utilisateurReadModel.departementCode,
     displayLiensGouvernance: utilisateurReadModel.isGestionnaireDepartement,
-    email: utilisateurReadModel.email,
+    emailDeContact: utilisateurReadModel.emailDeContact,
     nom: utilisateurReadModel.nom,
     prenom: utilisateurReadModel.prenom,
     role: {
@@ -24,8 +24,8 @@ export function createSessionUtilisateurPresenter(
 
 export type SessionUtilisateurViewModel = Readonly<{
   codeDepartement: string | null
-  email: string
   displayLiensGouvernance: boolean
+  emailDeContact: string
   nom: string
   prenom: string
   role: Readonly<{

@@ -30,7 +30,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     const utilisateurCourantState = utilisateurCourant.state()
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
-      email: command.email,
+      emailDeContact: command.emailDeContact,
       groupementUid: utilisateurCourantState.groupementUid?.value,
       inviteLe: this.#date,
       isSuperAdmin: utilisateurCourantState.isSuperAdmin,
@@ -39,7 +39,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       region: utilisateurCourantState.region,
       structureUid: utilisateurCourantState.structureUid?.value,
       telephone: '',
-      uid: command.email,
+      uid: command.emailDeContact,
     }).create(
       command.role?.type ?? utilisateurCourantState.role.nom,
       command.role?.codeOrganisation
@@ -50,7 +50,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
       const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
-      await emailGateway.send(command.email)
+      await emailGateway.send(command.emailDeContact)
       return 'OK'
     }
     return 'emailExistant'
@@ -60,7 +60,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
 export type InviterUnUtilisateurCommand = Readonly<{
   prenom: string
   nom: string
-  email: string
+  emailDeContact: string
   uidUtilisateurCourant: string
   role?: Readonly<{
     type: TypologieRole

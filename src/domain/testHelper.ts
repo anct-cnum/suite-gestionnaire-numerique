@@ -12,7 +12,7 @@ export function utilisateurFactory(
 ): Utilisateur {
   return new UtilisateurFactory({
     derniereConnexion: new Date(0),
-    email: 'martin.tartempion@example.net',
+    emailDeContact: 'martin.tartempion@example.net',
     inviteLe: new Date(0),
     isSuperAdmin: false,
     nom: 'Tartempion',

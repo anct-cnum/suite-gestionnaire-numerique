@@ -1298,7 +1298,7 @@ const utilisateurActifReadModel = utilisateurReadModelFactory({
 })
 
 const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
-  email: 'julien.deschamps@example.com',
+  emailDeContact: 'julien.deschamps@example.com',
   inviteLe: new Date('2024-02-12'),
   isActive: false,
   nom: 'Deschamps',
@@ -1307,7 +1307,7 @@ const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
 })
 
 const utilisateurEnAttenteDAujourdhuiReadModel = utilisateurReadModelFactory({
-  email: 'sebastien.palat@example.net',
+  emailDeContact: 'sebastien.palat@example.net',
   inviteLe: new Date(),
   isActive: false,
   nom: 'Palat',
@@ -1316,7 +1316,7 @@ const utilisateurEnAttenteDAujourdhuiReadModel = utilisateurReadModelFactory({
 
 const date = new Date()
 const utilisateurEnAttenteDHierReadModel = utilisateurReadModelFactory({
-  email: 'stephane.raymond@example.net',
+  emailDeContact: 'stephane.raymond@example.net',
   inviteLe: new Date(date.setDate(date.getDate() - 1)),
   isActive: false,
   nom: 'Raymond',
@@ -1325,7 +1325,7 @@ const utilisateurEnAttenteDHierReadModel = utilisateurReadModelFactory({
 
 const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
   derniereConnexion: new Date('2024-03-05'),
-  email: 'paul.provost@example.net',
+  emailDeContact: 'paul.provost@example.net',
   nom: 'Provost',
   prenom: 'Paul',
   role: {

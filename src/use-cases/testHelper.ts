@@ -10,7 +10,7 @@ export function utilisateurReadModelFactory(
   return {
     departementCode: null,
     derniereConnexion: epochTime,
-    email: 'martin.tartempion@example.net',
+    emailDeContact: 'martin.tartempion@example.net',
     groupementId: null,
     inviteLe: epochTime,
     isActive: true,
@@ -37,7 +37,7 @@ export function mesInformationsPersonnellesReadModelFactory(
   override?: Partial<MesInformationsPersonnellesReadModel>
 ): MesInformationsPersonnellesReadModel {
   return {
-    email: 'julien.deschamps@example.com',
+    emailDeContact: 'julien.deschamps@example.com',
     nom: 'Deschamps',
     prenom: 'Julien',
     role: 'Administrateur dispositif',

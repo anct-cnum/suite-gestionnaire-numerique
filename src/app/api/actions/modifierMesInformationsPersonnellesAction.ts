@@ -24,7 +24,7 @@ export async function modifierMesInformationsPersonnellesAction(
   const message = await new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
     .execute({
       modification: {
-        email: validationResult.data.email,
+        emailDeContact: validationResult.data.emailDeContact,
         nom: validationResult.data.nom,
         prenom: validationResult.data.prenom,
         telephone: validationResult.data.telephone,
@@ -36,7 +36,7 @@ export async function modifierMesInformationsPersonnellesAction(
 }
 
 type ActionParams = Readonly<{
-  email: string
+  emailDeContact: string
   nom: string
   prenom: string
   telephone: string
@@ -44,7 +44,7 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  email: z.string().email({ message: 'L’email doit être valide' }),
+  emailDeContact: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
   path: z.string().min(1, { message: 'Le chemin n’est pas correct' }),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
