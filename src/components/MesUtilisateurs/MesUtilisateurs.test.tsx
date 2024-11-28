@@ -1,5 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import selectEvent from 'react-select-event'
+import { select } from 'react-select-event'
 import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
@@ -553,13 +553,12 @@ describe('mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
     })
 
-    it('sur un département alors je n’affiche qu’eux', () => {
+    it('sur un département alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      const container = afficherLesFiltres(spiedRouterPush)
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access
-      container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '00_978'
+      afficherLesFiltres(spiedRouterPush)
+      const zoneGeographique = screen.getByLabelText('Par zone géographique')
+      await select(zoneGeographique, '(978) Saint-Martin')
 
       // WHEN
       const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -569,13 +568,12 @@ describe('mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeDepartement=978')
     })
 
-    it('sur une région alors je n’affiche qu’eux', () => {
+    it('sur une région alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      const container = afficherLesFiltres(spiedRouterPush)
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access
-      container.querySelector<HTMLInputElement>('input[type="hidden"]').value = '93_00'
+      afficherLesFiltres(spiedRouterPush)
+      const zoneGeographique = screen.getByLabelText('Par zone géographique')
+      await select(zoneGeographique, "(93) Provence-Alpes-Côte d'Azur")
 
       // WHEN
       const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -740,8 +738,15 @@ describe('mes utilisateurs', () => {
           },
         }
       }
+      vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
+        nom: string
+        uid: string
+      }>> => Promise.resolve([
+        { nom: 'ABC FORMATION', uid: '1845' },
+        { nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
+      ]) })))
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-      const { container } = renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
@@ -775,9 +780,9 @@ describe('mes utilisateurs', () => {
       fireEvent.click(gestionnaireStructure)
 
       // WHEN
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access, testing-library/no-container
-      container.querySelector<HTMLInputElement>('input[aria-hidden="true"]').value = '1845'
+      const structure = within(formulaireInvitation).getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'ABC' } })
+      await select(structure, 'ABC FORMATION')
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)
 
@@ -791,7 +796,49 @@ describe('mes utilisateurs', () => {
           role: 'Gestionnaire structure',
         })
       })
+      expect(fetch).toHaveBeenCalledWith('/api/structures?search=ABC')
       window.dsfr = windowDsfr
+    })
+
+    it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', () => {
+      // GIVEN
+      vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
+        nom: string
+        uid: string
+      }>> => Promise.resolve([]) })))
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          role: {
+            groupe: 'admin',
+            libelle: 'Rhône',
+            nom: 'Administrateur dispositif',
+            pictogramme: 'maille',
+            rolesGerables: [
+              'Administrateur dispositif',
+              'Gestionnaire département',
+              'Gestionnaire groupement',
+              'Gestionnaire région',
+              'Gestionnaire structure',
+              'Instructeur',
+              'Pilote politique publique',
+              'Support animation',
+            ],
+          },
+        }),
+      })
+
+      // WHEN
+      const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+      fireEvent.click(inviter)
+      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
+      fireEvent.click(gestionnaireStructure)
+      const structure = screen.getByLabelText('Structure *')
+      fireEvent.change(structure, { target: { value: 'AB' } })
+
+      // THEN
+      expect(fetch).not.toHaveBeenCalled()
     })
 
     it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
@@ -856,7 +903,7 @@ describe('mes utilisateurs', () => {
       expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     })
 
-    it('en invitant un membre du groupe admin, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
@@ -921,15 +968,17 @@ describe('mes utilisateurs', () => {
       window.dsfr = windowDsfr
     })
 
-    it('en invitant un membre du groupe gestionnaire, dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+    it('quand je remplis avec un e-mail déjà existant puis avec un e-mail inexistant le formulaire d’invitation, alors un message d’invalidation puis de validation s’affiche et le drawer est réinitialisé', async () => {
+      // GIVEN
       const roleGestionnaireLabelSelectionMapping = {
         'Gestionnaire département': 'Département',
         'Gestionnaire groupement': 'Groupement',
         'Gestionnaire région': 'Région',
         'Gestionnaire structure': 'Structure',
       }
-      // GIVEN
-      const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+      const inviterUnUtilisateurAction = vi.fn()
+        .mockResolvedValueOnce(['emailExistant'])
+        .mockResolvedValueOnce(['OK'])
       const windowDsfr = window.dsfr
       window.dsfr = (): {modal: {conceal: Mock}} => {
         return {
@@ -976,13 +1025,16 @@ describe('mes utilisateurs', () => {
       const gestionnaireRole = within(formulaireInvitation).getByLabelText('Gestionnaire département')
       fireEvent.click(gestionnaireRole)
       const departementSelect = within(formulaireInvitation).getByLabelText('Département *')
-      expect(departementSelect).toBeInTheDocument()
-      // eslint-disable-next-line import/no-named-as-default-member
-      await selectEvent.select(departementSelect, 'Ain')
+      await select(departementSelect, 'Ain')
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
+      fireEvent.click(envoyerInvitation)
+      const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
       fireEvent.click(envoyerInvitation)
 
       // THEN
+      expect(messageDErreur).toBeInTheDocument()
+      const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+      expect(absenceMessageDErreur).not.toBeInTheDocument()
       const notification = await screen.findByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
       expect(formulaireInvitation).not.toHaveAttribute('open', '')
@@ -1121,9 +1173,9 @@ describe('mes utilisateurs', () => {
     window.dsfr = windowDsfr
   })
 
-  function afficherLesFiltres(spiedRouterPush: Mock): HTMLElement {
+  function afficherLesFiltres(spiedRouterPush: Mock): void {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-    const { container } = renderComponent(
+    renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
       {
         router: {
@@ -1139,8 +1191,6 @@ describe('mes utilisateurs', () => {
 
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
     fireEvent.click(filtrer)
-
-    return container
   }
 })
 

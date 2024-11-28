@@ -39,4 +39,26 @@ describe('menu lateral', () => {
     const tableauDeBord = within(menuItems[1]).getByRole('link', { name: 'Gouvernance' })
     expect(tableauDeBord).toHaveAttribute('href', '/gouvernance/93')
   })
+
+  it('étant un utilisateur autre que gestionnaire de département, quand j’affiche le menu latéral, alors il ne s’affiche pas avec le lien de la gouvernance', () => {
+    // WHEN
+    renderComponent(<MenuLateral />, {
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        codeDepartement: '93',
+        role: {
+          groupe: 'gestionnaire',
+          libelle: '',
+          nom: 'Gestionnaire structure',
+          pictogramme: '',
+          rolesGerables: [],
+        },
+      }),
+    })
+
+    // THEN
+    const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    const menu = within(navigation).getByRole('list')
+    const tableauDeBord = within(menu).queryByRole('link', { name: 'Gouvernance' })
+    expect(tableauDeBord).not.toBeInTheDocument()
+  })
 })

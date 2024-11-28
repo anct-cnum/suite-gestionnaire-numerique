@@ -1,7 +1,7 @@
 import React, { ReactElement } from 'react'
 
 export default function Checkbox({
-  defaultChecked = false,
+  defaultChecked,
   label,
   id,
   name,
@@ -35,7 +35,7 @@ export default function Checkbox({
 }
 
 type CheckboxProps = Readonly<{
-  defaultChecked?: boolean
+  defaultChecked: boolean
   id: string
   label: string
   name: string

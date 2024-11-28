@@ -18,6 +18,9 @@ export default function OrganisationInput({
     return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
   }
 
+  // istanbul ignore next @preserve
+  const noResult = (): string => 'Pas de résultat'
+
   return (
     <div className="fr-select-group">
       <label
@@ -55,7 +58,7 @@ export default function OrganisationInput({
           isClearable={true}
           menuPlacement="top"
           name="organisation"
-          noOptionsMessage={() => 'Pas de résultat'}
+          noOptionsMessage={noResult}
           onChange={setOrganisation as (organisation: unknown) => void}
           options={options}
           placeholder=""
