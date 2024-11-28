@@ -36,7 +36,7 @@ export type GouvernanceViewModel = Readonly<{
     wording: string
     lien: Readonly<{
       label: string
-      url: URL
+      url: string
     }>
   }>
   sectionMembres: Readonly<{
@@ -141,7 +141,7 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
       budgetTotalCumule: '0',
       lien: {
         label: '',
-        url: new URL('/', process.env.NEXT_PUBLIC_HOST),
+        url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
       },
       total: '0',
       wording: 'feuille de route',
@@ -150,10 +150,10 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
 
   const lien = feuillesDeRoute.length === 1 ? {
     label: 'Voir la feuille de route',
-    url: new URL('/feuille-de-route', process.env.NEXT_PUBLIC_HOST),
+    url: new URL('/feuille-de-route', process.env.NEXT_PUBLIC_HOST).toString(),
   } : {
     label: 'Voir les feuilles de route',
-    url: new URL('/feuilles-de-route', process.env.NEXT_PUBLIC_HOST),
+    url: new URL('/feuilles-de-route', process.env.NEXT_PUBLIC_HOST).toString(),
   }
 
   const nombreDeFeuillesDeRoute = feuillesDeRoute.length

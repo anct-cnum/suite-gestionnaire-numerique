@@ -20,7 +20,7 @@ export default function GouvernanceVideController({ params }: PageProps): ReactE
       budgetTotalCumule: '',
       lien: {
         label: '',
-        url: new URL('/', process.env.NEXT_PUBLIC_HOST),
+        url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
       },
       total: '',
       wording: '',

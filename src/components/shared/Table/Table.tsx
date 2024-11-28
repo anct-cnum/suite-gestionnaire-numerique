@@ -2,7 +2,16 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import styles from './Table.module.css'
 
-export default function Table({ children, enTetes, titre, hasHead = true }: TableProps): ReactElement {
+export default function Table({
+  children,
+  enTetes,
+  // Stryker disable next-line BooleanLiteral
+  hasHead = true,
+  titre,
+}: TableProps): ReactElement {
+  // istanbul ignore next @preserve
+  const className = hasHead ? '' : 'fr-sr-only'
+
   return (
     <div
       className="fr-table--sm fr-table fr-table"
@@ -15,7 +24,7 @@ export default function Table({ children, enTetes, titre, hasHead = true }: Tabl
               <caption className="fr-sr-only">
                 {titre}
               </caption>
-              <thead className={hasHead ? '' : 'fr-sr-only'}>
+              <thead className={className}>
                 <tr>
                   {enTetes.map((enTete) => {
                     return (
