@@ -6,7 +6,7 @@ import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
 
 describe('inviter un utilisateur', () => {
-  afterEach(() => {
+  beforeEach(() => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
     spiedDestinataire = ''
@@ -235,10 +235,10 @@ describe('inviter un utilisateur', () => {
   })
 })
 
-let spiedUidToFind = ''
-let spiedUtilisateurToAdd: Utilisateur | null = null
-let spiedDestinataire = ''
-let spiedIsSuperAdmin: boolean | null = null
+let spiedUidToFind: string
+let spiedUtilisateurToAdd: Utilisateur | null
+let spiedDestinataire: string
+let spiedIsSuperAdmin: boolean | null
 
 class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurRepository {
   readonly #utilisateurCourant: Utilisateur | null

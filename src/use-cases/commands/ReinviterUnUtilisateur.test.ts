@@ -5,7 +5,7 @@ import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('réinviter un utilisateur', () => {
-  afterEach(() => {
+  beforeEach(() => {
     spiedUidToFind = ''
     spiedUtilisateurToUpdate = null
   })
@@ -128,9 +128,9 @@ const utilisateursByUid: Record<string, Utilisateur> = {
   }),
 }
 
-let spiedUidToFind = ''
-let spiedUtilisateurToUpdate: Utilisateur | null = null
-let spiedDestinataire = ''
+let spiedUidToFind: string
+let spiedUtilisateurToUpdate: Utilisateur | null
+let spiedDestinataire: string
 
 class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
