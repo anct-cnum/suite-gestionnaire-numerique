@@ -1,50 +1,77 @@
-import { ReactElement } from 'react'
+'use client'
 
+import { ReactElement, useState } from 'react'
+
+import Drawer from '../../shared/Drawer/Drawer'
 import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
+import AjouterUnComite from './AjouterUnComite'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ComitologieRemplie({ comites }: ComitologieRemplieProps): ReactElement {
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerComiteId = 'drawer-comite'
+  const labelComiteId = 'drawer-comite-titre'
+
   return (
-    <SectionRemplie
-      button={(
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
-          type="button"
-        >
-          Ajouter
-        </button>
-      )}
-      id="comitologie"
-      title="Comitologie"
-    >
-      <Table
-        enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
-        hideHead="fr-sr-only"
-        titre="Comités"
+    <>
+      <Drawer
+        boutonFermeture="Fermer"
+        id={drawerComiteId}
+        // Stryker disable next-line BooleanLiteral
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelComiteId}
+        setIsOpen={setIsDrawerOpen}
       >
-        {
-          comites.map((comite) => {
-            return (
-              <tr key={comite.nom}>
-                <td>
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-calendar-event-line color-blue-france"
-                  />
-                </td>
-                <td className="font-weight-700">
-                  {`${comite.nom} : ${comite.dateProchainComite}`}
-                </td>
-                <td className="color-grey">
-                  {comite.periodicite}
-                </td>
-              </tr>
-            )
-          })
-        }
-      </Table>
-    </SectionRemplie>
+        <AjouterUnComite />
+      </Drawer>
+      <SectionRemplie
+        button={(
+          <button
+            aria-controls={drawerComiteId}
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
+            data-fr-opened="false"
+            onClick={() => {
+              setIsDrawerOpen(true)
+            }}
+            type="button"
+          >
+            Ajouter
+          </button>
+        )}
+        id="comitologie"
+        title="Comitologie"
+      >
+        <Table
+          enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
+          hideHead="fr-sr-only"
+          titre="Comités"
+        >
+          {
+            comites.map((comite) => {
+              return (
+                <tr key={comite.nom}>
+                  <td>
+                    <span
+                      aria-hidden="true"
+                      className="fr-icon-calendar-event-line color-blue-france"
+                    />
+                  </td>
+                  <td className="font-weight-700">
+                    {`${comite.nom} : ${comite.dateProchainComite}`}
+                  </td>
+                  <td className="color-grey">
+                    {comite.periodicite}
+                  </td>
+                </tr>
+              )
+            })
+          }
+        </Table>
+      </SectionRemplie>
+    </>
   )
 }
 
