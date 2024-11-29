@@ -80,13 +80,13 @@ describe('utilisateur factory', () => {
     // GIVEN
     const utilisateurParams = {
       derniereConnexion: new Date(0),
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       inviteLe: new Date(0),
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone: '0102030405',
-      uid: 'fooId',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
       ...params,
     }
 
@@ -112,13 +112,13 @@ describe('utilisateur factory', () => {
     // GIVEN
     const utilisateurParams = {
       derniereConnexion,
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       inviteLe: new Date(0),
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone: '0102030405',
-      uid: 'fooId',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     }
     // WHEN
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
@@ -142,13 +142,13 @@ describe('utilisateur factory', () => {
     // GIVEN
     const utilisateurParams = {
       derniereConnexion: new Date(0),
-      email: 'martin.tartempion@example.net',
+      emailDeContact: 'martin.tartempion@example.net',
       inviteLe: new Date(0),
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
       telephone,
-      uid: 'fooId',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     }
     // WHEN
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')

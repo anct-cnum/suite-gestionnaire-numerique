@@ -31,7 +31,7 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
           </span>
         </div>
         <div className={'fr-text--xs color-blue-france'}>
-          {sessionUtilisateurViewModel.emailDeContact}
+          {sessionUtilisateurViewModel.email}
         </div>
       </div>
       <ul

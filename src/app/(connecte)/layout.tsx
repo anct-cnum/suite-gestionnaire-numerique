@@ -35,7 +35,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     if (error instanceof UtilisateurNonTrouveError) {
       const result = await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
         .execute({
-          emailDeContact: session.user.emailDeContact,
+          emailAsUid: session.user.email,
           uid: session.user.sub,
         })
 

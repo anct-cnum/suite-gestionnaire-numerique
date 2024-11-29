@@ -18,7 +18,7 @@ export function utilisateurFactory(
     nom: 'Tartempion',
     prenom: 'Martin',
     telephone: '0102030405',
-    uid: 'fooId',
+    uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     ...override,
   }).create(override?.role ?? 'Instructeur', override?.codeOrganisation)
 }

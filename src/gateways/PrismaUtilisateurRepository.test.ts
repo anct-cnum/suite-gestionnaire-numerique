@@ -11,11 +11,11 @@ import {
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
-import { UtilisateurUid } from '@/domain/Utilisateur'
+import { UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
-const uidUtilisateur = UtilisateurUid.from(uidUtilisateurValue)
+const uidUtilisateur = new UtilisateurUid({ email: 'martin.tartempion@example.net', value: uidUtilisateurValue })
 
 describe('utilisateur repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -33,7 +33,7 @@ describe('utilisateur repository', () => {
       })
 
       // WHEN
-      const result = await repository.find(uidUtilisateur)
+      const result = await repository.find(uidUtilisateurValue)
 
       // THEN
       expect(result).toBeNull()
@@ -46,7 +46,7 @@ describe('utilisateur repository', () => {
       })
 
       // WHEN
-      const result = await repository.find(uidUtilisateur)
+      const result = await repository.find(uidUtilisateurValue)
 
       // THEN
       expect(result).toBeNull()
@@ -171,12 +171,12 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await repository.find(uidUtilisateur)
+        const result = await repository.find(uidUtilisateurValue)
 
         // THEN
         expect(result?.state()).toStrictEqual(
           utilisateurFactory({
-            uid: uidUtilisateurValue,
+            uid: uidUtilisateur.state(),
             ...expected,
           }).state()
         )
@@ -213,7 +213,7 @@ describe('utilisateur repository', () => {
         })
 
         // WHEN
-        const result = await repository.find(uidUtilisateur)
+        const result = await repository.find(uidUtilisateurValue)
 
         // THEN
         expect(result?.state().isActive).toBe(expectedIsActive)
@@ -224,22 +224,28 @@ describe('utilisateur repository', () => {
   describe('suppression d’un utilisateur', () => {
     const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
     const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
-    const utilisateurExistant = utilisateurRecordFactory({ ssoId: ssoIdUtilisateurExistant })
+    const ssoEmailUtilisateurExistant = 'martin.tartempion@example.net'
+    const ssoEmailUtilisateurSupprime = 'martin.tartempion@example.org'
+    const utilisateurExistant = utilisateurRecordFactory({
+      ssoEmail: ssoEmailUtilisateurExistant,
+      ssoId: ssoIdUtilisateurExistant,
+    })
     const utilisateurSupprime = utilisateurRecordFactory({
       isSupprime: true,
+      ssoEmail: ssoEmailUtilisateurSupprime,
       ssoId: ssoIdUtilisateurSupprime,
     })
 
     describe.each([
       {
         desc: 'par identifiant de l’utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: string): Promise<boolean> =>
-          repository.dropByUid(UtilisateurUid.from(uid)),
+        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> =>
+          repository.dropByUid(uid),
       },
       {
         desc: 'par utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: string): Promise<boolean> =>
-          repository.drop(utilisateurFactory({ uid })),
+        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> =>
+          repository.drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uid } })),
       },
     ])('$desc', ({ dropFn }) => {
       it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
@@ -266,7 +272,7 @@ describe('utilisateur repository', () => {
           dateDeCreation: epochTime,
           departementCode: null,
           derniereConnexion: epochTime,
-          email: 'martin.tartempion@example.net',
+          emailDeContact: 'martin.tartempion@example.net',
           groupementId: null,
           inviteLe: epochTime,
           isSuperAdmin: false,
@@ -275,6 +281,7 @@ describe('utilisateur repository', () => {
           prenom: 'Martin',
           regionCode: null,
           role: 'instructeur',
+          ssoEmail: 'martin.tartempion@example.net',
           ssoId: ssoIdUtilisateurExistant,
           structureId: null,
           telephone: '0102030405',
@@ -378,7 +385,7 @@ describe('utilisateur repository', () => {
           nom: 'Dugenoux',
           prenom: 'Martine',
           role: 'Instructeur',
-          uid: uidUtilisateurValue,
+          uid: { email: 'martine.dugenoux@example.org', value: uidUtilisateurValue },
         })
       )
 
@@ -391,7 +398,7 @@ describe('utilisateur repository', () => {
       expect(updatedRecord?.role).toBe('instructeur')
       expect(updatedRecord?.nom).toBe('Dugenoux')
       expect(updatedRecord?.prenom).toBe('Martine')
-      expect(updatedRecord?.email).toBe('martine.dugenoux@example.org')
+      expect(updatedRecord?.emailDeContact).toBe('martine.dugenoux@example.org')
       expect(updatedRecord?.inviteLe).toStrictEqual(date)
     })
   })
@@ -402,15 +409,14 @@ describe('utilisateur repository', () => {
       const repository = new PrismaUtilisateurRepository(prisma)
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
-          email: 'martine.dugenoux@example.org',
+          ssoEmail: 'martine.dugenoux@example.org',
           ssoId: 'martine.dugenoux@example.org',
         }),
       })
 
       // WHEN
       await repository.updateUid(utilisateurFactory({
-        emailDeContact: 'martine.dugenoux@example.org',
-        uid: uidUtilisateurValue,
+        uid: { email: 'martine.dugenoux@example.org', value: uidUtilisateurValue },
       }))
 
       // THEN
@@ -449,7 +455,7 @@ describe('utilisateur repository', () => {
       const utilisateur = utilisateurFactory({
         departement: departementFactory({ code: departementCode }).state(),
         role: 'Gestionnaire département',
-        uid: ssoIdDifferent,
+        uid: { email: 'martin.tartempion@example.net', value: ssoIdDifferent },
       })
 
       // WHEN
@@ -478,7 +484,7 @@ describe('utilisateur repository', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ ssoId: ssoIdExistant }),
       })
-      const utilisateur = utilisateurFactory({ uid: ssoIdExistant })
+      const utilisateur = utilisateurFactory({ uid: { email: 'martin.tartempion@example.net', value: ssoIdExistant } })
 
       // WHEN
       const resultatCreation = await repository.add(utilisateur)

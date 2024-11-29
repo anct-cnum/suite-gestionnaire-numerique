@@ -1,6 +1,5 @@
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
-import { UtilisateurUid } from '../../domain/Utilisateur'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
@@ -22,7 +21,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
 
   async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
     const utilisateurCourant = await this.#repository.find(
-      UtilisateurUid.from(command.uidUtilisateurCourant)
+      command.uidUtilisateurCourant
     )
     if (!utilisateurCourant) {
       return 'KO'
@@ -30,7 +29,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     const utilisateurCourantState = utilisateurCourant.state()
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
-      emailDeContact: command.emailDeContact,
+      emailDeContact: command.email,
       groupementUid: utilisateurCourantState.groupementUid?.value,
       inviteLe: this.#date,
       isSuperAdmin: utilisateurCourantState.isSuperAdmin,
@@ -39,7 +38,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       region: utilisateurCourantState.region,
       structureUid: utilisateurCourantState.structureUid?.value,
       telephone: '',
-      uid: command.emailDeContact,
+      uid: { email: command.email, value: command.email },
     }).create(
       command.role?.type ?? utilisateurCourantState.role.nom,
       command.role?.codeOrganisation
@@ -50,7 +49,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
       const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
-      await emailGateway.send(command.emailDeContact)
+      await emailGateway.send(command.email)
       return 'OK'
     }
     return 'emailExistant'
@@ -60,7 +59,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
 export type InviterUnUtilisateurCommand = Readonly<{
   prenom: string
   nom: string
-  emailDeContact: string
+  email: string
   uidUtilisateurCourant: string
   role?: Readonly<{
     type: TypologieRole

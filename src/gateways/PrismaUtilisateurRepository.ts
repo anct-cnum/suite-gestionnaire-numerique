@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client'
 
 import { fromTypologieRole, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { DepartementState } from '@/domain/Departement'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
@@ -30,6 +30,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
           prenom: utilisateurState.prenom,
           regionCode: utilisateurState.region?.code,
           role: fromTypologieRole(utilisateurState.role.nom),
+          ssoEmail: utilisateurState.uid.email,
           ssoId: utilisateurState.uid.value,
           structureId: utilisateurState.structureUid?.value,
           telephone: '',
@@ -46,7 +47,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }
   }
 
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     const record = await this.#activeRecord.findUnique({
       include: {
         relationDepartement: true,
@@ -56,7 +57,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       },
       where: {
         isSupprime: false,
-        ssoId: uid.state().value,
+        ssoId: uid,
       },
     })
     if (!record) {
@@ -74,7 +75,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       region: record.relationRegion ?? undefined,
       structureUid: record.relationStructure?.id,
       telephone: record.telephone,
-      uid: record.ssoId,
+      uid: { email: record.ssoEmail, value: record.ssoId },
     }).create(toTypologieRole(record.role))
   }
 
@@ -82,8 +83,8 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return this.#drop(utilisateur.state().uid.value)
   }
 
-  async dropByUid(uid: UtilisateurUid): Promise<boolean> {
-    return this.#drop(uid.state().value)
+  async dropByUid(uid: UtilisateurUidState['value']): Promise<boolean> {
+    return this.#drop(uid)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
@@ -112,7 +113,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ssoId: utilisateurState.uid.value,
       },
       where: {
-        ssoId: utilisateurState.emailDeContact,
+        ssoId: utilisateurState.uid.email,
       },
     })
   }

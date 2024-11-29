@@ -33,7 +33,7 @@ describe('modifier mes informations personnelles', () => {
         {
           desc: 'l’email, si renseigné, doit être valide',
           expectedResult: 'emailInvalide',
-          modification: { email: 'example@example' },
+          modification: { emailDeContact: 'example@example' },
         },
         {
           desc: 'le téléphone, si renseigné, doit être valide',

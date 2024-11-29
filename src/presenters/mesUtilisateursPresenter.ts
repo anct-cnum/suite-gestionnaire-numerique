@@ -27,7 +27,7 @@ export function mesUtilisateursPresenter(
           isDisabled,
         },
         derniereConnexion: buildDate(monUtilisateur),
-        emailDeContact: monUtilisateur.emailDeContact,
+        emailDeContact: monUtilisateur.email,
         inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
         isActif: monUtilisateur.isActive,
         picto,

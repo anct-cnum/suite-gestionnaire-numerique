@@ -42,7 +42,7 @@ export default function MesUtilisateurs(
     telephone: '',
   })
   const [utilisateurEnAttenteSelectionne, setUtilisateurEnAttenteSelectionne] = useState({
-    emailDeContact: '',
+    email: '',
     inviteLe: '',
     uid: '',
   })
@@ -267,7 +267,7 @@ export default function MesUtilisateurs(
         setIsDrawerOpen(true)
       } else {
         setUtilisateurEnAttenteSelectionne({
-          emailDeContact: unUtilisateurViewModel.emailDeContact,
+          email: unUtilisateurViewModel.emailDeContact,
           inviteLe: unUtilisateurViewModel.inviteLe,
           uid: unUtilisateurViewModel.uid,
         })

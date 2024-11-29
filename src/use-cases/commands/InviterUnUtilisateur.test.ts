@@ -2,7 +2,7 @@ import { InviterUnUtilisateur, InviterUnUtilisateurCommand } from './InviterUnUt
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
-import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '../../domain/Utilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
 
 describe('inviter un utilisateur', () => {
@@ -142,7 +142,7 @@ describe('inviter un utilisateur', () => {
           prenom: 'Martine',
           role: utilisateurAInviter.role,
           telephone: '',
-          uid: 'martine.dugenoux@example.com',
+          uid: { email: 'martine.dugenoux@example.com', value: 'martine.dugenoux@example.com' },
         })
         expect(result).toBe('OK')
         expect(spiedUidToFind).toBe(command.uidUtilisateurCourant)
@@ -160,7 +160,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      emailDeContact: 'martin.tartempion@example.net',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -185,7 +185,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      emailDeContact: 'martin.tartempion@example.net',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -209,14 +209,14 @@ describe('inviter un utilisateur', () => {
     const utilisateurACreer = utilisateurFactory({
       inviteLe: date,
       telephone: '',
-      uid: 'martin.tartempion@example.net',
+      uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
     })
     const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
     const emailGatewayFactory = emailGatewayFactorySpy
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, date)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
     const command = {
-      emailDeContact: 'martin.tartempion@example.net',
+      email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
       role: { type: roleUtilisateurAInviter },
@@ -247,8 +247,8 @@ class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurReposito
     this.#utilisateurCourant = utilisateurCourant
   }
 
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    spiedUidToFind = uid.state().value
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidToFind = uid
     return Promise.resolve(this.#utilisateurCourant)
   }
 
@@ -279,7 +279,7 @@ function inviterUnUtilisateurCommandFactory(
   override: Readonly<Partial<InviterUnUtilisateurCommand>>
 ): InviterUnUtilisateurCommand {
   return {
-    emailDeContact: 'martine.dugenoux@example.com',
+    email: 'martine.dugenoux@example.com',
     nom: 'Dugenoux',
     prenom: 'Martine',
     uidUtilisateurCourant: 'utilisateurAdminUid',

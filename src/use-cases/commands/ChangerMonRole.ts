@@ -1,7 +1,7 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
-import { UtilisateurFailure, UtilisateurUid } from '@/domain/Utilisateur'
+import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class ChangerMonRole implements CommandHandler<Command> {
@@ -12,7 +12,7 @@ export class ChangerMonRole implements CommandHandler<Command> {
   }
 
   async execute({ nouveauRole, utilisateurUid }: Command): ResultAsync<ChangerMonRoleFailure> {
-    const utilisateur = await this.#repository.find(UtilisateurUid.from(utilisateurUid))
+    const utilisateur = await this.#repository.find(utilisateurUid)
     if (!utilisateur) {
       return 'compteInexistant'
     }

@@ -103,11 +103,11 @@ describe('utilisateur', () => {
 })
 
 const utilisateurProps = {
-  email: 'martin.tartempion@example.net',
+  emailDeContact: 'martin.tartempion@example.net',
   inviteLe: new Date(0),
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',
   role: 'Instructeur',
-  uid: 'fooId',
+  uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
 }

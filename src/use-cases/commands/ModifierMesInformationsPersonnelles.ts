@@ -3,7 +3,7 @@ import {
   FindUtilisateurRepository,
   UpdateUtilisateurRepository,
 } from './shared/UtilisateurRepository'
-import { UtilisateurFailure, UtilisateurUid } from '@/domain/Utilisateur'
+import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class ModifierMesInformationsPersonnelles implements CommandHandler<
@@ -22,7 +22,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<
       modification: { nom, prenom, emailDeContact: email, telephone },
       uid,
     } = command
-    const utilisateur = await this.#repository.find(UtilisateurUid.from(uid))
+    const utilisateur = await this.#repository.find(uid)
     if (!utilisateur) {
       return 'compteInexistant'
     }

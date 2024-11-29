@@ -94,15 +94,9 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
   abstract peutGerer(autre: Utilisateur): boolean
 }
 
-export class UtilisateurUid extends Uid<UtilisateurUidState> {
-  private constructor(state: UtilisateurUidState) {
-    super(state)
-  }
+export class UtilisateurUid extends Uid<UtilisateurUidState> {}
 
-  static from(value: string): UtilisateurUid {
-    return new UtilisateurUid({ value })
-  }
-}
+export type UtilisateurUidState = Readonly<{ value: string, email: string }>
 
 export type UtilisateurState = Readonly<{
   uid: UtilisateurUidState
@@ -165,5 +159,3 @@ export class Telephone extends ValueObject<AttributUtilisateurState> {
 }
 
 type AttributUtilisateurState = Readonly<{ value: string }>
-
-type UtilisateurUidState = Readonly<{ value: string }>

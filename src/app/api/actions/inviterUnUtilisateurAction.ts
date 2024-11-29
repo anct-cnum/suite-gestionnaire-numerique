@@ -24,7 +24,7 @@ export async function inviterUnUtilisateurAction(
   }
 
   let command: InviterUnUtilisateurCommand = {
-    emailDeContact: validationResult.data.emailDeContact,
+    email: validationResult.data.email,
     nom: validationResult.data.nom,
     prenom: validationResult.data.prenom,
     uidUtilisateurCourant: await getSubSession(),
@@ -54,7 +54,7 @@ export async function inviterUnUtilisateurAction(
 type ActionParams = Readonly<{
   prenom: string
   nom: string
-  emailDeContact: string
+  email: string
   codeOrganisation?: string
   role?: string
 }>
@@ -64,7 +64,7 @@ const validator = z.object({
     .string()
     .min(1, { message: 'Le code organisation doit être renseigné' })
     .optional(),
-  emailDeContact: z.string().email({ message: 'L’email doit être valide' }),
+  email: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
   role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),

@@ -1,7 +1,7 @@
 import { MettreAJourUidALaPremiereConnexion } from './MettreAJourUidALaPremiereConnexion'
-import { UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('mettre à jour l’identifiant unique à la première connexion', () => {
   beforeEach(() => {
@@ -11,33 +11,38 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
 
   it('quand l’utilisateur se connecte pour la première fois, alors l’identifiant unique est mis à jour', async () => {
     // GIVEN
-    const email = 'martin.tartempion@example.net'
+    const emailAsUid = 'martin.tartempion@example.net'
     const uid = 'fooId'
     const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await mettreAJourUidALaPremiereConnexion.execute({ emailDeContact: email, uid })
+    const result = await mettreAJourUidALaPremiereConnexion.execute({ emailAsUid, uid })
 
     // THEN
     expect(result).toBe('ok')
     expect(spiedUidToFind).toBe('martin.tartempion@example.net')
-    expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({ emailDeContact: email, uid }).state())
+    expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({
+      uid: {
+        email: emailAsUid,
+        value: uid,
+      },
+    }).state())
   })
 
   it('quand l’utilisateur se connecte pour la première fois mais qu’il n’existe pas, alors un message d’erreur est renvoyé', async () => {
     // GIVEN
-    const email = 'fake-email@example.com'
+    const emailAsUid = 'fake-email@example.com'
     const uid = 'fooId'
     const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(
       new UtilisateurIntrouvableRepositorySpy()
     )
 
     // WHEN
-    const result = await mettreAJourUidALaPremiereConnexion.execute({ emailDeContact: email, uid })
+    const result = await mettreAJourUidALaPremiereConnexion.execute({ emailAsUid, uid })
 
     // THEN
     expect(result).toBe('comptePremiereConnexionInexistant')
-    expect(spiedUidToFind).toBe(email)
+    expect(spiedUidToFind).toBe(emailAsUid)
     expect(spiedUtilisateurToUpdate).toBeNull()
   })
 })
@@ -45,12 +50,11 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
 let spiedUidToFind: string | null
 let spiedUtilisateurToUpdate: Utilisateur | null
 
-class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    spiedUidToFind = uid.state().value
+class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository, FindUtilisateurRepository {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({
-      emailDeContact: 'martin.tartempion@example.net',
-      uid: 'martin.tartempion@example.net',
+      uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
     }))
   }
 
@@ -61,8 +65,8 @@ class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository {
 }
 
 class UtilisateurIntrouvableRepositorySpy extends UtilisateurRepositorySpy {
-  override async find(uid: UtilisateurUid): Promise<null> {
-    spiedUidToFind = uid.state().value
+  override async find(uid: UtilisateurUidState['value']): Promise<null> {
+    spiedUidToFind = uid
     return Promise.resolve(null)
   }
 }

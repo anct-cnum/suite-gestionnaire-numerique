@@ -2,7 +2,7 @@ import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('réinviter un utilisateur', () => {
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('réinviter un utilisateur', () => {
     expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({
       inviteLe: date,
       role: 'Gestionnaire structure',
-      uid: 'uidUtilisateurAReinviterInactif',
+      uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
     }).state())
     expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state().emailDeContact)
   })
@@ -111,20 +111,20 @@ const utilisateursByUid: Record<string, Utilisateur> = {
     derniereConnexion: new Date('2024-01-01'),
     inviteLe: new Date('2024-01-01'),
     role: 'Gestionnaire structure',
-    uid: 'uidUtilisateurAReinviterActif',
+    uid: { email: 'uidUtilisateurAReinviterActif', value: 'uidUtilisateurAReinviterActif' },
   }),
   uidUtilisateurAReinviterInactif: utilisateurFactory({
     inviteLe: new Date('2024-01-01'),
     role: 'Gestionnaire structure',
-    uid: 'uidUtilisateurAReinviterInactif',
+    uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
   }),
   uidUtilisateurCourantAvecMemeRole: utilisateurFactory({
     role: 'Gestionnaire structure',
-    uid: 'uidUtilisateurCourantAvecMemeRole',
+    uid: { email: 'uidUtilisateurCourantAvecMemeRole', value: 'uidUtilisateurCourantAvecMemeRole' },
   }),
   uidUtilisateurCourantAvecRoleDifferent: utilisateurFactory({
     role: 'Gestionnaire département',
-    uid: 'uidUtilisateurCourantAvecRoleDifferent',
+    uid: { email: 'uidUtilisateurCourantAvecRoleDifferent', value: 'uidUtilisateurCourantAvecRoleDifferent' },
   }),
 }
 
@@ -133,10 +133,9 @@ let spiedUtilisateurToUpdate: Utilisateur | null
 let spiedDestinataire: string
 
 class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    const uidValue = uid.state().value
-    spiedUidToFind = uidValue
-    return Promise.resolve(utilisateursByUid[uidValue])
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidToFind = uid
+    return Promise.resolve(utilisateursByUid[uid])
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

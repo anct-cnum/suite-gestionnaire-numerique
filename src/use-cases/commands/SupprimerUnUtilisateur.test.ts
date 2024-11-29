@@ -1,7 +1,7 @@
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUnUtilisateur } from './SupprimerUnUtilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('supprimer un utilisateur', () => {
   beforeEach(() => {
@@ -111,15 +111,15 @@ describe('supprimer un utilisateur', () => {
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurASupprimerExistantUid: utilisateurFactory({
     role: 'Instructeur',
-    uid: 'utilisateurASupprimerExistantUid',
+    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurASupprimerExistantUid' },
   }),
   utilisateurCourantExistantAutreUid: utilisateurFactory({
     role: 'Administrateur dispositif',
-    uid: 'utilisateurCourantExistantAutreUid',
+    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurCourantExistantAutreUid' },
   }),
   utilisateurCourantExistantUid: utilisateurFactory({
     role: 'Gestionnaire département',
-    uid: 'utilisateurCourantExistantUid',
+    uid: { email: 'martin.tartempion@example.com', value: 'utilisateurCourantExistantUid' },
   }),
 }
 
@@ -127,10 +127,9 @@ const spiedUidsToFind: Array<string> = []
 let spiedUtilisateurToDrop: Utilisateur | null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    const uidValue = uid.state().value
-    spiedUidsToFind.push(uidValue)
-    return Promise.resolve(utilisateursByUid[uidValue])
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidsToFind.push(uid)
+    return Promise.resolve(utilisateursByUid[uid])
   }
 
   async drop(utilisateur: Utilisateur | UtilisateurUid): Promise<boolean> {

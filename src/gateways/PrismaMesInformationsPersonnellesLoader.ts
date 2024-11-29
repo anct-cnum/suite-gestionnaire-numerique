@@ -34,7 +34,7 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInformationsPersonnellesReadModel {
   let mesInformationsPersonnelles: MesInformationsPersonnellesReadModel = {
-    emailDeContact: utilisateurRecord.email,
+    emailDeContact: utilisateurRecord.emailDeContact,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,
     role: toTypologieRole(utilisateurRecord.role),

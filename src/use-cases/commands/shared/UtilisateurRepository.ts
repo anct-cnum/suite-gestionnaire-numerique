@@ -1,7 +1,7 @@
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 export interface FindUtilisateurRepository {
-  find: (uid: UtilisateurUid) => Promise<Utilisateur | null>
+  find: (uid: UtilisateurUidState['value']) => Promise<Utilisateur | null>
 }
 
 export interface DropUtilisateurRepository {
@@ -9,7 +9,7 @@ export interface DropUtilisateurRepository {
 }
 
 export interface DropUtilisateurByUidRepository {
-  dropByUid: (uid: UtilisateurUid) => Promise<boolean>
+  dropByUid: (uid: UtilisateurUidState['value']) => Promise<boolean>
 }
 
 export interface UpdateUtilisateurRepository {

@@ -8,7 +8,7 @@ import { GroupementUid } from './Groupement'
 import { Region, RegionState } from './Region'
 import { Role, TypologieRole } from './Role'
 import { StructureUid } from './Structure'
-import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid } from './Utilisateur'
+import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
 export class UtilisateurFactory {
   readonly #uid: UtilisateurUid
@@ -25,7 +25,7 @@ export class UtilisateurFactory {
   readonly #groupementUid?: number
 
   constructor(params: UtilisateurFactoryParams) {
-    this.#uid = UtilisateurUid.from(params.uid)
+    this.#uid = new UtilisateurUid(params.uid)
     this.#nom = new Nom(params.nom)
     this.#prenom = new Prenom(params.prenom)
     this.#emailDeContact = new Email(params.emailDeContact)
@@ -54,7 +54,7 @@ export class UtilisateurFactory {
       region: state.region,
       structureUid: state.structureUid?.value,
       telephone: state.telephone,
-      uid,
+      uid: { email: state.uid.email, value: uid },
     }).create(state.role.nom)
   }
 
@@ -149,7 +149,7 @@ export class UtilisateurFactory {
 }
 
 type UtilisateurFactoryParams = Readonly<{
-  uid: string
+  uid: UtilisateurUidState
   derniereConnexion?: Date
   emailDeContact: string
   inviteLe: Date,
