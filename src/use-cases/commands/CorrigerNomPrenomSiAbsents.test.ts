@@ -7,7 +7,7 @@ import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('corriger nom prenom si absents', () => {
-  afterEach(() => {
+  beforeEach(() => {
     spiedUidToFind = null
     spiedUtilisateurToUpdate = null
   })
@@ -202,8 +202,8 @@ describe('corriger nom prenom si absents', () => {
   )
 })
 
-let spiedUidToFind: string | null = null
-let spiedUtilisateurToUpdate: Utilisateur | null = null
+let spiedUidToFind: string | null
+let spiedUtilisateurToUpdate: Utilisateur | null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtilisateurRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur> {

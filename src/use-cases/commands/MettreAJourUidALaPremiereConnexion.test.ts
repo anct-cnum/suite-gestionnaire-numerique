@@ -4,7 +4,7 @@ import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('mettre à jour l’identifiant unique à la première connexion', () => {
-  afterEach(() => {
+  beforeEach(() => {
     spiedUidToFind = null
     spiedUtilisateurToUpdate = null
   })
@@ -42,8 +42,8 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
   })
 })
 
-let spiedUidToFind: string | null = null
-let spiedUtilisateurToUpdate: Utilisateur | null = null
+let spiedUidToFind: string | null
+let spiedUtilisateurToUpdate: Utilisateur | null
 
 class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository {
   async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
