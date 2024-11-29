@@ -4,11 +4,11 @@ export default function SegmentedControl({ options }: SegmentedControlProps): Re
   const [checked, setChecked] = useState<string | undefined>()
 
   return (
-    <div className="fr-segmented">
-      <div className="fr-segmented__elements">
+    <div className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
+      <div className="fr-segmented__elements full-width">
         {options.map(({ label, id }) => (
           <div
-            className="fr-segmented__element"
+            className="fr-segmented__element full-width"
             key={id}
           >
             <input

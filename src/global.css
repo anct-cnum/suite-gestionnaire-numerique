@@ -80,7 +80,15 @@ table button {
   z-index: 2;
 }
 
-.drawer-invitation-button {
+.center-button {
   justify-content: center;
+  width: 100%;
+}
+
+.w-fit-content {
+  width: fit-content;
+}
+
+.full-width {
   width: 100%;
 }
