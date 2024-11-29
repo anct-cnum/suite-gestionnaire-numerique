@@ -27,7 +27,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
 
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
   const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
-  let utilisateurReadModel: UnUtilisateurReadModel | null = null
+  let utilisateurReadModel: UnUtilisateurReadModel | null
 
   try {
     utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)

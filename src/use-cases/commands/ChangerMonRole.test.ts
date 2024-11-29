@@ -4,7 +4,7 @@ import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
-  afterEach(() => {
+  beforeEach(() => {
     spiedUtilisateur = nullUtilisateur
   })
 
@@ -63,7 +63,7 @@ describe('changer mon rôle', () => {
 
 const nullUtilisateur = {} as Utilisateur
 
-let spiedUtilisateur: Utilisateur = nullUtilisateur
+let spiedUtilisateur: Utilisateur
 
 const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurNonSuperAdminUid: utilisateurFactory({
