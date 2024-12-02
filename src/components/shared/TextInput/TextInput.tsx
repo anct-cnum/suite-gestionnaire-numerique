@@ -1,10 +1,8 @@
-import React, { PropsWithChildren, ReactElement } from 'react'
+import React, { PropsWithChildren, ReactElement, ReactNode } from 'react'
 
 export default function TextInput({ defaultValue = '', children, id, name, pattern, required, type = 'text', erreur }: InputProps): ReactElement {
-  const isErreur = Boolean(erreur)
   return (
-    // Stryker disable next-line all
-    <div className={`fr-input-group ${isErreur ? 'fr-input-group--error' : ''}`}>
+    <div className={`fr-input-group ${erreur?.className}`}>
       <label
         className="fr-label"
         htmlFor={id}
@@ -21,15 +19,7 @@ export default function TextInput({ defaultValue = '', children, id, name, patte
         required={required}
         type={type}
       />
-      {
-        isErreur ?
-          <p
-            className="fr-error-text"
-            id="text-input-error-desc-error"
-          >
-            {erreur}
-          </p> : null
-      }
+      {erreur?.content}
     </div>
   )
 }
@@ -41,5 +31,8 @@ type InputProps = PropsWithChildren<Readonly<{
   pattern?: string
   required: boolean
   type?: 'text' | 'tel' | 'email'
-  erreur?: string
+  erreur?: Readonly<{
+    className: string
+    content: ReactNode
+  }>
 }>>
