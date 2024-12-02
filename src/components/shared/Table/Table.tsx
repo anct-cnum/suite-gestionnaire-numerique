@@ -5,13 +5,9 @@ import styles from './Table.module.css'
 export default function Table({
   children,
   enTetes,
-  // Stryker disable next-line BooleanLiteral
-  hasHead = true,
+  hideHead = '',
   titre,
 }: TableProps): ReactElement {
-  // istanbul ignore next @preserve
-  const className = hasHead ? '' : 'fr-sr-only'
-
   return (
     <div
       className="fr-table--sm fr-table fr-table"
@@ -24,7 +20,7 @@ export default function Table({
               <caption className="fr-sr-only">
                 {titre}
               </caption>
-              <thead className={className}>
+              <thead className={hideHead}>
                 <tr>
                   {enTetes.map((enTete) => {
                     return (
@@ -54,7 +50,7 @@ export default function Table({
 }
 
 type TableProps = PropsWithChildren<Readonly<{
-  hasHead?: boolean
   enTetes: ReadonlyArray<string>
+  hideHead?: string
   titre: string
 }>>
