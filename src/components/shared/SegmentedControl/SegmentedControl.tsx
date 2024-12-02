@@ -1,10 +1,13 @@
 import { ReactElement, useState } from 'react'
 
-export default function SegmentedControl({ options }: SegmentedControlProps): ReactElement {
+export default function SegmentedControl({ options, children }: SegmentedControlProps): ReactElement {
   const [checked, setChecked] = useState<string | undefined>()
 
   return (
-    <div className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
+    <fieldset className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
+      <legend className="fr-segmented__legend">
+        {children}
+      </legend>
       <div className="fr-segmented__elements full-width">
         {options.map(({ label, id }) => (
           <div
@@ -22,7 +25,7 @@ export default function SegmentedControl({ options }: SegmentedControlProps): Re
               value={id}
             />
             <label
-              className="fr-label"
+              className="fr-label justify-center"
               htmlFor={id}
             >
               {label}
@@ -30,10 +33,11 @@ export default function SegmentedControl({ options }: SegmentedControlProps): Re
           </div>
         ))}
       </div>
-    </div>
+    </fieldset>
   )
 }
 
 type SegmentedControlProps = Readonly<{
   options: ReadonlyArray<{label: string, id: string}>
+  children: ReactElement
 }>

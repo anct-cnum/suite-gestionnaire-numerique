@@ -92,3 +92,7 @@ table button {
 .full-width {
   width: 100%;
 }
+
+.justify-center {
+  justify-content: center;
+}

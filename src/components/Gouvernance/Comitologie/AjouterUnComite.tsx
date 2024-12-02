@@ -63,22 +63,24 @@ export default function AjouterUnComite(): ReactElement {
       <p className="fr-text--sm color-grey">
         Renseignez les comités prévus et la fréquence à laquelle ils se réunissent
       </p>
-      <p className="fr-mb-1w">
-        Quel type de comité allez-vous organiser ?
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-      </p>
-      <SegmentedControl options={types} />
-      <p className="fr-mb-1w">
-        A quelle fréquence se réunit le comité ?
-        {' '}
-        <span className="color-red">
-          *
-        </span>
-      </p>
-      <SegmentedControl options={frequences} />
+      <SegmentedControl options={types}>
+        <p className="fr-label fr-mb-0">
+          Quel type de comité allez-vous organiser ?
+          {' '}
+          <span className="color-red">
+            *
+          </span>
+        </p>
+      </SegmentedControl>
+      <SegmentedControl options={frequences} >
+        <p className="fr-label fr-mb-0">
+          A quelle fréquence se réunit le comité ?
+          {' '}
+          <span className="color-red">
+            *
+          </span>
+        </p>
+      </SegmentedControl>
       <TextInput
         id="dateProchainComite"
         min={dateDuJour}
