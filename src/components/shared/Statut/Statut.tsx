@@ -2,10 +2,7 @@ import { ReactElement } from 'react'
 
 import Badge from '../../shared/Badge/Badge'
 
-export default function Statut({ libelle }: StatutProps): ReactElement {
-  // Stryker disable next-line all
-  const color = libelle === 'Activé' ? 'success' : 'grey-main'
-
+export default function Statut({ color, libelle }: StatutProps): ReactElement {
   return (
     <Badge color={color}>
       {libelle}
@@ -14,5 +11,6 @@ export default function Statut({ libelle }: StatutProps): ReactElement {
 }
 
 type StatutProps = Readonly<{
+  color: string
   libelle: string
 }>

@@ -12,9 +12,9 @@ export function mesUtilisateursPresenter(
     rolesAvecStructure,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
-      const [statut, picto] = monUtilisateur.isActive
-        ? ['Activé', monUtilisateur.role.categorie] as const
-        : ['En attente', inactif] as const
+      const [statut, couleur, picto] = monUtilisateur.isActive
+        ? ['Activé', 'success', monUtilisateur.role.categorie] as const
+        : ['En attente', 'grey-main', inactif] as const
 
       return {
         canBeDeleted: uid !== monUtilisateur.uid,
@@ -24,7 +24,10 @@ export function mesUtilisateursPresenter(
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
-        statut,
+        statut: {
+          couleur,
+          libelle: statut,
+        },
         structure: monUtilisateur.role.organisation,
         telephone: monUtilisateur.telephone || 'Non renseigné',
         uid: monUtilisateur.uid,
@@ -42,7 +45,10 @@ export type MesUtilisateursViewModel = Readonly<{
 export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
   canBeDeleted: boolean
   picto: string
-  statut: 'En attente' | 'Activé'
+  statut: Readonly<{
+    couleur: 'success' | 'grey-main'
+    libelle: 'En attente' | 'Activé'
+  }>
   uid: string
 }>
 

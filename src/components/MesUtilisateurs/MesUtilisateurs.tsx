@@ -158,7 +158,7 @@ export default function MesUtilisateurs(
               </td>
               <td>
                 <button
-                  aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
+                  aria-controls={unUtilisateurViewModel.statut.libelle === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
@@ -178,7 +178,10 @@ export default function MesUtilisateurs(
                 {unUtilisateurViewModel.derniereConnexion}
               </td>
               <td>
-                <Statut libelle={unUtilisateurViewModel.statut} />
+                <Statut
+                  color={unUtilisateurViewModel.statut.couleur}
+                  libelle={unUtilisateurViewModel.statut.libelle}
+                />
               </td>
               <td className="fr-cell--center">
                 <button
@@ -259,7 +262,7 @@ export default function MesUtilisateurs(
 
   function afficherLeBonDrawer(unUtilisateurViewModel: MonUtilisateur) {
     return () => {
-      if (unUtilisateurViewModel.statut === 'En attente') {
+      if (unUtilisateurViewModel.statut.libelle === 'En attente') {
         setUtilisateurEnAttenteSelectionne({
           email: unUtilisateurViewModel.email,
           inviteLe: unUtilisateurViewModel.inviteLe,
