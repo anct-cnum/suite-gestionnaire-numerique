@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useState } from 'react'
+import { ReactElement, useRef, useState } from 'react'
 
 import Drawer from '../../shared/Drawer/Drawer'
 import Table from '../../shared/Table/Table'
@@ -13,19 +13,24 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawer-comite'
   const labelComiteId = 'drawer-comite-titre'
+  const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
     <>
       <Drawer
         boutonFermeture="Fermer"
         id={drawerComiteId}
-        // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelComiteId}
+        ref={drawerRef}
         setIsOpen={setIsDrawerOpen}
+        // Stryker disable next-line BooleanLiteral
       >
-        <AjouterUnComite />
+        <AjouterUnComite
+          dialogRef={drawerRef}
+          setIsOpen={setIsDrawerOpen}
+        />
       </Drawer>
       <SectionRemplie
         button={(
@@ -50,24 +55,22 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
           titre="Comités"
         >
           {
-            comites.map((comite) => {
-              return (
-                <tr key={comite.nom}>
-                  <td>
-                    <span
-                      aria-hidden="true"
-                      className="fr-icon-calendar-event-line color-blue-france"
-                    />
-                  </td>
-                  <td className="font-weight-700">
-                    {`${comite.nom} : ${comite.dateProchainComite}`}
-                  </td>
-                  <td className="color-grey">
-                    {comite.periodicite}
-                  </td>
-                </tr>
-              )
-            })
+            comites.map(({ nom, dateProchainComite, periodicite }) => (
+              <tr key={nom}>
+                <td>
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-calendar-event-line color-blue-france"
+                  />
+                </td>
+                <td className="font-weight-700">
+                  {`${nom} : ${dateProchainComite}`}
+                </td>
+                <td className="color-grey">
+                  {periodicite}
+                </td>
+              </tr>
+            ))
           }
         </Table>
       </SectionRemplie>

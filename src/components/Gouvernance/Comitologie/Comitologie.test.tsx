@@ -1,12 +1,14 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
 
-import { gouvernancePresenter } from '../../../presenters/gouvernancePresenter'
-import { gouvernanceReadModelFactory } from '../../../use-cases/testHelper'
 import Gouvernance from '../Gouvernance'
+import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('comitologie', () => {
   it('quand je clique sur ajouter dans une comitologie, le drawer d’ajout de comitologie s’affiche', () => {
     // GIVEN
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2024, 11, 12, 13))
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
 
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -31,32 +33,37 @@ describe('comitologie', () => {
     const typeComiteQuestion = within(ajouterUnComiteDrawer).getByText('Quel type de comité allez-vous organiser ?', { selector: 'p' })
     expect(typeComiteQuestion).toBeInTheDocument()
     const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
-    expect(strategique).toBeInTheDocument()
+    expect(strategique).toHaveAttribute('value', 'strategique')
     const technique = within(ajouterUnComiteDrawer).getByLabelText('Technique')
-    expect(technique).toBeInTheDocument()
+    expect(technique).toHaveAttribute('value', 'technique')
     const consultatif = within(ajouterUnComiteDrawer).getByLabelText('Consultatif')
-    expect(consultatif).toBeInTheDocument()
+    expect(consultatif).toHaveAttribute('value', 'consultatif')
     const autre = within(ajouterUnComiteDrawer).getByLabelText('Autre')
-    expect(autre).toBeInTheDocument()
+    expect(autre).toHaveAttribute('value', 'autre')
     const frequenceComiteQuestion = within(ajouterUnComiteDrawer).getByText('A quelle fréquence se réunit le comité ?', { selector: 'p' })
     expect(frequenceComiteQuestion).toBeInTheDocument()
     const mensuelle = within(ajouterUnComiteDrawer).getByLabelText('Mensuelle')
-    expect(mensuelle).toBeInTheDocument()
+    expect(mensuelle).toHaveAttribute('value', 'mensuelle')
     const trimestrielle = within(ajouterUnComiteDrawer).getByLabelText('Trimestrielle')
-    expect(trimestrielle).toBeInTheDocument()
+    expect(trimestrielle).toHaveAttribute('value', 'trimestrielle')
     const semestrielle = within(ajouterUnComiteDrawer).getByLabelText('Semestrielle')
-    expect(semestrielle).toBeInTheDocument()
+    expect(semestrielle).toHaveAttribute('value', 'semestrielle')
     const annuelle = within(ajouterUnComiteDrawer).getByLabelText('Annuelle')
-    expect(annuelle).toBeInTheDocument()
+    expect(annuelle).toHaveAttribute('value', 'annuelle')
     const dateProchainComite = within(ajouterUnComiteDrawer).getByLabelText('Date du prochain comité')
-    expect(dateProchainComite).toBeInTheDocument()
+    expect(dateProchainComite).toHaveAttribute('type', 'date')
+    expect(dateProchainComite).not.toHaveAttribute('required')
+    expect(dateProchainComite).toHaveAttribute('min', '2024-12-12')
     const commentaires = within(ajouterUnComiteDrawer).getByLabelText('Laissez ici un commentaire général sur le comité')
-    expect(commentaires).toBeInTheDocument()
+    expect(commentaires).toHaveAttribute('maxLength', '500')
+    expect(commentaires).not.toHaveAttribute('required')
     const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
-    expect(enregistrer).toBeInTheDocument()
+    expect(enregistrer).toHaveAttribute('disabled')
+
+    vi.useRealTimers()
   })
 
-  it('quand je remplis entièrement le formulaire d’ajout de comitologie, le bouton de validation devient cliquable', () => {
+  it('quand je remplis les champs obligatoires du formulaire d’ajout de comitologie, alors le bouton de validation devient cliquable', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
 
@@ -69,10 +76,6 @@ describe('comitologie', () => {
     const ajouterUnComiteDrawer = screen.getByRole('dialog')
     const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
     expect(enregistrer).toHaveAttribute('disabled')
-    const dateProchainComite = within(ajouterUnComiteDrawer).getByLabelText('Date du prochain comité')
-    fireEvent.change(dateProchainComite, { target: { value: '2034-01-01' } })
-    const commentaires = within(ajouterUnComiteDrawer).getByLabelText('Laissez ici un commentaire général sur le comité')
-    fireEvent.change(commentaires, { target: { value: 'commentaire' } })
     const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
     fireEvent.click(strategique)
     const mensuelle = within(ajouterUnComiteDrawer).getByLabelText('Mensuelle')
@@ -80,5 +83,24 @@ describe('comitologie', () => {
 
     // THEN
     expect(enregistrer).not.toHaveAttribute('disabled')
+  })
+
+  it('quand je ne remplis pas les champs obligatoires du formulaire d’ajout de comitologie, alors le bouton de validation n’est pas cliquable', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    const comitologie = screen.getByRole('region', { name: 'Comitologie' })
+    const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
+    fireEvent.click(ajouter)
+
+    // WHEN
+    const ajouterUnComiteDrawer = screen.getByRole('dialog')
+    const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
+    fireEvent.click(strategique)
+
+    // THEN
+    const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
+    expect(enregistrer).toHaveAttribute('disabled')
   })
 })

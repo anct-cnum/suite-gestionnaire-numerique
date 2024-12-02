@@ -14,7 +14,6 @@ export default function TextInput({ defaultValue = '', children, id, name, patte
         className="fr-input"
         defaultValue={defaultValue}
         id={id}
-        min={min}
         name={name}
         pattern={pattern}
         required={required}
