@@ -81,6 +81,7 @@ export default function FiltrerMesUtilisateurs({
   )
 
   function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
+    setStructure('')
     setStructuresSearchParams(zoneGeographiqueToURLSearchParams(zoneGeographique))
   }
 
