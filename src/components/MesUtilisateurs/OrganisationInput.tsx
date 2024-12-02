@@ -1,6 +1,6 @@
 // Stryker disable all
 import { ReactElement } from 'react'
-import Select, { StylesConfig } from 'react-select'
+import Select, { StylesConfig, Options } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
 export default function OrganisationInput({
@@ -11,23 +11,7 @@ export default function OrganisationInput({
   required,
   additionalSearchParams,
 }: OrganisationInputProps): ReactElement {
-  const onSearch = async (search: string): Promise<ReadonlyArray<{label: string, value: string}>> => {
-    if (search.length < 3) {
-      return []
-    }
-    const url = new URL('/api/structures/', process.env.NEXT_PUBLIC_HOST)
-    const additionalSearchParamEntries = additionalSearchParams ? [...additionalSearchParams.entries()] : []
-    const searchParams = new URLSearchParams([['search', search], ...additionalSearchParamEntries])
-    searchParams.entries().forEach(([searchParam, searchValue]) => {
-      url.searchParams.append(searchParam, searchValue)
-    })
-    const result = await fetch(url, { cache: 'no-cache' })
-    const structures = await result.json() as ReadonlyArray<{ uid: string, nom: string }>
-    return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
-  }
-
-  // istanbul ignore next @preserve
-  const noResult = (): string => 'Pas de résultat'
+  const additionalSearchParamEntries = (additionalSearchParams ?? new URLSearchParams()).entries()
 
   return (
     <div className="fr-select-group">
@@ -47,7 +31,6 @@ export default function OrganisationInput({
       </label>
       {!options.length ?
         <AsyncSelect
-          cacheOptions={true}
           components={{ DropdownIndicator }}
           inputId="organisation"
           instanceId="organisation"
@@ -70,7 +53,7 @@ export default function OrganisationInput({
           isClearable={true}
           menuPlacement="top"
           name="organisation"
-          noOptionsMessage={noResult}
+          noOptionsMessage={() => 'Pas de résultat'}
           onChange={setOrganisation as (organisation: unknown) => void}
           options={options}
           placeholder=""
@@ -80,6 +63,19 @@ export default function OrganisationInput({
         />}
     </div>
   )
+
+  async function onSearch(search: string): Promise<Options<{label: string, value: string}>> {
+    if (search.length < 3) {
+      return []
+    }
+    const searchParams = new URLSearchParams([['search', search]])
+    for (const [searchParamKey, searchParamValue] of additionalSearchParamEntries) {
+      searchParams.append(searchParamKey, searchParamValue)
+    }
+    const result = await fetch(`/api/structures?${searchParams.toString()}`)
+    const structures = await result.json() as ReadonlyArray<{ uid: string, nom: string }>
+    return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
+  }
 }
 
 type OrganisationInputProps = Readonly<{
