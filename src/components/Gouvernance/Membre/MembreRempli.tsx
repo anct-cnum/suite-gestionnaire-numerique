@@ -32,7 +32,7 @@ export default function MembreRempli({
     >
       <Table
         enTetes={['Logo', 'Nom', 'Type', 'Rôle']}
-        hasHead={false}
+        hideHead="fr-sr-only"
         titre="Membres"
       >
         {

@@ -20,7 +20,7 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
     >
       <Table
         enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
-        hasHead={false}
+        hideHead="fr-sr-only"
         titre="Comités"
       >
         {
