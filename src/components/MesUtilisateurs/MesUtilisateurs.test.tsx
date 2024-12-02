@@ -1,12 +1,12 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { select } from 'react-select-event'
+import { clearFirst, select } from 'react-select-event'
 import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import departements from '../../../ressources/departements.json'
 import groupements from '../../../ressources/groupements.json'
 import regions from '../../../ressources/regions.json'
-import { renderComponent, matchWithoutMarkup } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup, structuresFetch } from '@/components/testHelper'
 import { mesUtilisateursPresenter, RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
@@ -583,14 +583,14 @@ describe('mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
     })
 
-    it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', () => {
+    it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', async () => {
       // GIVEN
+      vi.stubGlobal('fetch', structuresFetch)
       const spiedRouterPush = vi.fn()
-      const container = afficherLesFiltres(spiedRouterPush)
-      const filtreParStructure = within(container).queryByLabelText('Par structure')
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access
-      container.querySelectorAll('input[type="hidden"]')[1].value = 'tetris'
+      afficherLesFiltres(spiedRouterPush)
+      const filtreParStructure = screen.getByLabelText('Par structure')
+      fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
+      await select(filtreParStructure, 'TETRIS')
 
       // WHEN
       const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -598,28 +598,69 @@ describe('mes utilisateurs', () => {
 
       // THEN
       expect(filtreParStructure).toBeInTheDocument()
-      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=tetris')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
     })
 
-    it('sur une zone géographique et une structure, alors je n’affiche que les utilisateurs liés à cette structure', () => {
-      // GIVEN
-      const spiedRouterPush = vi.fn()
-      const container = afficherLesFiltres(spiedRouterPush)
-      const filtreParStructure = within(container).queryByLabelText('Par structure')
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access
-      container.querySelectorAll('input[type="hidden"]')[0].value = '93_00'
-      // @ts-expect-error
-      // eslint-disable-next-line testing-library/no-node-access
-      container.querySelectorAll('input[type="hidden"]')[1].value = 'tetris'
+    describe('sur une zone géographique et une structure', () => {
+      it.each([
+        {
+          desc: 'sur une région et une structure de cette région',
+          expectedRouterPush: 'http://example.com/mes-utilisateurs?codeRegion=93&structure=14',
+          zoneGeographique: "(93) Provence-Alpes-Côte d'Azur",
+        },
+        {
+          desc: 'sur un département et une structure de ce département',
+          expectedRouterPush: 'http://example.com/mes-utilisateurs?codeDepartement=06&structure=14',
+          zoneGeographique: '(06) Alpes-Maritimes',
+        },
+        {
+          desc: 'sur toutes les zones géographiques et une structure',
+          expectedRouterPush: 'http://example.com/mes-utilisateurs?structure=14',
+          zoneGeographique: 'Toutes les régions',
+        },
 
-      // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      ])(
+        '$desc, alors je n’affiche que les utilisateurs liés à cette structure',
+        async ({ expectedRouterPush, zoneGeographique }) => {
+          // GIVEN
+          vi.stubGlobal('fetch', structuresFetch)
+          const spiedRouterPush = vi.fn()
+          afficherLesFiltres(spiedRouterPush)
+          await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
+          const filtreParStructure = screen.getByLabelText('Par structure')
+          fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
+          await select(filtreParStructure, 'TETRIS')
 
-      // THEN
-      expect(filtreParStructure).toBeInTheDocument()
-      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93&structure=tetris')
+          // WHEN
+          const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+          fireEvent.click(boutonAfficher)
+
+          // THEN
+          expect(filtreParStructure).toBeInTheDocument()
+          expect(spiedRouterPush).toHaveBeenCalledWith(expectedRouterPush)
+        }
+      )
+
+      it('après avoir effacé la zone géographique précédemment sélectionnée, alors je n’affiche que les utilisateurs liés à cette structure', async () => {
+        // GIVEN
+        vi.stubGlobal('fetch', structuresFetch)
+        const spiedRouterPush = vi.fn()
+        afficherLesFiltres(spiedRouterPush)
+        const filtreParZoneGeographique = screen.getByLabelText('Par zone géographique')
+        await select(filtreParZoneGeographique, '(06) Alpes-Maritimes')
+        const filtreParStructure = screen.getByLabelText('Par structure')
+        fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
+        await select(filtreParStructure, 'TETRIS')
+
+        // WHEN
+        const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+        await clearFirst(filtreParZoneGeographique)
+        fireEvent.click(boutonAfficher)
+
+        // THEN
+        expect(filtreParStructure).toBeInTheDocument()
+        expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
+      })
     })
   })
 
@@ -777,13 +818,7 @@ describe('mes utilisateurs', () => {
           },
         }
       }
-      vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
-        nom: string
-        uid: string
-      }>> => Promise.resolve([
-        { nom: 'ABC FORMATION', uid: '1845' },
-        { nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
-      ]) })))
+      vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
         inviterUnUtilisateurAction,
@@ -1064,6 +1099,7 @@ describe('mes utilisateurs', () => {
       const gestionnaireRole = within(formulaireInvitation).getByLabelText('Gestionnaire département')
       fireEvent.click(gestionnaireRole)
       const departementSelect = within(formulaireInvitation).getByLabelText('Département *')
+      expect(departementSelect).toBeInTheDocument()
       await select(departementSelect, 'Ain')
       const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
       fireEvent.click(envoyerInvitation)

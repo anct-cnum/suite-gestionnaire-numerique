@@ -50,3 +50,15 @@ export function renderComponent(
     </clientContext.Provider>
   )
 }
+
+export async function structuresFetch(): Promise<Response> {
+  return Promise.resolve({
+    async json() {
+      return Promise.resolve([
+        { nom: 'ABC FORMATION', uid: '1845' },
+        { nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
+        { nom: 'TETRIS', uid: '14' },
+      ])
+    },
+  } as Response)
+}

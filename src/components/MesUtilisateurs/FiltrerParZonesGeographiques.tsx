@@ -6,6 +6,7 @@ import Select, { SelectInstance, StylesConfig } from 'react-select'
 
 import { clientContext } from '../shared/ClientContext'
 import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/filtresUtilisateurPresenter'
+import { isNullish } from '@/shared/lang'
 
 function FiltrerParZonesGeographiques(
   { setZoneGeographique }: FiltrerParZonesGeographiquesProps,
@@ -41,11 +42,13 @@ function FiltrerParZonesGeographiques(
   )
 
   function setZone(zoneGeographique?: ZoneGeographique): void {
-    if (zoneGeographique) {
-      setZoneGeographique(zoneGeographique)
+    if (!isNullish(zoneGeographique)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      setZoneGeographique(zoneGeographique!)
     }
   }
 }
+
 export default forwardRef(FiltrerParZonesGeographiques)
 
 // istanbul ignore next @preserve
