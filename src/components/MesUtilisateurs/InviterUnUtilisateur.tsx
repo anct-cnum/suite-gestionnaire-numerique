@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
+import { Dispatch, FormEvent, ReactElement, ReactNode, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
 import OrganisationInput from './OrganisationInput'
 import Badge from '../shared/Badge/Badge'
@@ -17,7 +17,7 @@ export default function InviterUnUtilisateur({
   dialogRef,
   rolesAvecStructure,
 }: InviterUnUtilisateurProps): ReactElement {
-  const [emailDejaExistant, setEmailDejaExistant] = useState('')
+  const [emailDejaExistant, setEmailDejaExistant] = useState<Erreur>()
   const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
   const [organisation, setOrganisation] = useState<string>('')
@@ -150,11 +150,21 @@ export default function InviterUnUtilisateur({
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
     const messages = await inviterUnUtilisateurAction({ codeOrganisation, email, nom, prenom, role })
     if (messages[0] === 'emailExistant') {
-      setEmailDejaExistant('Cet utilisateur dispose déjà d’un compte')
+      setEmailDejaExistant({
+        className: 'fr-input-group--error',
+        content: (
+          <p
+            className="fr-error-text"
+            id="text-input-error-desc-error"
+          >
+            Cet utilisateur dispose déjà d’un compte
+          </p>
+        ),
+      })
     } else {
       if (messages[0] === 'OK') {
         Notification('success', { description: email, title: 'Invitation envoyée à ' })
-        setEmailDejaExistant('')
+        setEmailDejaExistant(undefined)
       }
       fermerEtReinitialiser(event.target as HTMLFormElement)
     }
@@ -177,4 +187,9 @@ type InviterUnUtilisateurProps = Readonly<{
   labelId: string
   dialogRef: RefObject<HTMLDialogElement>
   rolesAvecStructure: RolesAvecStructure
+}>
+
+type Erreur = Readonly<{
+  content: ReactNode
+  className: string
 }>
