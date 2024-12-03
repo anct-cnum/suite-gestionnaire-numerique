@@ -23,9 +23,8 @@ describe('session utilisateur presenter', () => {
     // THEN
     expect(sessionUtilisateurSansEtablissementViewModel).toStrictEqual<SessionUtilisateurViewModel>({
       codeDepartement: null,
+      displayLiensGouvernance: false,
       email: 'martin.tartempion@example.net',
-      isGestionnaireDepartement: false,
-      isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
       role: {

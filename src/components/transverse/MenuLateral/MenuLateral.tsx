@@ -33,7 +33,7 @@ export default function MenuLateral(): ReactElement {
           </Link>
         </li>
         {
-          sessionUtilisateurViewModel.isGestionnaireDepartement ? (
+          sessionUtilisateurViewModel.displayLiensGouvernance ? (
             <>
               <li className="fr-sidemenu__item">
                 <Link
