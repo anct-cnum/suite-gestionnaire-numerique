@@ -21,7 +21,7 @@ import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur }
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: MesUtilisateursProps
 ): ReactElement {
-  const { sessionUtilisateurViewModel, utilisateursParPage } = useContext(clientContext)
+  const { sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -158,7 +158,7 @@ export default function MesUtilisateurs(
               </td>
               <td>
                 <button
-                  aria-controls={unUtilisateurViewModel.statut.libelle === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
+                  aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
@@ -208,7 +208,7 @@ export default function MesUtilisateurs(
         })}
       </Table>
       {
-        mesUtilisateursViewModel.totalUtilisateur > utilisateursParPage ?
+        mesUtilisateursViewModel.displayPagination ?
           (
             <div className="fr-grid-row fr-grid-row--center">
               <Pagination
@@ -262,16 +262,16 @@ export default function MesUtilisateurs(
 
   function afficherLeBonDrawer(unUtilisateurViewModel: MonUtilisateur) {
     return () => {
-      if (unUtilisateurViewModel.statut.libelle === 'En attente') {
+      if (unUtilisateurViewModel.isActif) {
+        setUtilisateurSelectionne(unUtilisateurViewModel)
+        setIsDrawerOpen(true)
+      } else {
         setUtilisateurEnAttenteSelectionne({
           email: unUtilisateurViewModel.email,
           inviteLe: unUtilisateurViewModel.inviteLe,
           uid: unUtilisateurViewModel.uid,
         })
         setIsDrawerRenvoyerInvitationOpen(true)
-      } else {
-        setUtilisateurSelectionne(unUtilisateurViewModel)
-        setIsDrawerOpen(true)
       }
     }
   }
