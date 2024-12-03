@@ -14,6 +14,7 @@ export function utilisateurReadModelFactory(
     groupementId: null,
     inviteLe: epochTime,
     isActive: true,
+    isGestionnaireDepartement: false,
     isSuperAdmin: false,
     nom: 'Tartempion',
     prenom: 'Martin',

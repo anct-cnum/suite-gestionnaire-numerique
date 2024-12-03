@@ -14,6 +14,7 @@ describe('prisma utilisateur query', () => {
   describe('chercher un utilisateur', () => {
     it.each([
       {
+        isGestionnaireDepartement: false,
         role: 'administrateur_dispositif',
         roleReadModel: {
           categorie: 'anct',
@@ -24,6 +25,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: true,
         role: 'gestionnaire_departement',
         roleReadModel: {
           categorie: 'maille',
@@ -34,6 +36,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'gestionnaire_groupement',
         roleReadModel: {
           categorie: 'groupement',
@@ -44,6 +47,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'gestionnaire_region',
         roleReadModel: {
           categorie: 'maille',
@@ -54,6 +58,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'gestionnaire_structure',
         roleReadModel: {
           categorie: 'structure',
@@ -64,6 +69,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'instructeur',
         roleReadModel: {
           categorie: 'bdt',
@@ -74,6 +80,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'pilote_politique_publique',
         roleReadModel: {
           categorie: 'anct',
@@ -84,6 +91,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        isGestionnaireDepartement: false,
         role: 'support_animation',
         roleReadModel: {
           categorie: 'mednum',
@@ -93,7 +101,7 @@ describe('prisma utilisateur query', () => {
           rolesGerables: Roles,
         },
       },
-    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ role, roleReadModel }) => {
+    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ isGestionnaireDepartement, role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await prisma.regionRecord.create({
@@ -131,6 +139,7 @@ describe('prisma utilisateur query', () => {
         groupementId: 10,
         inviteLe: epochTime,
         isActive: true,
+        isGestionnaireDepartement,
         isSuperAdmin: false,
         nom: 'Tartempion',
         prenom: 'Martin',
@@ -224,6 +233,7 @@ describe('prisma utilisateur query', () => {
             groupementId: null,
             inviteLe: epochTime,
             isActive: true,
+            isGestionnaireDepartement: true,
             isSuperAdmin: false,
             nom: 'dupont',
             prenom: 'Martin',
@@ -246,6 +256,7 @@ describe('prisma utilisateur query', () => {
             groupementId: null,
             inviteLe: epochTime,
             isActive: true,
+            isGestionnaireDepartement: false,
             isSuperAdmin: false,
             nom: 'Tartempion',
             prenom: 'Martin',

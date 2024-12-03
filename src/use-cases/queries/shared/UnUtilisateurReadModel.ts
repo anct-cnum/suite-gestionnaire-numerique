@@ -5,6 +5,7 @@ export type UnUtilisateurReadModel = Readonly<{
   groupementId: number | null
   inviteLe: Date
   isActive: boolean
+  isGestionnaireDepartement: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string
