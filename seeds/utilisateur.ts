@@ -178,15 +178,17 @@ async function transformUtilisateursCoNumToUtilisateurs(
       dateDeCreation: utilisateurCoNumRecord.createdAt,
       departementCode,
       derniereConnexion: utilisateurCoNumRecord.lastLogin,
-      email: utilisateurCoNumRecord.name,
+      emailDeContact: utilisateurCoNumRecord.name,
       groupementId,
       inviteLe: utilisateurCoNumRecord.mailSentDate,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
       nom: utilisateurCoNumRecord.nom,
+
       prenom: utilisateurCoNumRecord.prenom,
       regionCode,
       role,
+      ssoEmail: utilisateurCoNumRecord.name,
       ssoId: utilisateurCoNumRecord.sub,
       structureId,
       telephone: '',
@@ -222,15 +224,17 @@ function transformUtilisateursFNEToUtilisateurs(
       dateDeCreation: utilisateurFNERecord.created,
       // derniereConnexion: cette notion n'existe pas
       departementCode,
-      email: utilisateurFNERecord.email,
+      emailDeContact: utilisateurFNERecord.email,
       groupementId: null,
       inviteLe: utilisateurFNERecord.created,
       // isSuperAdmin: cette notion n'existe pas
       // isSupprime: cette notion n'existe pas
       nom: utilisateurFNERecord.lastName ?? '~',
+
       prenom: utilisateurFNERecord.firstName ?? '~',
       regionCode,
       role,
+      ssoEmail: utilisateurFNERecord.email,
       ssoId,
       structureId: null,
       telephone: '',
@@ -245,7 +249,7 @@ function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
     dateDeCreation: now,
     departementCode: '11',
     derniereConnexion: now,
-    email: 'compte.de.test@example.com',
+    emailDeContact: 'compte.de.test@example.com',
     groupementId: 18,
     inviteLe: now,
     isSuperAdmin: true,
@@ -254,6 +258,7 @@ function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
     prenom: 'CompteDe',
     regionCode: '52',
     role: 'administrateur_dispositif',
+    ssoEmail: 'compte.de.test@example.com',
     ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
     structureId: 292,
     telephone: '0102030405',

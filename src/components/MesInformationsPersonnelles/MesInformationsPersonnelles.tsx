@@ -63,7 +63,7 @@ export default function MesInformationsPersonnelles(
             />
             <InformationPersonnelle
               label="Adresse électronique"
-              value={mesInformationsPersonnellesViewModel.email}
+              value={mesInformationsPersonnellesViewModel.emailDeContact}
             />
             <InformationPersonnelle
               label="Téléphone professionnel"
@@ -193,7 +193,7 @@ export default function MesInformationsPersonnelles(
           </button>
         </section>
         <SupprimerMonCompte
-          email={mesInformationsPersonnellesViewModel.email}
+          email={mesInformationsPersonnellesViewModel.emailDeContact}
           id={supprimerMonCompteModalId}
           isOpen={isModalOpen}
           setIsOpen={setIsModalOpen}
@@ -211,7 +211,7 @@ export default function MesInformationsPersonnelles(
       >
         <ModifierMonCompte
           dialogRef={drawerModifierMonCompteRef}
-          email={mesInformationsPersonnellesViewModel.email}
+          email={mesInformationsPersonnellesViewModel.emailDeContact}
           id={drawerId}
           labelId={labelId}
           nom={mesInformationsPersonnellesViewModel.nom}

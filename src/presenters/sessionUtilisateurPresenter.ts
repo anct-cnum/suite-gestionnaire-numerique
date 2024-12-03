@@ -24,8 +24,8 @@ export function createSessionUtilisateurPresenter(
 
 export type SessionUtilisateurViewModel = Readonly<{
   codeDepartement: string | null
-  email: string
   displayLiensGouvernance: boolean
+  email: string
   nom: string
   prenom: string
   role: Readonly<{

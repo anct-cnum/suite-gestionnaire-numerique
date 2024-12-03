@@ -14,7 +14,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
   #role: Role
   #nom: Nom
   #prenom: Prenom
-  #email: Email
+  #emailDeContact: Email
   #telephone: Telephone
   #inviteLe: Date
 
@@ -23,7 +23,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     role: Role,
     nom: Nom,
     prenom: Prenom,
-    email: Email,
+    emailDeContact: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
     derniereConnexion: Date,
@@ -33,7 +33,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#role = role
     this.#nom = nom
     this.#prenom = prenom
-    this.#email = email
+    this.#emailDeContact = emailDeContact
     this.#derniereConnexion = derniereConnexion
     this.#isSuperAdmin = isSuperAdmin
     this.#telephone = telephone
@@ -43,7 +43,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
   override state(): UtilisateurState {
     return {
       derniereConnexion: this.#derniereConnexion.toJSON(),
-      email: this.#email.state().value,
+      emailDeContact: this.#emailDeContact.state().value,
       inviteLe: this.#inviteLe.toJSON(),
       isActive: this.#derniereConnexion.getTime() !== 0,
       isSuperAdmin: this.#isSuperAdmin,
@@ -69,7 +69,7 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
 
   changerEmail(email: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
-      this.#email = new Email(email)
+      this.#emailDeContact = new Email(email)
     })
   }
 
@@ -94,20 +94,14 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
   abstract peutGerer(autre: Utilisateur): boolean
 }
 
-export class UtilisateurUid extends Uid<UtilisateurUidState> {
-  private constructor(state: UtilisateurUidState) {
-    super(state)
-  }
+export class UtilisateurUid extends Uid<UtilisateurUidState> {}
 
-  static from(value: string): UtilisateurUid {
-    return new UtilisateurUid({ value })
-  }
-}
+export type UtilisateurUidState = Readonly<{ value: string, email: string }>
 
 export type UtilisateurState = Readonly<{
   uid: UtilisateurUidState
   derniereConnexion: string
-  email: string
+  emailDeContact: string
   inviteLe: string
   isActive: boolean
   isSuperAdmin: boolean
@@ -165,5 +159,3 @@ export class Telephone extends ValueObject<AttributUtilisateurState> {
 }
 
 type AttributUtilisateurState = Readonly<{ value: string }>
-
-type UtilisateurUidState = Readonly<{ value: string }>

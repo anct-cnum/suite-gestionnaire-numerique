@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
-import { UtilisateurUid } from '@/domain/Utilisateur'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Command> {
@@ -11,7 +10,7 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
   }
 
   async execute(command: Command): ResultAsync<Failure | Success> {
-    const utilisateurAvecUidEgalEmail = await this.#repository.find(UtilisateurUid.from(command.email))
+    const utilisateurAvecUidEgalEmail = await this.#repository.find(command.emailAsUid)
 
     if (!utilisateurAvecUidEgalEmail) {
       return 'comptePremiereConnexionInexistant'
@@ -27,7 +26,7 @@ type Failure = 'comptePremiereConnexionInexistant'
 type Success = 'ok'
 
 type Command = Readonly<{
-  email: string
+  emailAsUid: string
   uid: string
 }>
 

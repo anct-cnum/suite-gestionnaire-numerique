@@ -400,7 +400,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       // THEN
       const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationDesactive).toBeDisabled()
-      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ email: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
+      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ emailDeContact: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
       const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationActive).toBeEnabled()
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
