@@ -1,4 +1,5 @@
 import { formaterEnDateFrancaise } from './shared/date'
+import config from '@/use-cases/config.json'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function mesUtilisateursPresenter(
@@ -9,6 +10,7 @@ export function mesUtilisateursPresenter(
   now = (): Date => new Date()
 ): MesUtilisateursViewModel {
   return {
+    displayPagination: totalUtilisateur > config.utilisateursParPage,
     rolesAvecStructure,
     totalUtilisateur,
     utilisateurs: mesUtilisateursReadModel.map((monUtilisateur): MonUtilisateur => {
@@ -27,6 +29,7 @@ export function mesUtilisateursPresenter(
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
         inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
+        isActif: monUtilisateur.isActive,
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
         role: monUtilisateur.role.nom,
@@ -43,9 +46,10 @@ export function mesUtilisateursPresenter(
 }
 
 export type MesUtilisateursViewModel = Readonly<{
+  displayPagination: boolean
+  rolesAvecStructure: RolesAvecStructure
   totalUtilisateur: number
   utilisateurs: ReadonlyArray<MonUtilisateur>
-  rolesAvecStructure: RolesAvecStructure
 }>
 
 export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
@@ -53,6 +57,7 @@ export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
     color: 'color-grey' | 'color-red'
     isDisabled: boolean
   }>
+  isActif: boolean
   picto: string
   statut: Readonly<{
     couleur: 'success' | 'grey-main'

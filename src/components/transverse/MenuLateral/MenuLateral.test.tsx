@@ -22,13 +22,7 @@ describe('menu lateral', () => {
     renderComponent(<MenuLateral />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         codeDepartement: '93',
-        role: {
-          groupe: 'gestionnaire',
-          libelle: '',
-          nom: 'Gestionnaire département',
-          pictogramme: '',
-          rolesGerables: [],
-        },
+        isGestionnaireDepartement: true,
       }),
     })
 
@@ -45,13 +39,7 @@ describe('menu lateral', () => {
     renderComponent(<MenuLateral />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         codeDepartement: '93',
-        role: {
-          groupe: 'gestionnaire',
-          libelle: '',
-          nom: 'Gestionnaire structure',
-          pictogramme: '',
-          rolesGerables: [],
-        },
+        isGestionnaireDepartement: false,
       }),
     })
 
