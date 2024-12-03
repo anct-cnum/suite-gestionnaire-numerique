@@ -35,27 +35,25 @@ export default function FeuilleDeRouteRemplie({
         titre="Feuilles de route"
       >
         {
-          feuillesDeRoute.map((feuilleDeRoute) => {
-            return (
-              <tr key={feuilleDeRoute.nom}>
-                <td>
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-survey-line color-blue-france"
-                  />
-                </td>
-                <td className="font-weight-700">
-                  {feuilleDeRoute.nom}
-                </td>
-                <td className="color-grey">
-                  {feuilleDeRoute.totalActions}
-                </td>
-                <td className="font-weight-700">
-                  {`${feuilleDeRoute.budgetGlobal} €`}
-                </td>
-              </tr>
-            )
-          })
+          feuillesDeRoute.map((feuilleDeRoute) => (
+            <tr key={feuilleDeRoute.nom}>
+              <td>
+                <span
+                  aria-hidden="true"
+                  className="fr-icon-survey-line color-blue-france"
+                />
+              </td>
+              <td className="font-weight-700">
+                {feuilleDeRoute.nom}
+              </td>
+              <td className="color-grey">
+                {feuilleDeRoute.totalActions}
+              </td>
+              <td className="font-weight-700">
+                {`${feuilleDeRoute.budgetGlobal} €`}
+              </td>
+            </tr>
+          ))
         }
       </Table>
     </SectionRemplie>

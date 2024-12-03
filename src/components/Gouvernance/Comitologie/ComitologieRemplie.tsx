@@ -24,24 +24,22 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
         titre="Comités"
       >
         {
-          comites.map((comite) => {
-            return (
-              <tr key={comite.nom}>
-                <td>
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-calendar-event-line color-blue-france"
-                  />
-                </td>
-                <td className="font-weight-700">
-                  {`${comite.nom} : ${comite.dateProchainComite}`}
-                </td>
-                <td className="color-grey">
-                  {comite.periodicite}
-                </td>
-              </tr>
-            )
-          })
+          comites.map((comite) => (
+            <tr key={comite.nom}>
+              <td>
+                <span
+                  aria-hidden="true"
+                  className="fr-icon-calendar-event-line color-blue-france"
+                />
+              </td>
+              <td className="font-weight-700">
+                {`${comite.nom} : ${comite.dateProchainComite}`}
+              </td>
+              <td className="color-grey">
+                {comite.periodicite}
+              </td>
+            </tr>
+          ))
         }
       </Table>
     </SectionRemplie>

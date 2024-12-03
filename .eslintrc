@@ -26,6 +26,7 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["sort-keys-fix", "unused-imports"],
   "rules": {
+    "arrow-body-style": ["error", "as-needed"],
     "array-bracket-newline": "error",
     "array-bracket-spacing": "error",
     "array-element-newline": ["error", "consistent"],
