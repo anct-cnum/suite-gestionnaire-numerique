@@ -7,7 +7,7 @@ export function createSessionUtilisateurPresenter(
   return {
     codeDepartement: utilisateurReadModel.departementCode,
     email: utilisateurReadModel.email,
-    isGestionnaireDepartement: utilisateurReadModel.role.nom === 'Gestionnaire département',
+    isGestionnaireDepartement: utilisateurReadModel.isGestionnaireDepartement,
     isSuperAdmin: utilisateurReadModel.isSuperAdmin,
     nom: utilisateurReadModel.nom,
     prenom: utilisateurReadModel.prenom,
