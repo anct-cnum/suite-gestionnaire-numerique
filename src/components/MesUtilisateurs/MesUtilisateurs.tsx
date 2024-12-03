@@ -188,7 +188,7 @@ export default function MesUtilisateurs(
                   aria-controls={modalId}
                   className="fr-btn fr-btn--tertiary"
                   data-fr-opened="false"
-                  disabled={!unUtilisateurViewModel.canBeDeleted}
+                  disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
                   onClick={() => {
                     setUtilisateurASupprimer(unUtilisateurViewModel)
                     setIsModaleSuppressionOpen(true)
@@ -198,7 +198,7 @@ export default function MesUtilisateurs(
                 >
                   <span
                     aria-hidden="true"
-                    className={`fr-icon-delete-line ${unUtilisateurViewModel.canBeDeleted ? 'color-red' : 'color-grey'}`}
+                    className={`fr-icon-delete-line ${unUtilisateurViewModel.deleteButton.color}`}
                   />
                 </button>
 

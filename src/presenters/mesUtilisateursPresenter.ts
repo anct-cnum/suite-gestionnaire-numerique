@@ -15,9 +15,15 @@ export function mesUtilisateursPresenter(
       const [statut, couleur, picto] = monUtilisateur.isActive
         ? ['Activé', 'success', monUtilisateur.role.categorie] as const
         : ['En attente', 'grey-main', inactif] as const
+      const [color, isDisabled] = uid !== monUtilisateur.uid
+        ? ['color-red', true] as const
+        : ['color-grey', false] as const
 
       return {
-        canBeDeleted: uid !== monUtilisateur.uid,
+        deleteButton: {
+          color,
+          isDisabled,
+        },
         derniereConnexion: buildDate(monUtilisateur),
         email: monUtilisateur.email,
         inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
@@ -43,7 +49,10 @@ export type MesUtilisateursViewModel = Readonly<{
 }>
 
 export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
-  canBeDeleted: boolean
+  deleteButton: Readonly<{
+    color: 'color-grey' | 'color-red'
+    isDisabled: boolean
+  }>
   picto: string
   statut: Readonly<{
     couleur: 'success' | 'grey-main'
