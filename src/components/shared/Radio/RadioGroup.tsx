@@ -19,7 +19,7 @@ export default function RadioGroup({ nomGroupe, options, onChange }: RadioGroupP
   )
 }
 
-export type RadioOption = Readonly<{
+type RadioOption = Readonly<{
   id: string
   label: string
 }>
