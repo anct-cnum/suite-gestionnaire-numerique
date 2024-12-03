@@ -141,68 +141,66 @@ export default function MesUtilisateurs(
         enTetes={['', 'Utilisateur', 'Adresse électronique', 'Rôle', 'Dernière connexion', 'Statut', 'Action']}
         titre="Mes utilisateurs"
       >
-        {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => {
-          return (
-            <tr
-              data-row-key={index}
-              id={`table-sm-row-key-${index}`}
-              key={unUtilisateurViewModel.uid}
-            >
-              <td className="fr-cell--center">
-                <Image
-                  alt=""
-                  height={20}
-                  src={`${unUtilisateurViewModel.picto}.svg`}
-                  width={20}
+        {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => (
+          <tr
+            data-row-key={index}
+            id={`table-sm-row-key-${index}`}
+            key={unUtilisateurViewModel.uid}
+          >
+            <td className="fr-cell--center">
+              <Image
+                alt=""
+                height={20}
+                src={`${unUtilisateurViewModel.picto}.svg`}
+                width={20}
+              />
+            </td>
+            <td>
+              <button
+                aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
+                className="primary font-weight-700 fr-px-0 no-hover d-block"
+                data-fr-opened="false"
+                onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
+                type="button"
+              >
+                {unUtilisateurViewModel.prenomEtNom}
+              </button>
+              {unUtilisateurViewModel.structure}
+            </td>
+            <td>
+              {unUtilisateurViewModel.email}
+            </td>
+            <td>
+              <Role role={unUtilisateurViewModel.role} />
+            </td>
+            <td>
+              {unUtilisateurViewModel.derniereConnexion}
+            </td>
+            <td>
+              <Statut libelle={unUtilisateurViewModel.statut} />
+            </td>
+            <td className="fr-cell--center">
+              <button
+                aria-controls={modalId}
+                className="fr-btn fr-btn--tertiary"
+                data-fr-opened="false"
+                disabled={!unUtilisateurViewModel.canBeDeleted}
+                onClick={() => {
+                  setUtilisateurASupprimer(unUtilisateurViewModel)
+                  setIsModaleSuppressionOpen(true)
+                }}
+                title="Supprimer"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`fr-icon-delete-line ${unUtilisateurViewModel.canBeDeleted ? 'color-red' : 'color-grey'}`}
                 />
-              </td>
-              <td>
-                <button
-                  aria-controls={unUtilisateurViewModel.statut === 'En attente' ? drawerRenvoyerInvitationId : drawerDetailsId}
-                  className="primary font-weight-700 fr-px-0 no-hover d-block"
-                  data-fr-opened="false"
-                  onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
-                  type="button"
-                >
-                  {unUtilisateurViewModel.prenomEtNom}
-                </button>
-                {unUtilisateurViewModel.structure}
-              </td>
-              <td>
-                {unUtilisateurViewModel.email}
-              </td>
-              <td>
-                <Role role={unUtilisateurViewModel.role} />
-              </td>
-              <td>
-                {unUtilisateurViewModel.derniereConnexion}
-              </td>
-              <td>
-                <Statut libelle={unUtilisateurViewModel.statut} />
-              </td>
-              <td className="fr-cell--center">
-                <button
-                  aria-controls={modalId}
-                  className="fr-btn fr-btn--tertiary"
-                  data-fr-opened="false"
-                  disabled={!unUtilisateurViewModel.canBeDeleted}
-                  onClick={() => {
-                    setUtilisateurASupprimer(unUtilisateurViewModel)
-                    setIsModaleSuppressionOpen(true)
-                  }}
-                  title="Supprimer"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`fr-icon-delete-line ${unUtilisateurViewModel.canBeDeleted ? 'color-red' : 'color-grey'}`}
-                  />
-                </button>
+              </button>
 
-              </td>
-            </tr>
-          )
-        })}
+            </td>
+          </tr>
+        ))}
       </Table>
       {
         mesUtilisateursViewModel.totalUtilisateur > utilisateursParPage ?

@@ -36,36 +36,32 @@ export default function MembreRempli({
         titre="Membres"
       >
         {
-          membres.map((membre) => {
-            return (
-              <tr key={membre.nom}>
-                <td>
-                  <span
-                    aria-hidden="true"
-                    className={`fr-icon-${membre.logo} color-blue-france`}
-                  />
-                </td>
-                <td className="font-weight-700">
-                  {membre.nom}
-                </td>
-                <td className="color-grey">
-                  {membre.type}
-                </td>
-                <td>
-                  {membre.roles.map((role) => {
-                    return (
-                      <Fragment key={role.nom}>
-                        <Badge color={role.color}>
-                          {role.nom}
-                        </Badge>
-                        {' '}
-                      </Fragment>
-                    )
-                  })}
-                </td>
-              </tr>
-            )
-          })
+          membres.map((membre) => (
+            <tr key={membre.nom}>
+              <td>
+                <span
+                  aria-hidden="true"
+                  className={`fr-icon-${membre.logo} color-blue-france`}
+                />
+              </td>
+              <td className="font-weight-700">
+                {membre.nom}
+              </td>
+              <td className="color-grey">
+                {membre.type}
+              </td>
+              <td>
+                {membre.roles.map((role) => (
+                  <Fragment key={role.nom}>
+                    <Badge color={role.color}>
+                      {role.nom}
+                    </Badge>
+                    {' '}
+                  </Fragment>
+                ))}
+              </td>
+            </tr>
+          ))
         }
       </Table>
     </SectionRemplie>

@@ -369,13 +369,11 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       // GIVEN
       const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
+      window.dsfr = (): {modal: {conceal: Mock}} => ({
+        modal: {
+          conceal: vi.fn(),
+        },
+      })
 
       const mesInformationsPersonnellesViewModel =
         mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
