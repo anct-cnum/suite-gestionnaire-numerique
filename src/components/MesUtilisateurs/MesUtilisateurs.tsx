@@ -34,7 +34,7 @@ export default function MesUtilisateurs(
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
-    email: '',
+    emailDeContact: '',
     inviteLe: '',
     prenomEtNom: '',
     role: '',
@@ -169,7 +169,7 @@ export default function MesUtilisateurs(
                 {unUtilisateurViewModel.structure}
               </td>
               <td>
-                {unUtilisateurViewModel.email}
+                {unUtilisateurViewModel.emailDeContact}
               </td>
               <td>
                 <Role role={unUtilisateurViewModel.role} />
@@ -267,7 +267,7 @@ export default function MesUtilisateurs(
         setIsDrawerOpen(true)
       } else {
         setUtilisateurEnAttenteSelectionne({
-          email: unUtilisateurViewModel.email,
+          email: unUtilisateurViewModel.emailDeContact,
           inviteLe: unUtilisateurViewModel.inviteLe,
           uid: unUtilisateurViewModel.uid,
         })

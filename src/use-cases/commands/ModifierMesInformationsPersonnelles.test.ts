@@ -33,7 +33,7 @@ describe('modifier mes informations personnelles', () => {
         {
           desc: 'l’email, si renseigné, doit être valide',
           expectedResult: 'emailInvalide',
-          modification: { email: 'example@example' },
+          modification: { emailDeContact: 'example@example' },
         },
         {
           desc: 'le téléphone, si renseigné, doit être valide',
@@ -67,7 +67,7 @@ describe('modifier mes informations personnelles', () => {
 
       // THEN
       const utilisateurApresMiseAJour = utilisateurFactory({
-        email: 'martine.dugenoux@example.com',
+        emailDeContact: 'martine.dugenoux@example.com',
         nom: 'Dugenoux',
         prenom: 'Martine',
         telephone: '0102030406',
@@ -80,7 +80,7 @@ describe('modifier mes informations personnelles', () => {
 
 const informationsPersonnellesModifiees = {
   modification: {
-    email: 'martine.dugenoux@example.com',
+    emailDeContact: 'martine.dugenoux@example.com',
     nom: 'Dugenoux',
     prenom: 'Martine',
     telephone: '0102030406',

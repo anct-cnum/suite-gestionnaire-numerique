@@ -2,7 +2,7 @@ import { InviterUnUtilisateur, InviterUnUtilisateurCommand } from './InviterUnUt
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '../../domain/Role'
-import { Utilisateur, UtilisateurUid } from '../../domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '../../domain/Utilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
 
 describe('inviter un utilisateur', () => {
@@ -135,14 +135,14 @@ describe('inviter un utilisateur', () => {
         // THEN
         const expectedUtilisateurInvite = utilisateurFactory({
           codeOrganisation: utilisateurAInviter.codeOrganisation,
-          email: 'martine.dugenoux@example.com',
+          emailDeContact: 'martine.dugenoux@example.com',
           inviteLe: date,
           isSuperAdmin: utilisateurCourant.isSuperAdmin,
           nom: 'Dugenoux',
           prenom: 'Martine',
           role: utilisateurAInviter.role,
           telephone: '',
-          uid: 'martine.dugenoux@example.com',
+          uid: { email: 'martine.dugenoux@example.com', value: 'martine.dugenoux@example.com' },
         })
         expect(result).toBe('OK')
         expect(spiedUidToFind).toBe(command.uidUtilisateurCourant)
@@ -209,7 +209,7 @@ describe('inviter un utilisateur', () => {
     const utilisateurACreer = utilisateurFactory({
       inviteLe: date,
       telephone: '',
-      uid: 'martin.tartempion@example.net',
+      uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
     })
     const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
     const emailGatewayFactory = emailGatewayFactorySpy
@@ -247,8 +247,8 @@ class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurReposito
     this.#utilisateurCourant = utilisateurCourant
   }
 
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    spiedUidToFind = uid.state().value
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidToFind = uid
     return Promise.resolve(this.#utilisateurCourant)
   }
 

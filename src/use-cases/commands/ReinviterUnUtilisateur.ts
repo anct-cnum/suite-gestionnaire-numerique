@@ -1,7 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisateurCommand> {
   readonly #repository: Repository
@@ -15,12 +14,12 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
   }
 
   async execute(command: ReinviterUnUtilisateurCommand): ResultAsync<ReinviterUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(UtilisateurUid.from(command.uidUtilisateurCourant))
+    const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
     if (!utilisateurCourant) {
       return 'utilisateurCourantInexistant'
     }
 
-    const utilisateurAReinviter = await this.#repository.find(UtilisateurUid.from(command.uidUtilisateurAReinviter))
+    const utilisateurAReinviter = await this.#repository.find(command.uidUtilisateurAReinviter)
     if (!utilisateurAReinviter) {
       return 'utilisateurAReinviterInexistant'
     }
@@ -34,7 +33,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
     utilisateurAReinviter.changerLaDateDInvitation(this.#date)
     await this.#repository.update(utilisateurAReinviter)
     const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
-    await emailGateway.send(utilisateurAReinviter.state().email)
+    await emailGateway.send(utilisateurAReinviter.state().emailDeContact)
     return 'OK'
   }
 }

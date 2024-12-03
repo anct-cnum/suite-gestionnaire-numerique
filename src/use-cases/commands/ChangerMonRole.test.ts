@@ -1,7 +1,7 @@
 import { ChangerMonRole } from './ChangerMonRole'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('changer mon rôle', () => {
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('changer mon rôle', () => {
     expect(spiedUtilisateur.state()).toStrictEqual(utilisateurFactory({
       isSuperAdmin: true,
       role: 'Pilote politique publique',
-      uid: 'utilisateurSuperAdminUid',
+      uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
     }).state())
   })
 
@@ -68,17 +68,17 @@ let spiedUtilisateur: Utilisateur
 const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurNonSuperAdminUid: utilisateurFactory({
     isSuperAdmin: false,
-    uid: 'utilisateurNonSuperAdminUid',
+    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurNonSuperAdminUid' },
   }),
   utilisateurSuperAdminUid: utilisateurFactory({
     isSuperAdmin: true,
-    uid: 'utilisateurSuperAdminUid',
+    uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
   }),
 }
 
 const utilisateurRepository = new class implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur | null> {
-    return Promise.resolve(utilisateurByUid[uid.state().value] ?? null)
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    return Promise.resolve(utilisateurByUid[uid] ?? null)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

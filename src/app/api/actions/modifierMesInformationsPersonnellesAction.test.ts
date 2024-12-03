@@ -14,12 +14,18 @@ describe('modifier mes informations personnelles action', () => {
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({ email, nom, path, prenom, telephone })
+    const messages = await modifierMesInformationsPersonnellesAction({
+      emailDeContact,
+      nom,
+      path,
+      prenom,
+      telephone,
+    })
 
     // THEN
     expect(ModifierMesInformationsPersonnelles.prototype.execute).toHaveBeenCalledWith({
       modification: {
-        email: 'martin.tartempion@example.com',
+        emailDeContact: 'martin.tartempion@example.com',
         nom: 'Tartempion',
         prenom: 'Martin',
         telephone: '0102030405',
@@ -32,7 +38,7 @@ describe('modifier mes informations personnelles action', () => {
 
   it('si l’e-mail est mal formaté alors, s’affiche un message d’erreur', async () => {
     // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({ email: 'emailNonValide', nom, path, prenom, telephone })
+    const messages = await modifierMesInformationsPersonnellesAction({ emailDeContact: 'emailNonValide', nom, path, prenom, telephone })
 
     // THEN
     expect(messages).toStrictEqual(['L’email doit être valide'])
@@ -43,7 +49,13 @@ describe('modifier mes informations personnelles action', () => {
     const nomVide = ''
 
     // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({ email, nom: nomVide, path, prenom, telephone })
+    const messages = await modifierMesInformationsPersonnellesAction({
+      emailDeContact,
+      nom: nomVide,
+      path,
+      prenom,
+      telephone,
+    })
 
     // THEN
     expect(messages).toStrictEqual(['Le nom doit contenir au moins 1 caractère'])
@@ -55,7 +67,7 @@ describe('modifier mes informations personnelles action', () => {
 
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({
-      email,
+      emailDeContact,
       nom,
       path,
       prenom: prenomVide,
@@ -72,7 +84,7 @@ describe('modifier mes informations personnelles action', () => {
 
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({
-      email,
+      emailDeContact,
       nom,
       // @ts-expect-error
       path: pathIncorrect,
@@ -92,7 +104,7 @@ describe('modifier mes informations personnelles action', () => {
   ])('si le téléphone est mal formaté, alors s’affiche un message d’erreur', async (telephoneMalFormate) => {
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({
-      email,
+      emailDeContact,
       nom,
       path,
       prenom,
@@ -113,7 +125,7 @@ describe('modifier mes informations personnelles action', () => {
 
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({
-      email,
+      emailDeContact,
       nom,
       path,
       prenom,
@@ -124,7 +136,7 @@ describe('modifier mes informations personnelles action', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  const email = 'martin.tartempion@example.com'
+  const emailDeContact = 'martin.tartempion@example.com'
   const nom = 'Tartempion'
   const prenom = 'Martin'
   const telephone = '0102030405'

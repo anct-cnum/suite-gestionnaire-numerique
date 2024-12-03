@@ -3,7 +3,7 @@ export interface MesInformationsPersonnellesLoader {
 }
 
 export type MesInformationsPersonnellesReadModel = Readonly<{
-  email: string
+  emailDeContact: string
   nom: string
   prenom: string
   role: string

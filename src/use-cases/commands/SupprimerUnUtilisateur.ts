@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class SupprimerUnUtilisateur implements CommandHandler<Command> {
   readonly #repository: Repository
@@ -13,11 +12,11 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
     utilisateurCourantUid,
     utilisateurASupprimerUid,
   }: Command): ResultAsync<SupprimerUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(UtilisateurUid.from(utilisateurCourantUid))
+    const utilisateurCourant = await this.#repository.find(utilisateurCourantUid)
     if (!utilisateurCourant) {
       return 'compteConnecteInexistant'
     }
-    const utilisateurASupprimer = await this.#repository.find(UtilisateurUid.from(utilisateurASupprimerUid))
+    const utilisateurASupprimer = await this.#repository.find(utilisateurASupprimerUid)
     if (!utilisateurASupprimer) {
       return 'compteASupprimerInexistant'
     }

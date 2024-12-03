@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
-import { UtilisateurUid } from '@/domain/Utilisateur'
 import config from '@/use-cases/config.json'
 
 export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failure, Success> {
@@ -18,7 +17,7 @@ export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failu
     if (!isPrenomAbsent && !isNomAbsent) {
       return 'okSansMiseAJour'
     }
-    const utilisateur = await this.#utilisateurRepository.find(UtilisateurUid.from(uid))
+    const utilisateur = await this.#utilisateurRepository.find(uid)
     if (!utilisateur) {
       return Promise.resolve('compteInexistant')
     }

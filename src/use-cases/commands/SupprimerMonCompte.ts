@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropUtilisateurByUidRepository } from './shared/UtilisateurRepository'
-import { UtilisateurUid } from '@/domain/Utilisateur'
 
 export class SupprimerMonCompte implements CommandHandler<Command, SuppressionCompteFailure> {
   readonly #repository: DropUtilisateurByUidRepository
@@ -11,7 +10,7 @@ export class SupprimerMonCompte implements CommandHandler<Command, SuppressionCo
 
   async execute({ utilisateurUid }: Command): ResultAsync<SuppressionCompteFailure> {
     return this.#repository
-      .dropByUid(UtilisateurUid.from(utilisateurUid))
+      .dropByUid(utilisateurUid)
       .then((result) => (result ? 'OK' : 'compteInexistant'))
   }
 }

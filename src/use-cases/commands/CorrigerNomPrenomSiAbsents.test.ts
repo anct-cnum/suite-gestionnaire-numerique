@@ -4,7 +4,7 @@ import {
   UpdateUtilisateurRepository,
 } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('corriger nom prenom si absents', () => {
   beforeEach(() => {
@@ -206,8 +206,8 @@ let spiedUidToFind: string | null
 let spiedUtilisateurToUpdate: Utilisateur | null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<Utilisateur> {
-    spiedUidToFind = uid.state().value
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({ nom: 'Tartempion', prenom: 'Michel' }))
   }
 
@@ -219,8 +219,8 @@ class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtili
 
 class UtilisateurRepositoryUtilisateurIntrouvableSpy
 implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUid): Promise<null> {
-    spiedUidToFind = uid.state().value
+  async find(uid: UtilisateurUidState['value']): Promise<null> {
+    spiedUidToFind = uid
     return Promise.resolve(null)
   }
 

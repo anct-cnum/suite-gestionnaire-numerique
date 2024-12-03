@@ -27,7 +27,7 @@ export function mesUtilisateursPresenter(
           isDisabled,
         },
         derniereConnexion: buildDate(monUtilisateur),
-        email: monUtilisateur.email,
+        emailDeContact: monUtilisateur.email,
         inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
         isActif: monUtilisateur.isActive,
         picto,
@@ -69,7 +69,7 @@ export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
 export type DetailsUtilisateurViewModel = Readonly<{
   derniereConnexion: string
   inviteLe: string
-  email: string
+  emailDeContact: string
   prenomEtNom: string
   role: string
   structure: string

@@ -12,13 +12,13 @@ export function utilisateurFactory(
 ): Utilisateur {
   return new UtilisateurFactory({
     derniereConnexion: new Date(0),
-    email: 'martin.tartempion@example.net',
+    emailDeContact: 'martin.tartempion@example.net',
     inviteLe: new Date(0),
     isSuperAdmin: false,
     nom: 'Tartempion',
     prenom: 'Martin',
     telephone: '0102030405',
-    uid: 'fooId',
+    uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     ...override,
   }).create(override?.role ?? 'Instructeur', override?.codeOrganisation)
 }

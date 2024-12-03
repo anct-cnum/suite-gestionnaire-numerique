@@ -10,7 +10,7 @@ export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtil
     },
     {
       label: 'Adresse électronique',
-      value: utilisateur.email,
+      value: utilisateur.emailDeContact,
     },
     {
       label: 'Téléphone professionnel',

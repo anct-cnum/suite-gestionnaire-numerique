@@ -139,7 +139,7 @@ export default function ModifierMonCompte({
       texte: 'Modification en cours',
     })
 
-    await modifierMesInformationsPersonnellesAction({ email, nom, path: pathname, prenom, telephone })
+    await modifierMesInformationsPersonnellesAction({ emailDeContact: email, nom, path: pathname, prenom, telephone })
       .then(() => {
         setEtatBoutonEnregistrer({
           enAttente: false,
