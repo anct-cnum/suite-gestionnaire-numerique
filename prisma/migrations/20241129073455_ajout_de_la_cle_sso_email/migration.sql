@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "utilisateur" ADD COLUMN     "ssoEmail" TEXT NOT NULL DEFAULT '';
+ALTER TABLE "utilisateur" ADD COLUMN     "ssoEmail" TEXT NOT NULL;
 
 -- CreateIndex
 CREATE UNIQUE INDEX "utilisateur_ssoEmail_key" ON "utilisateur"("ssoEmail");

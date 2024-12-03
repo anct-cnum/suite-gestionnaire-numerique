@@ -736,6 +736,7 @@ describe('prisma utilisateur query', () => {
         data: utilisateurRecordFactory({
           nom: 'Dugenoux',
           prenom: 'Martine',
+          ssoEmail: 'martine.dugenoux@example.com',
           ssoId: 'd6895238-e15b-43a6-9868-5d21ae29490e',
           structureId: 416,
         }),
@@ -744,6 +745,7 @@ describe('prisma utilisateur query', () => {
         data: utilisateurRecordFactory({
           nom: 'Duchmolle',
           prenom: 'Martine',
+          ssoEmail: 'martine.duchmolle@example.com',
           ssoId: '31512478-64eb-4993-af47-a728ec4d8e06',
           structureId,
         }),
