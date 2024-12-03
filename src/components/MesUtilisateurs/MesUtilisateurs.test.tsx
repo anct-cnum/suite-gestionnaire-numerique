@@ -252,13 +252,11 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
+      window.dsfr = (): {modal: {conceal: Mock}} => ({
+        modal: {
+          conceal: vi.fn(),
+        },
+      })
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
@@ -815,13 +813,11 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
+      window.dsfr = (): {modal: {conceal: Mock}} => ({
+        modal: {
+          conceal: vi.fn(),
+        },
+      })
       vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -986,13 +982,11 @@ describe('mes utilisateurs', () => {
       // GIVEN
       const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
+      window.dsfr = (): {modal: {conceal: Mock}} => ({
+        modal: {
+          conceal: vi.fn(),
+        },
+      })
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -1059,13 +1053,11 @@ describe('mes utilisateurs', () => {
         .mockResolvedValueOnce(['emailExistant'])
         .mockResolvedValueOnce(['OK'])
       const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => {
-        return {
-          modal: {
-            conceal: vi.fn(),
-          },
-        }
-      }
+      window.dsfr = (): {modal: {conceal: Mock}} => ({
+        modal: {
+          conceal: vi.fn(),
+        },
+      })
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(
         <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -1188,13 +1180,11 @@ describe('mes utilisateurs', () => {
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['KO']))
     const windowDsfr = window.dsfr
     // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    window.dsfr = () => {
-      return {
-        modal: {
-          conceal: vi.fn(),
-        },
-      }
-    }
+    window.dsfr = () => ({
+      modal: {
+        conceal: vi.fn(),
+      },
+    })
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
