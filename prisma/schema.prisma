@@ -89,7 +89,7 @@ model UtilisateurRecord {
   role Role
   structureId Int?
   ssoId String @unique @default("")
-  ssoEmail String @unique @default("")
+  ssoEmail String @unique
   telephone String @db.VarChar(13)
 
   relationStructure StructureRecord? @relation(fields: [structureId], references: [id])
