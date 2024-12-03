@@ -22,20 +22,18 @@ export default function Table({
               </caption>
               <thead className={hideHead}>
                 <tr>
-                  {enTetes.map((enTete) => {
-                    return (
-                      <th
-                        key={enTete}
-                        scope="col"
-                      >
-                        {enTete !== '' ? enTete : (
-                          <>
+                  {enTetes.map((enTete) => (
+                    <th
+                      key={enTete}
+                      scope="col"
+                    >
+                      {enTete !== '' ? enTete : (
+                        <>
                             &nbsp;
-                          </>
-                        )}
-                      </th>
-                    )
-                  })}
+                        </>
+                      )}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>

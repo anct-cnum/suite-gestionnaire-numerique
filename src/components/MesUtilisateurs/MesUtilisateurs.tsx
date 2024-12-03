@@ -141,71 +141,69 @@ export default function MesUtilisateurs(
         enTetes={['', 'Utilisateur', 'Adresse électronique', 'Rôle', 'Dernière connexion', 'Statut', 'Action']}
         titre="Mes utilisateurs"
       >
-        {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => {
-          return (
-            <tr
-              data-row-key={index}
-              id={`table-sm-row-key-${index}`}
-              key={unUtilisateurViewModel.uid}
-            >
-              <td className="fr-cell--center">
-                <Image
-                  alt=""
-                  height={20}
-                  src={`${unUtilisateurViewModel.picto}.svg`}
-                  width={20}
+        {mesUtilisateursViewModel.utilisateurs.map((unUtilisateurViewModel, index) => (
+          <tr
+            data-row-key={index}
+            id={`table-sm-row-key-${index}`}
+            key={unUtilisateurViewModel.uid}
+          >
+            <td className="fr-cell--center">
+              <Image
+                alt=""
+                height={20}
+                src={`${unUtilisateurViewModel.picto}.svg`}
+                width={20}
+              />
+            </td>
+            <td>
+              <button
+                aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
+                className="primary font-weight-700 fr-px-0 no-hover d-block"
+                data-fr-opened="false"
+                onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
+                type="button"
+              >
+                {unUtilisateurViewModel.prenomEtNom}
+              </button>
+              {unUtilisateurViewModel.structure}
+            </td>
+            <td>
+              {unUtilisateurViewModel.emailDeContact}
+            </td>
+            <td>
+              <Role role={unUtilisateurViewModel.role} />
+            </td>
+            <td>
+              {unUtilisateurViewModel.derniereConnexion}
+            </td>
+            <td>
+              <Statut
+                color={unUtilisateurViewModel.statut.couleur}
+                libelle={unUtilisateurViewModel.statut.libelle}
+              />
+            </td>
+            <td className="fr-cell--center">
+              <button
+                aria-controls={modalId}
+                className="fr-btn fr-btn--tertiary"
+                data-fr-opened="false"
+                disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
+                onClick={() => {
+                  setUtilisateurASupprimer(unUtilisateurViewModel)
+                  setIsModaleSuppressionOpen(true)
+                }}
+                title="Supprimer"
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  className={`fr-icon-delete-line ${unUtilisateurViewModel.deleteButton.color}`}
                 />
-              </td>
-              <td>
-                <button
-                  aria-controls={unUtilisateurViewModel.isActif ? drawerDetailsId : drawerRenvoyerInvitationId}
-                  className="primary font-weight-700 fr-px-0 no-hover d-block"
-                  data-fr-opened="false"
-                  onClick={afficherLeBonDrawer(unUtilisateurViewModel)}
-                  type="button"
-                >
-                  {unUtilisateurViewModel.prenomEtNom}
-                </button>
-                {unUtilisateurViewModel.structure}
-              </td>
-              <td>
-                {unUtilisateurViewModel.emailDeContact}
-              </td>
-              <td>
-                <Role role={unUtilisateurViewModel.role} />
-              </td>
-              <td>
-                {unUtilisateurViewModel.derniereConnexion}
-              </td>
-              <td>
-                <Statut
-                  color={unUtilisateurViewModel.statut.couleur}
-                  libelle={unUtilisateurViewModel.statut.libelle}
-                />
-              </td>
-              <td className="fr-cell--center">
-                <button
-                  aria-controls={modalId}
-                  className="fr-btn fr-btn--tertiary"
-                  data-fr-opened="false"
-                  disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
-                  onClick={() => {
-                    setUtilisateurASupprimer(unUtilisateurViewModel)
-                    setIsModaleSuppressionOpen(true)
-                  }}
-                  title="Supprimer"
-                  type="button"
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`fr-icon-delete-line ${unUtilisateurViewModel.deleteButton.color}`}
-                  />
-                </button>
+              </button>
 
-              </td>
-            </tr>
-          )
-        })}
+            </td>
+          </tr>
+        ))}
       </Table>
       {
         mesUtilisateursViewModel.displayPagination ?
