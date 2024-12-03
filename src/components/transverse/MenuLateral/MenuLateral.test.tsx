@@ -22,7 +22,7 @@ describe('menu lateral', () => {
     renderComponent(<MenuLateral />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         codeDepartement: '93',
-        isGestionnaireDepartement: true,
+        displayLiensGouvernance: true,
       }),
     })
 
@@ -39,7 +39,7 @@ describe('menu lateral', () => {
     renderComponent(<MenuLateral />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         codeDepartement: '93',
-        isGestionnaireDepartement: false,
+        displayLiensGouvernance: false,
       }),
     })
 
