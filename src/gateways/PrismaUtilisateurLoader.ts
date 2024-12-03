@@ -124,6 +124,8 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 }
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
+  const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state()
+
   return {
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
@@ -131,11 +133,12 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
     isActive: utilisateurRecord.derniereConnexion !== null,
+    isGestionnaireDepartement: role.nom === 'Gestionnaire département',
     isSuperAdmin: utilisateurRecord.isSuperAdmin,
     nom: utilisateurRecord.nom,
     prenom: utilisateurRecord.prenom,
     regionCode: utilisateurRecord.regionCode,
-    role: new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state(),
+    role,
     structureId: utilisateurRecord.structureId,
     telephone: utilisateurRecord.telephone,
     uid: utilisateurRecord.ssoId,
