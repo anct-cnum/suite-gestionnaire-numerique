@@ -57,18 +57,16 @@ export default function FiltrerParRoles(): ReactElement {
         Par rôles
       </legend>
       {
-        checkboxes.map((checkbox) => {
-          return (
-            <Checkbox
-              defaultChecked={roles?.includes(checkbox.value) ?? true}
-              id={checkbox.value}
-              key={checkbox.value}
-              label={checkbox.label}
-              name="roles"
-              value={checkbox.value}
-            />
-          )
-        })
+        checkboxes.map((checkbox) => (
+          <Checkbox
+            defaultChecked={roles?.includes(checkbox.value) ?? true}
+            id={checkbox.value}
+            key={checkbox.value}
+            label={checkbox.label}
+            name="roles"
+            value={checkbox.value}
+          />
+        ))
       }
     </fieldset>
   )

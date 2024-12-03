@@ -45,38 +45,36 @@ export default function FeuilleDeRouteRemplie({
           titre="Feuilles de route"
         >
           {
-            feuillesDeRoute.map((feuilleDeRoute) => {
-              return (
-                <tr key={feuilleDeRoute.nom}>
-                  <td>
-                    <span
-                      aria-hidden="true"
-                      className="fr-icon-survey-line color-blue-france"
-                    />
-                  </td>
-                  <td className="font-weight-700">
-                    <button
-                      aria-controls={drawerFeuilleDeRouteId}
-                      className="primary font-weight-700 fr-px-0 no-hover d-block"
-                      data-fr-opened="false"
-                      onClick={() => {
-                        setIsDrawerOpen(true)
-                        setFeuilleDeRoute(feuilleDeRoute)
-                      }}
-                      type="button"
-                    >
-                      {feuilleDeRoute.nom}
-                    </button>
-                  </td>
-                  <td className="color-grey">
-                    {feuilleDeRoute.totalActions}
-                  </td>
-                  <td className="font-weight-700">
-                    {`${feuilleDeRoute.budgetGlobal} €`}
-                  </td>
-                </tr>
-              )
-            })
+            feuillesDeRoute.map((feuilleDeRoute) => (
+              <tr key={feuilleDeRoute.nom}>
+                <td>
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-survey-line color-blue-france"
+                  />
+                </td>
+                <td className="font-weight-700">
+                  <button
+                    aria-controls={drawerFeuilleDeRouteId}
+                    className="primary font-weight-700 fr-px-0 no-hover d-block"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setIsDrawerOpen(true)
+                      setFeuilleDeRoute(feuilleDeRoute)
+                    }}
+                    type="button"
+                  >
+                    {feuilleDeRoute.nom}
+                  </button>
+                </td>
+                <td className="color-grey">
+                  {feuilleDeRoute.totalActions}
+                </td>
+                <td className="font-weight-700">
+                  {`${feuilleDeRoute.budgetGlobal} €`}
+                </td>
+              </tr>
+            ))
           }
         </Table>
       </SectionRemplie>
