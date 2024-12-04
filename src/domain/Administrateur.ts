@@ -1,8 +1,8 @@
 import { Utilisateur, UtilisateurState } from './Utilisateur'
 
 export class Administrateur extends Utilisateur {
-  override state(): AdministrateurState {
-    return super.state()
+  override get state(): AdministrateurState {
+    return super.state
   }
 
   override peutGerer(): boolean {

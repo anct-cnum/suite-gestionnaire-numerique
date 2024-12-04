@@ -124,7 +124,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 }
 
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
-  const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state()
+  const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
 
   return {
     departementCode: utilisateurRecord.departementCode,

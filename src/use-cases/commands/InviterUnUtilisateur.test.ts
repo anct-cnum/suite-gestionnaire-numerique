@@ -146,7 +146,7 @@ describe('inviter un utilisateur', () => {
         })
         expect(result).toBe('OK')
         expect(spiedUidToFind).toBe(command.uidUtilisateurCourant)
-        expect(spiedUtilisateurToAdd?.state()).toStrictEqual(expectedUtilisateurInvite.state())
+        expect(spiedUtilisateurToAdd?.state).toStrictEqual(expectedUtilisateurInvite.state)
         expect(spiedDestinataire).toBe('martine.dugenoux@example.com')
         expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
       }
@@ -229,7 +229,7 @@ describe('inviter un utilisateur', () => {
     // THEN
     expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
-    expect(spiedUtilisateurToAdd?.state()).toStrictEqual(utilisateurACreer.state())
+    expect(spiedUtilisateurToAdd?.state).toStrictEqual(utilisateurACreer.state)
     expect(spiedDestinataire).toBe('')
     expect(spiedIsSuperAdmin).toBeNull()
   })

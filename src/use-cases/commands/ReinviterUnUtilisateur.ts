@@ -23,7 +23,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
     if (!utilisateurAReinviter) {
       return 'utilisateurAReinviterInexistant'
     }
-    if (utilisateurAReinviter.state().isActive) {
+    if (utilisateurAReinviter.state.isActive) {
       return 'utilisateurAReinviterDejaActif'
     }
     if (!utilisateurCourant.peutGerer(utilisateurAReinviter)) {
@@ -32,8 +32,8 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
 
     utilisateurAReinviter.changerLaDateDInvitation(this.#date)
     await this.#repository.update(utilisateurAReinviter)
-    const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
-    await emailGateway.send(utilisateurAReinviter.state().emailDeContact)
+    const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
+    await emailGateway.send(utilisateurAReinviter.state.emailDeContact)
     return 'OK'
   }
 }
@@ -50,4 +50,3 @@ export type ReinviterUnUtilisateurCommand = Readonly<{
 }>
 
 interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
-

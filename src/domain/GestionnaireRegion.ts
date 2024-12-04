@@ -30,10 +30,10 @@ export class GestionnaireRegion extends Utilisateur {
     this.#region = region
   }
 
-  override state(): GestionnaireRegionState {
+  override get state(): GestionnaireRegionState {
     return {
-      ...super.state(),
-      region: this.#region.state(),
+      ...super.state,
+      region: this.#region.state,
     }
   }
 

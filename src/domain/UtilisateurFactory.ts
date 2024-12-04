@@ -41,7 +41,7 @@ export class UtilisateurFactory {
   }
 
   static avecNouvelUid(utilisateur: Utilisateur, uid: string): Utilisateur {
-    const state = utilisateur.state()
+    const state = utilisateur.state
     return new UtilisateurFactory({
       departement: state.departement,
       derniereConnexion: new Date(state.derniereConnexion),

@@ -26,7 +26,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     if (!utilisateurCourant) {
       return 'KO'
     }
-    const utilisateurCourantState = utilisateurCourant.state()
+    const utilisateurCourantState = utilisateurCourant.state
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
       emailDeContact: command.email,
@@ -48,7 +48,7 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
     }
     const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
-      const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state().isSuperAdmin)
+      const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
       await emailGateway.send(command.email)
       return 'OK'
     }

@@ -30,10 +30,10 @@ export class GestionnaireDepartement extends Utilisateur {
     this.#departement = departement
   }
 
-  override state(): GestionnaireDepartementState {
+  override get state(): GestionnaireDepartementState {
     return {
-      ...super.state(),
-      departement: this.#departement.state(),
+      ...super.state,
+      departement: this.#departement.state,
     }
   }
 
