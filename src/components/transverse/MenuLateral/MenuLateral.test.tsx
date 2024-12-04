@@ -17,7 +17,13 @@ describe('menu lateral', () => {
     expect(tableauDeBord).toHaveAttribute('href', '/tableau-de-bord')
   })
 
-  it('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien de la gouvernance', () => {
+  it.each([
+    { index: 1, name: 'Gouvernance', url: '/gouvernance/93' },
+    { index: 5, name: 'Financements', url: '/' },
+    { index: 6, name: 'Bénéficiaires', url: '/' },
+    { index: 7, name: 'Aidants et médiateurs', url: '/' },
+    { index: 8, name: 'Lieux d’inclusion', url: '/' },
+  ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     renderComponent(<MenuLateral />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
@@ -29,9 +35,9 @@ describe('menu lateral', () => {
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
     const menuItems = within(navigation).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(5)
-    const tableauDeBord = within(menuItems[1]).getByRole('link', { name: 'Gouvernance' })
-    expect(tableauDeBord).toHaveAttribute('href', '/gouvernance/93')
+    expect(menuItems).toHaveLength(9)
+    const element = within(menuItems[index]).getByRole('link', { name })
+    expect(element).toHaveAttribute('href', url)
   })
 
   it('étant un gestionnaire de département, quand je clique sur menu Gouvernance, alors 2 sous menus s’affiche', () => {
@@ -46,7 +52,7 @@ describe('menu lateral', () => {
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
     const menus = within(navigation).getAllByRole('listitem')
-    expect(menus).toHaveLength(5)
+    expect(menus).toHaveLength(9)
     const menuGouvernance = within(menus[1]).getByRole('link', { name: 'Gouvernance' })
     fireEvent.click(menuGouvernance)
     const sousMenuMembres = screen.getByRole('link', { name: 'Membres' })
