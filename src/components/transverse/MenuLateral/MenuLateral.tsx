@@ -87,6 +87,55 @@ export default function MenuLateral(): ReactElement {
                   {'Gouvernance vide'}
                 </Link>
               </li>
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-pen-nib-line fr-mr-1w"
+                  />
+                  {'Financements'}
+                </Link>
+              </li>
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-community-line fr-mr-1w"
+                  />
+                  {'Bénéficiaires'}
+                </Link>
+              </li>
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-group-line fr-mr-1w"
+                  />
+                  {'Aidants et médiateurs'}
+                </Link>
+              </li>
+
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-map-pin-2-line fr-mr-1w"
+                  />
+                  {'Lieux d’inclusion'}
+                </Link>
+              </li>
             </>
           ) : null
         }
