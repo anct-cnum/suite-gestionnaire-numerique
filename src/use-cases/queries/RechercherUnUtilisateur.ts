@@ -1,7 +1,7 @@
 import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
 export interface UnUtilisateurLoader {
-  findByUid: (uid: string) => Promise<UnUtilisateurReadModel>
+  findByUid(uid: string): Promise<UnUtilisateurReadModel>
 }
 
 export class UtilisateurNonTrouveError extends Error {

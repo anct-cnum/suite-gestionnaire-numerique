@@ -41,6 +41,6 @@ export default function Modal({
 type ModalProps = PropsWithChildren<Readonly<{
   id: string,
   isOpen: boolean
-  close: () => void
   labelId: string
+  close(): void
 }>>
