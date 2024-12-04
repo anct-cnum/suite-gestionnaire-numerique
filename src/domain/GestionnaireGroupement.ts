@@ -30,10 +30,10 @@ export class GestionnaireGroupement extends Utilisateur {
     this.#groupementUid = groupementUid
   }
 
-  override state(): GestionnaireGroupementState {
+  override get state(): GestionnaireGroupementState {
     return {
-      ...super.state(),
-      groupementUid: this.#groupementUid.state(),
+      ...super.state,
+      groupementUid: this.#groupementUid.state,
     }
   }
 

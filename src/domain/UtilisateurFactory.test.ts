@@ -124,7 +124,7 @@ describe('utilisateur factory', () => {
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
     // THEN
-    expect(utilisateur.state().isActive).toBe(expectedIsActive)
+    expect(utilisateur.state.isActive).toBe(expectedIsActive)
   })
 
   it.each([
@@ -154,6 +154,6 @@ describe('utilisateur factory', () => {
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
     // THEN
-    expect(utilisateur.state().telephone).toBe(expectedTelephone)
+    expect(utilisateur.state.telephone).toBe(expectedTelephone)
   })
 })

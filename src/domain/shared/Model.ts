@@ -1,11 +1,11 @@
 import { Struct } from '@/shared/lang'
 
 abstract class Model {
-  equals(other: this): boolean {
-    return JSON.stringify(other.state()) === JSON.stringify(this.state())
-  }
+  abstract get state(): Struct
 
-  abstract state(): Struct
+  equals(other: this): boolean {
+    return JSON.stringify(other.state) === JSON.stringify(this.state)
+  }
 }
 
 export abstract class ValueObject<State extends Struct> extends Model {
@@ -17,7 +17,7 @@ export abstract class ValueObject<State extends Struct> extends Model {
     Object.freeze(this)
   }
 
-  override state(): State {
+  override get state(): State {
     return this.#state
   }
 }
@@ -32,7 +32,7 @@ export abstract class Entity<State extends EntityState> extends Model {
     this.uid = uid
   }
 
-  abstract override state(): State
+  abstract override get state(): State
 }
 
 type EntityState = Readonly<{ uid: UidState }> & Struct

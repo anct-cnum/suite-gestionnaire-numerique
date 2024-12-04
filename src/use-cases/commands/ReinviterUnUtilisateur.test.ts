@@ -25,12 +25,12 @@ describe('réinviter un utilisateur', () => {
 
     // THEN
     expect(result).toBe('OK')
-    expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({
+    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
       inviteLe: date,
       role: 'Gestionnaire structure',
       uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
-    }).state())
-    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state().emailDeContact)
+    }).state)
+    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state.emailDeContact)
   })
 
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {

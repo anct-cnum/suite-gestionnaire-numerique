@@ -21,12 +21,12 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
     // THEN
     expect(result).toBe('ok')
     expect(spiedUidToFind).toBe('martin.tartempion@example.net')
-    expect(spiedUtilisateurToUpdate?.state()).toStrictEqual(utilisateurFactory({
+    expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
       uid: {
         email: emailAsUid,
         value: uid,
       },
-    }).state())
+    }).state)
   })
 
   it('quand l’utilisateur se connecte pour la première fois mais qu’il n’existe pas, alors un message d’erreur est renvoyé', async () => {

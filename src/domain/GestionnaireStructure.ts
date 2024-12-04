@@ -30,10 +30,10 @@ export class GestionnaireStructure extends Utilisateur {
     this.#structureUid = structureUid
   }
 
-  override state(): GestionnaireStructureState {
+  override get state(): GestionnaireStructureState {
     return {
-      ...super.state(),
-      structureUid: this.#structureUid.state(),
+      ...super.state,
+      structureUid: this.#structureUid.state,
     }
   }
 

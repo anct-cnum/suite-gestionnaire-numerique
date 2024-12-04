@@ -82,7 +82,7 @@ describe('supprimer un utilisateur', () => {
       'utilisateurASupprimerExistantUid',
     ])
     expect(spiedUtilisateurToDrop).not.toBeNull()
-    expect(spiedUtilisateurToDrop?.state()).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state())
+    expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
     expect(result).toBe('compteASupprimerDejaSupprime')
   })
 
@@ -103,7 +103,7 @@ describe('supprimer un utilisateur', () => {
       'utilisateurCourantExistantAutreUid',
       'utilisateurASupprimerExistantUid',
     ])
-    expect(spiedUtilisateurToDrop?.state()).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state())
+    expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
     expect(result).toBe('OK')
   })
 })

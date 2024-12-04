@@ -14,7 +14,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async add(utilisateur: Utilisateur): Promise<boolean> {
-    const utilisateurState = utilisateur.state()
+    const utilisateurState = utilisateur.state
 
     try {
       await this.#activeRecord.create({
@@ -80,7 +80,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async drop(utilisateur: Utilisateur): Promise<boolean> {
-    return this.#drop(utilisateur.state().uid.value)
+    return this.#drop(utilisateur.state.uid.value)
   }
 
   async dropByUid(uid: UtilisateurUidState['value']): Promise<boolean> {
@@ -88,7 +88,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {
-    const utilisateurState = utilisateur.state()
+    const utilisateurState = utilisateur.state
 
     await this.#activeRecord.update({
       data: {
@@ -106,7 +106,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async updateUid(utilisateur: Utilisateur): Promise<void> {
-    const utilisateurState = utilisateur.state()
+    const utilisateurState = utilisateur.state
 
     await this.#activeRecord.update({
       data: {
