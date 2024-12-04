@@ -1,5 +1,5 @@
 export interface MesInformationsPersonnellesLoader {
-  findByUid: (uid: string) => Promise<MesInformationsPersonnellesReadModel>
+  findByUid(uid: string): Promise<MesInformationsPersonnellesReadModel>
 }
 
 export type MesInformationsPersonnellesReadModel = Readonly<{

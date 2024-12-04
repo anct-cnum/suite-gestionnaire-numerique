@@ -36,5 +36,5 @@ export default function GlobalError({ error, reset }: ErrorProps): ReactElement 
 
 type ErrorProps = Readonly<{
   error: Error & { digest?: string }
-  reset: () => void
+  reset(): void
 }>
