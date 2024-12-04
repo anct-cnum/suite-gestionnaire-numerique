@@ -82,9 +82,9 @@ type OrganisationInputProps = Readonly<{
   label: string
   options: ReadonlyArray<{value: string, label: string}>
   organisation: string
-  setOrganisation: (organisation: string) => void
   required: boolean
   additionalSearchParams?: URLSearchParams
+  setOrganisation(organisation: string): void
 }>
 
 // istanbul ignore next @preserve

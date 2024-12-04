@@ -53,7 +53,7 @@ export type UtilisateursCourantsEtTotalReadModel = Readonly<{
 }>
 
 export interface MesUtilisateursLoader extends UnUtilisateurLoader {
-  findMesUtilisateursEtLeTotal: (
+  findMesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,
@@ -62,5 +62,5 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     codeDepartement: string,
     codeRegion: string,
     idStructure: number
-  ) => Promise<UtilisateursCourantsEtTotalReadModel>
+  ): Promise<UtilisateursCourantsEtTotalReadModel>
 }

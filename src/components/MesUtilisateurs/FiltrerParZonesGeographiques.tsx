@@ -91,5 +91,5 @@ function DropdownIndicator(): ReactElement {
 }
 
 type FiltrerParZonesGeographiquesProps = Readonly<{
-  setZoneGeographique: (zoneGeographique: ZoneGeographique) => void
+  setZoneGeographique(zoneGeographique: ZoneGeographique): void
 }>
