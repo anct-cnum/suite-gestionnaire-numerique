@@ -92,13 +92,13 @@
           {
             "target": ["src/domain"],
             "from": ["src", "node_modules"],
-            "except": ["domain", "shared"],
+            "except": ["domain", "shared", "purify-ts"],
             "message": "Le domain représente le métier, il ne dépend d'aucun élément extérieur."
           },
           {
             "target": ["src/use-cases"],
             "from": ["src", "node_modules"],
-            "except": ["domain", "use-cases", "shared"],
+            "except": ["domain", "use-cases", "shared", "purify-ts"],
             "message": "Les use cases automatisent l'interaction entre les règles métiers et les ports représentant des éléments extérieurs."
           },
           {
