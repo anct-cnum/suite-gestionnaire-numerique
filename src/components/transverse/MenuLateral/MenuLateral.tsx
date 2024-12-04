@@ -27,6 +27,7 @@ export default function MenuLateral(): ReactElement {
           >
             <span
               aria-hidden="true"
+              aria-label="tableau de bord"
               className="fr-icon-dashboard-3-line fr-mr-1w"
             />
             {'Tableau de bord'}
@@ -41,11 +42,38 @@ export default function MenuLateral(): ReactElement {
                   href={`/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`}
                 >
                   <span
+                    aria-controls="fr-sidemenu-gouvernance"
+                    aria-expanded="false"
                     aria-hidden="true"
                     className="fr-icon-compass-3-line fr-mr-1w"
                   />
                   {'Gouvernance'}
                 </Link>
+                <div
+                  className="fr-collapse"
+                  id="fr-sidemenu-gouvernance"
+                >
+                  <ul className="fr-sidemenu__list">
+                    <li className="fr-sidemenu__item">
+                      <a
+                        className="fr-sidemenu__link"
+                        href={`/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`}
+                        target="_self"
+                      >
+                        Membres
+                      </a>
+                    </li>
+                    <li className="fr-sidemenu__item">
+                      <a
+                        className="fr-sidemenu__link"
+                        href="/"
+                        target="_self"
+                      >
+                        Feuilles de route
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </li>
               <li className="fr-sidemenu__item">
                 <Link
