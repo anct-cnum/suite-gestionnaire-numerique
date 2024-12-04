@@ -174,11 +174,11 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateurValue)
 
         // THEN
-        expect(result?.state()).toStrictEqual(
+        expect(result?.state).toStrictEqual(
           utilisateurFactory({
-            uid: uidUtilisateur.state(),
+            uid: uidUtilisateur.state,
             ...expected,
-          }).state()
+          }).state
         )
       })
 
@@ -216,7 +216,7 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateurValue)
 
         // THEN
-        expect(result?.state().isActive).toBe(expectedIsActive)
+        expect(result?.state.isActive).toBe(expectedIsActive)
       })
     })
   })
@@ -453,7 +453,7 @@ describe('utilisateur repository', () => {
         data: structureRecordFactory({ id: structureId }),
       })
       const utilisateur = utilisateurFactory({
-        departement: departementFactory({ code: departementCode }).state(),
+        departement: departementFactory({ code: departementCode }).state,
         role: 'Gestionnaire département',
         uid: { email: 'martin.tartempion@example.net', value: ssoIdDifferent },
       })

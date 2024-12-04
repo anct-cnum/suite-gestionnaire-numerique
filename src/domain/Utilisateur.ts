@@ -40,18 +40,18 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#inviteLe = inviteLe
   }
 
-  override state(): UtilisateurState {
+  override get state(): UtilisateurState {
     return {
       derniereConnexion: this.#derniereConnexion.toJSON(),
-      emailDeContact: this.#emailDeContact.state().value,
+      emailDeContact: this.#emailDeContact.state.value,
       inviteLe: this.#inviteLe.toJSON(),
       isActive: this.#derniereConnexion.getTime() !== 0,
       isSuperAdmin: this.#isSuperAdmin,
-      nom: this.#nom.state().value,
-      prenom: this.#prenom.state().value,
-      role: this.#role.state(),
-      telephone: this.#telephone.state().value,
-      uid: this.uid.state(),
+      nom: this.#nom.state.value,
+      prenom: this.#prenom.state.value,
+      role: this.#role.state,
+      telephone: this.#telephone.state.value,
+      uid: this.uid.state,
     }
   }
 
