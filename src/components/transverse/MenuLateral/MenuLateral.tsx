@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
+import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 
 export default function MenuLateral(): ReactElement {
@@ -36,6 +37,12 @@ export default function MenuLateral(): ReactElement {
         {
           sessionUtilisateurViewModel.displayLiensGouvernance ? (
             <>
+              <p
+                className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}
+              >
+                PILOTAGE
+              </p>
+              <hr className="fr-hr fr-mt-3v fr-col-12" />
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
@@ -57,7 +64,7 @@ export default function MenuLateral(): ReactElement {
                     <li className="fr-sidemenu__item">
                       <a
                         className="fr-sidemenu__link"
-                        href={`/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`}
+                        href="/"
                         target="_self"
                       >
                         Membres
@@ -134,6 +141,33 @@ export default function MenuLateral(): ReactElement {
                     className="fr-icon-map-pin-2-line fr-mr-1w"
                   />
                   {'Lieux d’inclusion'}
+                </Link>
+              </li>
+              <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
+                DONNEES ET STATISTIQUES
+              </p>
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-download-line fr-mr-1w"
+                  />
+                  {'Export de données'}
+                </Link>
+              </li>
+              <li className="fr-sidemenu__item">
+                <Link
+                  className="fr-sidemenu__link"
+                  href="/"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="fr-icon-line-chart-line fr-mr-1w"
+                  />
+                  {'Rapports'}
                 </Link>
               </li>
             </>
