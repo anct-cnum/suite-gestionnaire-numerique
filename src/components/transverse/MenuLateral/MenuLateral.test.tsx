@@ -23,6 +23,8 @@ describe('menu lateral', () => {
     { index: 6, name: 'Bénéficiaires', url: '/' },
     { index: 7, name: 'Aidants et médiateurs', url: '/' },
     { index: 8, name: 'Lieux d’inclusion', url: '/' },
+    { index: 9, name: 'Export de données', url: '/' },
+    { index: 10, name: 'Rapports', url: '/' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     renderComponent(<MenuLateral />, {
@@ -34,8 +36,10 @@ describe('menu lateral', () => {
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
+    within(navigation).getByText('PILOTAGE', { selector: 'p' })
+    within(navigation).getByText('DONNEES ET STATISTIQUES', { selector: 'p' })
     const menuItems = within(navigation).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(9)
+    expect(menuItems).toHaveLength(11)
     const element = within(menuItems[index]).getByRole('link', { name })
     expect(element).toHaveAttribute('href', url)
   })
@@ -52,7 +56,7 @@ describe('menu lateral', () => {
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
     const menus = within(navigation).getAllByRole('listitem')
-    expect(menus).toHaveLength(9)
+    expect(menus).toHaveLength(11)
     const menuGouvernance = within(menus[1]).getByRole('link', { name: 'Gouvernance' })
     fireEvent.click(menuGouvernance)
     const sousMenuMembres = screen.getByRole('link', { name: 'Membres' })
