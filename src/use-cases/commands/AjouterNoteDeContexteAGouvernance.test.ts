@@ -12,26 +12,32 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée, alors elle est ajoutée à une gourvenance', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par le gestionnaire de cette gouvernance, alors elle est ajoutée à une gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
-      new UtilisateurRepositorySpy(),
+      new GestionnaireRepositorySpy(),
       new Date(0)
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uid: uidUtilisateur, uidGouvernance })
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidGouvernance,
+      uidUtilisateur: uidUtilisateur,
+    })
 
     // THEN
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       gouvernanceFactory({
         noteDeContexte: {
           contenu,
-          dateDeModificationNoteDeContexte: new Date(0),
-          uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid),
+          dateDeModification: new Date(0),
+          uidUtilisateurLAyantModifie: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid
+          ),
         },
         uid: uidGouvernance,
       }).state
@@ -39,19 +45,40 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par quelqu’un d’autre que le gestionnaire de cette gouvernance, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+      new GouvernanceExistanteRepositorySpy(),
+      new UtilisateurUsurpateurRepositorySpy()
+    )
+
+    // WHEN
+    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidGouvernance, uidUtilisateur: 'utilisateurUsurpateur' })
+
+    // THEN
+    expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+    expect(spiedGouvernanceToUpdate).toBeNull()
+    expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
+  })
+
   it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new UtilisateurRepositorySpy()
+      new GestionnaireRepositorySpy()
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uid: uidUtilisateur, uidGouvernance })
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidGouvernance,
+      uidUtilisateur: uidUtilisateur,
+    })
 
     // THEN
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('gouvernanceInexistante')
   })
@@ -60,15 +87,19 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new UtilisateurInexistantRepositorySpy()
+      new GestionnaireInexistantRepositorySpy()
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uid: uidUtilisateur, uidGouvernance })
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidGouvernance,
+      uidUtilisateur: uidUtilisateur,
+    })
 
     // THEN
-    expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('utilisateurInexistant')
   })
@@ -88,8 +119,10 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
       gouvernanceFactory({
         noteDeContexte: {
           contenu,
-          dateDeModificationNoteDeContexte: new Date(0),
-          uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid),
+          dateDeModification: new Date(0),
+          uidUtilisateurLAyantModifie: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid
+          ),
         },
         uid: uidGouvernance,
       })
@@ -109,16 +142,23 @@ class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepository
   }
 }
 
-class UtilisateurRepositorySpy implements FindUtilisateurRepository {
+class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory())
   }
 }
 
-class UtilisateurInexistantRepositorySpy implements FindUtilisateurRepository {
+class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(null)
+  }
+}
+
+class UtilisateurUsurpateurRepositorySpy implements FindUtilisateurRepository {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(utilisateurFactory({ uid: { email: 'utilisateurUsurpateur@example.com', value: 'utilisateurUsurpateur' } }))
   }
 }
