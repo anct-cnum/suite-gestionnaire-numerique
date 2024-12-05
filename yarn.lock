@@ -4015,7 +4015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:7.0.15, @types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.9":
+"@types/json-schema@npm:^7.0.12, @types/json-schema@npm:^7.0.9":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: 10c0/a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
@@ -10589,15 +10589,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"purify-ts@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "purify-ts@npm:2.1.0"
-  dependencies:
-    "@types/json-schema": "npm:7.0.15"
-  checksum: 10c0/0d5ab2510276904d912bec91a96ff29e19c9d57b54b6d3e286463dc2f5dcdd0e3fc5febdc82a8dd1b8845cab9fa6a29ff845f3c6e0aaf96ee89868620c39a463
-  languageName: node
-  linkType: hard
-
 "qs@npm:^6.10.3":
   version: 6.13.0
   resolution: "qs@npm:6.13.0"
@@ -11800,7 +11791,6 @@ __metadata:
     prettier: "npm:^3.3.3"
     prisma: "npm:^5.21.1"
     prisma-json-types-generator: "npm:^3.1.1"
-    purify-ts: "npm:^2.1.0"
     react: "npm:^18"
     react-dom: "npm:^18"
     react-select: "npm:^5.8.3"
