@@ -2,7 +2,7 @@ import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouve
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
-import { utilisateurFactory } from '@/domain/testHelper'
+import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('ajouter une note de contexte à une gouvernance', () => {
@@ -27,7 +27,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
-      Gouvernance.create({
+      gouvernanceFactory({
         noteDeContexte: {
           contenu,
           dateDeModificationNoteDeContexte: new Date(0),
@@ -85,7 +85,7 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
   async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
-      Gouvernance.create({
+      gouvernanceFactory({
         noteDeContexte: {
           contenu,
           dateDeModificationNoteDeContexte: new Date(0),
