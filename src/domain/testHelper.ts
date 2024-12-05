@@ -28,10 +28,14 @@ export function gouvernanceFactory(override?: Partial<FactoryParams>): Gouvernan
   return Gouvernance.create({
     noteDeContexte: {
       contenu: '<p>contenu HTML</p>',
-      dateDeModificationNoteDeContexte: new Date(0),
-      uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory().state.uid),
+      dateDeModification: new Date(0),
+      uidUtilisateurLAyantModifie: new UtilisateurUid(utilisateurFactory().state.uid),
     },
     uid: 'fooGouvernanceUid',
+    utilisateurUid: {
+      email: 'martin.tartempion@example.net',
+      value: 'fooId',
+    },
     ...override,
   })
 }

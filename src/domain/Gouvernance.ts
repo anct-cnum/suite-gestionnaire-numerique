@@ -1,41 +1,54 @@
 import { Entity, Uid, ValueObject } from './shared/Model'
-import { UtilisateurUid } from './Utilisateur'
+import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
 export class Gouvernance extends Entity<GouvernanceState> {
   #noteDeContexte?: NoteDeContexte
+  readonly #uidUtilisateur: UtilisateurUid
 
-  private constructor(uid: GouvernanceUid, noteDeContexte?: NoteDeContexte) {
+  private constructor(
+    uid: GouvernanceUid,
+    uidUtilisateur: UtilisateurUid,
+    noteDeContexte?: NoteDeContexte
+  ) {
     super(uid)
     this.#noteDeContexte = noteDeContexte
+    this.#uidUtilisateur = uidUtilisateur
   }
 
   override get state(): GouvernanceState {
     return {
       noteDeContexte: this.#noteDeContexte?.state,
       uid: this.uid.state,
+      utilisateurUid: this.#uidUtilisateur.state,
     }
   }
 
   static create({
     noteDeContexte,
     uid,
+    utilisateurUid: utilisateur,
   }: FactoryParams): Gouvernance {
     const noteDeContexteAjoutee = noteDeContexte
       ? new NoteDeContexte(
-        noteDeContexte.dateDeModificationNoteDeContexte,
-        noteDeContexte.uidUtilisateurAyantModifieNoteDeContexte,
+        noteDeContexte.dateDeModification,
+        noteDeContexte.uidUtilisateurLAyantModifie,
         noteDeContexte.contenu
       )
       : undefined
 
     return new Gouvernance(
       new GouvernanceUid(uid),
+      new UtilisateurUid({ email: utilisateur.email, value: utilisateur.value }),
       noteDeContexteAjoutee
     )
   }
 
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): void {
     this.#noteDeContexte = noteDeContexte
+  }
+
+  peutSeFaireGerer(autre: Utilisateur): boolean {
+    return autre.state.uid.value === this.#uidUtilisateur.state.value
   }
 }
 
@@ -59,18 +72,23 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
   }
 }
 
-type GouvernanceState = Readonly<{
+export type GouvernanceState = Readonly<{
   noteDeContexte?: NoteDeContexteState
   uid: GouvernanceUidState
+  utilisateurUid: UtilisateurUidState
 }>
 
 export type FactoryParams = Readonly<{
   noteDeContexte?: Readonly<{
     contenu: string
-    dateDeModificationNoteDeContexte: Date
-    uidUtilisateurAyantModifieNoteDeContexte: UtilisateurUid
+    dateDeModification: Date
+    uidUtilisateurLAyantModifie: UtilisateurUid
   }>
   uid: string
+  utilisateurUid: {
+    email: string
+    value: string
+  }
 }>
 
 type NoteDeContexteState = Readonly<{
