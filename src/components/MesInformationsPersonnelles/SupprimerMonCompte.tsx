@@ -57,12 +57,14 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
               required={true}
               type="email"
             />
-            <p
-              className={emailValidationInfo.messageClass}
-              id={messageValidationId}
-            >
-              {emailValidationInfo.message}
-            </p>
+            {emailValidationInfo.message !== '' ? (
+              <p
+                className={emailValidationInfo.messageClass}
+                id={messageValidationId}
+              >
+                {emailValidationInfo.message}
+              </p>
+            ) : null}
           </div>
         </div>
         <div className="fr-modal__footer">

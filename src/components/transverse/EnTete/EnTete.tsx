@@ -24,6 +24,7 @@ export default function EnTete(): ReactElement {
               <div className="fr-header__brand-top">
                 <div className="fr-header__operator">
                   <svg
+                    aria-hidden
                     height="40"
                     width="35"
                     xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +50,6 @@ export default function EnTete(): ReactElement {
                     className="fr-btn--menu fr-btn"
                     data-fr-opened="false"
                     id="button-500"
-                    title="Menu"
                     type="button"
                   >
                     Menu
@@ -83,7 +83,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-search-line"
-                      href="/tableau-de-bord"
+                      href="/rechercher"
                     >
                       Rechercher
                     </Link>
@@ -91,7 +91,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-question-line"
-                      href="/tableau-de-bord"
+                      href="/aide"
                     >
                       Aide
                     </Link>
@@ -99,7 +99,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-notification-3-line"
-                      href="/tableau-de-bord"
+                      href="/notifications"
                     >
                       Notifications
                       {/**/}
@@ -140,7 +140,6 @@ export default function EnTete(): ReactElement {
             <button
               aria-controls="modal-499"
               className="fr-btn--close fr-btn"
-              title="Fermer"
               type="button"
             >
               Fermer

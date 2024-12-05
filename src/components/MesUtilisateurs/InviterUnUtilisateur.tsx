@@ -47,7 +47,7 @@ export default function InviterUnUtilisateur({
         sont obligatoires.
       </p>
       <form
-        aria-label="Modifier"
+        aria-label="Inviter un utilisateur"
         method="dialog"
         onSubmit={inviterUtilisateur}
       >
@@ -74,6 +74,7 @@ export default function InviterUnUtilisateur({
           </span>
         </TextInput>
         <TextInput
+          ariaDescribedById="text-input-error-desc-error"
           erreur={emailDejaExistant}
           id={emailId}
           name="email"
@@ -92,7 +93,10 @@ export default function InviterUnUtilisateur({
         </TextInput>
         {
           rolesGerables.length > 1 ?
-            <>
+            <fieldset
+              className="fr-fieldset"
+              id="attributionRole"
+            >
               <legend
                 aria-describedby="champsObligatoires"
                 className="fr-mb-2w"
@@ -111,7 +115,7 @@ export default function InviterUnUtilisateur({
                 }}
                 options={rolesGerables}
               />
-            </>
+            </fieldset>
             :
             <>
               <p className="fr-mb-1w">
