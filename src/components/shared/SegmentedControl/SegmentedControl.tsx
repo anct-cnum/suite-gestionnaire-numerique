@@ -1,6 +1,7 @@
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 export default function SegmentedControl({ options, children, name }: SegmentedControlProps): ReactElement {
+  const [checked, setChecked] = useState(options[0].id)
 
   return (
     <fieldset className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
@@ -14,8 +15,12 @@ export default function SegmentedControl({ options, children, name }: SegmentedC
             key={id}
           >
             <input
+              checked={checked === id}
               id={id}
               name={name}
+              onChange={(event) => {
+                setChecked(event.target.value)
+              }}
               type="radio"
               value={id}
             />

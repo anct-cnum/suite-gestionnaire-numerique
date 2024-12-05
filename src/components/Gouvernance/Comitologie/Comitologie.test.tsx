@@ -60,50 +60,9 @@ describe('comitologie', () => {
     expect(commentaires).toHaveAttribute('maxLength', '500')
     expect(commentaires).not.toHaveAttribute('required')
     const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
-    expect(enregistrer).toHaveAttribute('disabled')
+    expect(enregistrer).toBeInTheDocument()
 
     vi.useRealTimers()
-  })
-
-  it('quand je remplis les champs obligatoires du formulaire d’ajout de comitologie, alors le bouton de validation devient cliquable', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
-    const comitologie = screen.getByRole('region', { name: 'Comitologie' })
-    const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
-    fireEvent.click(ajouter)
-
-    // WHEN
-    const ajouterUnComiteDrawer = screen.getByRole('dialog')
-    const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
-    expect(enregistrer).toHaveAttribute('disabled')
-    const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
-    fireEvent.click(strategique)
-    const mensuelle = within(ajouterUnComiteDrawer).getByLabelText('Mensuelle')
-    fireEvent.click(mensuelle)
-
-    // THEN
-    expect(enregistrer).not.toHaveAttribute('disabled')
-  })
-
-  it('quand je ne remplis pas les champs obligatoires du formulaire d’ajout de comitologie, alors le bouton de validation n’est pas cliquable', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
-    const comitologie = screen.getByRole('region', { name: 'Comitologie' })
-    const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
-    fireEvent.click(ajouter)
-
-    // WHEN
-    const ajouterUnComiteDrawer = screen.getByRole('dialog')
-    const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
-    fireEvent.click(strategique)
-
-    // THEN
-    const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
-    expect(enregistrer).toHaveAttribute('disabled')
   })
 
   it('quand je remplis tous les champs du formulaire d’ajout de comitologie et que je l’envoie, alors il est validé', () => {

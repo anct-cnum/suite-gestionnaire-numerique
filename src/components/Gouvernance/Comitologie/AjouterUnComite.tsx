@@ -1,4 +1,4 @@
-import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
+import { FormEvent, ReactElement, RefObject, useContext } from 'react'
 
 import { clientContext } from '../../shared/ClientContext'
 import Datepicker from '../../shared/Datepicker/Datepicker'
@@ -7,7 +7,6 @@ import TextArea from '@/components/shared/TextArea/TextArea'
 import { formatForInputDate } from '@/presenters/shared/date'
 
 export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComiteProps): ReactElement {
-  const [isSendDisabled, setIsSendDisabled] = useState(true)
   const dateDuJour = formatForInputDate(new Date())
   const { ajouterUnComiteAction } = useContext(clientContext)
 
@@ -15,7 +14,6 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
     <form
       aria-label="Ajouter un comité"
       method="dialog"
-      onInput={checkValidity}
       onSubmit={creerUnComite}
     >
       <h1 className="color-blue-france fr-mt-5w">
@@ -70,7 +68,6 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
       <button
         className="fr-btn fr-my-2w center-button"
         data-fr-opened="false"
-        disabled={isSendDisabled}
         type="submit"
       >
         Enregistrer
@@ -87,13 +84,6 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
     setIsOpen(false)
     window.dsfr(dialogRef.current).modal.conceal();
     (event.target as HTMLFormElement).reset()
-  }
-
-  function checkValidity(event: FormEvent<HTMLFormElement>): void {
-    const form = new FormData(event.currentTarget)
-    const [type, frequence] = [...form.values()].map((value) => value as string)
-    const isDisabled = type === '' || frequence === ''
-    setIsSendDisabled(isDisabled)
   }
 }
 
