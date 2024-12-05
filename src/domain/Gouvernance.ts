@@ -1,19 +1,17 @@
-import { Just, Maybe, Nothing } from 'purify-ts'
-
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { UtilisateurUid } from './Utilisateur'
 
 export class Gouvernance extends Entity<GouvernanceState> {
-  #noteDeContexte: Maybe<NoteDeContexte> = Nothing
+  #noteDeContexte?: NoteDeContexte
 
   private constructor(uid: GouvernanceUid, noteDeContexte?: NoteDeContexte) {
     super(uid)
-    this.#noteDeContexte = Maybe.fromNullable(noteDeContexte)
+    this.#noteDeContexte = noteDeContexte
   }
 
   override get state(): GouvernanceState {
     return {
-      noteDeContexte: this.#noteDeContexte.extract()?.state,
+      noteDeContexte: this.#noteDeContexte?.state,
       uid: this.uid.state,
     }
   }
@@ -35,7 +33,7 @@ export class Gouvernance extends Entity<GouvernanceState> {
   }
 
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): void {
-    this.#noteDeContexte = Just(noteDeContexte)
+    this.#noteDeContexte = noteDeContexte
   }
 }
 
