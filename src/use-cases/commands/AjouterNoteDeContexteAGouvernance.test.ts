@@ -117,13 +117,7 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
-        noteDeContexte: {
-          contenu,
-          dateDeModification: new Date(0),
-          uidUtilisateurLAyantModifie: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid
-          ),
-        },
+        noteDeContexte: undefined,
         uid: uidGouvernance,
       })
     )
