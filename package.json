@@ -49,7 +49,6 @@
     "next-auth": "^4.24.10",
     "nodemailer": "^6.9.16",
     "prisma-json-types-generator": "^3.1.1",
-    "purify-ts": "^2.1.0",
     "react": "^18",
     "react-dom": "^18",
     "react-select": "^5.8.3",

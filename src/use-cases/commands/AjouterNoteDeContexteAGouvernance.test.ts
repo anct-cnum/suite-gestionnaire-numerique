@@ -1,5 +1,3 @@
-import { Just, Maybe, Nothing } from 'purify-ts'
-
 import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouvernance'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -36,7 +34,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
         uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid),
       }).state
     )
-    expect(result.extract()).toBe('Ok')
+    expect(result).toBe('OK')
   })
 
   it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
@@ -54,7 +52,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result.extract()).toBe('gouvernanceInexistante')
+    expect(result).toBe('gouvernanceInexistante')
   })
 
   it('étant donné un utilisateur inexistant, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
@@ -72,7 +70,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result.extract()).toBe('utilisateurInexistant')
+    expect(result).toBe('utilisateurInexistant')
   })
 })
 
@@ -84,15 +82,15 @@ let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
 class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Maybe<Gouvernance>> {
+  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
-      Just(Gouvernance.create({
+      Gouvernance.create({
         dateDeModificationNoteDeContexte: new Date(0),
         noteDeContexte: contenu,
         uid: uidGouvernance,
         uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid),
-      }))
+      })
     )
   }
 
@@ -103,9 +101,9 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
 }
 
 class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Maybe<Gouvernance>> {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
-    return Promise.resolve(Nothing)
+    return Promise.resolve(null)
   }
 }
 
