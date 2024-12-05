@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ReactElement, useContext } from 'react'
 
 import styles from './MenuLateral.module.css'
@@ -8,6 +9,59 @@ import { clientContext } from '@/components/shared/ClientContext'
 
 export default function MenuLateral(): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
+  const currentPath = usePathname()
+
+  const menusPilotage = [
+    {
+      ariaControls: 'fr-sidemenu-gouvernance',
+      ariaExpanded: false,
+      icon: 'compass-3-line',
+      label: 'Gouvernance',
+      sousMenu: [
+        { label: 'Membres', url: `/membres/${sessionUtilisateurViewModel.codeDepartement}` },
+        { label: 'Feuilles de route', url: `/feuilles-de-routes/${sessionUtilisateurViewModel.codeDepartement}` },
+      ],
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
+    },
+    {
+      icon: 'compass-3-line',
+      label: 'Gouvernance vide',
+      url: `/gouvernance-vide/${sessionUtilisateurViewModel.codeDepartement}`,
+    },
+    {
+      icon: 'pen-nib-line',
+      label: 'Financements',
+      url: '/financements',
+    },
+    {
+      icon: 'community-line',
+      label: 'Bénéficiaires',
+      url: '/beneficiaires',
+    },
+    {
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: '/aidants-et-mediateurs',
+    },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Lieux d’inclusion',
+      url: '/lieux-inclusion',
+    },
+  ]
+
+  const menusDonneesEtStatistiques = [
+    {
+      icon: 'download-line',
+      label: 'Export de données',
+      url: '/export-de-donnees',
+    },
+    {
+      icon: 'line-chart-line',
+      label: 'Rapports',
+      url: '/rapports',
+    },
+  ]
 
   return (
     <nav
@@ -43,133 +97,68 @@ export default function MenuLateral(): ReactElement {
                 PILOTAGE
               </p>
               <hr className="fr-hr fr-mt-3v fr-col-12" />
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href={`/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`}
-                >
-                  <span
-                    aria-controls="fr-sidemenu-gouvernance"
-                    aria-expanded="false"
-                    aria-hidden="true"
-                    className="fr-icon-compass-3-line fr-mr-1w"
-                  />
-                  {'Gouvernance'}
-                </Link>
-                <div
-                  className="fr-collapse"
-                  id="fr-sidemenu-gouvernance"
-                >
-                  <ul className="fr-sidemenu__list">
-                    <li className="fr-sidemenu__item">
-                      <a
-                        className="fr-sidemenu__link"
-                        href={`/membres/${sessionUtilisateurViewModel.codeDepartement}`}
-                        target="_self"
-                      >
-                        Membres
-                      </a>
-                    </li>
-                    <li className="fr-sidemenu__item">
-                      <a
-                        className="fr-sidemenu__link"
-                        href={`/feuilles-de-routes/${sessionUtilisateurViewModel.codeDepartement}`}
-                        target="_self"
-                      >
-                        Feuilles de route
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href={`/gouvernance-vide/${sessionUtilisateurViewModel.codeDepartement}`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-compass-3-line fr-mr-1w"
-                  />
-                  {'Gouvernance vide'}
-                </Link>
-              </li>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/financements"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-pen-nib-line fr-mr-1w"
-                  />
-                  {'Financements'}
-                </Link>
-              </li>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/beneficiaires"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-community-line fr-mr-1w"
-                  />
-                  {'Bénéficiaires'}
-                </Link>
-              </li>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/aidants-et-mediateurs"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-group-line fr-mr-1w"
-                  />
-                  {'Aidants et médiateurs'}
-                </Link>
-              </li>
-
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/lieux-inclusion"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-map-pin-2-line fr-mr-1w"
-                  />
-                  {'Lieux d’inclusion'}
-                </Link>
-              </li>
+              {menusPilotage.map((menu) => (
+                <>
+                  <li
+                    className={`fr-sidemenu__item ${menu.url === currentPath ? styles['element-selectionne'] : ''}`}
+                    key={menu.url}
+                  >
+                    <Link
+                      className="fr-sidemenu__link"
+                      href={menu.url as unknown as URL}
+                    >
+                      <span
+                        aria-controls={menu.ariaControls ?? ''}
+                        aria-expanded={menu.ariaExpanded}
+                        aria-hidden="true"
+                        className={`fr-icon-${menu.icon} fr-mr-1w ${menu.url === currentPath ? styles['element-selectionne-text'] : ''}`}
+                      />
+                      {menu.label}
+                    </Link>
+                  </li>
+                  {menu.sousMenu ?
+                    <div
+                      className="fr-collapse"
+                      id={menu.ariaControls}
+                    >
+                      <ul className="fr-sidemenu__list">
+                        {menu.sousMenu.map((sousMenuElement) => (
+                          <li
+                            className={`fr-sidemenu__item ${sousMenuElement.url === currentPath ? styles['element-selectionne'] : ''}`}
+                            key={sousMenuElement.url}
+                          >
+                            <a
+                              className="fr-sidemenu__link"
+                              href={sousMenuElement.url}
+                              target="_self"
+                            >
+                              {sousMenuElement.label}
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div> : null}
+                </>))}
               <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
                 DONNEES ET STATISTIQUES
               </p>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/export-de-donnees"
+              {menusDonneesEtStatistiques.map((menu) => (
+                <li
+                  className={`fr-sidemenu__item ${menu.url === currentPath ? styles['element-selectionne'] : ''}`}
+                  key={menu.url}
                 >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-download-line fr-mr-1w"
-                  />
-                  {'Export de données'}
-                </Link>
-              </li>
-              <li className="fr-sidemenu__item">
-                <Link
-                  className="fr-sidemenu__link"
-                  href="/rapports"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-line-chart-line fr-mr-1w"
-                  />
-                  {'Rapports'}
-                </Link>
-              </li>
+                  <Link
+                    className="fr-sidemenu__link"
+                    href={menu.url as unknown as URL}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`fr-icon-${menu.icon} fr-mr-1w ${menu.url === currentPath ? styles['element-selectionne-text'] : ''}`}
+                    />
+                    {menu.label}
+                  </Link>
+                </li>
+              ))}
             </>
           ) : null
         }

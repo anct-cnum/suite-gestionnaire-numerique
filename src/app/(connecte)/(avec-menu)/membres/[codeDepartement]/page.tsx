@@ -14,7 +14,7 @@ export default function MembresController({ params }: PageProps): ReactElement {
   }
 
   return (
-    <Title icon="">
+    <Title icon="compass-3-line">
       Membres
     </Title>
   )
