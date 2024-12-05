@@ -12,7 +12,7 @@ describe('réinviter un utilisateur', () => {
 
   it('étant donné que l’utilisateur courant peut gérer l’utilisateur à réinviter, quand il le réinvite, la date d’invitation est mise à jour puis un e-mail lui est envoyé', async () => {
     // GIVEN
-    const date = new Date('2024-01-01')
+    const date = new Date('2023-02-03')
     const repository = new RepositorySpy()
     const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, date)
     const command = {
