@@ -1,5 +1,7 @@
 import { fireEvent, render, within, screen } from '@testing-library/react'
+import { Mock } from 'vitest'
 
+import { renderComponent } from '../../testHelper'
 import Gouvernance from '../Gouvernance'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -102,5 +104,46 @@ describe('comitologie', () => {
     // THEN
     const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
     expect(enregistrer).toHaveAttribute('disabled')
+  })
+
+  it('quand je remplis tous les champs du formulaire d’ajout de comitologie et que je l’envoie, alors il est validé', () => {
+    // GIVEN
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date(2024, 11, 12, 13))
+    const ajouterUnComiteAction = vi.fn(async () => Promise.resolve())
+    window.dsfr = (): {modal: {conceal: Mock}} => ({
+      modal: {
+        conceal: vi.fn(),
+      },
+    })
+
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, { ajouterUnComiteAction })
+    const comitologie = screen.getByRole('region', { name: 'Comitologie' })
+    const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
+    fireEvent.click(ajouter)
+
+    // WHEN
+    const ajouterUnComiteDrawer = screen.getByRole('dialog')
+    const commentaire = within(ajouterUnComiteDrawer).getByLabelText('Laissez ici un commentaire général sur le comité')
+    fireEvent.change(commentaire, { target: { value: 'commentaire' } })
+    const date = within(ajouterUnComiteDrawer).getByLabelText('Date du prochain comité')
+    fireEvent.change(date, { target: { value: '2024-12-12' } })
+    const strategique = within(ajouterUnComiteDrawer).getByLabelText('Stratégique')
+    fireEvent.click(strategique)
+    const mensuelle = within(ajouterUnComiteDrawer).getByLabelText('Mensuelle')
+    fireEvent.click(mensuelle)
+    const enregistrer = within(ajouterUnComiteDrawer).getByRole('button', { name: 'Enregistrer' })
+    fireEvent.click(enregistrer)
+
+    // THEN
+    expect(ajouterUnComiteAction).toHaveBeenCalledWith({
+      commentaire: 'commentaire',
+      date: '2024-12-12',
+      frequence: 'mensuelle',
+      gouvernanceId: '',
+      type: 'strategique',
+    })
+    vi.useRealTimers()
   })
 })
