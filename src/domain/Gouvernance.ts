@@ -52,7 +52,7 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
     value: string
   ) {
     super({
-      dateDeModification: dateDeModification.toString(),
+      dateDeModification: dateDeModification.toJSON(),
       uidUtilisateurAyantModifie: uidUtilisateurAyantModifie.state.value,
       value,
     })
