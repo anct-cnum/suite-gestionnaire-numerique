@@ -14,7 +14,7 @@ export default function FeuillesDeRouteController({ params }: PageProps): ReactE
   }
 
   return (
-    <Title icon="">
+    <Title icon="compass-3-line">
       Feuilles de route
     </Title>
   )

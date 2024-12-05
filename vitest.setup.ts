@@ -24,6 +24,7 @@ expect.extend({
 
 vi.mock('next/navigation', () => {
   return {
+    usePathname: vi.fn(),
     useRouter: vi.fn(),
     useSearchParams: vi.fn(),
   }
