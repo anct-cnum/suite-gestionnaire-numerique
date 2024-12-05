@@ -28,10 +28,12 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       Gouvernance.create({
-        dateDeModificationNoteDeContexte: new Date(0),
-        noteDeContexte: contenu,
+        noteDeContexte: {
+          contenu,
+          dateDeModificationNoteDeContexte: new Date(0),
+          uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid),
+        },
         uid: uidGouvernance,
-        uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid),
       }).state
     )
     expect(result).toBe('OK')
@@ -41,8 +43,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new UtilisateurRepositorySpy(),
-      new Date(0)
+      new UtilisateurRepositorySpy()
     )
 
     // WHEN
@@ -59,8 +60,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new UtilisateurInexistantRepositorySpy(),
-      new Date(0)
+      new UtilisateurInexistantRepositorySpy()
     )
 
     // WHEN
@@ -86,10 +86,12 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       Gouvernance.create({
-        dateDeModificationNoteDeContexte: new Date(0),
-        noteDeContexte: contenu,
+        noteDeContexte: {
+          contenu,
+          dateDeModificationNoteDeContexte: new Date(0),
+          uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid),
+        },
         uid: uidGouvernance,
-        uidUtilisateurAyantModifieNoteDeContexte: new UtilisateurUid(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'fooId' } }).state.uid),
       })
     )
   }

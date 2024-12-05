@@ -17,18 +17,20 @@ export class Gouvernance extends Entity<GouvernanceState> {
   }
 
   static create({
-    dateDeModificationNoteDeContexte,
     noteDeContexte,
-    uidUtilisateurAyantModifieNoteDeContexte,
     uid,
   }: FactoryParams): Gouvernance {
+    const noteDeContexteAjoutee = noteDeContexte
+      ? new NoteDeContexte(
+        noteDeContexte.dateDeModificationNoteDeContexte,
+        noteDeContexte.uidUtilisateurAyantModifieNoteDeContexte,
+        noteDeContexte.contenu
+      )
+      : undefined
+
     return new Gouvernance(
       new GouvernanceUid(uid),
-      new NoteDeContexte(
-        dateDeModificationNoteDeContexte,
-        uidUtilisateurAyantModifieNoteDeContexte,
-        noteDeContexte
-      )
+      noteDeContexteAjoutee
     )
   }
 
@@ -63,9 +65,11 @@ type GouvernanceState = Readonly<{
 }>
 
 type FactoryParams = Readonly<{
-  dateDeModificationNoteDeContexte: Date
-  noteDeContexte: string
-  uidUtilisateurAyantModifieNoteDeContexte: UtilisateurUid
+  noteDeContexte?: Readonly<{
+    contenu: string
+    dateDeModificationNoteDeContexte: Date
+    uidUtilisateurAyantModifieNoteDeContexte: UtilisateurUid
+  }>
   uid: string
 }>
 
