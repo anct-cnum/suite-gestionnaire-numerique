@@ -19,13 +19,13 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(menuItems).toHaveLength(4)
 
     const rechercher = within(menuItems[0]).getByRole('link', { name: 'Rechercher' })
-    expect(rechercher).toHaveAttribute('href', '/tableau-de-bord')
+    expect(rechercher).toHaveAttribute('href', '/rechercher')
 
     const aide = within(menuItems[1]).getByRole('link', { name: 'Aide' })
-    expect(aide).toHaveAttribute('href', '/tableau-de-bord')
+    expect(aide).toHaveAttribute('href', '/aide')
 
     const notifications = within(menuItems[2]).getByRole('link', { name: 'Notifications' })
-    expect(notifications).toHaveAttribute('href', '/tableau-de-bord')
+    expect(notifications).toHaveAttribute('href', '/notifications')
 
     const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
     expect(monCompte).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
