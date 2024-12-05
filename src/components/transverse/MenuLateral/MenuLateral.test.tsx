@@ -19,12 +19,14 @@ describe('menu lateral', () => {
 
   it.each([
     { index: 1, name: 'Gouvernance', url: '/gouvernance/93' },
-    { index: 5, name: 'Financements', url: '/' },
-    { index: 6, name: 'Bénéficiaires', url: '/' },
-    { index: 7, name: 'Aidants et médiateurs', url: '/' },
-    { index: 8, name: 'Lieux d’inclusion', url: '/' },
-    { index: 9, name: 'Export de données', url: '/' },
-    { index: 10, name: 'Rapports', url: '/' },
+    { index: 2, name: 'Membres', url: '/membres/93' },
+    { index: 3, name: 'Feuilles de route', url: '/feuilles-de-routes/93' },
+    { index: 5, name: 'Financements', url: '/financements' },
+    { index: 6, name: 'Bénéficiaires', url: '/beneficiaires' },
+    { index: 7, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
+    { index: 8, name: 'Lieux d’inclusion', url: '/lieux-inclusion' },
+    { index: 9, name: 'Export de données', url: '/export-de-donnees' },
+    { index: 10, name: 'Rapports', url: '/rapports' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     renderComponent(<MenuLateral />, {
