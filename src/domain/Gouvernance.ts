@@ -64,7 +64,7 @@ type GouvernanceState = Readonly<{
   uid: GouvernanceUidState
 }>
 
-type FactoryParams = Readonly<{
+export type FactoryParams = Readonly<{
   noteDeContexte?: Readonly<{
     contenu: string
     dateDeModificationNoteDeContexte: Date
