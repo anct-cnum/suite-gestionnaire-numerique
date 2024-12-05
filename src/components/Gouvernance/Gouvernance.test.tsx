@@ -439,4 +439,47 @@ describe('gouvernance', () => {
     const lireMoins = screen.getByRole('button', { name: 'Lire moins' })
     expect(lireMoins).toBeInTheDocument()
   })
+
+  it('quand je clique sur une feuille de route alors un drawer souvre avec les détails de la feuille de route', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      feuillesDeRoute: [
+        {
+          budgetGlobal: 145_000,
+          nom: 'Feuille de route inclusion 1',
+          totalActions: 3,
+        },
+      ],
+    }))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
+    fireEvent.click(feuilleDeRoute)
+
+    // THEN
+    const drawer = screen.getByRole('dialog')
+    const titreDrawer = within(drawer).getByRole('heading', { level: 2, name: 'Feuille de route inclusion 1' })
+    expect(titreDrawer).toBeInTheDocument()
+    const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
+    expect(responsableLabel).toBeInTheDocument()
+    const budgetTotalLabel = within(drawer).getByText('Budget total des actions')
+    expect(budgetTotalLabel).toBeInTheDocument()
+    const budget = within(drawer).getByText('145 000€')
+    expect(budget).toBeInTheDocument()
+    const montantDeLaSubventionDemandeeLabel = within(drawer).getByText('Montant de la subvention demandée')
+    expect(montantDeLaSubventionDemandeeLabel).toBeInTheDocument()
+    const montantDeLaSubventionAccordeeLabel = within(drawer).getByText('Montant de la subvention accordée')
+    expect(montantDeLaSubventionAccordeeLabel).toBeInTheDocument()
+    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaires des subventions')
+    expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
+    const montantDeLaSubventionFormationAccordeeLabel = within(drawer).getByText('Montant de la subvention formation accordée')
+    expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
+    const beneficiairesDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
+    expect(beneficiairesDesSubventionsFormationLabel).toBeInTheDocument()
+    const boutonPlusDeDetails = within(drawer).getByRole('button', { name: 'Plus de détails' })
+    expect(boutonPlusDeDetails).toBeInTheDocument()
+    const boutonTelechargerPdf = within(drawer).getByRole('button', { name: 'Télécharger le document PDF' })
+    expect(boutonTelechargerPdf).toBeInTheDocument()
+  })
 })
