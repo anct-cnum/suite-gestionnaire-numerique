@@ -43,7 +43,7 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
         options={frequences}
       >
         <p className="fr-label fr-mb-0">
-          A quelle fréquence se réunit le comité ?
+          À quelle fréquence se réunit le comité ?
           {' '}
           <span className="color-red">
             *
@@ -81,6 +81,7 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
     const form = new FormData(event.currentTarget)
     const [type, frequence, date, commentaire] = [...form.values()].map((value) => value as string)
     await ajouterUnComiteAction({ commentaire, date, frequence, gouvernanceId: '', type })
+    // Stryker disable next-line BooleanLiteral
     setIsOpen(false)
     window.dsfr(dialogRef.current).modal.conceal();
     (event.target as HTMLFormElement).reset()

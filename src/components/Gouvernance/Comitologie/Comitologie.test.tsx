@@ -42,7 +42,7 @@ describe('comitologie', () => {
     expect(consultatif).toHaveAttribute('value', 'consultatif')
     const autre = within(ajouterUnComiteDrawer).getByLabelText('Autre')
     expect(autre).toHaveAttribute('value', 'autre')
-    const frequenceComiteQuestion = within(ajouterUnComiteDrawer).getByText('A quelle fréquence se réunit le comité ?', { selector: 'p' })
+    const frequenceComiteQuestion = within(ajouterUnComiteDrawer).getByText('À quelle fréquence se réunit le comité ?', { selector: 'p' })
     expect(frequenceComiteQuestion).toBeInTheDocument()
     const mensuelle = within(ajouterUnComiteDrawer).getByLabelText('Mensuelle')
     expect(mensuelle).toHaveAttribute('value', 'mensuelle')

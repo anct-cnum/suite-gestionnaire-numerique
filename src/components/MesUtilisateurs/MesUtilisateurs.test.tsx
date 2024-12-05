@@ -694,16 +694,18 @@ describe('mes utilisateurs', () => {
       fireEvent.click(inviter)
 
       // THEN
-      const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-      const titre = await within(formulaireInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const drawerInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+      const titre = await within(drawerInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
       expect(titre).toBeInTheDocument()
 
-      const champsObligatoires = within(formulaireInvitation).getByText(
+      const champsObligatoires = within(drawerInvitation).getByText(
         matchWithoutMarkup('Les champs avec * sont obligatoires.'),
         { selector: 'p' }
       )
       expect(champsObligatoires).toBeInTheDocument()
 
+      const formulaireInvitation = screen.getByRole('form', { name: 'Inviter un utilisateur' })
+      expect(formulaireInvitation).toHaveAttribute('method', 'dialog')
       const nom = within(formulaireInvitation).getByLabelText('Nom *')
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
@@ -719,49 +721,51 @@ describe('mes utilisateurs', () => {
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
       expect(email).toHaveAttribute('type', 'email')
+      expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
-      const roleQuestion = within(formulaireInvitation).getByText(
+      const fieldset = within(formulaireInvitation).getByRole('group')
+      const roleQuestion = within(fieldset).getByText(
         matchWithoutMarkup('Quel rôle souhaitez-vous lui attribuer ? *'),
         { selector: 'legend' }
       )
       expect(roleQuestion).toBeInTheDocument()
 
-      const administrateurDispositif = within(formulaireInvitation).getByLabelText('Administrateur dispositif')
+      const administrateurDispositif = within(fieldset).getByLabelText('Administrateur dispositif')
       expect(administrateurDispositif).toBeRequired()
       expect(administrateurDispositif).toHaveAttribute('name', 'attributionRole')
       expect(administrateurDispositif).toHaveAttribute('id', 'Administrateur dispositif')
 
-      const gestionnaireRegion = within(formulaireInvitation).getByLabelText('Gestionnaire région')
+      const gestionnaireRegion = within(fieldset).getByLabelText('Gestionnaire région')
       expect(gestionnaireRegion).toBeRequired()
       expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
 
-      const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
+      const gestionnaireDepartement = within(fieldset).getByLabelText('Gestionnaire département')
       expect(gestionnaireDepartement).toBeRequired()
       expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
 
-      const gestionnaireGroupement = within(formulaireInvitation).getByLabelText('Gestionnaire groupement')
+      const gestionnaireGroupement = within(fieldset).getByLabelText('Gestionnaire groupement')
       expect(gestionnaireGroupement).toBeRequired()
       expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
 
-      const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
+      const gestionnaireStructure = within(fieldset).getByLabelText('Gestionnaire structure')
       expect(gestionnaireStructure).toBeRequired()
       expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
       expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
-      const instructeur = within(formulaireInvitation).getByLabelText('Instructeur')
+      const instructeur = within(fieldset).getByLabelText('Instructeur')
       expect(instructeur).toBeRequired()
       expect(instructeur).toHaveAttribute('name', 'attributionRole')
       expect(instructeur).toHaveAttribute('id', 'Instructeur')
 
-      const pilotePolitiquePublique = within(formulaireInvitation).getByLabelText('Pilote politique publique')
+      const pilotePolitiquePublique = within(fieldset).getByLabelText('Pilote politique publique')
       expect(pilotePolitiquePublique).toBeRequired()
       expect(pilotePolitiquePublique).toHaveAttribute('name', 'attributionRole')
       expect(pilotePolitiquePublique).toHaveAttribute('id', 'Pilote politique publique')
 
-      const supportAnimation = within(formulaireInvitation).getByLabelText('Support animation')
+      const supportAnimation = within(fieldset).getByLabelText('Support animation')
       expect(supportAnimation).toBeRequired()
       expect(supportAnimation).toHaveAttribute('name', 'attributionRole')
       expect(supportAnimation).toHaveAttribute('id', 'Support animation')
@@ -960,6 +964,7 @@ describe('mes utilisateurs', () => {
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
       expect(email).toHaveAttribute('type', 'email')
+      expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
       const roleQuestion = within(formulaireInvitation).getByText(
         matchWithoutMarkup('Rôle attribué à cet utilisateur :'),
@@ -1089,6 +1094,7 @@ describe('mes utilisateurs', () => {
       fireEvent.click(inviter)
       const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
       const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+
       // WHEN
       const nom = within(formulaireInvitation).getByLabelText('Nom *')
       fireEvent.change(nom, { target: { value: 'Tartempion' } })

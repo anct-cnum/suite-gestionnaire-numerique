@@ -20,12 +20,12 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
       <Drawer
         boutonFermeture="Fermer"
         id={drawerComiteId}
+        // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelComiteId}
         ref={drawerRef}
         setIsOpen={setIsDrawerOpen}
-        // Stryker disable next-line BooleanLiteral
       >
         <AjouterUnComite
           dialogRef={drawerRef}

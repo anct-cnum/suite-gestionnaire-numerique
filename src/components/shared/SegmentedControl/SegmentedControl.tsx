@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react'
+import { PropsWithChildren, ReactElement, useState } from 'react'
 
 export default function SegmentedControl({ options, children, name }: SegmentedControlProps): ReactElement {
   const [checked, setChecked] = useState(options[0].id)
@@ -37,11 +37,10 @@ export default function SegmentedControl({ options, children, name }: SegmentedC
   )
 }
 
-type SegmentedControlProps = Readonly<{
+type SegmentedControlProps = PropsWithChildren<Readonly<{
+  name: string
   options: ReadonlyArray<{
-    label: string,
+    label: string
     id: string
   }>
-  children: ReactElement
-  name: string
-}>
+}>>
