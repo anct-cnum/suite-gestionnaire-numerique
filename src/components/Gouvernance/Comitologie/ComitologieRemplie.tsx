@@ -1,32 +1,62 @@
-import { ReactElement } from 'react'
+'use client'
 
+import { ReactElement, useRef, useState } from 'react'
+
+import Drawer from '../../shared/Drawer/Drawer'
 import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
+import AjouterUnComite from './AjouterUnComite'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ComitologieRemplie({ comites }: ComitologieRemplieProps): ReactElement {
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerComiteId = 'drawer-comite'
+  const labelComiteId = 'drawer-comite-titre'
+  const drawerRef = useRef<HTMLDialogElement>(null)
+
   return (
-    <SectionRemplie
-      button={(
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
-          type="button"
-        >
-          Ajouter
-        </button>
-      )}
-      id="comitologie"
-      title="Comitologie"
-    >
-      <Table
-        enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
-        hideHead="fr-sr-only"
-        titre="Comités"
+    <>
+      <Drawer
+        boutonFermeture="Fermer"
+        id={drawerComiteId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelComiteId}
+        ref={drawerRef}
+        setIsOpen={setIsDrawerOpen}
+        // Stryker disable next-line BooleanLiteral
       >
-        {
-          comites.map((comite) => {
-            return (
-              <tr key={comite.nom}>
+        <AjouterUnComite
+          dialogRef={drawerRef}
+          setIsOpen={setIsDrawerOpen}
+        />
+      </Drawer>
+      <SectionRemplie
+        button={(
+          <button
+            aria-controls={drawerComiteId}
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
+            data-fr-opened="false"
+            onClick={() => {
+              setIsDrawerOpen(true)
+            }}
+            type="button"
+          >
+            Ajouter
+          </button>
+        )}
+        id="comitologie"
+        title="Comitologie"
+      >
+        <Table
+          enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
+          hideHead="fr-sr-only"
+          titre="Comités"
+        >
+          {
+            comites.map(({ nom, dateProchainComite, periodicite }) => (
+              <tr key={nom}>
                 <td>
                   <span
                     aria-hidden="true"
@@ -34,17 +64,17 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
                   />
                 </td>
                 <td className="font-weight-700">
-                  {`${comite.nom} : ${comite.dateProchainComite}`}
+                  {`${nom} : ${dateProchainComite}`}
                 </td>
                 <td className="color-grey">
-                  {comite.periodicite}
+                  {periodicite}
                 </td>
               </tr>
-            )
-          })
-        }
-      </Table>
-    </SectionRemplie>
+            ))
+          }
+        </Table>
+      </SectionRemplie>
+    </>
   )
 }
 

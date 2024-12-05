@@ -6,6 +6,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
+import { ajouterUnComiteAction } from '../../app/api/actions/ajouterUnComiteAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
@@ -26,6 +27,7 @@ export default function ClientContext({
 
   const clientContextProviderValue = useMemo(
     () => ({
+      ajouterUnComiteAction,
       changerMonRoleAction,
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
@@ -57,6 +59,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
   pathname: __next_route_internal_types__.StaticRoutes
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction,
+  ajouterUnComiteAction: typeof ajouterUnComiteAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
