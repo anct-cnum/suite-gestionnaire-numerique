@@ -18,6 +18,7 @@ export function renderComponent(
   clientContextProviderValueOverride?: Partial<ClientContextProviderValue>
 ): RenderResult {
   const clientContextProviderDefaultValue = {
+    ajouterUnComiteAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),

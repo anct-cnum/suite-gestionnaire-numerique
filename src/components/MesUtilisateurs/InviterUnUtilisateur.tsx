@@ -133,7 +133,7 @@ export default function InviterUnUtilisateur({
             /> : null
         }
         <button
-          className="fr-btn fr-my-2w drawer-invitation-button"
+          className="fr-btn fr-my-2w center-button"
           data-fr-opened="false"
           type="submit"
         >
