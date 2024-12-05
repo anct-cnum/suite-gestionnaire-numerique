@@ -64,7 +64,7 @@ export default function MenuLateral(): ReactElement {
                     <li className="fr-sidemenu__item">
                       <a
                         className="fr-sidemenu__link"
-                        href="/"
+                        href={`/membres/${sessionUtilisateurViewModel.codeDepartement}`}
                         target="_self"
                       >
                         Membres
@@ -73,7 +73,7 @@ export default function MenuLateral(): ReactElement {
                     <li className="fr-sidemenu__item">
                       <a
                         className="fr-sidemenu__link"
-                        href="/"
+                        href={`/feuilles-de-routes/${sessionUtilisateurViewModel.codeDepartement}`}
                         target="_self"
                       >
                         Feuilles de route
@@ -97,7 +97,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/financements"
                 >
                   <span
                     aria-hidden="true"
@@ -109,7 +109,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/beneficiaires"
                 >
                   <span
                     aria-hidden="true"
@@ -121,7 +121,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/aidants-et-mediateurs"
                 >
                   <span
                     aria-hidden="true"
@@ -134,7 +134,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/lieux-inclusion"
                 >
                   <span
                     aria-hidden="true"
@@ -149,7 +149,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/export-de-donnees"
                 >
                   <span
                     aria-hidden="true"
@@ -161,7 +161,7 @@ export default function MenuLateral(): ReactElement {
               <li className="fr-sidemenu__item">
                 <Link
                   className="fr-sidemenu__link"
-                  href="/"
+                  href="/rapports"
                 >
                   <span
                     aria-hidden="true"
