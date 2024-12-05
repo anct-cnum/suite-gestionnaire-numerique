@@ -12,6 +12,7 @@ function Drawer({
   isFixedWidth,
   labelId,
   children,
+  icon,
 }: DrawerProps,
 ref: Ref<HTMLDialogElement>): ReactNode {
   // istanbul ignore next @preserve
@@ -30,15 +31,25 @@ ref: Ref<HTMLDialogElement>): ReactNode {
         <div className="fr-grid-row fr-grid-row--right">
           <div className={`fr-col-5 ${styles['modal-box']} ${boxSize}`}>
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
-              <button
-                aria-controls={id}
-                className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
-                onClick={() => {
-                  setIsOpen(false)
-                }}
-                title={boutonFermeture}
-                type="button"
-              />
+              <div className={`fr-modal__header ${styles['fr-modal__header']}`}>
+                {icon !== undefined ? (
+                  <h1 className="fr-mb-0">
+                    <span
+                      aria-hidden="true"
+                      className={`fr-icon-${icon} icon-title`}
+                    />
+                  </h1>
+                ) : null}
+                <button
+                  aria-controls={id}
+                  className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
+                  onClick={() => {
+                    setIsOpen(false)
+                  }}
+                  title={boutonFermeture}
+                  type="button"
+                />
+              </div>
               <div className={`fr-modal__content ${styles['fr-modal__content']}`}>
                 {children}
               </div>
@@ -57,4 +68,5 @@ type DrawerProps = PropsWithChildren<Readonly<{
   boutonFermeture: string
   labelId: string
   isFixedWidth: boolean
+  icon?: string
 }>>
