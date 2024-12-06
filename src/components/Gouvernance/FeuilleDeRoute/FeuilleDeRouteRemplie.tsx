@@ -8,7 +8,8 @@ import SectionRemplie from '../SectionRemplie'
 import SubSectionTitle from '../SubSectionTitle'
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import DrawerHeaderIcon from '@/components/shared/Drawer/DrawerHeaderIcon'
+import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function FeuilleDeRouteRemplie({
   feuillesDeRoute,
@@ -16,7 +17,7 @@ export default function FeuilleDeRouteRemplie({
   nombreDeFeuillesDeRoute,
 }: FeuilleDeRouteRemplieProps): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [feuilleDeRoute, setFeuilleDeRoute] = useState<NonNullable<GouvernanceViewModel['sectionFeuillesDeRoute']['feuillesDeRoute']>[0]>(feuillesDeRoute[0])
+  const [feuilleDeRoute, setFeuilleDeRoute] = useState<FeuilleDeRouteViewModel>(feuillesDeRoute[0])
   const drawerFeuilleDeRouteId = 'drawerFeuilleDeRouteId'
   const labelFeuilleDeRouteId = 'labelFeuilleDeRouteId'
   return (
@@ -80,8 +81,8 @@ export default function FeuilleDeRouteRemplie({
         </Table>
       </SectionRemplie>
       <Drawer
-        boutonFermeture="Fermer le menu"
-        icon="survey-line"
+        boutonFermeture="Fermer les détails de la feuille de route"
+        icon={<DrawerHeaderIcon iconName="survey-line" />}
         id={drawerFeuilleDeRouteId}
         isFixedWidth={false}
         isOpen={isDrawerOpen}

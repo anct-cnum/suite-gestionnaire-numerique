@@ -32,14 +32,7 @@ ref: Ref<HTMLDialogElement>): ReactNode {
           <div className={`fr-col-5 ${styles['modal-box']} ${boxSize}`}>
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
               <div className={`fr-modal__header ${styles['fr-modal__header']}`}>
-                {icon !== undefined ? (
-                  <h1 className="fr-mb-0">
-                    <span
-                      aria-hidden="true"
-                      className={`fr-icon-${icon} icon-title`}
-                    />
-                  </h1>
-                ) : null}
+                {icon}
                 <button
                   aria-controls={id}
                   className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
@@ -68,5 +61,5 @@ type DrawerProps = PropsWithChildren<Readonly<{
   boutonFermeture: string
   labelId: string
   isFixedWidth: boolean
-  icon?: string
+  icon?: ReactNode
 }>>
