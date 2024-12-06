@@ -11,7 +11,7 @@ export type UnUtilisateurReadModel = Readonly<{
   prenom: string
   role: Readonly<{
     categorie: string
-    groupe: string
+    doesItBelongToGroupeAdmin: boolean
     nom: string
     organisation: string
     rolesGerables: ReadonlyArray<string>

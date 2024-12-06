@@ -11,7 +11,7 @@ export function createSessionUtilisateurPresenter(
     nom: utilisateurReadModel.nom,
     prenom: utilisateurReadModel.prenom,
     role: {
-      groupe: role.groupe,
+      doesItBelongToGroupeAdmin: role.doesItBelongToGroupeAdmin,
       libelle: role.organisation,
       nom: role.nom,
       pictogramme: role.categorie,
@@ -29,7 +29,7 @@ export type SessionUtilisateurViewModel = Readonly<{
   nom: string
   prenom: string
   role: Readonly<{
-    groupe: string
+    doesItBelongToGroupeAdmin: boolean
     libelle: string
     nom: string
     pictogramme: string
