@@ -60,6 +60,7 @@ describe('menu lateral', () => {
     const menus = within(navigation).getAllByRole('listitem')
     expect(menus).toHaveLength(11)
     const menuGouvernance = within(menus[1]).getByRole('link', { name: 'Gouvernance' })
+    expect (menuGouvernance).toHaveAttribute('aria-controls', 'fr-sidemenu-gouvernance')
     fireEvent.click(menuGouvernance)
     const sousMenuMembres = screen.getByRole('link', { name: 'Membres' })
     expect (sousMenuMembres).toBeInTheDocument()
