@@ -112,7 +112,7 @@ export default function ModifierMonCompte({
             onClick={() => {
               setIsOpen(false)
             }}
-            type="button"
+            type="reset"
           >
             Annuler
           </button>
