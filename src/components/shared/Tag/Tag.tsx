@@ -1,16 +1,13 @@
-import { ReactElement, ReactNode } from 'react'
+import Link from 'next/link'
+import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Tag({ children }: TagProps): ReactElement {
+export default function Tag({ children }: PropsWithChildren): ReactElement {
   return (
-    <a
+    <Link
       className="fr-tag"
       href="/"
     >
       {children}
-    </a>
+    </Link>
   )
-}
-
-interface TagProps {
-  readonly children: ReactNode;
 }

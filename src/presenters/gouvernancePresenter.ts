@@ -183,7 +183,7 @@ type ComiteViewModel = Readonly<{
   periodicite: string
 }>
 
-type FeuilleDeRouteViewModel = Readonly<{
+export type FeuilleDeRouteViewModel = Readonly<{
   budgetGlobal: string
   nom: string
   totalActions: string

@@ -1,26 +1,24 @@
+import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import Tag from '@/components/shared/Tag/Tag'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
 
-type FeuilleDeRoute = NonNullable<GouvernanceViewModel['sectionFeuillesDeRoute']['feuillesDeRoute']>[number];
-interface DetailsFeuilleDeRouteProps { readonly feuilleDeRoute: FeuilleDeRoute }
-
-export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleDeRouteProps):ReactElement {
+export default function DetailsFeuilleDeRoute({ feuilleDeRoute }: DetailsFeuilleDeRouteProps): ReactElement {
   return (
     <>
-      <h2
-        className="color-blue-france fr-mt-5w"
+      <h1
+        className="color-blue-france fr-mt-5w fr-h2"
       >
         {feuilleDeRoute.nom}
-      </h2>
+      </h1>
       <div
         className="fr-mb-2w"
       >
         <div className="color-grey">
           Responsable de la feuille de route
         </div>
-        <Tag >
+        <Tag>
           CC des Monts du Lyonnais
         </Tag>
       </div>
@@ -31,7 +29,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
           Budget total des actions
         </div>
         <div className="font-weight-700">
-          {`${feuilleDeRoute.budgetGlobal}€`}
+          {`${feuilleDeRoute.budgetGlobal} €`}
         </div>
       </div>
       <div
@@ -41,7 +39,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
           Montant de la subvention demandée
         </div>
         <div className="font-weight-700">
-          30 000€
+          30 000 €
         </div>
       </div>
       <div
@@ -51,7 +49,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
           Montant de la subvention accordée
         </div>
         <div className="font-weight-700">
-          30 000€
+          30 000 €
         </div>
       </div>
       <div
@@ -71,7 +69,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
           Montant de la subvention formation accordée
         </div>
         <div className="font-weight-700">
-          20 000€
+          20 000 €
         </div>
       </div>
       <div
@@ -84,18 +82,20 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
           Croix Rouge Française
         </Tag>
       </div>
-      <ul className="fr-btns-group">
+      <ul
+        className="fr-btns-group--icon-left fr-btns-group"
+      >
         <li>
-          <button
+          <Link
             className="fr-btn fr-btn--secondary"
-            type="button"
+            href="/"
           >
             Plus de détails
-          </button>
+          </Link>
         </li>
         <li>
           <button
-            className="fr-btn fr-btn--secondary"
+            className="fr-btn fr-btn--secondary fr-icon-download-line"
             type="button"
           >
             Télécharger le document PDF
@@ -105,3 +105,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute }:DetailsFeuilleD
     </>
   )
 }
+
+type DetailsFeuilleDeRouteProps = Readonly<{
+   feuilleDeRoute: FeuilleDeRouteViewModel
+}>
