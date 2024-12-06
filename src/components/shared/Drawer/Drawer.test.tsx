@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 
 import Drawer from './Drawer'
+import DrawerHeaderIcon from './DrawerHeaderIcon'
 
 describe('drawer', () => {
   it('quand j’appelle le drawer alors j’affiche le bouton fermer et son contenu', () => {
@@ -55,5 +56,29 @@ describe('drawer', () => {
 
     // THEN
     expect(setIsOpen).toHaveBeenCalledWith(false)
+  })
+
+  it('quand j’appelle le drawer avec une icône alors j’affiche l’icône', () => {
+    // WHEN
+    render(
+      <Drawer
+        boutonFermeture="Fermer le menu"
+        icon={<DrawerHeaderIcon iconName="survey-line" />}
+        id="drawerId"
+        isFixedWidth={true}
+        isOpen={true}
+        labelId="labelId"
+        setIsOpen={vi.fn()}
+      >
+        contenu
+      </Drawer>
+    )
+
+    // THEN
+    const drawer = screen.getByRole('dialog')
+    const icon = within(drawer).getByText('', {
+      selector: 'span.fr-icon-survey-line',
+    })
+    expect(icon).toHaveClass('fr-icon-survey-line', 'icon-title')
   })
 })

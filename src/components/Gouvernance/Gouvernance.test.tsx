@@ -440,7 +440,7 @@ describe('gouvernance', () => {
     expect(lireMoins).toBeInTheDocument()
   })
 
-  it('quand je clique sur une feuille de route alors un drawer souvre avec les détails de la feuille de route', () => {
+  it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
@@ -459,13 +459,13 @@ describe('gouvernance', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog')
-    const titreDrawer = within(drawer).getByRole('heading', { level: 2, name: 'Feuille de route inclusion 1' })
+    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
     expect(titreDrawer).toBeInTheDocument()
     const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
     expect(responsableLabel).toBeInTheDocument()
     const budgetTotalLabel = within(drawer).getByText('Budget total des actions')
     expect(budgetTotalLabel).toBeInTheDocument()
-    const budget = within(drawer).getByText('145 000€')
+    const budget = within(drawer).getByText('145 000 €')
     expect(budget).toBeInTheDocument()
     const montantDeLaSubventionDemandeeLabel = within(drawer).getByText('Montant de la subvention demandée')
     expect(montantDeLaSubventionDemandeeLabel).toBeInTheDocument()
@@ -477,9 +477,12 @@ describe('gouvernance', () => {
     expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
     const beneficiairesDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
     expect(beneficiairesDesSubventionsFormationLabel).toBeInTheDocument()
-    const boutonPlusDeDetails = within(drawer).getByRole('button', { name: 'Plus de détails' })
-    expect(boutonPlusDeDetails).toBeInTheDocument()
-    const boutonTelechargerPdf = within(drawer).getByRole('button', { name: 'Télécharger le document PDF' })
+    const list = within(drawer).getByRole('list')
+    const listItems = within(list).getAllByRole('listitem')
+    expect(listItems).toHaveLength(2)
+    const boutonPlusDeDetails = within(listItems[0]).getByRole('link', { name: 'Plus de détails' })
+    expect(boutonPlusDeDetails).toHaveAttribute('href', '/')
+    const boutonTelechargerPdf = within(listItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
     expect(boutonTelechargerPdf).toBeInTheDocument()
   })
 })
