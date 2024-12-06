@@ -75,27 +75,33 @@ export default function MenuLateral(): ReactElement {
         Menu inclusion numérique
       </div>
       <ul className="fr-sidemenu__list">
-        <li className="fr-sidemenu__item">
+        <li className={`fr-sidemenu__item ${currentPath === '/tableau-de-bord' ? styles['element-selectionne'] : ''}`}>
           <Link
             className="fr-sidemenu__link"
-            href="/tableau-de-bord"
+            href={{ pathname: '/tableau-de-bord' }}
           >
             <span
               aria-hidden="true"
-              className="fr-icon-dashboard-3-line fr-mr-1w"
+              className={`fr-icon-dashboard-3-line fr-mr-1w ${currentPath === '/tableau-de-bord' ? styles['element-selectionne-text'] : ''}`}
             />
-            {'Tableau de bord'}
+            <span
+              className={currentPath === '/tableau-de-bord' ? styles['element-selectionne-text'] : ''}
+            >
+              Tableau de bord
+            </span>
           </Link>
         </li>
-        {
-          sessionUtilisateurViewModel.displayLiensGouvernance ? (
-            <>
-              <p
-                className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}
-              >
-                PILOTAGE
-              </p>
-              <hr className="fr-hr fr-mt-3v fr-col-12" />
+      </ul>
+      {
+        sessionUtilisateurViewModel.displayLiensGouvernance ? (
+          <>
+            <p
+              className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}
+            >
+              PILOTAGE
+            </p>
+            <hr className="fr-hr fr-mt-3v fr-col-12" />
+            <ul className="fr-sidemenu__list">
               {menusPilotage.map((menu) => (
                 <Fragment key={menu.url}>
                   <li
@@ -140,9 +146,11 @@ export default function MenuLateral(): ReactElement {
                       </ul>
                     </div> : null}
                 </Fragment>))}
-              <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
-                DONNEES ET STATISTIQUES
-              </p>
+            </ul>
+            <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
+              DONNEES ET STATISTIQUES
+            </p>
+            <ul className="fr-sidemenu__list">
               {menusDonneesEtStatistiques.map((menu) => (
                 <li
                   className={`fr-sidemenu__item ${menu.url === currentPath ? styles['element-selectionne'] : ''}`}
@@ -162,10 +170,10 @@ export default function MenuLateral(): ReactElement {
                   </Link>
                 </li>
               ))}
-            </>
-          ) : null
-        }
-      </ul>
+            </ul>
+          </>
+        ) : null
+      }
     </nav>
   )
 }
