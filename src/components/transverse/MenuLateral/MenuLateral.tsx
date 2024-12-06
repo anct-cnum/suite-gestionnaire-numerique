@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ReactElement, useContext } from 'react'
+import { Fragment, ReactElement, useContext } from 'react'
 
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -82,7 +82,6 @@ export default function MenuLateral(): ReactElement {
           >
             <span
               aria-hidden="true"
-              aria-label="tableau de bord"
               className="fr-icon-dashboard-3-line fr-mr-1w"
             />
             {'Tableau de bord'}
@@ -98,22 +97,25 @@ export default function MenuLateral(): ReactElement {
               </p>
               <hr className="fr-hr fr-mt-3v fr-col-12" />
               {menusPilotage.map((menu) => (
-                <>
+                <Fragment key={menu.url}>
                   <li
                     className={`fr-sidemenu__item ${menu.url === currentPath ? styles['element-selectionne'] : ''}`}
-                    key={menu.url}
                   >
                     <Link
+                      aria-controls={menu.ariaControls ?? ''}
+                      aria-expanded={menu.ariaExpanded}
                       className="fr-sidemenu__link"
-                      href={menu.url as unknown as URL}
+                      href={{ pathname: menu.url }}
                     >
                       <span
-                        aria-controls={menu.ariaControls ?? ''}
-                        aria-expanded={menu.ariaExpanded}
                         aria-hidden="true"
                         className={`fr-icon-${menu.icon} fr-mr-1w ${menu.url === currentPath ? styles['element-selectionne-text'] : ''}`}
                       />
-                      {menu.label}
+                      <span
+                        className={menu.url === currentPath ? styles['element-selectionne-text'] : ''}
+                      >
+                        {menu.label}
+                      </span>
                     </Link>
                   </li>
                   {menu.sousMenu ?
@@ -127,18 +129,17 @@ export default function MenuLateral(): ReactElement {
                             className={`fr-sidemenu__item ${sousMenuElement.url === currentPath ? styles['element-selectionne'] : ''}`}
                             key={sousMenuElement.url}
                           >
-                            <a
+                            <Link
                               className="fr-sidemenu__link"
-                              href={sousMenuElement.url}
-                              target="_self"
+                              href={{ pathname: sousMenuElement.url }}
                             >
                               {sousMenuElement.label}
-                            </a>
+                            </Link>
                           </li>
                         ))}
                       </ul>
                     </div> : null}
-                </>))}
+                </Fragment>))}
               <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
                 DONNEES ET STATISTIQUES
               </p>
@@ -149,13 +150,15 @@ export default function MenuLateral(): ReactElement {
                 >
                   <Link
                     className="fr-sidemenu__link"
-                    href={menu.url as unknown as URL}
+                    href={{ pathname: menu.url }}
                   >
                     <span
                       aria-hidden="true"
                       className={`fr-icon-${menu.icon} fr-mr-1w ${menu.url === currentPath ? styles['element-selectionne-text'] : ''}`}
                     />
-                    {menu.label}
+                    <span className={menu.url === currentPath ? styles['element-selectionne-text'] : ''}>
+                      {menu.label}
+                    </span>
                   </Link>
                 </li>
               ))}
