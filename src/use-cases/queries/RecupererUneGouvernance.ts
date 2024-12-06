@@ -1,3 +1,4 @@
+
 export interface UneGouvernanceReadModelLoader {
   find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
 }
@@ -23,9 +24,23 @@ export type ComiteReadModel = Readonly<{
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{
-  budgetGlobal: number
   nom: string
+  porteur: MembreReadModel
   totalActions: number
+  budgetGlobal: number
+  actions: ReadonlyArray<Action>
+}>
+
+export type Action = Readonly<{
+  nom: action
+  budgetTotal: number
+  montantSubventionDemandee: number
+  montantSubventionAccordee: number
+  montantSubventionFormationAccordee: number
+  montantSubventionFormationDemandee: number
+  beneficiaires:Array<MembreReadModel>
+  beneficiairesSubventionFormation: Array<MembreReadModel>
+  staut: statut
 }>
 
 export type MembreReadModel = Readonly<{
@@ -33,3 +48,11 @@ export type MembreReadModel = Readonly<{
   roles: ReadonlyArray<string>
   type: string
 }>
+
+type action = 'demandeDeSubvention' | 'demandeDeSubventionFormation'
+
+type statut = 'enCours' | 'terminee' | 'annulee'
+
+export const calculerBudgetGlobal = (actions: ReadonlyArray<Action>): number => {
+  return actions.reduce((sum, action) => sum + action.budgetTotal, 0)
+}
