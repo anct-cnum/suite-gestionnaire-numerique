@@ -16,7 +16,7 @@ describe('inviter un utilisateur', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           libelle: 'Rhône',
           nom: 'Administrateur dispositif',
           pictogramme: 'maille',
@@ -125,7 +125,7 @@ describe('inviter un utilisateur', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           libelle: 'Rhône',
           nom: 'Administrateur dispositif',
           pictogramme: 'maille',
@@ -171,7 +171,7 @@ describe('inviter un utilisateur', () => {
       inviterUnUtilisateurAction,
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           libelle: 'Rhône',
           nom: 'Administrateur dispositif',
           pictogramme: 'maille',
@@ -231,7 +231,7 @@ describe('inviter un utilisateur', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           libelle: 'Rhône',
           nom: 'Administrateur dispositif',
           pictogramme: 'maille',
@@ -268,7 +268,7 @@ describe('inviter un utilisateur', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           libelle: 'Rhône',
           nom: 'Gestionnaire département',
           pictogramme: 'maille',
@@ -340,7 +340,7 @@ describe('inviter un utilisateur', () => {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
-            groupe: 'admin',
+            doesItBelongToGroupeAdmin: true,
             libelle: 'Rhône',
             nom: 'Administrateur dispositif',
             pictogramme: 'maille',
@@ -411,7 +411,7 @@ describe('inviter un utilisateur', () => {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
-            groupe: 'admin',
+            doesItBelongToGroupeAdmin: true,
             libelle: 'Rhône',
             nom: 'Administrateur dispositif',
             pictogramme: 'maille',
@@ -481,7 +481,7 @@ describe('inviter un utilisateur', () => {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
-            groupe: 'admin',
+            doesItBelongToGroupeAdmin: true,
             libelle: 'Rhône',
             nom: 'Administrateur dispositif',
             pictogramme: 'maille',
@@ -538,7 +538,7 @@ describe('inviter un utilisateur', () => {
         inviterUnUtilisateurAction,
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
-            groupe: 'admin',
+            doesItBelongToGroupeAdmin: true,
             libelle: 'Rhône',
             nom: 'Administrateur dispositif',
             pictogramme: 'maille',

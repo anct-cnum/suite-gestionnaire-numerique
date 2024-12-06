@@ -18,7 +18,7 @@ describe('prisma utilisateur query', () => {
         role: 'administrateur_dispositif',
         roleReadModel: {
           categorie: 'anct',
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           nom: 'Administrateur dispositif',
           organisation: 'Administrateur dispositif',
           rolesGerables: Roles,
@@ -29,7 +29,7 @@ describe('prisma utilisateur query', () => {
         role: 'gestionnaire_departement',
         roleReadModel: {
           categorie: 'maille',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire département',
           organisation: 'Paris',
           rolesGerables: ['Gestionnaire département'],
@@ -40,7 +40,7 @@ describe('prisma utilisateur query', () => {
         role: 'gestionnaire_groupement',
         roleReadModel: {
           categorie: 'groupement',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
           rolesGerables: ['Gestionnaire groupement'],
@@ -51,7 +51,7 @@ describe('prisma utilisateur query', () => {
         role: 'gestionnaire_region',
         roleReadModel: {
           categorie: 'maille',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire région',
           organisation: 'Île-de-France',
           rolesGerables: ['Gestionnaire région'],
@@ -62,7 +62,7 @@ describe('prisma utilisateur query', () => {
         role: 'gestionnaire_structure',
         roleReadModel: {
           categorie: 'structure',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
           rolesGerables: ['Gestionnaire structure'],
@@ -73,7 +73,7 @@ describe('prisma utilisateur query', () => {
         role: 'instructeur',
         roleReadModel: {
           categorie: 'bdt',
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           nom: 'Instructeur',
           organisation: 'Banque des territoires',
           rolesGerables: Roles,
@@ -84,7 +84,7 @@ describe('prisma utilisateur query', () => {
         role: 'pilote_politique_publique',
         roleReadModel: {
           categorie: 'anct',
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           nom: 'Pilote politique publique',
           organisation: 'France Numérique Ensemble',
           rolesGerables: Roles,
@@ -95,7 +95,7 @@ describe('prisma utilisateur query', () => {
         role: 'support_animation',
         roleReadModel: {
           categorie: 'mednum',
-          groupe: 'admin',
+          doesItBelongToGroupeAdmin: true,
           nom: 'Support animation',
           organisation: 'Mednum',
           rolesGerables: Roles,
@@ -241,7 +241,7 @@ describe('prisma utilisateur query', () => {
             regionCode: null,
             role: {
               categorie: 'maille',
-              groupe: 'gestionnaire',
+              doesItBelongToGroupeAdmin: false,
               nom: 'Gestionnaire département',
               organisation: 'Paris',
               rolesGerables: ['Gestionnaire département'],
@@ -264,7 +264,7 @@ describe('prisma utilisateur query', () => {
             regionCode: null,
             role: {
               categorie: 'anct',
-              groupe: 'admin',
+              doesItBelongToGroupeAdmin: true,
               nom: 'Administrateur dispositif',
               organisation: 'Administrateur dispositif',
               rolesGerables: Roles,
@@ -285,7 +285,7 @@ describe('prisma utilisateur query', () => {
         departementCode,
         role: {
           categorie: 'maille',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire département',
           organisation: 'Rhône',
           rolesGerables: [],
@@ -335,7 +335,7 @@ describe('prisma utilisateur query', () => {
         regionCode,
         role: {
           categorie: 'maille',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire région',
           organisation: 'Auvergne-Rhône-Alpes',
           rolesGerables: [],
@@ -382,7 +382,7 @@ describe('prisma utilisateur query', () => {
         groupementId,
         role: {
           categorie: 'groupement',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
           rolesGerables: [],
@@ -428,7 +428,7 @@ describe('prisma utilisateur query', () => {
       const utilisateurAuthentifie = utilisateurReadModelFactory({
         role: {
           categorie: 'structure',
-          groupe: 'gestionnaire',
+          doesItBelongToGroupeAdmin: false,
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
           rolesGerables: ['Gestionnaire structure'],

@@ -7,7 +7,7 @@ describe('session utilisateur presenter', () => {
     const utilisateurReadModel = utilisateurReadModelFactory({
       role: {
         categorie: 'mednum',
-        groupe: 'admin',
+        doesItBelongToGroupeAdmin: true,
         nom: 'Support animation',
         organisation: 'Mednum',
         rolesGerables: [],
@@ -28,7 +28,7 @@ describe('session utilisateur presenter', () => {
       nom: 'Tartempion',
       prenom: 'Martin',
       role: {
-        groupe: 'admin',
+        doesItBelongToGroupeAdmin: true,
         libelle: 'Mednum',
         nom: 'Support animation',
         pictogramme: 'mednum',
