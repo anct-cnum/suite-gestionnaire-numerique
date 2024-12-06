@@ -6,6 +6,7 @@ import Drawer from '../../shared/Drawer/Drawer'
 import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
 import AjouterUnComite from './AjouterUnComite'
+import DrawerHeaderIcon from '@/components/shared/Drawer/DrawerHeaderIcon'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ComitologieRemplie({ comites }: ComitologieRemplieProps): ReactElement {
@@ -19,6 +20,7 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
     <>
       <Drawer
         boutonFermeture="Fermer"
+        icon={<DrawerHeaderIcon iconName="calendar-event-line" />}
         id={drawerComiteId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}

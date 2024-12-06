@@ -17,10 +17,6 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
       onSubmit={creerUnComite}
     >
       <h1 className="color-blue-france fr-mt-5w">
-        <div
-          aria-hidden="true"
-          className="fr-icon-calendar-event-line icon-title w-fit-content fr-mb-1w"
-        />
         Ajouter un comité
       </h1>
       <p className="fr-text--sm color-grey">
