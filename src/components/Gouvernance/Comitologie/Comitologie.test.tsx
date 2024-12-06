@@ -69,7 +69,7 @@ describe('comitologie', () => {
     // GIVEN
     vi.useFakeTimers()
     vi.setSystemTime(new Date(2024, 11, 12, 13))
-    const ajouterUnComiteAction = vi.fn(async () => Promise.resolve())
+    const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
     window.dsfr = (): {modal: {conceal: Mock}} => ({
       modal: {
         conceal: vi.fn(),
