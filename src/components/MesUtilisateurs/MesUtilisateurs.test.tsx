@@ -10,7 +10,7 @@ import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 describe('mes utilisateurs', () => {
   const totalUtilisateur = 11
 
-  it('quand j’affiche mes utilisateurs alors s’affiche l’en-tête', () => {
+  it('quand j’affiche mes utilisateurs, alors s’affiche l’en-tête commune aux deux groupes', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
@@ -18,9 +18,6 @@ describe('mes utilisateurs', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
-    expect(titre).toBeInTheDocument()
-
     const InviterUnePersonne = screen.getByRole('button', { name: 'Inviter une personne' })
     expect(InviterUnePersonne).toHaveAttribute('type', 'button')
 
@@ -41,7 +38,7 @@ describe('mes utilisateurs', () => {
     expect(columnsHead[6]).toHaveAttribute('scope', 'col')
   })
 
-  it('faisant partie du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
+  it('étant du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
@@ -50,7 +47,7 @@ describe('mes utilisateurs', () => {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
         {
           role: {
-            groupe: 'admin',
+            doesItBelongToGroupeAdmin: true,
             libelle: '',
             nom: 'Support animation',
             pictogramme: '',
@@ -61,6 +58,9 @@ describe('mes utilisateurs', () => {
     })
 
     // THEN
+    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
+    expect(titre).toBeInTheDocument()
+
     const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
     expect(rechercher).toHaveAttribute('placeholder', 'Rechercher par nom ou adresse électronique')
     expect(rechercher).toHaveAttribute('type', 'search')
@@ -73,7 +73,7 @@ describe('mes utilisateurs', () => {
     expect(exporter).toHaveAttribute('type', 'button')
   })
 
-  it('faisant partie du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai juste un sous titre', () => {
+  it('étant du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai un autre titre et un sous titre', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
@@ -85,7 +85,7 @@ describe('mes utilisateurs', () => {
       {
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
-            groupe: 'gestionnaire',
+            doesItBelongToGroupeAdmin: false,
             libelle: 'Rhône',
             nom: 'Gestionnaire groupement',
             pictogramme: 'maille',
@@ -96,6 +96,9 @@ describe('mes utilisateurs', () => {
     )
 
     // THEN
+    const titre = screen.getByRole('heading', { level: 1, name: 'Utilisateurs · Rhône' })
+    expect(titre).toBeInTheDocument()
+
     const rechercher = screen.queryByLabelText('Rechercher par nom ou adresse électronique')
     expect(rechercher).not.toBeInTheDocument()
     const boutonRechercher = screen.queryByRole('button', { name: 'Rechercher' })
@@ -439,7 +442,7 @@ const utilisateurActifReadModel = utilisateurReadModelFactory({
   isSuperAdmin: true,
   role: {
     categorie: 'anct',
-    groupe: 'admin',
+    doesItBelongToGroupeAdmin: true,
     nom: 'Administrateur dispositif',
     organisation: 'Préfecture du Rhône',
     rolesGerables: [],
@@ -480,7 +483,7 @@ const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
   prenom: 'Paul',
   role: {
     categorie: 'anct',
-    groupe: 'admin',
+    doesItBelongToGroupeAdmin: true,
     nom: 'Administrateur dispositif',
     organisation: 'Préfecture du Rhône',
     rolesGerables: [],
