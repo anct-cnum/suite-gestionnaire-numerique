@@ -331,7 +331,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(telephone).toHaveValue('0405060708')
 
       const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })
-      expect(annuler).toHaveAttribute('type', 'button')
+      expect(annuler).toHaveAttribute('type', 'reset')
       expect(annuler).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
