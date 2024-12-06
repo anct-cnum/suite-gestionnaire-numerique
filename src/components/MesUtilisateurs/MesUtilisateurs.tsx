@@ -54,11 +54,12 @@ export default function MesUtilisateurs(
   const labelInvitationId = 'drawer-invitation-titre'
   const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
   const labelRenvoyerInvitationId = 'drawer-renvoyer-invitation-titre'
+
   return (
     <>
       <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
         <PageTitle icon="team-line">
-          Gestion de mes utilisateurs
+          {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
         </PageTitle>
         <button
           aria-controls={drawerInvitationId}
@@ -105,11 +106,7 @@ export default function MesUtilisateurs(
         />
       </Drawer>
       {
-        sessionUtilisateurViewModel.role.groupe === 'gestionnaire' ? (
-          <p>
-            Gérez l’accès à l’espace de gestion
-          </p>
-        ) : (
+        sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? (
           <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
             <Search
               labelBouton="Rechercher"
@@ -135,6 +132,10 @@ export default function MesUtilisateurs(
               </button>
             </div>
           </div>
+        ) : (
+          <p>
+            Gérez l’accès à l’espace de gestion
+          </p>
         )
       }
       <Table

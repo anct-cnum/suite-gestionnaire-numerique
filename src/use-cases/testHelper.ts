@@ -21,7 +21,7 @@ export function utilisateurReadModelFactory(
     regionCode: null,
     role: {
       categorie: 'anct',
-      groupe: 'admin',
+      doesItBelongToGroupeAdmin: true,
       nom: 'Administrateur dispositif',
       organisation: '',
       rolesGerables: Roles,

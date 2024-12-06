@@ -11,7 +11,7 @@ export function sessionUtilisateurViewModelFactory(
     nom: 'Tartempion',
     prenom: 'Martin',
     role: {
-      groupe: 'admin',
+      doesItBelongToGroupeAdmin: true,
       libelle: 'Mednum',
       nom: 'Support animation',
       pictogramme: 'support-animation',
