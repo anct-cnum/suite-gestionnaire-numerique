@@ -4,6 +4,7 @@ import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContex
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { Notification } from '../shared/Notification/Notification'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
@@ -129,20 +130,21 @@ export default function ModifierMonCompte({
   async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
-    const form = new FormData(event.currentTarget)
-    const [nom, prenom, email, telephone] = [...form.values()].map((value) => value as string)
-
     setEtatBoutonEnregistrer({
       enAttente: true,
       texte: 'Modification en cours',
     })
 
-    await modifierMesInformationsPersonnellesAction({ emailDeContact: email, nom, path: pathname, prenom, telephone })
+    await modifierMesInformationsPersonnellesAction({ formData: new FormData(event.currentTarget), path: pathname })
       .then(() => {
         setEtatBoutonEnregistrer({
           enAttente: false,
           texte: 'Enregistrer',
         })
+        Notification('success', { description: 'réussie' })
+      })
+      .catch((error) => {
+        Notification('error', { description: error[0] })
       })
 
     setIsOpen(false)
