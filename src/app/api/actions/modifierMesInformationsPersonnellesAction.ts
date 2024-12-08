@@ -13,7 +13,13 @@ import { ModifierMesInformationsPersonnelles } from '@/use-cases/commands/Modifi
 export async function modifierMesInformationsPersonnellesAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator.safeParse(actionParams)
+  const validationResult = validator.safeParse({
+    emailDeContact: actionParams.formData.get('email'),
+    nom: actionParams.formData.get('nom'),
+    path: actionParams.path,
+    prenom: actionParams.formData.get('prenom'),
+    telephone: actionParams.formData.get('telephone'),
+  })
 
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
@@ -37,10 +43,7 @@ export async function modifierMesInformationsPersonnellesAction(
 }
 
 type ActionParams = Readonly<{
-  emailDeContact: string
-  nom: string
-  prenom: string
-  telephone: string
+  formData: FormData
   path: string
 }>
 
