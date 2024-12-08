@@ -332,7 +332,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(champsObligatoires).toBeInTheDocument()
 
       const formulaire = within(modifierMesInfosPersosDrawer).getByRole('form', { name: 'Modifier' })
-      expect(formulaire).toHaveAttribute('method', 'dialog')
+      expect(formulaire).toHaveAttribute('action')
       const nom = within(formulaire).getByLabelText('Nom *')
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
@@ -424,7 +424,15 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       // THEN
       const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationDesactive).toBeDisabled()
-      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ emailDeContact: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
+
+      const formData = new FormData()
+      formData.append('emailDeContact', 'martin.tartempion@example.com')
+      formData.append('nom', 'Tartempion')
+      formData.append('prenom', 'Martin')
+      formData.append('telephone', '0102030405')
+      // comment tester ça ?
+      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ formData, path: '/mes-informations-personnelles' })
+
       const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours' })
       expect(boutonModificationActive).toBeEnabled()
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })

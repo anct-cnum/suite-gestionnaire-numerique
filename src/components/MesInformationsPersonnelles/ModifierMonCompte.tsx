@@ -1,10 +1,9 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
+import { Dispatch, ReactElement, RefObject, SetStateAction, useActionState, useContext, useId } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import { Notification } from '../shared/Notification/Notification'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
@@ -19,10 +18,8 @@ export default function ModifierMonCompte({
   telephone,
 }: ModifierMonCompteProps): ReactElement {
   const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
-  const [etatBoutonEnregistrer, setEtatBoutonEnregistrer] = useState({
-    enAttente: false,
-    texte: 'Enregistrer',
-  })
+  const [_formState, formAction, pending] = useActionState(modifierMesInfosPersos, [])
+
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -43,9 +40,8 @@ export default function ModifierMonCompte({
         sont obligatoires.
       </p>
       <form
+        action={formAction}
         aria-label="Modifier"
-        method="dialog"
-        onSubmit={modifierMesInfosPersos}
       >
         <TextInput
           defaultValue={nom}
@@ -117,36 +113,18 @@ export default function ModifierMonCompte({
           </button>
           <button
             className="fr-btn fr-col-5"
-            disabled={etatBoutonEnregistrer.enAttente}
+            disabled={pending}
             type="submit"
           >
-            {etatBoutonEnregistrer.texte}
+            {pending ? 'Modification en cours' : 'Enregistrer'}
           </button>
         </div>
       </form>
     </>
   )
 
-  async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault()
-
-    setEtatBoutonEnregistrer({
-      enAttente: true,
-      texte: 'Modification en cours',
-    })
-
-    await modifierMesInformationsPersonnellesAction({ formData: new FormData(event.currentTarget), path: pathname })
-      .then(() => {
-        setEtatBoutonEnregistrer({
-          enAttente: false,
-          texte: 'Enregistrer',
-        })
-        Notification('success', { description: 'réussie' })
-      })
-      .catch((error) => {
-        Notification('error', { description: error[0] })
-      })
-
+  async function modifierMesInfosPersos(_state: Array<string>, formData: FormData): Promise<void> {
+    await modifierMesInformationsPersonnellesAction({ formData, path: pathname })
     setIsOpen(false)
     window.dsfr(dialogRef.current).modal.conceal()
   }
