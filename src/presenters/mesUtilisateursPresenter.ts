@@ -76,6 +76,14 @@ export type DetailsUtilisateurViewModel = Readonly<{
   telephone: string
 }>
 
+export type RolesAvecStructure = Readonly<Record<string, {
+  label: string,
+  options: ReadonlyArray<{
+    value: string
+    label: string
+  }>
+}>>
+
 const inactif = 'inactif'
 
 function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
@@ -100,8 +108,3 @@ function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
 
   return `Invitation envoyée le ${formaterEnDateFrancaise(dateDInvitation)}`
 }
-
-export type RolesAvecStructure = Readonly<Record<string, {
-  label: string,
-  options: ReadonlyArray<{value: string, label: string}>
-}>>
