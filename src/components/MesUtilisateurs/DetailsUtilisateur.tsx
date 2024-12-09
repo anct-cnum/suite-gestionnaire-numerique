@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import { DetailsUtilisateurViewModel } from '../../presenters/mesUtilisateursPresenter'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 
 export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtilisateurProps): ReactElement {
   const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
@@ -28,12 +29,9 @@ export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtil
 
   return (
     <div>
-      <h1
-        className="fr-h2 color-blue-france"
-        id={labelId}
-      >
+      <DrawerTitle id={labelId}>
         {utilisateur.prenomEtNom}
-      </h1>
+      </DrawerTitle>
       {donneesPersonnelles.map(({ label, value }) => (
         <div
           className="fr-mb-2w"

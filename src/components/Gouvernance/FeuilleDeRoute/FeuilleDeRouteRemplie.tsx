@@ -8,7 +8,7 @@ import SectionRemplie from '../SectionRemplie'
 import SubSectionTitle from '../SubSectionTitle'
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
-import DrawerHeaderIcon from '@/components/shared/Drawer/DrawerHeaderIcon'
+import Icon from '@/components/shared/Icon/Icon'
 import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function FeuilleDeRouteRemplie({
@@ -80,14 +80,17 @@ export default function FeuilleDeRouteRemplie({
       </SectionRemplie>
       <Drawer
         boutonFermeture="Fermer les détails de la feuille de route"
-        icon={<DrawerHeaderIcon iconName="survey-line" />}
+        icon={<Icon icon="survey-line" />}
         id={drawerFeuilleDeRouteId}
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelFeuilleDeRouteId}
         setIsOpen={setIsDrawerOpen}
       >
-        <DetailsFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} />
+        <DetailsFeuilleDeRoute
+          feuilleDeRoute={feuilleDeRoute}
+          labelId={labelFeuilleDeRouteId}
+        />
       </Drawer>
     </>
   )
