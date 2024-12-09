@@ -1,6 +1,7 @@
 import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { Notification } from '../shared/Notification/Notification'
 
 export default function ReinviterUnUtilisateur({
@@ -14,12 +15,9 @@ export default function ReinviterUnUtilisateur({
 
   return (
     <div>
-      <h1
-        className="fr-h2 color-blue-france"
-        id={labelId}
-      >
+      <DrawerTitle id={labelId}>
         {utilisateur.inviteLe}
-      </h1>
+      </DrawerTitle>
       <div className="fr-mb-4w">
         <div className="color-grey">
           Adresse électronique

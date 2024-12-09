@@ -8,6 +8,7 @@ import FiltrerParRoles from './FiltrerParRoles'
 import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import OrganisationInput from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import Toggle from '../shared/Toggle/Toggle'
 import { toutesLesRegions, urlDeFiltrage, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 
@@ -25,12 +26,9 @@ export default function FiltrerMesUtilisateurs({
 
   return (
     <>
-      <h1
-        className="fr-h3 color-blue-france"
-        id={labelId}
-      >
+      <DrawerTitle id={labelId}>
         Filtrer
-      </h1>
+      </DrawerTitle>
       <form
         aria-label="Filtrer"
         method="dialog"

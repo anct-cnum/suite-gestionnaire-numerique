@@ -31,7 +31,7 @@ ref: Ref<HTMLDialogElement>): ReactNode {
         <div className="fr-grid-row fr-grid-row--right">
           <div className={`fr-col-5 ${styles['modal-box']} ${boxSize}`}>
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
-              <div className={`fr-modal__header ${styles['fr-modal__header']}`}>
+              <div className="fr-modal__header">
                 {icon}
                 <button
                   aria-controls={id}

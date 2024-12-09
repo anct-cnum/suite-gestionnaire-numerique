@@ -4,6 +4,7 @@ import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, u
 import styles from './SupprimerMonCompte.module.css'
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
+import ModalTitle from '../shared/ModalTitle/ModalTitle'
 import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
@@ -27,12 +28,9 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
     >
       <form aria-label="Supprimer">
         <div className="fr-modal__content">
-          <h1
-            className="fr-modal__title"
-            id={modaleTitreId}
-          >
+          <ModalTitle id={modaleTitreId}>
             Supprimer mon compte
-          </h1>
+          </ModalTitle>
           <p>
             Êtes-vous sûr de vouloir supprimer votre compte ? Cette
             action est irréversible.

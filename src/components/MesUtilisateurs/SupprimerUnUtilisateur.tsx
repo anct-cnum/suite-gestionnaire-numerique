@@ -2,6 +2,7 @@ import { Dispatch, ReactElement, SetStateAction, useContext, useId } from 'react
 
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
+import ModalTitle from '../shared/ModalTitle/ModalTitle'
 
 export default function SupprimerUnUtilisateur({
   id,
@@ -20,16 +21,13 @@ export default function SupprimerUnUtilisateur({
       labelId={modaleTitreId}
     >
       <div className="fr-modal__content">
-        <h1
-          className="fr-modal__title"
-          id={modaleTitreId}
-        >
+        <ModalTitle id={modaleTitreId}>
           Retirer
           {' '}
           {utilisateurASupprimer.prenomEtNom}
           {' '}
           de mon équipe d’utilisateurs ?
-        </h1>
+        </ModalTitle>
         <p>
           En cliquant sur confirmer, cet utilisateur n’aura plus accès à votre espace de
           gestion.
