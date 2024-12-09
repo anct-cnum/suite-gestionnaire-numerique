@@ -29,18 +29,31 @@ export type FeuilleDeRouteReadModel = Readonly<{
   totalActions: number
   budgetGlobal: number
   actions: ReadonlyArray<Action>
+  montantSubventionFormationDemande: number
+  montantSubventionFormationAccorde: number
+  beneficiaire: MembreReadModel
+  beneficiaireSubventionFormation: MembreReadModel
 }>
 
 export type Action = Readonly<{
-  nom: action
-  budgetTotal: number
-  montantSubventionDemandee: number
-  montantSubventionAccordee: number
-  montantSubventionFormationAccordee: number
-  montantSubventionFormationDemandee: number
+  besoin: besoinSubvention
+  nom: string
+  budgetGlobal: number
+  demandesDeSubvention: ReadonlyArray<DemandeDeSubvention>
+  demandesDeCofinancement: ReadonlyArray<Cofinancement>
   beneficiaires:Array<MembreReadModel>
-  beneficiairesSubventionFormation: Array<MembreReadModel>
-  staut: statut
+  statut: statut
+}>
+
+export type DemandeDeSubvention = Readonly<{
+  type: string
+  montantDemande: number
+  montantAccorde: number
+}>
+
+export type Cofinancement = Readonly<{
+  emetteur: MembreReadModel
+  montantDemande: number
 }>
 
 export type MembreReadModel = Readonly<{
@@ -49,10 +62,18 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-type action = 'demandeDeSubvention' | 'demandeDeSubventionFormation'
+type besoinSubvention =
+'EtablirUnDiagnosticTerritorial' |
+'CoConstruireLaFeuilleDeRoute' |
+'RedigerLaFeuilleDeRoute' |
+'AppuiJuridique' |
+'StructurerUnFonds' |
+'MonterDossiersDeSubvention' |
+'AnimerLaGouvernance' |
+'StructurerUneFiliereDeReconditionnement' |
+'CollecterDesDonneesTerritoriales' |
+'SensibiliserLesActeursAuxOutilsExistants' |
+'AppuyerLaCertificationQualiopi'
 
-type statut = 'enCours' | 'terminee' | 'annulee'
+type statut = 'validee' | 'envoyee' | 'acceptee' | 'rejetee'
 
-export const calculerBudgetGlobal = (actions: ReadonlyArray<Action>): number => {
-  return actions.reduce((sum, action) => sum + action.budgetTotal, 0)
-}
