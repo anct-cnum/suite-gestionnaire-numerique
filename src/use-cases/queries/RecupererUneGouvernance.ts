@@ -1,3 +1,4 @@
+
 export interface UneGouvernanceReadModelLoader {
   find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
 }
@@ -22,9 +23,36 @@ export type ComiteReadModel = Readonly<{
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{
-  budgetGlobal: number
   nom: string
+  porteur: MembreReadModel
   totalActions: number
+  budgetGlobal: number
+  actions: ReadonlyArray<Action>
+  montantSubventionFormationDemande: number
+  montantSubventionFormationAccorde: number
+  beneficiaire: MembreReadModel
+  beneficiaireSubventionFormation: MembreReadModel
+}>
+
+export type Action = Readonly<{
+  besoin: besoinSubvention
+  nom: string
+  budgetGlobal: number
+  demandesDeSubvention: ReadonlyArray<DemandeDeSubvention>
+  demandesDeCofinancement: ReadonlyArray<Cofinancement>
+  beneficiaires:Array<MembreReadModel>
+  statut: statut
+}>
+
+export type DemandeDeSubvention = Readonly<{
+  type: string
+  montantDemande: number
+  montantAccorde: number
+}>
+
+export type Cofinancement = Readonly<{
+  emetteur: MembreReadModel
+  montantDemande: number
 }>
 
 export type MembreReadModel = Readonly<{
@@ -32,3 +60,19 @@ export type MembreReadModel = Readonly<{
   roles: ReadonlyArray<string>
   type: string
 }>
+
+type besoinSubvention =
+'EtablirUnDiagnosticTerritorial' |
+'CoConstruireLaFeuilleDeRoute' |
+'RedigerLaFeuilleDeRoute' |
+'AppuiJuridique' |
+'StructurerUnFonds' |
+'MonterDossiersDeSubvention' |
+'AnimerLaGouvernance' |
+'StructurerUneFiliereDeReconditionnement' |
+'CollecterDesDonneesTerritoriales' |
+'SensibiliserLesActeursAuxOutilsExistants' |
+'AppuyerLaCertificationQualiopi'
+
+type statut = 'validee' | 'envoyee' | 'acceptee' | 'rejetee'
+
