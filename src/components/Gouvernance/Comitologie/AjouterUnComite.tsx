@@ -124,7 +124,7 @@ const frequences = [
 ]
 
 type AjouterUnComiteProps = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement>
+  dialogRef: RefObject<HTMLDialogElement | null>
   labelId: string
   setIsOpen(isOpen: boolean): void
 }>

@@ -56,7 +56,7 @@ export default function ReinviterUnUtilisateur({
 }
 
 type DetailsUtilisateurProps = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement>
+  dialogRef: RefObject<HTMLDialogElement | null>
   utilisateur: Readonly<{
     email: string
     inviteLe: string

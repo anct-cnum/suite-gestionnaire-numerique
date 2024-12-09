@@ -151,7 +151,7 @@ export default function ModifierMonCompte({
 }
 
 type ModifierMonCompteProps = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement>
+  dialogRef: RefObject<HTMLDialogElement | null>
   email: string
   id: string
   labelId: string
