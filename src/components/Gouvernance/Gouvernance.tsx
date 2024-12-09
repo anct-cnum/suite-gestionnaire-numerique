@@ -20,6 +20,9 @@ import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps): ReactElement {
   return (
     <>
+      <title>
+        {`Gouvernance ${gouvernanceViewModel.departement}`}
+      </title>
       <PageTitle icon="compass-3-line">
         Inclusion numérique ·
         {' '}

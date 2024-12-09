@@ -1,16 +1,15 @@
 // Stryker disable all
 'use client'
 
-import { forwardRef, ReactElement, Ref, useContext } from 'react'
+import { ReactElement, Ref, useContext } from 'react'
 import Select, { SelectInstance, StylesConfig } from 'react-select'
 
 import { clientContext } from '../shared/ClientContext'
 import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } from '@/presenters/filtresUtilisateurPresenter'
 import { isNullish } from '@/shared/lang'
 
-function FiltrerParZonesGeographiques(
-  { setZoneGeographique }: FiltrerParZonesGeographiquesProps,
-  ref: Ref<SelectInstance>
+export default function FiltrerParZonesGeographiques(
+  { ref, setZoneGeographique }: FiltrerParZonesGeographiquesProps
 ): ReactElement {
   const { searchParams } = useContext(clientContext)
 
@@ -48,8 +47,6 @@ function FiltrerParZonesGeographiques(
     }
   }
 }
-
-export default forwardRef(FiltrerParZonesGeographiques)
 
 // istanbul ignore next @preserve
 const styles: StylesConfig<ZoneGeographique> = {
@@ -91,5 +88,6 @@ function DropdownIndicator(): ReactElement {
 }
 
 type FiltrerParZonesGeographiquesProps = Readonly<{
+  ref: Ref<SelectInstance>
   setZoneGeographique(zoneGeographique: ZoneGeographique): void
 }>
