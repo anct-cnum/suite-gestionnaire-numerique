@@ -14,6 +14,7 @@
 - [ ] Vérifier l'accessibilité avec WAVE
 - [ ] Vérifier l'accessibilité avec Axe
 - [ ] Vérifier l'accessibilité avec headingMap
+- [ ] Naviguer au clavier
 - [ ] Vérifier le constraste en mode sombre
 
 ## Facultatif mais fortement conseillé

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import Title from '@/components/shared/Title/Title'
+import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
   title: 'Export de données',
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function ExportDeDonneesController(): ReactElement {
   return (
-    <Title icon="download-line">
+    <PageTitle icon="download-line">
       Export de données
-    </Title>
+    </PageTitle>
   )
 }
