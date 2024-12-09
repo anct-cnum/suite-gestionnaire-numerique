@@ -96,7 +96,7 @@ export default function MenuLateral(): ReactElement {
         sessionUtilisateurViewModel.displayLiensGouvernance ? (
           <>
             <p
-              className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}
+              className={`fr-text--sm color-grey ${styles['menu-categorie']} fr-mt-2w`}
             >
               PILOTAGE
             </p>
@@ -147,7 +147,7 @@ export default function MenuLateral(): ReactElement {
                     </div> : null}
                 </Fragment>))}
             </ul>
-            <p className={`fr-text--sm color-grey ${styles['menu-categorie']}  fr-mt-2w`}>
+            <p className={`fr-text--sm color-grey ${styles['menu-categorie']} fr-mt-2w`}>
               DONNEES ET STATISTIQUES
             </p>
             <ul className="fr-sidemenu__list">

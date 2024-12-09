@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import Title from '@/components/shared/Title/Title'
+import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
   title: 'Lieux d’inclusion',
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function LieuxInclusionController(): ReactElement {
   return (
-    <Title icon="map-pin-2-line">
+    <PageTitle icon="map-pin-2-line">
       Lieux d’inclusion
-    </Title>
+    </PageTitle>
   )
 }
