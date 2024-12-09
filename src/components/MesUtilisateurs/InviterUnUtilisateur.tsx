@@ -187,7 +187,7 @@ export default function InviterUnUtilisateur({
 type InviterUnUtilisateurProps = Readonly<{
   setIsOpen: Dispatch<SetStateAction<boolean>>
   labelId: string
-  dialogRef: RefObject<HTMLDialogElement>
+  dialogRef: RefObject<HTMLDialogElement | null>
   rolesAvecStructure: RolesAvecStructure
 }>
 
