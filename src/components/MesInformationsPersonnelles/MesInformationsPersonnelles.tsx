@@ -6,8 +6,8 @@ import InformationPersonnelle from './InformationPersonnelle'
 import ModifierMonCompte from './ModifierMonCompte'
 import SupprimerMonCompte from './SupprimerMonCompte'
 import Drawer from '../shared/Drawer/Drawer'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import Role from '../shared/Role/Role'
-import Title from '../shared/Title/Title'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles(
@@ -25,9 +25,9 @@ export default function MesInformationsPersonnelles(
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
-        <Title icon="account-circle-line">
+        <PageTitle icon="account-circle-line">
           Mes informations
-        </Title>
+        </PageTitle>
         <p className="fr-text--sm color-grey">
           Retrouvez ici, les informations de votre compte.
         </p>

@@ -5,6 +5,7 @@ import { Dispatch, FormEvent, ReactElement, ReactNode, RefObject, SetStateAction
 import OrganisationInput from './OrganisationInput'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { Notification } from '../shared/Notification/Notification'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import TextInput from '../shared/TextInput/TextInput'
@@ -31,12 +32,9 @@ export default function InviterUnUtilisateur({
 
   return (
     <div>
-      <h1
-        className="fr-h2 color-blue-france"
-        id={labelId}
-      >
+      <DrawerTitle id={labelId}>
         Invitez un utilisateur à rejoindre l’espace de gestion
-      </h1>
+      </DrawerTitle>
       <p id="champsObligatoires">
         Les champs avec
         {' '}

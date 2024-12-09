@@ -9,12 +9,12 @@ import InviterUnUtilisateur from './InviterUnUtilisateur'
 import ReinviterUnUtilisateur from './ReinviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Role from '../shared/Role/Role'
 import Search from '../shared/Search/Search'
 import Statut from '../shared/Statut/Statut'
 import Table from '../shared/Table/Table'
-import Title from '../shared/Title/Title'
 import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
@@ -57,9 +57,9 @@ export default function MesUtilisateurs(
   return (
     <>
       <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
-        <Title icon="team-line">
+        <PageTitle icon="team-line">
           Gestion de mes utilisateurs
-        </Title>
+        </PageTitle>
         <button
           aria-controls={drawerInvitationId}
           className="fr-btn fr-btn--icon-left fr-icon-add-line"

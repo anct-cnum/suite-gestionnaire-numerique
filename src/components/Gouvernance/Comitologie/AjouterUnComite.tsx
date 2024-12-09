@@ -2,11 +2,12 @@ import { FormEvent, ReactElement, RefObject, useContext } from 'react'
 
 import { clientContext } from '../../shared/ClientContext'
 import Datepicker from '../../shared/Datepicker/Datepicker'
+import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import TextArea from '@/components/shared/TextArea/TextArea'
 import { formatForInputDate } from '@/presenters/shared/date'
 
-export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComiteProps): ReactElement {
+export default function AjouterUnComite({ dialogRef, labelId, setIsOpen }: AjouterUnComiteProps): ReactElement {
   const dateDuJour = formatForInputDate(new Date())
   const { ajouterUnComiteAction } = useContext(clientContext)
 
@@ -16,9 +17,9 @@ export default function AjouterUnComite({ setIsOpen, dialogRef }: AjouterUnComit
       method="dialog"
       onSubmit={creerUnComite}
     >
-      <h1 className="color-blue-france fr-mt-5w">
+      <DrawerTitle id={labelId}>
         Ajouter un comité
-      </h1>
+      </DrawerTitle>
       <p className="fr-text--sm color-grey">
         Renseignez les comités prévus et la fréquence à laquelle ils se réunissent
       </p>
@@ -124,5 +125,6 @@ const frequences = [
 
 type AjouterUnComiteProps = Readonly<{
   dialogRef: RefObject<HTMLDialogElement>
+  labelId: string
   setIsOpen(isOpen: boolean): void
 }>

@@ -14,17 +14,17 @@ import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
 import ResumeNoteDeContexteVide from './NoteDeContexte/ResumeNoteDeContexteVide'
-import Title from '../shared/Title/Title'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps): ReactElement {
   return (
     <>
-      <Title icon="compass-3-line">
+      <PageTitle icon="compass-3-line">
         Inclusion numérique ·
         {' '}
         {gouvernanceViewModel.departement}
-      </Title>
+      </PageTitle>
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
       </p>

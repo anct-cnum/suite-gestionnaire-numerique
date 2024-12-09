@@ -3,6 +3,7 @@
 import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
@@ -28,12 +29,9 @@ export default function ModifierMonCompte({
 
   return (
     <>
-      <h1
-        className="fr-h3 color-blue-france"
-        id={labelId}
-      >
+      <DrawerTitle id={labelId}>
         Mes informations personnelles
-      </h1>
+      </DrawerTitle>
       <p>
         Les champs avec
         {' '}
