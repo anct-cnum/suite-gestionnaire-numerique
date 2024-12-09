@@ -1,6 +1,6 @@
 import 'vitest-dom/extend-expect'
 
-function toOpenInNewTab(element: HTMLElement, content: string): { message: () => string; pass: boolean } {
+function toOpenInNewTab(element: HTMLElement, content: string): { message(): string; pass: boolean } {
   if (
     element.title === `${content} - nouvelle fenêtre` &&
       element.getAttribute('target') === '_blank' &&
@@ -20,12 +20,4 @@ function toOpenInNewTab(element: HTMLElement, content: string): { message: () =>
 
 expect.extend({
   toOpenInNewTab,
-})
-
-vi.mock('next/navigation', () => {
-  return {
-    usePathname: vi.fn(),
-    useRouter: vi.fn(),
-    useSearchParams: vi.fn(),
-  }
 })

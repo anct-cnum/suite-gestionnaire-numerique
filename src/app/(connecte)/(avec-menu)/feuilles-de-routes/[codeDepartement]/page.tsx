@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 }
 
 export default async function FeuillesDeRouteController({ params }: PageProps): Promise<ReactElement> {
-  if ((await params).codeDepartement === undefined) {
+  if (!(await params).codeDepartement) {
     notFound()
   }
 
@@ -21,7 +21,7 @@ export default async function FeuillesDeRouteController({ params }: PageProps): 
 }
 
 type PageProps = Readonly<{
-  params: Promise<Partial<Readonly<{
+  params: Promise<Readonly<{
     codeDepartement: string
-  }>>>
+  }>>
 }>
