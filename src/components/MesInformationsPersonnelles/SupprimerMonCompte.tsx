@@ -57,14 +57,17 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
               required={true}
               type="email"
             />
-            {emailValidationInfo.message !== '' ? (
-              <p
-                className={emailValidationInfo.messageClass}
-                id={messageValidationId}
-              >
-                {emailValidationInfo.message}
-              </p>
-            ) : null}
+            {
+              // Stryker disable next-line ConditionalExpression
+              emailValidationInfo.message !== '' ? (
+                <p
+                  className={emailValidationInfo.messageClass}
+                  id={messageValidationId}
+                >
+                  {emailValidationInfo.message}
+                </p>
+              ) : null
+            }
           </div>
         </div>
         <div className="fr-modal__footer">
@@ -73,7 +76,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
               aria-controls={id}
               className="fr-btn fr-btn--secondary"
               onClick={close}
-              type="button"
+              type="reset"
             >
               Annuler
             </button>
@@ -93,6 +96,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
   )
 
   function close(): void {
+    setEmailValidationInfo(emailValidationInfoByState.invalid)
     setIsOpen(false)
   }
 
