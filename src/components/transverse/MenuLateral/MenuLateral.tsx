@@ -114,10 +114,11 @@ export default function MenuLateral(): ReactElement {
                       <ul className="fr-sidemenu__list">
                         {menu.sousMenu.map((sousMenuElement) => (
                           <li
-                            className={`fr-sidemenu__item ${sousMenuElement.url === pathname ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''}`}
+                            className={`fr-sidemenu__item ${pathname === sousMenuElement.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''}`}
                             key={sousMenuElement.url}
                           >
                             <Link
+                              aria-current={pathname === sousMenuElement.url ? 'page' : false}
                               className="fr-sidemenu__link"
                               href={sousMenuElement.url}
                             >
