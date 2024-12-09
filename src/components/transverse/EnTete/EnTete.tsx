@@ -58,7 +58,7 @@ export default function EnTete(): ReactElement {
               </div>
               <div className="fr-header__service">
                 <Link
-                  href={{ pathname: '/tableau-de-bord' }}
+                  href="/tableau-de-bord"
                   title="Accueil"
                 >
                   <p className="fr-header__service-title">
@@ -83,7 +83,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-search-line"
-                      href={{ pathname: '/rechercher' }}
+                      href="/rechercher"
                     >
                       Rechercher
                     </Link>
@@ -91,7 +91,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-question-line"
-                      href={{ pathname: '/aide' }}
+                      href="/aide"
                     >
                       Aide
                     </Link>
@@ -99,7 +99,7 @@ export default function EnTete(): ReactElement {
                   <li>
                     <Link
                       className="fr-link fr-icon-notification-3-line"
-                      href={{ pathname: '/notifications' }}
+                      href="/notifications"
                     >
                       Notifications
                       {/**/}
