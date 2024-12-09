@@ -9,7 +9,7 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 export default async function GouvernanceController({ params }: PageProps): Promise<ReactElement> {
   const codeDepartement = (await params).codeDepartement
 
-  if (codeDepartement === undefined) {
+  if (!codeDepartement) {
     notFound()
   }
 
@@ -27,7 +27,7 @@ export default async function GouvernanceController({ params }: PageProps): Prom
 }
 
 type PageProps = Readonly<{
-  params: Promise<Partial<Readonly<{
+  params: Promise<Readonly<{
     codeDepartement: string
-  }>>>
+  }>>
 }>
