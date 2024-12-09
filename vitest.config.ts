@@ -48,6 +48,7 @@ export default defineConfig({
     },
     environment: 'jsdom',
     globals: true,
+    include: ['src/**/*.test.ts?(x)'],
     sequence: { shuffle: true },
     server: {
       deps: {

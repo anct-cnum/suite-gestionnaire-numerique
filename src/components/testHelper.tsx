@@ -2,9 +2,13 @@ import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
 import { ToastContainer } from 'react-toastify'
 
+import departements from '../../ressources/departements.json'
+import groupements from '../../ressources/groupements.json'
+import regions from '../../ressources/regions.json'
 import { clientContext, ClientContextProviderValue } from '@/components/shared/ClientContext'
 // eslint-disable-next-line import/no-restricted-paths
 import { Roles } from '@/domain/Role'
+import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 export function matchWithoutMarkup(wording: string) {
@@ -62,4 +66,24 @@ export async function structuresFetch(): Promise<Response> {
       ])
     },
   } as Response)
+}
+
+export
+const rolesAvecStructure: RolesAvecStructure = {
+  'Gestionnaire département': {
+    label: 'Département',
+    options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
+  },
+  'Gestionnaire groupement': {
+    label: 'Groupement',
+    options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
+  },
+  'Gestionnaire région': {
+    label: 'Région',
+    options: regions.map((region) => ({ label: region.nom, value: region.code })),
+  },
+  'Gestionnaire structure': {
+    label: 'Structure',
+    options: [],
+  },
 }
