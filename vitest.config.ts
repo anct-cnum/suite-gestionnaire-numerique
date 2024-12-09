@@ -24,6 +24,7 @@ export default defineConfig({
       exclude: [
         '**/global-error.tsx',
         '**/layout.tsx',
+        '**/page.tsx',
         '**/not-found.tsx',
         '**/sentry/**',
         '**/Accessibilite/**',
