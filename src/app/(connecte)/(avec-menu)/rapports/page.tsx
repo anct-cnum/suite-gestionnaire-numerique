@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import Title from '@/components/shared/Title/Title'
+import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
   title: 'Rapports',
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
 
 export default function RapportsController(): ReactElement {
   return (
-    <Title icon="dashboard-3-line">
+    <PageTitle icon="dashboard-3-line">
       Rapports
-    </Title>
+    </PageTitle>
   )
 }
