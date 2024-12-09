@@ -144,7 +144,7 @@ describe('gouvernance', () => {
     expect(membre).toBeInTheDocument()
     const lienMembre = screen.getByRole('link', { name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance' })
     expect(lienMembre).toHaveAttribute('href', 'https://inclusion-numerique.anct.gouv.fr/gouvernance')
-    expect(lienMembre).toHaveAttribute('title', 'Formulaire d’invitation à la gouvernance - nouvelle fenêtre')
+    expect(lienMembre).toOpenInNewTab('Formulaire d’invitation à la gouvernance')
     const ajouterDesMembres = within(sectionMembre).getByRole('button', { name: 'Ajouter un membre' })
     expect(ajouterDesMembres).toHaveAttribute('type', 'button')
   })
