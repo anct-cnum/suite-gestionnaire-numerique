@@ -2,11 +2,11 @@
 
 import { ReactElement, useRef, useState } from 'react'
 
-import Drawer from '../../shared/Drawer/Drawer'
-import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
 import AjouterUnComite from './AjouterUnComite'
+import Drawer from '@/components/shared/Drawer/Drawer'
 import Icon from '@/components/shared/Icon/Icon'
+import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ComitologieRemplie({ comites }: ComitologieRemplieProps): ReactElement {

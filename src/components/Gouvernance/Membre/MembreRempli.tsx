@@ -1,10 +1,10 @@
 import Link from 'next/link'
 import { Fragment, ReactElement } from 'react'
 
-import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
 import SubSectionTitle from '../SubSectionTitle'
 import Badge from '@/components/shared/Badge/Badge'
+import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function MembreRempli({

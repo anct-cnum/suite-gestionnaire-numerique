@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 
-import { DetailsUtilisateurViewModel } from '../../presenters/mesUtilisateursPresenter'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
 
 export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtilisateurProps): ReactElement {
   const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
