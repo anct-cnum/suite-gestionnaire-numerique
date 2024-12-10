@@ -61,7 +61,7 @@ describe('menu lateral', () => {
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const donneesEtStatistiques = within(navigation).getByText('DONNEES ET STATISTIQUES', { selector: 'p' })
+    const donneesEtStatistiques = within(navigation).getByText('DONNÉES ET STATISTIQUES', { selector: 'p' })
     expect(donneesEtStatistiques).toBeInTheDocument()
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[3]).getAllByRole('listitem')
