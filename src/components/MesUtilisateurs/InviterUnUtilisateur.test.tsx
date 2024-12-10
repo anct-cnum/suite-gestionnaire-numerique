@@ -1,9 +1,8 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { select } from 'react-select-event'
-import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
@@ -159,12 +158,7 @@ describe('inviter un utilisateur', () => {
   it('en tant qu’administrateur, quand je fais une recherche dans le champ de structure, alors je peux y faire une recherche utilisée dans le formulaire', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
-    const windowDsfr = window.dsfr
-    window.dsfr = (): {modal: {conceal: Mock}} => ({
-      modal: {
-        conceal: vi.fn(),
-      },
-    })
+    vi.stubGlobal('dsfr', stubbedConceal())
     vi.stubGlobal('fetch', vi.fn(structuresFetch))
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -218,7 +212,6 @@ describe('inviter un utilisateur', () => {
       })
     })
     expect(fetch).toHaveBeenCalledWith('/api/structures?search=ABC')
-    window.dsfr = windowDsfr
   })
 
   it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', () => {
@@ -328,12 +321,7 @@ describe('inviter un utilisateur', () => {
   it('quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
-    const windowDsfr = window.dsfr
-    window.dsfr = (): {modal: {conceal: Mock}} => ({
-      modal: {
-        conceal: vi.fn(),
-      },
-    })
+    vi.stubGlobal('dsfr', stubbedConceal())
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -378,14 +366,13 @@ describe('inviter un utilisateur', () => {
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
-    expect(formulaireInvitation).not.toHaveAttribute('open', '')
+    expect(formulaireInvitation).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })
-    window.dsfr = windowDsfr
   })
 
   it('quand je remplis avec un e-mail déjà existant puis avec un e-mail inexistant le formulaire d’invitation, alors un message d’invalidation puis de validation s’affiche et le drawer est réinitialisé', async () => {
@@ -399,12 +386,7 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateurAction = vi.fn()
       .mockResolvedValueOnce(['emailExistant'])
       .mockResolvedValueOnce(['OK'])
-    const windowDsfr = window.dsfr
-    window.dsfr = (): {modal: {conceal: Mock}} => ({
-      modal: {
-        conceal: vi.fn(),
-      },
-    })
+    vi.stubGlobal('dsfr', stubbedConceal())
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
@@ -457,7 +439,7 @@ describe('inviter un utilisateur', () => {
     expect(absenceMessageDErreur).not.toBeInTheDocument()
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
-    expect(formulaireInvitation).not.toHaveAttribute('open', '')
+    expect(formulaireInvitation).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -468,7 +450,6 @@ describe('inviter un utilisateur', () => {
       const champSelection = within(formulaireInvitation).queryByLabelText(`${labelChampSelection} *`)
       expect(champSelection).not.toBeInTheDocument()
     })
-    window.dsfr = windowDsfr
   })
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
@@ -518,19 +499,13 @@ describe('inviter un utilisateur', () => {
     // THEN
     const erreurEmailDejaExistant = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(erreurEmailDejaExistant).toBeInTheDocument()
-    expect(formulaireInvitation).toHaveAttribute('open', '')
+    expect(formulaireInvitation).toBeVisible()
   })
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['KO']))
-    const windowDsfr = window.dsfr
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    window.dsfr = () => ({
-      modal: {
-        conceal: vi.fn(),
-      },
-    })
+    vi.stubGlobal('dsfr', stubbedConceal())
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
@@ -580,13 +555,12 @@ describe('inviter un utilisateur', () => {
       'dialog',
       { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' }
     )
-    expect(formulaireInvitationApresInvitationEnEchec).not.toHaveAttribute('open', '')
+    expect(formulaireInvitationApresInvitationEnEchec).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })
-    window.dsfr = windowDsfr
   })
 })

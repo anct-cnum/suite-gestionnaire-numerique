@@ -1,6 +1,7 @@
 import { render, RenderResult } from '@testing-library/react'
 import { ReactElement } from 'react'
 import { ToastContainer } from 'react-toastify'
+import { Mock } from 'vitest'
 
 import departements from '../../ressources/departements.json'
 import groupements from '../../ressources/groupements.json'
@@ -68,8 +69,7 @@ export async function structuresFetch(): Promise<Response> {
   } as Response)
 }
 
-export
-const rolesAvecStructure: RolesAvecStructure = {
+export const rolesAvecStructure: RolesAvecStructure = {
   'Gestionnaire département': {
     label: 'Département',
     options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
@@ -86,4 +86,18 @@ const rolesAvecStructure: RolesAvecStructure = {
     label: 'Structure',
     options: [],
   },
+}
+
+export class FrozenDate extends Date {
+  constructor() {
+    super('1996-04-15T03:24:00')
+  }
+}
+
+export function stubbedConceal() {
+  return (): { modal: { conceal: Mock } } => ({
+    modal: {
+      conceal: vi.fn(),
+    },
+  })
 }
