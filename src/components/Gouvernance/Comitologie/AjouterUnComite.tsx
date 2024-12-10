@@ -1,15 +1,21 @@
-import { FormEvent, ReactElement, RefObject, useContext } from 'react'
+import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
 
-import { clientContext } from '../../shared/ClientContext'
-import Datepicker from '../../shared/Datepicker/Datepicker'
+import { clientContext } from '@/components/shared/ClientContext'
+import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import { Notification } from '@/components/shared/Notification/Notification'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import TextArea from '@/components/shared/TextArea/TextArea'
 import { formatForInputDate } from '@/presenters/shared/date'
 
-export default function AjouterUnComite({ dialogRef, labelId, setIsOpen }: AjouterUnComiteProps): ReactElement {
-  const dateDuJour = formatForInputDate(new Date())
-  const { ajouterUnComiteAction } = useContext(clientContext)
+export default function AjouterUnComite({
+  dialogRef,
+  uidGouvernance,
+  labelId,
+  setIsOpen,
+}: AjouterUnComiteProps): ReactElement {
+  const { ajouterUnComiteAction, pathname } = useContext(clientContext)
+  const [isDisabled, setIsDisabled] = useState(false)
 
   return (
     <form
@@ -50,7 +56,7 @@ export default function AjouterUnComite({ dialogRef, labelId, setIsOpen }: Ajout
       <div className="fr-col-6 fr-mb-3w">
         <Datepicker
           id="dateProchainComite"
-          min={dateDuJour}
+          min={formatForInputDate(new Date())}
           name="dateProchainComite"
         >
           Date du prochain comité
@@ -65,9 +71,10 @@ export default function AjouterUnComite({ dialogRef, labelId, setIsOpen }: Ajout
       <button
         className="fr-btn fr-my-2w center-button"
         data-fr-opened="false"
+        disabled={isDisabled}
         type="submit"
       >
-        Enregistrer
+        {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
       </button>
     </form>
   )
@@ -77,29 +84,40 @@ export default function AjouterUnComite({ dialogRef, labelId, setIsOpen }: Ajout
 
     const form = new FormData(event.currentTarget)
     const [type, frequence, date, commentaire] = [...form.values()].map((value) => value as string)
-    await ajouterUnComiteAction({ commentaire, date, frequence, gouvernanceId: '', type })
+    setIsDisabled(true)
+    const messages = await ajouterUnComiteAction({ commentaire, date, frequence, path: pathname, type, uidGouvernance })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'bien ajouté', title: 'Comité ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
     // Stryker disable next-line BooleanLiteral
     setIsOpen(false)
     window.dsfr(dialogRef.current).modal.conceal();
     (event.target as HTMLFormElement).reset()
+    setIsDisabled(false)
   }
 }
 
 const types = [
   {
     id: 'strategique',
+    isChecked: true,
     label: 'Stratégique',
   },
   {
     id: 'technique',
+    isChecked: false,
     label: 'Technique',
   },
   {
     id: 'consultatif',
+    isChecked: false,
     label: 'Consultatif',
   },
   {
     id: 'autre',
+    isChecked: false,
     label: 'Autre',
   },
 ]
@@ -107,24 +125,29 @@ const types = [
 const frequences = [
   {
     id: 'mensuelle',
+    isChecked: true,
     label: 'Mensuelle',
   },
   {
     id: 'trimestrielle',
+    isChecked: false,
     label: 'Trimestrielle',
   },
   {
     id: 'semestrielle',
+    isChecked: false,
     label: 'Semestrielle',
   },
   {
     id: 'annuelle',
+    isChecked: false,
     label: 'Annuelle',
   },
 ]
 
 type AjouterUnComiteProps = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
+  uidGouvernance: string
   labelId: string
   setIsOpen(isOpen: boolean): void
 }>

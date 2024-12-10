@@ -1,9 +1,8 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
-import { Mock } from 'vitest'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -394,12 +393,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
       // GIVEN
       const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
-      const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => ({
-        modal: {
-          conceal: vi.fn(),
-        },
-      })
+      vi.stubGlobal('dsfr', stubbedConceal())
 
       const mesInformationsPersonnellesViewModel =
         mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
@@ -429,7 +423,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(boutonModificationActive).toBeEnabled()
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
       expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
-      window.dsfr = windowDsfr
     })
 
     function ouvrirDrawer(): void {
