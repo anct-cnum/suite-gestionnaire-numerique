@@ -66,7 +66,10 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
       <section aria-labelledby="comitologie">
         {
           gouvernanceViewModel.comites ? (
-            <ComitologieRemplie comites={gouvernanceViewModel.comites} />
+            <ComitologieRemplie
+              comites={gouvernanceViewModel.comites}
+              gouvernanceUid={gouvernanceViewModel.uid}
+            />
           ) : (
             <ComitologieVide />
           )

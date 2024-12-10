@@ -5,8 +5,8 @@ import { ReactElement, useContext } from 'react'
 import DernierePage from './DernierePage'
 import Page from './Page'
 import PremierePage from './PremierePage'
-import { fullUrl } from '../../../presenters/paginationPresenter'
 import { clientContext } from '../ClientContext'
+import { fullUrl } from '@/presenters/paginationPresenter'
 
 export default function Pagination({ pathname, totalUtilisateurs }: PaginationProps): ReactElement {
   const { searchParams, utilisateursParPage } = useContext(clientContext)

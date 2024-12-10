@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-import Badge from '../../shared/Badge/Badge'
+import Badge from '../Badge/Badge'
 
 export default function Role({ role }: RoleProps): ReactElement {
   return (

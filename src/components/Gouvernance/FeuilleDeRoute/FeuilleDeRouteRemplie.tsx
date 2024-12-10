@@ -3,12 +3,12 @@
 import Link from 'next/link'
 import { ReactElement, useState } from 'react'
 
-import Table from '../../shared/Table/Table'
 import SectionRemplie from '../SectionRemplie'
 import SubSectionTitle from '../SubSectionTitle'
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import Icon from '@/components/shared/Icon/Icon'
+import Table from '@/components/shared/Table/Table'
 import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function FeuilleDeRouteRemplie({
@@ -82,6 +82,7 @@ export default function FeuilleDeRouteRemplie({
         boutonFermeture="Fermer les détails de la feuille de route"
         icon={<Icon icon="survey-line" />}
         id={drawerFeuilleDeRouteId}
+        // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelFeuilleDeRouteId}

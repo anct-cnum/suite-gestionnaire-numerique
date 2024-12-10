@@ -6,7 +6,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
-import { ajouterUnComiteAction } from '../../app/api/actions/ajouterUnComiteAction'
+import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'

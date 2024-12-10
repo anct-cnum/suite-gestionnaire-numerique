@@ -1,7 +1,7 @@
-import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { TypologieRole } from '../../domain/Role'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
+import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { TypologieRole } from '@/domain/Role'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import { pages } from '../../../presenters/paginationPresenter'
+import { pages } from '@/presenters/paginationPresenter'
 
 export default function Page({
   nombreDeResultat,
