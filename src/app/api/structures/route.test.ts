@@ -1,8 +1,8 @@
 import { NextRequest } from 'next/server'
 
 import { GET } from './route'
-import { PrismaStructureLoader } from '../../../gateways/PrismaStructureLoader'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
 
 describe('route /structures', () => {
   it('devrait retourner une erreur 403 quand on quand l’utilisateur n’est pas authentifié', async () => {
