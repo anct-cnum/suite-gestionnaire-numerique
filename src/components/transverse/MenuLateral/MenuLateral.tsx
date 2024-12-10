@@ -131,7 +131,7 @@ export default function MenuLateral(): ReactElement {
                 </Fragment>))}
             </ul>
             <p className={`fr-text--sm color-grey ${styles['menu-categorie']} fr-mt-2w`}>
-              DONNEES ET STATISTIQUES
+              DONNÉES ET STATISTIQUES
             </p>
             <ul className="fr-sidemenu__list">
               {menusDonneesEtStatistiques.map((menu) => (
