@@ -1,8 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { Mock } from 'vitest'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, rolesAvecStructure } from '@/components/testHelper'
+import { renderComponent, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
@@ -250,12 +249,7 @@ describe('mes utilisateurs', () => {
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
       const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
-      const windowDsfr = window.dsfr
-      window.dsfr = (): {modal: {conceal: Mock}} => ({
-        modal: {
-          conceal: vi.fn(),
-        },
-      })
+      vi.stubGlobal('dsfr', stubbedConceal())
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
       const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
@@ -273,7 +267,6 @@ describe('mes utilisateurs', () => {
       expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
       const notification = screen.getByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
-      window.dsfr = windowDsfr
     })
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {

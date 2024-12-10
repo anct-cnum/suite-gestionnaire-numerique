@@ -22,6 +22,7 @@ export function gouvernancePresenter(
       ...{ noteDeContexte: toNoteDeContexteViewModel(gouvernanceReadModel.noteDeContexte) },
       sousTitre: buildSousTitreNoteDeContexte(gouvernanceReadModel.noteDeContexte),
     },
+    uid: gouvernanceReadModel.uid,
   }
 }
 
@@ -49,6 +50,7 @@ export type GouvernanceViewModel = Readonly<{
     noteDeContexte?: NoteDeContexteViewModel
     sousTitre: string
   }>
+  uid: string
 }>
 
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {

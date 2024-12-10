@@ -13,6 +13,7 @@ export type UneGouvernanceReadModel = Readonly<{
     prenomAuteur: string
     texte: string
   }>
+  uid: string
 }>
 
 export type ComiteReadModel = Readonly<{

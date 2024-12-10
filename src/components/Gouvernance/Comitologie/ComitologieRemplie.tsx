@@ -9,7 +9,7 @@ import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function ComitologieRemplie({ comites }: ComitologieRemplieProps): ReactElement {
+export default function ComitologieRemplie({ comites, gouvernanceUid }: ComitologieRemplieProps): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawer-comite'
@@ -31,6 +31,7 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
       >
         <AjouterUnComite
           dialogRef={drawerRef}
+          gouvernanceUid={gouvernanceUid}
           labelId={labelComiteId}
           setIsOpen={setIsDrawerOpen}
         />
@@ -83,4 +84,5 @@ export default function ComitologieRemplie({ comites }: ComitologieRemplieProps)
 
 type ComitologieRemplieProps = Readonly<{
   comites: NonNullable<GouvernanceViewModel['comites']>
+  gouvernanceUid: string
 }>
