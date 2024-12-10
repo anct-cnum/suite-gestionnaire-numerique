@@ -37,7 +37,7 @@ export default function Layout({ children }: PropsWithChildren): ReactElement {
           type="image/x-icon"
         />
         <Script
-          src="/dsfr-1.12.1.module.min.js"
+          src="/dsfr-1.13.0.module.min.js"
           strategy="lazyOnload"
         />
       </head>
