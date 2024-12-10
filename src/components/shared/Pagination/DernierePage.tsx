@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import { nombreDePage } from '../../../presenters/paginationPresenter'
+import { nombreDePage } from '@/presenters/paginationPresenter'
 
 export default function DernierePage({
   nombreDeResultat,

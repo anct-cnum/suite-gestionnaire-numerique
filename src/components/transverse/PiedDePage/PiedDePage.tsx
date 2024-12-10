@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import ExternalLink from '../../shared/ExternalLink/ExternalLink'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function PiedDePage(): ReactElement {
   return (
