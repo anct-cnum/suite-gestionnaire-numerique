@@ -8,6 +8,7 @@ import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { Notification } from '../shared/Notification/Notification'
 import RadioGroup from '../shared/Radio/RadioGroup'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TextInput from '../shared/TextInput/TextInput'
 import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { emailPattern } from '@/shared/patterns'
@@ -22,6 +23,7 @@ export default function InviterUnUtilisateur({
   const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
   const [organisation, setOrganisation] = useState<string>('')
+  const [isDisabled, setIsDisabled] = useState(false)
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -134,13 +136,12 @@ export default function InviterUnUtilisateur({
               setOrganisation={setOrganisation}
             /> : null
         }
-        <button
-          className="fr-btn fr-my-2w center-button"
-          data-fr-opened="false"
-          type="submit"
-        >
-          Envoyer l’invitation
-        </button>
+        <div className="fr-btns-group fr-mt-2w">
+          <SubmitButton
+            isDisabled={isDisabled}
+            label={isDisabled ? 'Envois en cours...' : 'Envoyer l’invitation'}
+          />
+        </div>
       </form>
     </div>
   )
@@ -148,6 +149,7 @@ export default function InviterUnUtilisateur({
   async function inviterUtilisateur(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
+    setIsDisabled(true)
     const form = new FormData(event.currentTarget)
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
     const messages = await inviterUnUtilisateurAction({ codeOrganisation, email: email, nom, prenom, role })
@@ -170,6 +172,7 @@ export default function InviterUnUtilisateur({
       }
       fermerEtReinitialiser(event.target as HTMLFormElement)
     }
+    setIsDisabled(false)
   }
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {

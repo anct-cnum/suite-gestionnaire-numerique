@@ -5,6 +5,7 @@ import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
+import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 import TextArea from '@/components/shared/TextArea/TextArea'
 import { formatForInputDate } from '@/presenters/shared/date'
 
@@ -68,14 +69,12 @@ export default function AjouterUnComite({
       >
         Laissez ici un commentaire général sur le comité
       </TextArea>
-      <button
-        className="fr-btn fr-my-2w center-button"
-        data-fr-opened="false"
-        disabled={isDisabled}
-        type="submit"
-      >
-        {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-      </button>
+      <div className="fr-btns-group">
+        <SubmitButton
+          isDisabled={isDisabled}
+          label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+        />
+      </div>
     </form>
   )
 

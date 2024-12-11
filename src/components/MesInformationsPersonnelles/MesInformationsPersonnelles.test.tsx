@@ -172,6 +172,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(avertissement).toBeInTheDocument()
 
       const formulaire = within(modal).getByRole('form', { name: 'Supprimer' })
+      expect(formulaire).toHaveAttribute('method', 'dialog')
       const saisie = within(formulaire).getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
       expect(saisie).toBeRequired()
       expect(saisie).toHaveAttribute('type', 'email')
@@ -184,7 +185,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       const confirmer = within(formulaire).getByRole('button', { name: 'Confirmer la suppression' })
       expect(confirmer).toHaveAttribute('type', 'submit')
-      expect(confirmer).toHaveAttribute('formMethod', 'dialog')
       expect(confirmer).toBeDisabled()
     })
 
@@ -281,7 +281,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         fireEvent.click(confirmerSuppressionCompte())
 
         // THEN
-        const boutonConfirmationDesactive = await screen.findByRole('button', { name: 'Suppression en cours' })
+        const boutonConfirmationDesactive = await screen.findByRole('button', { name: 'Suppression en cours...' })
         expect(boutonConfirmationDesactive).toBeDisabled()
         expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
         expect(supprimerMonCompteAction).toHaveBeenCalledWith()
@@ -416,10 +416,10 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       fireEvent.click(enregistrer)
 
       // THEN
-      const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours' })
+      const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours...' })
       expect(boutonModificationDesactive).toBeDisabled()
       expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ emailDeContact: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
-      const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours' })
+      const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours...' })
       expect(boutonModificationActive).toBeEnabled()
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
       expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
