@@ -270,109 +270,23 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-          ],
-          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 105_000,
           montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
-          montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
         },
         {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-          ],
-          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 88_030,
           montantSubventionAccorde: 38_030,
           montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
-          montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 2',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 1,
@@ -431,75 +345,12 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'CoConstruireLaFeuilleDeRoute',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'validee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'RedigerLaFeuilleDeRoute',
-              budgetGlobal: 45_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 30_000,
-                  montantDemande: 35_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubvention',
-              statut: 'rejetee',
-            },
-          ],
-          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
-          montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
@@ -607,193 +458,5 @@ describe('gouvernance', () => {
     expect(lirePlus).toHaveClass('fr-icon-arrow-up-s-line')
     const lireMoins = screen.getByRole('button', { name: 'Lire moins' })
     expect(lireMoins).toBeInTheDocument()
-  })
-
-  it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      feuillesDeRoute: [
-        {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'CoConstruireLaFeuilleDeRoute',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'validee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'RedigerLaFeuilleDeRoute',
-              budgetGlobal: 45_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 30_000,
-                  montantDemande: 35_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubvention',
-              statut: 'rejetee',
-            },
-          ],
-          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 100_000,
-          montantSubventionDemande: 115_000,
-          montantSubventionFormationAccorde: 5_000,
-          montantSubventionFormationDemande: 40_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-      ],
-    }))
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
-
-    // WHEN
-    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
-    fireEvent.click(feuilleDeRoute)
-
-    // THEN
-    const drawer = screen.getByRole('dialog')
-    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
-    expect(titreDrawer).toBeInTheDocument()
-    const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
-    expect(responsableLabel).toBeInTheDocument()
-    const responsable = within(drawer).getAllByRole('link', {
-      name: 'Préfecture du Rhône',
-    })[0]
-    expect(responsable).toBeInTheDocument()
-    const budgetGlobalLabel = within(drawer).getByText('Budget total des actions')
-    expect(budgetGlobalLabel).toBeInTheDocument()
-    const budgetGlobal = within(drawer).getByText('145 000 €')
-    expect(budgetGlobal).toBeInTheDocument()
-    const montantDeLaSubventionDemandeeLabel = within(drawer).getByText('Montant de la subvention demandée')
-    expect(montantDeLaSubventionDemandeeLabel).toBeInTheDocument()
-    const montantDeLaSubventionDemandee = within(drawer).getByText('115 000 €')
-    expect(montantDeLaSubventionDemandee).toBeInTheDocument()
-    const montantDeLaSubventionAccordeeLabel = within(drawer).getByText('Montant de la subvention accordée')
-    expect(montantDeLaSubventionAccordeeLabel).toBeInTheDocument()
-    const montantDeLaSubventionAccordee = within(drawer).getByText('100 000 €')
-    expect(montantDeLaSubventionAccordee).toBeInTheDocument()
-    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaires des subventions')
-    expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
-    const beneficiairesList = within(drawer).getAllByRole('list')[0]
-    const beneficiairesListItems = within(beneficiairesList).getAllByRole('listitem')
-    const premierBeneficiaireDesSubventions = within(beneficiairesListItems[0]).getByRole('link', { name: 'Préfecture du Rhône' })
-    expect(premierBeneficiaireDesSubventions).toHaveAttribute('href', '/')
-    const secondBeneficiaireDesSubventions = within(beneficiairesListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-    expect(secondBeneficiaireDesSubventions).toHaveAttribute('href', '/')
-    const montantDeLaSubventionFormationAccordeeLabel = within(drawer).getByText('Montant de la subvention formation accordée')
-    expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
-    const montantDeLaSubventionFormationAccordee = within(drawer).getByText('5 000 €')
-    expect(montantDeLaSubventionFormationAccordee).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
-    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
-    const beneficiairesSubventionFormationList = within(drawer).getAllByRole('list')[1]
-    const beneficiairesSubventionFormationListItems = within(beneficiairesSubventionFormationList).getAllByRole('listitem')
-    const premierBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[0]).getByRole('link', { name: 'Préfecture du Rhône' })
-    expect(premierBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/')
-    const secondBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-    expect(secondBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/')
-    const buttonsList = within(drawer).getAllByRole('list')[2]
-    const buttonsListItems = within(buttonsList).getAllByRole('listitem')
-    const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
-    expect(boutonPlusDeDetails).toHaveAttribute('href', '/')
-    const boutonTelechargerPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
-    expect(boutonTelechargerPdf).toBeInTheDocument()
-  })
-
-  it('quand je suis dans le détail d’une feuille de route, si il ny a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      feuillesDeRoute: [
-        {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-          ],
-          beneficiaires: [],
-          beneficiairesSubventionFormation: [],
-          budgetGlobal: 50_000,
-          montantSubventionAccorde: 0,
-          montantSubventionDemande: 15_000,
-          montantSubventionFormationAccorde: 0,
-          montantSubventionFormationDemande: 0,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 1,
-        },
-      ],
-    }))
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
-
-    // WHEN
-    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
-    fireEvent.click(feuilleDeRoute)
-
-    // THEN
-    const drawer = screen.getByRole('dialog')
-    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
-    expect(titreDrawer).toBeInTheDocument()
-    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions')
-    expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = screen.getByText('Bénéficiaire des subventions formation')
-    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
-    const tirets = screen.getAllByText('-')
-    expect(tirets).toHaveLength(2)
   })
 })

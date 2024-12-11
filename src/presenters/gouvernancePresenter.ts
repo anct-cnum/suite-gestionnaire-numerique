@@ -63,29 +63,27 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
 }
 
 function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
-  const typeDeComite = comite.type
   return {
     dateProchainComite: formaterEnDateFrancaise(comite.dateProchainComite),
-    nom: `Comité ${typeDeComite}`,
+    nom: `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }
 }
 
 function toFeuillesDeRouteViewModel(feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
-  const nombreDeBeneficiaires = feuilleDeRoute.beneficiaires.length
+  const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
   const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
   return {
-    beneficiaires: feuilleDeRoute.beneficiaires.map(toMembresViewModel),
+    beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
     beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
     budgetGlobal: formaterEnNombreFrancais(feuilleDeRoute.budgetGlobal),
     montantSubventionAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionAccorde),
     montantSubventionDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionDemande),
     montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
-    montantSubventionFormationDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationDemande),
     nom: feuilleDeRoute.nom,
     porteur: feuilleDeRoute.porteur.nom,
     totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
-    wordingBeneficiaires: `Bénéficiaire${formatPluriel(nombreDeBeneficiaires)}`,
+    wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
     wordingBeneficiairesSubventionFormation: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormation)}`,
   }
 }
@@ -204,11 +202,10 @@ export type FeuilleDeRouteViewModel = Readonly<{
   budgetGlobal: string
   montantSubventionDemande: string
   montantSubventionAccorde: string
-  montantSubventionFormationDemande: string
   montantSubventionFormationAccorde: string
-  beneficiaires: ReadonlyArray<MembreViewModel>
+  beneficiairesSubvention: ReadonlyArray<MembreViewModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
-  wordingBeneficiaires: string
+  wordingBeneficiairesSubvention: string
   wordingBeneficiairesSubventionFormation: string
 }>
 

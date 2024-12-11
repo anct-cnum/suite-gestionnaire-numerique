@@ -46,78 +46,26 @@ describe('gouvernance loader', () => {
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [
         {
-          actions: [
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'EtablirUnDiagnosticTerritorial',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'envoyee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'CoConstruireLaFeuilleDeRoute',
-              budgetGlobal: 50_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 35_000,
-                  montantDemande: 40_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubventionFormation',
-              statut: 'validee',
-            },
-            {
-              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
-              besoin: 'RedigerLaFeuilleDeRoute',
-              budgetGlobal: 45_000,
-              demandesDeCofinancement: [
-                {
-                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
-                  montantDemande: 15_000,
-                },
-              ],
-              demandesDeSubvention: [
-                {
-                  montantAccorde: 30_000,
-                  montantDemande: 35_000,
-                  type: 'FSE',
-                },
-              ],
-              nom: 'demandeDeSubvention',
-              statut: 'rejetee',
-            },
-          ],
-          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
           montantSubventionFormationAccorde: 5_000,
-          montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 2',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 2,
         },
       ],
       membres: [

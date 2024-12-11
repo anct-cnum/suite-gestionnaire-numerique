@@ -1,4 +1,3 @@
-
 export interface UneGouvernanceReadModelLoader {
   find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
 }
@@ -29,34 +28,11 @@ export type FeuilleDeRouteReadModel = Readonly<{
   porteur: MembreReadModel
   totalActions: number
   budgetGlobal: number
-  actions: ReadonlyArray<Action>
   montantSubventionDemande: number
   montantSubventionAccorde: number
-  montantSubventionFormationDemande: number
   montantSubventionFormationAccorde: number
-  beneficiaires: ReadonlyArray<MembreReadModel>
+  beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
-}>
-
-export type Action = Readonly<{
-  besoin: BesoinSubvention
-  nom: string
-  budgetGlobal: number
-  demandesDeSubvention: ReadonlyArray<DemandeDeSubvention>
-  demandesDeCofinancement: ReadonlyArray<Cofinancement>
-  beneficiaires:Array<MembreReadModel>
-  statut: Statut
-}>
-
-export type DemandeDeSubvention = Readonly<{
-  type: string
-  montantDemande: number
-  montantAccorde: number
-}>
-
-export type Cofinancement = Readonly<{
-  emetteur: MembreReadModel
-  montantDemande: number
 }>
 
 export type MembreReadModel = Readonly<{
@@ -66,19 +42,3 @@ export type MembreReadModel = Readonly<{
 }>
 
 type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
-
-type BesoinSubvention =
-'EtablirUnDiagnosticTerritorial' |
-'CoConstruireLaFeuilleDeRoute' |
-'RedigerLaFeuilleDeRoute' |
-'AppuiJuridique' |
-'StructurerUnFonds' |
-'MonterDossiersDeSubvention' |
-'AnimerLaGouvernance' |
-'StructurerUneFiliereDeReconditionnement' |
-'CollecterDesDonneesTerritoriales' |
-'SensibiliserLesActeursAuxOutilsExistants' |
-'AppuyerLaCertificationQualiopi'
-
-type Statut = 'validee' | 'envoyee' | 'acceptee' | 'rejetee'
-

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import Tag from '@/components/shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: DetailsFeuilleDeRouteProps): ReactElement {
@@ -14,13 +15,9 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
         <div className="color-grey">
           Responsable de la feuille de route
         </div>
-        <a
-          className="fr-tag"
-          href="/"
-          target="_self"
-        >
+        <Tag>
           {feuilleDeRoute.porteur}
-        </a>
+        </Tag>
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
@@ -48,24 +45,18 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
-          {`${feuilleDeRoute.wordingBeneficiaires} des subventions`}
+          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions`}
         </div>
         {
-          feuilleDeRoute.beneficiaires.length > 0 ?
+          feuilleDeRoute.beneficiairesSubvention.length > 0 ?
             <ul className="fr-tags-group">
               {
-                feuilleDeRoute.beneficiaires.map((membre) => (
-                  <li key={membre.nom}>
-                    <a
-                      className="fr-tag"
-                      href="/"
-                      key={membre.nom}
-                      target="_self"
-                    >
-                      {membre.nom}
-                    </a>
+                feuilleDeRoute.beneficiairesSubvention.map((beneficiaire) => (
+                  <li key={beneficiaire.nom}>
+                    <Tag>
+                      {beneficiaire.nom}
+                    </Tag>
                   </li>
-
                 ))
               }
             </ul>
@@ -88,15 +79,11 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
           feuilleDeRoute.beneficiairesSubventionFormation.length > 0 ?
             <ul className="fr-tags-group">
               {
-                feuilleDeRoute.beneficiairesSubventionFormation.map((membre) => (
-                  <li key={membre.nom}>
-                    <a
-                      className="fr-tag"
-                      href="/"
-                      target="_self"
-                    >
-                      {membre.nom}
-                    </a>
+                feuilleDeRoute.beneficiairesSubventionFormation.map((beneficiaire) => (
+                  <li key={beneficiaire.nom}>
+                    <Tag>
+                      {beneficiaire.nom}
+                    </Tag>
                   </li>
                 ))
               }
