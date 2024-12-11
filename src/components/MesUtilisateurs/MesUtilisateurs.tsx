@@ -90,48 +90,50 @@ export default function MesUtilisateurs(
           setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
-      <Drawer
-        boutonFermeture="Fermer les filtres"
-        id={drawerFiltreId}
-        // Stryker disable next-line BooleanLiteral
-        isFixedWidth={false}
-        isOpen={isDrawerOpen}
-        labelId={labelFiltreId}
-        setIsOpen={setIsDrawerOpen}
-      >
-        <FiltrerMesUtilisateurs
-          id={drawerFiltreId}
-          labelId={labelFiltreId}
-          setIsOpen={setIsDrawerOpen}
-        />
-      </Drawer>
       {
         sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? (
-          <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
-            <Search
-              labelBouton="Rechercher"
-              placeholder="Rechercher par nom ou adresse électronique"
-            />
-            <div>
-              <button
-                aria-controls={drawerFiltreId}
-                className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
-                data-fr-opened="false"
-                onClick={() => {
-                  setIsDrawerOpen(true)
-                }}
-                type="button"
-              >
-                Filtrer
-              </button>
-              <button
-                className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
-                type="button"
-              >
-                Exporter
-              </button>
+          <>
+            <Drawer
+              boutonFermeture="Fermer les filtres"
+              id={drawerFiltreId}
+              // Stryker disable next-line BooleanLiteral
+              isFixedWidth={false}
+              isOpen={isDrawerOpen}
+              labelId={labelFiltreId}
+              setIsOpen={setIsDrawerOpen}
+            >
+              <FiltrerMesUtilisateurs
+                id={drawerFiltreId}
+                labelId={labelFiltreId}
+                setIsOpen={setIsDrawerOpen}
+              />
+            </Drawer>
+            <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
+              <Search
+                labelBouton="Rechercher"
+                placeholder="Rechercher par nom ou adresse électronique"
+              />
+              <div>
+                <button
+                  aria-controls={drawerFiltreId}
+                  className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-filter-line fr-mr-2w"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                  type="button"
+                >
+                  Filtrer
+                </button>
+                <button
+                  className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
+                  type="button"
+                >
+                  Exporter
+                </button>
+              </div>
             </div>
-          </div>
+          </>
         ) : (
           <p>
             Gérez l’accès à l’espace de gestion
