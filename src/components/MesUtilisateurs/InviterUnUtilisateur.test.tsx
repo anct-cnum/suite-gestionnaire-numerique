@@ -215,7 +215,7 @@ describe('inviter un utilisateur', () => {
     expect(fetch).toHaveBeenCalledWith('/api/structures?search=ABC')
   })
 
-  it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', () => {
+  it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', async () => {
     // GIVEN
     vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
         nom: string
@@ -253,7 +253,9 @@ describe('inviter un utilisateur', () => {
     fireEvent.change(structure, { target: { value: 'AB' } })
 
     // THEN
-    expect(fetch).not.toHaveBeenCalled()
+    await waitFor(() => {
+      expect(fetch).not.toHaveBeenCalled()
+    })
   })
 
   it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
