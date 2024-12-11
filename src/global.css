@@ -80,11 +80,6 @@ table button {
   z-index: 2;
 }
 
-.center-button {
-  justify-content: center;
-  width: 100%;
-}
-
 .full-width {
   width: 100%;
 }

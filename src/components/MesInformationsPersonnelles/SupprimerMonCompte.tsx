@@ -5,16 +5,14 @@ import styles from './SupprimerMonCompte.module.css'
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
 import ModalTitle from '../shared/ModalTitle/ModalTitle'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { emailPattern } from '@/shared/patterns'
 
 export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: SupprimerMonCompteProps): ReactElement {
   const { supprimerMonCompteAction } = useContext(clientContext)
   const [emailValidationInfo, setEmailValidationInfo] =
     useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
-  const [etatBoutonSuppression, setEtatBoutonSuppression] = useState<EtatBoutonSuppression>({
-    enAttente: false,
-    texte: 'Confirmer la suppression',
-  })
+  const [isDisabled, setIsDisabled] = useState(false)
   const modaleTitreId = useId()
   const champEmailId = useId()
   const messageValidationId = 'supprimer-mon-compte-email-message-validation'
@@ -26,7 +24,11 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
       isOpen={isOpen}
       labelId={modaleTitreId}
     >
-      <form aria-label="Supprimer">
+      <form
+        aria-label="Supprimer"
+        method="dialog"
+        onSubmit={logout}
+      >
         <div className="fr-modal__content">
           <ModalTitle id={modaleTitreId}>
             Supprimer mon compte
@@ -78,15 +80,10 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
             >
               Annuler
             </button>
-            <button
-              className="fr-btn red-button"
-              disabled={isConfirmerDisabled()}
-              formMethod="dialog"
-              onClick={logout}
-              type="submit"
-            >
-              {etatBoutonSuppression.texte}
-            </button>
+            <SubmitButton
+              isDisabled={isConfirmerDisabled()}
+              label={isDisabled ? 'Suppression en cours...' : 'Confirmer la suppression'}
+            />
           </div>
         </div>
       </form>
@@ -103,17 +100,17 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Sup
     setEmailValidationInfo(emailValidationInfoByState[validationState(currentTarget, email)])
   }
 
-  async function logout(event: FormEvent<HTMLButtonElement>): Promise<void> {
+  async function logout(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
-    setEtatBoutonSuppression({ enAttente: true, texte: 'Suppression en cours' })
+    setIsDisabled(true)
 
     await supprimerMonCompteAction()
       .then(async () => signOut({ callbackUrl: '/connexion' }))
   }
 
   function isConfirmerDisabled(): boolean {
-    return !emailValidationInfo.isOk || etatBoutonSuppression.enAttente
+    return !emailValidationInfo.isOk || isDisabled
   }
 }
 
@@ -132,11 +129,6 @@ type EmailValidationInfo = Readonly<{
   messageClass: string
   message: string
   isOk: boolean
-}>
-
-type EtatBoutonSuppression = Readonly<{
-  enAttente: boolean
-  texte: string
 }>
 
 const emailValidationInfoByState: Readonly<Record<EmailValidationState, EmailValidationInfo>> = {

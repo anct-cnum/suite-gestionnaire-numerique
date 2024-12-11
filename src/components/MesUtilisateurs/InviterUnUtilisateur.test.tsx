@@ -116,6 +116,7 @@ describe('inviter un utilisateur', () => {
 
     const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
     expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    expect(envoyerInvitation).toBeEnabled()
   })
 
   it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
@@ -316,6 +317,7 @@ describe('inviter un utilisateur', () => {
 
     const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
     expect(envoyerInvitation).toHaveAttribute('type', 'submit')
+    expect(envoyerInvitation).toBeEnabled()
   })
 
   it('quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
@@ -364,6 +366,7 @@ describe('inviter un utilisateur', () => {
     fireEvent.click(envoyerInvitation)
 
     // THEN
+    expect(envoyerInvitation).toBeDisabled()
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
     expect(formulaireInvitation).not.toBeVisible()
@@ -373,6 +376,7 @@ describe('inviter un utilisateur', () => {
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })
+    expect(envoyerInvitation).toBeEnabled()
   })
 
   it('quand je remplis avec un e-mail déjà existant puis avec un e-mail inexistant le formulaire d’invitation, alors un message d’invalidation puis de validation s’affiche et le drawer est réinitialisé', async () => {
