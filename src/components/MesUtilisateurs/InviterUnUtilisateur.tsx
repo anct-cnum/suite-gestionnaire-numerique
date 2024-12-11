@@ -151,7 +151,7 @@ export default function InviterUnUtilisateur({
     const form = new FormData(event.currentTarget)
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
     const messages = await inviterUnUtilisateurAction({ codeOrganisation, email: email, nom, prenom, role })
-    if (messages[0] === 'emailExistant') {
+    if (messages.includes('emailExistant')) {
       setEmailDejaExistant({
         className: 'fr-input-group--error',
         content: (
@@ -164,7 +164,7 @@ export default function InviterUnUtilisateur({
         ),
       })
     } else {
-      if (messages[0] === 'OK') {
+      if (messages.includes('OK')) {
         Notification('success', { description: email, title: 'Invitation envoyée à ' })
         setEmailDejaExistant(undefined)
       }

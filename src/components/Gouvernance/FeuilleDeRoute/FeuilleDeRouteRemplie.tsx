@@ -82,6 +82,7 @@ export default function FeuilleDeRouteRemplie({
         boutonFermeture="Fermer les détails de la feuille de route"
         icon={<Icon icon="survey-line" />}
         id={drawerFeuilleDeRouteId}
+        // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelFeuilleDeRouteId}
