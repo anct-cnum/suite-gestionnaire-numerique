@@ -78,11 +78,13 @@ describe('gouvernance', () => {
           dateProchainComite: new Date('2024-09-06'),
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
+          type: 'stratégique',
         },
         {
           dateProchainComite: new Date('2024-03-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'Trimestriel',
+          type: 'technique',
         },
       ],
     }))
@@ -114,11 +116,11 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(3)
-    expect(columns1Body[1].textContent).toBe('Comité stratégique 1 : 06/09/2024')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique : 06/09/2024')
     expect(columns1Body[2].textContent).toBe('Semestriel')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(3)
-    expect(columns2Body[1].textContent).toBe('Comité stratégique 2 : 01/03/2024')
+    expect(columns2Body[1].textContent).toBe('Comité technique : 01/03/2024')
     expect(columns2Body[2].textContent).toBe('Trimestriel')
   })
 
@@ -330,9 +332,11 @@ describe('gouvernance', () => {
               statut: 'envoyee',
             },
           ],
-          beneficiaire: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
-          beneficiaireSubventionFormation: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
+          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
+          montantSubventionAccorde: 105_000,
+          montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
           montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
@@ -362,9 +366,11 @@ describe('gouvernance', () => {
               statut: 'envoyee',
             },
           ],
-          beneficiaire: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
-          beneficiaireSubventionFormation: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
+          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 88_030,
+          montantSubventionAccorde: 38_030,
+          montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
           montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 2',
@@ -487,9 +493,11 @@ describe('gouvernance', () => {
               statut: 'rejetee',
             },
           ],
-          beneficiaire: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
-          beneficiaireSubventionFormation: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
+          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
+          montantSubventionAccorde: 100_000,
+          montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
@@ -668,9 +676,11 @@ describe('gouvernance', () => {
               statut: 'rejetee',
             },
           ],
-          beneficiaire: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
-          beneficiaireSubventionFormation: { nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' },
+          beneficiaires: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
+          montantSubventionAccorde: 100_000,
+          montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           montantSubventionFormationDemande: 40_000,
           nom: 'Feuille de route inclusion 1',
@@ -691,26 +701,47 @@ describe('gouvernance', () => {
     expect(titreDrawer).toBeInTheDocument()
     const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
     expect(responsableLabel).toBeInTheDocument()
+    const responsable = within(drawer).getAllByRole('link', {
+      name: 'Préfecture du Rhône',
+    })[0]
+    expect(responsable).toBeInTheDocument()
     const budgetGlobalLabel = within(drawer).getByText('Budget total des actions')
     expect(budgetGlobalLabel).toBeInTheDocument()
-    const budget = within(drawer).getByText('145 000 €')
-    expect(budget).toBeInTheDocument()
+    const budgetGlobal = within(drawer).getByText('145 000 €')
+    expect(budgetGlobal).toBeInTheDocument()
     const montantDeLaSubventionDemandeeLabel = within(drawer).getByText('Montant de la subvention demandée')
     expect(montantDeLaSubventionDemandeeLabel).toBeInTheDocument()
+    const montantDeLaSubventionDemandee = within(drawer).getByText('115 000 €')
+    expect(montantDeLaSubventionDemandee).toBeInTheDocument()
     const montantDeLaSubventionAccordeeLabel = within(drawer).getByText('Montant de la subvention accordée')
     expect(montantDeLaSubventionAccordeeLabel).toBeInTheDocument()
+    const montantDeLaSubventionAccordee = within(drawer).getByText('100 000 €')
+    expect(montantDeLaSubventionAccordee).toBeInTheDocument()
     const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaires des subventions')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
+    const beneficiairesList = within(drawer).getAllByRole('list')[0]
+    const beneficiairesListItems = within(beneficiairesList).getAllByRole('listitem')
+    const premierBeneficiaireDesSubventions = within(beneficiairesListItems[0]).getByRole('link', { name: 'Préfecture du Rhône' })
+    expect(premierBeneficiaireDesSubventions).toHaveAttribute('href', '/')
+    const secondBeneficiaireDesSubventions = within(beneficiairesListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
+    expect(secondBeneficiaireDesSubventions).toHaveAttribute('href', '/')
     const montantDeLaSubventionFormationAccordeeLabel = within(drawer).getByText('Montant de la subvention formation accordée')
     expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
-    const beneficiairesDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
-    expect(beneficiairesDesSubventionsFormationLabel).toBeInTheDocument()
-    const list = within(drawer).getByRole('list')
-    const listItems = within(list).getAllByRole('listitem')
-    expect(listItems).toHaveLength(2)
-    const boutonPlusDeDetails = within(listItems[0]).getByRole('link', { name: 'Plus de détails' })
+    const montantDeLaSubventionFormationAccordee = within(drawer).getByText('5 000 €')
+    expect(montantDeLaSubventionFormationAccordee).toBeInTheDocument()
+    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
+    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
+    const beneficiairesSubventionFormationList = within(drawer).getAllByRole('list')[1]
+    const beneficiairesSubventionFormationListItems = within(beneficiairesSubventionFormationList).getAllByRole('listitem')
+    const premierBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[0]).getByRole('link', { name: 'Préfecture du Rhône' })
+    expect(premierBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/')
+    const secondBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
+    expect(secondBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/')
+    const buttonsList = within(drawer).getAllByRole('list')[2]
+    const buttonsListItems = within(buttonsList).getAllByRole('listitem')
+    const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
     expect(boutonPlusDeDetails).toHaveAttribute('href', '/')
-    const boutonTelechargerPdf = within(listItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
+    const boutonTelechargerPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
     expect(boutonTelechargerPdf).toBeInTheDocument()
   })
 })

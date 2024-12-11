@@ -63,18 +63,30 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
 }
 
 function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
+  const typeDeComite = comite.type
   return {
     dateProchainComite: formaterEnDateFrancaise(comite.dateProchainComite),
-    nom: comite.nom,
+    nom: `Comité ${typeDeComite}`,
     periodicite: comite.periodicite,
   }
 }
 
 function toFeuillesDeRouteViewModel(feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
+  const nombreDeBeneficiaires = feuilleDeRoute.beneficiaires.length
+  const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
   return {
+    beneficiaires: feuilleDeRoute.beneficiaires.map(toMembresViewModel),
+    beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
     budgetGlobal: formaterEnNombreFrancais(feuilleDeRoute.budgetGlobal),
+    montantSubventionAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionAccorde),
+    montantSubventionDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionDemande),
+    montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
+    montantSubventionFormationDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationDemande),
     nom: feuilleDeRoute.nom,
+    porteur: feuilleDeRoute.porteur.nom,
     totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
+    wordingBeneficiaires: `Bénéficiaire${formatPluriel(nombreDeBeneficiaires)}`,
+    wordingBeneficiairesSubventionFormation: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormation)}`,
   }
 }
 
@@ -186,9 +198,18 @@ type ComiteViewModel = Readonly<{
 }>
 
 export type FeuilleDeRouteViewModel = Readonly<{
-  budgetGlobal: string
   nom: string
+  porteur: string
   totalActions: string
+  budgetGlobal: string
+  montantSubventionDemande: string
+  montantSubventionAccorde: string
+  montantSubventionFormationDemande: string
+  montantSubventionFormationAccorde: string
+  beneficiaires: ReadonlyArray<MembreViewModel>
+  beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
+  wordingBeneficiaires: string
+  wordingBeneficiairesSubventionFormation: string
 }>
 
 type MembreViewModel = Readonly<{

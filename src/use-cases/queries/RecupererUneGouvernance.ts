@@ -21,6 +21,7 @@ export type ComiteReadModel = Readonly<{
   dateProchainComite: Date
   nom: string
   periodicite: string
+  type : TypeDeComite
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{
@@ -29,20 +30,22 @@ export type FeuilleDeRouteReadModel = Readonly<{
   totalActions: number
   budgetGlobal: number
   actions: ReadonlyArray<Action>
+  montantSubventionDemande: number
+  montantSubventionAccorde: number
   montantSubventionFormationDemande: number
   montantSubventionFormationAccorde: number
-  beneficiaire: MembreReadModel
-  beneficiaireSubventionFormation: MembreReadModel
+  beneficiaires: ReadonlyArray<MembreReadModel>
+  beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
 }>
 
 export type Action = Readonly<{
-  besoin: besoinSubvention
+  besoin: BesoinSubvention
   nom: string
   budgetGlobal: number
   demandesDeSubvention: ReadonlyArray<DemandeDeSubvention>
   demandesDeCofinancement: ReadonlyArray<Cofinancement>
   beneficiaires:Array<MembreReadModel>
-  statut: statut
+  statut: Statut
 }>
 
 export type DemandeDeSubvention = Readonly<{
@@ -62,7 +65,9 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-type besoinSubvention =
+type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
+
+type BesoinSubvention =
 'EtablirUnDiagnosticTerritorial' |
 'CoConstruireLaFeuilleDeRoute' |
 'RedigerLaFeuilleDeRoute' |
@@ -75,5 +80,5 @@ type besoinSubvention =
 'SensibiliserLesActeursAuxOutilsExistants' |
 'AppuyerLaCertificationQualiopi'
 
-type statut = 'validee' | 'envoyee' | 'acceptee' | 'rejetee'
+type Statut = 'validee' | 'envoyee' | 'acceptee' | 'rejetee'
 

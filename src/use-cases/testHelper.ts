@@ -55,24 +55,92 @@ export function gouvernanceReadModelFactory(
         dateProchainComite: epochTime,
         nom: 'Comité stratégique',
         periodicite: 'Semestriel',
+        type: 'stratégique',
       },
       {
         dateProchainComite: new Date('2024-03-01'),
         nom: 'Comité stratégique 2',
         periodicite: 'Trimestriel',
+        type: 'technique',
       },
     ],
     departement: 'Rhône',
     feuillesDeRoute: [
       {
-        budgetGlobal: 145000,
+        actions: [
+          {
+            beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
+            besoin: 'EtablirUnDiagnosticTerritorial',
+            budgetGlobal: 50_000,
+            demandesDeCofinancement: [
+              {
+                emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
+                montantDemande: 15_000,
+              },
+            ],
+            demandesDeSubvention: [
+              {
+                montantAccorde: 35_000,
+                montantDemande: 40_000,
+                type: 'FSE',
+              },
+            ],
+            nom: 'demandeDeSubventionFormation',
+            statut: 'envoyee',
+          },
+          {
+            beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
+            besoin: 'CoConstruireLaFeuilleDeRoute',
+            budgetGlobal: 50_000,
+            demandesDeCofinancement: [
+              {
+                emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
+                montantDemande: 15_000,
+              },
+            ],
+            demandesDeSubvention: [
+              {
+                montantAccorde: 35_000,
+                montantDemande: 40_000,
+                type: 'FSE',
+              },
+            ],
+            nom: 'demandeDeSubventionFormation',
+            statut: 'validee',
+          },
+        ],
+        beneficiaires: [
+          {
+            nom: 'Structure 1',
+            roles: ['Co-porteur'],
+            type: 'Administration',
+          },
+          {
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur', 'Financeur'],
+            type: 'Collectivité',
+          },
+        ],
+        beneficiairesSubventionFormation: [
+          {
+            nom: 'Structure 1',
+            roles: ['Porteur'],
+            type: 'Structure',
+          },
+          {
+            nom: 'Structure 2',
+            roles: ['Porteur'],
+            type: 'Structure',
+          },
+        ],
+        budgetGlobal: 145_000,
+        montantSubventionAccorde: 5_000,
+        montantSubventionDemande: 40_000,
+        montantSubventionFormationAccorde: 5_000,
+        montantSubventionFormationDemande: 40_000,
         nom: 'Feuille de route inclusion 1',
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
         totalActions: 3,
-      },
-      {
-        budgetGlobal: 88030,
-        nom: 'Feuille de route inclusion 2',
-        totalActions: 1,
       },
     ],
     membres: [
