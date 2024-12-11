@@ -50,23 +50,27 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
         <div className="color-grey">
           {`${feuilleDeRoute.wordingBeneficiaires} des subventions`}
         </div>
-        <ul className="fr-tags-group">
-          {
-            feuilleDeRoute.beneficiaires.map((membre) => (
-              <li key={membre.nom}>
-                <a
-                  className="fr-tag"
-                  href="/"
-                  key={membre.nom}
-                  target="_self"
-                >
-                  {membre.nom}
-                </a>
-              </li>
+        {
+          feuilleDeRoute.beneficiaires.length > 0 ?
+            <ul className="fr-tags-group">
+              {
+                feuilleDeRoute.beneficiaires.map((membre) => (
+                  <li key={membre.nom}>
+                    <a
+                      className="fr-tag"
+                      href="/"
+                      key={membre.nom}
+                      target="_self"
+                    >
+                      {membre.nom}
+                    </a>
+                  </li>
 
-            ))
-          }
-        </ul>
+                ))
+              }
+            </ul>
+            : '-'
+        }
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
@@ -80,23 +84,25 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
         <div className="color-grey">
           {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation`}
         </div>
-        <ul
-          className="fr-tags-group"
-        >
-          {
-            feuilleDeRoute.beneficiairesSubventionFormation.map((membre) => (
-              <li key={membre.nom}>
-                <a
-                  className="fr-tag"
-                  href="/"
-                  target="_self"
-                >
-                  {membre.nom}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        {
+          feuilleDeRoute.beneficiairesSubventionFormation.length > 0 ?
+            <ul className="fr-tags-group">
+              {
+                feuilleDeRoute.beneficiairesSubventionFormation.map((membre) => (
+                  <li key={membre.nom}>
+                    <a
+                      className="fr-tag"
+                      href="/"
+                      target="_self"
+                    >
+                      {membre.nom}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            : '-'
+        }
       </div>
       <ul className="fr-btns-group--icon-left fr-btns-group">
         <li>

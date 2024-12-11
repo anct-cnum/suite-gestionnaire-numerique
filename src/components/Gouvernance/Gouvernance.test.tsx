@@ -744,4 +744,56 @@ describe('gouvernance', () => {
     const boutonTelechargerPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
     expect(boutonTelechargerPdf).toBeInTheDocument()
   })
+
+  it('quand je suis dans le détail d’une feuille de route, si il ny a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      feuillesDeRoute: [
+        {
+          actions: [
+            {
+              beneficiaires: [{ nom: 'Structure 1', roles: ['Porteur'], type: 'Structure' }, { nom: 'Structure 2', roles: ['Porteur'], type: 'Structure' }],
+              besoin: 'EtablirUnDiagnosticTerritorial',
+              budgetGlobal: 50_000,
+              demandesDeCofinancement: [
+                {
+                  emetteur: { nom: 'Région Auvergne-Rhône-Alpes', roles: ['Financeur'], type: 'Collectivité' },
+                  montantDemande: 15_000,
+                },
+              ],
+              demandesDeSubvention: [],
+              nom: 'demandeDeSubventionFormation',
+              statut: 'envoyee',
+            },
+          ],
+          beneficiaires: [],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 50_000,
+          montantSubventionAccorde: 0,
+          montantSubventionDemande: 15_000,
+          montantSubventionFormationAccorde: 0,
+          montantSubventionFormationDemande: 0,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 1,
+        },
+      ],
+    }))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
+    fireEvent.click(feuilleDeRoute)
+
+    // THEN
+    const drawer = screen.getByRole('dialog')
+    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
+    expect(titreDrawer).toBeInTheDocument()
+    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions')
+    expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
+    const beneficiaireDesSubventionsFormationLabel = screen.getByText('Bénéficiaire des subventions formation')
+    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
+    const tirets = screen.getAllByText('-')
+    expect(tirets).toHaveLength(2)
+  })
 })
