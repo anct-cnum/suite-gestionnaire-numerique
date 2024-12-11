@@ -17,6 +17,7 @@ describe('menu lateral', () => {
     const tableauDeBord = within(menuItems[0]).getByRole('link', { name: 'Tableau de bord' })
     expect(tableauDeBord).toHaveAttribute('href', '/tableau-de-bord')
     expect(tableauDeBord).toHaveAttribute('aria-current', 'false')
+    expect(menuItems[0]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
   })
 
   it.each([
