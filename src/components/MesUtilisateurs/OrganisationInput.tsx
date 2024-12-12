@@ -7,6 +7,7 @@ export default function OrganisationInput({
   label,
   options,
   organisation,
+  placeholder,
   setOrganisation,
   required,
   additionalSearchParams,
@@ -41,7 +42,7 @@ export default function OrganisationInput({
           name="organisation"
           noOptionsMessage={() => 'Rechercher une structure'}
           onChange={setOrganisation as (organisation: unknown) => void}
-          placeholder=""
+          placeholder={placeholder}
           required={required}
           styles={styles}
           value={organisation}
@@ -56,7 +57,7 @@ export default function OrganisationInput({
           noOptionsMessage={() => 'Pas de résultat'}
           onChange={setOrganisation as (organisation: unknown) => void}
           options={options}
-          placeholder=""
+          placeholder={placeholder}
           required={required}
           styles={styles}
           value={organisation}
@@ -82,6 +83,7 @@ type Props = Readonly<{
   label: string
   options: ReadonlyArray<{value: string, label: string}>
   organisation: string
+  placeholder: string
   required: boolean
   additionalSearchParams?: URLSearchParams
   setOrganisation(organisation: string): void
@@ -97,6 +99,10 @@ const styles: StylesConfig = {
     boxShadow: 'inset 0 -2px 0 0 var(--border-plain-grey)',
     color: 'var(--text-default-grey)',
     cursor: 'pointer',
+  }),
+  input: (styles) => ({
+    ...styles,
+    color: 'var(--text-default-grey)',
   }),
   option: (styles, { isFocused }) => ({
     ...styles,
