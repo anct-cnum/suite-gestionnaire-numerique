@@ -49,18 +49,22 @@ export default async function MesUtilisateursController({ searchParams }: Props)
     'Gestionnaire département': {
       label: 'Département',
       options: departements.map((departement) => ({ label: departement.nom, value: departement.code })),
+      placeholder: 'Nom du département',
     },
     'Gestionnaire groupement': {
       label: 'Groupement',
       options: groupements.map((groupement) => ({ label: groupement.nom, value: `${groupement.id}` })),
+      placeholder: 'Nom du groupement',
     },
     'Gestionnaire région': {
       label: 'Région',
       options: regions.map((region) => ({ label: region.nom, value: region.code })),
+      placeholder: 'Nom de la région',
     },
     'Gestionnaire structure': {
       label: 'Structure',
       options: [],
+      placeholder: 'Nom de la structure',
     },
   }
 

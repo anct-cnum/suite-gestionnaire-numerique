@@ -82,6 +82,7 @@ export type RolesAvecStructure = Readonly<Record<string, {
     value: string
     label: string
   }>
+  placeholder: string
 }>>
 
 const inactif = 'inactif'
