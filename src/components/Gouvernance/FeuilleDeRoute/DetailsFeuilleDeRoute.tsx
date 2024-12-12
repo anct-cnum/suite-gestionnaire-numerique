@@ -16,7 +16,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
           Responsable de la feuille de route
         </div>
         <Tag>
-          CC des Monts du Lyonnais
+          {feuilleDeRoute.porteur}
         </Tag>
       </div>
       <div className="fr-mb-2w">
@@ -32,7 +32,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
           Montant de la subvention demandée
         </div>
         <div className="font-weight-700">
-          30 000 €
+          {`${feuilleDeRoute.montantSubventionDemande} €`}
         </div>
       </div>
       <div className="fr-mb-2w">
@@ -40,32 +40,56 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
           Montant de la subvention accordée
         </div>
         <div className="font-weight-700">
-          30 000 €
+          {`${feuilleDeRoute.montantSubventionAccorde} €`}
         </div>
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
-          Bénéficiaires des subventions
+          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions`}
         </div>
-        <Tag>
-          CC des Monts du Lyonnais
-        </Tag>
+        {
+          feuilleDeRoute.beneficiairesSubvention.length > 0 ?
+            <ul className="fr-tags-group">
+              {
+                feuilleDeRoute.beneficiairesSubvention.map((beneficiaire) => (
+                  <li key={beneficiaire.nom}>
+                    <Tag>
+                      {beneficiaire.nom}
+                    </Tag>
+                  </li>
+                ))
+              }
+            </ul>
+            : '-'
+        }
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
           Montant de la subvention formation accordée
         </div>
         <div className="font-weight-700">
-          20 000 €
+          {`${feuilleDeRoute.montantSubventionFormationAccorde} €`}
         </div>
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
-          Bénéficiaires des subventions formation
+          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation`}
         </div>
-        <Tag>
-          Croix Rouge Française
-        </Tag>
+        {
+          feuilleDeRoute.beneficiairesSubventionFormation.length > 0 ?
+            <ul className="fr-tags-group">
+              {
+                feuilleDeRoute.beneficiairesSubventionFormation.map((beneficiaire) => (
+                  <li key={beneficiaire.nom}>
+                    <Tag>
+                      {beneficiaire.nom}
+                    </Tag>
+                  </li>
+                ))
+              }
+            </ul>
+            : '-'
+        }
       </div>
       <ul className="fr-btns-group--icon-left fr-btns-group">
         <li>
