@@ -30,6 +30,9 @@ describe('filtrer mes utilisateurs', () => {
     const zonesGeographiques = within(drawerFiltrer).getByRole('combobox', { name: 'Par zone géographique' })
     expect(zonesGeographiques).toBeInTheDocument()
 
+    const structure = within(drawerFiltrer).getByRole('combobox', { name: 'Par structure' })
+    expect(structure).toBeInTheDocument()
+
     const administrateurDispositif = within(formulaire).getByLabelText('Administrateur dispositif')
     expect(administrateurDispositif).toBeChecked()
     const gestionnaireDepartement = within(formulaire).getByLabelText('Gestionnaire département')

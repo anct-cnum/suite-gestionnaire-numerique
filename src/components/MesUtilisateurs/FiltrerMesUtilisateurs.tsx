@@ -54,6 +54,7 @@ export default function FiltrerMesUtilisateurs({
           label="Par structure"
           options={[]}
           organisation={structure}
+          placeholder="Nom de la structure"
           required={false}
           setOrganisation={setStructure}
         />
