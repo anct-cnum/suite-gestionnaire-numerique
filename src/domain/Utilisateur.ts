@@ -10,7 +10,7 @@ import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export abstract class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  readonly #derniereConnexion: Date
+  #derniereConnexion: Date
   #role: Role
   #nom: Nom
   #prenom: Prenom
@@ -89,6 +89,12 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
       return 'OK'
     }
     return 'utilisateurNonAutoriseAChangerSonRole'
+  }
+
+  mettreAJourLaDateDeDerniereConnexion(date: Date): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#derniereConnexion = new Date(date)
+    })
   }
 
   abstract peutGerer(autre: Utilisateur): boolean

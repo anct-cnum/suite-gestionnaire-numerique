@@ -4,13 +4,20 @@ import { JWT } from 'next-auth/jwt'
 import { OAuthConfig } from 'next-auth/providers'
 import { ClientSafeProvider } from 'next-auth/react'
 
+import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
+import prisma from '../../prisma/prismaClient'
+import { MettreAJourDateDeDerniereConnexion } from '@/use-cases/commands/MettreAJourDateDeDerniereConnexion'
+
 const providerId = 'pro-connect'
 const providerName = 'Pro Connect'
 const providerScope = 'openid given_name usual_name siret phone email'
 const nextAuthOptions = {
   callbacks: {
-    jwt({ token, profile }): JWT {
+    async jwt({ token, profile }): Promise<JWT> {
       if (profile) {
+        const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
+        const userSsoId = profile.sub ?? ''
+        await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({ uid: userSsoId })
         return {
           ...token,
           user: profile,
