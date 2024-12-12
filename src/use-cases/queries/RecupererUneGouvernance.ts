@@ -20,12 +20,19 @@ export type ComiteReadModel = Readonly<{
   dateProchainComite: Date
   nom: string
   periodicite: string
+  type : TypeDeComite
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{
-  budgetGlobal: number
   nom: string
+  porteur: MembreReadModel
   totalActions: number
+  budgetGlobal: number
+  montantSubventionDemande: number
+  montantSubventionAccorde: number
+  montantSubventionFormationAccorde: number
+  beneficiairesSubvention: ReadonlyArray<MembreReadModel>
+  beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
 }>
 
 export type MembreReadModel = Readonly<{
@@ -33,3 +40,5 @@ export type MembreReadModel = Readonly<{
   roles: ReadonlyArray<string>
   type: string
 }>
+
+type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'

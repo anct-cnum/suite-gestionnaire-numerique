@@ -55,24 +55,49 @@ export function gouvernanceReadModelFactory(
         dateProchainComite: epochTime,
         nom: 'Comité stratégique',
         periodicite: 'Semestriel',
+        type: 'stratégique',
       },
       {
         dateProchainComite: new Date('2024-03-01'),
         nom: 'Comité stratégique 2',
         periodicite: 'Trimestriel',
+        type: 'technique',
       },
     ],
     departement: 'Rhône',
     feuillesDeRoute: [
       {
-        budgetGlobal: 145000,
+        beneficiairesSubvention: [
+          {
+            nom: 'Structure 1',
+            roles: ['Co-porteur'],
+            type: 'Administration',
+          },
+          {
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur', 'Financeur'],
+            type: 'Collectivité',
+          },
+        ],
+        beneficiairesSubventionFormation: [
+          {
+            nom: 'Structure 1',
+            roles: ['Porteur'],
+            type: 'Structure',
+          },
+          {
+            nom: 'Structure 2',
+            roles: ['Porteur'],
+            type: 'Structure',
+          },
+        ],
+        budgetGlobal: 145_000,
+        montantSubventionAccorde: 5_000,
+        montantSubventionDemande: 40_000,
+        montantSubventionFormationAccorde: 5_000,
         nom: 'Feuille de route inclusion 1',
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
         totalActions: 3,
-      },
-      {
-        budgetGlobal: 88030,
-        nom: 'Feuille de route inclusion 2',
-        totalActions: 1,
       },
     ],
     membres: [
