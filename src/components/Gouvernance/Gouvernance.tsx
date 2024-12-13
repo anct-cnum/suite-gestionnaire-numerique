@@ -17,7 +17,7 @@ import ResumeNoteDeContexteVide from './NoteDeContexte/ResumeNoteDeContexteVide'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps): ReactElement {
+export default function Gouvernance({ gouvernanceViewModel }: Props): ReactElement {
   return (
     <>
       <title>
@@ -117,6 +117,6 @@ export default function Gouvernance({ gouvernanceViewModel }: GouvernanceProps):
   )
 }
 
-type GouvernanceProps = Readonly<{
+type Props = Readonly<{
   gouvernanceViewModel: GouvernanceViewModel
 }>

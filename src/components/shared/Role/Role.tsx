@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 
 import Badge from '../Badge/Badge'
 
-export default function Role({ role }: RoleProps): ReactElement {
+export default function Role({ role }: Props): ReactElement {
   return (
     <Badge color="blue-ecume">
       {role}
@@ -10,6 +10,6 @@ export default function Role({ role }: RoleProps): ReactElement {
   )
 }
 
-type RoleProps = Readonly<{
+type Props = Readonly<{
   role: string
 }>

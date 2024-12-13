@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Gouvernance vide',
 }
 
-export default async function GouvernanceVideController({ params }: PageProps): Promise<ReactElement> {
+export default async function GouvernanceVideController({ params }: Props): Promise<ReactElement> {
   if (!(await params).codeDepartement) {
     notFound()
   }
@@ -41,7 +41,7 @@ export default async function GouvernanceVideController({ params }: PageProps): 
   )
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   params: Promise<Readonly<{
     codeDepartement: string
   }>>

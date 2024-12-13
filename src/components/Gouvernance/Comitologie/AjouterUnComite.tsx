@@ -14,7 +14,7 @@ export default function AjouterUnComite({
   uidGouvernance,
   labelId,
   setIsOpen,
-}: AjouterUnComiteProps): ReactElement {
+}: Props): ReactElement {
   const { ajouterUnComiteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
@@ -144,7 +144,7 @@ const frequences = [
   },
 ]
 
-type AjouterUnComiteProps = Readonly<{
+type Props = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
   uidGouvernance: string
   labelId: string

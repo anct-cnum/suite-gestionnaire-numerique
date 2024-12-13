@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 
 import Badge from '../Badge/Badge'
 
-export default function Statut({ color, libelle }: StatutProps): ReactElement {
+export default function Statut({ color, libelle }: Props): ReactElement {
   return (
     <Badge color={color}>
       {libelle}
@@ -10,7 +10,7 @@ export default function Statut({ color, libelle }: StatutProps): ReactElement {
   )
 }
 
-type StatutProps = Readonly<{
+type Props = Readonly<{
   color: string
   libelle: string
 }>

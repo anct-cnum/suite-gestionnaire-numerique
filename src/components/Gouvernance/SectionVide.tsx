@@ -2,7 +2,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import styles from './Gouvernance.module.css'
 
-export default function SectionVide({ buttonLabel, children, id, title }: SectionVideProps): ReactElement {
+export default function SectionVide({ buttonLabel, children, id, title }: Props): ReactElement {
   return (
     <>
       <header>
@@ -26,7 +26,7 @@ export default function SectionVide({ buttonLabel, children, id, title }: Sectio
   )
 }
 
-type SectionVideProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   buttonLabel: string
   id: string
   title: string

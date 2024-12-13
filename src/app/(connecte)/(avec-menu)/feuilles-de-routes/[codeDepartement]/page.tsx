@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Feuilles de route',
 }
 
-export default async function FeuillesDeRouteController({ params }: PageProps): Promise<ReactElement> {
+export default async function FeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
   if (!(await params).codeDepartement) {
     notFound()
   }
@@ -20,7 +20,7 @@ export default async function FeuillesDeRouteController({ params }: PageProps): 
   )
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   params: Promise<Readonly<{
     codeDepartement: string
   }>>

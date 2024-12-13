@@ -20,7 +20,7 @@ export default function ClientContext({
   roles,
   sessionUtilisateurViewModel,
   utilisateursParPage,
-}: ClientContextProps): ReactElement {
+}: Props): ReactElement {
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const router = useRouter()
@@ -69,7 +69,7 @@ export type ClientContextProviderValue = Readonly<{
   utilisateursParPage: number
 }>
 
-type ClientContextProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   roles: ReadonlyArray<string>
   sessionUtilisateurViewModel: SessionUtilisateurViewModel
   utilisateursParPage: number

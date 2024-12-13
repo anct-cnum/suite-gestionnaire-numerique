@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function SegmentedControl({ children, name, options }: SegmentedControlProps): ReactElement {
+export default function SegmentedControl({ children, name, options }: Props): ReactElement {
   return (
     <fieldset className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
       <legend className="fr-segmented__legend">
@@ -32,7 +32,7 @@ export default function SegmentedControl({ children, name, options }: SegmentedC
   )
 }
 
-type SegmentedControlProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   name: string
   options: ReadonlyArray<{
     id: string

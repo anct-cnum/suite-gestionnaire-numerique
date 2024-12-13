@@ -9,7 +9,7 @@ import styles from './MenuUtilisateur.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import SelecteurRole from '@/components/transverse/EnTete/MenuUtilisateur/SelecteurRole/SelecteurRole'
 
-export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps): ReactElement {
+export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
@@ -81,6 +81,6 @@ export default function MenuUtilisateur({ ariaControlsId }: MenuUtilisateurProps
   )
 }
 
-type MenuUtilisateurProps = Readonly<{
+type Props = Readonly<{
   ariaControlsId: string
 }>

@@ -8,7 +8,7 @@ export default function Page({
   pageCourante,
   urlAvecParametres,
   utilisateursParPage,
-}: PageProps): ReadonlyArray<ReactElement> {
+}: Props): ReadonlyArray<ReactElement> {
   return pages(nombreDeResultat, pageCourante, utilisateursParPage).map((page): ReactElement => {
     if (pageCourante === page - 1) {
       return (
@@ -42,7 +42,7 @@ export default function Page({
   })
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   nombreDeResultat: number
   pageCourante: number
   urlAvecParametres: URL

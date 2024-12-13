@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function SubmitButton({ isDisabled, label }: SubmitButtonProps): ReactElement {
+export default function SubmitButton({ isDisabled, label }: Props): ReactElement {
   return (
     <button
       className="fr-btn"
@@ -12,7 +12,7 @@ export default function SubmitButton({ isDisabled, label }: SubmitButtonProps): 
   )
 }
 
-type SubmitButtonProps = Readonly<{
+type Props = Readonly<{
   isDisabled: boolean
   label: string
 }>

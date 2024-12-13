@@ -7,7 +7,7 @@ export default function Table({
   enTetes,
   hideHead = '',
   titre,
-}: TableProps): ReactElement {
+}: Props): ReactElement {
   return (
     <div
       className="fr-table--sm fr-table fr-table"
@@ -47,7 +47,7 @@ export default function Table({
   )
 }
 
-type TableProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   enTetes: ReadonlyArray<string>
   hideHead?: string
   titre: string

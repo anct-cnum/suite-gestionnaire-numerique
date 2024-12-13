@@ -6,7 +6,7 @@ export default function Checkbox({
   id,
   name,
   value,
-}: CheckboxProps): ReactElement {
+}: Props): ReactElement {
   return (
     <div className="fr-fieldset__element">
       <div className="fr-checkbox-group">
@@ -34,7 +34,7 @@ export default function Checkbox({
   )
 }
 
-type CheckboxProps = Readonly<{
+type Props = Readonly<{
   defaultChecked: boolean
   id: string
   label: string

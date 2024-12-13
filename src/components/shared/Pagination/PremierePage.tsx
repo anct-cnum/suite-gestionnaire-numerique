@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-export default function PremierePage({ urlAvecParametres }: PremierePageProps): ReactElement {
+export default function PremierePage({ urlAvecParametres }: Props): ReactElement {
   urlAvecParametres.searchParams.delete('page')
 
   return (
@@ -14,6 +14,6 @@ export default function PremierePage({ urlAvecParametres }: PremierePageProps): 
   )
 }
 
-type PremierePageProps = Readonly<{
+type Props = Readonly<{
   urlAvecParametres: URL
 }>

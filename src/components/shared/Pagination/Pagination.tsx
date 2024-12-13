@@ -8,7 +8,7 @@ import PremierePage from './PremierePage'
 import { clientContext } from '../ClientContext'
 import { fullUrl } from '@/presenters/paginationPresenter'
 
-export default function Pagination({ pathname, totalUtilisateurs }: PaginationProps): ReactElement {
+export default function Pagination({ pathname, totalUtilisateurs }: Props): ReactElement {
   const { searchParams, utilisateursParPage } = useContext(clientContext)
   const urlAvecParametres = fullUrl(pathname, searchParams)
 
@@ -39,7 +39,7 @@ export default function Pagination({ pathname, totalUtilisateurs }: PaginationPr
   )
 }
 
-type PaginationProps = Readonly<{
+type Props = Readonly<{
   pathname: string
   totalUtilisateurs: number
 }>

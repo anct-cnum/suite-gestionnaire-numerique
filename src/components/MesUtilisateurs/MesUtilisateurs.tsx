@@ -19,7 +19,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
-  { mesUtilisateursViewModel }: MesUtilisateursProps
+  { mesUtilisateursViewModel }: Props
 ): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
@@ -278,6 +278,6 @@ export default function MesUtilisateurs(
   }
 }
 
-type MesUtilisateursProps = Readonly<{
+type Props = Readonly<{
   mesUtilisateursViewModel: MesUtilisateursViewModel
 }>
