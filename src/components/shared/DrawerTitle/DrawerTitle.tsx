@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function DrawerTitle({ children, id }: DrawerTitleProps): ReactElement {
+export default function DrawerTitle({ children, id }: Props): ReactElement {
   return (
     <h1
       className="color-blue-france fr-h2"
@@ -11,6 +11,6 @@ export default function DrawerTitle({ children, id }: DrawerTitleProps): ReactEl
   )
 }
 
-type DrawerTitleProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   id: string
 }>>

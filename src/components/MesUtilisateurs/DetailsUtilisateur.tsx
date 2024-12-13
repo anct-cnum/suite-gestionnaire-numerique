@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { DetailsUtilisateurViewModel } from '@/presenters/mesUtilisateursPresenter'
 
-export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtilisateurProps): ReactElement {
+export default function DetailsUtilisateur({ utilisateur, labelId }: Props): ReactElement {
   const donneesPersonnelles: ReadonlyArray<DetailUtilisateur> = [
     {
       label: 'Rôle attribué',
@@ -49,7 +49,7 @@ export default function DetailsUtilisateur({ utilisateur, labelId }: DetailsUtil
   )
 }
 
-type DetailsUtilisateurProps = Readonly<{
+type Props = Readonly<{
   utilisateur: DetailsUtilisateurViewModel,
   labelId: string,
 }>

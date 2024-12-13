@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function ExternalLink({ children, className = '', href, title }: ExternalLinkProps): ReactElement {
+export default function ExternalLink({ children, className = '', href, title }: Props): ReactElement {
   return (
     <a
       className={className}
@@ -14,7 +14,7 @@ export default function ExternalLink({ children, className = '', href, title }: 
   )
 }
 
-type ExternalLinkProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   href: string
   className?: string
   title: string

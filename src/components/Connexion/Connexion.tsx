@@ -5,7 +5,7 @@ import { ReactElement } from 'react'
 
 import ProConnect from './ProConnect'
 
-export default function Connexion({ idProvider }: ConnexionProps): ReactElement {
+export default function Connexion({ idProvider }: Props): ReactElement {
   return (
     <div className="fr-container fr-container--fluid">
       <div className="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
@@ -44,6 +44,6 @@ export default function Connexion({ idProvider }: ConnexionProps): ReactElement 
   )
 }
 
-type ConnexionProps = Readonly<{
+type Props = Readonly<{
   idProvider: string
 }>

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Resume({ children, style }: ResumeProps): ReactElement {
+export default function Resume({ children, style }: Props): ReactElement {
   return (
     <div className="fr-col-md-4">
       <div className={`fr-card color-blue-france ${style}`}>
@@ -14,6 +14,6 @@ export default function Resume({ children, style }: ResumeProps): ReactElement {
   )
 }
 
-type ResumeProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   style: string
 }>>

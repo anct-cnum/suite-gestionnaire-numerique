@@ -6,7 +6,7 @@ export default function Modal({
   id,
   isOpen,
   labelId,
-}: ModalProps): ReactElement {
+}: Props): ReactElement {
   return (
     <dialog
       aria-labelledby={labelId}
@@ -38,7 +38,7 @@ export default function Modal({
   )
 }
 
-type ModalProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   id: string,
   isOpen: boolean
   labelId: string

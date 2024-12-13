@@ -9,7 +9,7 @@ export default function Toggle({
   hasSeparator = false,
   id,
   name,
-}: ToggleProps): ReactElement {
+}: Props): ReactElement {
   const className = hasSeparator ? `fr-pb-2w ${styles['fr-toggle--bb']}` : 'fr-mt-2w'
 
   return (
@@ -37,7 +37,7 @@ export default function Toggle({
   )
 }
 
-type ToggleProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   defaultChecked?: boolean
   hasSeparator?: boolean
   id: string

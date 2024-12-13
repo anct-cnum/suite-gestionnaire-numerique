@@ -9,7 +9,7 @@ export default function DernierePage({
   nombreDeResultat,
   urlAvecParametres,
   utilisateursParPage,
-}: DernierePageProps): ReactElement {
+}: Props): ReactElement {
   urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat, utilisateursParPage) - 1))
 
   return (
@@ -22,7 +22,7 @@ export default function DernierePage({
   )
 }
 
-type DernierePageProps = Readonly<{
+type Props = Readonly<{
   nombreDeResultat: number
   urlAvecParametres: URL
   utilisateursParPage: number

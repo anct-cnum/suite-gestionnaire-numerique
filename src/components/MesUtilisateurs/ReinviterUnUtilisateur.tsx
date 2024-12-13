@@ -10,7 +10,7 @@ export default function ReinviterUnUtilisateur({
   drawerId,
   setIsOpen,
   dialogRef,
-}: DetailsUtilisateurProps): ReactElement {
+}: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
 
   return (
@@ -55,7 +55,7 @@ export default function ReinviterUnUtilisateur({
   }
 }
 
-type DetailsUtilisateurProps = Readonly<{
+type Props = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
   utilisateur: Readonly<{
     email: string

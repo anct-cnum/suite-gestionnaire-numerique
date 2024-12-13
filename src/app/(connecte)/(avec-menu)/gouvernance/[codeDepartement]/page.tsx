@@ -6,7 +6,7 @@ import Gouvernance from '@/components/Gouvernance/Gouvernance'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 
-export default async function GouvernanceController({ params }: PageProps): Promise<ReactElement> {
+export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
   const codeDepartement = (await params).codeDepartement
 
   if (!codeDepartement) {
@@ -26,7 +26,7 @@ export default async function GouvernanceController({ params }: PageProps): Prom
   )
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   params: Promise<Readonly<{
     codeDepartement: string
   }>>

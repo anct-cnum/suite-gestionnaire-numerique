@@ -18,7 +18,7 @@ export default function InviterUnUtilisateur({
   labelId,
   dialogRef,
   rolesAvecStructure,
-}: InviterUnUtilisateurProps): ReactElement {
+}: Props): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<Erreur>()
   const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
@@ -187,7 +187,7 @@ export default function InviterUnUtilisateur({
   }
 }
 
-type InviterUnUtilisateurProps = Readonly<{
+type Props = Readonly<{
   setIsOpen: Dispatch<SetStateAction<boolean>>
   labelId: string
   dialogRef: RefObject<HTMLDialogElement | null>

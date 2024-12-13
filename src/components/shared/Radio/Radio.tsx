@@ -1,6 +1,6 @@
 import { ChangeEventHandler, PropsWithChildren, ReactElement } from 'react'
 
-export default function Radio({ children, id, nomGroupe, onChange }: RadioProps): ReactElement {
+export default function Radio({ children, id, nomGroupe, onChange }: Props): ReactElement {
   return (
     <div className="fr-fieldset__element">
       <div className="fr-radio-group">
@@ -23,7 +23,7 @@ export default function Radio({ children, id, nomGroupe, onChange }: RadioProps)
   )
 }
 
-type RadioProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   id: string
   nomGroupe: string
   onChange: ChangeEventHandler<HTMLInputElement>

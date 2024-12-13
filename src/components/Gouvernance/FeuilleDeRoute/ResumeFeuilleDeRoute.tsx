@@ -9,7 +9,7 @@ export default function ResumeFeuilleDeRoute({
   linkLabel,
   total,
   wording,
-}: ResumeFeuilleDeRouteProps): ReactElement {
+}: Props): ReactElement {
   return (
     <Resume style={styles['resume-feuilles-de-route']}>
       <p>
@@ -35,7 +35,7 @@ export default function ResumeFeuilleDeRoute({
   )
 }
 
-type ResumeFeuilleDeRouteProps = Readonly<{
+type Props = Readonly<{
   link: string
   linkLabel: string
   total: string

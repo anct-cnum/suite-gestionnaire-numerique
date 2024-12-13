@@ -11,7 +11,7 @@ import Role from '../shared/Role/Role'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles(
-  { mesInformationsPersonnellesViewModel }: MesInformationsPersonnellesProps
+  { mesInformationsPersonnellesViewModel }: Props
 ): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -224,6 +224,6 @@ export default function MesInformationsPersonnelles(
   )
 }
 
-type MesInformationsPersonnellesProps = Readonly<{
+type Props = Readonly<{
   mesInformationsPersonnellesViewModel: MesInformationsPersonnellesViewModel
 }>

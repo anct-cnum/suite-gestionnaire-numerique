@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: 'Mes utilisateurs',
 }
 
-export default async function MesUtilisateursController({ searchParams }: PageProps): Promise<ReactElement> {
+export default async function MesUtilisateursController({ searchParams }: Props): Promise<ReactElement> {
   const sub = await getSubSession()
   const pageAwaited = (await searchParams).page
   const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) }
@@ -76,7 +76,7 @@ export default async function MesUtilisateursController({ searchParams }: PagePr
   )
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   searchParams: Promise<Partial<Readonly<{
     codeDepartement: string
     codeRegion: string

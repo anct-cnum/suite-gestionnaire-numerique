@@ -9,7 +9,7 @@ export default function SectionRemplie({
   subButton,
   subTitle,
   title,
-}: SectionRemplieProps): ReactElement {
+}: Props): ReactElement {
   return (
     <>
       <header className={`fr-grid-row fr-btns-group--space-between fr-mb-2w ${styles.header}`}>
@@ -34,7 +34,7 @@ export default function SectionRemplie({
   )
 }
 
-type SectionRemplieProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   button: ReactElement
   id: string
   subButton?: ReactElement

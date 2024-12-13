@@ -16,7 +16,7 @@ export default function FiltrerMesUtilisateurs({
   id,
   labelId,
   setIsOpen,
-}: FiltrerMesUtilisateursProps): ReactElement {
+}: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
   const utilisateursActivesToggleId = useId()
@@ -103,7 +103,7 @@ export default function FiltrerMesUtilisateurs({
   }
 }
 
-type FiltrerMesUtilisateursProps = Readonly<{
+type Props = Readonly<{
   id: string
   labelId: string
   setIsOpen: Dispatch<SetStateAction<boolean>>

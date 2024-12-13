@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react'
 
-export default function InformationPersonnelle({ label, value }: InformationPersonnelleProps): ReactElement {
+export default function InformationPersonnelle({ label, value }: Props): ReactElement {
   return (
     <div className="fr-col-12 fr-col-md-6">
       <div className="color-grey">
@@ -13,7 +13,7 @@ export default function InformationPersonnelle({ label, value }: InformationPers
   )
 }
 
-type InformationPersonnelleProps = Readonly<{
+type Props = Readonly<{
   label: ReactNode
   value: string
 }>

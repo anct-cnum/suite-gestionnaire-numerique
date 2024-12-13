@@ -2,7 +2,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import Icon from '../Icon/Icon'
 
-export default function PageTitle({ children, icon }: PageTitleProps): ReactElement {
+export default function PageTitle({ children, icon }: Props): ReactElement {
   return (
     <h1 className="color-blue-france fr-mt-5w">
       <Icon icon={icon} />
@@ -11,6 +11,6 @@ export default function PageTitle({ children, icon }: PageTitleProps): ReactElem
   )
 }
 
-type PageTitleProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   icon: string
 }>>

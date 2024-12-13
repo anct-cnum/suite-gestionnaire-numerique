@@ -10,7 +10,7 @@ export default function OrganisationInput({
   setOrganisation,
   required,
   additionalSearchParams,
-}: OrganisationInputProps): ReactElement {
+}: Props): ReactElement {
   const additionalSearchParamEntries = [...(additionalSearchParams ?? new URLSearchParams()).entries()]
 
   return (
@@ -78,7 +78,7 @@ export default function OrganisationInput({
   }
 }
 
-type OrganisationInputProps = Readonly<{
+type Props = Readonly<{
   label: string
   options: ReadonlyArray<{value: string, label: string}>
   organisation: string

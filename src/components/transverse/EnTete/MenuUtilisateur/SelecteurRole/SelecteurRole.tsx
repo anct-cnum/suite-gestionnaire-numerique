@@ -4,7 +4,7 @@ import { FormEvent, ReactElement, useContext } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 
-export default function SelecteurRole({ ariaControlsId }: SelecteurRoleProps): ReactElement {
+export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
   const { changerMonRoleAction, pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
@@ -41,6 +41,6 @@ export default function SelecteurRole({ ariaControlsId }: SelecteurRoleProps): R
   }
 }
 
-type SelecteurRoleProps = Readonly<{
+type Props = Readonly<{
   ariaControlsId: string
 }>

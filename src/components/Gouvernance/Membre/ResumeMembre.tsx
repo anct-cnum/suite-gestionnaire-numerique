@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeMembre({ total, type }: ResumeMembreProps): ReactElement {
+export default function ResumeMembre({ total, type }: Props): ReactElement {
   return (
     <Resume style={styles['resume-membres']}>
       <p>
@@ -30,7 +30,7 @@ export default function ResumeMembre({ total, type }: ResumeMembreProps): ReactE
   )
 }
 
-type ResumeMembreProps = Readonly<{
+type Props = Readonly<{
   total: string
   type: string
 }>
