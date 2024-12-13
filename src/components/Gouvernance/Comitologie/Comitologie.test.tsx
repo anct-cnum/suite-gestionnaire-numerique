@@ -81,6 +81,7 @@ describe('comitologie', () => {
 
   it('quand je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour et le formulaire est réinitialisé', async () => {
     // GIVEN
+    vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
     vi.stubGlobal('dsfr', stubbedConceal())
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
@@ -90,7 +91,7 @@ describe('comitologie', () => {
     // WHEN
     cliquerSurUnType('Technique')
     cliquerSurUneFrequence('Annuelle')
-    const date = choisirUneDate('2024-12-12')
+    const date = choisirUneDate('1996-04-15')
     const commentaire = ecrireUnCommentaire('commentaire')
     const enregistrer = validerLeFormulaire()
 
@@ -107,7 +108,7 @@ describe('comitologie', () => {
     expect(commentaire).toHaveValue('')
     expect(ajouterUnComiteAction).toHaveBeenCalledWith({
       commentaire: 'commentaire',
-      date: '2024-12-12',
+      date: '1996-04-15',
       frequence: 'annuelle',
       path: '/gouvernance/11',
       type: 'technique',
