@@ -9,7 +9,7 @@ import SubSectionButton from './SubSectionButton'
 export default function NoteDeContexteRemplie({
   sousTitre,
   texte,
-}: NoteDeContexteRemplieProps): ReactElement {
+}: Props): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
@@ -52,7 +52,7 @@ export default function NoteDeContexteRemplie({
   )
 }
 
-type NoteDeContexteRemplieProps = Readonly<{
+type Props = Readonly<{
   sousTitre: string
   texte: string
 }>

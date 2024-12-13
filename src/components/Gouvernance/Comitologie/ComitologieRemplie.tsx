@@ -9,7 +9,7 @@ import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function ComitologieRemplie({ comites, uidGouvernance }: ComitologieRemplieProps): ReactElement {
+export default function ComitologieRemplie({ comites, uidGouvernance }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawer-comite'
@@ -82,7 +82,7 @@ export default function ComitologieRemplie({ comites, uidGouvernance }: Comitolo
   )
 }
 
-type ComitologieRemplieProps = Readonly<{
+type Props = Readonly<{
   comites: NonNullable<GouvernanceViewModel['comites']>
   uidGouvernance: string
 }>

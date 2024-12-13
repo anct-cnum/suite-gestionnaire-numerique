@@ -10,7 +10,7 @@ export default function TextInput({
   required,
   type = 'text',
   erreur = errorDefault,
-}: InputProps): ReactElement {
+}: Props): ReactElement {
   return (
     <div className={`fr-input-group ${erreur.className}`}>
       <label
@@ -36,7 +36,7 @@ export default function TextInput({
 }
 
 const errorDefault = { className: '', content: '' }
-type InputProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   ariaDescribedById?: string
   defaultValue?: string
   id: string

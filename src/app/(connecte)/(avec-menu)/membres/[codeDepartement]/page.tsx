@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'Membres',
 }
 
-export default async function MembresController({ params }: PageProps): Promise<ReactElement> {
+export default async function MembresController({ params }: Props): Promise<ReactElement> {
   if (!(await params).codeDepartement) {
     notFound()
   }
@@ -20,7 +20,7 @@ export default async function MembresController({ params }: PageProps): Promise<
   )
 }
 
-type PageProps = Readonly<{
+type Props = Readonly<{
   params: Promise<Readonly<{
     codeDepartement: string
   }>>

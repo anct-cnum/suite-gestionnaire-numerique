@@ -22,7 +22,7 @@ export default function EnTete(): ReactElement {
           <div className="fr-header__body-row fr-px-5w">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
-                <div className="fr-header__operator">
+                <div className="fr-header__logo">
                   <svg
                     aria-hidden
                     height="40"

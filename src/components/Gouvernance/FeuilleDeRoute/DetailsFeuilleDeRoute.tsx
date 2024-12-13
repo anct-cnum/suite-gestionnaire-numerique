@@ -5,7 +5,7 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import Tag from '@/components/shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: DetailsFeuilleDeRouteProps): ReactElement {
+export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props): ReactElement {
   return (
     <>
       <DrawerTitle id={labelId}>
@@ -113,7 +113,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Detai
   )
 }
 
-type DetailsFeuilleDeRouteProps = Readonly<{
+type Props = Readonly<{
   feuilleDeRoute: FeuilleDeRouteViewModel
   labelId: string
 }>

@@ -15,7 +15,7 @@ export default function FeuilleDeRouteRemplie({
   feuillesDeRoute,
   budgetTotalCumule,
   nombreDeFeuillesDeRoute,
-}: FeuilleDeRouteRemplieProps): ReactElement {
+}: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [feuilleDeRoute, setFeuilleDeRoute] = useState<FeuilleDeRouteViewModel>(feuillesDeRoute[0])
   const drawerFeuilleDeRouteId = 'drawerFeuilleDeRouteId'
@@ -97,7 +97,7 @@ export default function FeuilleDeRouteRemplie({
   )
 }
 
-type FeuilleDeRouteRemplieProps = Readonly<{
+type Props = Readonly<{
   feuillesDeRoute: NonNullable<GouvernanceViewModel['sectionFeuillesDeRoute']['feuillesDeRoute']>
   budgetTotalCumule: string
   nombreDeFeuillesDeRoute: string

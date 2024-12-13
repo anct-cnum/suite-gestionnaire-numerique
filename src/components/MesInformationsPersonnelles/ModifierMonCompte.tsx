@@ -17,7 +17,7 @@ export default function ModifierMonCompte({
   prenom,
   setIsOpen,
   telephone,
-}: ModifierMonCompteProps): ReactElement {
+}: Props): ReactElement {
   const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const nomId = useId()
@@ -143,7 +143,7 @@ export default function ModifierMonCompte({
   }
 }
 
-type ModifierMonCompteProps = Readonly<{
+type Props = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
   email: string
   id: string

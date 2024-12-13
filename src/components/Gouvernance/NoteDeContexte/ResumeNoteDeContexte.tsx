@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeNoteDeContexte({ sousTitre, texte }: ResumeNoteDeContexteProps): ReactElement {
+export default function ResumeNoteDeContexte({ sousTitre, texte }: Props): ReactElement {
   return (
     <Resume style={styles['resume-note-de-contexte']}>
       <p>
@@ -17,7 +17,7 @@ export default function ResumeNoteDeContexte({ sousTitre, texte }: ResumeNoteDeC
   )
 }
 
-type ResumeNoteDeContexteProps = Readonly<{
+type Props = Readonly<{
   texte: string
   sousTitre: string
 }>

@@ -9,7 +9,7 @@ export default function SupprimerUnUtilisateur({
   isOpen,
   utilisateurASupprimer,
   setIsOpen,
-}: SupprimerUnUtilisateurProps): ReactElement {
+}: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
   const modaleTitreId = useId()
 
@@ -66,7 +66,7 @@ export default function SupprimerUnUtilisateur({
   }
 }
 
-type SupprimerUnUtilisateurProps = Readonly<{
+type Props = Readonly<{
   id: string
   isOpen: boolean
   utilisateurASupprimer: UtilisateurASupprimer

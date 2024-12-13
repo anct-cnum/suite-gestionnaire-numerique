@@ -11,7 +11,7 @@ export default function MembreRempli({
   detailDuNombreDeChaqueMembre,
   membres,
   nombreDeMembres,
-}: MembreRempliProps): ReactElement {
+}: Props): ReactElement {
   return (
     <SectionRemplie
       button={(
@@ -68,7 +68,7 @@ export default function MembreRempli({
   )
 }
 
-type MembreRempliProps = Readonly<{
+type Props = Readonly<{
   detailDuNombreDeChaqueMembre: string
   membres: NonNullable<GouvernanceViewModel['sectionMembres']['membres']>
   nombreDeMembres: string

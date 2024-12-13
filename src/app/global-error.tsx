@@ -3,7 +3,7 @@
 import { captureException } from '@sentry/nextjs'
 import { ReactElement, useEffect } from 'react'
 
-export default function GlobalError({ error, reset }: ErrorProps): ReactElement {
+export default function GlobalError({ error, reset }: Props): ReactElement {
   useEffect(() => {
     captureException(error)
   }, [error])
@@ -34,7 +34,7 @@ export default function GlobalError({ error, reset }: ErrorProps): ReactElement 
   )
 }
 
-type ErrorProps = Readonly<{
+type Props = Readonly<{
   error: Error & { digest?: string }
   reset(): void
 }>

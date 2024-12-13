@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function Icon({ icon }: IconProps): ReactElement {
+export default function Icon({ icon }: Props): ReactElement {
   return (
     <span
       aria-hidden="true"
@@ -9,6 +9,6 @@ export default function Icon({ icon }: IconProps): ReactElement {
   )
 }
 
-type IconProps = Readonly<{
+type Props = Readonly<{
   icon: string
 }>

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function ModalTitle({ children, id }: ModalTitleProps): ReactElement {
+export default function ModalTitle({ children, id }: Props): ReactElement {
   return (
     <h1
       className="fr-modal__title"
@@ -11,6 +11,6 @@ export default function ModalTitle({ children, id }: ModalTitleProps): ReactElem
   )
 }
 
-type ModalTitleProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   id: string
 }>>

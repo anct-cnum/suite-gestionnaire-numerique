@@ -9,7 +9,7 @@ import { regionsEtDepartements, ZoneGeographique, zoneGeographiqueParDefaut } fr
 import { isNullish } from '@/shared/lang'
 
 export default function FiltrerParZonesGeographiques(
-  { ref, setZoneGeographique }: FiltrerParZonesGeographiquesProps
+  { ref, setZoneGeographique }: Props
 ): ReactElement {
   const { searchParams } = useContext(clientContext)
 
@@ -87,7 +87,7 @@ function DropdownIndicator(): ReactElement {
   )
 }
 
-type FiltrerParZonesGeographiquesProps = Readonly<{
+type Props = Readonly<{
   ref: Ref<SelectInstance>
   setZoneGeographique(zoneGeographique: ZoneGeographique): void
 }>

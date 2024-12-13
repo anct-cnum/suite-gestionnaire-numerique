@@ -12,7 +12,7 @@ export default function Drawer({
   children,
   icon,
   ref,
-}: DrawerProps): ReactNode {
+}: Props): ReactNode {
   // istanbul ignore next @preserve
   const boxSize = isFixedWidth ? styles['modal-box--fixed-width'] : ''
 
@@ -52,7 +52,7 @@ export default function Drawer({
   )
 }
 
-type DrawerProps = PropsWithChildren<Readonly<{
+type Props = PropsWithChildren<Readonly<{
   id: string,
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
