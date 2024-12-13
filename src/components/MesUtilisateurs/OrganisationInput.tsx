@@ -11,7 +11,7 @@ export default function OrganisationInput({
   required,
   additionalSearchParams,
 }: OrganisationInputProps): ReactElement {
-  const additionalSearchParamEntries = (additionalSearchParams ?? new URLSearchParams()).entries()
+  const additionalSearchParamEntries = [...(additionalSearchParams ?? new URLSearchParams()).entries()]
 
   return (
     <div className="fr-select-group">
