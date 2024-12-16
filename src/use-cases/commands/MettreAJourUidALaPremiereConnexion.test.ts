@@ -19,7 +19,7 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
     const result = await mettreAJourUidALaPremiereConnexion.execute({ emailAsUid, uid })
 
     // THEN
-    expect(result).toBe('ok')
+    expect(result).toBe('OK')
     expect(spiedUidToFind).toBe('martin.tartempion@example.net')
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
       uid: {
@@ -41,7 +41,7 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
     const result = await mettreAJourUidALaPremiereConnexion.execute({ emailAsUid, uid })
 
     // THEN
-    expect(result).toBe('comptePremiereConnexionInexistant')
+    expect(result).toBe('utilisateurCourantInexistant')
     expect(spiedUidToFind).toBe(emailAsUid)
     expect(spiedUtilisateurToUpdate).toBeNull()
   })

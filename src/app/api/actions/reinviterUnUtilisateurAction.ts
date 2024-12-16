@@ -13,35 +13,31 @@ import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisat
 export async function reinviterUnUtilisateurAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  const validationResult = validator
-    .safeParse({
-      uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
-    })
+  const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const command = {
-    uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
-    uidUtilisateurCourant: await getSubSession(),
-  }
-
-  revalidatePath(actionParams.path)
-
   const message = await new ReinviterUnUtilisateur(
     new PrismaUtilisateurRepository(prisma),
     emailInvitationGatewayFactory
-  ).execute(command)
+  ).execute({
+    uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
+    uidUtilisateurCourant: await getSubSession(),
+  })
+
+  revalidatePath(validationResult.data.path)
 
   return [message]
 }
 
 type ActionParams = Readonly<{
-  uidUtilisateurAReinviter: string
   path: string
+  uidUtilisateurAReinviter: string
 }>
 
 const validator = z.object({
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   uidUtilisateurAReinviter: z.string().min(1, 'L’identifiant de l’utilisateur à réinviter doit être renseigné'),
 })

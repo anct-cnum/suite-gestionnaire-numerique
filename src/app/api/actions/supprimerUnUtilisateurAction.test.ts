@@ -9,32 +9,32 @@ describe('supprimer un utilisateur action', () => {
     // GIVEN
     const sub = 'fooId'
     const path = '/mes-utilisateurs'
-    const utilisateurASupprimerUid = 'barId'
+    const uidUtilisateurASupprimer = 'barId'
     vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(SupprimerUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN
-    const messages = await supprimerUnUtilisateurAction({ path, utilisateurASupprimerUid })
+    const messages = await supprimerUnUtilisateurAction({ path, uidUtilisateurASupprimer })
 
     // THEN
     expect(SupprimerUnUtilisateur.prototype.execute).toHaveBeenCalledWith({
-      utilisateurASupprimerUid,
-      utilisateurCourantUid: sub,
+      uidUtilisateurASupprimer,
+      uidUtilisateurCourant: sub,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('étant donné un path incorrect, quand la suppression d’un utilisateur est passée, alors cela renvoie une erreur', async () => {
+  it('étant donné un path non renseigné, quand la suppression d’un utilisateur est passée, alors cela renvoie une erreur', async () => {
     // GIVEN
-    const utilisateurASupprimerUid = 'barId'
+    const uidUtilisateurASupprimer = 'barId'
     const pathIncorrect = ''
 
     // WHEN
-    const messages = await supprimerUnUtilisateurAction({ path: pathIncorrect, utilisateurASupprimerUid })
+    const messages = await supprimerUnUtilisateurAction({ path: pathIncorrect, uidUtilisateurASupprimer })
 
     // THEN
-    expect(messages).toStrictEqual(['Le chemin n’est pas correct'])
+    expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
   })
 })

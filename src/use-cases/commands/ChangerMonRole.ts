@@ -5,30 +5,32 @@ import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class ChangerMonRole implements CommandHandler<Command> {
-  readonly #repository: Repository
+  readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(repository: Repository) {
-    this.#repository = repository
+  constructor(utilisateurRepository: UtilisateurRepository) {
+    this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute({ nouveauRole, utilisateurUid }: Command): ResultAsync<ChangerMonRoleFailure> {
-    const utilisateur = await this.#repository.find(utilisateurUid)
-    if (!utilisateur) {
-      return 'compteInexistant'
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return 'utilisateurCourantInexistant'
     }
-    const result = utilisateur.changerRole(nouveauRole)
+
+    const result = utilisateurCourant.changerRole(command.nouveauRole)
     if (isOk(result)) {
-      await this.#repository.update(utilisateur)
+      await this.#utilisateurRepository.update(utilisateurCourant)
     }
+
     return result
   }
 }
 
-export type ChangerMonRoleFailure = UtilisateurFailure | 'compteInexistant'
+type Failure = UtilisateurFailure | 'utilisateurCourantInexistant'
 
 type Command = Readonly<{
-  nouveauRole: TypologieRole,
-  utilisateurUid: string,
+  nouveauRole: TypologieRole
+  uidUtilisateurCourant: string
 }>
 
-interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

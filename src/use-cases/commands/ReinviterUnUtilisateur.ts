@@ -2,24 +2,28 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 
-export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisateurCommand> {
-  readonly #repository: Repository
+export class ReinviterUnUtilisateur implements CommandHandler<Command> {
+  readonly #utilisateurRepository: UtilisateurRepository
   readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
 
-  constructor(repository: Repository, emailGatewayFactory: EmailGatewayFactory, date: Date = new Date()) {
-    this.#repository = repository
+  constructor(
+    utilisateurRepository: UtilisateurRepository,
+    emailGatewayFactory: EmailGatewayFactory,
+    date: Date = new Date()
+  ) {
+    this.#utilisateurRepository = utilisateurRepository
     this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date
   }
 
-  async execute(command: ReinviterUnUtilisateurCommand): ResultAsync<ReinviterUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
     if (!utilisateurCourant) {
       return 'utilisateurCourantInexistant'
     }
 
-    const utilisateurAReinviter = await this.#repository.find(command.uidUtilisateurAReinviter)
+    const utilisateurAReinviter = await this.#utilisateurRepository.find(command.uidUtilisateurAReinviter)
     if (!utilisateurAReinviter) {
       return 'utilisateurAReinviterInexistant'
     }
@@ -31,22 +35,23 @@ export class ReinviterUnUtilisateur implements CommandHandler<ReinviterUnUtilisa
     }
 
     utilisateurAReinviter.changerLaDateDInvitation(this.#date)
-    await this.#repository.update(utilisateurAReinviter)
+    await this.#utilisateurRepository.update(utilisateurAReinviter)
     const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
     await emailGateway.send(utilisateurAReinviter.state.emailDeContact)
+
     return 'OK'
   }
 }
 
-export type ReinviterUnUtilisateurFailure =
+type Failure =
   | 'utilisateurCourantInexistant'
   | 'utilisateurAReinviterInexistant'
   | 'utilisateurAReinviterDejaActif'
   | 'utilisateurNePeutPasGererUtilisateurAReinviter'
 
-export type ReinviterUnUtilisateurCommand = Readonly<{
+type Command = Readonly<{
   uidUtilisateurAReinviter: string
   uidUtilisateurCourant: string
 }>
 
-interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

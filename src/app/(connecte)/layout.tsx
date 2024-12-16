@@ -39,7 +39,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
           uid: session.user.sub,
         })
 
-      if (result === 'comptePremiereConnexionInexistant') {
+      if (result === 'utilisateurCourantInexistant') {
         throw error
       }
     }
@@ -56,7 +56,7 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
         nom: session.user.usual_name,
         prenom: session.user.given_name,
       },
-      uid: session.user.sub,
+      uidUtilisateurCourant: session.user.sub,
     })
 
   if (correctionNomPrenom === 'okAvecMiseAJour') {

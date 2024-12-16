@@ -9,10 +9,7 @@ import { Roles } from '@/domain/Role'
 import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
-import {
-  InviterUnUtilisateurCommand,
-  InviterUnUtilisateur,
-} from '@/use-cases/commands/InviterUnUtilisateur'
+import { InviterUnUtilisateur } from '@/use-cases/commands/InviterUnUtilisateur'
 
 export async function inviterUnUtilisateurAction(
   actionParams: ActionParams
@@ -23,40 +20,32 @@ export async function inviterUnUtilisateurAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  let command: InviterUnUtilisateurCommand = {
+  const message = await new InviterUnUtilisateur(
+    new PrismaUtilisateurRepository(prisma),
+    emailInvitationGatewayFactory
+  ).execute({
     email: validationResult.data.email,
     nom: validationResult.data.nom,
     prenom: validationResult.data.prenom,
+    role: validationResult.data.role ? {
+      codeOrganisation: validationResult.data.codeOrganisation,
+      type: validationResult.data.role,
+    } : undefined,
     uidUtilisateurCourant: await getSubSession(),
-  }
+  })
 
-  if (validationResult.data.role) {
-    command = {
-      ...command,
-      role: {
-        codeOrganisation: validationResult.data.codeOrganisation,
-        type: validationResult.data.role,
-      },
-    }
-  }
-  const result = await new InviterUnUtilisateur(
-    new PrismaUtilisateurRepository(prisma),
-    emailInvitationGatewayFactory
-  ).execute(command)
+  revalidatePath(validationResult.data.path)
 
-  if (result === 'OK') {
-    revalidatePath('/mes-utilisateurs')
-  }
-
-  return [result]
+  return [message]
 }
 
 type ActionParams = Readonly<{
-  prenom: string
-  nom: string
   email: string
   codeOrganisation?: string
+  nom: string
   role?: string
+  path: string
+  prenom: string
 }>
 
 const validator = z.object({
@@ -66,6 +55,7 @@ const validator = z.object({
     .optional(),
   email: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
   role: z.enum(Roles, { message: 'Le rôle n’est pas correct' }).optional(),
 })

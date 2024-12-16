@@ -20,7 +20,7 @@ export default function InviterUnUtilisateur({
   rolesAvecStructure,
 }: Props): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<Erreur>()
-  const { inviterUnUtilisateurAction, sessionUtilisateurViewModel } = useContext(clientContext)
+  const { inviterUnUtilisateurAction, pathname, sessionUtilisateurViewModel } = useContext(clientContext)
   const [roleSelectionne, setRoleSelectionne] = useState('')
   const [organisation, setOrganisation] = useState<string>('')
   const [isDisabled, setIsDisabled] = useState(false)
@@ -153,7 +153,14 @@ export default function InviterUnUtilisateur({
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
-    const messages = await inviterUnUtilisateurAction({ codeOrganisation, email: email, nom, prenom, role })
+    const messages = await inviterUnUtilisateurAction({
+      codeOrganisation,
+      email: email,
+      nom,
+      path: pathname,
+      prenom,
+      role,
+    })
     if (messages.includes('emailExistant')) {
       setEmailDejaExistant({
         className: 'fr-input-group--error',

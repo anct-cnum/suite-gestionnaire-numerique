@@ -3,31 +3,31 @@ import { FindUtilisateurRepository, UpdateUtilisateurUidRepository } from './sha
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Command> {
-  readonly #repository: Repository
+  readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(repository: Repository) {
-    this.#repository = repository
+  constructor(utilisateurRepository: UtilisateurRepository) {
+    this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure | Success> {
-    const utilisateurAvecUidEgalEmail = await this.#repository.find(command.emailAsUid)
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.find(command.emailAsUid)
 
-    if (!utilisateurAvecUidEgalEmail) {
-      return 'comptePremiereConnexionInexistant'
+    if (!utilisateurCourant) {
+      return 'utilisateurCourantInexistant'
     }
 
-    const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurAvecUidEgalEmail, command.uid)
-    await this.#repository.updateUid(utilisateurAvecNouvelUid)
-    return 'ok'
+    const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurCourant, command.uid)
+    await this.#utilisateurRepository.updateUid(utilisateurAvecNouvelUid)
+
+    return 'OK'
   }
 }
 
-type Failure = 'comptePremiereConnexionInexistant'
-type Success = 'ok'
+type Failure = 'utilisateurCourantInexistant'
 
 type Command = Readonly<{
   emailAsUid: string
   uid: string
 }>
 
-type Repository = FindUtilisateurRepository & UpdateUtilisateurUidRepository
+type UtilisateurRepository = FindUtilisateurRepository & UpdateUtilisateurUidRepository
