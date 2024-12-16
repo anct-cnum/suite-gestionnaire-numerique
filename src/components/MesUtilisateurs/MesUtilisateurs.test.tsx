@@ -385,7 +385,7 @@ describe('mes utilisateurs', () => {
       // THEN
       const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
       expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
-      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', utilisateurASupprimerUid: '123456' })
+      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
     })
   })
 

@@ -30,7 +30,7 @@ describe('modifier mes informations personnelles action', () => {
         prenom: 'Martin',
         telephone: '0102030405',
       },
-      uid: sub,
+      uidUtilisateurCourant: sub,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
     expect(messages).toStrictEqual(['OK'])
@@ -78,7 +78,7 @@ describe('modifier mes informations personnelles action', () => {
     expect(messages).toStrictEqual(['Le prénom doit contenir au moins 1 caractère'])
   })
 
-  it('si le path est vide alors cela renvoie une erreur car il doit contenir au moins un caractère', async () => {
+  it('si le path est non renseigné alors cela renvoie une erreur car il doit contenir au moins un caractère', async () => {
     // GIVEN
     const pathIncorrect = ''
 
@@ -92,7 +92,7 @@ describe('modifier mes informations personnelles action', () => {
     })
 
     // THEN
-    expect(messages).toStrictEqual(['Le chemin n’est pas correct'])
+    expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
   })
 
   it.each([

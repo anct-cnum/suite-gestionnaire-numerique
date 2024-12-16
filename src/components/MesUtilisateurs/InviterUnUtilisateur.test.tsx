@@ -156,6 +156,44 @@ describe('inviter un utilisateur', () => {
     expect(organisation).toHaveAttribute('type', 'text')
   })
 
+  it('en tant qu’administrateur, quand je cherche un département qui n’existe pas, alors un libellé me le signifie', async () => {
+    // GIVEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        role: {
+          doesItBelongToGroupeAdmin: true,
+          libelle: 'Rhône',
+          nom: 'Administrateur dispositif',
+          pictogramme: 'maille',
+          rolesGerables: [
+            'Administrateur dispositif',
+            'Gestionnaire département',
+            'Gestionnaire groupement',
+            'Gestionnaire région',
+            'Gestionnaire structure',
+            'Instructeur',
+            'Pilote politique publique',
+            'Support animation',
+          ],
+        },
+      }),
+    })
+    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+    fireEvent.click(inviter)
+    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
+    fireEvent.click(gestionnaireDepartement)
+
+    // WHEN
+    const organisation = within(formulaireInvitation).getByLabelText('Département *')
+    fireEvent.change(organisation, { target: { value: 'departementInexistant' } })
+
+    // THEN
+    const pasDeResulat = await screen.findByText('Pas de résultat')
+    expect(pasDeResulat).toBeInTheDocument()
+  })
+
   it('en tant qu’administrateur, quand je fais une recherche dans le champ de structure, alors je peux y faire une recherche utilisée dans le formulaire', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
@@ -164,6 +202,7 @@ describe('inviter un utilisateur', () => {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       inviterUnUtilisateurAction,
+      pathname: '/mes-utilisateurs',
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
           doesItBelongToGroupeAdmin: true,
@@ -208,6 +247,7 @@ describe('inviter un utilisateur', () => {
         codeOrganisation: '1845',
         email: 'martin.tartempion@example.com',
         nom: 'Tartempion',
+        path: '/mes-utilisateurs',
         prenom: 'Martin',
         role: 'Gestionnaire structure',
       })
@@ -510,7 +550,7 @@ describe('inviter un utilisateur', () => {
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['KO']))
+    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['utilisateurNePeutPasGererUtilisateurACreer']))
     vi.stubGlobal('dsfr', stubbedConceal())
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(

@@ -14,7 +14,7 @@ describe('modifier mes informations personnelles', () => {
     const result = await commandHandler.execute(informationsPersonnellesModifiees)
 
     // THEN
-    expect(result).toBe('compteInexistant')
+    expect(result).toBe('utilisateurCourantInexistant')
   })
 
   describe('quand le compte existe', () => {
@@ -85,7 +85,7 @@ const informationsPersonnellesModifiees = {
     prenom: 'Martine',
     telephone: '0102030406',
   },
-  uid: 'fooId',
+  uidUtilisateurCourant: 'fooId',
 }
 
 class RepositoryStub implements FindUtilisateurRepository, UpdateUtilisateurRepository {

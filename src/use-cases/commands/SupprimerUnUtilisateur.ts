@@ -2,42 +2,41 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 
 export class SupprimerUnUtilisateur implements CommandHandler<Command> {
-  readonly #repository: Repository
+  readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(repository: Repository) {
-    this.#repository = repository
+  constructor(utilisateurRepository: UtilisateurRepository) {
+    this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute({
-    utilisateurCourantUid,
-    utilisateurASupprimerUid,
-  }: Command): ResultAsync<SupprimerUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(utilisateurCourantUid)
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
     if (!utilisateurCourant) {
-      return 'compteConnecteInexistant'
+      return 'utilisateurCourantInexistant'
     }
-    const utilisateurASupprimer = await this.#repository.find(utilisateurASupprimerUid)
+
+    const utilisateurASupprimer = await this.#utilisateurRepository.find(command.uidUtilisateurASupprimer)
     if (!utilisateurASupprimer) {
       return 'compteASupprimerInexistant'
     }
     if (!utilisateurCourant.peutGerer(utilisateurASupprimer)) {
       return 'suppressionNonAutorisee'
     }
-    return (await this.#repository.drop(utilisateurASupprimer))
+
+    return (await this.#utilisateurRepository.drop(utilisateurASupprimer))
       ? 'OK'
       : 'compteASupprimerDejaSupprime'
   }
 }
 
-export type SupprimerUnUtilisateurFailure =
-  | 'compteConnecteInexistant'
+type Failure =
+  | 'utilisateurCourantInexistant'
   | 'compteASupprimerInexistant'
   | 'suppressionNonAutorisee'
   | 'compteASupprimerDejaSupprime'
 
 type Command = Readonly<{
-  utilisateurCourantUid: string
-  utilisateurASupprimerUid: string
+  uidUtilisateurCourant: string
+  uidUtilisateurASupprimer: string
 }>
 
-interface Repository extends FindUtilisateurRepository, DropUtilisateurRepository {}
+interface UtilisateurRepository extends FindUtilisateurRepository, DropUtilisateurRepository {}

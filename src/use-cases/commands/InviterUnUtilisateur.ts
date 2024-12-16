@@ -4,28 +4,27 @@ import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/Ut
 import { TypologieRole } from '@/domain/Role'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
-export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateurCommand> {
-  readonly #repository: Repository
+export class InviterUnUtilisateur implements CommandHandler<Command> {
+  readonly #utilisateurRepository: UtilisateurRepository
   readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
 
   constructor(
-    repository: Repository,
+    utilisateurRepository: UtilisateurRepository,
     emailGatewayFactory: EmailGatewayFactory,
     date: Date = new Date()
   ) {
-    this.#repository = repository
+    this.#utilisateurRepository = utilisateurRepository
     this.#emailGatewayFactory = emailGatewayFactory
     this.#date = date
   }
 
-  async execute(command: InviterUnUtilisateurCommand): ResultAsync<InviterUnUtilisateurFailure> {
-    const utilisateurCourant = await this.#repository.find(
-      command.uidUtilisateurCourant
-    )
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
     if (!utilisateurCourant) {
-      return 'KO'
+      return 'utilisateurCourantInexistant'
     }
+
     const utilisateurCourantState = utilisateurCourant.state
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
@@ -43,30 +42,33 @@ export class InviterUnUtilisateur implements CommandHandler<InviterUnUtilisateur
       command.role?.type ?? utilisateurCourantState.role.nom,
       command.role?.codeOrganisation
     )
+
     if (!utilisateurCourant.peutGerer(utilisateurACreer)) {
-      return 'KO'
+      return 'utilisateurNePeutPasGererUtilisateurACreer'
     }
-    const isUtilisateurCreated = await this.#repository.add(utilisateurACreer)
+
+    const isUtilisateurCreated = await this.#utilisateurRepository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
       const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
       await emailGateway.send(command.email)
       return 'OK'
     }
+
     return 'emailExistant'
   }
 }
 
-export type InviterUnUtilisateurCommand = Readonly<{
+type Command = Readonly<{
   prenom: string
   nom: string
   email: string
-  uidUtilisateurCourant: string
   role?: Readonly<{
     type: TypologieRole
     codeOrganisation?: string
   }>
+  uidUtilisateurCourant: string
 }>
 
-export type InviterUnUtilisateurFailure = 'KO' | 'emailExistant'
+type Failure = 'utilisateurNePeutPasGererUtilisateurACreer' | 'emailExistant' | 'utilisateurCourantInexistant'
 
-interface Repository extends FindUtilisateurRepository, AddUtilisateurRepository {}
+interface UtilisateurRepository extends FindUtilisateurRepository, AddUtilisateurRepository {}

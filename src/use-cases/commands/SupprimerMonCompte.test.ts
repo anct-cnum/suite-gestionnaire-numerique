@@ -5,7 +5,7 @@ describe('supprimer mon compte utilisateur', () => {
   it.each([
     [
       'quand le compte n’existe pas alors pas de suppression possible',
-      'compteInexistant',
+      'utilisateurCourantInexistant',
       repositoryCompteInexistant,
     ],
     [
@@ -18,7 +18,7 @@ describe('supprimer mon compte utilisateur', () => {
     const commandHandler = new SupprimerMonCompte(repository)
 
     // WHEN
-    const result = await commandHandler.execute({ utilisateurUid: 'fooId' })
+    const result = await commandHandler.execute({ uidUtilisateurCourant: 'fooId' })
 
     // THEN
     expect(result).toBe(expected)

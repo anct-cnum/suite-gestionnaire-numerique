@@ -20,7 +20,7 @@ describe('changer mon rôle action', () => {
     // THEN
     expect(ChangerMonRole.prototype.execute).toHaveBeenCalledWith({
       nouveauRole,
-      utilisateurUid: sub,
+      uidUtilisateurCourant: sub,
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
     expect(messages).toStrictEqual(['OK'])
@@ -37,7 +37,7 @@ describe('changer mon rôle action', () => {
     expect(messages).toStrictEqual(['Le rôle n’est pas correct'])
   })
 
-  it('étant donné un path incorrect quand mon rôle est changé alors cela renvoie une erreur', async () => {
+  it('étant donné un path non renseigné quand mon rôle est changé alors cela renvoie une erreur', async () => {
     // GIVEN
     const nouveauRole = 'Instructeur'
     const pathIncorrect = ''
@@ -46,6 +46,6 @@ describe('changer mon rôle action', () => {
     const messages = await changerMonRoleAction({ nouveauRole, path: pathIncorrect })
 
     // THEN
-    expect(messages).toStrictEqual(['Le chemin n’est pas correct'])
+    expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
   })
 })

@@ -16,7 +16,7 @@ describe('changer mon rôle', () => {
     // WHEN
     const result = await changerMonRole.execute({
       nouveauRole,
-      utilisateurUid: 'utilisateurSuperAdminUid',
+      uidUtilisateurCourant: 'utilisateurSuperAdminUid',
     })
 
     // THEN
@@ -36,7 +36,7 @@ describe('changer mon rôle', () => {
     // WHEN
     const result = await changerMonRole.execute({
       nouveauRole,
-      utilisateurUid: 'utilisateurNonSuperAdminUid',
+      uidUtilisateurCourant: 'utilisateurNonSuperAdminUid',
     })
 
     // THEN
@@ -52,11 +52,11 @@ describe('changer mon rôle', () => {
     // WHEN
     const result = await changerMonRole.execute({
       nouveauRole,
-      utilisateurUid: 'utilisateurIntrouvableUid',
+      uidUtilisateurCourant: 'utilisateurIntrouvableUid',
     })
 
     // THEN
-    expect(result).toBe('compteInexistant')
+    expect(result).toBe('utilisateurCourantInexistant')
     expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
   })
 })

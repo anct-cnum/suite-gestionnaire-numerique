@@ -4,12 +4,12 @@ import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 import config from '@/use-cases/config.json'
 
 export class RechercherMesUtilisateurs implements QueryHandler<
-  MesUtilisateursQuery, UtilisateursCourantsEtTotalReadModel
+  Query, UtilisateursCourantsEtTotalReadModel
 > {
-  readonly #loader: MesUtilisateursLoader
+  readonly #mesUtilisateursLoader: MesUtilisateursLoader
 
   constructor(mesUtilisateursLoader: MesUtilisateursLoader) {
-    this.#loader = mesUtilisateursLoader
+    this.#mesUtilisateursLoader = mesUtilisateursLoader
   }
 
   async get({
@@ -21,10 +21,10 @@ export class RechercherMesUtilisateurs implements QueryHandler<
     codeDepartement = '0',
     codeRegion = '0',
     idStructure = Infinity,
-  }: MesUtilisateursQuery): Promise<UtilisateursCourantsEtTotalReadModel> {
-    const utilisateur = await this.#loader.findByUid(uid)
+  }: Query): Promise<UtilisateursCourantsEtTotalReadModel> {
+    const utilisateur = await this.#mesUtilisateursLoader.findByUid(uid)
 
-    return this.#loader.findMesUtilisateursEtLeTotal(
+    return this.#mesUtilisateursLoader.findMesUtilisateursEtLeTotal(
       utilisateur,
       pageCourante,
       utilisateursParPage,
@@ -36,16 +36,6 @@ export class RechercherMesUtilisateurs implements QueryHandler<
     )
   }
 }
-
-type MesUtilisateursQuery = Partial<Readonly<{
-  codeDepartement: string
-  codeRegion: string
-  pageCourante: number
-  roles: ReadonlyArray<string>
-  utilisateursActives: boolean
-  utilisateursParPage: number
-  idStructure: number
-}>> & Readonly<{uid: string}>
 
 export type UtilisateursCourantsEtTotalReadModel = Readonly<{
   total: number
@@ -64,3 +54,15 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     idStructure: number
   ): Promise<UtilisateursCourantsEtTotalReadModel>
 }
+
+type Query = Partial<Readonly<{
+  codeDepartement: string
+  codeRegion: string
+  pageCourante: number
+  roles: ReadonlyArray<string>
+  utilisateursActives: boolean
+  utilisateursParPage: number
+  idStructure: number
+}>> & Readonly<{
+  uid: string
+}>

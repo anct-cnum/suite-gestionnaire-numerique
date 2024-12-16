@@ -19,13 +19,13 @@ export async function changerMonRoleAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  revalidatePath(actionParams.path)
-
   const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma))
     .execute({
       nouveauRole: validationResult.data.nouveauRole,
-      utilisateurUid: await getSubSession(),
+      uidUtilisateurCourant: await getSubSession(),
     })
+
+  revalidatePath(actionParams.path)
 
   return [message]
 }
@@ -37,5 +37,5 @@ type ActionParams = Readonly<{
 
 const validator = z.object({
   nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
-  path: z.string().min(1, { message: 'Le chemin n’est pas correct' }),
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })

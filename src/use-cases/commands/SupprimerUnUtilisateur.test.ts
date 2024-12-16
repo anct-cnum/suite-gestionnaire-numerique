@@ -11,31 +11,29 @@ describe('supprimer un utilisateur', () => {
 
   it('l’utilisateur courant n’existe pas : échec de suppression', async () => {
     // GIVEN
-    const command = {
-      utilisateurASupprimerUid: 'utilisateurASupprimerExistantUid',
-      utilisateurCourantUid: 'utilisateurCourantInexistantUid',
-    }
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await supprimerUnUtilisateur.execute(command)
+    const result = await supprimerUnUtilisateur.execute({
+      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+      uidUtilisateurCourant: 'utilisateurCourantInexistantUid',
+    })
 
     // THEN
     expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantInexistantUid'])
     expect(spiedUtilisateurToDrop).toBeNull()
-    expect(result).toBe('compteConnecteInexistant')
+    expect(result).toBe('utilisateurCourantInexistant')
   })
 
   it('l’utilisateur à supprimer n’existe pas : échec de suppression', async () => {
     // GIVEN
-    const command = {
-      utilisateurASupprimerUid: 'utilisateurASupprimerInexistantUid',
-      utilisateurCourantUid: 'utilisateurCourantExistantUid',
-    }
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await supprimerUnUtilisateur.execute(command)
+    const result = await supprimerUnUtilisateur.execute({
+      uidUtilisateurASupprimer: 'utilisateurASupprimerInexistantUid',
+      uidUtilisateurCourant: 'utilisateurCourantExistantUid',
+    })
 
     // THEN
     expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantExistantUid', 'utilisateurASupprimerInexistantUid'])
@@ -46,14 +44,13 @@ describe('supprimer un utilisateur', () => {
   it('l’utilisateur courant n’est pas autorisé à supprimer l’utilisateur qu’il souhaite supprimer :'
     + ' échec de suppression', async () => {
     // GIVEN
-    const command = {
-      utilisateurASupprimerUid: 'utilisateurASupprimerExistantUid',
-      utilisateurCourantUid: 'utilisateurCourantExistantUid',
-    }
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await supprimerUnUtilisateur.execute(command)
+    const result = await supprimerUnUtilisateur.execute({
+      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+      uidUtilisateurCourant: 'utilisateurCourantExistantUid',
+    })
 
     // THEN
     expect(spiedUidsToFind).toStrictEqual([
@@ -67,14 +64,13 @@ describe('supprimer un utilisateur', () => {
   it('les deux utilisateurs existent et l’utilisateur courant est autorisé à supprimer celui qu’il souhaite' +
     ' supprimer, mais ce dernier a été supprimé entre-temps : échec de la suppression', async () => {
     // GIVEN
-    const command = {
-      utilisateurASupprimerUid: 'utilisateurASupprimerExistantUid',
-      utilisateurCourantUid: 'utilisateurCourantExistantAutreUid',
-    }
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateursSuppressionConcurrenteRepositorySpy())
 
     // WHEN
-    const result = await commandHandler.execute(command)
+    const result = await commandHandler.execute({
+      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+      uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+    })
 
     // THEN
     expect(spiedUidsToFind).toStrictEqual([
@@ -89,14 +85,13 @@ describe('supprimer un utilisateur', () => {
   it('les deux utilisateurs existent et l’utilisateur courant est autorisé à supprimer celui qu’il souhaite' +
     ' supprimer, qui n’a pas été supprimé entre-temps : succès de la suppression', async () => {
     // GIVEN
-    const command = {
-      utilisateurASupprimerUid: 'utilisateurASupprimerExistantUid',
-      utilisateurCourantUid: 'utilisateurCourantExistantAutreUid',
-    }
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await commandHandler.execute(command)
+    const result = await commandHandler.execute({
+      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
+      uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
+    })
 
     // THEN
     expect(spiedUidsToFind).toStrictEqual([
