@@ -12,7 +12,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par le gestionnaire de cette gouvernance, alors elle est ajoutée à une gourvernance', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par le gestionnaire de cette gouvernance, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
@@ -35,7 +35,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
         noteDeContexte: {
           contenu,
           dateDeModification: new Date(0),
-          uidUtilisateurLAyantModifie: new UtilisateurUid(
+          uidUtilisateurLAyantModifiee: new UtilisateurUid(
             utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
           ),
         },
@@ -107,7 +107,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
 const uidGouvernance = '1'
-const uidUtilisateurCourant = 'fooId'
+const uidUtilisateurCourant = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
