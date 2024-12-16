@@ -1,6 +1,7 @@
 // Stryker disable all
+import { Comite, ComiteFactoryParams, ComiteUid } from './Comite'
 import { Departement, DepartementState } from './Departement'
-import { FactoryParams, Gouvernance } from './Gouvernance'
+import { GouvernanceFactoryParams, Gouvernance } from './Gouvernance'
 import { TypologieRole } from './Role'
 import { UtilisateurFactory } from './UtilisateurFactory'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
@@ -19,25 +20,43 @@ export function utilisateurFactory(
     nom: 'Tartempion',
     prenom: 'Martin',
     telephone: '0102030405',
-    uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+    uid: { email: 'martin.tartempion@example.net', value: 'userFooId' },
     ...override,
   }).create(override?.role ?? 'Instructeur', override?.codeOrganisation)
 }
 
-export function gouvernanceFactory(override?: Partial<FactoryParams>): Gouvernance {
+export function gouvernanceFactory(override?: Partial<GouvernanceFactoryParams>): Gouvernance {
   return Gouvernance.create({
+    comites: [new ComiteUid(String(new Date(0).getTime()))],
     noteDeContexte: {
       contenu: '<p>contenu HTML</p>',
       dateDeModification: new Date(0),
-      uidUtilisateurLAyantModifie: new UtilisateurUid(utilisateurFactory().state.uid),
+      uidUtilisateurLAyantModifiee: new UtilisateurUid(utilisateurFactory().state.uid),
     },
     uid: 'fooGouvernanceUid',
     utilisateurUid: {
       email: 'martin.tartempion@example.net',
-      value: 'fooId',
+      value: 'userFooId',
     },
     ...override,
   })
+}
+
+export function comiteFactory(override?: Partial<ComiteFactoryParams>): Comite {
+  return Comite.create({
+    commentaire: 'un commentaire',
+    date: '1970-01-01',
+    dateDeCreation: '1970-01-01T00:00:00.000Z',
+    dateDeModification: '1970-01-01T00:00:00.000Z',
+    frequence: 'Annuelle',
+    type: 'Stratégique',
+    uid: '',
+    uidUtilisateurCourant: {
+      email: 'martin.tartempion@example.net',
+      value: 'userFooId',
+    },
+    ...override,
+  }) as Comite
 }
 
 export function departementFactory(override?: Partial<DepartementState>): Departement {
