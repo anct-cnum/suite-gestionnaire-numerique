@@ -19,8 +19,6 @@ export async function modifierMesInformationsPersonnellesAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  revalidatePath(actionParams.path)
-
   const message = await new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
     .execute({
       modification: {
@@ -29,8 +27,10 @@ export async function modifierMesInformationsPersonnellesAction(
         prenom: validationResult.data.prenom,
         telephone: validationResult.data.telephone,
       },
-      uid: await getSubSession(),
+      uidUtilisateurCourant: await getSubSession(),
     })
+
+  revalidatePath(actionParams.path)
 
   return [message]
 }
@@ -46,8 +46,7 @@ type ActionParams = Readonly<{
 const validator = z.object({
   emailDeContact: z.string().email({ message: 'L’email doit être valide' }),
   nom: z.string().min(1, { message: 'Le nom doit contenir au moins 1 caractère' }),
-  path: z.string().min(1, { message: 'Le chemin n’est pas correct' }),
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   prenom: z.string().min(1, { message: 'Le prénom doit contenir au moins 1 caractère' }),
-  // Stryker disable next-line Regex
   telephone: z.string().regex(telephonePattern, { message: 'Le téléphone doit être au format 0102030405 ou +33102030405' }).or(z.literal('')),
 })

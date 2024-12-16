@@ -30,7 +30,7 @@ describe('corriger nom prenom si absents', () => {
         nom: 'Dugenoux',
         prenom: 'Micheline',
       },
-      uid: 'fooId',
+      uidUtilisateurCourant: 'fooId',
     })
 
     // THEN
@@ -74,11 +74,11 @@ describe('corriger nom prenom si absents', () => {
           nom: 'Dugenoux',
           prenom: 'Micheline',
         },
-        uid: 'fooId',
+        uidUtilisateurCourant: 'fooId',
       })
 
       // THEN
-      expect(result).toBe('compteInexistant')
+      expect(result).toBe('utilisateurCourantInexistant')
       expect(spiedUidToFind).toBe('fooId')
       expect(spiedUtilisateurToUpdate).toBeNull()
     }
@@ -125,7 +125,7 @@ describe('corriger nom prenom si absents', () => {
           nom: correctionNom,
           prenom: correctionPrenom,
         },
-        uid: 'fooId',
+        uidUtilisateurCourant: 'fooId',
       })
 
       // THEN
@@ -188,7 +188,7 @@ describe('corriger nom prenom si absents', () => {
           nom: correctionNom,
           prenom: correctionPrenom,
         },
-        uid: 'fooId',
+        uidUtilisateurCourant: 'fooId',
       })
 
       // THEN

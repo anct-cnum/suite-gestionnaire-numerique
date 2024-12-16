@@ -17,6 +17,7 @@ describe('inviter un utilisateur action', () => {
         actionParams: {
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
+          path: '/mes-utilisateurs',
           prenom: 'Martin',
         },
         desc: 'sans rôle spécifié',
@@ -31,6 +32,7 @@ describe('inviter un utilisateur action', () => {
         actionParams: {
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
+          path: '/mes-utilisateurs',
           prenom: 'Martin',
           role: 'Instructeur',
         },
@@ -50,6 +52,7 @@ describe('inviter un utilisateur action', () => {
           codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
+          path: '/mes-utilisateurs',
           prenom: 'Martin',
           role: 'Gestionnaire structure',
         },
@@ -70,6 +73,7 @@ describe('inviter un utilisateur action', () => {
           codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',
+          path: '/mes-utilisateurs',
           prenom: 'Martin',
         },
         desc: 'avec code organisation spécifiée sans rôle : ignorée',
@@ -82,16 +86,16 @@ describe('inviter un utilisateur action', () => {
       },
     ])('$desc', async ({ actionParams, expectedCommand }) => {
       // GIVEN
-      vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
       vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+      vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
       vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
       // WHEN
       const messages = await inviterUnUtilisateurAction(actionParams)
 
       // THEN
-      expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
       expect(InviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith(expectedCommand)
+      expect(nextCache.revalidatePath).toHaveBeenCalledWith(actionParams.path)
       expect(messages).toStrictEqual(['OK'])
     })
   })
@@ -101,11 +105,13 @@ describe('inviter un utilisateur action', () => {
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
     vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
     vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('emailExistant')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
     const inviterUnUtilisateurParams = {
       codeOrganisation: '21',
       email: 'martin.tartempion@example.com',
       nom: 'Tartempion',
+      path: '/',
       prenom: 'Martin',
       role: 'Gestionnaire département',
     }
@@ -124,6 +130,7 @@ describe('inviter un utilisateur action', () => {
         email: 'martin.tartempion@example.com',
         expectedError: 'Le nom doit contenir au moins 1 caractère',
         nom: '',
+        path: '/',
         prenom: 'Martin',
       },
       {
@@ -131,6 +138,7 @@ describe('inviter un utilisateur action', () => {
         email: 'martin.tartempion@example.com',
         expectedError: 'Le prénom doit contenir au moins 1 caractère',
         nom: 'Tartempion',
+        path: '/',
         prenom: '',
       },
       {
@@ -138,6 +146,7 @@ describe('inviter un utilisateur action', () => {
         email: '',
         expectedError: 'L’email doit être valide',
         nom: 'Tartempion',
+        path: '/',
         prenom: 'Martin',
       },
       {
@@ -145,6 +154,7 @@ describe('inviter un utilisateur action', () => {
         email: 'martin.tartempion@example.com',
         expectedError: 'Le rôle n’est pas correct',
         nom: 'Tartempion',
+        path: '/',
         prenom: 'Martin',
         role: 'Rôle bidon',
       },
@@ -154,14 +164,24 @@ describe('inviter un utilisateur action', () => {
         email: 'martin.tartempion@example.com',
         expectedError: 'Le code organisation doit être renseigné',
         nom: 'Tartempion',
+        path: '/',
         prenom: 'Martin',
       },
-    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, expectedError }) => {
+      {
+        desc: 'chemin vide',
+        email: 'martin.tartempion@example.com',
+        expectedError: 'Le chemin doit être renseigné',
+        nom: 'Tartempion',
+        path: '',
+        prenom: 'Martin',
+      },
+    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, path, expectedError }) => {
       // GIVEN
       const inviterUnUtilisateurParams = {
         codeOrganisation,
         email,
         nom,
+        path,
         prenom,
         role,
       }
@@ -218,11 +238,11 @@ describe('inviter un utilisateur action', () => {
             codeOrganisation: '21',
             email: 'martin.tartempion@example.com',
             nom: 'Tartempion',
+            path: '/',
             prenom: 'Martin',
           })
 
           // THEN
-          expect(nextCache.revalidatePath).toHaveBeenCalledWith('/mes-utilisateurs')
           expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
           expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
         }

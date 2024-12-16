@@ -24,11 +24,11 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
       uidGouvernance,
-      uidUtilisateur: uidUtilisateur,
+      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       gouvernanceFactory({
@@ -36,7 +36,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
           contenu,
           dateDeModification: new Date(0),
           uidUtilisateurLAyantModifie: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateur } }).state.uid
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
           ),
         },
         uid: uidGouvernance,
@@ -53,7 +53,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidGouvernance, uidUtilisateur: 'utilisateurUsurpateur' })
+    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidGouvernance, uidUtilisateurCourant: 'utilisateurUsurpateur' })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
@@ -73,11 +73,11 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
       uidGouvernance,
-      uidUtilisateur: uidUtilisateur,
+      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('gouvernanceInexistante')
@@ -94,20 +94,20 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
       uidGouvernance,
-      uidUtilisateur: uidUtilisateur,
+      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateur)
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurInexistant')
+    expect(result).toBe('utilisateurCourantInexistant')
   })
 })
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
 const uidGouvernance = '1'
-const uidUtilisateur = 'fooId'
+const uidUtilisateurCourant = 'fooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null

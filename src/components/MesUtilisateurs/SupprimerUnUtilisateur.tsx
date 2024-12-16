@@ -60,8 +60,8 @@ export default function SupprimerUnUtilisateur({
     setIsOpen(false)
   }
 
-  async function supprimer(utilisateurASupprimerUid: string): Promise<void> {
-    await supprimerUnUtilisateurAction({ path: pathname, utilisateurASupprimerUid })
+  async function supprimer(uidUtilisateurASupprimer: string): Promise<void> {
+    await supprimerUnUtilisateurAction({ path: pathname, uidUtilisateurASupprimer })
     close()
   }
 }

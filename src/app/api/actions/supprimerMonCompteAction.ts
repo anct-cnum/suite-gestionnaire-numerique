@@ -8,7 +8,7 @@ import { SupprimerMonCompte } from '@/use-cases/commands/SupprimerMonCompte'
 
 export async function supprimerMonCompteAction(): ResultAsync<ReadonlyArray<string>> {
   const message = await new SupprimerMonCompte(new PrismaUtilisateurRepository(prisma))
-    .execute({ utilisateurUid: await getSubSession() })
+    .execute({ uidUtilisateurCourant: await getSubSession() })
 
   return [message]
 }

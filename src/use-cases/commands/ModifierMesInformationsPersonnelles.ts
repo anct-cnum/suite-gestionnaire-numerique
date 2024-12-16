@@ -1,62 +1,61 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import {
-  FindUtilisateurRepository,
-  UpdateUtilisateurRepository,
-} from './shared/UtilisateurRepository'
+import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
-export class ModifierMesInformationsPersonnelles implements CommandHandler<
-  MesInformationsPersonnellesModifiees,
-  ModificationUtilisateurFailure> {
-  readonly #repository: Repository
+export class ModifierMesInformationsPersonnelles implements CommandHandler<Command, Failure> {
+  readonly #utilisateurRepository: UtilisateurRepository
 
-  constructor(repository: Repository) {
-    this.#repository = repository
+  constructor(utilisateurRepository: UtilisateurRepository) {
+    this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(
-    command: MesInformationsPersonnellesModifiees
-  ): ResultAsync<ModificationUtilisateurFailure> {
+  async execute(command: Command): ResultAsync<Failure> {
     const {
       modification: { nom, prenom, emailDeContact: email, telephone },
-      uid,
+      uidUtilisateurCourant,
     } = command
-    const utilisateur = await this.#repository.find(uid)
-    if (!utilisateur) {
-      return 'compteInexistant'
+
+    const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return 'utilisateurCourantInexistant'
     }
-    const changerPrenomResult = utilisateur.changerPrenom(prenom)
+
+    const changerPrenomResult = utilisateurCourant.changerPrenom(prenom)
     if (!isOk(changerPrenomResult)) {
       return changerPrenomResult
     }
-    const changerNomResult = utilisateur.changerNom(nom)
+
+    const changerNomResult = utilisateurCourant.changerNom(nom)
     if (!isOk(changerNomResult)) {
       return changerNomResult
     }
-    const changerEmailResult = utilisateur.changerEmail(email)
+
+    const changerEmailResult = utilisateurCourant.changerEmail(email)
     if (!isOk(changerEmailResult)) {
       return changerEmailResult
     }
-    const changerTelephoneResult = utilisateur.changerTelephone(telephone)
+
+    const changerTelephoneResult = utilisateurCourant.changerTelephone(telephone)
     if (!isOk(changerTelephoneResult)) {
       return changerTelephoneResult
     }
-    await this.#repository.update(utilisateur)
+    await this.#utilisateurRepository.update(utilisateurCourant)
+
     return 'OK'
   }
 }
 
-export type MesInformationsPersonnellesModifiees = Readonly<{
+type Command = Readonly<{
   modification: Readonly<{
     emailDeContact: string
     nom: string
     prenom: string
     telephone: string
   }>
-  uid: string
+  uidUtilisateurCourant: string
 }>
 
-export type ModificationUtilisateurFailure = 'compteInexistant' | UtilisateurFailure
+type Failure = 'utilisateurCourantInexistant' | UtilisateurFailure
 
-interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

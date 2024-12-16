@@ -13,7 +13,7 @@ describe('supprimer mon compte action', () => {
     const messages = await supprimerMonCompteAction()
 
     // THEN
-    expect(SupprimerMonCompte.prototype.execute).toHaveBeenCalledWith({ utilisateurUid: sub })
+    expect(SupprimerMonCompte.prototype.execute).toHaveBeenCalledWith({ uidUtilisateurCourant: sub })
     expect(messages).toStrictEqual(['OK'])
   })
 })

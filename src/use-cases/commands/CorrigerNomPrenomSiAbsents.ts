@@ -11,29 +11,34 @@ export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failu
     this.#valeurNomOuPrenomAbsent = config.absenceNomOuPrenom
   }
 
-  async execute({ actuels, corriges, uid }: Command): ResultAsync<Failure, Success> {
+  async execute(command: Command): ResultAsync<Failure, Success> {
+    const { actuels, corriges, uidUtilisateurCourant } = command
     const isPrenomAbsent = this.#valeurNomOuPrenomAbsent === actuels.prenom
     const isNomAbsent = this.#valeurNomOuPrenomAbsent === actuels.nom
     if (!isPrenomAbsent && !isNomAbsent) {
       return 'okSansMiseAJour'
     }
-    const utilisateur = await this.#utilisateurRepository.find(uid)
-    if (!utilisateur) {
-      return Promise.resolve('compteInexistant')
+
+    const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return Promise.resolve('utilisateurCourantInexistant')
     }
+
     if (isPrenomAbsent) {
       if (this.#valeurNomOuPrenomAbsent === corriges.prenom) {
         return 'miseAJourInvalide'
       }
-      utilisateur.changerPrenom(corriges.prenom)
+      utilisateurCourant.changerPrenom(corriges.prenom)
     }
+
     if (isNomAbsent) {
       if (this.#valeurNomOuPrenomAbsent === corriges.nom) {
         return 'miseAJourInvalide'
       }
-      utilisateur.changerNom(corriges.nom)
+      utilisateurCourant.changerNom(corriges.nom)
     }
-    return this.#utilisateurRepository.update(utilisateur).then(() => 'okAvecMiseAJour')
+
+    return this.#utilisateurRepository.update(utilisateurCourant).then(() => 'okAvecMiseAJour')
   }
 }
 
@@ -46,10 +51,10 @@ type Command = Readonly<{
     nom: string
     prenom: string
   }>
-  uid: string
+  uidUtilisateurCourant: string
 }>
 
-type Failure = 'compteInexistant' | 'miseAJourInvalide'
+type Failure = 'utilisateurCourantInexistant' | 'miseAJourInvalide'
 
 type Success = 'okAvecMiseAJour' | 'okSansMiseAJour'
 

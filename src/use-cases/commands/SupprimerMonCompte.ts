@@ -1,22 +1,22 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropUtilisateurByUidRepository } from './shared/UtilisateurRepository'
 
-export class SupprimerMonCompte implements CommandHandler<Command, SuppressionCompteFailure> {
-  readonly #repository: DropUtilisateurByUidRepository
+export class SupprimerMonCompte implements CommandHandler<Command, Failure> {
+  readonly #utilisateurRepository: DropUtilisateurByUidRepository
 
-  constructor(repository: DropUtilisateurByUidRepository) {
-    this.#repository = repository
+  constructor(utilisateurRepository: DropUtilisateurByUidRepository) {
+    this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute({ utilisateurUid }: Command): ResultAsync<SuppressionCompteFailure> {
-    return this.#repository
-      .dropByUid(utilisateurUid)
-      .then((result) => (result ? 'OK' : 'compteInexistant'))
+  async execute(command: Command): ResultAsync<Failure> {
+    return this.#utilisateurRepository
+      .dropByUid(command.uidUtilisateurCourant)
+      .then((result) => (result ? 'OK' : 'utilisateurCourantInexistant'))
   }
 }
 
-export type SuppressionCompteFailure = 'compteInexistant'
+type Failure = 'utilisateurCourantInexistant'
 
 type Command = Readonly<{
-  utilisateurUid: string
+  uidUtilisateurCourant: string
 }>

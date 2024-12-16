@@ -18,22 +18,22 @@ export async function supprimerUnUtilisateurAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  revalidatePath(actionParams.path)
-
   const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma))
     .execute({
-      utilisateurASupprimerUid: actionParams.utilisateurASupprimerUid,
-      utilisateurCourantUid: await getSubSession(),
+      uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
+      uidUtilisateurCourant: await getSubSession(),
     })
+
+  revalidatePath(actionParams.path)
 
   return [message]
 }
 
 type ActionParams = Readonly<{
-  utilisateurASupprimerUid: string
+  uidUtilisateurASupprimer: string
   path: string
 }>
 
 const validator = z.object({
-  path: z.string().min(1, { message: 'Le chemin n’est pas correct' }),
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })
