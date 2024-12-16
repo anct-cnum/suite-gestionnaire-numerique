@@ -1,22 +1,27 @@
+import { ComiteUid } from './Comite'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
-export class Gouvernance extends Entity<GouvernanceState> {
+export class Gouvernance extends Entity<State> {
   #noteDeContexte?: NoteDeContexte
+  readonly #comites: Array<ComiteUid>
   readonly #uidUtilisateur: UtilisateurUid
 
   private constructor(
     uid: GouvernanceUid,
     uidUtilisateur: UtilisateurUid,
-    noteDeContexte?: NoteDeContexte
+    noteDeContexte?: NoteDeContexte,
+    comites?: ReadonlyArray<ComiteUid>
   ) {
     super(uid)
+    this.#comites = [...comites ?? []]
     this.#noteDeContexte = noteDeContexte
     this.#uidUtilisateur = uidUtilisateur
   }
 
-  override get state(): GouvernanceState {
+  override get state(): State {
     return {
+      comites: this.#comites.map((comite) => comite.state.value),
       noteDeContexte: this.#noteDeContexte?.state,
       uid: this.uid.state,
       utilisateurUid: this.#uidUtilisateur.state,
@@ -24,14 +29,15 @@ export class Gouvernance extends Entity<GouvernanceState> {
   }
 
   static create({
+    comites,
     noteDeContexte,
     uid,
     utilisateurUid: utilisateur,
-  }: FactoryParams): Gouvernance {
+  }: GouvernanceFactoryParams): Gouvernance {
     const noteDeContexteAjoutee = noteDeContexte
       ? new NoteDeContexte(
         noteDeContexte.dateDeModification,
-        noteDeContexte.uidUtilisateurLAyantModifie,
+        noteDeContexte.uidUtilisateurLAyantModifiee,
         noteDeContexte.contenu
       )
       : undefined
@@ -39,12 +45,17 @@ export class Gouvernance extends Entity<GouvernanceState> {
     return new Gouvernance(
       new GouvernanceUid(uid),
       new UtilisateurUid({ email: utilisateur.email, value: utilisateur.value }),
-      noteDeContexteAjoutee
+      noteDeContexteAjoutee,
+      comites
     )
   }
 
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): void {
     this.#noteDeContexte = noteDeContexte
+  }
+
+  ajouterComite(comite: ComiteUid): void {
+    this.#comites.push(comite)
   }
 
   peutSeFaireGerer(autre: Utilisateur): boolean {
@@ -66,17 +77,18 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
   ) {
     super({
       dateDeModification: dateDeModification.toJSON(),
-      uidUtilisateurAyantModifie: uidUtilisateurAyantModifie.state.value,
+      uidUtilisateurAyantModifiee: uidUtilisateurAyantModifie.state.value,
       value,
     })
   }
 }
 
-export type FactoryParams = Readonly<{
+export type GouvernanceFactoryParams = Readonly<{
+  comites?: ReadonlyArray<ComiteUid>
   noteDeContexte?: Readonly<{
     contenu: string
     dateDeModification: Date
-    uidUtilisateurLAyantModifie: UtilisateurUid
+    uidUtilisateurLAyantModifiee: UtilisateurUid
   }>
   uid: string
   utilisateurUid: {
@@ -85,7 +97,8 @@ export type FactoryParams = Readonly<{
   }
 }>
 
-type GouvernanceState = Readonly<{
+type State = Readonly<{
+  comites?: ReadonlyArray<string>
   noteDeContexte?: NoteDeContexteState
   uid: GouvernanceUidState
   utilisateurUid: UtilisateurUidState
@@ -93,8 +106,8 @@ type GouvernanceState = Readonly<{
 
 type NoteDeContexteState = Readonly<{
   dateDeModification: string
-  uidUtilisateurAyantModifie: string
+  uidUtilisateurAyantModifiee: string
   value: string
- }>
+}>
 
 type GouvernanceUidState = Readonly<{ value: string }>
