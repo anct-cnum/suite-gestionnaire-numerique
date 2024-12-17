@@ -244,7 +244,7 @@ describe('inviter un utilisateur', () => {
     // THEN
     await waitFor(() => {
       expect(inviterUnUtilisateurAction).toHaveBeenCalledWith({
-        codeOrganisation: '1845',
+        codeOrganisation: '5001',
         email: 'martin.tartempion@example.com',
         nom: 'Tartempion',
         path: '/mes-utilisateurs',

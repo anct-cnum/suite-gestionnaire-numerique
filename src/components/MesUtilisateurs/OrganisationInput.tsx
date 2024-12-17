@@ -3,6 +3,8 @@ import { ReactElement } from 'react'
 import Select, { StylesConfig, Options } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
+import { makeSearchParams, StructureSearchViewModel, toStructureSearchViewModels } from '@/presenters/rechercheStructuresPresenter'
+
 export default function OrganisationInput({
   label,
   options,
@@ -10,9 +12,8 @@ export default function OrganisationInput({
   placeholder,
   setOrganisation,
   required,
-  additionalSearchParams,
+  extraSearchParams,
 }: Props): ReactElement {
-  const additionalSearchParamEntries = [...(additionalSearchParams ?? new URLSearchParams()).entries()]
 
   return (
     <div className="fr-select-group">
@@ -65,17 +66,13 @@ export default function OrganisationInput({
     </div>
   )
 
-  async function onSearch(search: string): Promise<Options<{label: string, value: string}>> {
+  async function onSearch(search: string): Promise<Options<StructureSearchViewModel>> {
     if (search.length < 3) {
       return []
     }
-    const searchParams = new URLSearchParams([['search', search]])
-    for (const [searchParamKey, searchParamValue] of additionalSearchParamEntries) {
-      searchParams.append(searchParamKey, searchParamValue)
-    }
-    const result = await fetch(`/api/structures?${searchParams.toString()}`)
-    const structures = await result.json() as ReadonlyArray<{ uid: string, nom: string }>
-    return structures.map(({ uid, nom }) => ({ label: nom, value: uid }))
+    return fetch(`/api/structures?${makeSearchParams(search, extraSearchParams).toString()}`)
+      .then(async (result) => result.json())
+      .then(toStructureSearchViewModels)
   }
 }
 
@@ -85,7 +82,7 @@ type Props = Readonly<{
   organisation: string
   placeholder: string
   required: boolean
-  additionalSearchParams?: URLSearchParams
+  extraSearchParams?: URLSearchParams
   setOrganisation(organisation: string): void
 }>
 

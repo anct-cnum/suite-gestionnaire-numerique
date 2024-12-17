@@ -50,7 +50,7 @@ export default function FiltrerMesUtilisateurs({
         />
         <hr />
         <OrganisationInput
-          additionalSearchParams={structuresSearchParams}
+          extraSearchParams={structuresSearchParams}
           label="Par structure"
           options={[]}
           organisation={structure}

@@ -66,7 +66,7 @@ describe('route /structures', () => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
       const spiedFind = vi.spyOn(PrismaStructureLoader.prototype, 'findStructures')
-        .mockResolvedValueOnce([{ nom: 'La Poste', uid: '21' }])
+        .mockResolvedValueOnce([{ commune: 'TARBES', nom: 'La Poste', uid: '802' }])
 
       const req = {
         nextUrl: {
@@ -81,7 +81,7 @@ describe('route /structures', () => {
       const response = (await result.json()) as unknown
       expect(spiedFind).toHaveBeenCalledWith(expectedFindParams)
       expect(result.status).toBe(200)
-      expect(response).toStrictEqual([{ nom: 'La Poste', uid: '21' }])
+      expect(response).toStrictEqual([{ commune: 'TARBES', nom: 'La Poste', uid: '802' }])
     })
   })
 })
