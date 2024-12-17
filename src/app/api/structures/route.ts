@@ -4,7 +4,7 @@ import prisma from '../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
 import { isNullishOrEmpty, isNullish } from '@/shared/lang'
-import { RechercherStruturesQuery, StructuresReadModel } from '@/use-cases/queries/RechercherLesStructures'
+import { RechercherLesStructures, StructuresReadModel } from '@/use-cases/queries/RechercherLesStructures'
 
 export async function GET(request: NextRequest): Promise<NextResponse<StructuresReadModel | null>> {
   const session = await getSession()
@@ -15,24 +15,24 @@ export async function GET(request: NextRequest): Promise<NextResponse<Structures
   if (isNullishOrEmpty(search)) {
     return NextResponse.json(null, { status: 400 })
   }
-  const structureLoader = new PrismaStructureLoader(prisma)
-  const structuresReadModel = await structureLoader.findStructures({
+  const rechercherLesStructures = new RechercherLesStructures(new PrismaStructureLoader(prisma))
+  const structuresReadModel = await rechercherLesStructures.get({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     match: search!,
-    ...makeZone(request.nextUrl.searchParams),
+    zone: makeZone(request.nextUrl.searchParams),
   })
   return NextResponse.json(structuresReadModel)
 }
 
-function makeZone(searchParams: URLSearchParams): {zone?: RechercherStruturesQuery['zone']} {
+function makeZone(searchParams: URLSearchParams): Parameters<typeof RechercherLesStructures.prototype.get>[0]['zone'] {
   const [departement, region] = [searchParams.get('departement'), searchParams.get('region')]
-  let zone: RechercherStruturesQuery['zone'] | undefined
+  let zone: ReturnType<typeof makeZone>
   if (!isNullishOrEmpty(departement)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    zone = ['departement', departement!]
+    zone = { code: departement!, type: 'departement' }
   } else if (!isNullishOrEmpty(region)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    zone = ['region', region!]
+    zone = { code: region!, type: 'region' }
   }
-  return { zone }
+  return zone
 }
