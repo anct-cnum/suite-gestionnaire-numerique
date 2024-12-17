@@ -9,7 +9,8 @@ export type RechercherStruturesQuery = Readonly<{
   zone?: ['departement' | 'region', string]
 }>
 
-type UneStructureReadModel = Readonly<{
+export type UneStructureReadModel = Readonly<{
   nom: string
+  commune: string
   uid: string
 }>

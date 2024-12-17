@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { StructureRecord, PrismaClient } from '@prisma/client'
 
 import { RechercherStruturesQuery, StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
@@ -39,10 +39,9 @@ export class PrismaStructureLoader implements StructureLoader {
   }
 }
 
-function transform(
-  structuresRecord: ReadonlyArray<{ id: number; nom: string }>
-): ReadonlyArray<{ nom: string; uid: string }> {
-  return structuresRecord.map(({ nom, id }) => ({
+function transform(structuresRecord: ReadonlyArray<StructureRecord>): StructuresReadModel {
+  return structuresRecord.map(({ commune, nom, id }) => ({
+    commune,
     nom,
     uid: `${id}`,
   }))

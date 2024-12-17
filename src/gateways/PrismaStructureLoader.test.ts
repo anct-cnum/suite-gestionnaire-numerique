@@ -14,6 +14,7 @@ describe('structures loader', () => {
         desc: 'la correspondance se fait par inclusion du terme de la recherche',
         expected: [
           {
+            commune: 'NOISY-LE-GRAND',
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
@@ -24,6 +25,7 @@ describe('structures loader', () => {
         desc: 'la casse étant ignorée',
         expected: [
           {
+            commune: 'NOISY-LE-GRAND',
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
@@ -34,10 +36,12 @@ describe('structures loader', () => {
         desc: 'la liste structures trouvées étant triée par ordre alphabétique sur le nom',
         expected: [
           {
+            commune: 'NOISY-LE-GRAND',
             nom: 'GRAND PARIS GRAND EST',
             uid: '416',
           },
           {
+            commune: 'GRASSE',
             nom: 'TETRIS',
             uid: '14',
           },
@@ -68,6 +72,7 @@ describe('structures loader', () => {
         desc: 'et un département, alors seules les structures appartenant à ce département sont remontées',
         expected: [
           {
+            commune: 'GRASSE',
             nom: 'TETRIS',
             uid: '14',
           },
@@ -78,6 +83,7 @@ describe('structures loader', () => {
         desc: 'et une région, alors seules les structures appartenant à un département appartenant à cette région sont remontées',
         expected: [
           {
+            commune: 'GRASSE',
             nom: 'TETRIS',
             uid: '14',
           },
@@ -111,6 +117,7 @@ async function createStructures(): Promise<void> {
   })
   await prisma.structureRecord.create({
     data: structureRecordFactory({
+      commune: 'GRASSE',
       departementCode: '06',
       id: 14,
       nom: 'TETRIS',
@@ -118,6 +125,7 @@ async function createStructures(): Promise<void> {
   })
   await prisma.structureRecord.create({
     data: structureRecordFactory({
+      commune: 'NOISY-LE-GRAND',
       departementCode: '93',
       id: 416,
       nom: 'GRAND PARIS GRAND EST',

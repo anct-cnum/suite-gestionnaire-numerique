@@ -4,9 +4,9 @@ import prisma from '../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
 import { isNullishOrEmpty, isNullish } from '@/shared/lang'
-import { RechercherStruturesQuery } from '@/use-cases/queries/RechercherLesStructures'
+import { RechercherStruturesQuery, StructuresReadModel } from '@/use-cases/queries/RechercherLesStructures'
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse<StructuresReadModel | null>> {
   const session = await getSession()
   if (isNullish(session)) {
     return NextResponse.json(null, { status: 403 })
