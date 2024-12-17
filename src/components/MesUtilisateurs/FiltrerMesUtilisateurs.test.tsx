@@ -173,12 +173,12 @@ describe('filtrer mes utilisateurs', () => {
 
     it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', async () => {
       // GIVEN
-      vi.stubGlobal('fetch', structuresFetch)
+      vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
       const filtreParStructure = screen.getByLabelText('Par structure')
       fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-      await select(filtreParStructure, 'TETRIS')
+      await select(filtreParStructure, 'TETRIS — GRASSE')
 
       // WHEN
       const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -186,6 +186,7 @@ describe('filtrer mes utilisateurs', () => {
 
       // THEN
       expect(filtreParStructure).toBeInTheDocument()
+      expect(fetch).toHaveBeenCalledWith('/api/structures?search=tet')
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
     })
 
@@ -193,31 +194,34 @@ describe('filtrer mes utilisateurs', () => {
       it.each([
         {
           desc: 'sur une région et une structure de cette région',
+          expectedFetchInput: '/api/structures?search=tet&region=93',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?codeRegion=93&structure=14',
           zoneGeographique: "(93) Provence-Alpes-Côte d'Azur",
         },
         {
           desc: 'sur un département et une structure de ce département',
+          expectedFetchInput: '/api/structures?search=tet&departement=06',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?codeDepartement=06&structure=14',
           zoneGeographique: '(06) Alpes-Maritimes',
         },
         {
           desc: 'sur toutes les zones géographiques et une structure',
+          expectedFetchInput: '/api/structures?search=tet',
           expectedRouterPush: 'http://example.com/mes-utilisateurs?structure=14',
           zoneGeographique: 'Toutes les régions',
         },
 
       ])(
         '$desc, alors je n’affiche que les utilisateurs liés à cette structure',
-        async ({ expectedRouterPush, zoneGeographique }) => {
+        async ({ expectedFetchInput, expectedRouterPush, zoneGeographique }) => {
           // GIVEN
-          vi.stubGlobal('fetch', structuresFetch)
+          vi.stubGlobal('fetch', vi.fn(structuresFetch))
           const spiedRouterPush = vi.fn()
           afficherLesFiltres(spiedRouterPush)
           await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
           const filtreParStructure = screen.getByLabelText('Par structure')
           fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-          await select(filtreParStructure, 'TETRIS')
+          await select(filtreParStructure, 'TETRIS — GRASSE')
 
           // WHEN
           const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -225,6 +229,7 @@ describe('filtrer mes utilisateurs', () => {
 
           // THEN
           expect(filtreParStructure).toBeInTheDocument()
+          expect(fetch).toHaveBeenCalledWith(expectedFetchInput)
           expect(spiedRouterPush).toHaveBeenCalledWith(expectedRouterPush)
         }
       )
@@ -238,7 +243,7 @@ describe('filtrer mes utilisateurs', () => {
         await select(filtreParZoneGeographique, '(06) Alpes-Maritimes')
         const filtreParStructure = screen.getByLabelText('Par structure')
         fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-        await select(filtreParStructure, 'TETRIS')
+        await select(filtreParStructure, 'TETRIS — GRASSE')
 
         // WHEN
         const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
@@ -272,4 +277,3 @@ describe('filtrer mes utilisateurs', () => {
     fireEvent.click(filtrer)
   }
 })
-
