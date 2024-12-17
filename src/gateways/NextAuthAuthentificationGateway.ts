@@ -13,11 +13,8 @@ const providerName = 'Pro Connect'
 const providerScope = 'openid given_name usual_name siret phone email'
 const nextAuthOptions = {
   callbacks: {
-    async jwt({ token, profile }): Promise<JWT> {
+    jwt({ token, profile }): JWT {
       if (profile) {
-        const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
-        const userSsoId = profile.sub ?? ''
-        await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({ uid: userSsoId })
         return {
           ...token,
           user: profile,
@@ -32,6 +29,19 @@ const nextAuthOptions = {
         // @ts-expect-error
         user: token.user,
       }
+    },
+    async signIn({ profile }): Promise<boolean> {
+      if (profile) {
+        const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
+        const userSsoId = profile.sub
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (userSsoId) {
+          await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({
+            uid: userSsoId,
+          })
+        }
+      }
+      return true
     },
   },
   debug: process.env.NODE_ENV !== 'production',
