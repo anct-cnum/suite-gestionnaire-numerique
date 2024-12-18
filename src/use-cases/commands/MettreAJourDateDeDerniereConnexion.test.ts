@@ -9,7 +9,20 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     spiedUtilisateurToUpdate = null
   })
 
-  it('chaque fois que l’utilisateur se connecte, alors sa date de dernière connexion est mise à jour', async () => {
+  it('étant donné que le compte de l’utilisateur courant n’existe plus, quand sa date de dernière connexion doit être mise à jour, alors il y a une erreur', async () => {
+    // GIVEN
+    const uidUtilisateurCourant = 'fooId'
+    const date = new Date('2023-02-03')
+    const repository = new UtilisateurInexistantRepositorySpy()
+    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, date)
+    // WHEN
+    const result = await mettreAJourDateDerniereConnexion.execute({ uidUtilisateurCourant })
+    // THEN
+    expect(result).toBe('utilisateurCourantInexistant')
+    expect(spiedUidToFind).toBe('fooId')
+  })
+
+  it('étant donné une nouvelle date de connexion d’un utilisateur, quand une mise à jour est demandée, alors elle est mise à jour', async () => {
     // GIVEN
     const uidUtilisateurCourant = 'fooId'
     const date = new Date('2023-02-03')
@@ -30,6 +43,20 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
       },
     }).state)
   })
+
+  it('étant donné une date invalide de connexion d’un utilisateur, quand une mise à jour est demandée, alors elle n’est pas mise à jour', async () => {
+    // GIVEN
+    const uidUtilisateurCourant = 'fooId'
+    const date = new Date('foo')
+    const repository = new UtilisateurRepositorySpy()
+    const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, date)
+
+    // WHEN
+    const asyncResult = mettreAJourDateDerniereConnexion.execute({ uidUtilisateurCourant })
+
+    // THEN
+    await expect(asyncResult).rejects.toThrow('dateDeDerniereConnexionInvalide')
+  })
 })
 
 let spiedUidToFind: string | null
@@ -41,6 +68,17 @@ class UtilisateurRepositorySpy implements UpdateUtilisateurRepository, FindUtili
     return Promise.resolve(utilisateurFactory({
       uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     }))
+  }
+
+  async update(utilisateur: Utilisateur): Promise<void> {
+    spiedUtilisateurToUpdate = utilisateur
+    return Promise.resolve()
+  }
+}
+class UtilisateurInexistantRepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUidToFind = uid
+    return Promise.resolve(null)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

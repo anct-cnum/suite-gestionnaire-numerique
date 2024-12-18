@@ -4,19 +4,20 @@ import { RegionState } from './Region'
 import { Role, TypologieRole, type RoleState } from './Role'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
+import { ValidDate } from './shared/ValidDate'
 import { StructureState } from './Structure'
 import { isEmpty, Result } from '@/shared/lang'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export abstract class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  #derniereConnexion: Date
+  #derniereConnexion: ValidDate<UtilisateurFailure>
   #role: Role
   #nom: Nom
   #prenom: Prenom
   #emailDeContact: Email
   #telephone: Telephone
-  #inviteLe: Date
+  #inviteLe: ValidDate<UtilisateurFailure>
 
   constructor(
     uid: UtilisateurUid,
@@ -25,8 +26,8 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
-    inviteLe: Date,
-    derniereConnexion: Date,
+    inviteLe: ValidDate<UtilisateurFailure>,
+    derniereConnexion: ValidDate<UtilisateurFailure>,
     telephone: Telephone
   ) {
     super(uid)
@@ -34,10 +35,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#nom = nom
     this.#prenom = prenom
     this.#emailDeContact = emailDeContact
-    this.#derniereConnexion = derniereConnexion
     this.#isSuperAdmin = isSuperAdmin
-    this.#telephone = telephone
+    this.#derniereConnexion = derniereConnexion
     this.#inviteLe = inviteLe
+    this.#telephone = telephone
   }
 
   override get state(): UtilisateurState {
@@ -79,8 +80,8 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     })
   }
 
-  changerLaDateDInvitation(inviteLe: Date): void {
-    this.#inviteLe = inviteLe
+  changerDateDInvitation(inviteLe: Date): void {
+    this.#inviteLe = new ValidDate(inviteLe, 'dateDInvitationInvalide')
   }
 
   changerRole(nouveauRole: TypologieRole): Result<UtilisateurFailure> {
@@ -91,8 +92,8 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  mettreAJourLaDateDeDerniereConnexion(date: Date): void {
-    this.#derniereConnexion = new Date(date)
+  changerDateDeDerniereConnexion(date: Date): void {
+    this.#derniereConnexion = new ValidDate(date, 'dateDeDerniereConnexionInvalide')
   }
 
   abstract peutGerer(autre: Utilisateur): boolean
@@ -125,6 +126,8 @@ export type UtilisateurFailure =
   | 'nomAbsent'
   | 'emailInvalide'
   | 'telephoneInvalide'
+  | 'dateDeDerniereConnexionInvalide'
+  | 'dateDInvitationInvalide'
 
 export class Nom extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {

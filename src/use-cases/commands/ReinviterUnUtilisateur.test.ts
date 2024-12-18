@@ -69,7 +69,7 @@ describe('réinviter un utilisateur', () => {
     expect(spiedUtilisateurToUpdate).toBeNull()
   })
 
-  it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvite, alors il y a une erreur', async () => {
+  it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
     const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
@@ -103,6 +103,27 @@ describe('réinviter un utilisateur', () => {
     expect(result).toBe('utilisateurAReinviterInexistant')
     expect(spiedUidToFind).toBe('uidUtilisateurAReinviterInexistant')
     expect(spiedUtilisateurToUpdate).toBeNull()
+  })
+
+  it('étant donné une date invalide d’invitation d’un utilisateur, quand il est réinvité, alors il y a une erreur', async () => {
+    // GIVEN
+    const dateDInvitationInvalide = new Date('foo')
+    const repository = new RepositorySpy()
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(
+      repository,
+      emailGatewayFactorySpy,
+      dateDInvitationInvalide
+    )
+    const command = {
+      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
+      uidUtilisateurCourant: 'uidUtilisateurCourantAvecMemeRole',
+    }
+
+    // WHEN
+    const asyncResult = reinviterUnUtilisateur.execute(command)
+
+    // THEN
+    await expect(asyncResult).rejects.toThrow('dateDInvitationInvalide')
   })
 })
 

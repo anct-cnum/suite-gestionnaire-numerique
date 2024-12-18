@@ -7,6 +7,7 @@ import { GestionnaireStructure } from './GestionnaireStructure'
 import { GroupementUid } from './Groupement'
 import { Region, RegionState } from './Region'
 import { Role, TypologieRole } from './Role'
+import { ValidDate } from './shared/ValidDate'
 import { StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
@@ -96,8 +97,8 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#derniereConnexion,
+      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
+      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
       this.#telephone,
       region
     )
@@ -111,8 +112,8 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#derniereConnexion,
+      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
+      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
       this.#telephone,
       structureUid
     )
@@ -126,8 +127,8 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#derniereConnexion,
+      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
+      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
       this.#telephone,
       groupementUid
     )
@@ -141,8 +142,8 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#derniereConnexion,
+      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
+      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
       this.#telephone
     )
   }
