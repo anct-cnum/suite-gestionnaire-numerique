@@ -91,10 +91,8 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  mettreAJourLaDateDeDerniereConnexion(date: Date): Result<UtilisateurFailure> {
-    return Exception.toResult<UtilisateurFailure>(() => {
-      this.#derniereConnexion = new Date(date)
-    })
+  mettreAJourLaDateDeDerniereConnexion(date: Date): void {
+    this.#derniereConnexion = new Date(date)
   }
 
   abstract peutGerer(autre: Utilisateur): boolean

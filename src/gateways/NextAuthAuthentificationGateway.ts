@@ -33,11 +33,9 @@ const nextAuthOptions = {
     async signIn({ profile }): Promise<boolean> {
       if (profile) {
         const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
-        const userSsoId = profile.sub
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-        if (userSsoId) {
+        if (profile.sub !== undefined) {
           await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({
-            uid: userSsoId,
+            uidUtilisateurCourant: profile.sub,
           })
         }
       }

@@ -10,22 +10,24 @@ export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Comman
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure | Success> {
-    const utilisateur = await this.#repository.find(command.uid)
-    if (!utilisateur) {
-      return 'compteInexistant'
+  async execute(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#repository.find(command.uidUtilisateurCourant)
+    if (!utilisateurCourant) {
+      return 'utilisateurCourantInexistant'
     }
-    utilisateur.mettreAJourLaDateDeDerniereConnexion(this.#date)
-    await this.#repository.update(utilisateur)
-    return 'ok'
+    if (isNaN(this.#date.getTime())) {
+      return 'dateInvalide'
+    }
+    utilisateurCourant.mettreAJourLaDateDeDerniereConnexion(this.#date)
+    await this.#repository.update(utilisateurCourant)
+    return 'OK'
   }
 }
 
-type Failure = 'compteInexistant'
-type Success = 'ok'
+type Failure = 'utilisateurCourantInexistant' | 'dateInvalide'
 
 type Command = Readonly<{
-  uid: string
+  uidUtilisateurCourant: string
 }>
 
 interface Repository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

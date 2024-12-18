@@ -370,7 +370,7 @@ describe('utilisateur repository', () => {
   describe('mise à jour d’un utilisateur', () => {
     const repository = new PrismaUtilisateurRepository(prisma)
 
-    it('changement du rôle, du nom, du prénom, de la date d’invitation et de l’email', async () => {
+    it('changement du rôle, du nom, du prénom, de la date d’invitation, de la date de dernière connexion et de l’email', async () => {
       // GIVEN
       const date = new Date(0)
       await prisma.utilisateurRecord.create({
@@ -380,6 +380,7 @@ describe('utilisateur repository', () => {
       // WHEN
       await repository.update(
         utilisateurFactory({
+          derniereConnexion: date,
           emailDeContact: 'martine.dugenoux@example.org',
           inviteLe: date,
           nom: 'Dugenoux',
@@ -400,6 +401,7 @@ describe('utilisateur repository', () => {
       expect(updatedRecord?.prenom).toBe('Martine')
       expect(updatedRecord?.emailDeContact).toBe('martine.dugenoux@example.org')
       expect(updatedRecord?.inviteLe).toStrictEqual(date)
+      expect(updatedRecord?.derniereConnexion).toStrictEqual(date)
     })
   })
 
