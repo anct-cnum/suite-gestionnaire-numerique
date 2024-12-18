@@ -1,7 +1,6 @@
 import { $Enums, Prisma, PrismaClient } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
-import departements from '../../ressources/departements.json'
 import { Role } from '@/domain/Role'
 import { isNullish } from '@/shared/lang'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
@@ -47,14 +46,34 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       }
 
       if (codeDepartement !== departementInexistant) {
-        where.departementCode = codeDepartement
+        where.OR = [
+          {
+            departementCode: codeDepartement,
+          },
+          {
+            relationStructure: {
+              relationDepartement: {
+                code: codeDepartement,
+              },
+            },
+          },
+        ]
       } else if (codeRegion !== regionInexistante) {
         where.OR = [
           {
-            departementCode: {
-              in: departements
-                .filter((departement) => departement.regionCode === codeRegion)
-                .map((departement) => departement.code),
+            relationDepartement: {
+              relationRegion: {
+                code: codeRegion,
+              },
+            },
+          },
+          {
+            relationStructure: {
+              relationDepartement: {
+                relationRegion: {
+                  code: codeRegion,
+                },
+              },
             },
           },
           { regionCode: codeRegion },
