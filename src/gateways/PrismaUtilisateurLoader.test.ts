@@ -783,4 +783,251 @@ describe('prisma utilisateur query', () => {
     const codeDepartement = '0'
     const codeRegion = '0'
   })
+
+  describe('chercher un utilisateur par son nom ou son email', () => {
+
+    it('quand je cherche un utilisateur par son email alors je le trouve', async () => {
+      // GIVEN
+      const structureId = 14
+      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const pageCourante = 0
+      const utilisateursParPage = 10
+      const isActive = false
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
+      const roles: ReadonlyArray<string> = []
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const codeDepartement = '0'
+      const codeRegion = '0'
+
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({
+          code: '93',
+          nom: 'Provence-Alpes-Côte d\'Azur',
+        }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({
+          code: '06',
+          nom: 'Alpes-Maritimes',
+          regionCode: '93',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '06',
+          id: structureId,
+          nom: 'TETRIS',
+        }),
+
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          emailDeContact: 'martin.tartempion2@example.net',
+          structureId,
+        }),
+      })
+      const nomOuEmail = 'martin.tartempion2@example.net'
+
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        nomOuEmail
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(1)
+    })
+
+    it('quand je cherche un utilisateur par son email et qun autre utilisateur à le même mail de contact alors je les trouve', async () => {
+      // GIVEN
+      const structureId = 14
+      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const pageCourante = 0
+      const utilisateursParPage = 10
+      const isActive = false
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
+      const roles: ReadonlyArray<string> = []
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const codeDepartement = '0'
+      const codeRegion = '0'
+
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({
+          code: '93',
+          nom: 'Provence-Alpes-Côte d\'Azur',
+        }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({
+          code: '06',
+          nom: 'Alpes-Maritimes',
+          regionCode: '93',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '06',
+          id: structureId,
+          nom: 'TETRIS',
+        }),
+
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          emailDeContact: 'structure@example.net',
+          ssoEmail: 'martin.tartempion@example.net',
+          ssoId: 'fooId',
+          structureId,
+        }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          emailDeContact: 'structure@example.net',
+          ssoEmail: 'martin.tartempion2@example.net',
+          ssoId: 'barId',
+          structureId,
+        }),
+      })
+      const nomOuEmail = 'structure@example.net'
+
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        nomOuEmail
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(2)
+    })
+
+    it('quand je cherche un utilisateur par son prénom alors je le trouve', async () => {
+      // GIVEN
+      const structureId = 14
+      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const pageCourante = 0
+      const utilisateursParPage = 10
+      const isActive = false
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
+      const roles: ReadonlyArray<string> = []
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const codeDepartement = '0'
+      const codeRegion = '0'
+
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: '93' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({
+          code: '06',
+          regionCode: '93',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '06',
+          id: structureId,
+        }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          prenom: 'Grégory',
+          structureId,
+        }),
+      })
+      const nomOuEmail = 'Grégory'
+
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        nomOuEmail
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].prenom).toBe('Grégory')
+    })
+
+    it('quand je cherche un utilisateur par son nom alors je le trouve', async () => {
+      // GIVEN
+      const structureId = 14
+      const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      const pageCourante = 0
+      const utilisateursParPage = 10
+      const isActive = false
+      const utilisateurAuthentifie = utilisateurReadModelFactory({
+        uid: ssoId,
+      })
+      const roles: ReadonlyArray<string> = []
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const codeDepartement = '0'
+      const codeRegion = '0'
+
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: '93' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({
+          code: '06',
+          regionCode: '93',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '06',
+          id: structureId,
+        }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({
+          nom: 'Logeais',
+          structureId,
+        }),
+      })
+      const nomOuEmail = 'Logeais'
+
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        nomOuEmail
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(1)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].nom).toBe('Logeais')
+    })
+  })
 })
