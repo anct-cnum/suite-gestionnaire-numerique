@@ -1,41 +1,20 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { NodemailerEmailInvitationGateway } from '@/gateways/NodemailerEmailInvitationGateway'
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
-const {
-  SMTP_HOST,
-  SMTP_SUPER_ADMIN_HOST,
-  SMTP_PORT,
-  SMTP_SUPER_ADMIN_PORT,
-  SMTP_USER,
-  SMTP_SUPER_ADMIN_USER,
-  SMTP_PASSWORD,
-  SMTP_SUPER_ADMIN_PASSWORD,
-  NEXT_PUBLIC_HOST,
-} = process.env as NodeJS.Process['env'] & Readonly<{
-  SMTP_HOST: string,
-  SMTP_SUPER_ADMIN_HOST: string,
-  SMTP_PORT: string,
-  SMTP_SUPER_ADMIN_PORT: string,
-  SMTP_USER: string,
-  SMTP_SUPER_ADMIN_USER: string,
-  SMTP_PASSWORD: string,
-  SMTP_SUPER_ADMIN_PASSWORD: string,
-  NEXT_PUBLIC_HOST: string,
-}>
-
 export function emailInvitationGatewayFactory(isSuperAdmin: boolean): EmailGateway {
-  return isSuperAdmin
+  return isSuperAdmin // NOSONAR
     ? new NodemailerEmailInvitationGateway(
-      SMTP_SUPER_ADMIN_HOST,
-      SMTP_SUPER_ADMIN_PORT,
-      NEXT_PUBLIC_HOST,
-      SMTP_SUPER_ADMIN_USER,
-      SMTP_SUPER_ADMIN_PASSWORD
+      process.env.SMTP_SUPER_ADMIN_HOST!,
+      process.env.SMTP_SUPER_ADMIN_PORT!,
+      process.env.NEXT_PUBLIC_HOST!,
+      process.env.SMTP_SUPER_ADMIN_USER,
+      process.env.SMTP_SUPER_ADMIN_PASSWORD
     ) : new NodemailerEmailInvitationGateway(
-      SMTP_HOST,
-      SMTP_PORT,
-      NEXT_PUBLIC_HOST,
-      SMTP_USER,
-      SMTP_PASSWORD
+      process.env.SMTP_HOST!,
+      process.env.SMTP_PORT!,
+      process.env.NEXT_PUBLIC_HOST!,
+      process.env.SMTP_USER,
+      process.env.SMTP_PASSWORD
     )
 }
