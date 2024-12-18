@@ -9,6 +9,7 @@ export class StructureUid extends Uid<StructureUidState> {}
 
 type StructureUidState = Readonly<{ value: number }>
 
+/* A décommenter quand ça sera utile
 const Types = [
   'COLLECTIVITE',
   'COMMUNE',
@@ -33,3 +34,4 @@ const Statuts = [
 ] as const
 
 export type TypologieStatut = (typeof Statuts)[number]
+*/

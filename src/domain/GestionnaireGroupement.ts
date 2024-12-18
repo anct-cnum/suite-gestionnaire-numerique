@@ -42,5 +42,5 @@ export class GestionnaireGroupement extends Utilisateur {
   }
 }
 
-export type GestionnaireGroupementState = UtilisateurState &
+type GestionnaireGroupementState = UtilisateurState &
   Readonly<{ groupementUid: GroupementState['uid'] }>

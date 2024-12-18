@@ -42,5 +42,5 @@ export class GestionnaireDepartement extends Utilisateur {
   }
 }
 
-export type GestionnaireDepartementState = UtilisateurState &
+type GestionnaireDepartementState = UtilisateurState &
   Readonly<{ departement: DepartementState }>

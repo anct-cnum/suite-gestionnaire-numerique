@@ -42,4 +42,4 @@ export class GestionnaireRegion extends Utilisateur {
   }
 }
 
-export type GestionnaireRegionState = UtilisateurState & Readonly<{ region: RegionState }>
+type GestionnaireRegionState = UtilisateurState & Readonly<{ region: RegionState }>

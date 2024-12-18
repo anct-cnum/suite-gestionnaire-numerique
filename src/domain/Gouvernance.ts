@@ -72,12 +72,6 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
   }
 }
 
-export type GouvernanceState = Readonly<{
-  noteDeContexte?: NoteDeContexteState
-  uid: GouvernanceUidState
-  utilisateurUid: UtilisateurUidState
-}>
-
 export type FactoryParams = Readonly<{
   noteDeContexte?: Readonly<{
     contenu: string
@@ -89,6 +83,12 @@ export type FactoryParams = Readonly<{
     email: string
     value: string
   }
+}>
+
+type GouvernanceState = Readonly<{
+  noteDeContexte?: NoteDeContexteState
+  uid: GouvernanceUidState
+  utilisateurUid: UtilisateurUidState
 }>
 
 type NoteDeContexteState = Readonly<{
