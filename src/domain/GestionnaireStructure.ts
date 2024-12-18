@@ -42,5 +42,5 @@ export class GestionnaireStructure extends Utilisateur {
   }
 }
 
-export type GestionnaireStructureState = UtilisateurState &
+type GestionnaireStructureState = UtilisateurState &
   Readonly<{ structureUid: StructureState['uid'] }>
