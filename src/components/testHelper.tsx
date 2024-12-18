@@ -92,8 +92,8 @@ export const rolesAvecStructure: RolesAvecStructure = {
 }
 
 export class FrozenDate extends Date {
-  constructor() {
-    super('1996-04-15T03:24:00')
+  constructor(date: number | string | Date | undefined) {
+    super(date ?? '1996-04-15T03:24:00')
   }
 }
 

@@ -84,7 +84,14 @@ export default function AjouterUnComite({
     const form = new FormData(event.currentTarget)
     const [type, frequence, date, commentaire] = [...form.values()].map((value) => value as string)
     setIsDisabled(true)
-    const messages = await ajouterUnComiteAction({ commentaire, date, frequence, path: pathname, type, uidGouvernance })
+    const messages = await ajouterUnComiteAction({
+      commentaire: commentaire === '' ? undefined : commentaire,
+      date: date === '' ? undefined : date,
+      frequence,
+      path: pathname,
+      type,
+      uidGouvernance,
+    })
     if (messages.includes('OK')) {
       Notification('success', { description: 'bien ajouté', title: 'Comité ' })
     } else {

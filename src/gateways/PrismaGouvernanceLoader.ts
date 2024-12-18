@@ -114,6 +114,6 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
     ],
     noteDeContexte,
-    uid: '123456',
+    uid: String(gouvernanceRecord.id),
   }
 }
