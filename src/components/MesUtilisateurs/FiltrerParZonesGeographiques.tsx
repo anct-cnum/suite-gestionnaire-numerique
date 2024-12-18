@@ -60,7 +60,8 @@ const styles: StylesConfig<ZoneGeographique> = {
     cursor: 'pointer',
   }),
   option: (styles, { data, isFocused, isSelected }) => {
-    const backgroundColor = isSelected ? '#bbb' : isFocused ? '#dfdfdf' : undefined
+    const colorOfFocus = isFocused ? '#dfdfdf' : undefined
+    const backgroundColor = isSelected ? '#bbb' : colorOfFocus
     const borderBottom = data.type === 'region' ? '1px solid #ddd' : undefined
     const fontWeight = data.type === 'region' ? '900' : undefined
 

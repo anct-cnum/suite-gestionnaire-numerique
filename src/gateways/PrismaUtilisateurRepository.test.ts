@@ -335,8 +335,9 @@ describe('utilisateur repository', () => {
         // GIVEN
         const prismaClientKnownRequestErrorOnUpdateStub = {
           utilisateurRecord: {
+            // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
             async update(): Promise<never> {
-              return Promise.reject(
+              return Promise.reject( // NOSONAR
                 new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
               )
             },
@@ -498,7 +499,8 @@ describe('utilisateur repository', () => {
       const prismaClientAuthenticationFailedErrorStub = {
         utilisateurRecord: {
           async create(): Promise<never> {
-            return Promise.reject(
+            // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
+            return Promise.reject( // NOSONAR
               new Prisma.PrismaClientKnownRequestError('authentication failed', {
                 clientVersion: '',
                 code: 'P1000',
