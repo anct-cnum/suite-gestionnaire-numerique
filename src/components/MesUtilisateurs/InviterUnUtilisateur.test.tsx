@@ -63,7 +63,7 @@ describe('inviter un utilisateur', () => {
     const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
-    expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+    expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
     expect(email).toHaveAttribute('type', 'email')
     expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
@@ -341,7 +341,7 @@ describe('inviter un utilisateur', () => {
     const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
-    expect(email).toHaveAttribute('pattern', '.+@.+\\..{2,}')
+    expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
     expect(email).toHaveAttribute('type', 'email')
     expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 

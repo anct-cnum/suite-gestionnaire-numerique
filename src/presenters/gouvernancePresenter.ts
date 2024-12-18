@@ -117,7 +117,7 @@ function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['note
     nomAuteur: noteDeContexte.nomAuteur,
     prenomAuteur: noteDeContexte.prenomAuteur,
     texteAvecHTML: noteDeContexte.texte,
-    texteSansHTML: `${noteDeContexte.texte.replace(/<[^>]*>/g, '').substring(0, 290)}...`,
+    texteSansHTML: `${noteDeContexte.texte.replace(/(?:<(?:[^>]+)>)/g, '').substring(0, 290)}...`,
   }
 }
 

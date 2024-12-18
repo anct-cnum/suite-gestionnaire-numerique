@@ -65,6 +65,7 @@
     "no-else-return": "error",
     "no-multiple-empty-lines": ["error", { "max": 1 }],
     "no-multi-spaces": "error",
+    "no-nested-ternary": "error",
     "no-param-reassign": "error",
     "no-tabs": "error",
     "no-trailing-spaces": "error",

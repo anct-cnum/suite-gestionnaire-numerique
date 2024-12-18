@@ -139,7 +139,7 @@ async function transformUtilisateursCoNumToUtilisateurs(
     const isGestionnaireStructure = utilisateurCoNumRecord.roles.includes('structure')
     const isGestionnaireRegion = utilisateurCoNumRecord.roles.includes('prefet') && utilisateurCoNumRecord.region !== ''
     const isGestionnaireDepartement = utilisateurCoNumRecord.roles.includes('prefet') && utilisateurCoNumRecord.departement !== ''
-    let role: Role = 'gestionnaire_structure'
+    let role: Role
     let structureId = null
     let groupementId = null
     let departementCode = null
@@ -172,6 +172,8 @@ async function transformUtilisateursCoNumToUtilisateurs(
       role = 'gestionnaire_departement'
 
       departementCode = utilisateurCoNumRecord.departement
+    } else {
+      role = 'gestionnaire_structure'
     }
 
     return {
@@ -202,7 +204,7 @@ function transformUtilisateursFNEToUtilisateurs(
   return utilisateursFNERecord.map((utilisateurFNERecord): Prisma.UtilisateurRecordUncheckedCreateInput => {
     const isGestionnaireRegion = utilisateurFNERecord.role === 'PrefectureRegion'
     const isGestionnaireDepartement = utilisateurFNERecord.role === 'PrefectureDepartement'
-    let role: Role = 'gestionnaire_region'
+    let role: Role
     let departementCode = null
     let regionCode = null
 
@@ -214,6 +216,8 @@ function transformUtilisateursFNEToUtilisateurs(
       role = 'gestionnaire_departement'
 
       departementCode = utilisateurFNERecord.roleScope
+    } else {
+      role = 'gestionnaire_region'
     }
 
     const ssoId = utilisateurFNERecord.accounts.length > 0
