@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
+import { Dispatch, ReactElement, RefObject, SetStateAction, useActionState, useContext, useId } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -20,7 +20,8 @@ export default function ModifierMonCompte({
   telephone,
 }: Props): ReactElement {
   const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
-  const [isDisabled, setIsDisabled] = useState(false)
+  const [_formState, formAction, pending] = useActionState(modifierMesInfosPersos, [])
+
   const nomId = useId()
   const prenomId = useId()
   const emailId = useId()
@@ -41,9 +42,8 @@ export default function ModifierMonCompte({
         sont obligatoires.
       </p>
       <form
+        action={formAction}
         aria-label="Modifier"
-        method="dialog"
-        onSubmit={modifierMesInfosPersos}
       >
         <TextInput
           defaultValue={nom}
@@ -117,8 +117,8 @@ export default function ModifierMonCompte({
           </div>
           <div className="fr-col-5">
             <SubmitButton
-              isDisabled={isDisabled}
-              label={isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+              isDisabled={pending}
+              label={pending ? 'Modification en cours...' : 'Enregistrer'}
             />
           </div>
         </div>
@@ -126,19 +126,15 @@ export default function ModifierMonCompte({
     </>
   )
 
-  async function modifierMesInfosPersos(event: FormEvent<HTMLFormElement>): Promise<void> {
-    event.preventDefault()
+  // TODO: tester https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations#optimistic-updates
+  async function modifierMesInfosPersos(_state: Array<string>, formData: FormData): Promise<void> {
+    const messages = await modifierMesInformationsPersonnellesAction({ formData, path: pathname })
 
-    setIsDisabled(true)
-
-    await modifierMesInformationsPersonnellesAction({ formData: new FormData(event.currentTarget), path: pathname })
-      .then(() => {
-        setIsDisabled(false)
-        Notification('success', { description: 'réussie' })
-      })
-      .catch((error) => {
-        Notification('error', { description: error[0] })
-      })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'ont bien été sauvegardées', title: 'Vos informations personnelles ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
 
     setIsOpen(false)
     window.dsfr(dialogRef.current).modal.conceal()
