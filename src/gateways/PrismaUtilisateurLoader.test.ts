@@ -617,7 +617,9 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.utilisateursCourants[1].role.nom).toBe('Gestionnaire structure')
     })
 
-    it('quand je cherche mes utilisateurs par un département alors je trouve tous ceux qui ont ce département', async () => {
+    it(`quand je cherche mes utilisateurs par un département alors je trouve tous ceux qui sont rattachés à :
+          - ce département
+          - une structure rattachée à ce département`, async () => {
       // GIVEN
       const codeDepartement = '93'
       await prisma.regionRecord.create({
@@ -629,57 +631,23 @@ describe('prisma utilisateur query', () => {
       await prisma.departementRecord.create({
         data: departementRecordFactory({ code: '75' }),
       })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({ departementCode: '75' }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({ departementCode: codeDepartement, id: 11 }),
+      })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ departementCode: codeDepartement, nom: 'a', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ departementCode: '75', nom: 'b', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' }),
       })
-
-      // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
-        utilisateurAuthentifie,
-        pageCourante,
-        utilisateursParPage,
-        isActive,
-        roles,
-        codeDepartement,
-        codeRegion
-      )
-
-      // THEN
-      expect(mesUtilisateursReadModel.total).toBe(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(1)
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
-      expect(mesUtilisateursReadModel.utilisateursCourants[0].departementCode).toBe('93')
-    })
-
-    it('quand je cherche mes utilisateurs par une région alors je trouve ceux qui ont cette région et tous les départements liés à cette région', async () => {
-      // GIVEN
-      const codeRegion = '11'
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: codeRegion }),
-      })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: '21' }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '75' }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '10', regionCode: '21' }),
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ ssoEmail: 'nicolas.james@example.net', ssoId: '1234567', structureId: 10 }),
       })
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'a', regionCode: codeRegion, ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'b', regionCode: '21', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: '75', nom: 'c', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: '10', nom: 'D', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' }),
+        data: utilisateurRecordFactory({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 }),
       })
 
       // WHEN
@@ -697,9 +665,75 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('1234568')
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].departementCode).toBe('93')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(11)
+    })
+
+    it(`quand je cherche mes utilisateurs par une région alors je trouve tous ceux qui sont rattachés à :
+          - cette région
+          - un département rattaché à cette région
+          - une structure rattachée à un département rattaché à cette région`, async () => {
+      // GIVEN
+      const codeRegion = '11'
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: codeRegion }),
+      })
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({ code: '21' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '75' }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({ code: '10', regionCode: '21' }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({ departementCode: '75' }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({ departementCode: '10', id: 11 }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'a', regionCode: codeRegion, ssoId }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ nom: 'b', regionCode: '21', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: '75', nom: 'c', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ departementCode: '10', nom: 'D', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' }),
+      })
+
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ ssoEmail: 'anthony.parquet@example.net', ssoId: 'uiopq', structureId: 10 }),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 }),
+      })
+
+      // WHEN
+      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion
+      )
+
+      // THEN
+      expect(mesUtilisateursReadModel.total).toBe(3)
+      expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(3)
+      expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('7396c91e-b9f2-4f9d-8547-5e7b3302725b')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].regionCode).toBe('11')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('67890')
       expect(mesUtilisateursReadModel.utilisateursCourants[1].departementCode).toBe('75')
+      expect(mesUtilisateursReadModel.utilisateursCourants[2].uid).toBe('uiopq')
+      expect(mesUtilisateursReadModel.utilisateursCourants[2].structureId).toBe(10)
     })
 
     it('quand des utilisateurs sont recherchés par structure, alors tous ceux qui lui appartiennent sont trouvés', async () => {
