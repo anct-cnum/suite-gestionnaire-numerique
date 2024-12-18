@@ -10,6 +10,7 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant, alors elle est renvoyée', async () => {
     // GIVEN
+    const codeDepartement = '93'
     await prisma.regionRecord.create({
       data: regionRecordFactory({
         code: '11',
@@ -21,6 +22,12 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({
+        code: '75',
+        nom: 'Paris',
+      }),
+    })
     const user = await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({
         id: 123,
@@ -28,10 +35,18 @@ describe('gouvernance loader', () => {
         prenom: 'Jean',
       }),
     })
+    await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '75',
+        id: 2,
+        idFNE: 'TYa65',
+      },
+    })
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
         createurId: user.id,
-        departementCode: '93',
+        departementCode: codeDepartement,
         id: 1,
         idFNE: '123456',
       },
@@ -69,7 +84,6 @@ describe('gouvernance loader', () => {
       },
     })
 
-    const codeDepartement = '93'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
@@ -118,7 +132,7 @@ describe('gouvernance loader', () => {
         prenomAuteur: 'Jean',
         texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
-      uid: '123456',
+      uid: '1',
     })
   })
 
@@ -203,9 +217,10 @@ describe('gouvernance loader', () => {
         },
       ],
       noteDeContexte: undefined,
-      uid: '123456',
+      uid: '1',
     })
   })
+
   it('quand une gouvernance est demandée par son code département existant avec un comité sans date de prochain comité, alors elle est renvoyée sans date de prochain comité', async () => {
     // GIVEN
     await prisma.regionRecord.create({
@@ -283,9 +298,10 @@ describe('gouvernance loader', () => {
         },
       ],
       noteDeContexte: undefined,
-      uid: '123456',
+      uid: '1',
     })
   })
+
   it('quand une gouvernance est demandée par son code département existant avec un comité sans commentaire, alors elle est renvoyée sans commentaire', async () => {
     // GIVEN
     await prisma.regionRecord.create({
@@ -364,7 +380,7 @@ describe('gouvernance loader', () => {
         },
       ],
       noteDeContexte: undefined,
-      uid: '123456',
+      uid: '1',
     })
   })
 
@@ -445,7 +461,7 @@ describe('gouvernance loader', () => {
         },
       ],
       noteDeContexte: undefined,
-      uid: '123456',
+      uid: '1',
     })
   })
 })

@@ -14,7 +14,7 @@ import { UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
-const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const uidUtilisateurValue = 'userFooId'
 const uidUtilisateur = new UtilisateurUid({ email: 'martin.tartempion@example.net', value: uidUtilisateurValue })
 
 describe('utilisateur repository', () => {
@@ -221,7 +221,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('suppression d’un utilisateur', () => {
-    const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+    const ssoIdUtilisateurExistant = 'userFooId'
     const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
     const ssoEmailUtilisateurExistant = 'martin.tartempion@example.net'
     const ssoEmailUtilisateurSupprime = 'martin.tartempion@example.org'
