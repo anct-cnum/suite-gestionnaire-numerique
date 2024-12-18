@@ -10,4 +10,4 @@ export class Administrateur extends Utilisateur {
   }
 }
 
-export type AdministrateurState = UtilisateurState
+type AdministrateurState = UtilisateurState
