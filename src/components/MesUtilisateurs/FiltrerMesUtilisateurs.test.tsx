@@ -254,6 +254,27 @@ describe('filtrer mes utilisateurs', () => {
         expect(filtreParStructure).toBeInTheDocument()
         expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
       })
+
+      it('après avoir sélectionné une zone géographique différente, alors je ne filtre plus les utilisateurs liés à cette structure', async () => {
+        // GIVEN
+        vi.stubGlobal('fetch', structuresFetch)
+        const spiedRouterPush = vi.fn()
+        afficherLesFiltres(spiedRouterPush)
+        const filtreParZoneGeographique = screen.getByLabelText('Par zone géographique')
+        await select(filtreParZoneGeographique, '(06) Alpes-Maritimes')
+        const filtreParStructure = screen.getByLabelText('Par structure')
+        fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
+        await select(filtreParStructure, 'TETRIS — GRASSE')
+
+        // WHEN
+        await select(filtreParZoneGeographique, '(27) Bourgogne-Franche-Comté')
+        const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
+        fireEvent.click(boutonAfficher)
+
+        // THEN
+        expect(filtreParStructure).toBeInTheDocument()
+        expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=27')
+      })
     })
   })
 
