@@ -818,4 +818,179 @@ describe('prisma utilisateur query', () => {
     const codeDepartement = '0'
     const codeRegion = '0'
   })
+
+  describe('chercher un utilisateur par son nom ou son email', () => {
+    const structureId = 15
+    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const pageCourante = 0
+    const utilisateursParPage = 10
+    const isActive = false
+    const utilisateurAuthentifie = utilisateurReadModelFactory({
+      uid: ssoId,
+    })
+    const roles: ReadonlyArray<string> = []
+    const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+    const codeDepartement = '0'
+    const codeRegion = '0'
+
+    beforeAll(async () => {
+      await prisma.regionRecord.create({
+        data: regionRecordFactory({
+          code: '92',
+          nom: 'Provence-Alpes-Côte d\'Azur',
+        }),
+      })
+      await prisma.departementRecord.create({
+        data: departementRecordFactory({
+          code: '07',
+          nom: 'Alpes-Maritimes',
+          regionCode: '92',
+        }),
+      })
+      await prisma.structureRecord.create({
+        data: structureRecordFactory({
+          departementCode: '07',
+          id: structureId,
+          nom: 'TETRIS',
+        }),
+      })
+
+      await prisma.utilisateurRecord.createMany({
+        data: [
+          utilisateurRecordFactory({
+            emailDeContact: 'structure@example.net',
+            nom: 'Dubois',
+            prenom: 'Grégory',
+            ssoEmail: 'gregory.logeais@example.net',
+            ssoId: 'fooId1',
+            structureId,
+          }),
+          utilisateurRecordFactory({
+            emailDeContact: 'structure@example.net',
+            nom: 'Belleville',
+            prenom: 'Romain',
+            ssoEmail: 'romain.belleville@example.net',
+            ssoId: 'barId1',
+            structureId,
+          }),
+        ],
+      })
+
+      it('quand je cherche un utilisateur par son email alors je le trouve', async () => {
+        const nomOuEmail = 'martin.tartempion2@example.net'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(1)
+      })
+
+      it('quand je cherche un utilisateur par son email de contact et qu‘un autre utilisateur a le même email de contact alors je les trouve', async () => {
+        const nomOuEmail = 'structure@example.net'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(2)
+      })
+
+      it('quand je cherche un utilisateur par son prénom alors je le trouve', async () => {
+        const nomOuEmail = 'Grégory'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(1)
+        expect(result.utilisateursCourants[0].prenom).toBe('Grégory')
+      })
+
+      it('quand je cherche un utilisateur par son nom alors je le trouve', async () => {
+        const nomOuEmail = 'Logeais'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(1)
+        expect(result.utilisateursCourants[0].nom).toBe('Logeais')
+      })
+
+      it('quand je cherche avec un email qui n\'existe pas alors je ne trouve personne', async () => {
+        const nomOuEmail = 'nonexistent@example.com'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(0)
+        expect(result.utilisateursCourants).toHaveLength(0)
+      })
+
+      it('quand je cherche avec un nom qui n\'existe pas alors je ne trouve personne', async () => {
+        const nomOuEmail = 'NonExistentName'
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(0)
+        expect(result.utilisateursCourants).toHaveLength(0)
+      })
+
+      it('quand je cherche avec une chaîne vide alors je ne trouve personne', async () => {
+        const nomOuEmail = ''
+        const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+          utilisateurAuthentifie,
+          pageCourante,
+          utilisateursParPage,
+          isActive,
+          roles,
+          codeDepartement,
+          codeRegion,
+          structureId,
+          nomOuEmail
+        )
+        expect(result.total).toBe(0)
+      })
+    })
+  })
 })
