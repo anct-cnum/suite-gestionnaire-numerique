@@ -73,8 +73,51 @@ export function utilisateurRecordFactory(
     prenom: 'Martin',
     role: 'instructeur',
     ssoEmail: 'martin.tartempion@example.net',
-    ssoId: '8e39c6db-2f2a-45cf-ba65-e2831241cbe4',
+    ssoId: 'userFooId',
     telephone: '0102030405',
+    ...override,
+  }
+}
+
+export function gouvernanceRecordFactory(
+  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
+): Prisma.GouvernanceRecordUncheckedCreateInput {
+  return {
+    createurId: 1,
+    departementCode: '75',
+    departementPorteurCode: '75',
+    epciPorteur: null,
+    idFNE: 'f6ecbc16-2088-4bbd-aca7-054da85ff58a',
+    sgarPorteurCode: null,
+    siretPorteur: null,
+    ...override,
+  }
+}
+
+export function comiteRecordFactory(
+  override?: Partial<Prisma.ComiteRecordUncheckedCreateInput>
+): Prisma.ComiteRecordUncheckedCreateInput {
+  return {
+    commentaire: 'un commentaire',
+    creation: epochTime,
+    dateProchainComite: epochTime,
+    derniereEdition: epochTime,
+    editeurUtilisateurId: '1',
+    frequence: 'annuelle',
+    gouvernanceId: 1,
+    type: 'strategique',
+    ...override,
+  }
+}
+
+export function noteDeContexteRecordFactory(
+  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
+): Prisma.NoteDeContexteRecordUncheckedCreateInput {
+  return {
+    contenu: '<p>contenu HTML</p>',
+    derniereEdition: epochTime,
+    editeurId: 1,
+    gouvernanceId: 1,
     ...override,
   }
 }
