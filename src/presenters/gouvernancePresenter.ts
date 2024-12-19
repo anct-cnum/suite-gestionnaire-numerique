@@ -209,7 +209,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   wordingBeneficiairesSubventionFormation: string
 }>
 
-type MembreViewModel = Readonly<{
+export type MembreViewModel = Readonly<{
   logo: string
   nom: string
   roles: ReadonlyArray<RoleViewModel>
