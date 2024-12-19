@@ -8,6 +8,7 @@ import SubSectionTitle from '../SubSectionTitle'
 import DetailsMembre from './DetailsMembre'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
+import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { MembreViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -88,6 +89,7 @@ export default function MembreRempli({
       </SectionRemplie>
       <Drawer
         boutonFermeture={`Fermer les détails du membre : ${membreDetails.nom}`}
+        icon={<Icon icon={membreDetails.logo} />}
         id={drawerMembreId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
