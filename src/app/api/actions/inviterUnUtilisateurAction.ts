@@ -21,7 +21,7 @@ export async function inviterUnUtilisateurAction(
   }
 
   const message = await new InviterUnUtilisateur(
-    new PrismaUtilisateurRepository(prisma),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     emailInvitationGatewayFactory
   ).execute({
     email: validationResult.data.email,

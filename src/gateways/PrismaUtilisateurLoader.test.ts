@@ -126,7 +126,7 @@ describe('prisma utilisateur query', () => {
           structureId: 10,
         }),
       })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
       const utilisateurReadModel = await utilisateurLoader.findByUid(ssoIdExistant)
@@ -157,7 +157,7 @@ describe('prisma utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ ssoId: '1234567890' }),
       })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
       const utilisateurReadModel =
@@ -173,7 +173,7 @@ describe('prisma utilisateur query', () => {
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdExistant }),
       })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
       const utilisateurReadModel =
@@ -813,7 +813,7 @@ describe('prisma utilisateur query', () => {
       uid: ssoId,
     })
     const roles: ReadonlyArray<string> = []
-    const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+    const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
     const codeDepartement = '0'
     const codeRegion = '0'
   })

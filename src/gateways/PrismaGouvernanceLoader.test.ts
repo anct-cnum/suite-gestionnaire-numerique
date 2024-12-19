@@ -22,7 +22,7 @@ describe('gouvernance loader', () => {
       }),
     })
     const codeDepartement = '93'
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma)
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.departementRecord)
 
     // WHEN
     const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
@@ -109,7 +109,7 @@ describe('gouvernance loader', () => {
       }),
     })
     const codeDepartementInexistant = 'zzz'
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma)
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.departementRecord)
 
     // WHEN
     const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartementInexistant)

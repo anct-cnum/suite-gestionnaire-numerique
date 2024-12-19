@@ -1,16 +1,16 @@
-import { DepartementRecord, PrismaClient } from '@prisma/client'
+import { DepartementRecord, Prisma } from '@prisma/client'
 
 import { UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
-  readonly #prisma: PrismaClient
+  readonly #dataResource: Prisma.DepartementRecordDelegate
 
-  constructor(prisma: PrismaClient) {
-    this.#prisma = prisma
+  constructor(dataResource: Prisma.DepartementRecordDelegate) {
+    this.#dataResource = dataResource
   }
 
   async find(codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    const gouvernanceRecord = await this.#prisma.departementRecord.findUnique({
+    const gouvernanceRecord = await this.#dataResource.findUnique({
       where: {
         code: codeDepartement,
       },

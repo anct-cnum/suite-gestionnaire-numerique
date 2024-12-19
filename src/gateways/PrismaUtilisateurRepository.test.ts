@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
 import {
@@ -23,7 +23,7 @@ describe('utilisateur repository', () => {
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
   describe('recherche d’un utilisateur', () => {
-    const repository = new PrismaUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
 
     it('l’utilisateur n’existe pas : pas de donnée', async () => {
       // GIVEN
@@ -259,7 +259,7 @@ describe('utilisateur repository', () => {
 
         // WHEN
         const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma),
+          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
           ssoIdUtilisateurExistant
         )
 
@@ -299,7 +299,7 @@ describe('utilisateur repository', () => {
 
         // WHEN
         const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma),
+          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
           ssoIdUtilisateurSupprime
         )
 
@@ -319,7 +319,7 @@ describe('utilisateur repository', () => {
 
         // WHEN
         const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma),
+          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
           ssoIdUtilisateurExistant
         )
 
@@ -334,22 +334,18 @@ describe('utilisateur repository', () => {
       it('erreur inattendue : non gérée', async () => {
         // GIVEN
         const prismaClientKnownRequestErrorOnUpdateStub = {
-          utilisateurRecord: {
+          async update(): Promise<never> {
             // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
-            async update(): Promise<never> {
-              return Promise.reject( // NOSONAR
-                new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
-              )
-            },
+            return Promise.reject( // NOSONAR
+              new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
+            )
           },
-        } as unknown as typeof prisma
+        } as unknown as Prisma.UtilisateurRecordDelegate
         const prismaClientUnknownRequestErrorOnUpdateStub = {
-          utilisateurRecord: {
-            async update(): Promise<never> {
-              return Promise.reject(new Error('error'))
-            },
+          async update(): Promise<never> {
+            return Promise.reject(new Error('error'))
           },
-        } as unknown as typeof prisma
+        } as unknown as Prisma.UtilisateurRecordDelegate
 
         // WHEN
         const unhandledKnownRequestError = dropFn(
@@ -369,7 +365,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('mise à jour d’un utilisateur', () => {
-    const repository = new PrismaUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
 
     it('changement du rôle, du nom, du prénom, de la date d’invitation, de la date de dernière connexion et de l’email', async () => {
       // GIVEN
@@ -409,7 +405,7 @@ describe('utilisateur repository', () => {
   describe('mise à jour de l’identifiant unique d’un utilisateur', () => {
     it('changement de l’identifiant unique', async () => {
       // GIVEN
-      const repository = new PrismaUtilisateurRepository(prisma)
+      const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({
           ssoEmail: 'martine.dugenoux@example.org',
@@ -433,7 +429,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('ajout d’un utilisateur', () => {
-    const repository = new PrismaUtilisateurRepository(prisma)
+    const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
     const structureId = 10
     const departementCode = '75'
     const groupementId = 10
@@ -499,26 +495,22 @@ describe('utilisateur repository', () => {
     it('erreur non gérée', async () => {
       // GIVEN
       const prismaClientAuthenticationFailedErrorStub = {
-        utilisateurRecord: {
-          async create(): Promise<never> {
-            // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
-            return Promise.reject( // NOSONAR
-              new Prisma.PrismaClientKnownRequestError('authentication failed', {
-                clientVersion: '',
-                code: 'P1000',
-              })
-            )
-          },
+        async create(): Promise<never> {
+          // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
+          return Promise.reject( // NOSONAR
+            new Prisma.PrismaClientKnownRequestError('authentication failed', {
+              clientVersion: '',
+              code: 'P1000',
+            })
+          )
         },
-      } as unknown as PrismaClient
+      } as unknown as Prisma.UtilisateurRecordDelegate
 
       const prismaClientGenericErrorStub = {
-        utilisateurRecord: {
-          async create(): Promise<never> {
-            return Promise.reject(new Error('generic error'))
-          },
+        async create(): Promise<never> {
+          return Promise.reject(new Error('generic error'))
         },
-      } as unknown as PrismaClient
+      } as unknown as Prisma.UtilisateurRecordDelegate
 
       const repositoryGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub)
       const repositoryAuthenticationError = new PrismaUtilisateurRepository(
