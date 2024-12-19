@@ -18,7 +18,7 @@ export async function supprimerUnUtilisateurAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma))
+  const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
     .execute({
       uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
       uidUtilisateurCourant: await getSubSession(),

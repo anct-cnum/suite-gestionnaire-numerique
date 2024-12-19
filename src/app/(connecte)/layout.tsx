@@ -25,8 +25,8 @@ export default async function Layout({ children }: PropsWithChildren): Promise<R
     redirect('/connexion')
   }
 
-  const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
-  const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+  const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
   let utilisateurReadModel: UnUtilisateurReadModel | null
 
   try {

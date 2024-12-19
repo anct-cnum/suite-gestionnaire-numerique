@@ -1,18 +1,18 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { UtilisateurEtSesRelationsRecord, toTypologieRole } from './shared/RoleMapper'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
-  readonly #prisma: PrismaClient
+  readonly dataResource: Prisma.UtilisateurRecordDelegate
 
-  constructor(prisma: PrismaClient) {
-    this.#prisma = prisma
+  constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
+    this.dataResource = dataResource
   }
 
   async findByUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
-    const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
+    const utilisateurRecord = await this.dataResource.findUnique({
       include: {
         relationDepartement: true,
         relationGroupement: true,

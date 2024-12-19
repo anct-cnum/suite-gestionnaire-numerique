@@ -15,7 +15,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   if (isNullishOrEmpty(search)) {
     return NextResponse.json(null, { status: 400 })
   }
-  const structureLoader = new PrismaStructureLoader(prisma)
+  const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
   const structuresReadModel = await structureLoader.findStructures({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     match: search!,

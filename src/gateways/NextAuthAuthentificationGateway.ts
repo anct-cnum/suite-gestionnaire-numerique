@@ -32,7 +32,7 @@ const nextAuthOptions = {
     },
     async signIn({ profile }): Promise<boolean> {
       if (profile) {
-        const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
+        const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
         if (profile.sub !== undefined) {
           await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({
             uidUtilisateurCourant: profile.sub,

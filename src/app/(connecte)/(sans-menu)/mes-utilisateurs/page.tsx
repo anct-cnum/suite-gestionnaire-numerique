@@ -32,7 +32,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const idStructure = isNullishOrEmpty(structureAwaited) ? {} : { idStructure: +structureAwaited! }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+  const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.get({

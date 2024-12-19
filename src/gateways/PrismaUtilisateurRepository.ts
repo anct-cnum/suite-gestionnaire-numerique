@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { fromTypologieRole, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import { DepartementState } from '@/domain/Departement'
@@ -7,17 +7,17 @@ import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
-  readonly #activeRecord: Prisma.UtilisateurRecordDelegate
+  readonly #dataResource: Prisma.UtilisateurRecordDelegate
 
-  constructor(dbClient: PrismaClient) {
-    this.#activeRecord = dbClient.utilisateurRecord
+  constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
+    this.#dataResource = dataResource
   }
 
   async add(utilisateur: Utilisateur): Promise<boolean> {
     const utilisateurState = utilisateur.state
 
     try {
-      await this.#activeRecord.create({
+      await this.#dataResource.create({
         data: {
           dateDeCreation: utilisateurState.inviteLe,
           departementCode: utilisateurState.departement?.code,
@@ -48,7 +48,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    const record = await this.#activeRecord.findUnique({
+    const record = await this.#dataResource.findUnique({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -90,7 +90,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async update(utilisateur: Utilisateur): Promise<void> {
     const utilisateurState = utilisateur.state
 
-    await this.#activeRecord.update({
+    await this.#dataResource.update({
       data: {
         derniereConnexion: utilisateurState.derniereConnexion,
         emailDeContact: utilisateurState.emailDeContact,
@@ -109,7 +109,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async updateUid(utilisateur: Utilisateur): Promise<void> {
     const utilisateurState = utilisateur.state
 
-    await this.#activeRecord.update({
+    await this.#dataResource.update({
       data: {
         ssoId: utilisateurState.uid.value,
       },
@@ -120,7 +120,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async #drop(ssoId: string): Promise<boolean> {
-    return this.#activeRecord
+    return this.#dataResource
       .update({
         data: {
           isSupprime: true,

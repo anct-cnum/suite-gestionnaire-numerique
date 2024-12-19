@@ -1,18 +1,18 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { RechercherStruturesQuery, StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
 export class PrismaStructureLoader implements StructureLoader {
-  readonly #prisma: PrismaClient
+  readonly #dataResource: Prisma.StructureRecordDelegate
 
-  constructor(prisma: PrismaClient) {
-    this.#prisma = prisma
+  constructor(dataResource: Prisma.StructureRecordDelegate) {
+    this.#dataResource = dataResource
   }
 
   async findStructures(query: RechercherStruturesQuery): Promise<StructuresReadModel> {
     const departementOuRegion = query.zone?.[0]
     const code = query.zone?.[1]
-    const structuresRecord = await this.#prisma.structureRecord.findMany({
+    const structuresRecord = await this.#dataResource.findMany({
       orderBy: {
         nom: 'asc',
       },

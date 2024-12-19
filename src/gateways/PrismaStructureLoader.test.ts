@@ -52,7 +52,7 @@ describe('structures loader', () => {
     ])('$desc', async ({ query, expected }) => {
       // GIVEN
       await createStructures()
-      const structureLoader = new PrismaStructureLoader(prisma)
+      const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
       const structureReadModel = await structureLoader.findStructures(query)
@@ -87,7 +87,7 @@ describe('structures loader', () => {
     ])('$desc', async ({ query, expected }) => {
       // GIVEN
       await createStructures()
-      const structureLoader = new PrismaStructureLoader(prisma)
+      const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
       const structureReadModel = await structureLoader.findStructures(query as RechercherStruturesQuery)

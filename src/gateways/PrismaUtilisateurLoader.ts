@@ -1,4 +1,4 @@
-import { $Enums, Prisma, PrismaClient } from '@prisma/client'
+import { $Enums, Prisma } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import departements from '../../ressources/departements.json'
@@ -9,10 +9,10 @@ import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtili
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
-  readonly #prisma: PrismaClient
+  readonly #dataResource: Prisma.UtilisateurRecordDelegate
 
-  constructor(prisma: PrismaClient) {
-    this.#prisma = prisma
+  constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
+    this.#dataResource = dataResource
   }
 
   async findMesUtilisateursEtLeTotal(
@@ -70,14 +70,14 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       }
     }
 
-    const total = await this.#prisma.utilisateurRecord.count({
+    const total = await this.#dataResource.count({
       where: {
         ...where,
         isSupprime: false,
       },
     })
 
-    const utilisateursRecord = await this.#prisma.utilisateurRecord.findMany({
+    const utilisateursRecord = await this.#dataResource.findMany({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -102,7 +102,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   }
 
   async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    const utilisateurRecord = await this.#prisma.utilisateurRecord.findUnique({
+    const utilisateurRecord = await this.#dataResource.findUnique({
       include: {
         relationDepartement: true,
         relationGroupement: true,
