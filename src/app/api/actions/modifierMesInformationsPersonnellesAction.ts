@@ -19,16 +19,17 @@ export async function modifierMesInformationsPersonnellesAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const message = await new ModifierMesInformationsPersonnelles(new PrismaUtilisateurRepository(prisma))
-    .execute({
-      modification: {
-        emailDeContact: validationResult.data.emailDeContact,
-        nom: validationResult.data.nom,
-        prenom: validationResult.data.prenom,
-        telephone: validationResult.data.telephone,
-      },
-      uidUtilisateurCourant: await getSubSession(),
-    })
+  const message = await new ModifierMesInformationsPersonnelles(
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  ).execute({
+    modification: {
+      emailDeContact: validationResult.data.emailDeContact,
+      nom: validationResult.data.nom,
+      prenom: validationResult.data.prenom,
+      telephone: validationResult.data.telephone,
+    },
+    uidUtilisateurCourant: await getSubSession(),
+  })
 
   revalidatePath(actionParams.path)
 
