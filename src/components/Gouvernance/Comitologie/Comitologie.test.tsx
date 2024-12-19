@@ -16,7 +16,7 @@ describe('comitologie', () => {
     cliquerSurAjouterUnComite()
 
     // THEN
-    const ajouterUnComiteDrawer = screen.getByRole('dialog')
+    const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
     expect(ajouterUnComiteDrawer).toHaveAttribute('aria-labelledby', 'drawer-comite-titre')
     expect(ajouterUnComiteDrawer).toHaveAttribute('aria-modal', 'true')
     expect(ajouterUnComiteDrawer).toHaveAttribute('id', 'drawer-comite')
