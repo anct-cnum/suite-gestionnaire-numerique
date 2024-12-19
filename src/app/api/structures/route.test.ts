@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 
 import { GET } from './route'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
+import { RechercherLesStructures } from '@/use-cases/queries/RechercherLesStructures'
 
 describe('route /structures', () => {
   it('devrait retourner une erreur 403 quand on quand l’utilisateur n’est pas authentifié', async () => {
@@ -48,7 +48,7 @@ describe('route /structures', () => {
       },
       {
         desc: 'sur un nom de structure et un code de département',
-        expectedFindParams: { match: 'la poste', zone: ['departement', '06'] },
+        expectedFindParams: { match: 'la poste', zone: { code: '06', type: 'departement' } },
         searchParams: new Map([
           ['search', 'la poste'],
           ['departement', '06'],
@@ -56,7 +56,7 @@ describe('route /structures', () => {
       },
       {
         desc: 'sur un nom de structure et un code de région',
-        expectedFindParams: { match: 'la poste', zone: ['region', '93'] },
+        expectedFindParams: { match: 'la poste', zone: { code: '93', type: 'region' } },
         searchParams: new Map([
           ['search', 'la poste'],
           ['region', '93'],
@@ -65,8 +65,8 @@ describe('route /structures', () => {
     ])('$desc', async ({ searchParams, expectedFindParams }) => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
-      const spiedFind = vi.spyOn(PrismaStructureLoader.prototype, 'findStructures')
-        .mockResolvedValueOnce([{ nom: 'La Poste', uid: '21' }])
+      const spiedFind = vi.spyOn(RechercherLesStructures.prototype, 'get')
+        .mockResolvedValueOnce([{ commune: 'TARBES', nom: 'La Poste', uid: '802' }])
 
       const req = {
         nextUrl: {
@@ -81,7 +81,7 @@ describe('route /structures', () => {
       const response = (await result.json()) as unknown
       expect(spiedFind).toHaveBeenCalledWith(expectedFindParams)
       expect(result.status).toBe(200)
-      expect(response).toStrictEqual([{ nom: 'La Poste', uid: '21' }])
+      expect(response).toStrictEqual([{ commune: 'TARBES', nom: 'La Poste', uid: '802' }])
     })
   })
 })

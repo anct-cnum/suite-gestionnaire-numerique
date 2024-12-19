@@ -61,9 +61,9 @@ export async function structuresFetch(): Promise<Response> {
   return Promise.resolve({
     async json() {
       return Promise.resolve([
-        { nom: 'ABC FORMATION', uid: '1845' },
-        { nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
-        { nom: 'TETRIS', uid: '14' },
+        { commune: '', nom: 'ABC FORMATION', uid: '5001' },
+        { commune: 'PARIS 18', nom: 'AGIRabcd Délégation des Pyrénées Orientales', uid: '1154' },
+        { commune: 'GRASSE', nom: 'TETRIS', uid: '14' },
       ])
     },
   } as Response)
