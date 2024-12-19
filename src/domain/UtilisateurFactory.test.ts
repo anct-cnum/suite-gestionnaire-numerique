@@ -3,6 +3,8 @@ import { GestionnaireDepartement } from './GestionnaireDepartement'
 import { GestionnaireGroupement } from './GestionnaireGroupement'
 import { GestionnaireRegion } from './GestionnaireRegion'
 import { GestionnaireStructure } from './GestionnaireStructure'
+import { utilisateurFactory } from './testHelper'
+import { Utilisateur } from './Utilisateur'
 import { UtilisateurFactory } from './UtilisateurFactory'
 
 describe('utilisateur factory', () => {
@@ -155,5 +157,31 @@ describe('utilisateur factory', () => {
 
     // THEN
     expect(utilisateur.state.telephone).toBe(expectedTelephone)
+  })
+
+  it('la date de dernière connexion doit être une date valide', () => {
+    // GIVEN
+    const dateDeConnexionInvalide = new Date('foo')
+
+    // WHEN
+    const lazyUtilisateur = () : Utilisateur => utilisateurFactory({
+      derniereConnexion: dateDeConnexionInvalide,
+    })
+
+    // THEN
+    expect(lazyUtilisateur).toThrow('dateDeDerniereConnexionInvalide')
+  })
+
+  it('la date d‘invitation doit être une date valide', () => {
+    // GIVEN
+    const dateDInvitationInvalide = new Date('foo')
+
+    // WHEN
+    const lazyUtilisateur = () : Utilisateur => utilisateurFactory({
+      inviteLe: dateDInvitationInvalide,
+    })
+
+    // THEN
+    expect(lazyUtilisateur).toThrow('dateDInvitationInvalide')
   })
 })

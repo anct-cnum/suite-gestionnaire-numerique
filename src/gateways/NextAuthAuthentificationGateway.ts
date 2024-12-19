@@ -4,6 +4,10 @@ import { JWT } from 'next-auth/jwt'
 import { OAuthConfig } from 'next-auth/providers'
 import { ClientSafeProvider } from 'next-auth/react'
 
+import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
+import prisma from '../../prisma/prismaClient'
+import { MettreAJourDateDeDerniereConnexion } from '@/use-cases/commands/MettreAJourDateDeDerniereConnexion'
+
 const providerId = 'pro-connect'
 const providerName = 'Pro Connect'
 const providerScope = 'openid given_name usual_name siret phone email'
@@ -25,6 +29,17 @@ const nextAuthOptions = {
         // @ts-expect-error
         user: token.user,
       }
+    },
+    async signIn({ profile }): Promise<boolean> {
+      if (profile) {
+        const utilisateurRepository = new PrismaUtilisateurRepository(prisma)
+        if (profile.sub !== undefined) {
+          await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({
+            uidUtilisateurCourant: profile.sub,
+          })
+        }
+      }
+      return true
     },
   },
   debug: process.env.NODE_ENV !== 'production',

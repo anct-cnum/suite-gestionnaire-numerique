@@ -92,6 +92,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
     await this.#activeRecord.update({
       data: {
+        derniereConnexion: utilisateurState.derniereConnexion,
         emailDeContact: utilisateurState.emailDeContact,
         inviteLe: utilisateurState.inviteLe,
         nom: utilisateurState.nom,

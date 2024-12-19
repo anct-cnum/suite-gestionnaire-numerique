@@ -1,6 +1,7 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { UtilisateurFailure } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<Command> {
   readonly #utilisateurRepository: UtilisateurRepository
@@ -34,7 +35,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
       return 'utilisateurNePeutPasGererUtilisateurAReinviter'
     }
 
-    utilisateurAReinviter.changerLaDateDInvitation(this.#date)
+    utilisateurAReinviter.changerDateDInvitation(this.#date)
     await this.#utilisateurRepository.update(utilisateurAReinviter)
     const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
     await emailGateway.send(utilisateurAReinviter.state.emailDeContact)
@@ -48,6 +49,7 @@ type Failure =
   | 'utilisateurAReinviterInexistant'
   | 'utilisateurAReinviterDejaActif'
   | 'utilisateurNePeutPasGererUtilisateurAReinviter'
+  | UtilisateurFailure
 
 type Command = Readonly<{
   uidUtilisateurAReinviter: string
