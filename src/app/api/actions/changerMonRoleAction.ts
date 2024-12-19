@@ -19,7 +19,7 @@ export async function changerMonRoleAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma))
+  const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
     .execute({
       nouveauRole: validationResult.data.nouveauRole,
       uidUtilisateurCourant: await getSubSession(),
