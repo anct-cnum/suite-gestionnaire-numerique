@@ -1,26 +1,27 @@
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
+import { ValidDate } from './shared/ValidDate'
 import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class Comite extends Entity<State> {
   readonly #commentaire?: string
-  readonly #date?: DateDuComite
-  readonly #dateDeCreation: DateDeCreation
-  readonly #dateDeModification: DateDeModification
+  readonly #date?: ValidDate<ComiteFailure>
+  readonly #dateDeCreation: ValidDate<ComiteFailure>
+  readonly #dateDeModification: ValidDate<ComiteFailure>
   readonly #frequence: Frequence
   readonly #type: Type
   readonly #uidUtilisateurLAyantModifie: UtilisateurUid
 
   private constructor(
     uid: ComiteUid,
-    dateDeCreation: DateDeCreation,
-    dateDeModification: DateDeModification,
+    dateDeCreation: ValidDate<ComiteFailure>,
+    dateDeModification: ValidDate<ComiteFailure>,
     frequence: Frequence,
     type: Type,
     uidUtilisateurLAyantModifie: UtilisateurUid,
     commentaire?: string,
-    date?: DateDuComite
+    date?: ValidDate<ComiteFailure>
   ) {
     super(uid)
     this.#commentaire = commentaire
@@ -35,9 +36,9 @@ export class Comite extends Entity<State> {
   override get state(): State {
     return {
       commentaire: this.#commentaire,
-      date: this.#date?.state.value,
-      dateDeCreation: this.#dateDeCreation.state.value,
-      dateDeModification: this.#dateDeModification.state.value,
+      date: this.#date?.toJSON(),
+      dateDeCreation: this.#dateDeCreation.toJSON(),
+      dateDeModification: this.#dateDeModification.toJSON(),
       frequence: this.#frequence.state.value,
       type: this.#type.state.value,
       uid: this.uid.state,
@@ -56,13 +57,13 @@ export class Comite extends Entity<State> {
     date,
   }: ComiteFactoryParams): Result<ComiteFailure, Comite> {
     try {
-      const dateDeCreationValidee = new DateDeCreation(dateDeCreation)
-      const dateDuComiteValidee = date !== undefined ? new DateDuComite(date) : undefined
+      const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
+      const dateDuComiteValidee = date !== undefined ? new ValidDate(date, 'dateDuComiteInvalide') : undefined
 
       const comite = new Comite(
         new ComiteUid(uid),
         dateDeCreationValidee,
-        new DateDeModification(dateDeModification),
+        new ValidDate(dateDeModification, 'dateDeModificationInvalide'),
         new Frequence(frequence),
         new Type(type),
         new UtilisateurUid(uidUtilisateurCourant),
@@ -82,17 +83,6 @@ export class Comite extends Entity<State> {
   }
 }
 
-export type ComiteFactoryParams = Readonly<{
-  uid: string
-  dateDeCreation: string
-  dateDeModification: string
-  frequence: string
-  type: string
-  uidUtilisateurCourant: UtilisateurUidState
-  commentaire?: string
-  date?: string
-}>
-
 export class ComiteUid extends Uid<ComiteUidState> {
   constructor(value: string) {
     super({ value })
@@ -106,34 +96,6 @@ export type ComiteFailure =
   | 'dateDuComiteDoitEtreDansLeFutur'
   | 'frequenceInvalide'
   | 'typeInvalide'
-
-class DateDuComite extends ValueObject<AttributGouvernanceState> {
-  constructor(value: string) {
-    if (isNaN(Date.parse(value))) {
-      throw Exception.of<ComiteFailure>('dateDuComiteInvalide')
-    }
-
-    super({ value: new Date(value).toJSON() })
-  }
-}
-
-class DateDeCreation extends ValueObject<AttributGouvernanceState> {
-  constructor(value: string) {
-    if (isNaN(Date.parse(value))) {
-      throw Exception.of<ComiteFailure>('dateDeCreationInvalide')
-    }
-    super({ value: new Date(value).toJSON() })
-  }
-}
-
-class DateDeModification extends ValueObject<AttributGouvernanceState> {
-  constructor(value: string) {
-    if (isNaN(Date.parse(value))) {
-      throw Exception.of<ComiteFailure>('dateDeModificationInvalide')
-    }
-    super({ value: new Date(value).toJSON() })
-  }
-}
 
 class Frequence extends ValueObject<AttributGouvernanceState> {
   constructor(value: string) {
@@ -157,6 +119,17 @@ const Frequences = ['Mensuelle', 'Trimestrielle', 'Semestrielle', 'Annuelle']
 
 const Types = ['Stratégique', 'Technique', 'Consultatif', 'Autre']
 
+type ComiteFactoryParams = Readonly<{
+  uid: string
+  dateDeCreation: Date
+  dateDeModification: Date
+  frequence: string
+  type: string
+  uidUtilisateurCourant: UtilisateurUidState
+  commentaire?: string
+  date?: Date
+}>
+
 type State = Readonly<{
   commentaire?: string
   date?: string
@@ -172,9 +145,9 @@ type AttributGouvernanceState = Readonly<{ value: string }>
 
 type ComiteUidState = Readonly<{ value: string }>
 
-function validerQueLadateDuComiteDoitEtreDansLeFutur(date: DateDuComite, dateDeCreation: DateDeCreation): void | never {
-  const dateDuComiteAComparer = Number(new Date(date.state.value).toISOString().split('T')[0].replaceAll('-', ''))
-  const dateDeCreationAComparer = Number(new Date(dateDeCreation.state.value).toISOString().split('T')[0].replaceAll('-', ''))
+function validerQueLadateDuComiteDoitEtreDansLeFutur(date: Date, dateDeCreation: Date): void | never {
+  const dateDuComiteAComparer = Number(date.toISOString().split('T')[0].replaceAll('-', ''))
+  const dateDeCreationAComparer = Number(dateDeCreation.toISOString().split('T')[0].replaceAll('-', ''))
 
   if (dateDuComiteAComparer < dateDeCreationAComparer) {
     throw Exception.of<ComiteFailure>('dateDuComiteDoitEtreDansLeFutur')
