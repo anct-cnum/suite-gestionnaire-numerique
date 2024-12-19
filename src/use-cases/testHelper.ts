@@ -124,10 +124,3 @@ export function gouvernanceReadModelFactory(
 }
 
 const epochTime = new Date(0)
-
-export class FrozenDate extends Date {
-  constructor(date: number | string | Date) {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    super(date ?? '1996-04-15T03:24:00')
-  }
-}

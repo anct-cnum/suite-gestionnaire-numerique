@@ -36,10 +36,10 @@ export class AjouterUnComite implements CommandHandler<Command> {
       return 'utilisateurInexistant'
     }
 
-    const dateDeCreation = this.#date.toJSON()
+    const dateDeCreation = this.#date
     const comite = Comite.create({
       commentaire,
-      date,
+      date: date !== undefined ? new Date(date) : undefined,
       dateDeCreation,
       dateDeModification: dateDeCreation,
       frequence,

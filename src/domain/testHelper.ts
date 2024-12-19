@@ -1,7 +1,7 @@
 // Stryker disable all
-import { Comite, ComiteFactoryParams, ComiteUid } from './Comite'
+import { Comite, ComiteUid } from './Comite'
 import { Departement, DepartementState } from './Departement'
-import { GouvernanceFactoryParams, Gouvernance } from './Gouvernance'
+import { Gouvernance } from './Gouvernance'
 import { TypologieRole } from './Role'
 import { UtilisateurFactory } from './UtilisateurFactory'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
@@ -25,7 +25,7 @@ export function utilisateurFactory(
   }).create(override?.role ?? 'Instructeur', override?.codeOrganisation)
 }
 
-export function gouvernanceFactory(override?: Partial<GouvernanceFactoryParams>): Gouvernance {
+export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouvernance.create>[0]>): Gouvernance {
   return Gouvernance.create({
     comites: [new ComiteUid(String(new Date(0).getTime()))],
     noteDeContexte: {
@@ -42,12 +42,12 @@ export function gouvernanceFactory(override?: Partial<GouvernanceFactoryParams>)
   })
 }
 
-export function comiteFactory(override?: Partial<ComiteFactoryParams>): Comite {
+export function comiteFactory(override?: Partial<Parameters<typeof Comite.create>[0]>): Comite {
   return Comite.create({
     commentaire: 'un commentaire',
-    date: '1970-01-01',
-    dateDeCreation: '1970-01-01T00:00:00.000Z',
-    dateDeModification: '1970-01-01T00:00:00.000Z',
+    date: new Date(0),
+    dateDeCreation: new Date(0),
+    dateDeModification: new Date(0),
     frequence: 'Annuelle',
     type: 'Stratégique',
     uid: '',
