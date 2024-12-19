@@ -5,7 +5,7 @@ import { Fragment, ReactElement, useState } from 'react'
 
 import SectionRemplie from '../SectionRemplie'
 import SubSectionTitle from '../SubSectionTitle'
-import DetailsMembre from './DetailsMembre'
+import Membre from './Membre'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import Icon from '@/components/shared/Icon/Icon'
@@ -55,7 +55,7 @@ export default function MembreRempli({
                     className={`fr-icon-${membre.logo} color-blue-france`}
                   />
                 </td>
-                <td className="font-weight-700">
+                <td>
                   <button
                     aria-controls={drawerMembreId}
                     className="primary font-weight-700 fr-px-0 no-hover d-block"
@@ -97,7 +97,7 @@ export default function MembreRempli({
         labelId={labelMembreId}
         setIsOpen={setIsDrawerOpen}
       >
-        <DetailsMembre
+        <Membre
           labelId={labelMembreId}
           membreDetails={membreDetails}
         />

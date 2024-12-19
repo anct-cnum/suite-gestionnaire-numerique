@@ -376,7 +376,7 @@ describe('mes utilisateurs', () => {
       const columnsBody = within(rowsBody[1]).getAllByRole('cell')
       const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(supprimer)
-      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
+      const supprimerUnUtilisateurModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       const confirmer = await within(supprimerUnUtilisateurModal).findByRole('button', { name: 'Confirmer' })
 
       // WHEN
