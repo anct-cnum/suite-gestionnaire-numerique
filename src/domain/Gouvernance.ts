@@ -83,7 +83,7 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
   }
 }
 
-export type GouvernanceFactoryParams = Readonly<{
+type GouvernanceFactoryParams = Readonly<{
   comites?: ReadonlyArray<ComiteUid>
   noteDeContexte?: Readonly<{
     contenu: string

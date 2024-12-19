@@ -1,4 +1,3 @@
-import { FrozenDate } from '../testHelper'
 import { AjouterUnComite } from './AjouterUnComite'
 import { AddComiteRepository } from './shared/ComiteRepository'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
@@ -19,6 +18,7 @@ describe('ajouter un comité à une gouvernance', () => {
     {
       commentaire,
       date,
+      expectedDate: new Date(date),
       frequence: frequenceValide,
       intention: 'complètement',
       type: typeValide,
@@ -26,6 +26,7 @@ describe('ajouter un comité à une gouvernance', () => {
     {
       commentaire: undefined,
       date: undefined,
+      expectedDate: undefined,
       frequence: frequenceValide,
       intention: 'sans date ni commentaire',
       type: typeValide,
@@ -33,11 +34,11 @@ describe('ajouter un comité à une gouvernance', () => {
   ])('étant donné une gouvernance existante, quand un comité est créé $intention par le gestionnaire de cette gouvernance, alors il est ajouté à cette gourvernance', async ({
     commentaire,
     date,
+    expectedDate,
     frequence,
     type,
   }) => {
     // GIVEN
-    vi.stubGlobal('Date', FrozenDate)
     const dateDeCreation = new Date('2024-01-01')
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceExistanteRepositorySpy(),
@@ -69,9 +70,9 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(spiedComiteToAdd?.state).toStrictEqual(
       comiteFactory({
         commentaire,
-        date,
-        dateDeCreation: dateDeCreation.toJSON(),
-        dateDeModification: dateDeCreation.toJSON(),
+        date: expectedDate,
+        dateDeCreation: dateDeCreation,
+        dateDeModification: dateDeCreation,
         frequence,
         type,
         uid: String(dateDeCreation.getTime()),
@@ -127,7 +128,6 @@ describe('ajouter un comité à une gouvernance', () => {
     },
   ])('étant donné une gouvernance existante, quand un comité est créé par le gestionnaire de cette gouvernance mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
     // GIVEN
-    vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceExistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
@@ -153,11 +153,11 @@ describe('ajouter un comité à une gouvernance', () => {
 
   it('étant donné une gouvernance existante, quand un comité est créé par quelqu’un d’autre que le gestionnaire de cette gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
-    vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceExistanteRepositorySpy(),
       new UtilisateurUsurpateurRepositorySpy(),
-      new ComiteRepositorySpy()
+      new ComiteRepositorySpy(),
+      new Date(0)
     )
 
     // WHEN
@@ -179,11 +179,12 @@ describe('ajouter un comité à une gouvernance', () => {
 
   it('étant donné une gouvernance inexistante, quand un comité est créé, alors une erreur est renvoyée', async () => {
     // GIVEN
-    vi.stubGlobal('Date', FrozenDate)
+    // vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy()
+      new ComiteRepositorySpy(),
+      new Date(0)
     )
 
     // WHEN
