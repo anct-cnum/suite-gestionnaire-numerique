@@ -4,8 +4,8 @@ import Gouvernance from '../Gouvernance'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
-describe('memebres', () => {
-  it('quand je clique sur un membres, alors un drawer s’ouvre avec les détails du membres', () => {
+describe('membres', () => {
+  it('quand je clique sur un membres, alors un drawer s’ouvre avec les détails du membre', () => {
   // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
