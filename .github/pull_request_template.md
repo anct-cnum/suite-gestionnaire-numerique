@@ -4,6 +4,7 @@
 
 - [ ] Relire le code
 - [ ] Relire le ticket
+- [ ] [Relire les critères d'acceptance](https://github.com/anct-cnum/suite-gestionnaire-numerique/discussions/252)
 - [ ] Recetter l'application
 - [ ] Regarder le commentaire de sonarcloud et corriger s'il est pertinent
 - [ ] Ajouter des variables d'environnement sur la production au besoin
