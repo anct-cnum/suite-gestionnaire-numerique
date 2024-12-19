@@ -29,7 +29,7 @@ describe('feuille de route', () => {
     fireEvent.click(feuilleDeRoute)
 
     // THEN
-    const drawer = screen.getByRole('dialog')
+    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
     const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
     expect(titreDrawer).toBeInTheDocument()
     const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')

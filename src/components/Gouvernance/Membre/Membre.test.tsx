@@ -5,7 +5,7 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres', () => {
-  it('quand je clique sur un membres, alors un drawer s’ouvre avec les détails du membre', () => {
+  it('quand je clique sur un membre, alors un drawer s’ouvre avec les détails du membre', () => {
   // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -15,7 +15,7 @@ describe('membres', () => {
     fireEvent.click(membre)
 
     // THEN
-    const drawer = screen.getByRole('dialog')
+    const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
     expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
     const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Préfecture du Rhône' })
     expect(titreDrawer).toBeInTheDocument()

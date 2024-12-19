@@ -10,6 +10,7 @@ export default function DetailsMembre({ membreDetails, labelId }: Props): ReactE
     </DrawerTitle>
   )
 }
+
 type Props = Readonly<{
   membreDetails: MembreViewModel,
   labelId: string
