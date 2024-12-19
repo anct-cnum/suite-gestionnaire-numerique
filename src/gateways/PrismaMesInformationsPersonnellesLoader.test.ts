@@ -48,7 +48,7 @@ describe('mes informations personnelles loader', () => {
         ssoId: ssoIdExistant,
       }),
     })
-    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
     const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
@@ -83,7 +83,7 @@ describe('mes informations personnelles loader', () => {
         structureId,
       }),
     })
-    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
     const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
@@ -116,7 +116,7 @@ describe('mes informations personnelles loader', () => {
     await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory(),
     })
-    const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma)
+    const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
     const utilisateurReadModel =

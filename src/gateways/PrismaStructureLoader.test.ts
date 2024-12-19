@@ -55,7 +55,7 @@ describe('structures loader', () => {
     ])('alors $intention', async ({ match, expected }) => {
       // GIVEN
       await createStructures()
-      const structureLoader = new PrismaStructureLoader(prisma)
+      const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
       const structureReadModel = await structureLoader.findStructures(match)
@@ -67,7 +67,7 @@ describe('structures loader', () => {
     it('et un département, alors seules les structures appartenant à ce département sont remontées', async () => {
       // GIVEN
       await createStructures()
-      const structureLoader = new PrismaStructureLoader(prisma)
+      const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
       const structureReadModel = await structureLoader.findStructuresByDepartement('ris', '06')
@@ -85,7 +85,7 @@ describe('structures loader', () => {
     it('et une région, alors seules les structures appartenant à un département appartenant à cette région sont remontées', async () => {
       // GIVEN
       await createStructures()
-      const structureLoader = new PrismaStructureLoader(prisma)
+      const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
       const structureReadModel = await structureLoader.findStructuresByRegion('ris', '93')

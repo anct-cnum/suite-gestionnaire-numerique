@@ -1,12 +1,12 @@
-import { StructureRecord, PrismaClient, Prisma } from '@prisma/client'
+import { Prisma, StructureRecord } from '@prisma/client'
 
 import { StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
 export class PrismaStructureLoader implements StructureLoader {
-  readonly #prisma: PrismaClient
+  readonly #dataResource: Prisma.StructureRecordDelegate
 
-  constructor(prisma: PrismaClient) {
-    this.#prisma = prisma
+  constructor(dataResource: Prisma.StructureRecordDelegate) {
+    this.#dataResource = dataResource
   }
 
   async findStructures(match: string): Promise<StructuresReadModel> {
@@ -35,7 +35,7 @@ export class PrismaStructureLoader implements StructureLoader {
     match: string,
     where: Prisma.StructureRecordWhereInput = {}
   ): Promise<ReadonlyArray<StructureRecord>> {
-    return this.#prisma.structureRecord.findMany({
+    return this.#dataResource.findMany({
       orderBy: {
         nom: 'asc',
       },
