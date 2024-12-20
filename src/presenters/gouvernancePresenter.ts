@@ -1,7 +1,7 @@
 import { formaterEnDateFrancaise } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailsReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel
@@ -15,7 +15,7 @@ export function gouvernancePresenter(
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
     },
     sectionMembres: {
-      ...{ membres: gouvernanceReadModel.membres?.map(toMembresViewModel) },
+      ...{ membres: gouvernanceReadModel.membres?.map(toMembresDetailsViewModel) },
       ...buildSousTitreMembres(gouvernanceReadModel.membres),
     },
     sectionNoteDeContexte: {
@@ -42,7 +42,7 @@ export type GouvernanceViewModel = Readonly<{
   }>
   sectionMembres: Readonly<{
     detailDuNombreDeChaqueMembre: string
-    membres?: ReadonlyArray<MembreViewModel>
+    membres?: ReadonlyArray<MembreDetailsViewModel>
     total: string
     wording: string
   }>
@@ -94,6 +94,22 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
     nom: membre.nom,
     roles: membre.roles.map(toRoleViewModel),
     type: membre.type,
+  }
+}
+
+function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetailsViewModel {
+  const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
+  return {
+    contactReferent,
+    contactTechnique: membre.contactTechnique,
+    feuillesDeRoute: membre.feuillesDeRoute,
+    logo: buildLogoMembre(membre),
+    nom: membre.nom,
+    roles: membre.roles.map(toRoleViewModel),
+    sectionFeuilleDeRoute: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+    telephone: membre.telephone !== '' ? membre.telephone : '-',
+    type: membre.type,
+    typologieMembre: membre.typologieMembre,
   }
 }
 
@@ -209,11 +225,32 @@ export type FeuilleDeRouteViewModel = Readonly<{
   wordingBeneficiairesSubventionFormation: string
 }>
 
-export type MembreViewModel = Readonly<{
+type MembreViewModel = Readonly<{
   logo: string
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
+}>
+
+export type MembreDetailsViewModel = Readonly<{
+  nom: string
+  logo: string
+  roles: ReadonlyArray<RoleViewModel>
+  type: string
+  contactTechnique: string,
+  // contactReferent: Readonly<{
+  //   nom: string
+  //   prenom: string
+  //   poste: string
+  //   mailContact: string
+  // }>,
+  contactReferent: string
+  telephone?: string,
+  sectionFeuilleDeRoute: string,
+  typologieMembre: string,
+  feuillesDeRoute: ReadonlyArray<Readonly<{
+    nom: string
+  }>>
 }>
 
 type RoleViewModel = Readonly<{

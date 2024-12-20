@@ -156,14 +156,37 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       membres: [
         {
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
+          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [
+            { nom: 'Feuille de route inclusion' },
+            { nom: 'Feuille de route numérique du Rhône' },
+          ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
+          telephone: '+33 4 45 00 45 00',
           type: 'Administration',
+          typologieMembre: 'Préfecture départementale',
         },
         {
+          contactReferent: {
+            mailContact: 'jean.dupont@rhones.gouv.fr',
+            nom: 'Jean',
+            poste: 'chargé de mission',
+            prenom: 'Dupont',
+          },
+          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
+          telephone: '+33 4 45 00 45 01',
           type: 'Collectivité',
+          typologieMembre: 'Collectivité, EPCI',
         },
       ],
     }))
@@ -225,9 +248,22 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       membres: [
         {
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
+          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [
+            { nom: 'Feuille de route inclusion' },
+            { nom: 'Feuille de route inclusion 2' },
+          ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
+          telephone: '+33 4 45 00 45 00',
           type: 'Administration',
+          typologieMembre: 'Préfecture départementale',
         },
       ],
     }))
@@ -283,7 +319,7 @@ describe('gouvernance', () => {
           montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
         {
@@ -294,7 +330,7 @@ describe('gouvernance', () => {
           montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 1,
         },
       ],
@@ -358,7 +394,7 @@ describe('gouvernance', () => {
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
       ],
