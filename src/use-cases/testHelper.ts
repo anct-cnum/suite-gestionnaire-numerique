@@ -105,14 +105,27 @@ export function gouvernanceReadModelFactory(
     ],
     membres: [
       {
+        contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+        contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+        feuillesDeRoute: [
+          { nom: 'Feuille de route inclusion' },
+          { nom: 'Feuille de route numérique du Rhône' },
+        ],
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
+        telephone: '+33 4 45 00 45 00',
         type: 'Administration',
+        typologieMembre: 'Préfecture départementale',
       },
       {
+        contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+        contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
+        feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
+        telephone: '+33 4 45 00 45 01',
         type: 'Collectivité',
+        typologieMembre: 'Collectivité, EPCI',
       },
     ],
     noteDeContexte: {
