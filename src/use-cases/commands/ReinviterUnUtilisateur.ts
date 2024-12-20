@@ -11,7 +11,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
   constructor(
     utilisateurRepository: UtilisateurRepository,
     emailGatewayFactory: EmailGatewayFactory,
-    date: Date = new Date()
+    date: Date
   ) {
     this.#utilisateurRepository = utilisateurRepository
     this.#emailGatewayFactory = emailGatewayFactory

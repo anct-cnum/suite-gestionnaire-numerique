@@ -21,7 +21,8 @@ export async function reinviterUnUtilisateurAction(
 
   const message = await new ReinviterUnUtilisateur(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    emailInvitationGatewayFactory
+    emailInvitationGatewayFactory,
+    new Date()
   ).execute({
     uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
     uidUtilisateurCourant: await getSubSession(),

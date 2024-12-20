@@ -12,7 +12,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   constructor(
     gouvernanceRepository: GouvernanceRepository,
     utilisateurRepository: UtilisateurRepository,
-    date = new Date()
+    date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository

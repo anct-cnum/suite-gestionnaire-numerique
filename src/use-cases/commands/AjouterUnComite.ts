@@ -15,7 +15,7 @@ export class AjouterUnComite implements CommandHandler<Command> {
     gouvernanceRepository: GouvernanceRepository,
     utilisateurRepository: UtilisateurRepository,
     comiteRepository: ComiteRepository,
-    date: Date = new Date()
+    date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
