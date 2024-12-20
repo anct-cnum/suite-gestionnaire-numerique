@@ -6,7 +6,7 @@ describe('supprimer mon compte action', () => {
   it('quand mon compte est supprimé, alors cela modifie mon compte', async () => {
     // GIVEN
     const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(SupprimerMonCompte.prototype, 'execute').mockResolvedValueOnce('OK')
 
     // WHEN

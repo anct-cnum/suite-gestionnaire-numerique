@@ -89,7 +89,7 @@ export async function getSession(): Promise<{ user: Profile } | null> {
   return getServerSession(nextAuthOptions)
 }
 
-export async function getSubSession(): Promise<string> {
+export async function getSessionSub(): Promise<string> {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return (await getSession())!.user.sub
 }

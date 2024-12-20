@@ -9,7 +9,7 @@ describe('modifier mes informations personnelles action', () => {
     // GIVEN
     const path = '/mes-informations-personnelles'
     const sub = 'fooId'
-    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 
@@ -118,7 +118,7 @@ describe('modifier mes informations personnelles action', () => {
     // GIVEN
     const sub = 'fooId'
     const telephoneVide = ''
-    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
 

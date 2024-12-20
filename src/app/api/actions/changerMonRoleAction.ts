@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
-import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ChangerMonRole } from '@/use-cases/commands/ChangerMonRole'
@@ -22,7 +22,7 @@ export async function changerMonRoleAction(
   const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
     .execute({
       nouveauRole: validationResult.data.nouveauRole,
-      uidUtilisateurCourant: await getSubSession(),
+      uidUtilisateurCourant: await getSessionSub(),
     })
 
   revalidatePath(actionParams.path)
