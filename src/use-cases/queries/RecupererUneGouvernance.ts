@@ -49,9 +49,9 @@ export type MembreDetailsReadModel = Readonly<{
   contactPolitique: string,
   telephone?: string,
   typologieMembre: string,
-  feuillesDeRoute?: ReadonlyArray<Readonly<{
+  feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
-  }>> | undefined
+  }>>
 }>
 
 type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
