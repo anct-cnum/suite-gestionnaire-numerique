@@ -50,7 +50,7 @@ function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadMode
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
         nom: 'Feuille de route inclusion 1',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 3,
       },
       {
@@ -61,7 +61,7 @@ function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadMode
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
         nom: 'Feuille de route inclusion 2',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' }, //Todo
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 2,
       },
     ],
