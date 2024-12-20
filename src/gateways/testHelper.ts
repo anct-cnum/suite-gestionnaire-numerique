@@ -1,6 +1,8 @@
 // Stryker disable all
 import { Prisma } from '@prisma/client'
 
+import { epochTime } from '@/shared/testHelper'
+
 export function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
@@ -76,5 +78,3 @@ export function utilisateurRecordFactory(
     ...override,
   }
 }
-
-export const epochTime = new Date(0)

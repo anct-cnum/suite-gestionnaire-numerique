@@ -1,5 +1,6 @@
 import { Roles } from './Role'
 import { utilisateurFactory } from './testHelper'
+import { epochTime } from '@/shared/testHelper'
 
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
@@ -104,7 +105,7 @@ describe('utilisateur', () => {
 
 const utilisateurProps = {
   emailDeContact: 'martin.tartempion@example.net',
-  inviteLe: new Date(0),
+  inviteLe: epochTime,
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',

@@ -1,10 +1,10 @@
-import { epochTime } from '../testHelper'
 import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouvernance'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('ajouter une note de contexte à une gouvernance', () => {
   beforeEach(() => {
@@ -35,7 +35,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
       gouvernanceFactory({
         noteDeContexte: {
           contenu,
-          dateDeModification: new Date(0),
+          dateDeModification: epochTime,
           uidUtilisateurLAyantModifiee: new UtilisateurUid(
             utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
           ),

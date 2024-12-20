@@ -1,10 +1,10 @@
-import { epochTime } from '../testHelper'
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('inviter un utilisateur', () => {
   beforeEach(() => {

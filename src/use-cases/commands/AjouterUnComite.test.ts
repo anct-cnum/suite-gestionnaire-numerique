@@ -1,4 +1,3 @@
-import { epochTime } from '../testHelper'
 import { AjouterUnComite } from './AjouterUnComite'
 import { AddComiteRepository } from './shared/ComiteRepository'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
@@ -7,6 +6,7 @@ import { Comite, ComiteUid } from '@/domain/Comite'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('ajouter un comité à une gouvernance', () => {
   beforeEach(() => {
@@ -158,7 +158,7 @@ describe('ajouter un comité à une gouvernance', () => {
       new GouvernanceExistanteRepositorySpy(),
       new UtilisateurUsurpateurRepositorySpy(),
       new ComiteRepositorySpy(),
-      new Date(0)
+      epochTime
     )
 
     // WHEN
@@ -185,7 +185,7 @@ describe('ajouter un comité à une gouvernance', () => {
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
-      new Date(0)
+      epochTime
     )
 
     // WHEN
