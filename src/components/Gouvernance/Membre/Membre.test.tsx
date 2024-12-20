@@ -380,6 +380,138 @@ describe('membres', () => {
     const plusDeDetails = within(drawer).getByRole('link', { name: 'Plus de détails' })
     expect(plusDeDetails).toBeInTheDocument()
   })
+
+  it('quand je visualise le detail d’un membre, alors je vois les informations optionnelles remplacer par un tiret', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        membres: [
+          {
+            contactReferent: {
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
+            },
+            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+            feuillesDeRoute: [],
+            nom: 'Préfecture du Rhône',
+            roles: ['Co-porteur'],
+            telephone: '',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Administration',
+            typologieMembre: 'Préfecture départementale',
+          },
+        ],
+      })
+    )
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+    fireEvent.click(membre)
+
+    // THEN
+    const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+    const tirets = within(drawer).getAllByText('-')
+    expect(tirets).toHaveLength(1)
+  })
+
+  it.each([
+    {
+      feuilleDeRouteTotal: 1,
+      feuillesDeRoute: [
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route inclusion',
+        },
+      ],
+      result: 'Feuille de route',
+      totalTirets: 1,
+      version: 'singulier',
+    },
+    {
+      feuilleDeRouteTotal: 2,
+      feuillesDeRoute: [
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route inclusion',
+        },
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route numérique du Rhône',
+        },
+      ],
+      result: 'Feuilles de route',
+      totalTirets: 1,
+      version: 'pluriel',
+    },
+    {
+      feuilleDeRouteTotal: 3,
+      feuillesDeRoute: [
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route inclusion',
+        },
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route numérique du Rhône',
+        },
+        {
+          montantSubventionAccorde: 0,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route numérique du Rhône 2',
+        },
+      ],
+      result: 'Feuilles de route',
+      totalTirets: 1,
+      version: 'pluriel',
+    },
+  ])(
+    'quand je visualise le detail d’un membre et que j’ai $feuilleDeRouteTotal $result alors il s’affiche aux $version',
+    ({ feuillesDeRoute, result }) => {
+      // GIVEN
+      const gouvernanceViewModel = gouvernancePresenter(
+        gouvernanceReadModelFactory({
+          membres: [
+            {
+              contactReferent: {
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+              feuillesDeRoute,
+              nom: 'Préfecture du Rhône',
+              roles: ['Co-porteur'],
+              telephone: '',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Administration',
+              typologieMembre: 'Préfecture départementale',
+            },
+          ],
+        })
+      )
+      render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+      // WHEN
+      const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+      fireEvent.click(membre)
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const feuilleDeRouteSingulierOuPluriel = within(drawer).getByText(result)
+      expect(feuilleDeRouteSingulierOuPluriel).toBeInTheDocument()
+    }
+  )
 })
 
 function afficherGouvernance(): void {
