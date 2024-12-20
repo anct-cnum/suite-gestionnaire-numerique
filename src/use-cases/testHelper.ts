@@ -3,6 +3,7 @@ import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInfo
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
+import { epochTime } from '@/shared/testHelper'
 
 export function utilisateurReadModelFactory(
   override?: Partial<UnUtilisateurReadModel>
@@ -122,5 +123,3 @@ export function gouvernanceReadModelFactory(
     ...override,
   }
 }
-
-export const epochTime = new Date(0)

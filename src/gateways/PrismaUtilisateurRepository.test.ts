@@ -3,7 +3,6 @@ import { Prisma } from '@prisma/client'
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
 import {
   departementRecordFactory,
-  epochTime,
   groupementRecordFactory,
   regionRecordFactory,
   structureRecordFactory,
@@ -12,6 +11,7 @@ import {
 import prisma from '../../prisma/prismaClient'
 import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
 const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
@@ -369,7 +369,7 @@ describe('utilisateur repository', () => {
 
     it('changement du rôle, du nom, du prénom, de la date d’invitation, de la date de dernière connexion et de l’email', async () => {
       // GIVEN
-      const date = new Date(0)
+      const date = epochTime
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory(),
       })

@@ -1,9 +1,9 @@
-import { epochTime } from '../testHelper'
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('réinviter un utilisateur', () => {
   beforeEach(() => {
