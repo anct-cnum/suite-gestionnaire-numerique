@@ -102,7 +102,12 @@ export function gouvernanceReadModelFactory(
     ],
     membres: [
       {
-        contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+        contactReferent: {
+          mailContact: 'julien.deschamps@rhones.gouv.fr',
+          nom: 'Henrich',
+          poste: 'chargé de mission',
+          prenom: 'Laetitia',
+        },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [
           { nom: 'Feuille de route inclusion' },
@@ -115,7 +120,12 @@ export function gouvernanceReadModelFactory(
         typologieMembre: 'Préfecture départementale',
       },
       {
-        contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+        contactReferent: {
+          mailContact: 'jean.dupont@rhones.gouv.fr',
+          nom: 'Jean',
+          poste: 'chargé de mission',
+          prenom: 'Dupont',
+        },
         contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
         nom: 'Département du Rhône',

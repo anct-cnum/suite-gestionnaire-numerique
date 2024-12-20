@@ -45,10 +45,10 @@ describe('membres', () => {
       name: 'Fermer les détails du membre : Préfecture du Rhône',
     })
     expect(boutonFermeture).toBeInTheDocument()
-    const contactPolitiqueMembre = within(drawer).getByText(
+    const contactReferentMembre = within(drawer).getByText(
       'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr'
     )
-    expect(contactPolitiqueMembre).toBeInTheDocument()
+    expect(contactReferentMembre).toBeInTheDocument()
     const contactTechniqueMembre = within(drawer).getByText('Simon.lagrange@rhones.gouv.fr')
     expect(contactTechniqueMembre).toBeInTheDocument()
     const telephoneMembre = within(drawer).getByText('+33 4 45 00 45 00')
@@ -61,7 +61,12 @@ describe('membres', () => {
       gouvernanceReadModelFactory({
         membres: [
           {
-            contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+            contactReferent: {
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
+            },
             contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [],
             nom: 'Préfecture du Rhône',
@@ -131,8 +136,12 @@ describe('membres', () => {
         gouvernanceReadModelFactory({
           membres: [
             {
-              contactPolitique:
-                'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+              contactReferent: {
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
               contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
               feuillesDeRoute,
               nom: 'Préfecture du Rhône',
@@ -158,38 +167,4 @@ describe('membres', () => {
       expect(tirets).toHaveLength(totalTirets)
     }
   )
-
-  // it(
-  //   'quand je visualise le detail d’un membre et que j’ai 0 feuille de route alors un tiret ',
-  //   () => {
-  //     // GIVEN
-  //     const gouvernanceViewModel = gouvernancePresenter(
-  //       gouvernanceReadModelFactory({
-  //         membres: [
-  //           {
-  //             contactPolitique:
-  //               'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
-  //             contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-  //             feuillesDeRoute: undefined,
-  //             nom: 'Préfecture du Rhône',
-  //             roles: ['Co-porteur'],
-  //             telephone: '',
-  //             type: 'Administration',
-  //             typologieMembre: 'Préfecture départementale',
-  //           },
-  //         ],
-  //       })
-  //     )
-  //     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
-
-  //     // WHEN
-  //     const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-  //     fireEvent.click(membre)
-
-  //     // THEN
-  //     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-  //     const totalList = within(drawer).getAllByRole('list')
-  //     expect(totalList).toHaveLength(1)
-  //   }
-  // )
 })
