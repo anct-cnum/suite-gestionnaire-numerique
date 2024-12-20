@@ -9,7 +9,7 @@ describe('reinviter un utilisateur action', () => {
     // GIVEN
     const sub = 'uidUtilisateurCourant'
     const path = '/mes-utilisateurs'
-    vi.spyOn(ssoGateway, 'getSubSession').mockResolvedValueOnce(sub)
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(ReinviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 

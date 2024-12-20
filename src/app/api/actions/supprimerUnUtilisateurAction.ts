@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'
@@ -21,7 +21,7 @@ export async function supprimerUnUtilisateurAction(
   const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
     .execute({
       uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
-      uidUtilisateurCourant: await getSubSession(),
+      uidUtilisateurCourant: await getSessionSub(),
     })
 
   revalidatePath(actionParams.path)

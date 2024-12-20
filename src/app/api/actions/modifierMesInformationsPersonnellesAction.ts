@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
-import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { telephonePattern } from '@/shared/patterns'
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -28,7 +28,7 @@ export async function modifierMesInformationsPersonnellesAction(
       prenom: validationResult.data.prenom,
       telephone: validationResult.data.telephone,
     },
-    uidUtilisateurCourant: await getSubSession(),
+    uidUtilisateurCourant: await getSessionSub(),
   })
 
   revalidatePath(actionParams.path)
