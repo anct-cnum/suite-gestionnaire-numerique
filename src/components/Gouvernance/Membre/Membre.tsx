@@ -48,7 +48,7 @@ export default function Membre({ membreDetails, labelId }: Props): ReactElement 
           Contact politique de la collectivité
         </div>
         <div className="font-weight-700">
-          {membreDetails.contactPolitique}
+          {membreDetails.contactReferent}
         </div>
       </div>
       <div className="fr-mb-2w">
