@@ -108,7 +108,7 @@ function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetail
     logo: buildLogoMembre(membre),
     nom: membre.nom,
     roles: membre.roles.map(toRoleViewModel),
-    sectionFeuilleDeRoute: `Feuille${formatPluriel(membre.feuillesDeRoute?.length ?? 0)} de route`,
+    sectionFeuilleDeRoute: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
     telephone: membre.telephone !== '' ? membre.telephone : '-',
     type: membre.type,
     typologieMembre: membre.typologieMembre,
@@ -249,9 +249,9 @@ export type MembreDetailsViewModel = Readonly<{
   telephone?: string,
   sectionFeuilleDeRoute: string,
   typologieMembre: string,
-  feuillesDeRoute?: ReadonlyArray<Readonly<{
+  feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
-  }>> | undefined
+  }>>
 }>
 
 type RoleViewModel = Readonly<{

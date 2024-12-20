@@ -15,6 +15,8 @@ describe('membres', () => {
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
     expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
+    const totaltirets = within(drawer).queryByText('-')
+    expect(totaltirets).not.toBeInTheDocument()
     const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Préfecture du Rhône' })
     expect(titreDrawer).toBeInTheDocument()
     const rolesList = within(drawer).getAllByRole('list')[0]
@@ -90,8 +92,10 @@ describe('membres', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-    const tirets = within(drawer).getAllByText('-')
-    expect(tirets).toHaveLength(2)
+    const totaltirets = within(drawer).getAllByText('-')
+    expect(totaltirets).toHaveLength(2)
+    const totalList = within(drawer).getAllByRole('list')
+    expect(totalList).toHaveLength(1)
   })
 
   it.each([
@@ -99,12 +103,14 @@ describe('membres', () => {
       feuilleDeRouteTotal: 0,
       feuillesDeRoute: [],
       result: 'Feuille de route',
+      totalTirets: 2,
       version: 'singulier',
     },
     {
       feuilleDeRouteTotal: 1,
       feuillesDeRoute: [{ nom: 'Feuille de route inclusion' }],
       result: 'Feuille de route',
+      totalTirets: 1,
       version: 'singulier',
     },
     {
@@ -114,6 +120,7 @@ describe('membres', () => {
         { nom: 'Feuille de route numérique du Rhône' },
       ],
       result: 'Feuilles de route',
+      totalTirets: 1,
       version: 'pluriel',
     },
     {
@@ -124,11 +131,12 @@ describe('membres', () => {
         { nom: 'Feuille de route numérique du Rhône 2' },
       ],
       result: 'Feuilles de route',
+      totalTirets: 1,
       version: 'pluriel',
     },
   ])(
     'quand je visualise le detail d’un membre et que j’ai $feuilleDeRouteTotal $result alors il s’affiche aux $version ',
-    ({ feuillesDeRoute, result }) => {
+    ({ feuillesDeRoute, totalTirets, result }) => {
       // GIVEN
       const gouvernanceViewModel = gouvernancePresenter(
         gouvernanceReadModelFactory({
@@ -157,8 +165,44 @@ describe('membres', () => {
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
       const feuilleDeRouteSingulierOuPluriel = within(drawer).getByText(result)
       expect(feuilleDeRouteSingulierOuPluriel).toBeInTheDocument()
+      const tirets = within(drawer).getAllByText('-')
+      expect(tirets).toHaveLength(totalTirets)
     }
   )
+
+  // it(
+  //   'quand je visualise le detail d’un membre et que j’ai 0 feuille de route alors un tiret ',
+  //   () => {
+  //     // GIVEN
+  //     const gouvernanceViewModel = gouvernancePresenter(
+  //       gouvernanceReadModelFactory({
+  //         membres: [
+  //           {
+  //             contactPolitique:
+  //               'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+  //             contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+  //             feuillesDeRoute: undefined,
+  //             nom: 'Préfecture du Rhône',
+  //             roles: ['Co-porteur'],
+  //             telephone: '',
+  //             type: 'Administration',
+  //             typologieMembre: 'Préfecture départementale',
+  //           },
+  //         ],
+  //       })
+  //     )
+  //     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+  //     // WHEN
+  //     const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+  //     fireEvent.click(membre)
+
+  //     // THEN
+  //     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+  //     const totalList = within(drawer).getAllByRole('list')
+  //     expect(totalList).toHaveLength(1)
+  //   }
+  // )
 })
 
 function afficherGouvernance(): void {
