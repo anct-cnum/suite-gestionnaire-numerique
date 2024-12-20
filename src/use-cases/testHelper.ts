@@ -123,4 +123,4 @@ export function gouvernanceReadModelFactory(
   }
 }
 
-const epochTime = new Date(0)
+export const epochTime = new Date(0)

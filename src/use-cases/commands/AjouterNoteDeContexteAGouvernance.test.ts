@@ -1,3 +1,4 @@
+import { epochTime } from '../testHelper'
 import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouvernance'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -17,7 +18,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new Date(0)
+      epochTime
     )
 
     // WHEN
@@ -49,7 +50,8 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
-      new UtilisateurUsurpateurRepositorySpy()
+      new UtilisateurUsurpateurRepositorySpy(),
+      epochTime
     )
 
     // WHEN
@@ -66,7 +68,8 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy()
+      new GestionnaireRepositorySpy(),
+      epochTime
     )
 
     // WHEN
@@ -87,7 +90,8 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy()
+      new GestionnaireInexistantRepositorySpy(),
+      epochTime
     )
 
     // WHEN

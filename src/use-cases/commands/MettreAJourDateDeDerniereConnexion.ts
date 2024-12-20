@@ -6,7 +6,7 @@ export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Comman
   readonly #utilisateurRepository: UtilisateurRepository
   readonly #date: Date
 
-  constructor(utilisateurRepository: UtilisateurRepository, date: Date = new Date()) {
+  constructor(utilisateurRepository: UtilisateurRepository, date: Date) {
     this.#utilisateurRepository = utilisateurRepository
     this.#date = date
   }
