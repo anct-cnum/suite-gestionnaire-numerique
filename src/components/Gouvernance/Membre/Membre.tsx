@@ -29,10 +29,10 @@ export default function Membre({ membreDetails, labelId }: Props): ReactElement 
         </ul>
       </div>
       <div className="fr-mb-2w">
-        <p className="color-grey">
+        <div className="color-grey">
           {membreDetails.sectionFeuilleDeRoute}
-        </p>
-        { membreDetails.feuillesDeRoute && membreDetails.feuillesDeRoute.length >= 1 ?
+        </div>
+        { membreDetails.feuillesDeRoute.length >= 1 ?
           <ul className="fr-tags-group">
             { membreDetails.feuillesDeRoute.map((feuilleDeRoute) => (
               <li key={feuilleDeRoute.nom}>
@@ -44,28 +44,28 @@ export default function Membre({ membreDetails, labelId }: Props): ReactElement 
           </ul> : '-'}
       </div>
       <div className="fr-mb-2w">
-        <p className="color-grey">
+        <div className="color-grey">
           Contact politique de la collectivité
-        </p>
-        <p className="font-weight-700">
+        </div>
+        <div className="font-weight-700">
           {membreDetails.contactPolitique}
-        </p>
+        </div>
       </div>
       <div className="fr-mb-2w">
-        <p className="color-grey">
+        <div className="color-grey">
           Contact technique
-        </p>
-        <p className="font-weight-700">
+        </div>
+        <div className="font-weight-700">
           {membreDetails.contactTechnique}
-        </p>
+        </div>
       </div>
       <div className="fr-mb-2w">
-        <p className="color-grey">
+        <div className="color-grey">
           Téléphone
-        </p>
-        <p className="font-weight-700">
+        </div>
+        <div className="font-weight-700">
           {membreDetails.telephone}
-        </p>
+        </div>
       </div>
     </>
   )
