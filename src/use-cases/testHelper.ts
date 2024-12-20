@@ -99,7 +99,7 @@ export function gouvernanceReadModelFactory(
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
         nom: 'Feuille de route inclusion 1',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 3,
       },
     ],
