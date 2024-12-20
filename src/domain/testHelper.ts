@@ -5,6 +5,7 @@ import { Gouvernance } from './Gouvernance'
 import { TypologieRole } from './Role'
 import { UtilisateurFactory } from './UtilisateurFactory'
 import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 export function utilisateurFactory(
   override?: Partial<
@@ -13,9 +14,9 @@ export function utilisateurFactory(
   >
 ): Utilisateur {
   return new UtilisateurFactory({
-    derniereConnexion: new Date(0),
+    derniereConnexion: epochTime,
     emailDeContact: 'martin.tartempion@example.net',
-    inviteLe: new Date(0),
+    inviteLe: epochTime,
     isSuperAdmin: false,
     nom: 'Tartempion',
     prenom: 'Martin',
@@ -27,10 +28,10 @@ export function utilisateurFactory(
 
 export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouvernance.create>[0]>): Gouvernance {
   return Gouvernance.create({
-    comites: [new ComiteUid(String(new Date(0).getTime()))],
+    comites: [new ComiteUid(String(epochTime.getTime()))],
     noteDeContexte: {
       contenu: '<p>contenu HTML</p>',
-      dateDeModification: new Date(0),
+      dateDeModification: epochTime,
       uidUtilisateurLAyantModifiee: new UtilisateurUid(utilisateurFactory().state.uid),
     },
     uid: 'fooGouvernanceUid',
@@ -45,9 +46,9 @@ export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouverna
 export function comiteFactory(override?: Partial<Parameters<typeof Comite.create>[0]>): Comite {
   return Comite.create({
     commentaire: 'un commentaire',
-    date: new Date(0),
-    dateDeCreation: new Date(0),
-    dateDeModification: new Date(0),
+    date: epochTime,
+    dateDeCreation: epochTime,
+    dateDeModification: epochTime,
     frequence: 'Annuelle',
     type: 'Stratégique',
     uid: '',

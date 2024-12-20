@@ -6,6 +6,7 @@ import { GestionnaireStructure } from './GestionnaireStructure'
 import { utilisateurFactory } from './testHelper'
 import { Utilisateur } from './Utilisateur'
 import { UtilisateurFactory } from './UtilisateurFactory'
+import { epochTime } from '@/shared/testHelper'
 
 describe('utilisateur factory', () => {
   it.each([
@@ -81,9 +82,9 @@ describe('utilisateur factory', () => {
   ])('$desc', ({ role, params, expectedType }) => {
     // GIVEN
     const utilisateurParams = {
-      derniereConnexion: new Date(0),
+      derniereConnexion: epochTime,
       emailDeContact: 'martin.tartempion@example.net',
-      inviteLe: new Date(0),
+      inviteLe: epochTime,
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
@@ -115,7 +116,7 @@ describe('utilisateur factory', () => {
     const utilisateurParams = {
       derniereConnexion,
       emailDeContact: 'martin.tartempion@example.net',
-      inviteLe: new Date(0),
+      inviteLe: epochTime,
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
@@ -143,9 +144,9 @@ describe('utilisateur factory', () => {
 
     // GIVEN
     const utilisateurParams = {
-      derniereConnexion: new Date(0),
+      derniereConnexion: epochTime,
       emailDeContact: 'martin.tartempion@example.net',
-      inviteLe: new Date(0),
+      inviteLe: epochTime,
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',
