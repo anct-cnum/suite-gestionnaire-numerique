@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
-import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { ReinviterUnUtilisateur } from '@/use-cases/commands/ReinviterUnUtilisateur'
@@ -25,7 +25,7 @@ export async function reinviterUnUtilisateurAction(
     new Date()
   ).execute({
     uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
-    uidUtilisateurCourant: await getSubSession(),
+    uidUtilisateurCourant: await getSessionSub(),
   })
 
   revalidatePath(validationResult.data.path)
