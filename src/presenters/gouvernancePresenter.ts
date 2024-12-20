@@ -101,8 +101,9 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
 }
 
 function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetailsViewModel {
+  const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
   return {
-    contactPolitique: membre.contactPolitique,
+    contactReferent,
     contactTechnique: membre.contactTechnique,
     feuillesDeRoute: membre.feuillesDeRoute,
     logo: buildLogoMembre(membre),
@@ -245,7 +246,13 @@ export type MembreDetailsViewModel = Readonly<{
   roles: ReadonlyArray<RoleViewModel>
   type: string
   contactTechnique: string,
-  contactPolitique: string,
+  // contactReferent: Readonly<{
+  //   nom: string
+  //   prenom: string
+  //   poste: string
+  //   mailContact: string
+  // }>,
+  contactReferent: string
   telephone?: string,
   sectionFeuilleDeRoute: string,
   typologieMembre: string,

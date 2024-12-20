@@ -98,11 +98,16 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     ],
     membres: [
       {
-        contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+        contactReferent: {
+          mailContact: 'julien.deschamps@rhones.gouv.fr',
+          nom: 'Henrich',
+          poste: 'chargé de mission',
+          prenom: 'Laetitia',
+        },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [
-          { nom: 'Feuille de route inclusion 1' },
-          { nom: 'Feuille de route inclusion 2' },
+          { nom: 'Feuille de route inclusion' },
+          { nom: 'Feuille de route numérique du Rhône' },
         ],
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
@@ -111,7 +116,12 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         typologieMembre: 'Préfecture départementale',
       },
       {
-        contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+        contactReferent: {
+          mailContact: 'jean.dupont@rhones.gouv.fr',
+          nom: 'Jean',
+          poste: 'chargé de mission',
+          prenom: 'Dupont',
+        },
         contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
         nom: 'Département du Rhône',
@@ -121,7 +131,12 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         typologieMembre: 'Collectivité, EPCI',
       },
       {
-        contactPolitique: 'Coco Dupont, chargé de mission coco.dupont@rhones.gouv.fr',
+        contactReferent: {
+          mailContact: 'coco.dupont@rhones.gouv.fr',
+          nom: 'Coco',
+          poste: 'chargé de mission',
+          prenom: 'Dupont',
+        },
         contactTechnique: 'coco.dupont@rhones.gouv.fr',
         feuillesDeRoute: [],
         nom: 'CC des Monts du Lyonnais',
