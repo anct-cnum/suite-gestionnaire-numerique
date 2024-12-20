@@ -70,7 +70,12 @@ export type MembreDetailsReadModel = Readonly<{
   roles: ReadonlyArray<string>
   type: string
   contactTechnique: string,
-  contactPolitique: string,
+  contactReferent: Readonly<{
+    nom: string
+    prenom: string
+    poste: string
+    mailContact: string
+  }>,
   telephone?: string,
   typologieMembre: string,
   feuillesDeRoute: ReadonlyArray<Readonly<{
