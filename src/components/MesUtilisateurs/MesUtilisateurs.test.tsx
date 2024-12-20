@@ -39,33 +39,45 @@ describe('mes utilisateurs', () => {
 
   it('étant du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
+    const spiedRouterPush = vi.fn()
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
-        {
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: '',
-            nom: 'Support animation',
-            pictogramme: '',
-            rolesGerables: [],
-          },
-        }
-      ),
-    })
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      {
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
+          {
+            role: {
+              doesItBelongToGroupeAdmin: true,
+              libelle: '',
+              nom: 'Support animation',
+              pictogramme: '',
+              rolesGerables: [],
+            },
+          }
+        ),
+      }
+    )
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
     expect(titre).toBeInTheDocument()
-
     const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
     expect(rechercher).toHaveAttribute('placeholder', 'Rechercher par nom ou adresse électronique')
     expect(rechercher).toHaveAttribute('type', 'search')
     const boutonRechercher = screen.getByRole('button', { name: 'Rechercher' })
     expect(boutonRechercher).toHaveAttribute('type', 'button')
-
+    fireEvent.change(rechercher, { target: { value: 'martin' } })
+    fireEvent.click(boutonRechercher)
+    expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('nomOuEmail=martin'))
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
     expect(filtrer).toHaveAttribute('type', 'button')
     const exporter = screen.getByRole('button', { name: 'Exporter' })

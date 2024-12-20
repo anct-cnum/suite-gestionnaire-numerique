@@ -21,7 +21,7 @@ import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur }
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: Props
 ): ReactElement {
-  const { sessionUtilisateurViewModel } = useContext(clientContext)
+  const { sessionUtilisateurViewModel, router } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -32,6 +32,7 @@ export default function MesUtilisateurs(
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
+  const [termesDeRecherche, setTermesDeRecherche] = useState('')
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     emailDeContact: '',
@@ -112,6 +113,10 @@ export default function MesUtilisateurs(
               <Search
                 labelBouton="Rechercher"
                 placeholder="Rechercher par nom ou adresse électronique"
+                rechercher={(event) => {
+                  setTermesDeRecherche(event.target.value)
+                }}
+                soumettreLaRecherche={soumettreLaRecherche}
               />
               <div>
                 <button
@@ -275,6 +280,12 @@ export default function MesUtilisateurs(
         setIsDrawerRenvoyerInvitationOpen(true)
       }
     }
+  }
+
+  function soumettreLaRecherche(): void {
+    const cloneUrlAvecParametres = new URL(window.location.href)
+    cloneUrlAvecParametres.searchParams.set('nomOuEmail', termesDeRecherche)
+    router.push(cloneUrlAvecParametres.toString())
   }
 }
 

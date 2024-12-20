@@ -829,7 +829,7 @@ describe('prisma utilisateur query', () => {
       uid: ssoId,
     })
     const roles: ReadonlyArray<string> = []
-    const utilisateurLoader = new PrismaUtilisateurLoader(prisma)
+    const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
     const codeDepartement = '0'
     const codeRegion = '0'
 

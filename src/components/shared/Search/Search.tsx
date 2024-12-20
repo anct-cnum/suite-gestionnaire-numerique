@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function Search({ labelBouton, placeholder }: Props): ReactElement {
+export default function Search({ labelBouton, placeholder, soumettreLaRecherche, rechercher }: Props): ReactElement {
   return (
     <div
       className="fr-search-bar"
@@ -17,11 +17,13 @@ export default function Search({ labelBouton, placeholder }: Props): ReactElemen
         className="fr-input"
         id="search-784-input"
         name="search-784-input"
+        onChange={rechercher}
         placeholder={placeholder}
         type="search"
       />
       <button
         className="fr-btn"
+        onClick={soumettreLaRecherche}
         title={labelBouton}
         type="button"
       >
@@ -34,4 +36,6 @@ export default function Search({ labelBouton, placeholder }: Props): ReactElemen
 type Props = Readonly<{
   labelBouton: string
   placeholder: string
+  soumettreLaRecherche(): void
+  rechercher(event: React.ChangeEvent<HTMLInputElement>): void
 }>
