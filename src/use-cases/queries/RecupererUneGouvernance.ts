@@ -6,7 +6,7 @@ export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
-  membres?: ReadonlyArray<MembreReadModel>
+  membres?: ReadonlyArray<MembreDetailsReadModel>
   noteDeContexte?: Readonly<{
     dateDeModification: Date
     nomAuteur: string
@@ -39,6 +39,19 @@ export type MembreReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
+}>
+
+export type MembreDetailsReadModel = Readonly<{
+  nom: string
+  roles: ReadonlyArray<string>
+  type: string
+  contactTechnique: string,
+  contactPolitique: string,
+  telephone?: string,
+  typologieMembre: string,
+  feuillesDeRoute?: ReadonlyArray<Readonly<{
+    nom: string
+  }>> | undefined
 }>
 
 type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
