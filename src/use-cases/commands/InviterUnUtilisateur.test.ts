@@ -1,3 +1,4 @@
+import { epochTime } from '../testHelper'
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -159,7 +160,7 @@ describe('inviter un utilisateur', () => {
     // GIVEN
     const repository = new RepositorySpy(utilisateurFactory({ role: 'Gestionnaire structure' }))
     const emailGatewayFactory = emailGatewayFactorySpy
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, epochTime)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
 
     // WHEN
@@ -183,7 +184,7 @@ describe('inviter un utilisateur', () => {
     // GIVEN
     const repository = new RepositorySpy(null)
     const emailGatewayFactory = emailGatewayFactorySpy
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory)
+    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, epochTime)
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
 
     // WHEN

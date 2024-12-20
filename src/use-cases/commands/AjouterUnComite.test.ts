@@ -1,3 +1,4 @@
+import { epochTime } from '../testHelper'
 import { AjouterUnComite } from './AjouterUnComite'
 import { AddComiteRepository } from './shared/ComiteRepository'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
@@ -209,7 +210,8 @@ describe('ajouter un comité à une gouvernance', () => {
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceExistanteRepositorySpy(),
       new GestionnaireInexistantRepositorySpy(),
-      new ComiteRepositorySpy()
+      new ComiteRepositorySpy(),
+      epochTime
     )
 
     // WHEN

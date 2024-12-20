@@ -1,3 +1,4 @@
+import { epochTime } from '../testHelper'
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
 import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -36,7 +37,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que l’utilisateur courant ne peut pas gérer l’utilisateur à réinviter, quand il le réinvite, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
@@ -54,7 +55,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que le compte de l’utilisateur courant est inexistant, quand il réinvite un autre utilisateur, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
       uidUtilisateurCourant: 'utilisateurInexistantUid',
@@ -72,7 +73,7 @@ describe('réinviter un utilisateur', () => {
   it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterActif',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
@@ -87,10 +88,10 @@ describe('réinviter un utilisateur', () => {
     expect(spiedUtilisateurToUpdate).toBeNull()
   })
 
-  it('étant donné que le compte de l’utilisateur est inexistant, quand il est réinvite, alors il y a une erreur', async () => {
+  it('étant donné que le compte de l’utilisateur est inexistant, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy)
+    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
     const command = {
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInexistant',
       uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
