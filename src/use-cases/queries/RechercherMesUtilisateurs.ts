@@ -21,6 +21,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<
     codeDepartement = '0',
     codeRegion = '0',
     idStructure = Infinity,
+    nomOuEmail,
   }: Query): Promise<UtilisateursCourantsEtTotalReadModel> {
     const utilisateur = await this.#mesUtilisateursLoader.findByUid(uid)
 
@@ -32,7 +33,8 @@ export class RechercherMesUtilisateurs implements QueryHandler<
       roles,
       codeDepartement,
       codeRegion,
-      idStructure
+      idStructure,
+      nomOuEmail
     )
   }
 }
@@ -51,7 +53,8 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
-    idStructure: number
+    idStructure: number,
+    nomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel>
 }
 
@@ -63,6 +66,7 @@ type Query = Partial<Readonly<{
   utilisateursActives: boolean
   utilisateursParPage: number
   idStructure: number
+  nomOuEmail?: string
 }>> & Readonly<{
   uid: string
 }>
