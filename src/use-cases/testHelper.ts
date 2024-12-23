@@ -111,8 +111,16 @@ export function gouvernanceReadModelFactory(
         },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [
-          { nom: 'Feuille de route inclusion' },
-          { nom: 'Feuille de route numérique du Rhône' },
+          {
+            montantSubventionAccorde: 5_000,
+            montantSubventionFormationAccorde: 5_000,
+            nom: 'Feuille de route inclusion',
+          },
+          {
+            montantSubventionAccorde: 5_000,
+            montantSubventionFormationAccorde: 5_000,
+            nom: 'Feuille de route numérique du Rhône',
+          },
         ],
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
@@ -122,13 +130,19 @@ export function gouvernanceReadModelFactory(
       },
       {
         contactReferent: {
-          mailContact: 'jean.dupont@rhones.gouv.fr',
-          nom: 'Jean',
+          mailContact: 'didier.durand@exemple.com',
+          nom: 'Didier',
           poste: 'chargé de mission',
-          prenom: 'Dupont',
+          prenom: 'Durant',
         },
         contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-        feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+        feuillesDeRoute: [
+          {
+            montantSubventionAccorde: 5_000,
+            montantSubventionFormationAccorde: 5_000,
+            nom: 'Feuille de route inclusion',
+          },
+        ],
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
@@ -140,7 +154,8 @@ export function gouvernanceReadModelFactory(
       dateDeModification: epochTime,
       nomAuteur: 'Deschamps',
       prenomAuteur: 'Jean',
-      texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      texte:
+        '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
     },
     uid: 'gouvernanceFooId',
     ...override,
