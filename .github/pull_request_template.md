@@ -17,6 +17,7 @@
 
 ## Facultatif mais fortement conseillé
 
+- [ ] Vérifier le coverage
 - [ ] Lancer les tests de mutation
 
 > **Et n'oublie pas de vérifier ce que tu as fait en production !**
