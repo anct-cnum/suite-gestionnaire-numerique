@@ -96,8 +96,14 @@ describe('gouvernance loader', () => {
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [
+            { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+            { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+          ],
+          beneficiairesSubventionFormation: [
+            { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+            { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+          ],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
@@ -108,7 +114,10 @@ describe('gouvernance loader', () => {
         },
         {
           beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [
+            { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+            { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+          ],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
@@ -128,8 +137,16 @@ describe('gouvernance loader', () => {
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
-            { nom: 'Feuille de route inclusion' },
-            { nom: 'Feuille de route numérique du Rhône' },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route inclusion',
+            },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route numérique du Rhône',
+            },
           ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -139,13 +156,19 @@ describe('gouvernance loader', () => {
         },
         {
           contactReferent: {
-            mailContact: 'jean.dupont@rhones.gouv.fr',
-            nom: 'Jean',
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
             poste: 'chargé de mission',
-            prenom: 'Dupont',
+            prenom: 'Durant',
           },
           contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+          feuillesDeRoute: [
+            {
+              montantSubventionAccorde: 30_000,
+              montantSubventionFormationAccorde: 20_000,
+              nom: 'Feuille de route inclusion',
+            },
+          ],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
@@ -172,7 +195,8 @@ describe('gouvernance loader', () => {
         dateDeModification: new Date('2024-11-23'),
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
-        texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        texte:
+          '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
       uid: '123456',
     })
