@@ -76,10 +76,12 @@ export type MembreDetailsReadModel = Readonly<{
     poste: string
     mailContact: string
   }>,
-  telephone?: string,
+  telephone: string,
   typologieMembre: string,
   feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
+    montantSubventionAccorde: number
+    montantSubventionFormationAccorde: number
   }>>
 }>
 
