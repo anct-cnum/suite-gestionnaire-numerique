@@ -102,15 +102,67 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
 
 function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
+  const montantSubventionAccorde = membre.feuillesDeRoute.reduce(
+    (result, feuilleDeRoute) => result +
+    (!isNaN(feuilleDeRoute.montantSubventionAccorde) ? feuilleDeRoute.montantSubventionAccorde : 0),
+    0
+  )
+
+  const montantSubventionFormationAccorde = membre.feuillesDeRoute.reduce(
+    (result, feuilleDeRoute) => result +
+    (!isNaN(feuilleDeRoute.montantSubventionFormationAccorde) ? feuilleDeRoute.montantSubventionFormationAccorde : 0),
+    0
+  )
+
+  const affichageMembrePrefecture: MembreDetailsViewModel['aperçueDuMembre'] = [
+    ...(membre.feuillesDeRoute.length >= 1
+      ? [
+        {
+          aperçueFeuillesDeRoute: membre.feuillesDeRoute,
+          aperçueIntitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+        },
+      ]
+      : []),
+    { aperçueDeLaDonnee: contactReferent, aperçueIntitule: 'Contact politique de la collectivité' },
+    { aperçueDeLaDonnee: membre.contactTechnique, aperçueIntitule: 'Contact technique' },
+    {
+      aperçueDeLaDonnee: membre.telephone !== '' ? membre.telephone : '-',
+      aperçueIntitule: 'Téléphone',
+    },
+  ]
+
+  const affichageAutreMembre: MembreDetailsViewModel['aperçueDuMembre'] = [
+    ...(membre.feuillesDeRoute.length >= 1
+      ? [
+        {
+          aperçueDeLaDonnee: '',
+          aperçueFeuillesDeRoute: membre.feuillesDeRoute,
+          aperçueIntitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+        },
+      ]
+      : []),
+    {
+      aperçueDeLaDonnee: `${formaterEnNombreFrancais(montantSubventionAccorde)} €`,
+      aperçueIntitule: 'Total subventions accordées',
+    },
+    {
+      aperçueDeLaDonnee: `${formaterEnNombreFrancais(montantSubventionFormationAccorde)} €`,
+      aperçueIntitule: 'Total subventions formations accordées',
+    },
+    { aperçueDeLaDonnee: contactReferent, aperçueIntitule: 'Contact référent' },
+    {
+      aperçueDeLaDonnee: membre.telephone !== '' ? membre.telephone : '-',
+      aperçueIntitule: 'Téléphone',
+    },
+  ]
+  const categorieDuMembre = typologieMembreEtAperçue[membre.typologieMembre] ?? typologieMembreEtAperçue.Autre
   return {
-    contactReferent,
-    contactTechnique: membre.contactTechnique,
-    feuillesDeRoute: membre.feuillesDeRoute,
+    affichagePlusDetails: categorieDuMembre === 'affichageAutreMembre',
+    aperçueDuMembre: categorieDuMembre === 'affichageMembrePrefecture' ? affichageMembrePrefecture : affichageAutreMembre,
+    categorieDuMembre: typologieMembreEtAperçue[membre.typologieMembre] ?? typologieMembreEtAperçue.Autre,
     logo: buildLogoMembre(membre),
     nom: membre.nom,
     roles: membre.roles.map(toRoleViewModel),
-    sectionFeuilleDeRoute: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
-    telephone: membre.telephone !== '' ? membre.telephone : '-',
     type: membre.type,
     typologieMembre: membre.typologieMembre,
   }
@@ -152,13 +204,15 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
     }
   }
 
-  const detailDuNombreDeChaqueMembre = Object.entries(membres
-    .flatMap(({ roles }) => roles)
-    .reduce<Record<string, number>>((nombreParRole, role) => {
-      nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
+  const detailDuNombreDeChaqueMembre = Object.entries(
+    membres
+      .flatMap(({ roles }) => roles)
+      .reduce<Record<string, number>>((nombreParRole, role) => {
+        nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
 
-      return nombreParRole
-    }, {}))
+        return nombreParRole
+      }, {})
+  )
     .map(([role, nombre]) => `${nombre} ${role.toLowerCase()}${formatPluriel(nombre)}`)
     .join(', ')
 
@@ -245,20 +299,22 @@ export type MembreDetailsViewModel = Readonly<{
   logo: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
-  contactTechnique: string,
-  // contactReferent: Readonly<{
-  //   nom: string
-  //   prenom: string
-  //   poste: string
-  //   mailContact: string
-  // }>,
-  contactReferent: string
-  telephone?: string,
-  sectionFeuilleDeRoute: string,
-  typologieMembre: string,
-  feuillesDeRoute: ReadonlyArray<Readonly<{
-    nom: string
+  typologieMembre: string
+  feuillesDeRoute?: ReadonlyArray<
+    Readonly<{
+      nom: string
+    }>
+  >
+  aperçueDuMembre: ReadonlyArray<Readonly<{
+    aperçueIntitule: string
+    aperçueDeLaDonnee?: string
+    aperçueFeuillesDeRoute?: ReadonlyArray<
+      Readonly<{
+        nom: string
+      }>>
   }>>
+  categorieDuMembre: string
+  affichagePlusDetails: boolean
 }>
 
 type RoleViewModel = Readonly<{
@@ -283,4 +339,9 @@ const roleAndHisColor: Record<string, string> = {
   Observateur: 'beige-gris-galet',
   Porteur: 'info',
   Récipiendaire: 'green-archipel',
+}
+
+const typologieMembreEtAperçue: Record<string, string> = {
+  Autre: 'affichageAutreMembre',
+  'Préfecture départementale': 'affichageMembrePrefecture',
 }

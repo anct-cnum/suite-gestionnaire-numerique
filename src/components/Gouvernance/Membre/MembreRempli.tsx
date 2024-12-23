@@ -98,6 +98,8 @@ export default function MembreRempli({
         setIsOpen={setIsDrawerOpen}
       >
         <Membre
+          affichagePlusDetails={membreDetails.affichagePlusDetails}
+          aperçueDuMembre={membreDetails.aperçueDuMembre}
           labelId={labelMembreId}
           membreDetails={membreDetails}
         />
@@ -109,5 +111,5 @@ export default function MembreRempli({
 type Props = Readonly<{
   detailDuNombreDeChaqueMembre: string
   membres: NonNullable<GouvernanceViewModel['sectionMembres']['membres']>
-  nombreDeMembres: string
+  nombreDeMembres: string,
 }>
