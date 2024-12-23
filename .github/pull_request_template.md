@@ -5,6 +5,7 @@
 - [ ] Relire le code
 - [ ] Relire le ticket
 - [ ] [Relire les critères d'acceptation](https://github.com/anct-cnum/suite-gestionnaire-numerique/discussions/252)
+- [ ] Vérifier le coverage
 - [ ] Recetter l'application
 - [ ] Regarder le commentaire de sonarcloud et corriger s'il est pertinent
 - [ ] Ajouter des variables d'environnement sur la production au besoin
@@ -17,7 +18,6 @@
 
 ## Facultatif mais fortement conseillé
 
-- [ ] Vérifier le coverage
 - [ ] Lancer les tests de mutation
 
 > **Et n'oublie pas de vérifier ce que tu as fait en production !**
