@@ -32,7 +32,7 @@ export default function MesUtilisateurs(
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
-  const [termesDeRecherche, setTermesDeRecherche] = useState('')
+  const [termesDeRechercheNomOuEmail, setTermesDeRechercheNomOuEmail] = useState('')
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     emailDeContact: '',
@@ -107,6 +107,7 @@ export default function MesUtilisateurs(
                 id={drawerFiltreId}
                 labelId={labelFiltreId}
                 setIsOpen={setIsDrawerOpen}
+                setTermesDeRechercheNomOuEmail={setTermesDeRechercheNomOuEmail}
               />
             </Drawer>
             <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
@@ -114,9 +115,12 @@ export default function MesUtilisateurs(
                 labelBouton="Rechercher"
                 placeholder="Rechercher par nom ou adresse électronique"
                 rechercher={(event) => {
-                  setTermesDeRecherche(event.target.value)
+                  setTermesDeRechercheNomOuEmail(event.target.value)
                 }}
+                reinitialiserBouton="Reinitialiser"
+                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
                 soumettreLaRecherche={soumettreLaRecherche}
+                termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
               />
               <div>
                 <button
@@ -282,9 +286,18 @@ export default function MesUtilisateurs(
     }
   }
 
-  function soumettreLaRecherche(): void {
+  function soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault()
     const cloneUrlAvecParametres = new URL(window.location.href)
-    cloneUrlAvecParametres.searchParams.set('nomOuEmail', termesDeRecherche)
+    cloneUrlAvecParametres.searchParams.delete('page')
+    cloneUrlAvecParametres.searchParams.set('prenomOuNomOuEmail', termesDeRechercheNomOuEmail)
+    router.push(cloneUrlAvecParametres.toString())
+  }
+
+  function reinitialiserLesTermesDeRechercheNomOuEmail(): void {
+    setTermesDeRechercheNomOuEmail('')
+    const cloneUrlAvecParametres = new URL(window.location.href)
+    cloneUrlAvecParametres.searchParams.delete('prenomOuNomOuEmail')
     router.push(cloneUrlAvecParametres.toString())
   }
 }

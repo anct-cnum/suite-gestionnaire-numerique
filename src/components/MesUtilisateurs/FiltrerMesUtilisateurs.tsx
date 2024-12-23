@@ -16,6 +16,7 @@ export default function FiltrerMesUtilisateurs({
   id,
   labelId,
   setIsOpen,
+  setTermesDeRechercheNomOuEmail,
 }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
@@ -89,6 +90,7 @@ export default function FiltrerMesUtilisateurs({
     ref.current?.setValue(toutesLesRegions, 'select-option')
     setStructure('')
     router.push('/mes-utilisateurs')
+    setTermesDeRechercheNomOuEmail('')
   }
 
   function filtrer(event: FormEvent<HTMLFormElement>): void {
@@ -108,4 +110,5 @@ type Props = Readonly<{
   id: string
   labelId: string
   setIsOpen: Dispatch<SetStateAction<boolean>>
+  setTermesDeRechercheNomOuEmail: Dispatch<SetStateAction<string>>
 }>

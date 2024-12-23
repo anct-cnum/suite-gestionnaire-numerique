@@ -23,17 +23,17 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     codeDepartement: string,
     codeRegion: string,
     idStructure?: number,
-    nomOuEmail?: string
+    prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
     const departementInexistant = '0'
     const regionInexistante = '0'
     let where: Prisma.UtilisateurRecordWhereInput = {}
 
-    if (nomOuEmail !== undefined) {
+    if (prenomOuNomOuEmail !== undefined) {
       where.OR = [
-        { nom: { contains: nomOuEmail, mode: 'insensitive' } },
-        { prenom: { contains: nomOuEmail, mode: 'insensitive' } },
-        { emailDeContact: { contains: nomOuEmail, mode: 'insensitive' } },
+        { nom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
+        { prenom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
+        { emailDeContact: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
       ]
     }
 
