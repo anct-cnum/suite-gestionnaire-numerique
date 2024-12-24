@@ -18,19 +18,22 @@ export const metadata: Metadata = {
 
 export default async function MesUtilisateursController({ searchParams }: Props): Promise<ReactElement> {
   const sub = await getSessionSub()
-  const pageAwaited = (await searchParams).page
+  const searchParamsAwaited = await searchParams
+  const pageAwaited = searchParamsAwaited.page
   const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) }
-  const utilisateursActives = Boolean((await searchParams).utilisateursActives)
-  const codeDepartement = isNullishOrEmpty((await searchParams).codeDepartement)
+  const utilisateursActives = Boolean(searchParamsAwaited.utilisateursActives)
+  const codeDepartement = isNullishOrEmpty(searchParamsAwaited.codeDepartement)
     ? {}
-    : { codeDepartement: (await searchParams).codeDepartement }
-  const codeRegionAwaited = (await searchParams).codeRegion
+    : { codeDepartement: searchParamsAwaited.codeDepartement }
+  const codeRegionAwaited = searchParamsAwaited.codeRegion
   const codeRegion = isNullishOrEmpty(codeRegionAwaited) ? {} : { codeRegion: codeRegionAwaited }
-  const rolesAwaited = (await searchParams).roles
+  const rolesAwaited = searchParamsAwaited.roles
   const roles = isNullishOrEmpty(rolesAwaited) ? {} : { roles: rolesAwaited?.split(',') }
-  const structureAwaited = (await searchParams).structure
+  const structureAwaited = searchParamsAwaited.structure
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const idStructure = isNullishOrEmpty(structureAwaited) ? {} : { idStructure: +structureAwaited! }
+  const prenomOuNomOuEmailAwaited = searchParamsAwaited.prenomOuNomOuEmail
+  const prenomOuNomOuEmail = isNullishOrEmpty(prenomOuNomOuEmailAwaited) ? '' : prenomOuNomOuEmailAwaited
 
   const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
@@ -43,6 +46,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
       ...pageCourante,
       ...roles,
       ...idStructure,
+      prenomOuNomOuEmail,
     })
 
   const rolesAvecStructure: RolesAvecStructure = {
@@ -88,5 +92,6 @@ type Props = Readonly<{
     roles: string
     utilisateursActives: string
     structure: string
+    prenomOuNomOuEmail: string
   }>>>
 }>

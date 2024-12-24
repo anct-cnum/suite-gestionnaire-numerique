@@ -15,27 +15,36 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   }
 
   async findMesUtilisateursEtLeTotal(
-    utilisateur: UnUtilisateurReadModel,
+    utilisateurCourant: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,
     utilisateursActives: boolean,
     roles: ReadonlyArray<string>,
     codeDepartement: string,
     codeRegion: string,
-    idStructure?: number
+    idStructure?: number,
+    prenomOuNomOuEmail?: string
   ): Promise<UtilisateursCourantsEtTotalReadModel> {
     const departementInexistant = '0'
     const regionInexistante = '0'
     let where: Prisma.UtilisateurRecordWhereInput = {}
 
-    if (utilisateur.role.nom === 'Gestionnaire structure') {
-      where = { role: 'gestionnaire_structure', structureId: utilisateur.structureId }
-    } else if (utilisateur.role.nom === 'Gestionnaire département') {
-      where = { departementCode: utilisateur.departementCode, role: 'gestionnaire_departement' }
-    } else if (utilisateur.role.nom === 'Gestionnaire groupement') {
-      where = { groupementId: utilisateur.groupementId, role: 'gestionnaire_groupement' }
-    } else if (utilisateur.role.nom === 'Gestionnaire région') {
-      where = { regionCode: utilisateur.regionCode, role: 'gestionnaire_region' }
+    if (prenomOuNomOuEmail !== undefined) {
+      where.OR = [
+        { nom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
+        { prenom: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
+        { emailDeContact: { contains: prenomOuNomOuEmail, mode: 'insensitive' } },
+      ]
+    }
+
+    if (utilisateurCourant.role.nom === 'Gestionnaire structure') {
+      where = { role: 'gestionnaire_structure', structureId: utilisateurCourant.structureId }
+    } else if (utilisateurCourant.role.nom === 'Gestionnaire département') {
+      where = { departementCode: utilisateurCourant.departementCode, role: 'gestionnaire_departement' }
+    } else if (utilisateurCourant.role.nom === 'Gestionnaire groupement') {
+      where = { groupementId: utilisateurCourant.groupementId, role: 'gestionnaire_groupement' }
+    } else if (utilisateurCourant.role.nom === 'Gestionnaire région') {
+      where = { regionCode: utilisateurCourant.regionCode, role: 'gestionnaire_region' }
     } else {
       if (utilisateursActives) {
         where.NOT = { derniereConnexion: null }

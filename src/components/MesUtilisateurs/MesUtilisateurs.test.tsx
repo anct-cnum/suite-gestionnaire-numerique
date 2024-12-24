@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import { renderComponent, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
@@ -39,12 +40,94 @@ describe('mes utilisateurs', () => {
 
   it('étant du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
     // GIVEN
+    const spiedRouterPush = vi.fn()
     const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
 
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
-        {
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      {
+        router: {
+          push: spiedRouterPush,
+        } as unknown as AppRouterInstance,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
+          {
+            role: {
+              doesItBelongToGroupeAdmin: true,
+              libelle: '',
+              nom: 'Support animation',
+              pictogramme: '',
+              rolesGerables: [],
+            },
+          }
+        ),
+      }
+    )
+
+    // THEN
+    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
+    expect(titre).toBeInTheDocument()
+    const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
+    expect(rechercher).toHaveAttribute('placeholder', 'Rechercher par nom ou adresse électronique')
+    expect(rechercher).toHaveAttribute('type', 'search')
+    const boutonRechercher = screen.getByRole('button', { name: 'Rechercher' })
+    expect(boutonRechercher).toHaveAttribute('type', 'submit')
+    fireEvent.change(rechercher, { target: { value: 'martin' } })
+    const searchForm = screen.getByRole('search')
+    fireEvent.submit(searchForm)
+    expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('prenomOuNomOuEmail=martin'))
+    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
+    expect(filtrer).toHaveAttribute('type', 'button')
+    const exporter = screen.getByRole('button', { name: 'Exporter' })
+    expect(exporter).toHaveAttribute('type', 'button')
+  })
+
+  it('étant du groupe gestionnaire quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
+    // GIVEN
+    const spiedRouterPush = vi.fn()
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+
+    // WHEN
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      {
+        router: {
+          push: spiedRouterPush,
+        } as unknown as AppRouterInstance,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
+          {
+            role: {
+              doesItBelongToGroupeAdmin: true,
+              libelle: '',
+              nom: 'Support animation',
+              pictogramme: '',
+              rolesGerables: [],
+            },
+          }
+        ),
+      }
+    )
+
+    // THEN
+    const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
+    fireEvent.change(rechercher, { target: { value: 'martin' } })
+    const searchForm = screen.getByRole('search')
+    fireEvent.submit(searchForm)
+    expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('prenomOuNomOuEmail=martin'))
+    const boutonReinitialiser = screen.getByRole('button', { name: 'Reinitialiser' })
+    fireEvent.click(boutonReinitialiser)
+    expect(spiedRouterPush).toHaveBeenCalledWith(expect.not.stringContaining('prenomOuNomOuEmail='))
+  })
+
+  it('étant du groupe gestionnaire quand le champ de recherche est vide alors l’icône de réinitialisation n’est pas affichée', () => {
+    // GIVEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+
+    // WHEN
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      {
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
             doesItBelongToGroupeAdmin: true,
             libelle: '',
@@ -52,24 +135,15 @@ describe('mes utilisateurs', () => {
             pictogramme: '',
             rolesGerables: [],
           },
-        }
-      ),
-    })
+        }),
+      }
+    )
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
-    expect(titre).toBeInTheDocument()
-
     const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
-    expect(rechercher).toHaveAttribute('placeholder', 'Rechercher par nom ou adresse électronique')
-    expect(rechercher).toHaveAttribute('type', 'search')
-    const boutonRechercher = screen.getByRole('button', { name: 'Rechercher' })
-    expect(boutonRechercher).toHaveAttribute('type', 'button')
-
-    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-    expect(filtrer).toHaveAttribute('type', 'button')
-    const exporter = screen.getByRole('button', { name: 'Exporter' })
-    expect(exporter).toHaveAttribute('type', 'button')
+    expect(rechercher).toHaveValue('')
+    const boutonReinitialiser = screen.queryByRole('button', { name: 'Reinitialiser' })
+    expect(boutonReinitialiser).not.toBeInTheDocument()
   })
 
   it('étant du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai un autre titre et un sous titre', () => {
