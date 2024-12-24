@@ -25,14 +25,14 @@ export default function MembreRempli({
   return (
     <>
       <SectionRemplie
-        button={(
+        button={
           <Link
             className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
             href="/"
           >
             Gérer
           </Link>
-        )}
+        }
         id="membre"
         subTitle={
           <SubSectionTitle>
@@ -46,45 +46,43 @@ export default function MembreRempli({
           hideHead="fr-sr-only"
           titre="Membres"
         >
-          {
-            membres.map((membre) => (
-              <tr key={membre.nom} >
-                <td>
-                  <span
-                    aria-hidden="true"
-                    className={`fr-icon-${membre.logo} color-blue-france`}
-                  />
-                </td>
-                <td>
-                  <button
-                    aria-controls={drawerMembreId}
-                    className="primary font-weight-700 fr-px-0 no-hover d-block"
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setMembreDetails(membre)
-                      setIsDrawerOpen(true)
-                    }}
-                    type="button"
-                  >
-                    {membre.nom}
-                  </button>
-                </td>
-                <td className="color-grey">
-                  {membre.type}
-                </td>
-                <td>
-                  {membre.roles.map((role) => (
-                    <Fragment key={role.nom}>
-                      <Badge color={role.color}>
-                        {role.nom}
-                      </Badge>
-                      {' '}
-                    </Fragment>
-                  ))}
-                </td>
-              </tr>
-            ))
-          }
+          {membres.map((membre) => (
+            <tr key={membre.nom}>
+              <td>
+                <span
+                  aria-hidden="true"
+                  className={`fr-icon-${membre.logo} color-blue-france`}
+                />
+              </td>
+              <td>
+                <button
+                  aria-controls={drawerMembreId}
+                  className="primary font-weight-700 fr-px-0 no-hover d-block"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setMembreDetails(membre)
+                    setIsDrawerOpen(true)
+                  }}
+                  type="button"
+                >
+                  {membre.nom}
+                </button>
+              </td>
+              <td className="color-grey">
+                {membre.type}
+              </td>
+              <td>
+                {membre.roles.map((role) => (
+                  <Fragment key={role.nom}>
+                    <Badge color={role.color}>
+                      {role.nom}
+                    </Badge>
+                    {' '}
+                  </Fragment>
+                ))}
+              </td>
+            </tr>
+          ))}
         </Table>
       </SectionRemplie>
       <Drawer
@@ -99,7 +97,7 @@ export default function MembreRempli({
       >
         <Membre
           affichagePlusDetails={membreDetails.affichagePlusDetails}
-          aperçueDuMembre={membreDetails.aperçueDuMembre}
+          details={membreDetails.details}
           labelId={labelMembreId}
           membreDetails={membreDetails}
         />
@@ -111,5 +109,5 @@ export default function MembreRempli({
 type Props = Readonly<{
   detailDuNombreDeChaqueMembre: string
   membres: NonNullable<GouvernanceViewModel['sectionMembres']['membres']>
-  nombreDeMembres: string,
+  nombreDeMembres: string
 }>

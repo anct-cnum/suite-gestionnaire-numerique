@@ -9,7 +9,7 @@ import { MembreDetailsViewModel } from '@/presenters/gouvernancePresenter'
 export default function Membre({
   membreDetails,
   labelId,
-  aperçueDuMembre,
+  details,
   affichagePlusDetails,
 }: Props): ReactElement {
   return (
@@ -34,17 +34,17 @@ export default function Membre({
           </li>
         </ul>
       </div>
-      {aperçueDuMembre.map((membre) => (
+      {details.map((membre) => (
         <div
           className="fr-mb-2w"
-          key={membre.aperçueIntitule}
+          key={membre.intitule}
         >
           <div className="color-grey">
-            {membre.aperçueIntitule}
+            {membre.intitule}
           </div>
-          {membre.aperçueFeuillesDeRoute ? (
+          {membre.feuillesDeRoute ? (
             <ul className="fr-tags-group">
-              {membre.aperçueFeuillesDeRoute.map((feuilleDeRoute) => (
+              {membre.feuillesDeRoute.map((feuilleDeRoute) => (
                 <li key={feuilleDeRoute.nom}>
                   <Tag>
                     {feuilleDeRoute.nom}
@@ -54,7 +54,7 @@ export default function Membre({
             </ul>
           ) : (
             <div className="font-weight-700">
-              {membre.aperçueDeLaDonnee}
+              {membre.information}
             </div>
           )}
         </div>
@@ -78,6 +78,6 @@ export default function Membre({
 type Props = Readonly<{
   membreDetails: MembreDetailsViewModel
   labelId: string
-  aperçueDuMembre: MembreDetailsViewModel['aperçueDuMembre']
+  details: MembreDetailsViewModel['details']
   affichagePlusDetails: boolean
 }>
