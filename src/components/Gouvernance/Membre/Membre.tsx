@@ -20,7 +20,10 @@ export default function Membre({
       <div className="fr-mb-2w">
         <ul className="fr-tags-group">
           {membreDetails.roles.map((role) => (
-            <li key={role.nom}>
+            <li
+              className="fr-mr-1w"
+              key={role.nom}
+            >
               <Badge color={role.color}>
                 {role.nom}
               </Badge>
