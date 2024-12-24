@@ -65,26 +65,6 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-export type MembreDetailsReadModel = Readonly<{
-  nom: string
-  roles: ReadonlyArray<string>
-  type: string
-  contactTechnique: string,
-  contactReferent: Readonly<{
-    nom: string
-    prenom: string
-    poste: string
-    mailContact: string
-  }>,
-  telephone: string,
-  typologieMembre: string,
-  feuillesDeRoute: ReadonlyArray<Readonly<{
-    nom: string
-    montantSubventionAccorde: number
-    montantSubventionFormationAccorde: number
-  }>>
-}>
-
 export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
 
 type NoteDeContexteReadModel = Readonly<{
