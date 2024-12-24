@@ -818,4 +818,241 @@ describe('prisma utilisateur query', () => {
     const codeDepartement = '0'
     const codeRegion = '0'
   })
+
+  describe('chercher un utilisateur par son nom ou son email', () => {
+    const structureId = 15
+    const ssoId = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const pageCourante = 0
+    const utilisateursParPage = 10
+    const isActive = false
+    const utilisateurAuthentifie = utilisateurReadModelFactory({
+      uid: ssoId,
+    })
+    const roles: ReadonlyArray<string> = []
+    const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
+    const codeDepartement = '0'
+    const codeRegion = '0'
+
+    it('quand je cherche un utilisateur par son email alors je le trouve', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'gregory.logeais@example.net'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(1)
+    })
+
+    it('quand je cherche un utilisateur par son email de contact et qu‘un autre utilisateur a le même email de contact alors je les trouve', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'structure@example.net'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(2)
+    })
+
+    it('quand je cherche un utilisateur par son prénom alors je le trouve', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'Baptiste'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(1)
+      expect(result.utilisateursCourants[0].prenom).toMatch(/baptiste/i)
+    })
+
+    it('quand je cherche un utilisateur par son nom alors je le trouve', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'Nogent'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(1)
+      expect(result.utilisateursCourants[0].nom).toMatch(/nogent/i)
+    })
+
+    it('quand je cherche avec un email qui n‘existe pas alors je ne trouve personne', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'nonexistent@example.com'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(0)
+      expect(result.utilisateursCourants).toHaveLength(0)
+    })
+
+    it('quand je cherche avec un nom qui n‘existe pas alors je ne trouve personne', async () => {
+
+      // GIVEN
+      await creationDesUtilisateurs(structureId)
+      const prenomOuNomOuEmail = 'NonExistentName'
+
+      // WHEN
+      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+        utilisateurAuthentifie,
+        pageCourante,
+        utilisateursParPage,
+        isActive,
+        roles,
+        codeDepartement,
+        codeRegion,
+        structureId,
+        prenomOuNomOuEmail
+      )
+
+      // THEN
+      expect(result.total).toBe(0)
+      expect(result.utilisateursCourants).toHaveLength(0)
+    })
+  })
 })
+
+async function creationDesUtilisateurs(structureId: number): Promise<void> {
+  await prisma.regionRecord.create({
+    data: regionRecordFactory({
+      code: '92',
+      nom: 'Provence-Alpes-Côte d\'Azur',
+    }),
+  })
+
+  await prisma.departementRecord.create({
+    data: departementRecordFactory({
+      code: '07',
+      nom: 'Alpes-Maritimes',
+      regionCode: '92',
+    }),
+  })
+
+  await prisma.structureRecord.create({
+    data: structureRecordFactory({
+      departementCode: '07',
+      id: structureId,
+      nom: 'LAPOSTE',
+    }),
+  })
+
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      emailDeContact: 'gregory.logeais@example.net',
+      nom: 'Logeais',
+      prenom: 'Gregory',
+      ssoEmail: 'gregory.logeais@example.net',
+      ssoId: 'fooId1',
+      structureId,
+    }),
+  })
+
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      emailDeContact: 'structure@example.net',
+      nom: 'Belleville',
+      prenom: 'Romain',
+      ssoEmail: 'romain.belleville@example.net',
+      ssoId: 'barId1',
+      structureId,
+    }),
+  })
+
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      emailDeContact: 'structure@example.net',
+      nom: 'Belleville',
+      prenom: 'Romain',
+      ssoEmail: 'robin.desmurs@example.net',
+      ssoId: 'barId2',
+      structureId,
+    }),
+  })
+
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      emailDeContact: 'structure1@example.net',
+      nom: 'Deschamps',
+      prenom: 'Baptiste',
+      ssoEmail: 'romain.sceller@example.net',
+      ssoId: 'barId23',
+      structureId,
+    }),
+  })
+
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      emailDeContact: 'structure3@example.net',
+      nom: 'Nogent',
+      prenom: 'Eric',
+      ssoEmail: 'foo.bar@example.net',
+      ssoId: 'barId234',
+      structureId,
+    }),
+  })
+}

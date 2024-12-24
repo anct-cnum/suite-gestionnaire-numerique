@@ -21,7 +21,7 @@ import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur }
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: Props
 ): ReactElement {
-  const { sessionUtilisateurViewModel } = useContext(clientContext)
+  const { sessionUtilisateurViewModel, router } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })
@@ -32,6 +32,7 @@ export default function MesUtilisateurs(
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerRenvoyerInvitationOpen, setIsDrawerRenvoyerInvitationOpen] = useState(false)
+  const [termesDeRechercheNomOuEmail, setTermesDeRechercheNomOuEmail] = useState('')
   const [utilisateurSelectionne, setUtilisateurSelectionne] = useState<DetailsUtilisateurViewModel>({
     derniereConnexion: '',
     emailDeContact: '',
@@ -106,12 +107,20 @@ export default function MesUtilisateurs(
                 id={drawerFiltreId}
                 labelId={labelFiltreId}
                 setIsOpen={setIsDrawerOpen}
+                setTermesDeRechercheNomOuEmail={setTermesDeRechercheNomOuEmail}
               />
             </Drawer>
             <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
               <Search
                 labelBouton="Rechercher"
                 placeholder="Rechercher par nom ou adresse électronique"
+                rechercher={(event) => {
+                  setTermesDeRechercheNomOuEmail(event.target.value)
+                }}
+                reinitialiserBouton="Reinitialiser"
+                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
+                soumettreLaRecherche={soumettreLaRecherche}
+                termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
               />
               <div>
                 <button
@@ -275,6 +284,21 @@ export default function MesUtilisateurs(
         setIsDrawerRenvoyerInvitationOpen(true)
       }
     }
+  }
+
+  function soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault()
+    const cloneUrlAvecParametres = new URL(window.location.href)
+    cloneUrlAvecParametres.searchParams.delete('page')
+    cloneUrlAvecParametres.searchParams.set('prenomOuNomOuEmail', termesDeRechercheNomOuEmail)
+    router.push(cloneUrlAvecParametres.toString())
+  }
+
+  function reinitialiserLesTermesDeRechercheNomOuEmail(): void {
+    setTermesDeRechercheNomOuEmail('')
+    const cloneUrlAvecParametres = new URL(window.location.href)
+    cloneUrlAvecParametres.searchParams.delete('prenomOuNomOuEmail')
+    router.push(cloneUrlAvecParametres.toString())
   }
 }
 
