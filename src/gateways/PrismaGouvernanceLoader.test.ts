@@ -267,11 +267,24 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres: [
         {
-          contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
-            { nom: 'Feuille de route inclusion 1' },
-            { nom: 'Feuille de route inclusion 2' },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route inclusion',
+            },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route numérique du Rhône',
+            },
           ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -280,9 +293,20 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Préfecture départementale',
         },
         {
-          contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
+          },
           contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+          feuillesDeRoute: [
+            {
+              montantSubventionAccorde: 30_000,
+              montantSubventionFormationAccorde: 20_000,
+              nom: 'Feuille de route inclusion',
+            },
+          ],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
@@ -290,7 +314,12 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Collectivité, EPCI',
         },
         {
-          contactPolitique: 'Coco Dupont, chargé de mission coco.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'coco.dupont@rhones.gouv.fr',
+            nom: 'Coco',
+            poste: 'chargé de mission',
+            prenom: 'Dupont',
+          },
           contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           nom: 'CC des Monts du Lyonnais',
@@ -365,11 +394,24 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres: [
         {
-          contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
-            { nom: 'Feuille de route inclusion 1' },
-            { nom: 'Feuille de route inclusion 2' },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route inclusion',
+            },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route numérique du Rhône',
+            },
           ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -378,9 +420,20 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Préfecture départementale',
         },
         {
-          contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
+          },
           contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+          feuillesDeRoute: [
+            {
+              montantSubventionAccorde: 30_000,
+              montantSubventionFormationAccorde: 20_000,
+              nom: 'Feuille de route inclusion',
+            },
+          ],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
@@ -388,7 +441,12 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Collectivité, EPCI',
         },
         {
-          contactPolitique: 'Coco Dupont, chargé de mission coco.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'coco.dupont@rhones.gouv.fr',
+            nom: 'Coco',
+            poste: 'chargé de mission',
+            prenom: 'Dupont',
+          },
           contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           nom: 'CC des Monts du Lyonnais',
@@ -464,11 +522,24 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres: [
         {
-          contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
-            { nom: 'Feuille de route inclusion 1' },
-            { nom: 'Feuille de route inclusion 2' },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route inclusion',
+            },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route numérique du Rhône',
+            },
           ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -477,9 +548,20 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Préfecture départementale',
         },
         {
-          contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
+          },
           contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+          feuillesDeRoute: [
+            {
+              montantSubventionAccorde: 30_000,
+              montantSubventionFormationAccorde: 20_000,
+              nom: 'Feuille de route inclusion',
+            },
+          ],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
@@ -487,7 +569,12 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Collectivité, EPCI',
         },
         {
-          contactPolitique: 'Coco Dupont, chargé de mission coco.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'coco.dupont@rhones.gouv.fr',
+            nom: 'Coco',
+            poste: 'chargé de mission',
+            prenom: 'Dupont',
+          },
           contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           nom: 'CC des Monts du Lyonnais',
@@ -563,11 +650,24 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres: [
         {
-          contactPolitique: 'Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
+          },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
-            { nom: 'Feuille de route inclusion 1' },
-            { nom: 'Feuille de route inclusion 2' },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route inclusion',
+            },
+            {
+              montantSubventionAccorde: 5_000,
+              montantSubventionFormationAccorde: 5_000,
+              nom: 'Feuille de route numérique du Rhône',
+            },
           ],
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -576,9 +676,20 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Préfecture départementale',
         },
         {
-          contactPolitique: 'Jean Dupont, chargé de mission jean.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
+          },
           contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ nom: 'Feuille de route inclusion 1' }],
+          feuillesDeRoute: [
+            {
+              montantSubventionAccorde: 30_000,
+              montantSubventionFormationAccorde: 20_000,
+              nom: 'Feuille de route inclusion',
+            },
+          ],
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
@@ -586,7 +697,12 @@ describe('gouvernance loader', () => {
           typologieMembre: 'Collectivité, EPCI',
         },
         {
-          contactPolitique: 'Coco Dupont, chargé de mission coco.dupont@rhones.gouv.fr',
+          contactReferent: {
+            mailContact: 'coco.dupont@rhones.gouv.fr',
+            nom: 'Coco',
+            poste: 'chargé de mission',
+            prenom: 'Dupont',
+          },
           contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           nom: 'CC des Monts du Lyonnais',
@@ -611,7 +727,7 @@ const feuillesDeRoute = [
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route inclusion 1',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 3,
   },
   {
@@ -622,7 +738,7 @@ const feuillesDeRoute = [
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route inclusion 2',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 2,
   },
 ]

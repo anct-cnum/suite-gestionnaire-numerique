@@ -73,16 +73,22 @@ function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
   }
 }
 
-function toFeuillesDeRouteViewModel(feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
+function toFeuillesDeRouteViewModel(
+  feuilleDeRoute: FeuilleDeRouteReadModel
+): FeuilleDeRouteViewModel {
   const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
-  const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
+  const nombreDeBeneficiairesSubventionFormation =
+    feuilleDeRoute.beneficiairesSubventionFormation.length
   return {
     beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
-    beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
+    beneficiairesSubventionFormation:
+      feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
     budgetGlobal: formaterEnNombreFrancais(feuilleDeRoute.budgetGlobal),
     montantSubventionAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionAccorde),
     montantSubventionDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionDemande),
-    montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
+    montantSubventionFormationAccorde: formaterEnNombreFrancais(
+      feuilleDeRoute.montantSubventionFormationAccorde
+    ),
     nom: feuilleDeRoute.nom,
     porteur: feuilleDeRoute.porteur.nom,
     totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
@@ -100,66 +106,71 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
+function calculSubvention(array: ReadonlyArray<number>): number {
+  return array.reduce(
+    (result: number, montant: number) =>
+      result + (!isNaN(montant) ? montant : 0),
+    0
+  )
+}
+
 function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
-  const montantSubventionAccorde = membre.feuillesDeRoute.reduce(
-    (result, feuilleDeRoute) => result +
-    (!isNaN(feuilleDeRoute.montantSubventionAccorde) ? feuilleDeRoute.montantSubventionAccorde : 0),
-    0
-  )
+  const montantSubventionAccorde = calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionAccorde))
+  const montantSubventionFormationAccorde =
+  calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionFormationAccorde))
 
-  const montantSubventionFormationAccorde = membre.feuillesDeRoute.reduce(
-    (result, feuilleDeRoute) => result +
-    (!isNaN(feuilleDeRoute.montantSubventionFormationAccorde) ? feuilleDeRoute.montantSubventionFormationAccorde : 0),
-    0
-  )
-
-  const affichageMembrePrefecture: MembreDetailsViewModel['aperçueDuMembre'] = [
+  const affichageMembrePrefecture: MembreDetailsViewModel['details'] = [
     ...(membre.feuillesDeRoute.length >= 1
       ? [
         {
-          aperçueFeuillesDeRoute: membre.feuillesDeRoute,
-          aperçueIntitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+          feuillesDeRoute: membre.feuillesDeRoute,
+          intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
         },
       ]
       : []),
-    { aperçueDeLaDonnee: contactReferent, aperçueIntitule: 'Contact politique de la collectivité' },
-    { aperçueDeLaDonnee: membre.contactTechnique, aperçueIntitule: 'Contact technique' },
+    { information: contactReferent, intitule: 'Contact politique de la collectivité' },
+    { information: membre.contactTechnique, intitule: 'Contact technique' },
     {
-      aperçueDeLaDonnee: membre.telephone !== '' ? membre.telephone : '-',
-      aperçueIntitule: 'Téléphone',
+      information: membre.telephone !== '' ? membre.telephone : '-',
+      intitule: 'Téléphone',
     },
   ]
 
-  const affichageAutreMembre: MembreDetailsViewModel['aperçueDuMembre'] = [
+  const affichageAutreMembre: MembreDetailsViewModel['details'] = [
     ...(membre.feuillesDeRoute.length >= 1
       ? [
         {
-          aperçueDeLaDonnee: '',
-          aperçueFeuillesDeRoute: membre.feuillesDeRoute,
-          aperçueIntitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+          feuillesDeRoute: membre.feuillesDeRoute,
+          information: '',
+          intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
         },
       ]
       : []),
     {
-      aperçueDeLaDonnee: `${formaterEnNombreFrancais(montantSubventionAccorde)} €`,
-      aperçueIntitule: 'Total subventions accordées',
+      information: `${formaterEnNombreFrancais(montantSubventionAccorde)} €`,
+      intitule: 'Total subventions accordées',
     },
     {
-      aperçueDeLaDonnee: `${formaterEnNombreFrancais(montantSubventionFormationAccorde)} €`,
-      aperçueIntitule: 'Total subventions formations accordées',
+      information: `${formaterEnNombreFrancais(montantSubventionFormationAccorde)} €`,
+      intitule: 'Total subventions formations accordées',
     },
-    { aperçueDeLaDonnee: contactReferent, aperçueIntitule: 'Contact référent' },
+    { information: contactReferent, intitule: 'Contact référent' },
     {
-      aperçueDeLaDonnee: membre.telephone !== '' ? membre.telephone : '-',
-      aperçueIntitule: 'Téléphone',
+      information: membre.telephone !== '' ? membre.telephone : '-',
+      intitule: 'Téléphone',
     },
   ]
-  const categorieDuMembre = typologieMembreEtAperçue[membre.typologieMembre] ?? typologieMembreEtAperçue.Autre
+  const categorieDuMembre =
+    typologieMembreEtAffichage[membre.typologieMembre] ?? typologieMembreEtAffichage.Autre
   return {
     affichagePlusDetails: categorieDuMembre === 'affichageAutreMembre',
-    aperçueDuMembre: categorieDuMembre === 'affichageMembrePrefecture' ? affichageMembrePrefecture : affichageAutreMembre,
-    categorieDuMembre: typologieMembreEtAperçue[membre.typologieMembre] ?? typologieMembreEtAperçue.Autre,
+    categorieDuMembre:
+      typologieMembreEtAffichage[membre.typologieMembre] ?? typologieMembreEtAffichage.Autre,
+    details:
+      categorieDuMembre === 'affichageMembrePrefecture'
+        ? affichageMembrePrefecture
+        : affichageAutreMembre,
     logo: buildLogoMembre(membre),
     nom: membre.nom,
     roles: membre.roles.map(toRoleViewModel),
@@ -305,14 +316,17 @@ export type MembreDetailsViewModel = Readonly<{
       nom: string
     }>
   >
-  aperçueDuMembre: ReadonlyArray<Readonly<{
-    aperçueIntitule: string
-    aperçueDeLaDonnee?: string
-    aperçueFeuillesDeRoute?: ReadonlyArray<
-      Readonly<{
-        nom: string
-      }>>
-  }>>
+  details: ReadonlyArray<
+    Readonly<{
+      intitule: string
+      information?: string
+      feuillesDeRoute?: ReadonlyArray<
+        Readonly<{
+          nom: string
+        }>
+      >
+    }>
+  >
   categorieDuMembre: string
   affichagePlusDetails: boolean
 }>
@@ -341,7 +355,7 @@ const roleAndHisColor: Record<string, string> = {
   Récipiendaire: 'green-archipel',
 }
 
-const typologieMembreEtAperçue: Record<string, string> = {
+const typologieMembreEtAffichage: Record<string, string> = {
   Autre: 'affichageAutreMembre',
   'Préfecture départementale': 'affichageMembrePrefecture',
 }

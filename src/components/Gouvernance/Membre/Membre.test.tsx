@@ -5,12 +5,27 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres', () => {
-  it('en tant que gestionnaire departement et que je clique sur le membre de la préfecture, alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
+  it('quand je clique sur un membre puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
     afficherGouvernance()
 
     // WHEN
     jOuvreLesDetailsDUnMembre()
+    jeFermeLesDetailsDUnMembre()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Préfecture du Rhône' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
+  it('quand je clique sur le membre de la préfecture, alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+    fireEvent.click(membre)
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -69,7 +84,7 @@ describe('membres', () => {
     expect(drawer).not.toBeVisible()
   })
 
-  it('quand je visualise le detail d’un membre, alors je vois les informations optionnelles remplacer par un tiret', () => {
+  it('quand je clique sur le membre de la préfecture, alors je vois les informations non-obligatoires remplacer par un tiret ou que l’intituler n’est pas affiché', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(
       gouvernanceReadModelFactory({
@@ -201,7 +216,7 @@ describe('membres', () => {
     }
   )
 
-  it('en tant que gestionnaire departement et que je clique sur le membre autre que la préfecture, alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
+  it('quand je clique sur le membre autre que la préfecture alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -250,7 +265,7 @@ describe('membres', () => {
     expect(telephoneMembre).toBeInTheDocument()
   })
 
-  it('en tant que gestionnaire departement et que je clique sur le membre autre que la préfecture, alors je vois les informations optionnelles remplacer par un tiret', () => {
+  it('quand je clique sur le membre autre que la préfecture alors je vois les informations optionnelles remplacer par un tiret', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(
       gouvernanceReadModelFactory({
@@ -273,6 +288,7 @@ describe('membres', () => {
         ],
       })
     )
+
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -292,7 +308,7 @@ describe('membres', () => {
     'Contact technique',
     'Feuilles de route',
     'Téléphone',
-  ])('si le membre est la préfecture (donc moi même), Le drawer contient %s', (section) => {
+  ])('quand je clique sur le membre de la préfecture alors le drawer contient %s', (section) => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -307,7 +323,7 @@ describe('membres', () => {
     expect(contactReferentMembre).toBeInTheDocument()
   })
 
-  it('si le membre est la préfecture (donc moi même), Le drawer ne contient pas le bouton Plus de détails ', () => {
+  it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas le bouton "Plus de détails" ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -329,7 +345,7 @@ describe('membres', () => {
     'Total subventions accordées',
     'Total subventions formations accordées',
     'Téléphone',
-  ])('si le membre est autre que la préfecture, Le drawer contient %s ', (section) => {
+  ])('quand je clique sur le membre est autre que la préfecture alors le drawer contient %s ', (section) => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -344,7 +360,7 @@ describe('membres', () => {
     expect(contactReferentMembre).toBeInTheDocument()
   })
 
-  it('si le membre est autre que la préfecture, Le drawer contient le bouton Plus de détails ', () => {
+  it('quand je clique sur le membre est autre que la préfecture alors le drawer contient le bouton "Plus de détails" ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)

@@ -77,7 +77,7 @@ export default function MembreRempli({ membres }: Props): ReactElement {
       >
         <Membre
           affichagePlusDetails={membreDetails.affichagePlusDetails}
-          aperçueDuMembre={membreDetails.aperçueDuMembre}
+          details={membreDetails.details}
           labelId={labelMembreId}
           membreDetails={membreDetails}
         />
