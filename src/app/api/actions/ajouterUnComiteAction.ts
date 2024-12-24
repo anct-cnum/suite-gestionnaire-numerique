@@ -1,19 +1,53 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+import prisma from '../../../../prisma/prismaClient'
+import { getSubSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaComiteRepository } from '@/gateways/PrismaComiteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
+import { AjouterUnComite } from '@/use-cases/commands/AjouterUnComite'
 
 export async function ajouterUnComiteAction(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _actionParams: ActionParams
+  actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
-  return Promise.resolve(['OK'])
+  const validationResult = validator.safeParse(actionParams)
+
+  if (validationResult.error) {
+    return validationResult.error.issues.map(({ message }) => message)
+  }
+
+  const result = await new AjouterUnComite(
+    new PrismaGouvernanceRepository(prisma),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    new PrismaComiteRepository(prisma),
+    new Date()
+  ).execute({
+    commentaire: actionParams.commentaire,
+    date: actionParams.date,
+    frequence: actionParams.frequence,
+    type: actionParams.type,
+    uidGouvernance: actionParams.uidGouvernance,
+    uidUtilisateurCourant: await getSubSession(),
+  })
+
+  revalidatePath(validationResult.data.path)
+
+  return [result]
 }
 
 type ActionParams = Readonly<{
   commentaire?: string
-  date?: string,
-  frequence: string,
+  date?: string
+  frequence: string
   path: string
-  type: string,
-  uidGouvernance: string,
+  type: string
+  uidGouvernance: string
 }>
+
+const validator = z.object({
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
+})
