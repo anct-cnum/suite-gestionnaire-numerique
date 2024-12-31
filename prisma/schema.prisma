@@ -109,7 +109,7 @@ model UtilisateurRecord {
 model GouvernanceRecord {
   id Int @id @default(autoincrement())
 
-  idFNE                  String     @unique
+  idFNE                  String  @unique
   createurId             Int
   departementCode        String
   departementPorteurCode String?
@@ -123,6 +123,7 @@ model GouvernanceRecord {
   relationSgarPorteur        RegionRecord?      @relation(fields: [sgarPorteurCode], references: [code])
 
   noteDeContexte NoteDeContexteRecord?
+  comites        ComiteRecord[]
 
   @@map("gouvernance")
 }
@@ -139,6 +140,23 @@ model NoteDeContexteRecord {
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
 
   @@map("note_de_contexte")
+}
+
+model ComiteRecord {
+  id Int @id @default(autoincrement())
+
+  gouvernanceId      Int
+  creation           DateTime
+  derniereEdition    DateTime
+  type               String
+  frequence          String
+  commentaire        String?
+  nom                String?
+  dateProchainComite DateTime?
+
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("comite")
 }
 
 enum Role {

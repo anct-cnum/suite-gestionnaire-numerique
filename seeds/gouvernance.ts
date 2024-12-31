@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Prisma } from '@prisma/client'
 
 import { Prisma as PrismaFNE } from './fne/client-fne'
@@ -5,9 +6,15 @@ import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
 
 void (async function migrate(): Promise<void> {
-  await prismaFNE.gouvernance
+
+  const greenColor = '\x1b[32m%s\x1b[0m'
+
+  console.log(greenColor, 'La migration des gouvernances commence')
+
+  const { gouvernances, notesDeContexte, comites } = await prismaFNE.gouvernance
     .findMany({
       include: {
+        comites: true,
         relationEpci: true,
         relationUserCreateur: true,
         relationUserDerniereModification: true,
@@ -18,9 +25,27 @@ void (async function migrate(): Promise<void> {
     })
     .then(grouperDonneesACreer)
     .then(formaterDonneesACreer)
-    .then(async ({ gouvernances, notesDeContexte }) => creerGouvernances(gouvernances)
-      .then(async () => associerNoteDeContexteAGouvernanceId(notesDeContexte))
-      .then(creerNotesDeContexte))
+
+  console.log(greenColor, `${gouvernances.length} gouvernances FNE sont récupérées`)
+  console.log(greenColor, `${comites.length} comites FNE sont récupérés`)
+
+  await prisma.gouvernanceRecord.createMany({ data: [...gouvernances], skipDuplicates: true })
+
+  const gouvernanceIdsByFNEIds = await recupererLesIdsGouvernance()
+
+  const gouvernancesCreees = await prisma.noteDeContexteRecord.createMany({
+    data: [...remplacerFNEIdsParIdsGeneres(gouvernanceIdsByFNEIds, notesDeContexte)],
+    skipDuplicates: true,
+  })
+  const comitesCrees = await prisma.comiteRecord.createMany({
+    data: [...remplacerFNEIdsParIdsGeneres(gouvernanceIdsByFNEIds, comites)],
+    skipDuplicates: true,
+  })
+
+  console.log(greenColor, `${gouvernancesCreees.count} gouvernances sont insérées`)
+  console.log(greenColor, `${comitesCrees.count} comites sont insérés`)
+
+  console.log(greenColor, 'La migration des gouvernances est finie')
 })()
 
 async function grouperDonneesACreer(
@@ -41,75 +66,63 @@ async function grouperDonneesACreer(
 }
 
 function formaterDonneesACreer(donneesAFormaterGroupees: GouvernanceFNEEtAssociations): GroupeGouvernances {
-  return donneesAFormaterGroupees.reduce<GroupeGouvernances>(
-    (
-      { gouvernances, notesDeContexte },
-      { gouvernanceFNE, createurId, editeurNoteDeContexteId }
-    ) => ({
-      gouvernances: [
-        ...gouvernances,
-        {
-          createurId,
-          departementCode: gouvernanceFNE.departementCode,
-          departementPorteurCode: gouvernanceFNE.porteurDepartementCode,
-          epciPorteur: gouvernanceFNE.relationEpci?.nom,
-          idFNE: gouvernanceFNE.id,
-          sgarPorteurCode: gouvernanceFNE.porteurRegionCode,
-          siretPorteur: gouvernanceFNE.porteurSiret,
-        },
-      ],
-      notesDeContexte: [
-        ...notesDeContexte,
-        {
-          contenu: gouvernanceFNE.noteDeContexte,
-          derniereEdition: gouvernanceFNE.modification,
-          editeurId: editeurNoteDeContexteId,
-          gouvernanceFNEId: gouvernanceFNE.id,
-        },
-      ],
-    }),
-    { gouvernances: [], notesDeContexte: [] }
-  )
+  return donneesAFormaterGroupees
+    .reduce<GroupeGouvernances>(
+      (groupe, { createurId, editeurNoteDeContexteId, gouvernanceFNE }) => ({
+        comites: [
+          ...groupe.comites,
+          gouvernanceFNE.comites.map((comiteFNE) => ({
+            commentaire: comiteFNE.commentaire,
+            creation: comiteFNE.creation,
+            derniereEdition: comiteFNE.modification,
+            frequence: comiteFNE.frequence,
+            gouvernanceFNEId: gouvernanceFNE.id,
+            type: comiteFNE.type !== 'autre' ? comiteFNE.type.toString() : comiteFNE.typeAutrePrecision ?? '',
+          })),
+        ].flat(),
+        gouvernances: [
+          ...groupe.gouvernances,
+          {
+            createurId,
+            departementCode: gouvernanceFNE.departementCode,
+            departementPorteurCode: gouvernanceFNE.porteurDepartementCode,
+            epciPorteur: gouvernanceFNE.relationEpci?.nom,
+            idFNE: gouvernanceFNE.id,
+            sgarPorteurCode: gouvernanceFNE.porteurRegionCode,
+            siretPorteur: gouvernanceFNE.porteurSiret,
+          },
+        ],
+        notesDeContexte: [
+          ...groupe.notesDeContexte,
+          {
+            contenu: gouvernanceFNE.noteDeContexte,
+            derniereEdition: gouvernanceFNE.modification,
+            editeurId: editeurNoteDeContexteId,
+            gouvernanceFNEId: gouvernanceFNE.id,
+          },
+        ],
+      }),
+      { comites: [], gouvernances: [], notesDeContexte: [] }
+    )
 }
 
-async function creerGouvernances(
-  gouvernances: ReadonlyArray<Prisma.GouvernanceRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.gouvernanceRecord
-    .createMany({
-      data: [...gouvernances],
-      skipDuplicates: true,
-    })
+async function recupererLesIdsGouvernance(): Promise<GouvernanceIdsByFNEId> {
+  return prisma.gouvernanceRecord.findMany({
+    select: {
+      id: true,
+      idFNE: true,
+    },
+  }).then((ids) => ids.reduce((idByFNEId, { id, idFNE }) => ({ ...idByFNEId, [idFNE]: id }), {}))
 }
 
-async function associerNoteDeContexteAGouvernanceId(
-  notesDeContexte: ReadonlyArray<NoteDeContexteAvecGouvernanceFNEId>
-): Promise<ReadonlyArray<Prisma.NoteDeContexteRecordUncheckedCreateInput>> {
-  return Promise.all(
-    notesDeContexte.map(async (noteDeContexte) =>
-      prisma.gouvernanceRecord.findUniqueOrThrow({
-        select: {
-          id: true,
-        },
-        where: {
-          idFNE: noteDeContexte.gouvernanceFNEId,
-        },
-      }).then(({ id }) => ({
-        contenu: noteDeContexte.contenu,
-        derniereEdition: noteDeContexte.derniereEdition,
-        editeurId: noteDeContexte.editeurId,
-        gouvernanceId: id,
-      })))
-  )
-}
-
-async function creerNotesDeContexte(
-  notesDeContexte: ReadonlyArray<Prisma.NoteDeContexteRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.noteDeContexteRecord.createMany({
-    data: [...notesDeContexte],
-    skipDuplicates: true,
-  })
+function remplacerFNEIdsParIdsGeneres<T extends WithGouvernanceFNEId>(
+  gouvernanceIdsByFNEIds: GouvernanceIdsByFNEId,
+  withGouvernanceFNEIds: ReadonlyArray<T>
+): ReadonlyArray<Omit<T, 'gouvernanceFNEId'> & Readonly<{gouvernanceId: number}>> {
+  return withGouvernanceFNEIds.map(({ gouvernanceFNEId, ...rest }) => ({
+    ...rest,
+    gouvernanceId: gouvernanceIdsByFNEIds[gouvernanceFNEId],
+  }))
 }
 
 async function idUtilisateurViaEmail(email: string): Promise<number> {
@@ -127,6 +140,7 @@ type GouvernanceFNE = PrismaFNE.$GouvernancePayload['scalars'] &
     relationEpci: PrismaFNE.$EpciPayload['scalars'] | null
     relationUserCreateur: PrismaFNE.$UserFNEPayload['scalars']
     relationUserDerniereModification: PrismaFNE.$UserFNEPayload['scalars']
+    comites: ReadonlyArray<PrismaFNE.$ComitePayload['scalars']>
   }>
 
 type GouvernanceFNEEtAssociations = ReadonlyArray<{
@@ -135,12 +149,17 @@ type GouvernanceFNEEtAssociations = ReadonlyArray<{
   editeurNoteDeContexteId: number
 }>
 
-type NoteDeContexteAvecGouvernanceFNEId = Omit<
-  Prisma.NoteDeContexteRecordUncheckedCreateInput,
-  'gouvernanceId'
-> & Readonly<{ gouvernanceFNEId: string }>
+type WithGouvernanceFNEId = Readonly<{ gouvernanceFNEId: string }>
+
+type NoteDeContexteAvecGouvernanceFNEId = Omit<Prisma.NoteDeContexteRecordUncheckedCreateInput, 'gouvernanceId'>
+  & WithGouvernanceFNEId
+
+type ComiteAvecGouvernanceFNEId = Omit<Prisma.ComiteRecordUncheckedCreateInput, 'gouvernanceId'> & WithGouvernanceFNEId
+
+type GouvernanceIdsByFNEId = Readonly<Record<string, number>>
 
 type GroupeGouvernances = Readonly<{
   gouvernances: ReadonlyArray<Prisma.GouvernanceRecordUncheckedCreateInput>
   notesDeContexte: ReadonlyArray<NoteDeContexteAvecGouvernanceFNEId>
+  comites: ReadonlyArray<ComiteAvecGouvernanceFNEId>
 }>
