@@ -50,31 +50,34 @@ model Gouvernance {
   porteurEpciCode            String?   @map("v1_porteur_epci_code")
   porteurSiret               String?   @map("v1_porteur_siret")
 
-  relationEpci                     Epci?            @relation(fields: [porteurEpciCode], references: [code])
-  relationUserCreateur             UserFNE          @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
-  relationUserDerniereModification UserFNE          @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
-  Comite                           Comite[]
-  FeuilleDeRoute                   FeuilleDeRoute[]
+  relationEpci                     Epci?   @relation(fields: [porteurEpciCode], references: [code])
+  relationUserCreateur             UserFNE @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
+  relationUserDerniereModification UserFNE @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
+
+  comites         Comite[]
+  feuillesDeRoute FeuilleDeRoute[]
 
   @@map("gouvernances")
 }
 
 model Comite {
-  id                 String   @id
-  gouvernanceId      String
+  id                 String          @id
+  gouvernanceId      String          @map("gouvernance_id")
   creation           DateTime
   modification       DateTime
-  type               String
-  typeAutrePrecision String?  @map("type_autre_precision")
-  frequence          String
+  type               TypeComite      @default(autre)
+  typeAutrePrecision String?         @map("type_autre_precisions")
+  frequence          FrequenceComite @default(annuelle)
   commentaire        String?
 
   relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("comite_gouvernance")
 }
 
 model FeuilleDeRoute {
   id                          String   @id
-  gouvernanceId               String
+  gouvernanceId               String   @map("gouvernance_id")
   creation                    DateTime
   modification                DateTime
   nom                         String
@@ -105,4 +108,18 @@ enum UserRoleFNE {
   User                  @map("user")
 
   @@map("user_role")
+}
+
+enum TypeComite {
+  strategique
+  technique
+  consultatif
+  autre
+}
+
+enum FrequenceComite {
+  mensuelle
+  trimestrielle
+  semestrielle
+  annuelle
 }
