@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
-import { console } from 'inspector'
 
-import { UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
+import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
 
 type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
@@ -51,15 +50,23 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
 }
 
 function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
-  console.log('gouvernanceRecord', gouvernanceRecord)
-  return {
-    comites: gouvernanceRecord.comites.map((comite) => ({
+  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
+    dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
+    nomAuteur: 'Deschamps',
+    prenomAuteur: 'Jean',
+    texte: gouvernanceRecord.noteDeContexte.contenu,
+  } : undefined
+  const comites = gouvernanceRecord.comites.length > 0
+    ? gouvernanceRecord.comites.map((comite) => ({
       commentaire: comite.commentaire ?? '',
-      dateProchainComite: comite.dateProchainComite ?? new Date(),
+      dateProchainComite: comite.dateProchainComite ?? undefined,
       nom: comite.nom ?? '',
       periodicite: comite.frequence,
-      type: comite.type as 'stratégique' | 'technique',
-    })),
+      type: comite.type as TypeDeComite,
+    }))
+    : undefined
+  return {
+    comites: comites,
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: [
       {
@@ -102,12 +109,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         type: 'Collectivité',
       },
     ],
-    noteDeContexte: {
-      dateDeModification: gouvernanceRecord.noteDeContexte?.derniereEdition ?? new Date(),
-      nomAuteur: 'Deschamps',
-      prenomAuteur: 'Jean',
-      texte: gouvernanceRecord.noteDeContexte?.contenu ?? '',
-    },
+    noteDeContexte: noteDeContexte,
     uid: '123456',
   }
 }

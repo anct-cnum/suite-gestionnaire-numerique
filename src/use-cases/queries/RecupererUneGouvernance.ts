@@ -7,19 +7,21 @@ export type UneGouvernanceReadModel = Readonly<{
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
   membres?: ReadonlyArray<MembreReadModel>
-  noteDeContexte?: Readonly<{
-    dateDeModification: Date
-    nomAuteur: string
-    prenomAuteur: string
-    texte: string
-  }>
+  noteDeContexte?: NoteDeContexteReadModel
   uid: string
 }>
 
+export type NoteDeContexteReadModel = Readonly<{
+  dateDeModification: Date
+  nomAuteur: string
+  prenomAuteur: string
+  texte: string
+}>
+
 export type ComiteReadModel = Readonly<{
-  commentaire: string
-  dateProchainComite: Date
-  nom: string
+  commentaire?: string
+  dateProchainComite?: Date
+  nom?: string
   periodicite: string
   type : TypeDeComite
 }>
@@ -42,4 +44,4 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
+export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'

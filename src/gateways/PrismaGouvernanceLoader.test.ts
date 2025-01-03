@@ -51,10 +51,8 @@ describe('gouvernance loader', () => {
         dateProchainComite: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
+        gouvernanceId: gouvernance.id,
         nom: 'Comité stratégique 1',
-        relationGouvernance: {
-          connect: { id: gouvernance.id },
-        },
         type: 'stratégique',
       },
     })
@@ -65,10 +63,8 @@ describe('gouvernance loader', () => {
         dateProchainComite: new Date('2024-08-01'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
+        gouvernanceId: gouvernance.id,
         nom: 'Comité stratégique 2',
-        relationGouvernance: {
-          connect: { id: gouvernance.id },
-        },
         type: 'technique',
       },
     })
@@ -170,5 +166,90 @@ describe('gouvernance loader', () => {
 
     // THEN
     expect(gouvernanceReadModel).toBeNull()
+  })
+
+  it('quand une gouvernance est demandée par son code département existant et qu‘elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
+    // GIVEN
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({
+        code: '11',
+      }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({
+        code: '93',
+        nom: 'Seine-Saint-Denis',
+      }),
+    })
+    const user = await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({
+        id: 123,
+        nom: 'Deschamps',
+        prenom: 'Jean',
+      }),
+    })
+    await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '93',
+        id: 1,
+        idFNE: '123456',
+      },
+    })
+
+    const codeDepartement = '93'
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
+
+    // WHEN
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+
+    // THEN
+    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
+      comites: undefined,
+      departement: 'Seine-Saint-Denis',
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 3,
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 2',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 2,
+        },
+      ],
+      membres: [
+        {
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          type: 'Administration',
+        },
+        {
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+        {
+          nom: 'CC des Monts du Lyonnais',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+      ],
+      noteDeContexte: undefined,
+      uid: '123456',
+    })
   })
 })
