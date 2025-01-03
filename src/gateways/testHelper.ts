@@ -83,13 +83,7 @@ export function gouvernanceRecordFactory(
   override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
 ): Prisma.GouvernanceRecordUncheckedCreateInput {
   return {
-    createurId: 1,
     departementCode: '75',
-    departementPorteurCode: '75',
-    epciPorteur: null,
-    idFNE: 'f6ecbc16-2088-4bbd-aca7-054da85ff58a',
-    sgarPorteurCode: null,
-    siretPorteur: null,
     ...override,
   }
 }
