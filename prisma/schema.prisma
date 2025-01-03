@@ -33,9 +33,9 @@ model DepartementRecord {
   structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
-  relationRegion         RegionRecord        @relation(fields: [regionCode], references: [code])
-  gouvernancesRattachees GouvernanceRecord[] @relation("departementDeRattachement")
-  gouvernancesPortees    GouvernanceRecord[] @relation("departementPorteur")
+  relationRegion     RegionRecord                         @relation(fields: [regionCode], references: [code])
+  gouvernances       GouvernanceRecord[]
+  membresGouvernance MembreGouvernanceDepartementRecord[]
 
   @@map("departement")
 }
@@ -44,9 +44,9 @@ model RegionRecord {
   code String @id
   nom  String
 
-  departements DepartementRecord[]
-  utilisateurs UtilisateurRecord[]
-  gouvernances GouvernanceRecord[]
+  departements       DepartementRecord[]
+  utilisateurs       UtilisateurRecord[]
+  membresGouvernance MembreGouvernanceSgarRecord[]
 
   @@map("region")
 }
@@ -101,7 +101,6 @@ model UtilisateurRecord {
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
 
   notesDeContexte NoteDeContexteRecord[]
-  gouvernances    GouvernanceRecord[]
   comites         ComiteRecord[]
 
   @@map("utilisateur")
@@ -110,21 +109,17 @@ model UtilisateurRecord {
 model GouvernanceRecord {
   id Int @id @default(autoincrement())
 
-  idFNE                  String  @unique
-  createurId             Int
-  departementCode        String
-  departementPorteurCode String?
-  sgarPorteurCode        String?
-  epciPorteur            String?
-  siretPorteur           String?
+  departementCode String @unique
 
-  relationCreateur           UtilisateurRecord  @relation(fields: [createurId], references: [id])
-  relationDepartement        DepartementRecord  @relation("departementDeRattachement", fields: [departementCode], references: [code])
-  relationDepartementPorteur DepartementRecord? @relation("departementPorteur", fields: [departementPorteurCode], references: [code])
-  relationSgarPorteur        RegionRecord?      @relation(fields: [sgarPorteurCode], references: [code])
+  relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
-  noteDeContexte NoteDeContexteRecord?
-  comites        ComiteRecord[]
+  noteDeContexte      NoteDeContexteRecord?
+  comites             ComiteRecord[]
+  membresDepartements MembreGouvernanceDepartementRecord[]
+  membresSgars        MembreGouvernanceSgarRecord[]
+  membresEpcis        MembreGouvernanceEpciRecord[]
+  membresCommunes     MembreGouvernanceCommuneRecord[]
+  membresStructures   MembreGouvernanceStructureRecord[]
 
   @@map("gouvernance")
 }
@@ -152,14 +147,70 @@ model ComiteRecord {
   type                 String
   frequence            String
   commentaire          String?
-  nom                  String?
   date                 DateTime?
-  editeurUtilisateurId String?   @map("editeur_utilisateur_id")
+  editeurUtilisateurId String    @map("editeur_utilisateur_id")
 
   relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceId], references: [id])
   relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
 
   @@map("comite")
+}
+
+model MembreGouvernanceDepartementRecord {
+  departementCode String
+  gouvernanceId   Int
+  role            String
+
+  relationDepartement DepartementRecord  @relation(fields: [departementCode], references: [code])
+  relationGouvernance GouvernanceRecord? @relation(fields: [gouvernanceId], references: [id])
+
+  @@id([departementCode, gouvernanceId, role])
+  @@map("membre_gouvernance_departement")
+}
+
+model MembreGouvernanceSgarRecord {
+  sgarCode      String
+  gouvernanceId Int
+  role          String
+
+  relationSgar        RegionRecord?      @relation(fields: [sgarCode], references: [code])
+  relationGouvernance GouvernanceRecord? @relation(fields: [gouvernanceId], references: [id])
+
+  @@unique([sgarCode, gouvernanceId, role])
+  @@map("membre_gouvernance_sgar")
+}
+
+model MembreGouvernanceEpciRecord {
+  epci          String
+  gouvernanceId Int
+  role          String
+
+  relationGouvernance GouvernanceRecord? @relation(fields: [gouvernanceId], references: [id])
+
+  @@id([epci, gouvernanceId, role])
+  @@map("membre_gouvernance_epci")
+}
+
+model MembreGouvernanceCommuneRecord {
+  commune       String
+  gouvernanceId Int
+  role          String
+
+  relationGouvernance GouvernanceRecord? @relation(fields: [gouvernanceId], references: [id])
+
+  @@id([commune, gouvernanceId, role])
+  @@map("membre_gouvernance_commune")
+}
+
+model MembreGouvernanceStructureRecord {
+  structure     String
+  gouvernanceId Int
+  role          String
+
+  relationGouvernance GouvernanceRecord? @relation(fields: [gouvernanceId], references: [id])
+
+  @@id([structure, gouvernanceId, role])
+  @@map("membre_gouvernance_structure")
 }
 
 enum Role {

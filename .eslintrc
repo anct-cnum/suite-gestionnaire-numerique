@@ -134,6 +134,7 @@
     "@stylistic/dot-location": ["error", "property"],
     "@stylistic/function-call-argument-newline": ["error", "consistent"],
     "@stylistic/function-paren-newline": ["error", "consistent"],
+    "@stylistic/implicit-arrow-linebreak": ["off"],
     "@stylistic/indent": ["error", 2],
     "@stylistic/lines-around-comment": "off",
     "@stylistic/lines-between-class-members": [
@@ -166,6 +167,7 @@
     "@stylistic/multiline-ternary": "off",
     "@stylistic/multiline-comment-style": "off",
     "@stylistic/newline-per-chained-call": ["off"],
+    "@stylistic/no-confusing-arrow": ["off"],
     "@stylistic/no-extra-parens": ["error", "all", { "ignoreJSX": "all" }],
     "@stylistic/no-multiple-empty-lines": ["error", { "max": 1 }],
     "@stylistic/object-curly-spacing": ["error", "always"],

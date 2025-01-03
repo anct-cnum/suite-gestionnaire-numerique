@@ -28,7 +28,7 @@ describe('gouvernance loader', () => {
         nom: 'Paris',
       }),
     })
-    const user = await prisma.utilisateurRecord.create({
+    await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({
         id: 123,
         nom: 'Deschamps',
@@ -38,18 +38,14 @@ describe('gouvernance loader', () => {
     })
     await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: '75',
         id: 2,
-        idFNE: 'TYa65',
       },
     })
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: codeDepartement,
         id: 1,
-        idFNE: '123456',
       },
     })
     await prisma.noteDeContexteRecord.create({
@@ -69,7 +65,6 @@ describe('gouvernance loader', () => {
         editeurUtilisateurId: 'FooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
-        nom: 'Comité stratégique 1',
         type: 'stratégique',
       },
     })
@@ -82,7 +77,6 @@ describe('gouvernance loader', () => {
         editeurUtilisateurId: 'FooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
-        nom: 'Comité stratégique 2',
         type: 'technique',
       },
     })
@@ -101,6 +95,7 @@ describe('gouvernance loader', () => {
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
+          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
@@ -110,6 +105,7 @@ describe('gouvernance loader', () => {
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
+          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'technique',
         },
@@ -164,19 +160,10 @@ describe('gouvernance loader', () => {
       }),
     })
 
-    const user = await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        id: 123,
-        nom: 'Deschamps',
-        prenom: 'Jean',
-      }),
-    })
     await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: '93',
         id: 1,
-        idFNE: '123456',
       },
     })
 
@@ -210,21 +197,14 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
-    const user = await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        id: 123,
-        nom: 'Deschamps',
-        prenom: 'Jean',
-        ssoId: 'FooId',
-      }),
-    })
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: '93',
         id: 1,
-        idFNE: '123456',
       },
+    })
+    await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'FooId' }),
     })
     await prisma.comiteRecord.create({
       data: {
@@ -234,7 +214,6 @@ describe('gouvernance loader', () => {
         editeurUtilisateurId: 'FooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
-        nom: 'Comité stratégique 1',
         type: 'stratégique',
       },
     })
@@ -254,6 +233,7 @@ describe('gouvernance loader', () => {
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
+          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
@@ -274,21 +254,14 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
-    const user = await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        id: 123,
-        nom: 'Deschamps',
-        prenom: 'Jean',
-        ssoId: 'FooId',
-      }),
-    })
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: '93',
         id: 1,
-        idFNE: '123456',
       },
+    })
+    await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'FooId' }),
     })
     await prisma.comiteRecord.create({
       data: {
@@ -298,7 +271,6 @@ describe('gouvernance loader', () => {
         editeurUtilisateurId: 'FooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
-        nom: 'Comité stratégique 1',
         type: 'stratégique',
       },
     })
@@ -339,29 +311,20 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
-    const user = await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        id: 123,
-        nom: 'Deschamps',
-        prenom: 'Jean',
-        ssoId: 'FooId',
-      }),
-    })
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
-        createurId: user.id,
         departementCode: '93',
         id: 1,
-        idFNE: '123456',
       },
     })
+    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory() })
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
         creation: new Date('2024-11-23'),
         date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: null,
+        editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'stratégique',
@@ -382,8 +345,9 @@ describe('gouvernance loader', () => {
           date: new Date('2024-11-23'),
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
-          nomEditeur: '~',
-          prenomEditeur: '~',
+          nomEditeur: 'Tartempion',
+          periodicite: 'trimestrielle',
+          prenomEditeur: 'Martin',
           type: 'stratégique',
         },
       ]
