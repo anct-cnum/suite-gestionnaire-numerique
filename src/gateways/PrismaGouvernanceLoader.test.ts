@@ -252,4 +252,315 @@ describe('gouvernance loader', () => {
       uid: '123456',
     })
   })
+  it('quand une gouvernance est demandée par son code département existant avec un comité sans date de prochain comité, alors elle est renvoyée sans date de prochain comité', async () => {
+    // GIVEN
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({
+        code: '11',
+      }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({
+        code: '93',
+        nom: 'Seine-Saint-Denis',
+      }),
+    })
+    const user = await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({
+        id: 123,
+        nom: 'Deschamps',
+        prenom: 'Jean',
+      }),
+    })
+    const gouvernance = await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '93',
+        id: 1,
+        idFNE: '123456',
+      },
+    })
+    await prisma.comiteRecord.create({
+      data: {
+        commentaire: 'commentaire',
+        creation: new Date('2024-11-23'),
+        derniereEdition: new Date('2024-11-23'),
+        frequence: 'trimestrielle',
+        gouvernanceId: gouvernance.id,
+        nom: 'Comité stratégique 1',
+        type: 'stratégique',
+      },
+    })
+
+    const codeDepartement = '93'
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
+
+    // WHEN
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+
+    // THEN
+    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          dateProchainComite: undefined,
+          nom: 'Comité stratégique 1',
+          periodicite: 'trimestrielle',
+          type: 'stratégique',
+        },
+      ],
+      departement: 'Seine-Saint-Denis',
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 3,
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 2',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 2,
+        },
+      ],
+      membres: [
+        {
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          type: 'Administration',
+        },
+        {
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+        {
+          nom: 'CC des Monts du Lyonnais',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+      ],
+      noteDeContexte: undefined,
+      uid: '123456',
+    })
+  })
+  it('quand une gouvernance est demandée par son code département existant avec un comité sans commentaire, alors elle est renvoyée sans commentaire', async () => {
+    // GIVEN
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({
+        code: '11',
+      }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({
+        code: '93',
+        nom: 'Seine-Saint-Denis',
+      }),
+    })
+    const user = await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({
+        id: 123,
+        nom: 'Deschamps',
+        prenom: 'Jean',
+      }),
+    })
+    const gouvernance = await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '93',
+        id: 1,
+        idFNE: '123456',
+      },
+    })
+    await prisma.comiteRecord.create({
+      data: {
+        creation: new Date('2024-11-23'),
+        dateProchainComite: new Date('2024-11-23'),
+        derniereEdition: new Date('2024-11-23'),
+        frequence: 'trimestrielle',
+        gouvernanceId: gouvernance.id,
+        nom: 'Comité stratégique 1',
+        type: 'stratégique',
+      },
+    })
+
+    const codeDepartement = '93'
+
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
+
+    // WHEN
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+
+    // THEN
+    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
+      comites: [
+        {
+          commentaire: '',
+          dateProchainComite: new Date('2024-11-23'),
+          nom: 'Comité stratégique 1',
+          periodicite: 'trimestrielle',
+          type: 'stratégique',
+        },
+      ],
+      departement: 'Seine-Saint-Denis',
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 3,
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 2',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 2,
+        },
+      ],
+      membres: [
+        {
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          type: 'Administration',
+        },
+        {
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+        {
+          nom: 'CC des Monts du Lyonnais',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+      ],
+      noteDeContexte: undefined,
+      uid: '123456',
+    })
+  })
+
+  it('quand une gouvernance est demandée par son code département existant avec un comité sans nom, alors elle est renvoyée sans nom', async () => {
+    // GIVEN
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({
+        code: '11',
+      }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({
+        code: '93',
+        nom: 'Seine-Saint-Denis',
+      }),
+    })
+    const user = await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({
+        id: 123,
+        nom: 'Deschamps',
+        prenom: 'Jean',
+      }),
+    })
+    const gouvernance = await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '93',
+        id: 1,
+        idFNE: '123456',
+      },
+    })
+    await prisma.comiteRecord.create({
+      data: {
+        commentaire: 'commentaire',
+        creation: new Date('2024-11-23'),
+        dateProchainComite: new Date('2024-11-23'),
+        derniereEdition: new Date('2024-11-23'),
+        frequence: 'trimestrielle',
+        gouvernanceId: gouvernance.id,
+        type: 'stratégique',
+      },
+    })
+
+    const codeDepartement = '93'
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
+
+    // WHEN
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+
+    // THEN
+    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          dateProchainComite: new Date('2024-11-23'),
+          nom: '',
+          periodicite: 'trimestrielle',
+          type: 'stratégique',
+        },
+      ],
+      departement: 'Seine-Saint-Denis',
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 3,
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 5_000,
+          montantSubventionDemande: 40_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 2',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 2,
+        },
+      ],
+      membres: [
+        {
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          type: 'Administration',
+        },
+        {
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+        {
+          nom: 'CC des Monts du Lyonnais',
+          roles: ['Co-porteur', 'Financeur'],
+          type: 'Collectivité',
+        },
+      ],
+      noteDeContexte: undefined,
+      uid: '123456',
+    })
+  })
 })

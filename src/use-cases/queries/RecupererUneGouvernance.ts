@@ -11,7 +11,7 @@ export type UneGouvernanceReadModel = Readonly<{
   uid: string
 }>
 
-export type NoteDeContexteReadModel = Readonly<{
+type NoteDeContexteReadModel = Readonly<{
   dateDeModification: Date
   nomAuteur: string
   prenomAuteur: string
