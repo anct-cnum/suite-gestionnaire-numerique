@@ -1,5 +1,5 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { departementRecordFactory, regionRecordFactory } from './testHelper'
+import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -21,8 +21,60 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
+    const user = await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({
+        id: 123,
+        nom: 'Deschamps',
+        prenom: 'Jean',
+      }),
+    })
+    const gouvernance = await prisma.gouvernanceRecord.create({
+      data: {
+        createurId: user.id,
+        departementCode: '93',
+        id: 1,
+        idFNE: '123456',
+      },
+    })
+    await prisma.noteDeContexteRecord.create({
+      data: {
+        contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        derniereEdition: new Date('2024-11-23'),
+        editeurId: 123,
+        gouvernanceId: gouvernance.id,
+      },
+    })
+    await prisma.comiteRecord.create({
+      data: {
+        commentaire: 'commentaire',
+        creation: new Date('2024-11-23'),
+        dateProchainComite: new Date('2024-11-23'),
+        derniereEdition: new Date('2024-11-23'),
+        frequence: 'trimestrielle',
+        nom: 'Comité stratégique 1',
+        relationGouvernance: {
+          connect: { id: gouvernance.id },
+        },
+        type: 'stratégique',
+      },
+    })
+    await prisma.comiteRecord.create({
+      data: {
+        commentaire: 'commentaire',
+        creation: new Date('2024-11-23'),
+        dateProchainComite: new Date('2024-08-01'),
+        derniereEdition: new Date('2024-11-23'),
+        frequence: 'trimestrielle',
+        nom: 'Comité stratégique 2',
+        relationGouvernance: {
+          connect: { id: gouvernance.id },
+        },
+        type: 'technique',
+      },
+    })
+
     const codeDepartement = '93'
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.departementRecord)
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
@@ -31,15 +83,17 @@ describe('gouvernance loader', () => {
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: [
         {
-          dateProchainComite: new Date('2024-09-06'),
-          nom: 'Comité stratégique 2',
-          periodicite: 'Semestriel',
+          commentaire: 'commentaire',
+          dateProchainComite: new Date('2024-11-23'),
+          nom: 'Comité stratégique 1',
+          periodicite: 'trimestrielle',
           type: 'stratégique',
         },
         {
+          commentaire: 'commentaire',
           dateProchainComite: new Date('2024-08-01'),
-          nom: 'Comité stratégique 1',
-          periodicite: 'Trimestriel',
+          nom: 'Comité stratégique 2',
+          periodicite: 'trimestrielle',
           type: 'technique',
         },
       ],
@@ -109,7 +163,7 @@ describe('gouvernance loader', () => {
       }),
     })
     const codeDepartementInexistant = 'zzz'
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.departementRecord)
+    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartementInexistant)

@@ -75,12 +75,14 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
         {
+          commentaire: 'commentaire',
           dateProchainComite: new Date('2024-09-06'),
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
         },
         {
+          commentaire: 'commentaire',
           dateProchainComite: new Date('2024-03-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'Trimestriel',

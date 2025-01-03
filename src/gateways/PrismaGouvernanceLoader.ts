@@ -1,21 +1,47 @@
-import { DepartementRecord, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import { console } from 'inspector'
 
 import { UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
 
-export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
-  readonly #dataResource: Prisma.DepartementRecordDelegate
+type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
+  include: {
+    noteDeContexte: {
+      select: {
+        id: true
+        gouvernanceId: true
+        derniereEdition: true
+        editeurId: true
+        contenu: true
+      }
+    }
+    comites: true
+    relationDepartement: {
+      select: {
+        code: true
+        nom: true
+      }
+    }
+  }
+}>
 
-  constructor(dataResource: Prisma.DepartementRecordDelegate) {
+export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
+  readonly #dataResource: Prisma.GouvernanceRecordDelegate
+
+  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
     this.#dataResource = dataResource
   }
 
   async find(codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    const gouvernanceRecord = await this.#dataResource.findUnique({
+    const gouvernanceRecord = await this.#dataResource.findFirst({
+      include: {
+        comites: true,
+        noteDeContexte: true,
+        relationDepartement: true,
+      },
       where: {
-        code: codeDepartement,
+        departementCode: codeDepartement,
       },
     })
-
     if (gouvernanceRecord === null) {
       return null
     }
@@ -24,23 +50,17 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
   }
 }
 
-function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadModel {
+function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
+  console.log('gouvernanceRecord', gouvernanceRecord)
   return {
-    comites: [
-      {
-        dateProchainComite: new Date('2024-09-06'),
-        nom: 'Comité stratégique 2',
-        periodicite: 'Semestriel',
-        type: 'stratégique',
-      },
-      {
-        dateProchainComite: new Date('2024-08-01'),
-        nom: 'Comité stratégique 1',
-        periodicite: 'Trimestriel',
-        type: 'technique',
-      },
-    ],
-    departement: gouvernanceRecord.nom,
+    comites: gouvernanceRecord.comites.map((comite) => ({
+      commentaire: comite.commentaire ?? '',
+      dateProchainComite: comite.dateProchainComite ?? new Date(),
+      nom: comite.nom ?? '',
+      periodicite: comite.frequence,
+      type: comite.type as 'stratégique' | 'technique',
+    })),
+    departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: [
       {
         beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
@@ -83,10 +103,10 @@ function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadMode
       },
     ],
     noteDeContexte: {
-      dateDeModification: new Date('2024-11-23'),
+      dateDeModification: gouvernanceRecord.noteDeContexte?.derniereEdition ?? new Date(),
       nomAuteur: 'Deschamps',
       prenomAuteur: 'Jean',
-      texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      texte: gouvernanceRecord.noteDeContexte?.contenu ?? '',
     },
     uid: '123456',
   }
