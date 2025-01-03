@@ -22,7 +22,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1 }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
     const comite = comiteFactory({
@@ -57,22 +57,14 @@ describe('comité repository', () => {
       date: epochTime,
       editeurUtilisateurId: 'userFooId',
       intention: 'complet',
-      uidUtilisateurCourant: {
-        email: 'martin.tartempion@example.net',
-        value: 'userFooId',
-      },
     },
     {
       commentaire: undefined,
       date: undefined,
-      editeurUtilisateurId: undefined,
+      editeurUtilisateurId: 'userFooId',
       intention: 'sans commentaire ni date',
-      uidUtilisateurCourant: {
-        email: '',
-        value: '',
-      },
     },
-  ])('trouver un comité $intention', async ({ commentaire, date, editeurUtilisateurId, uidUtilisateurCourant }) => {
+  ])('trouver un comité $intention', async ({ commentaire, date, editeurUtilisateurId }) => {
     // GIVEN
     const gouvernanceId = 1
     await prisma.regionRecord.create({
@@ -85,7 +77,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({
@@ -122,7 +114,6 @@ describe('comité repository', () => {
       uidGouvernance: {
         value: '1',
       },
-      uidUtilisateurCourant,
     }).state)
   })
 
@@ -139,7 +130,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({ editeurUtilisateurId: 'userFooId', gouvernanceId, id: 2 }),
@@ -166,7 +157,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({ date: epochTime, derniereEdition: new Date('3000-01-01'), editeurUtilisateurId: 'userFooId', gouvernanceId, id: 2 }),
@@ -194,7 +185,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({
@@ -265,7 +256,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({

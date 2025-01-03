@@ -38,24 +38,29 @@ model UserFNE {
 }
 
 model Gouvernance {
-  id                         String    @id
-  userCreateurId             String    @map("createur_id")
-  departementCode            String    @map("departement_code")
-  userDerniereModificationId String    @map("derniere_modification_par_id")
-  modification               DateTime
-  suppression                DateTime? @map("supression")
-  noteDeContexte             String    @map("note_de_contexte")
-  porteurRegionCode          String?   @map("v1_porteur_region_code")
-  porteurDepartementCode     String?   @map("v1_porteur_departement_code")
-  porteurEpciCode            String?   @map("v1_porteur_epci_code")
-  porteurSiret               String?   @map("v1_porteur_siret")
+  id                              String                 @id
+  userCreateurId                  String                 @map("createur_id")
+  departementCode                 String                 @map("departement_code")
+  userDerniereModificationId      String                 @map("derniere_modification_par_id")
+  modification                    DateTime
+  suppression                     DateTime?              @map("supression")
+  noteDeContexte                  String                 @map("note_de_contexte")
+  perimetre                       perimetre_gouvernance? @map("v1_perimetre")
+  porteurRegionCode               String?                @map("v1_porteur_region_code")
+  porteurDepartementCode          String?                @map("v1_porteur_departement_code")
+  porteurEpciCode                 String?                @map("v1_porteur_epci_code")
+  porteurSiret                    String?                @map("v1_porteur_siret")
+  beneficiaireDotationFormationId String?                @map("beneficiaire_dotation_formation_id")
 
-  relationEpci                     Epci?   @relation(fields: [porteurEpciCode], references: [code])
-  relationUserCreateur             UserFNE @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
-  relationUserDerniereModification UserFNE @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
+  relationEpci                          Epci?              @relation(fields: [porteurEpciCode], references: [code])
+  relationUserCreateur                  UserFNE            @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
+  relationUserDerniereModification      UserFNE            @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
+  relationInformationSiret              InformationSiret?  @relation(fields: [porteurSiret], references: [siret])
+  relationBeneficiaireDotationFormation MembreGouvernance? @relation("beneficiaireDotationFormation", fields: [beneficiaireDotationFormationId], references: [id])
 
   comites         Comite[]
   feuillesDeRoute FeuilleDeRoute[]
+  membres         MembreGouvernance[]
 
   @@map("gouvernances")
 }
@@ -91,13 +96,79 @@ model FeuilleDeRoute {
   relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
 }
 
+model MembreGouvernance {
+  id              String   @id
+  gouvernanceId   String   @map("gouvernance_id")
+  creation        DateTime
+  modification    DateTime
+  regionCode      String?  @map("region_code")
+  departementCode String?  @map("departement_code")
+  epciCode        String?  @map("epci_code")
+  nomStructure    String?  @map("nom_structure")
+  siret           String?
+  coporteur       Boolean
+  communeCode     String?  @map("commune_code")
+
+  relationGouvernance      Gouvernance       @relation(fields: [gouvernanceId], references: [id])
+  relationEpci             Epci?             @relation(fields: [epciCode], references: [code])
+  relationInformationSiret InformationSiret? @relation(fields: [siret], references: [siret])
+  relationCommune          Commune?          @relation(fields: [communeCode], references: [code])
+
+  gouvernanceDotationFormation Gouvernance[]            @relation("beneficiaireDotationFormation")
+  beneficiairesSubventions     BeneficiaireSubvention[]
+
+  @@map("membre_gouvernance")
+}
+
 model Epci {
   code String @id
   nom  String
 
-  gouvernance Gouvernance[]
+  gouvernance        Gouvernance[]
+  membresGouvernance MembreGouvernance[]
 
   @@map("epcis")
+}
+
+model Commune {
+  code String @id
+  nom  String
+
+  membresGouvernance MembreGouvernance[]
+
+  @@map("communes")
+}
+
+model InformationSiret {
+  siret String  @id
+  nom   String?
+
+  gouvernances      Gouvernance[]
+  membreGouvernance MembreGouvernance[]
+
+  @@map("informations_siret")
+}
+
+model BeneficiaireSubvention {
+  id String @id
+
+  demandeDeSubventionId String @map("demande_de_subvention_id")
+  membreGouvernanceId   String @map("membre_gouvernance_id")
+
+  relationMembreGouvernance   MembreGouvernance   @relation(fields: [membreGouvernanceId], references: [id])
+  relationDemandeDeSubvention DemandeDeSubvention @relation(fields: [demandeDeSubventionId], references: [id])
+
+  @@map("beneficiaire_subvention")
+}
+
+model DemandeDeSubvention {
+  id String @id
+
+  acceptee DateTime?
+
+  beneficiairesSubventions BeneficiaireSubvention[]
+
+  @@map("demande_de_subvention")
 }
 
 enum UserRoleFNE {
@@ -122,4 +193,11 @@ enum FrequenceComite {
   trimestrielle
   semestrielle
   annuelle
+}
+
+enum perimetre_gouvernance {
+  autre
+  departement
+  epci
+  region
 }

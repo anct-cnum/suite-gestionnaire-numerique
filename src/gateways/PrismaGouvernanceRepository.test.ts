@@ -22,7 +22,7 @@ describe('gouvernance repository', () => {
       data: utilisateurRecordFactory({ id: 1 }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
@@ -42,14 +42,17 @@ describe('gouvernance repository', () => {
     await prisma.departementRecord.create({
       data: departementRecordFactory({ code: '75' }),
     })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({ code: '76' }),
+    })
     await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({ id: 1 }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId, idFNE: 'fneFooId1' }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: 2, idFNE: 'fneFooId2' }),
+      data: gouvernanceRecordFactory({ departementCode: '76', id: 2 }),
     })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
@@ -73,7 +76,7 @@ describe('gouvernance repository', () => {
       data: utilisateurRecordFactory({ id: 1 }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.noteDeContexteRecord.create({
       data: noteDeContexteRecordFactory({ gouvernanceId, id: 1 }),

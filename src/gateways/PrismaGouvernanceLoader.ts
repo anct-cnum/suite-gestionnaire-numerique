@@ -77,6 +77,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       frequence: comite.frequence,
       id: comite.id,
       nomEditeur: comite.relationUtilisateur?.nom ?? '~',
+      periodicite: comite.frequence,
       prenomEditeur: comite.relationUtilisateur?.prenom ?? '~',
       type: comite.type as TypeDeComite,
     }))
