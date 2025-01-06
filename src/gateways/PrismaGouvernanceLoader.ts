@@ -9,7 +9,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
         id: true
         gouvernanceId: true
         derniereEdition: true
-        editeurId: true
+        relationUtilisateur: true
         contenu: true
       }
     }
@@ -34,7 +34,11 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: true,
-        noteDeContexte: true,
+        noteDeContexte: {
+          include: {
+            relationUtilisateur: true,
+          },
+        },
         relationDepartement: true,
       },
       where: {
@@ -52,8 +56,8 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
 function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
   const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
     dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
-    nomAuteur: 'Deschamps',
-    prenomAuteur: 'Jean',
+    nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
+    prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
     texte: gouvernanceRecord.noteDeContexte.contenu,
   } : undefined
   const comites = gouvernanceRecord.comites.length > 0

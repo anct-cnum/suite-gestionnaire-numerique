@@ -94,30 +94,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-        {
-          beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 2,
-        },
-      ],
+      feuillesDeRoute: feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -207,30 +184,7 @@ describe('gouvernance loader', () => {
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: undefined,
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-        {
-          beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 2,
-        },
-      ],
+      feuillesDeRoute: feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -310,30 +264,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-        {
-          beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 2,
-        },
-      ],
+      feuillesDeRoute: feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -414,30 +345,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-        {
-          beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 2,
-        },
-      ],
+      feuillesDeRoute: feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -518,30 +426,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-        {
-          beneficiairesSubvention: [],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 5_000,
-          montantSubventionDemande: 40_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
-          totalActions: 2,
-        },
-      ],
+      feuillesDeRoute: feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -564,3 +449,28 @@ describe('gouvernance loader', () => {
     })
   })
 })
+
+const feuillesDeRoute = [
+  {
+    beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    budgetGlobal: 145_000,
+    montantSubventionAccorde: 5_000,
+    montantSubventionDemande: 40_000,
+    montantSubventionFormationAccorde: 5_000,
+    nom: 'Feuille de route inclusion 1',
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    totalActions: 3,
+  },
+  {
+    beneficiairesSubvention: [],
+    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    budgetGlobal: 145_000,
+    montantSubventionAccorde: 5_000,
+    montantSubventionDemande: 40_000,
+    montantSubventionFormationAccorde: 5_000,
+    nom: 'Feuille de route inclusion 2',
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    totalActions: 2,
+  },
+]
