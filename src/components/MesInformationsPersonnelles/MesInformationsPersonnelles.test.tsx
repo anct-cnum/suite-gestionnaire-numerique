@@ -46,8 +46,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     const sousTitreMonRole = screen.getByText(matchWithoutMarkup('Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques. Contacter le support pour le modifier.'), { selector: 'p' })
     const lienContacterLeSupport = within(sousTitreMonRole).getByRole('link', { name: 'Contacter le support' })
     expect(lienContacterLeSupport).toHaveAttribute('href', 'https://aide.conseiller-numerique.gouv.fr/fr/')
-    expect(lienContacterLeSupport).toHaveAttribute('target', '_blank')
-    expect(lienContacterLeSupport).toHaveAttribute('rel', 'external noopener noreferrer')
+    expect(lienContacterLeSupport).toOpenInNewTab('Aide')
     const role = screen.getByText('Administrateur dispositif', { selector: 'p' })
     expect(role).toBeInTheDocument()
 

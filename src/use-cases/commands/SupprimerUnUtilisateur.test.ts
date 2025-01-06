@@ -41,8 +41,7 @@ describe('supprimer un utilisateur', () => {
     expect(result).toBe('compteASupprimerInexistant')
   })
 
-  it('l’utilisateur courant n’est pas autorisé à supprimer l’utilisateur qu’il souhaite supprimer :'
-    + ' échec de suppression', async () => {
+  it('l’utilisateur courant n’est pas autorisé à supprimer l’utilisateur qu’il souhaite supprimer : échec de suppression', async () => {
     // GIVEN
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 

@@ -11,7 +11,10 @@ export class SupprimerMonCompte implements CommandHandler<Command, Failure> {
   async execute(command: Command): ResultAsync<Failure> {
     return this.#utilisateurRepository
       .dropByUid(command.uidUtilisateurCourant)
-      .then((result) => (result ? 'OK' : 'utilisateurCourantInexistant'))
+      .then((result) => {
+        // eslint-disable-next-line sonarjs/no-selector-parameter
+        return result ? 'OK' : 'utilisateurCourantInexistant'
+      })
   }
 }
 

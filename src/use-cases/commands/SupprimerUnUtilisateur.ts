@@ -22,7 +22,7 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
       return 'suppressionNonAutorisee'
     }
 
-    return (await this.#utilisateurRepository.drop(utilisateurASupprimer))
+    return await this.#utilisateurRepository.drop(utilisateurASupprimer)
       ? 'OK'
       : 'compteASupprimerDejaSupprime'
   }

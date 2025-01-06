@@ -59,14 +59,14 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Pro
             />
             {
               // Stryker disable next-line ConditionalExpression
-              emailValidationInfo.message !== '' ? (
+              emailValidationInfo.message === '' ? null : (
                 <p
                   className={emailValidationInfo.messageClass}
                   id={messageValidationId}
                 >
                   {emailValidationInfo.message}
                 </p>
-              ) : null
+              )
             }
           </div>
         </div>

@@ -24,9 +24,9 @@ export interface AddUtilisateurRepository {
   add(utilisateur: Utilisateur): Promise<boolean>
 }
 
-export interface UtilisateurRepository
-  extends FindUtilisateurRepository,
-    DropUtilisateurRepository,
-    DropUtilisateurByUidRepository,
-    AddUtilisateurRepository,
-    UpdateUtilisateurRepository {}
+export interface UtilisateurRepository extends
+  FindUtilisateurRepository,
+  DropUtilisateurRepository,
+  DropUtilisateurByUidRepository,
+  AddUtilisateurRepository,
+  UpdateUtilisateurRepository {}

@@ -18,7 +18,7 @@ import config from '@/use-cases/config.json'
 import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
-export default async function Layout({ children }: PropsWithChildren): Promise<ReactElement> {
+export default async function Layout({ children }: Readonly<PropsWithChildren>): Promise<ReactElement> {
   const session = await getSession()
 
   if (!session) {

@@ -3,7 +3,6 @@ import { GestionnaireDepartement } from './GestionnaireDepartement'
 import { GestionnaireGroupement } from './GestionnaireGroupement'
 import { GestionnaireRegion } from './GestionnaireRegion'
 import { GestionnaireStructure } from './GestionnaireStructure'
-import { utilisateurFactory } from './testHelper'
 import { Utilisateur } from './Utilisateur'
 import { UtilisateurFactory } from './UtilisateurFactory'
 import { epochTime } from '@/shared/testHelper'
@@ -111,7 +110,6 @@ describe('utilisateur factory', () => {
       expectedIsActive: true,
     },
   ])('$desc', ({ derniereConnexion, expectedIsActive }) => {
-
     // GIVEN
     const utilisateurParams = {
       derniereConnexion,
@@ -123,6 +121,7 @@ describe('utilisateur factory', () => {
       telephone: '0102030405',
       uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     }
+
     // WHEN
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
@@ -141,7 +140,6 @@ describe('utilisateur factory', () => {
       expectedTelephone: '',
     },
   ])('$desc', ({ telephone, expectedTelephone }) => {
-
     // GIVEN
     const utilisateurParams = {
       derniereConnexion: epochTime,
@@ -153,6 +151,7 @@ describe('utilisateur factory', () => {
       telephone,
       uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
     }
+
     // WHEN
     const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
@@ -162,12 +161,18 @@ describe('utilisateur factory', () => {
 
   it('la date de dernière connexion doit être une date valide', () => {
     // GIVEN
-    const dateDeConnexionInvalide = new Date('foo')
+    const utilisateurParams = {
+      derniereConnexion: new Date('foo'),
+      emailDeContact: 'martin.tartempion@example.net',
+      inviteLe: epochTime,
+      isSuperAdmin: false,
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+    }
 
     // WHEN
-    const lazyUtilisateur = () : Utilisateur => utilisateurFactory({
-      derniereConnexion: dateDeConnexionInvalide,
-    })
+    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
     // THEN
     expect(lazyUtilisateur).toThrow('dateDeDerniereConnexionInvalide')
@@ -175,12 +180,18 @@ describe('utilisateur factory', () => {
 
   it('la date d‘invitation doit être une date valide', () => {
     // GIVEN
-    const dateDInvitationInvalide = new Date('foo')
+    const utilisateurParams = {
+      derniereConnexion: epochTime,
+      emailDeContact: 'martin.tartempion@example.net',
+      inviteLe: new Date('foo'),
+      isSuperAdmin: false,
+      nom: 'Tartempion',
+      prenom: 'Martin',
+      uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
+    }
 
     // WHEN
-    const lazyUtilisateur = () : Utilisateur => utilisateurFactory({
-      inviteLe: dateDInvitationInvalide,
-    })
+    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Instructeur')
 
     // THEN
     expect(lazyUtilisateur).toThrow('dateDInvitationInvalide')

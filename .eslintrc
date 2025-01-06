@@ -1,13 +1,14 @@
 {
   "extends": [
     "next/core-web-vitals",
-    "eslint:recommended",
+    "eslint:all",
+    "plugin:@stylistic/all-extends",
     "plugin:@typescript-eslint/all",
+    "plugin:sonarjs/recommended-legacy",
     "plugin:react/all",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "plugin:jsx-a11y/strict",
-    "plugin:deprecation/recommended"
+    "plugin:jsx-a11y/strict"
   ],
   "parserOptions": {
     "project": ["./tsconfig.json"]
@@ -23,66 +24,27 @@
     }
   },
   "ignorePatterns": ["public", "next.config.js"],
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["sort-keys-fix", "unused-imports"],
+  "plugins": ["only-warn", "sonarjs", "sort-keys-fix", "unused-imports"],
   "rules": {
-    "arrow-body-style": ["error", "as-needed"],
-    "array-bracket-newline": "error",
-    "array-bracket-spacing": "error",
-    "array-element-newline": ["error", "consistent"],
-    "arrow-parens": "error",
-    "arrow-spacing": "error",
-    "brace-style": "error",
-    "comma-dangle": [
-      "error",
-      {
-        "arrays": "always-multiline",
-        "imports": "always-multiline",
-        "objects": "always-multiline"
-      }
-    ],
-    "comma-spacing": "error",
-    "default-case": "error",
-    "eol-last": "error",
-    "eqeqeq": "error",
-    "function-paren-newline": ["error", "consistent"],
-    "id-match": "error",
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-    "jsx-quotes": "error",
-    "key-spacing": "error",
-    "keyword-spacing": "error",
-    "max-len": [
-      "error",
-      {
-        "code": 120,
-        "ignoreUrls": true,
-        "ignoreStrings": true,
-        "ignoreTemplateLiterals": true,
-        "ignoreRegExpLiterals": true
-      }
-    ],
-    "no-console": "error",
-    "no-else-return": "error",
-    "no-multiple-empty-lines": ["error", { "max": 1 }],
-    "no-multi-spaces": "error",
-    "no-nested-ternary": "error",
-    "no-param-reassign": "error",
-    "no-tabs": "error",
-    "no-trailing-spaces": "error",
-    "no-unneeded-ternary": "error",
-    "no-whitespace-before-property": "error",
-    "object-curly-spacing": ["error", "always"],
-    "object-curly-newline": "error",
-    "object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "arrow-body-style": "off",
+    "capitalized-comments": "off",
+    "func-style": ["error", "declaration"],
+    "id-length": ["error", { "exceptions": ["_"] }],
+    "line-comment-position": "off",
+    "max-classes-per-file": "off",
+    "max-lines": "off",
+    "max-lines-per-function": "off",
+    "max-statements": "off",
+    "multiline-comment-style": "off",
+    "new-cap": ["error", { "capIsNewExceptions": ["GET", "NextAuth", "Notification"] }],
+    "no-inline-comments": "off",
+    "no-ternary": "off",
+    "no-undefined": "off",
+    "no-void": ["error", { "allowAsStatement": true }],
     "one-var": ["error", "never"],
-    "prefer-const": "error",
-    "quote-props": ["error", "as-needed"],
-    "quotes": ["error", "single", { "avoidEscape": true }],
-    "semi": ["error", "never"],
-    "space-before-blocks": "error",
-    "space-in-parens": "error",
-    "space-infix-ops": "error",
-    "yoda": "error",
+    "prefer-named-capture-group": "off",
+    "require-unicode-regexp": "off",
+    "sort-imports": "off",
     "import/newline-after-import": "error",
     "import/no-anonymous-default-export": "off",
     "import/no-extraneous-dependencies": "error",
@@ -144,9 +106,11 @@
         "alphabetize": { "order": "asc", "caseInsensitive": true }
       }
     ],
+    "jsx-a11y/no-interactive-element-to-noninteractive-role": "error",
+    "jsx-a11y/no-aria-hidden-on-focusable": "error",
+    "jsx-a11y/lang": "error",
     "react/forbid-component-props": "off",
-    "react/jsx-boolean-value": ["error", "always", { "never": ["aria-hidden"] }],
-    "react/jsx-curly-brace-presence": "off",
+    "react/jsx-boolean-value": "off",
     "react/jsx-filename-extension": ["error", { "extensions": [".tsx"] }],
     "react/jsx-indent": ["error", 2],
     "react/jsx-indent-props": ["error", 2],
@@ -156,20 +120,87 @@
     "react/jsx-no-literals": "off",
     "react/react-in-jsx-scope": "off",
     "react/no-multi-comp": ["error", { "ignoreStateless": true }],
+    "sonarjs/no-nested-functions": "off",
     "sort-keys-fix/sort-keys-fix": "error",
+    "@stylistic/array-element-newline": ["error", "consistent"],
+    "@stylistic/comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "imports": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
+    "@stylistic/dot-location": ["error", "property"],
+    "@stylistic/function-call-argument-newline": ["error", "consistent"],
+    "@stylistic/function-paren-newline": ["error", "consistent"],
+    "@stylistic/indent": ["error", 2],
+    "@stylistic/lines-around-comment": "off",
+    "@stylistic/lines-between-class-members": [
+      "error",
+      {
+        "enforce": [
+          { "blankLine": "always", "prev": "*", "next": "*" },
+          { "blankLine": "never", "prev": "field", "next": "field" }
+        ]
+      }
+    ],
+    "@stylistic/max-len": [
+      "error",
+      {
+        "code": 120,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ],
+    "@stylistic/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none"
+        }
+      }
+    ],
+    "@stylistic/multiline-ternary": "off",
+    "@stylistic/multiline-comment-style": "off",
+    "@stylistic/newline-per-chained-call": ["off"],
+    "@stylistic/no-extra-parens": ["error", "all", { "ignoreJSX": "all" }],
+    "@stylistic/no-multiple-empty-lines": ["error", { "max": 1 }],
+    "@stylistic/object-curly-spacing": ["error", "always"],
+    "@stylistic/object-property-newline": ["error", { "allowAllPropertiesOnSameLine": true }],
+    "@stylistic/operator-linebreak": "off",
+    "@stylistic/padded-blocks": ["error", "never"],
+    "@stylistic/quote-props": ["error", "as-needed"],
+    "@stylistic/quotes": ["error", "single", { "avoidEscape": true }],
+    "@stylistic/semi": ["error", "never"],
+    "@stylistic/space-before-function-paren": [
+      "error",
+      {
+        "anonymous": "always",
+        "named": "never",
+        "asyncArrow": "always"
+      }
+    ],
     "@typescript-eslint/array-type": ["error", { "default": "generic", "readonly": "generic" }],
     "@typescript-eslint/ban-ts-comment": "off",
-    "@typescript-eslint/class-methods-use-this": ["error", { "ignoreOverrideMethods": true }],
     "@typescript-eslint/consistent-type-imports": "off",
     "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/init-declarations": "off",
+    "@typescript-eslint/max-params": "off",
     "@typescript-eslint/method-signature-style": ["error", "method"],
     "@typescript-eslint/naming-convention": "off",
-    "@typescript-eslint/max-params": "off",
     "@typescript-eslint/no-magic-numbers": "off",
-    "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "@typescript-eslint/no-shadow": "off",
     "@typescript-eslint/no-use-before-define": "off",
+    "@typescript-eslint/switch-exhaustiveness-check": [
+      "error",
+      { "considerDefaultExhaustiveForUnions": true }
+    ],
+    "@typescript-eslint/no-misused-promises": ["error", { "checksVoidReturn": false }],
+    "@typescript-eslint/no-unnecessary-type-parameters": "off",
+    "@typescript-eslint/no-unsafe-type-assertion": "off",
     "@typescript-eslint/prefer-destructuring": "off",
     "@typescript-eslint/prefer-readonly-parameter-types": [
       "off",
@@ -194,8 +225,9 @@
       "extends": ["plugin:vitest/all"],
       "rules": {
         "@typescript-eslint/class-methods-use-this": "off",
-        "@typescript-eslint/init-declarations": "off",
         "@typescript-eslint/unbound-method": "off",
+        "func-style": "off",
+        "no-undef": "off",
         "vitest/max-expects": "off",
         "vitest/no-conditional-expect": "off",
         "vitest/no-hooks": "off",
@@ -203,6 +235,12 @@
         "vitest/prefer-expect-assertions": "off",
         "vitest/prefer-to-be-falsy": "off",
         "vitest/prefer-to-be-truthy": "off"
+      }
+    },
+    {
+      "files": ["**/testHelper.tsx"],
+      "rules": {
+        "no-undef": "off"
       }
     },
     {

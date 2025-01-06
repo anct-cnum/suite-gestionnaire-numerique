@@ -72,12 +72,12 @@ const nextConfig: NextConfig = {
   },
   // @ts-expect-error
   headers() {
-    return process.env.NODE_ENV !== 'development' ? [
+    return process.env.NODE_ENV === 'development' ? [] : [
       {
         headers: securityHeaders,
         source: '/:path*',
       },
-    ] : []
+    ]
   },
   poweredByHeader: false,
   reactStrictMode: true,

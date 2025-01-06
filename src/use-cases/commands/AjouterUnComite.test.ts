@@ -72,7 +72,7 @@ describe('ajouter un comité à une gouvernance', () => {
       comiteFactory({
         commentaire,
         date: expectedDate,
-        dateDeCreation: dateDeCreation,
+        dateDeCreation,
         dateDeModification: dateDeCreation,
         frequence,
         type,
@@ -180,7 +180,6 @@ describe('ajouter un comité à une gouvernance', () => {
 
   it('étant donné une gouvernance inexistante, quand un comité est créé, alors une erreur est renvoyée', async () => {
     // GIVEN
-    // vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),

@@ -194,7 +194,6 @@ describe('utilisateur repository', () => {
           expectedIsActive: true,
         },
       ])('$desc', async ({ derniereConnexion, expectedIsActive }) => {
-
         // GIVEN
         await prisma.regionRecord.create({
           data: regionRecordFactory({ code: regionCode }),
@@ -239,13 +238,11 @@ describe('utilisateur repository', () => {
     describe.each([
       {
         desc: 'par identifiant de l’utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> =>
-          repository.dropByUid(uid),
+        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> => repository.dropByUid(uid),
       },
       {
         desc: 'par utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> =>
-          repository.drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uid } })),
+        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> => repository.drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uid } })),
       },
     ])('$desc', ({ dropFn }) => {
       it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
@@ -335,8 +332,7 @@ describe('utilisateur repository', () => {
         // GIVEN
         const prismaClientKnownRequestErrorOnUpdateStub = {
           async update(): Promise<never> {
-            // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
-            return Promise.reject( // NOSONAR
+            return Promise.reject(
               new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
             )
           },
@@ -496,8 +492,7 @@ describe('utilisateur repository', () => {
       // GIVEN
       const prismaClientAuthenticationFailedErrorStub = {
         async create(): Promise<never> {
-          // Sonar ne voit pas que c'est une Error car le fichier Prisma est dans node_module
-          return Promise.reject( // NOSONAR
+          return Promise.reject(
             new Prisma.PrismaClientKnownRequestError('authentication failed', {
               clientVersion: '',
               code: 'P1000',

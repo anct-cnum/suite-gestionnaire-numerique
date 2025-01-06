@@ -59,7 +59,7 @@ describe('utilisateur', () => {
           role: 'Gestionnaire structure' as const,
         },
       ])('$role', ({ role, nePeutGererDesc, peutGererDesc, codeOrganisation, codeOrganisationAutre }) => {
-        it.each(Roles.filter((r) => role !== r))('ne peut gérer %s', (roleAGerer) => {
+        it.each(Roles.filter((roleAGerer) => role !== roleAGerer))('ne peut gérer %s', (roleAGerer) => {
           // GIVEN
           const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role })
           const utilisateurAGerer = utilisateurFactory({ ...utilisateurProps, role: roleAGerer })

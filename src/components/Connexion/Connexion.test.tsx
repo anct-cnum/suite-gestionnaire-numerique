@@ -8,7 +8,7 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     // GIVEN
     vi.spyOn(nextAuth, 'signIn').mockImplementationOnce(vi.fn())
 
-    render(<Connexion idProvider={'pro-connect'} />)
+    render(<Connexion idProvider="pro-connect" />)
     const boutonSeConnecter = screen.getByRole('button', { name: 'S’identifier avec ProConnect' })
 
     // WHEN

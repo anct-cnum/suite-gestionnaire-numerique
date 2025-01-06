@@ -7,4 +7,4 @@ export type GroupementState = Readonly<{
   nom: string
 }>
 
-type GroupementUidState = Readonly<{value: number}>
+type GroupementUidState = Readonly<{ value: number }>
