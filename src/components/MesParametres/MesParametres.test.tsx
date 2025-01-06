@@ -47,9 +47,9 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
             const receptionNotifsToggle = within(regionPreferencesDeCommunicationEtNotification())
               .getByRole(
                 'checkbox',
-                { name: 'Recevoir toutes les notifications sur votre adresse électronique' }
+                { checked: false, name: 'Recevoir toutes les notifications sur votre adresse électronique' }
               )
-            expect(receptionNotifsToggle).not.toBeChecked()
+            expect(receptionNotifsToggle).toBeInTheDocument()
           })
 
           it('d’un récapitulatif hebdomadaire', () => {
@@ -60,9 +60,9 @@ describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
             const receptionRecapHebdoToggle = within(regionPreferencesDeCommunicationEtNotification())
               .getByRole(
                 'checkbox',
-                { name: 'Recevoir un récapitulatif hebdomadaire sur votre adresse électronique' }
+                { checked: false, name: 'Recevoir un récapitulatif hebdomadaire sur votre adresse électronique' }
               )
-            expect(receptionRecapHebdoToggle).not.toBeChecked()
+            expect(receptionRecapHebdoToggle).toBeInTheDocument()
           })
         })
 
