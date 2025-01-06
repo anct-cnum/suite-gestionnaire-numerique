@@ -36,9 +36,9 @@ export type UneStructureReadModel = Readonly<{
 type TypeZone = 'departement' | 'region'
 
 type Query = Readonly<{
-  match: string,
+  match: string
   zone?: Readonly<{
-    type: TypeZone,
+    type: TypeZone
     code: string
   }>
 }>

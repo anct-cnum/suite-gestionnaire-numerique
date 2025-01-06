@@ -20,7 +20,7 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
   }
 
   async send(destinataire: string): Promise<void> {
-    const authParams = this.#user !== '' ? { auth: { pass: this.#password, user: this.#user } } : {}
+    const authParams = this.#user === '' ? {} : { auth: { pass: this.#password, user: this.#user } }
     const mailSender = nodemailer.createTransport({
       // @ts-expect-error
       host: this.#host,

@@ -1,4 +1,4 @@
-import { Dispatch, PropsWithChildren, ReactNode, Ref, SetStateAction } from 'react'
+import { Dispatch, PropsWithChildren, ReactElement, ReactNode, Ref, SetStateAction } from 'react'
 
 import styles from './Drawer.module.css'
 
@@ -12,7 +12,7 @@ export default function Drawer({
   children,
   icon,
   ref,
-}: Props): ReactNode {
+}: Props): ReactElement {
   // istanbul ignore next @preserve
   const boxSize = isFixedWidth ? styles['modal-box--fixed-width'] : ''
 
@@ -53,7 +53,7 @@ export default function Drawer({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  id: string,
+  id: string
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
   boutonFermeture: string

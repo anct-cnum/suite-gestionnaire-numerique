@@ -17,9 +17,9 @@ export function mesUtilisateursPresenter(
       const [statut, couleur, picto] = monUtilisateur.isActive
         ? ['Activé', 'success', monUtilisateur.role.categorie] as const
         : ['En attente', 'grey-main', inactif] as const
-      const [color, isDisabled] = uid !== monUtilisateur.uid
-        ? ['color-red', true] as const
-        : ['color-grey', false] as const
+      const [color, isDisabled] = uid === monUtilisateur.uid
+        ? ['color-grey', false] as const
+        : ['color-red', true] as const
 
       return {
         deleteButton: {
@@ -77,7 +77,7 @@ export type DetailsUtilisateurViewModel = Readonly<{
 }>
 
 export type RolesAvecStructure = Readonly<Record<string, {
-  label: string,
+  label: string
   options: ReadonlyArray<{
     value: string
     label: string

@@ -46,6 +46,7 @@ export class Comite extends Entity<State> {
     }
   }
 
+  // eslint-disable-next-line sonarjs/function-return-type
   static create({
     uid,
     dateDeCreation,
@@ -58,7 +59,7 @@ export class Comite extends Entity<State> {
   }: ComiteFactoryParams): Result<ComiteFailure, Comite> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
-      const dateDuComiteValidee = date !== undefined ? new ValidDate(date, 'dateDuComiteInvalide') : undefined
+      const dateDuComiteValidee = date === undefined ? undefined : new ValidDate(date, 'dateDuComiteInvalide')
 
       const comite = new Comite(
         new ComiteUid(uid),

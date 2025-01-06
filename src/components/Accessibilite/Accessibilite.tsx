@@ -77,7 +77,6 @@ export default function Accessibilite(): ReactElement {
         >
           Contactez-nous
         </ExternalLink>
-        {''}
         .
       </p>
     </>

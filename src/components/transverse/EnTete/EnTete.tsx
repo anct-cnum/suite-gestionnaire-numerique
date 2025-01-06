@@ -24,7 +24,7 @@ export default function EnTete(): ReactElement {
               <div className="fr-header__brand-top">
                 <div className="fr-header__logo">
                   <svg
-                    aria-hidden
+                    aria-hidden="true"
                     height="40"
                     width="35"
                     xmlns="http://www.w3.org/2000/svg"

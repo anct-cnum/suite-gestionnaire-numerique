@@ -110,13 +110,16 @@ function toRoleViewModel(role: string): RoleViewModel {
 }
 
 function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['noteDeContexte']): GouvernanceViewModel['sectionNoteDeContexte']['noteDeContexte'] {
-  if (!noteDeContexte) return undefined
+  if (!noteDeContexte) {
+    return undefined
+  }
 
   return {
     dateDeModification: formaterEnDateFrancaise(noteDeContexte.dateDeModification),
     nomAuteur: noteDeContexte.nomAuteur,
     prenomAuteur: noteDeContexte.prenomAuteur,
     texteAvecHTML: noteDeContexte.texte,
+    // eslint-disable-next-line sonarjs/slow-regex
     texteSansHTML: `${noteDeContexte.texte.replace(/(?:<(?:[^>]+)>)/g, '').substring(0, 290)}...`,
   }
 }
@@ -180,7 +183,9 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
 }
 
 function buildSousTitreNoteDeContexte(noteDeContexte: UneGouvernanceReadModel['noteDeContexte']): string {
-  if (!noteDeContexte) return ''
+  if (!noteDeContexte) {
+    return ''
+  }
 
   return `Modifié le ${formaterEnDateFrancaise(noteDeContexte.dateDeModification)} par ${noteDeContexte.prenomAuteur} ${noteDeContexte.nomAuteur}`
 }

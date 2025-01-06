@@ -156,8 +156,9 @@ export default function MesInformationsPersonnelles(
             {' '}
             <a
               href="https://aide.conseiller-numerique.gouv.fr/fr/"
-              rel="external noopener noreferrer"
+              rel="noopener external noreferrer"
               target="_blank"
+              title="Aide - nouvelle fenêtre"
             >
               Contacter le support
             </a>

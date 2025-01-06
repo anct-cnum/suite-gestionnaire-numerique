@@ -15,7 +15,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-weather/icons-weather.min.css'
 import '../global.css'
 
-export default function Layout({ children }: PropsWithChildren): ReactElement {
+export default function Layout({ children }: Readonly<PropsWithChildren>): ReactElement {
   return (
     <html
       data-fr-scheme="light"

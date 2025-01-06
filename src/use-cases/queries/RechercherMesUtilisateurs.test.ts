@@ -32,8 +32,9 @@ describe('rechercher mes utilisateurs', () => {
 const dummyUtilisateur = utilisateurReadModelFactory()
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
-  spiedFindMesUtilisateursEtLeTotalArgs: Parameters<typeof this.findMesUtilisateursEtLeTotal> | undefined
-  spiedFindByUidIdArgs: Parameters<typeof this.findByUid> | undefined
+  spiedFindMesUtilisateursEtLeTotalArgs:
+    Parameters<typeof MesUtilisateursLoaderSpy.prototype.findMesUtilisateursEtLeTotal> | undefined
+  spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
 
   async findMesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,

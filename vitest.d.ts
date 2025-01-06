@@ -2,10 +2,10 @@
 import type { Assertion } from 'vitest'
 
 interface CustomMatchers<R = unknown> {
-  toOpenInNewTab: (content: string) => R
+  toOpenInNewTab(content: string): R
 }
 
 declare module 'vitest' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface Assertion<T> extends CustomMatchers<T> {}
 }

@@ -38,8 +38,10 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       })
       return true
     } catch (error: unknown) {
-      // https://www.prisma.io/docs/orm/reference/error-reference#p2002
-      // Unique constraint failed on the {constraint}.
+      /*
+       * https://www.prisma.io/docs/orm/reference/error-reference#p2002
+       * Unique constraint failed on the {constraint}.
+       */
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         return false
       }
@@ -132,8 +134,10 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       })
       .then(() => true)
       .catch((error: unknown) => {
-        // https://www.prisma.io/docs/orm/reference/error-reference#p2025
-        // An operation failed because it depends on one or more records that were required but not found.
+        /*
+         * https://www.prisma.io/docs/orm/reference/error-reference#p2025
+         * An operation failed because it depends on one or more records that were required but not found.
+         */
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
           return false
         }

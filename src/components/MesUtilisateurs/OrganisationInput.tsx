@@ -14,7 +14,6 @@ export default function OrganisationInput({
   required,
   extraSearchParams,
 }: Props): ReactElement {
-
   return (
     <div className="fr-select-group">
       <label
@@ -31,38 +30,40 @@ export default function OrganisationInput({
           </> :
           null}
       </label>
-      {!options.length ?
-        <AsyncSelect
-          components={{ DropdownIndicator }}
-          inputId="organisation"
-          instanceId="organisation"
-          isClearable={true}
-          loadOptions={onSearch}
-          loadingMessage={() => 'Chargement des structures...'}
-          menuPlacement="top"
-          name="organisation"
-          noOptionsMessage={() => 'Rechercher une structure'}
-          onChange={setOrganisation as (organisation: unknown) => void}
-          placeholder={placeholder}
-          required={required}
-          styles={styles}
-          value={organisation}
-        /> :
-        <Select
-          components={{ DropdownIndicator }}
-          inputId="organisation"
-          instanceId="organisation"
-          isClearable={true}
-          menuPlacement="top"
-          name="organisation"
-          noOptionsMessage={() => 'Pas de résultat'}
-          onChange={setOrganisation as (organisation: unknown) => void}
-          options={options}
-          placeholder={placeholder}
-          required={required}
-          styles={styles}
-          value={organisation}
-        />}
+      {
+        options.length ?
+          <Select
+            components={{ DropdownIndicator }}
+            inputId="organisation"
+            instanceId="organisation"
+            isClearable={true}
+            menuPlacement="top"
+            name="organisation"
+            noOptionsMessage={() => 'Pas de résultat'}
+            onChange={setOrganisation as (organisation: unknown) => void}
+            options={options}
+            placeholder={placeholder}
+            required={required}
+            styles={styles}
+            value={organisation}
+          /> :
+          <AsyncSelect
+            components={{ DropdownIndicator }}
+            inputId="organisation"
+            instanceId="organisation"
+            isClearable={true}
+            loadOptions={onSearch}
+            loadingMessage={() => 'Chargement des structures...'}
+            menuPlacement="top"
+            name="organisation"
+            noOptionsMessage={() => 'Rechercher une structure'}
+            onChange={setOrganisation as (organisation: unknown) => void}
+            placeholder={placeholder}
+            required={required}
+            styles={styles}
+            value={organisation}
+          />
+      }
     </div>
   )
 
@@ -71,14 +72,17 @@ export default function OrganisationInput({
       return []
     }
     return fetch(`/api/structures?${makeSearchParams(search, extraSearchParams).toString()}`)
-      .then(async (result) => result.json())
+      .then(async (result) => result.json() as Promise<Parameters<typeof toStructureSearchViewModels>[0]>)
       .then(toStructureSearchViewModels)
   }
 }
 
 type Props = Readonly<{
   label: string
-  options: ReadonlyArray<{value: string, label: string}>
+  options: ReadonlyArray<{
+    value: string
+    label: string
+  }>
   organisation: string
   placeholder: string
   required: boolean

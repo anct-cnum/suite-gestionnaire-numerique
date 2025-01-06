@@ -5,11 +5,11 @@ import { isNullishOrEmpty } from '@/shared/lang'
 export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
   const utilisateursActives = form.get('utilisateursActives')
   const isUtilisateursActivesChecked = utilisateursActives === 'on'
-  const zoneGeographique = String(form.get('zoneGeographique'))
-  const selectedStructure = form.get('organisation')?.toString()
+  const zoneGeographique = form.get('zoneGeographique') as string
+  const selectedStructure = form.get('organisation') as string
   // Stryker disable next-line ConditionalExpression
   const isZoneGeographiqueSelected = zoneGeographique !== '' && zoneGeographique !== valeurParDefautDeToutesLesRegions
-  const roles = form.getAll('roles')
+  const roles = form.getAll('roles') as Array<string>
   const shouldFilterByRoles = roles.length < totalDesRoles
 
   const url = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
@@ -34,7 +34,7 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
 
   if (!isNullishOrEmpty(selectedStructure)) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    url.searchParams.append('structure', selectedStructure!)
+    url.searchParams.append('structure', selectedStructure)
   }
 
   return url
@@ -80,7 +80,7 @@ export function zoneGeographiqueToURLSearchParams(zoneGeographique: ZoneGeograph
   if (!isZoneParDefaut(zoneGeographique)) {
     const isDepartement = zoneGeographique.type === 'departement'
     const codesZone = laRegionOuLeDepartementSelectionne(zoneGeographique.value)
-    searchParams.push([zoneGeographique.type, codesZone[+isDepartement]])
+    searchParams.push([zoneGeographique.type, codesZone[Number(isDepartement)]])
   }
   return new URLSearchParams(searchParams)
 }

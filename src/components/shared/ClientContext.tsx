@@ -55,10 +55,10 @@ export const clientContext = createContext<ClientContextProviderValue>({} as Cli
 
 export type ClientContextProviderValue = Readonly<{
   changerMonRoleAction: typeof changerMonRoleAction
-  inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction,
+  inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
   pathname: string
-  reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction,
+  reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   ajouterUnComiteAction: typeof ajouterUnComiteAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance

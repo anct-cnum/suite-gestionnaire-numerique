@@ -20,7 +20,7 @@ export type ComiteReadModel = Readonly<{
   dateProchainComite: Date
   nom: string
   periodicite: string
-  type : TypeDeComite
+  type: TypeDeComite
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{

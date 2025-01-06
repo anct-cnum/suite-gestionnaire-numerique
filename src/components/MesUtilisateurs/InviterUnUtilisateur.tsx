@@ -155,7 +155,7 @@ export default function InviterUnUtilisateur({
     const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
     const messages = await inviterUnUtilisateurAction({
       codeOrganisation,
-      email: email,
+      email,
       nom,
       path: pathname,
       prenom,

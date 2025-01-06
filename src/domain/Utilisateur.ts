@@ -101,7 +101,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
 
 export class UtilisateurUid extends Uid<UtilisateurUidState> {}
 
-export type UtilisateurUidState = Readonly<{ value: string, email: string }>
+export type UtilisateurUidState = Readonly<{
+  value: string
+  email: string
+}>
 
 export type UtilisateurState = Readonly<{
   uid: UtilisateurUidState

@@ -119,9 +119,9 @@ describe('mes informations personnelles loader', () => {
     const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
-    const utilisateurReadModel =
-      async (): Promise<MesInformationsPersonnellesReadModel> =>
-        mesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
+    const utilisateurReadModel = async (): Promise<MesInformationsPersonnellesReadModel> => {
+      return mesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
+    }
 
     // THEN
     await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')

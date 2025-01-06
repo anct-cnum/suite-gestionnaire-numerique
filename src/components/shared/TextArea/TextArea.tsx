@@ -20,6 +20,6 @@ export default function TextArea({ children, id, maxLength }: Props): ReactEleme
 }
 
 type Props = PropsWithChildren<Readonly<{
-  id: string,
+  id: string
   maxLength?: number
 }>>
