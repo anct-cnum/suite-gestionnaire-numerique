@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   DepartementRecord,
   GroupementRecord,
@@ -55,5 +56,5 @@ const typologieRoleByEnumRole: TypologieRoleByEnumRole = {
 }
 
 const enumRoleByTypologieRole = Object.fromEntries(
-  Object.entries(typologieRoleByEnumRole).map(((roleEtTypologie) => roleEtTypologie.reverse()))
+  Object.entries(typologieRoleByEnumRole).map((roleEtTypologie) => roleEtTypologie.reverse())
 ) as EnumRoleByTypologieRole

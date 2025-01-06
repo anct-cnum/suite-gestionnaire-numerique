@@ -13,9 +13,7 @@ import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 export function matchWithoutMarkup(wording: string) {
-  return function(_: string, element: Element | null): boolean {
-    return element?.textContent === wording
-  }
+  return (_: string, element: Element | null): boolean => element?.textContent === wording
 }
 
 export function renderComponent(

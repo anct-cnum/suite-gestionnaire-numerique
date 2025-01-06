@@ -37,4 +37,4 @@ export abstract class Entity<State extends EntityState> extends Model {
 
 type EntityState = Readonly<{ uid: UidState }> & Struct
 
-type UidState = Readonly<{value: string | number}> & Struct
+type UidState = Readonly<{ value: string | number }> & Struct

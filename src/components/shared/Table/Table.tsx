@@ -27,11 +27,13 @@ export default function Table({
                       key={enTete}
                       scope="col"
                     >
-                      {enTete !== '' ? enTete : (
-                        <>
+                      {
+                        enTete === '' ? (
+                          <>
                             &nbsp;
-                        </>
-                      )}
+                          </>
+                        ) : enTete
+                      }
                     </th>
                   ))}
                 </tr>

@@ -50,11 +50,11 @@ export default function DetailsUtilisateur({ utilisateur, labelId }: Props): Rea
 }
 
 type Props = Readonly<{
-  utilisateur: DetailsUtilisateurViewModel,
-  labelId: string,
+  utilisateur: DetailsUtilisateurViewModel
+  labelId: string
 }>
 
 type DetailUtilisateur = Readonly<{
-  label: string,
+  label: string
   value: string
 }>

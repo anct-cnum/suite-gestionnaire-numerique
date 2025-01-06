@@ -30,7 +30,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
             {sessionUtilisateurViewModel.nom}
           </span>
         </div>
-        <div className={'fr-text--xs color-blue-france'}>
+        <div className="fr-text--xs color-blue-france">
           {sessionUtilisateurViewModel.email}
         </div>
       </div>

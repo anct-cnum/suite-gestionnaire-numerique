@@ -3,7 +3,8 @@ import { NodemailerEmailInvitationGateway } from '@/gateways/NodemailerEmailInvi
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
 export function emailInvitationGatewayFactory(isSuperAdmin: boolean): EmailGateway {
-  return isSuperAdmin // NOSONAR
+  // eslint-disable-next-line sonarjs/no-selector-parameter
+  return isSuperAdmin
     ? new NodemailerEmailInvitationGateway(
       process.env.SMTP_SUPER_ADMIN_HOST!,
       process.env.SMTP_SUPER_ADMIN_PORT!,

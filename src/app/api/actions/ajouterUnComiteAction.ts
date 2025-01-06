@@ -11,9 +11,9 @@ export async function ajouterUnComiteAction(
 
 type ActionParams = Readonly<{
   commentaire?: string
-  date?: string,
-  frequence: string,
+  date?: string
+  frequence: string
   path: string
-  type: string,
-  uidGouvernance: string,
+  type: string
+  uidGouvernance: string
 }>

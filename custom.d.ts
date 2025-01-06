@@ -1,8 +1,8 @@
 declare global {
   interface Window {
-    dsfr: (element: HTMLElement | null) => {
+    dsfr(element: HTMLElement | null): {
       modal: {
-        conceal: () => void
+        conceal(): void
       }
     }
   }

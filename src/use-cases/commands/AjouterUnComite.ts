@@ -39,7 +39,7 @@ export class AjouterUnComite implements CommandHandler<Command> {
     const dateDeCreation = this.#date
     const comite = Comite.create({
       commentaire,
-      date: date !== undefined ? new Date(date) : undefined,
+      date: date === undefined ? undefined : new Date(date),
       dateDeCreation,
       dateDeModification: dateDeCreation,
       frequence,

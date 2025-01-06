@@ -195,8 +195,7 @@ describe('inviter un utilisateur action', () => {
   })
 
   describe(
-    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de' +
-      ' l’invitation est ou n’est pas un "super admin"',
+    'étant donné que le paramétrage de l’envoi de l’email d’invitation diffère selon que l’utilisateur à l’origine de l’invitation est ou n’est pas un "super admin"',
     () => {
       it.each([
         {

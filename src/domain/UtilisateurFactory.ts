@@ -66,9 +66,9 @@ export class UtilisateurFactory {
       case 'Gestionnaire région':
         return this.#createGestionnaireRegion(codeOrganisation)
       case 'Gestionnaire structure':
-        return this.#createGestionnaireStructure(+codeOrganisation)
+        return this.#createGestionnaireStructure(Number(codeOrganisation))
       case 'Gestionnaire groupement':
-        return this.#createGestionnaireGroupement(+codeOrganisation)
+        return this.#createGestionnaireGroupement(Number(codeOrganisation))
       default:
         return this.#createAdministrateur(new Role(role))
     }
@@ -153,7 +153,7 @@ type UtilisateurFactoryParams = Readonly<{
   uid: UtilisateurUidState
   derniereConnexion?: Date
   emailDeContact: string
-  inviteLe: Date,
+  inviteLe: Date
   isSuperAdmin: boolean
   nom: string
   prenom: string

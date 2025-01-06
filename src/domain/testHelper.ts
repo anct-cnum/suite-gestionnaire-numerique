@@ -10,7 +10,7 @@ import { epochTime } from '@/shared/testHelper'
 export function utilisateurFactory(
   override?: Partial<
     ConstructorParameters<typeof UtilisateurFactory>[0] &
-      Readonly<{ role: TypologieRole; codeOrganisation: string }>
+    Readonly<{ role: TypologieRole; codeOrganisation: string }>
   >
 ): Utilisateur {
   return new UtilisateurFactory({

@@ -834,7 +834,6 @@ describe('prisma utilisateur query', () => {
     const codeRegion = '0'
 
     it('quand je cherche un utilisateur par son email alors je le trouve', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'gregory.logeais@example.net'
@@ -857,7 +856,6 @@ describe('prisma utilisateur query', () => {
     })
 
     it('quand je cherche un utilisateur par son email de contact et qu‘un autre utilisateur a le même email de contact alors je les trouve', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'structure@example.net'
@@ -880,7 +878,6 @@ describe('prisma utilisateur query', () => {
     })
 
     it('quand je cherche un utilisateur par son prénom alors je le trouve', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'Baptiste'
@@ -904,7 +901,6 @@ describe('prisma utilisateur query', () => {
     })
 
     it('quand je cherche un utilisateur par son nom alors je le trouve', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'Nogent'
@@ -928,7 +924,6 @@ describe('prisma utilisateur query', () => {
     })
 
     it('quand je cherche avec un email qui n‘existe pas alors je ne trouve personne', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'nonexistent@example.com'
@@ -952,7 +947,6 @@ describe('prisma utilisateur query', () => {
     })
 
     it('quand je cherche avec un nom qui n‘existe pas alors je ne trouve personne', async () => {
-
       // GIVEN
       await creationDesUtilisateurs(structureId)
       const prenomOuNomOuEmail = 'NonExistentName'

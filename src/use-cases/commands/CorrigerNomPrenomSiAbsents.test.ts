@@ -56,8 +56,7 @@ describe('corriger nom prenom si absents', () => {
       prenomAvantCorrection: valeurNomOuPrenomAbsent,
     },
   ])(
-    '$desc, mais l’utilisateur est introuvable : la notification de compte inexistant est émise et aucune' +
-      ' mise à jour n’est effectuée',
+    '$desc, mais l’utilisateur est introuvable : la notification de compte inexistant est émise et aucune mise à jour n’est effectuée',
     async ({ nomAvantCorrection, prenomAvantCorrection }) => {
       // GIVEN
       const nom = nomAvantCorrection
@@ -107,8 +106,7 @@ describe('corriger nom prenom si absents', () => {
       prenomAvantCorrection: valeurNomOuPrenomAbsent,
     },
   ])(
-    '$desc, mais la mise à jour est invalide : la notification d’invalidité est émise et aucune' +
-      ' mise à jour n’est effectuée',
+    '$desc, mais la mise à jour est invalide : la notification d’invalidité est émise et aucune mise à jour n’est effectuée',
     async ({ nomAvantCorrection, prenomAvantCorrection, correctionNom, correctionPrenom }) => {
       // GIVEN
       const nom = nomAvantCorrection

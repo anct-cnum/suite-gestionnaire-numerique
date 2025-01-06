@@ -73,14 +73,18 @@ function transformStructuresCoNumToStructures(
   return structuresCoNumRecord.map((structureCoNumRecord): Prisma.StructureRecordUncheckedCreateInput => {
     const adresse = []
     if (structureCoNumRecord.insee) {
-      if (structureCoNumRecord.insee.adresse.numero_voie)
+      if (structureCoNumRecord.insee.adresse.numero_voie) {
         adresse.push(structureCoNumRecord.insee.adresse.numero_voie)
-      if (structureCoNumRecord.insee.adresse.indice_repetition_voie)
+      }
+      if (structureCoNumRecord.insee.adresse.indice_repetition_voie) {
         adresse.push(structureCoNumRecord.insee.adresse.indice_repetition_voie)
-      if (structureCoNumRecord.insee.adresse.type_voie)
+      }
+      if (structureCoNumRecord.insee.adresse.type_voie) {
         adresse.push(structureCoNumRecord.insee.adresse.type_voie)
-      if (structureCoNumRecord.insee.adresse.libelle_voie)
+      }
+      if (structureCoNumRecord.insee.adresse.libelle_voie) {
         adresse.push(structureCoNumRecord.insee.adresse.libelle_voie)
+      }
     }
 
     return {
@@ -91,6 +95,7 @@ function transformStructuresCoNumToStructures(
       contact: structureCoNumRecord.contact,
       // On ne peut pas changer directement le 00 en 978 en production car beaucoup de logique est basée dessus
       departementCode: structureCoNumRecord.codeDepartement === '00' ? '978' : structureCoNumRecord.codeDepartement,
+      // eslint-disable-next-line no-underscore-dangle
       idMongo: structureCoNumRecord._id,
       identifiantEtablissement: structureCoNumRecord.siret || structureCoNumRecord.ridet,
       nom: structureCoNumRecord.nom,

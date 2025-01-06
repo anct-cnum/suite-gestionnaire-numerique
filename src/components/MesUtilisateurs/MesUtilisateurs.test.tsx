@@ -343,7 +343,7 @@ describe('mes utilisateurs', () => {
       expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
     })
 
-    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async() => {
+    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDAujourdhuiReadModel], '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -358,7 +358,7 @@ describe('mes utilisateurs', () => {
       expect(titre).toBeInTheDocument()
     })
 
-    it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async() => {
+    it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async () => {
       // GIVEN
       const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDHierReadModel], '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur, rolesAvecStructure)
       renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -489,7 +489,7 @@ describe('mes utilisateurs', () => {
   })
 })
 
-function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>, rowsBody: ReadonlyArray<HTMLElement> } {
+function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>; rowsBody: ReadonlyArray<HTMLElement> } {
   const mesUtilisateurs = screen.getByRole('table', { name: 'Mes utilisateurs' })
   const rowsGroup = within(mesUtilisateurs).getAllByRole('rowgroup')
 

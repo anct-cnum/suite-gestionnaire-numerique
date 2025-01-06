@@ -267,10 +267,10 @@ class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
 
 function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
   spiedIsSuperAdmin = isSuperAdmin
-  return new (class implements EmailGateway {
+  return new class implements EmailGateway {
     async send(destinataire: string): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }
-  })()
+  }()
 }

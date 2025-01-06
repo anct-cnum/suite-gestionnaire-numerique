@@ -111,6 +111,7 @@ async function retrieveUtilisateursFNE(): Promise<Array<UtilisateurFNERecord>> {
     select: {
       accounts: {
         select: {
+          // eslint-disable-next-line camelcase
           id_token: true,
         },
       },

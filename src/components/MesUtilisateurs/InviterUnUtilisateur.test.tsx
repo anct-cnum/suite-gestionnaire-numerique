@@ -258,9 +258,9 @@ describe('inviter un utilisateur', () => {
   it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', async () => {
     // GIVEN
     vi.stubGlobal('fetch', vi.fn(() => ({ json: async (): Promise<ReadonlyArray<{
-        nom: string
-        uid: string
-      }>> => Promise.resolve([]) })))
+      nom: string
+      uid: string
+    }>> => Promise.resolve([]) })))
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({

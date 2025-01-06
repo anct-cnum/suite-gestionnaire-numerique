@@ -1,10 +1,10 @@
 import 'vitest-dom/extend-expect'
 
-function toOpenInNewTab(element: HTMLElement, content: string): { message(): string; pass: boolean } {
+function toOpenInNewTab(element: HTMLElement, content: string): { pass: boolean; message(): string } {
   if (
     element.title === `${content} - nouvelle fenêtre` &&
-      element.getAttribute('target') === '_blank' &&
-      element.getAttribute('rel') === 'noopener external noreferrer'
+    element.getAttribute('target') === '_blank' &&
+    element.getAttribute('rel') === 'noopener external noreferrer'
   ) {
     return {
       message: (): string => 'Tout est ok',
