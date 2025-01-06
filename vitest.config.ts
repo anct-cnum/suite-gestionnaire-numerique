@@ -47,7 +47,7 @@ export default defineConfig({
         statements: [90, 100],
       },
     },
-    environment: 'jsdom',
+    environmentMatchGlobs: [['src/components/**', 'jsdom']],
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
     sequence: { shuffle: true },
