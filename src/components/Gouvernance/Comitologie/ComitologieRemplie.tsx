@@ -68,7 +68,7 @@ export default function ComitologieRemplie({ comites, uidGouvernance }: Props): 
                   />
                 </td>
                 <td className="font-weight-700">
-                  {`${nom} : ${dateProchainComite}`}
+                  {`${nom} ${dateProchainComite}`}
                 </td>
                 <td className="color-grey">
                   {periodicite}

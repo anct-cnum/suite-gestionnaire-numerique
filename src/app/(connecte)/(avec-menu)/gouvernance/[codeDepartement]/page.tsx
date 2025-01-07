@@ -13,7 +13,7 @@ export default async function GouvernanceController({ params }: Props): Promise<
     notFound()
   }
 
-  const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma.departementRecord).find(codeDepartement)
+  const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma.gouvernanceRecord).find(codeDepartement)
 
   if (gouvernanceReadModel === null) {
     notFound()

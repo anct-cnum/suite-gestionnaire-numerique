@@ -63,8 +63,11 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
 }
 
 function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
+  const dateProchainComite = comite.dateProchainComite ?
+    `: ${formaterEnDateFrancaise(comite.dateProchainComite)}` :
+    'en attente de planification'
   return {
-    dateProchainComite: formaterEnDateFrancaise(comite.dateProchainComite),
+    dateProchainComite: dateProchainComite,
     nom: `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }
