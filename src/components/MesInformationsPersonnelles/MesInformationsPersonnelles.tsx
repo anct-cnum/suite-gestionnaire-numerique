@@ -36,7 +36,10 @@ export default function MesInformationsPersonnelles(
           className="grey-border fr-p-4w fr-mb-4w"
         >
           <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
-            <h2 id="mesInformationsPersonnelles">
+            <h2
+              className="fr-h6"
+              id="mesInformationsPersonnelles"
+            >
               Mes informations personnelles
             </h2>
             <button

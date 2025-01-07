@@ -17,7 +17,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
       <div className={`fr-mb-8v ${styles['zone-infos']}`}>
         <Image
           alt=""
-          className="grey-border"
+          className="grey-border border-radius"
           height={80}
           src={`${sessionUtilisateurViewModel.role.pictogramme}.svg`}
           width={80}

@@ -38,6 +38,7 @@
 .fr-modal__body {
   height: 100vh;
   max-height: 100vh !important;
+  overflow-y: hidden;
   padding-bottom: 2rem;
   padding-top: 2rem;
 }
