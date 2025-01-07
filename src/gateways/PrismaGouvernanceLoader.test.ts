@@ -94,7 +94,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: feuillesDeRoute,
+      feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -184,7 +184,7 @@ describe('gouvernance loader', () => {
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: undefined,
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: feuillesDeRoute,
+      feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -264,7 +264,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: feuillesDeRoute,
+      feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -345,7 +345,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: feuillesDeRoute,
+      feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',
@@ -426,7 +426,7 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute: feuillesDeRoute,
+      feuillesDeRoute,
       membres: [
         {
           nom: 'Préfecture du Rhône',

@@ -6,7 +6,6 @@ import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
 
 void (async function migrate(): Promise<void> {
-
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des gouvernances commence')
@@ -46,22 +45,21 @@ void (async function migrate(): Promise<void> {
   console.log(greenColor, `${comitesCrees.count} comites sont insérés`)
 
   console.log(greenColor, 'La migration des gouvernances est finie')
-})()
+}())
 
 async function grouperDonneesACreer(
   gouvernancesFNE: ReadonlyArray<GouvernanceFNE>
 ): Promise<GouvernanceFNEEtAssociations> {
   return Promise.all(
-    gouvernancesFNE.map(async (gouvernanceFNE) =>
-      Promise.all([
-        gouvernanceFNE,
-        idUtilisateurViaEmail(gouvernanceFNE.relationUserCreateur.email),
-        idUtilisateurViaEmail(gouvernanceFNE.relationUserDerniereModification.email),
-      ]).then(([gouvernanceFNE, createurId, editeurNoteDeContexteId]) => ({
-        createurId,
-        editeurNoteDeContexteId,
-        gouvernanceFNE,
-      })))
+    gouvernancesFNE.map(async (gouvernanceFNE) => Promise.all([
+      gouvernanceFNE,
+      idUtilisateurViaEmail(gouvernanceFNE.relationUserCreateur.email),
+      idUtilisateurViaEmail(gouvernanceFNE.relationUserDerniereModification.email),
+    ]).then(([gouvernanceFNE, createurId, editeurNoteDeContexteId]) => ({
+      createurId,
+      editeurNoteDeContexteId,
+      gouvernanceFNE,
+    })))
   )
 }
 
@@ -77,7 +75,7 @@ function formaterDonneesACreer(donneesAFormaterGroupees: GouvernanceFNEEtAssocia
             derniereEdition: comiteFNE.modification,
             frequence: comiteFNE.frequence,
             gouvernanceFNEId: gouvernanceFNE.id,
-            type: comiteFNE.type !== 'autre' ? comiteFNE.type.toString() : comiteFNE.typeAutrePrecision ?? '',
+            type: comiteFNE.type === 'autre' ? comiteFNE.typeAutrePrecision ?? '' : comiteFNE.type,
           })),
         ].flat(),
         gouvernances: [
@@ -118,7 +116,7 @@ async function recupererLesIdsGouvernance(): Promise<GouvernanceIdsByFNEId> {
 function remplacerFNEIdsParIdsGeneres<T extends WithGouvernanceFNEId>(
   gouvernanceIdsByFNEIds: GouvernanceIdsByFNEId,
   withGouvernanceFNEIds: ReadonlyArray<T>
-): ReadonlyArray<Omit<T, 'gouvernanceFNEId'> & Readonly<{gouvernanceId: number}>> {
+): ReadonlyArray<Omit<T, 'gouvernanceFNEId'> & Readonly<{ gouvernanceId: number }>> {
   return withGouvernanceFNEIds.map(({ gouvernanceFNEId, ...rest }) => ({
     ...rest,
     gouvernanceId: gouvernanceIdsByFNEIds[gouvernanceFNEId],

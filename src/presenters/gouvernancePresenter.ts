@@ -67,7 +67,7 @@ function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
     `: ${formaterEnDateFrancaise(comite.dateProchainComite)}` :
     'en attente de planification'
   return {
-    dateProchainComite: dateProchainComite,
+    dateProchainComite,
     nom: `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }

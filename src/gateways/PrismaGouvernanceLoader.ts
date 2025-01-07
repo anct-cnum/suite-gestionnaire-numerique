@@ -70,7 +70,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     }))
     : undefined
   return {
-    comites: comites,
+    comites,
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: [
       {
@@ -113,7 +113,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         type: 'Collectivité',
       },
     ],
-    noteDeContexte: noteDeContexte,
+    noteDeContexte,
     uid: '123456',
   }
 }
