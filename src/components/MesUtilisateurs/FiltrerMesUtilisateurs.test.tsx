@@ -15,7 +15,7 @@ describe('filtrer mes utilisateurs', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // WHEN
-    jouvreLesFiltres()
+    jOuvreLesFiltres()
 
     // THEN
     const drawerFiltrer = screen.getByRole('dialog', { name: 'Filtrer' })
@@ -70,7 +70,7 @@ describe('filtrer mes utilisateurs', () => {
     )
 
     // WHEN
-    jouvreLesFiltres()
+    jOuvreLesFiltres()
 
     // THEN
     const formulaire = screen.getByRole('form', { name: 'Filtrer' })
@@ -94,6 +94,19 @@ describe('filtrer mes utilisateurs', () => {
 
     // THEN
     expect(spiedRouterPush).toHaveBeenCalledWith('/mes-utilisateurs')
+  })
+
+  it('quand il n’y a aucun résultat après un filtrage alors une phrase s’affiche pour informer l’utilisateur', () => {
+    // WHEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 0, rolesAvecStructure)
+    renderComponent(
+      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+      { searchParams: new URLSearchParams('roles=instructeur') }
+    )
+
+    // THEN
+    const phraseInformative = screen.getByText('Aucun utilisateur ne correspond aux filtres sélectionnés.', { selector: 'p' })
+    expect(phraseInformative).toBeInTheDocument()
   })
 
   describe('quand je filtre', () => {
@@ -269,7 +282,7 @@ describe('filtrer mes utilisateurs', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Afficher les utilisateurs' }))
   }
 
-  function jouvreLesFiltres(): void {
+  function jOuvreLesFiltres(): void {
     fireEvent.click(screen.getByRole('button', { name: 'Filtrer' }))
   }
 
@@ -288,6 +301,6 @@ describe('filtrer mes utilisateurs', () => {
         },
       }
     )
-    jouvreLesFiltres()
+    jOuvreLesFiltres()
   }
 })
