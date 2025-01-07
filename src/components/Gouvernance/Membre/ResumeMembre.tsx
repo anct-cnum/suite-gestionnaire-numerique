@@ -19,7 +19,6 @@ export default function ResumeMembre({ total, type }: Props): ReactElement {
           de la gouvernance
         </span>
       </p>
-      <hr className={styles['resume-hr']} />
       <Link
         className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${styles['resume-a']}`}
         href="/"

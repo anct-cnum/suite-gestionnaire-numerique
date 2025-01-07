@@ -24,7 +24,6 @@ export default function ResumeFeuilleDeRoute({
           territoriale
         </span>
       </p>
-      <hr className={styles['resume-hr']} />
       <Link
         className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${styles['resume-a']}`}
         href={link}

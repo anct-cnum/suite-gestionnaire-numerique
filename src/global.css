@@ -37,6 +37,10 @@
   border: 0.1rem solid var(--grey-900-175);
 }
 
+.border-radius {
+  border-radius: 1rem;
+}
+
 .menu-border {
   border-left: 0.1rem solid var(--grey-900-175);
 }

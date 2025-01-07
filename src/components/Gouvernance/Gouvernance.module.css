@@ -2,10 +2,25 @@
   text-align: center;
 }
 
+.article div {
+  margin: 0;
+  padding: 0;
+}
+
+.header div:last-child {
+  text-align: right;
+}
+
 .resume-membres {
   background-color: var(--info-950-100);
   background-image: none !important;
   border-radius: 1rem;
+  height: 20rem !important;
+  overflow: scroll;
+}
+
+.resume-membres div div:nth-child(1) {
+  justify-content: space-between;
 }
 
 .resume-membres span {
@@ -18,12 +33,20 @@
 
 .resume-a {
   background-image: none;
+  border-top: 0.1rem solid var(--grey-1000-50);
+  padding-top: 0.5rem;
 }
 
 .resume-feuilles-de-route {
   background-color: var(--purple-glycine-950-100);
   background-image: none !important;
   border-radius: 1rem;
+  height: 20rem !important;
+  overflow: scroll;
+}
+
+.resume-feuilles-de-route div div:nth-child(1) {
+  justify-content: space-between;
 }
 
 .resume-feuilles-de-route span {
@@ -34,30 +57,32 @@
   text-transform: capitalize;
 }
 
-.resume-hr {
-  border-top: 0.1rem solid var(--grey-1000-50);
-  margin: 0 0 0.5rem;
-  padding: 0;
-}
-
 .resume-note-de-contexte {
   background-color: var(--green-tilleul-verveine-975-75);
   background-image: none !important;
   border-radius: 1rem;
+  height: 20rem !important;
+  overflow: scroll;
 }
 
-.article div {
+.resume-note-de-contexte div div:nth-child(1) {
+  justify-content: space-between;
+}
+
+.resume-note-de-contexte p {
   margin: 0;
-  padding: 0;
 }
 
-.header div:last-child {
-  text-align: right;
+.resume-note-de-contexte p:nth-child(2) {
+  border-top: 0.1rem solid var(--grey-1000-50);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
 }
 
 .article table {
   border-collapse: separate;
   border-spacing: 0 0.5rem;
+  margin-top: -0.5rem;
 }
 
 .article tbody td {
@@ -74,6 +99,6 @@
 }
 
 .collapse {
-  height: 5rem;
+  height: 4.4rem;
   overflow: hidden;
 }

@@ -9,7 +9,6 @@ export default function ResumeNoteDeContexte({ sousTitre, texte }: Props): React
       <p>
         {texte}
       </p>
-      <hr className={styles['resume-hr']} />
       <p className="fr-text--xs">
         {sousTitre}
       </p>
