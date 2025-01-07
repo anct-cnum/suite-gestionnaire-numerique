@@ -15,8 +15,7 @@ describe('filtrer mes utilisateurs', () => {
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
 
     // WHEN
-    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-    fireEvent.click(filtrer)
+    jouvreLesFiltres()
 
     // THEN
     const drawerFiltrer = screen.getByRole('dialog', { name: 'Filtrer' })
@@ -26,6 +25,9 @@ describe('filtrer mes utilisateurs', () => {
 
     const formulaire = within(drawerFiltrer).getByRole('form', { name: 'Filtrer' })
     expect(formulaire).toHaveAttribute('method', 'dialog')
+
+    const utilisateursActives = within(drawerFiltrer).getByRole('checkbox', { checked: false, name: 'Uniquement les utilisateurs activés' })
+    expect(utilisateursActives).toHaveAttribute('name', 'utilisateursActives')
 
     const zonesGeographiques = within(drawerFiltrer).getByRole('combobox', { name: 'Par zone géographique' })
     expect(zonesGeographiques).toBeInTheDocument()
@@ -64,33 +66,22 @@ describe('filtrer mes utilisateurs', () => {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
     renderComponent(
       <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      { searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur') }
+      { searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur&codeDepartement=978') }
     )
 
     // WHEN
-    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-    fireEvent.click(filtrer)
-    const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
+    jouvreLesFiltres()
 
     // THEN
-    const utilisateursActives = within(filtres).getByRole('checkbox', { checked: true, name: 'Uniquement les utilisateurs activés' })
-    expect(utilisateursActives).toHaveAttribute('name', 'utilisateursActives')
-    const administrateurDispositif = within(filtres).getByRole('checkbox', { checked: false, name: 'Administrateur dispositif' })
-    expect(administrateurDispositif).toHaveAttribute('name', 'roles')
-    const gestionnaireDepartement = within(filtres).getByRole('checkbox', { checked: false, name: 'Gestionnaire département' })
-    expect(gestionnaireDepartement).toHaveAttribute('name', 'roles')
-    const gestionnaireGroupement = within(filtres).getByRole('checkbox', { checked: true, name: 'Gestionnaire groupement' })
-    expect(gestionnaireGroupement).toHaveAttribute('name', 'roles')
-    const gestionnaireRegion = within(filtres).getByRole('checkbox', { checked: false, name: 'Gestionnaire région' })
-    expect(gestionnaireRegion).toHaveAttribute('name', 'roles')
-    const gestionnaireStructure = within(filtres).getByRole('checkbox', { checked: false, name: 'Gestionnaire structure' })
-    expect(gestionnaireStructure).toHaveAttribute('name', 'roles')
-    const instructeur = within(filtres).getByRole('checkbox', { checked: true, name: 'Instructeur' })
-    expect(instructeur).toHaveAttribute('name', 'roles')
-    const pilotePolitiquePublique = within(filtres).getByRole('checkbox', { checked: false, name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toHaveAttribute('name', 'roles')
-    const supportAnimation = within(filtres).getByRole('checkbox', { checked: false, name: 'Support animation' })
-    expect(supportAnimation).toHaveAttribute('name', 'roles')
+    const formulaire = screen.getByRole('form', { name: 'Filtrer' })
+    expect(formulaire).toHaveFormValues({
+      roles: [
+        'gestionnaire_groupement',
+        'instructeur',
+      ],
+      utilisateursActives: true,
+      zoneGeographique: '00_978',
+    })
   })
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
@@ -99,8 +90,7 @@ describe('filtrer mes utilisateurs', () => {
     afficherLesFiltres(spiedRouterPush)
 
     // WHEN
-    const boutonReinitialiser = screen.getByRole('button', { name: 'Réinitialiser les filtres' })
-    fireEvent.click(boutonReinitialiser)
+    jeReinitialiseLesFiltres()
 
     // THEN
     expect(spiedRouterPush).toHaveBeenCalledWith('/mes-utilisateurs')
@@ -111,13 +101,10 @@ describe('filtrer mes utilisateurs', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
-      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
-      const utilisateursActives = within(filtres).getByLabelText('Uniquement les utilisateurs activés')
-      fireEvent.click(utilisateursActives)
+      jeSelectionneUniquementLesUtilisateursActives()
 
       // WHEN
-      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      jeFiltreLesUtilisateurs()
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
@@ -127,15 +114,11 @@ describe('filtrer mes utilisateurs', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
-      const filtres = screen.getByRole('dialog', { name: 'Filtrer' })
-      const gestionnaireRegion = within(filtres).getByLabelText('Gestionnaire région')
-      fireEvent.click(gestionnaireRegion)
-      const gestionnaireDepartement = within(filtres).getByLabelText('Gestionnaire département')
-      fireEvent.click(gestionnaireDepartement)
+      jeSelectionneGestionnaireRegion()
+      jeSelectionneGestionnaireDepartement()
 
       // WHEN
-      const boutonAfficher = within(filtres).getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      jeFiltreLesUtilisateurs()
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
@@ -145,12 +128,10 @@ describe('filtrer mes utilisateurs', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
-      const zoneGeographique = screen.getByLabelText('Par zone géographique')
-      await select(zoneGeographique, '(978) Saint-Martin')
+      await jeSelectionneUneZoneGeographique('(978) Saint-Martin')
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      jeFiltreLesUtilisateurs()
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeDepartement=978')
@@ -160,12 +141,10 @@ describe('filtrer mes utilisateurs', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
-      const zoneGeographique = screen.getByLabelText('Par zone géographique')
-      await select(zoneGeographique, "(93) Provence-Alpes-Côte d'Azur")
+      await jeSelectionneUneZoneGeographique("(93) Provence-Alpes-Côte d'Azur")
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      jeFiltreLesUtilisateurs()
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
@@ -176,16 +155,12 @@ describe('filtrer mes utilisateurs', () => {
       vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const spiedRouterPush = vi.fn()
       afficherLesFiltres(spiedRouterPush)
-      const filtreParStructure = screen.getByLabelText('Par structure')
-      fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-      await select(filtreParStructure, 'TETRIS — GRASSE')
+      await jeSelectionneUneStructure()
 
       // WHEN
-      const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-      fireEvent.click(boutonAfficher)
+      jeFiltreLesUtilisateurs()
 
       // THEN
-      expect(filtreParStructure).toBeInTheDocument()
       expect(fetch).toHaveBeenCalledWith('/api/structures?search=tet')
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
     })
@@ -218,17 +193,13 @@ describe('filtrer mes utilisateurs', () => {
           vi.stubGlobal('fetch', vi.fn(structuresFetch))
           const spiedRouterPush = vi.fn()
           afficherLesFiltres(spiedRouterPush)
-          await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
-          const filtreParStructure = screen.getByLabelText('Par structure')
-          fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-          await select(filtreParStructure, 'TETRIS — GRASSE')
+          await jeSelectionneUneZoneGeographique(zoneGeographique)
+          await jeSelectionneUneStructure()
 
           // WHEN
-          const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-          fireEvent.click(boutonAfficher)
+          jeFiltreLesUtilisateurs()
 
           // THEN
-          expect(filtreParStructure).toBeInTheDocument()
           expect(fetch).toHaveBeenCalledWith(expectedFetchInput)
           expect(spiedRouterPush).toHaveBeenCalledWith(expectedRouterPush)
         }
@@ -239,19 +210,14 @@ describe('filtrer mes utilisateurs', () => {
         vi.stubGlobal('fetch', structuresFetch)
         const spiedRouterPush = vi.fn()
         afficherLesFiltres(spiedRouterPush)
-        const filtreParZoneGeographique = screen.getByLabelText('Par zone géographique')
-        await select(filtreParZoneGeographique, '(06) Alpes-Maritimes')
-        const filtreParStructure = screen.getByLabelText('Par structure')
-        fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-        await select(filtreParStructure, 'TETRIS — GRASSE')
+        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        await jeSelectionneUneStructure()
 
         // WHEN
-        const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-        await clearFirst(filtreParZoneGeographique)
-        fireEvent.click(boutonAfficher)
+        await clearFirst(screen.getByLabelText('Par zone géographique'))
+        jeFiltreLesUtilisateurs()
 
         // THEN
-        expect(filtreParStructure).toBeInTheDocument()
         expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
       })
 
@@ -260,23 +226,52 @@ describe('filtrer mes utilisateurs', () => {
         vi.stubGlobal('fetch', structuresFetch)
         const spiedRouterPush = vi.fn()
         afficherLesFiltres(spiedRouterPush)
-        const filtreParZoneGeographique = screen.getByLabelText('Par zone géographique')
-        await select(filtreParZoneGeographique, '(06) Alpes-Maritimes')
-        const filtreParStructure = screen.getByLabelText('Par structure')
-        fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-        await select(filtreParStructure, 'TETRIS — GRASSE')
+        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        await jeSelectionneUneStructure()
 
         // WHEN
-        await select(filtreParZoneGeographique, '(27) Bourgogne-Franche-Comté')
-        const boutonAfficher = screen.getByRole('button', { name: 'Afficher les utilisateurs' })
-        fireEvent.click(boutonAfficher)
+        await jeSelectionneUneZoneGeographique('(27) Bourgogne-Franche-Comté')
+        jeFiltreLesUtilisateurs()
 
         // THEN
-        expect(filtreParStructure).toBeInTheDocument()
         expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=27')
       })
     })
   })
+
+  function jeSelectionneUniquementLesUtilisateursActives(): void {
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Uniquement les utilisateurs activés' }))
+  }
+
+  async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
+    await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
+  }
+
+  async function jeSelectionneUneStructure(): Promise<void> {
+    const filtreParStructure = screen.getByLabelText('Par structure')
+    fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
+    await select(filtreParStructure, 'TETRIS — GRASSE')
+  }
+
+  function jeSelectionneGestionnaireRegion(): void {
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire région' }))
+  }
+
+  function jeSelectionneGestionnaireDepartement(): void {
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire département' }))
+  }
+
+  function jeReinitialiseLesFiltres(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Réinitialiser les filtres' }))
+  }
+
+  function jeFiltreLesUtilisateurs(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Afficher les utilisateurs' }))
+  }
+
+  function jouvreLesFiltres(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Filtrer' }))
+  }
 
   function afficherLesFiltres(spiedRouterPush: Mock): void {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
@@ -293,8 +288,6 @@ describe('filtrer mes utilisateurs', () => {
         },
       }
     )
-
-    const filtrer = screen.getByRole('button', { name: 'Filtrer' })
-    fireEvent.click(filtrer)
+    jouvreLesFiltres()
   }
 })
