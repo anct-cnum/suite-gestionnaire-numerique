@@ -7,8 +7,8 @@ generator json {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   // Prisma a besoin de créer une database temporaire quand on lance la migration
   // https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database
   // Du coup, on a créée une application Scalingo qui contient qu'une database dédiée à ça
@@ -26,24 +26,27 @@ model GroupementRecord {
 }
 
 model DepartementRecord {
-  code String @id
+  code       String @id
   regionCode String
-  nom String
+  nom        String
 
-  structures StructureRecord[]
+  structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
-  relationRegion RegionRecord @relation(fields: [regionCode], references: [code])
+  relationRegion         RegionRecord        @relation(fields: [regionCode], references: [code])
+  gouvernancesRattachees GouvernanceRecord[] @relation("departementDeRattachement")
+  gouvernancesPortees    GouvernanceRecord[] @relation("departementPorteur")
 
   @@map("departement")
 }
 
 model RegionRecord {
   code String @id
-  nom String
+  nom  String
 
   departements DepartementRecord[]
   utilisateurs UtilisateurRecord[]
+  gouvernances GouvernanceRecord[]
 
   @@map("region")
 }
@@ -51,19 +54,19 @@ model RegionRecord {
 model StructureRecord {
   id Int @id @default(autoincrement())
 
-  adresse String
-  codePostal String
-  commune String
+  adresse                  String
+  codePostal               String
+  commune                  String
   /// [Contact]
-  contact Json
-  departementCode String
+  contact                  Json
+  departementCode          String
   // SIRET ou RIDET
   identifiantEtablissement String
   // TODO: à supprimer après la migration finale
-  idMongo String
-  nom String @db.Citext
-  statut String
-  type String
+  idMongo                  String
+  nom                      String @db.Citext
+  statut                   String
+  type                     String
 
   utilisateurs UtilisateurRecord[]
 
@@ -75,29 +78,85 @@ model StructureRecord {
 model UtilisateurRecord {
   id Int @id @default(autoincrement())
 
-  dateDeCreation DateTime
-  departementCode String?
+  dateDeCreation    DateTime
+  departementCode   String?
   derniereConnexion DateTime?
-  emailDeContact String
-  groupementId Int?
-  inviteLe DateTime
-  isSuperAdmin Boolean @default(false)
-  isSupprime Boolean @default(false)
-  nom String @db.Citext
-  prenom String
-  regionCode String?
-  role Role
-  structureId Int?
-  ssoId String @unique @default("")
-  ssoEmail String @unique
-  telephone String @db.VarChar(13)
+  emailDeContact    String
+  groupementId      Int?
+  inviteLe          DateTime
+  isSuperAdmin      Boolean   @default(false)
+  isSupprime        Boolean   @default(false)
+  nom               String    @db.Citext
+  prenom            String
+  regionCode        String?
+  role              Role
+  structureId       Int?
+  ssoId             String    @unique @default("")
+  ssoEmail          String    @unique
+  telephone         String    @db.VarChar(13)
 
-  relationStructure StructureRecord? @relation(fields: [structureId], references: [id])
-  relationGroupement GroupementRecord? @relation(fields: [groupementId], references: [id])
+  relationStructure   StructureRecord?   @relation(fields: [structureId], references: [id])
+  relationGroupement  GroupementRecord?  @relation(fields: [groupementId], references: [id])
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
-  relationRegion RegionRecord? @relation(fields: [regionCode], references: [code])
+  relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
+
+  notesDeContexte NoteDeContexteRecord[]
+  gouvernances    GouvernanceRecord[]
 
   @@map("utilisateur")
+}
+
+model GouvernanceRecord {
+  id Int @id @default(autoincrement())
+
+  idFNE                  String  @unique
+  createurId             Int
+  departementCode        String
+  departementPorteurCode String?
+  sgarPorteurCode        String?
+  epciPorteur            String?
+  siretPorteur           String?
+
+  relationCreateur           UtilisateurRecord  @relation(fields: [createurId], references: [id])
+  relationDepartement        DepartementRecord  @relation("departementDeRattachement", fields: [departementCode], references: [code])
+  relationDepartementPorteur DepartementRecord? @relation("departementPorteur", fields: [departementPorteurCode], references: [code])
+  relationSgarPorteur        RegionRecord?      @relation(fields: [sgarPorteurCode], references: [code])
+
+  noteDeContexte NoteDeContexteRecord?
+  comites        ComiteRecord[]
+
+  @@map("gouvernance")
+}
+
+model NoteDeContexteRecord {
+  id Int @id @default(autoincrement())
+
+  gouvernanceId   Int      @unique
+  editeurId       Int
+  contenu         String
+  derniereEdition DateTime
+
+  relationUtilisateur UtilisateurRecord @relation(fields: [editeurId], references: [id])
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("note_de_contexte")
+}
+
+model ComiteRecord {
+  id Int @id @default(autoincrement())
+
+  gouvernanceId      Int
+  creation           DateTime
+  derniereEdition    DateTime
+  type               String
+  frequence          String
+  commentaire        String?
+  nom                String?
+  dateProchainComite DateTime?
+
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("comite")
 }
 
 enum Role {

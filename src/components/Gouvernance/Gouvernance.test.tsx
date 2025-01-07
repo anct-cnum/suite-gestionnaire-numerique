@@ -75,12 +75,14 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
         {
+          commentaire: 'commentaire',
           dateProchainComite: new Date('2024-09-06'),
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
         },
         {
+          commentaire: 'commentaire',
           dateProchainComite: new Date('2024-03-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'Trimestriel',
@@ -464,5 +466,33 @@ describe('gouvernance', () => {
     expect(lirePlus).toHaveClass('fr-icon-arrow-up-s-line')
     const lireMoins = screen.getByRole('button', { name: 'Lire moins' })
     expect(lireMoins).toBeInTheDocument()
+  })
+
+  it('quand j’affiche une gouvernance avec un comité sans date de prochain comité, alors elle s’affiche avec la mention en attente de planification', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          dateProchainComite: undefined,
+          nom: 'Comité stratégique 1',
+          periodicite: 'Semestriel',
+          type: 'stratégique',
+        },
+      ],
+    }))
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const comites = screen.getByRole('table', { name: 'Comités' })
+    const rowsGroup = within(comites).getAllByRole('rowgroup')
+    const body = rowsGroup[1]
+    const rowsBody = within(body).getAllByRole('row')
+    const columns1Body = within(rowsBody[0]).getAllByRole('cell')
+    expect(columns1Body).toHaveLength(3)
+    expect(columns1Body[1].textContent).toBe('Comité stratégique en attente de planification')
+    expect(columns1Body[2].textContent).toBe('Semestriel')
   })
 })

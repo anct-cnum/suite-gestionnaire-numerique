@@ -1,20 +1,20 @@
 generator client {
   provider = "prisma-client-js"
-  output = "./client-fne"
+  output   = "./client-fne"
 }
 
 datasource db {
   provider = "postgresql"
-  url = env("FNE_DATABASE_URL")
+  url      = env("FNE_DATABASE_URL")
 }
 
 // Les models ci-dessous sont copiés/collés du projet inclusion-numerique en fonction de nos besoin de migrations.
 // Les models sont suffixés par "FNE" pour les distinguer des notres.
 
 model AccountFNE {
-  id                String  @id @default(cuid())
-  id_token          String  @db.Text
-  userId            String  @map("user_id") @db.Uuid
+  id       String @id @default(cuid())
+  id_token String @db.Text
+  userId   String @map("user_id") @db.Uuid
 
   user UserFNE @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -22,16 +22,82 @@ model AccountFNE {
 }
 
 model UserFNE {
-  id String     @id @default(uuid()) @db.Uuid
-  accounts      AccountFNE[]
-  created       DateTime @default(now())
-  email         String @unique
-  firstName     String? @map("first_name")
-  lastName      String? @map("last_name")
-  role          UserRoleFNE @default(User)
-  roleScope     String? @map("role_scope")
+  id        String       @id @default(uuid()) @db.Uuid
+  accounts  AccountFNE[]
+  created   DateTime     @default(now())
+  email     String       @unique
+  firstName String?      @map("first_name")
+  lastName  String?      @map("last_name")
+  role      UserRoleFNE  @default(User)
+  roleScope String?      @map("role_scope")
+
+  gouvernancesCrees                 Gouvernance[] @relation("gouvernancesCrees")
+  gouvernancesDernierementModifiees Gouvernance[] @relation("gouvernancesDernierementModifiees")
 
   @@map("users")
+}
+
+model Gouvernance {
+  id                         String    @id
+  userCreateurId             String    @map("createur_id")
+  departementCode            String    @map("departement_code")
+  userDerniereModificationId String    @map("derniere_modification_par_id")
+  modification               DateTime
+  suppression                DateTime? @map("supression")
+  noteDeContexte             String    @map("note_de_contexte")
+  porteurRegionCode          String?   @map("v1_porteur_region_code")
+  porteurDepartementCode     String?   @map("v1_porteur_departement_code")
+  porteurEpciCode            String?   @map("v1_porteur_epci_code")
+  porteurSiret               String?   @map("v1_porteur_siret")
+
+  relationEpci                     Epci?   @relation(fields: [porteurEpciCode], references: [code])
+  relationUserCreateur             UserFNE @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
+  relationUserDerniereModification UserFNE @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
+
+  comites         Comite[]
+  feuillesDeRoute FeuilleDeRoute[]
+
+  @@map("gouvernances")
+}
+
+model Comite {
+  id                 String          @id
+  gouvernanceId      String          @map("gouvernance_id")
+  creation           DateTime
+  modification       DateTime
+  type               TypeComite      @default(autre)
+  typeAutrePrecision String?         @map("type_autre_precisions")
+  frequence          FrequenceComite @default(annuelle)
+  commentaire        String?
+
+  relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("comite_gouvernance")
+}
+
+model FeuilleDeRoute {
+  id                          String   @id
+  gouvernanceId               String   @map("gouvernance_id")
+  creation                    DateTime
+  modification                DateTime
+  nom                         String
+  contratPreexistant          Boolean  @map("contrat_preexistant")
+  typeContrat                 String?  @map("type_contrat")
+  typeContratAutreDescription String?  @map("type_contrat_autre_description")
+  perimetreRegionCode         String?  @map("perimetre_region_code")
+  perimetreDepartmentCode     String?  @map("perimetre_departement_code")
+  pieceJointe                 String?  @map("piece_jointe")
+
+  relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
+}
+
+model Epci {
+  code String @id
+  nom  String
+
+  gouvernance Gouvernance[]
+
+  @@map("epcis")
 }
 
 enum UserRoleFNE {
@@ -42,4 +108,18 @@ enum UserRoleFNE {
   User                  @map("user")
 
   @@map("user_role")
+}
+
+enum TypeComite {
+  strategique
+  technique
+  consultatif
+  autre
+}
+
+enum FrequenceComite {
+  mensuelle
+  trimestrielle
+  semestrielle
+  annuelle
 }

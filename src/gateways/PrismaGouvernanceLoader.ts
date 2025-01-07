@@ -1,21 +1,50 @@
-import { DepartementRecord, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
-import { UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
+import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
+
+type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
+  include: {
+    noteDeContexte: {
+      select: {
+        id: true
+        gouvernanceId: true
+        derniereEdition: true
+        relationUtilisateur: true
+        contenu: true
+      }
+    }
+    comites: true
+    relationDepartement: {
+      select: {
+        code: true
+        nom: true
+      }
+    }
+  }
+}>
 
 export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
-  readonly #dataResource: Prisma.DepartementRecordDelegate
+  readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
-  constructor(dataResource: Prisma.DepartementRecordDelegate) {
+  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
     this.#dataResource = dataResource
   }
 
   async find(codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    const gouvernanceRecord = await this.#dataResource.findUnique({
+    const gouvernanceRecord = await this.#dataResource.findFirst({
+      include: {
+        comites: true,
+        noteDeContexte: {
+          include: {
+            relationUtilisateur: true,
+          },
+        },
+        relationDepartement: true,
+      },
       where: {
-        code: codeDepartement,
+        departementCode: codeDepartement,
       },
     })
-
     if (gouvernanceRecord === null) {
       return null
     }
@@ -24,23 +53,25 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
   }
 }
 
-function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadModel {
+function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
+  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
+    dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
+    nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
+    prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
+    texte: gouvernanceRecord.noteDeContexte.contenu,
+  } : undefined
+  const comites = gouvernanceRecord.comites.length > 0
+    ? gouvernanceRecord.comites.map((comite) => ({
+      commentaire: comite.commentaire ?? '',
+      dateProchainComite: comite.dateProchainComite ?? undefined,
+      nom: comite.nom ?? '',
+      periodicite: comite.frequence,
+      type: comite.type as TypeDeComite,
+    }))
+    : undefined
   return {
-    comites: [
-      {
-        dateProchainComite: new Date('2024-09-06'),
-        nom: 'Comité stratégique 2',
-        periodicite: 'Semestriel',
-        type: 'stratégique',
-      },
-      {
-        dateProchainComite: new Date('2024-08-01'),
-        nom: 'Comité stratégique 1',
-        periodicite: 'Trimestriel',
-        type: 'technique',
-      },
-    ],
-    departement: gouvernanceRecord.nom,
+    comites: comites,
+    departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: [
       {
         beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
@@ -82,12 +113,7 @@ function transform(gouvernanceRecord: DepartementRecord): UneGouvernanceReadMode
         type: 'Collectivité',
       },
     ],
-    noteDeContexte: {
-      dateDeModification: new Date('2024-11-23'),
-      nomAuteur: 'Deschamps',
-      prenomAuteur: 'Jean',
-      texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-    },
+    noteDeContexte: noteDeContexte,
     uid: '123456',
   }
 }
