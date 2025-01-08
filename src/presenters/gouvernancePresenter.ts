@@ -4,10 +4,11 @@ import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
-  gouvernanceReadModel: UneGouvernanceReadModel
+  gouvernanceReadModel: UneGouvernanceReadModel,
+  now = (): Date => new Date()
 ): GouvernanceViewModel {
   return {
-    ...{ comites: gouvernanceReadModel.comites?.map(toComitesViewModel) },
+    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now())) },
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     sectionFeuillesDeRoute: {
@@ -62,11 +63,10 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
   ].every(isNullish)
 }
 
-function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
-  const now = new Date()
-  const date = comite.date && comite.date >= now ?
-    ` : ${formaterEnDateFrancaise(comite.date)}` :
-    null
+function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteViewModel {
+  const date = comite.date !== undefined && comite.date >= now
+    ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}`
+    : ''
   return {
     date,
     nom: `Comité ${comite.type}`,
@@ -199,7 +199,7 @@ function formatPluriel(count: number): 's' | '' {
 }
 
 type ComiteViewModel = Readonly<{
-  date: string | null
+  date: string
   nom: string
   periodicite: string
 }>

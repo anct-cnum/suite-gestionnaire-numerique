@@ -515,13 +515,8 @@ describe('gouvernance', () => {
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
-    const rowsGroup = within(comites).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    const columns1Body = within(rowsBody[0]).getAllByRole('cell')
-    expect(columns1Body).toHaveLength(3)
+    const columns1Body = within(comites).getAllByRole('cell')
     expect(columns1Body[1].textContent).toBe('Comité stratégique')
-    expect(columns1Body[2].textContent).toBe('Semestriel')
   })
 
   it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché sans date', () => {
@@ -543,13 +538,33 @@ describe('gouvernance', () => {
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
-    const rowsGroup = within(comites).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    const columns1Body = within(rowsBody[0]).getAllByRole('cell')
-    expect(columns1Body).toHaveLength(3)
+    const columns1Body = within(comites).getAllByRole('cell')
     expect(columns1Body[1].textContent).toBe('Comité stratégique')
-    expect(columns1Body[2].textContent).toBe('Semestriel')
+  })
+
+  it('quand j’affiche une gouvernance avec un comité dont la date est le jour même ou dans le futur, alors le comité est affiché avec sa date', () => {
+    // GIVEN
+    vi.stubGlobal('Date', FrozenDate)
+
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          date: new FrozenDate(),
+          nom: 'Comité stratégique 1',
+          periodicite: 'Semestriel',
+          type: 'stratégique',
+        },
+      ],
+    }))
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const comites = screen.getByRole('table', { name: 'Comités' })
+    const columns1Body = within(comites).getAllByRole('cell')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique : 15/04/1996')
   })
 
   function jOuvreLeFormulairePourAjouterUnComite(): void {
