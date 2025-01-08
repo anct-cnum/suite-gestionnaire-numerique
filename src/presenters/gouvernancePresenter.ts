@@ -63,11 +63,12 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
 }
 
 function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
-  const dateProchainComite = comite.dateProchainComite ?
-    `: ${formaterEnDateFrancaise(comite.dateProchainComite)}` :
-    'en attente de planification'
+  const now = new Date()
+  const date = comite.date && comite.date >= now ?
+    ` : ${formaterEnDateFrancaise(comite.date)}` :
+    null
   return {
-    dateProchainComite,
+    date,
     nom: `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }
@@ -198,7 +199,7 @@ function formatPluriel(count: number): 's' | '' {
 }
 
 type ComiteViewModel = Readonly<{
-  dateProchainComite: string
+  date: string | null
   nom: string
   periodicite: string
 }>

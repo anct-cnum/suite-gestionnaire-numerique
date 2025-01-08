@@ -99,18 +99,20 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
     // GIVEN
+    const datePassee = new Date('2024-01-01')
+    vi.setSystemTime(datePassee)
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-09-06'),
+          date: new Date('2024-09-06'),
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
         },
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-03-01'),
+          date: new Date('2024-03-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'Trimestriel',
           type: 'technique',
@@ -494,13 +496,13 @@ describe('gouvernance', () => {
     expect(lireMoins).toBeInTheDocument()
   })
 
-  it('quand j’affiche une gouvernance avec un comité sans date de prochain comité, alors elle s’affiche avec la mention en attente de planification', () => {
+  it('quand j’affiche une gouvernance avec un comité sans date, alors le comité est affiché sans date', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: undefined,
+          date: undefined,
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
@@ -518,7 +520,35 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(3)
-    expect(columns1Body[1].textContent).toBe('Comité stratégique en attente de planification')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique')
+    expect(columns1Body[2].textContent).toBe('Semestriel')
+  })
+
+  it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché sans date', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          date: new Date('2020-09-06'),
+          nom: 'Comité stratégique 1',
+          periodicite: 'Semestriel',
+          type: 'stratégique',
+        },
+      ],
+    }))
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const comites = screen.getByRole('table', { name: 'Comités' })
+    const rowsGroup = within(comites).getAllByRole('rowgroup')
+    const body = rowsGroup[1]
+    const rowsBody = within(body).getAllByRole('row')
+    const columns1Body = within(rowsBody[0]).getAllByRole('cell')
+    expect(columns1Body).toHaveLength(3)
+    expect(columns1Body[1].textContent).toBe('Comité stratégique')
     expect(columns1Body[2].textContent).toBe('Semestriel')
   })
 

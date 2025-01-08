@@ -20,7 +20,7 @@ type NoteDeContexteReadModel = Readonly<{
 
 export type ComiteReadModel = Readonly<{
   commentaire?: string
-  dateProchainComite?: Date
+  date?: Date
   nom?: string
   periodicite: string
   type: TypeDeComite
