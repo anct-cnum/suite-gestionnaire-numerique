@@ -3,33 +3,12 @@
 import { ReactElement, useState } from 'react'
 
 import styles from '../Gouvernance.module.css'
-import SectionRemplie from '../SectionRemplie'
-import SubSectionButton from './SubSectionButton'
 
-export default function NoteDeContexteRemplie({
-  sousTitre,
-  texte,
-}: Props): ReactElement {
+export default function NoteDeContexteRemplie({ texte }: Props): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (
-    <SectionRemplie
-      button={(
-        <button
-          className="fr-btn fr-btn--secondary"
-          type="button"
-        >
-          Modifier
-        </button>
-      )}
-      id="noteDeContexte"
-      subButton={(
-        <SubSectionButton>
-          {sousTitre}
-        </SubSectionButton>
-      )}
-      title="Note de contexte"
-    >
+    <>
       <div
         className={isCollapsed ? styles.collapse : ''}
         // eslint-disable-next-line react/no-danger
@@ -48,11 +27,10 @@ export default function NoteDeContexteRemplie({
           {isCollapsed ? 'Lire plus' : 'Lire moins' }
         </button>
       </div>
-    </SectionRemplie>
+    </>
   )
 }
 
 type Props = Readonly<{
-  sousTitre: string
   texte: string
 }>
