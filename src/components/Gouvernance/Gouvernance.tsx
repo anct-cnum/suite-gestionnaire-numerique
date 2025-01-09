@@ -1,11 +1,16 @@
-import { ReactElement } from 'react'
+'use client'
 
+import Link from 'next/link'
+import { ReactElement, useRef, useState } from 'react'
+
+import AjouterUnComite from './Comitologie/AjouterUnComite'
 import ComitologieRemplie from './Comitologie/ComitologieRemplie'
 import ComitologieVide from './Comitologie/ComitologieVide'
 import FeuilleDeRouteRemplie from './FeuilleDeRoute/FeuilleDeRouteRemplie'
 import FeuilleDeRouteVide from './FeuilleDeRoute/FeuilleDeRouteVide'
 import ResumeFeuilleDeRoute from './FeuilleDeRoute/ResumeFeuilleDeRoute'
 import ResumeFeuilleDeRouteVide from './FeuilleDeRoute/ResumeFeuilleDeRouteVide'
+import styles from './Gouvernance.module.css'
 import MembreRempli from './Membre/MembreRempli'
 import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
@@ -14,10 +19,23 @@ import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
 import ResumeNoteDeContexteVide from './NoteDeContexte/ResumeNoteDeContexteVide'
+import SubSectionButton from './NoteDeContexte/SubSectionButton'
+import Resume from './Resume'
+import SectionRemplie from './SectionRemplie'
+import SectionVide from './SectionVide'
+import SubSectionTitle from './SubSectionTitle'
+import Drawer from '../shared/Drawer/Drawer'
+import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function Gouvernance({ gouvernanceViewModel }: Props): ReactElement {
+  // Stryker disable next-line BooleanLiteral
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerComiteId = 'drawer-comite'
+  const labelComiteId = 'drawer-comite-titre'
+  const drawerRef = useRef<HTMLDialogElement>(null)
+
   return (
     <>
       <title>
@@ -41,7 +59,11 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                   <ResumeMembre
                     total={gouvernanceViewModel.sectionMembres.total}
                     type={gouvernanceViewModel.sectionMembres.wording}
-                  /> : <ResumeMembreVide />
+                  /> : (
+                    <Resume style={styles['resume-membres']}>
+                      <ResumeMembreVide />
+                    </Resume>
+                  )
               }
               {
                 gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ?
@@ -50,7 +72,11 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                     linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
                     total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
                     wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
-                  /> : <ResumeFeuilleDeRouteVide />
+                  /> : (
+                    <Resume style={styles['resume-feuilles-de-route']}>
+                      <ResumeFeuilleDeRouteVide />
+                    </Resume>
+                  )
               }
               {
                 gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
@@ -58,58 +84,183 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                     sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
                     texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteSansHTML}
                   />
-                ) : <ResumeNoteDeContexteVide />
+                ) : (
+                  <Resume style={styles['resume-note-de-contexte']}>
+                    <ResumeNoteDeContexteVide />
+                  </Resume>
+                )
               }
             </div>
           )
       }
       <section aria-labelledby="comitologie">
+        <Drawer
+          boutonFermeture="Fermer"
+          icon={<Icon icon="calendar-event-line" />}
+          id={drawerComiteId}
+          // Stryker disable next-line BooleanLiteral
+          isFixedWidth={false}
+          isOpen={isDrawerOpen}
+          labelId={labelComiteId}
+          ref={drawerRef}
+          setIsOpen={setIsDrawerOpen}
+        >
+          <AjouterUnComite
+            dialogRef={drawerRef}
+            labelId={labelComiteId}
+            setIsOpen={setIsDrawerOpen}
+            uidGouvernance={gouvernanceViewModel.uid}
+          />
+        </Drawer>
         {
           gouvernanceViewModel.comites ? (
-            <ComitologieRemplie
-              comites={gouvernanceViewModel.comites}
-              uidGouvernance={gouvernanceViewModel.uid}
-            />
+            <SectionRemplie
+              button={(
+                <button
+                  aria-controls={drawerComiteId}
+                  className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                  type="button"
+                >
+                  Ajouter
+                </button>
+              )}
+              id="comitologie"
+              title="Comitologie"
+            >
+              <ComitologieRemplie
+                comites={gouvernanceViewModel.comites}
+              />
+            </SectionRemplie>
           ) : (
-            <ComitologieVide />
+            <SectionVide
+              buttonLabel="Ajouter un comité"
+              drawerComiteId={drawerComiteId}
+              id="comitologie"
+              showDrawer={() => {
+                setIsDrawerOpen(true)
+              }}
+              title="Comitologie"
+            >
+              <ComitologieVide />
+            </SectionVide>
           )
         }
       </section>
       <section aria-labelledby="membre">
         {
           gouvernanceViewModel.sectionMembres.membres ? (
-            <MembreRempli
-              detailDuNombreDeChaqueMembre={gouvernanceViewModel.sectionMembres.detailDuNombreDeChaqueMembre}
-              membres={gouvernanceViewModel.sectionMembres.membres}
-              nombreDeMembres={`${gouvernanceViewModel.sectionMembres.total} ${gouvernanceViewModel.sectionMembres.wording}`}
-            />
+            <SectionRemplie
+              button={(
+                <Link
+                  className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
+                  href="/"
+                >
+                  Gérer
+                </Link>
+              )}
+              id="membre"
+              subTitle={
+                <SubSectionTitle>
+                  {gouvernanceViewModel.sectionMembres.detailDuNombreDeChaqueMembre}
+                </SubSectionTitle>
+              }
+              title={`${gouvernanceViewModel.sectionMembres.total} ${gouvernanceViewModel.sectionMembres.wording}`}
+            >
+              <MembreRempli
+                membres={gouvernanceViewModel.sectionMembres.membres}
+              />
+            </SectionRemplie>
           ) : (
-            <MembreVide />
+            <SectionVide
+              buttonLabel="Ajouter un membre"
+              drawerComiteId=""
+              id="membre"
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              showDrawer={() => {}}
+              title="0 membre"
+            >
+              <MembreVide />
+            </SectionVide>
           )
         }
       </section>
       <section aria-labelledby="feuilleDeRoute">
         {
           gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ? (
-            <FeuilleDeRouteRemplie
-              budgetTotalCumule={gouvernanceViewModel.sectionFeuillesDeRoute.budgetTotalCumule}
-              feuillesDeRoute={gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute}
-              nombreDeFeuillesDeRoute={`${gouvernanceViewModel.sectionFeuillesDeRoute.total} ${gouvernanceViewModel.sectionFeuillesDeRoute.wording}`}
-            />
+            <SectionRemplie
+              button={(
+                <Link
+                  className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
+                  href="/"
+                >
+                  Gérer
+                </Link>
+              )}
+              id="feuilleDeRoute"
+              subTitle={
+                <SubSectionTitle>
+                  {`${gouvernanceViewModel.sectionFeuillesDeRoute.total} ${gouvernanceViewModel.sectionFeuillesDeRoute.wording}, ${gouvernanceViewModel.sectionFeuillesDeRoute.budgetTotalCumule} €`}
+                </SubSectionTitle>
+              }
+              title={`${gouvernanceViewModel.sectionFeuillesDeRoute.total} ${gouvernanceViewModel.sectionFeuillesDeRoute.wording}`}
+            >
+              <FeuilleDeRouteRemplie
+                feuillesDeRoute={gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute}
+              />
+            </SectionRemplie>
           ) : (
-            <FeuilleDeRouteVide />
+            <SectionVide
+              buttonLabel="Ajouter une feuille de route"
+              drawerComiteId=""
+              id="feuilleDeRoute"
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              showDrawer={() => {}}
+              title="0 feuille de route"
+            >
+              <FeuilleDeRouteVide />
+            </SectionVide>
           )
         }
       </section>
       <section aria-labelledby="noteDeContexte">
         {
           gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
-            <NoteDeContexteRemplie
-              sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
-              texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
-            />
+            <SectionRemplie
+              button={(
+                <button
+                  className="fr-btn fr-btn--secondary"
+                  type="button"
+                >
+                  Modifier
+                </button>
+              )}
+              id="noteDeContexte"
+              subButton={(
+                <SubSectionButton>
+                  {gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
+                </SubSectionButton>
+              )}
+              title="Note de contexte"
+            >
+              <NoteDeContexteRemplie
+                texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
+              />
+            </SectionRemplie>
           ) : (
-            <NoteDeContexteVide />
+            <SectionVide
+              buttonLabel="Ajouter une note de contexte"
+              drawerComiteId=""
+              id="noteDeContexte"
+              // eslint-disable-next-line @typescript-eslint/no-empty-function
+              showDrawer={() => {}}
+              title="Note de contexte"
+            >
+              <NoteDeContexteVide />
+            </SectionVide>
           )
         }
       </section>

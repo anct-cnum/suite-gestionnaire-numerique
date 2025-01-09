@@ -1,15 +1,10 @@
 import { ReactElement } from 'react'
 
-import SectionVide from '../SectionVide'
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 
 export default function MembreVide(): ReactElement {
   return (
-    <SectionVide
-      buttonLabel="Ajouter un membre"
-      id="membre"
-      title="0 membre"
-    >
+    <>
       <p className="fr-h6">
         Actuellement, il n’y a aucun membre dans la gouvernance
       </p>
@@ -25,6 +20,6 @@ export default function MembreVide(): ReactElement {
           https://inclusion-numerique.anct.gouv.fr/gouvernance
         </ExternalLink>
       </p>
-    </SectionVide>
+    </>
   )
 }

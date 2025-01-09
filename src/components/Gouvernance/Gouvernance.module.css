@@ -2,7 +2,7 @@
   text-align: center;
 }
 
-.article div {
+.article > div {
   margin: 0;
   padding: 0;
 }
