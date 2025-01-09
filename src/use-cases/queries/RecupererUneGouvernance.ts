@@ -8,12 +8,11 @@ export class RecupererUneGouvernance implements QueryHandler<Query, GouvernanceR
   }
 
   async get({ codeDepartement }: Query): Promise<GouvernanceReadModel> {
-
     const gouvernance = await this.#loader.find(codeDepartement)
 
     return gouvernance === null ? null : {
       ...gouvernance,
-      membres: (gouvernance.membres ?? []).map(toMembreDetailAvecTotauxReadModel)
+      membres: (gouvernance.membres ?? []).map(toMembreDetailAvecTotauxReadModel),
     }
   }
 }
@@ -22,12 +21,13 @@ function toMembreDetailAvecTotauxReadModel(membre: MembreDetailsReadModel): Memb
   return {
     ...membre,
     ...membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
-      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde + feuilleDeRoute.montantSubventionFormationAccorde,
-      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde
+      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
+      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
+        feuilleDeRoute.montantSubventionFormationAccorde,
     }), {
+      totalMontantSubventionAccorde: 0,
       totalMontantSubventionFormationAccorde: 0,
-      totalMontantSubventionAccorde: 0
-    })
+    }),
   }
 }
 

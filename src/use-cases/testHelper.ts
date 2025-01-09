@@ -1,6 +1,6 @@
 // Stryker disable all
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
-import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
+import { GouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -48,8 +48,8 @@ export function mesInformationsPersonnellesReadModelFactory(
 }
 
 export function gouvernanceReadModelFactory(
-  override?: Partial<UneGouvernanceReadModel>
-): UneGouvernanceReadModel {
+  override?: Partial<GouvernanceReadModel>
+): GouvernanceReadModel {
   return {
     comites: [
       {
@@ -127,6 +127,8 @@ export function gouvernanceReadModelFactory(
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
         telephone: '+33 4 45 00 45 00',
+        totalMontantSubventionAccorde: 0,
+        totalMontantSubventionFormationAccorde: 0,
         type: 'Administration',
         typologieMembre: 'Préfecture départementale',
       },
@@ -148,6 +150,8 @@ export function gouvernanceReadModelFactory(
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
+        totalMontantSubventionAccorde: 0,
+        totalMontantSubventionFormationAccorde: 0,
         type: 'Collectivité',
         typologieMembre: 'Collectivité, EPCI',
       },

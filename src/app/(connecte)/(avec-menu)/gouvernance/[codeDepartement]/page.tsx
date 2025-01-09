@@ -15,7 +15,8 @@ export default async function GouvernanceController({ params }: Props): Promise<
   }
 
   // const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma.gouvernanceRecord).find(codeDepartement)
-  const gouvernanceReadModel = await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
+  const gouvernanceReadModel =
+    await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
 
   if (gouvernanceReadModel === null) {
     notFound()

@@ -5,7 +5,7 @@ import {
   GouvernanceReadModel,
 } from './RecupererUneGouvernance'
 
-describe('RecupererUneGouvernance', () => {
+describe('recupererUneGouvernance', () => {
   it("quand une gouvernance est demandée sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
     // GIVEN
     const queryHandler = new RecupererUneGouvernance(new GouvernanceInexistanteLoaderStub())
@@ -13,7 +13,7 @@ describe('RecupererUneGouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
-    //THEN
+    // THEN
     expect(gouvernance).toBeNull()
   })
 
@@ -24,7 +24,7 @@ describe('RecupererUneGouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
-    //THEN
+    // THEN
     expect(gouvernance).toStrictEqual(gouvernanceReadModel)
   })
 
@@ -35,7 +35,7 @@ describe('RecupererUneGouvernance', () => {
     // WHEN
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
-    //THEN
+    // THEN
     expect(gouvernance).toStrictEqual(gouvernanceSansMembreReadModel)
   })
 })
@@ -154,7 +154,7 @@ const uneGouvernance = {
 
 const uneGouvernanceSansMembre = {
   ...uneGouvernance,
-  membres: undefined
+  membres: undefined,
 }
 
 const gouvernanceReadModel: GouvernanceReadModel = {
@@ -162,41 +162,41 @@ const gouvernanceReadModel: GouvernanceReadModel = {
   membres: [
     {
       ...uneGouvernance.membres[0],
+      totalMontantSubventionAccorde: 10_000,
       totalMontantSubventionFormationAccorde: 10_000,
-      totalMontantSubventionAccorde: 10_000
     },
     {
       ...uneGouvernance.membres[1],
+      totalMontantSubventionAccorde: 30_000,
       totalMontantSubventionFormationAccorde: 20_000,
-      totalMontantSubventionAccorde: 30_000
     },
     {
       ...uneGouvernance.membres[2],
+      totalMontantSubventionAccorde: 0,
       totalMontantSubventionFormationAccorde: 0,
-      totalMontantSubventionAccorde: 0
-    }
-  ]
+    },
+  ],
 }
 
 const gouvernanceSansMembreReadModel = {
   ...uneGouvernance,
-  membres: []
+  membres: [],
 }
 
 class GouvernanceInexistanteLoaderStub implements UneGouvernanceReadModelLoader {
-  find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
     return Promise.resolve(null)
   }
 }
 
 class GouvernanceSansMembreLoaderStub implements UneGouvernanceReadModelLoader {
-  find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
     return Promise.resolve(uneGouvernanceSansMembre)
   }
 }
 
 class GouvernanceExistanteLoaderStub implements UneGouvernanceReadModelLoader {
-  find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
     return Promise.resolve(uneGouvernance)
   }
 }
