@@ -1,28 +1,33 @@
 import { QueryHandler } from '../QueryHandler'
 
-export class RecupererUneGouvernance implements QueryHandler<Query, Partial<GouvernanceReadModel>> {
+export class RecupererUneGouvernance implements QueryHandler<Query, GouvernanceReadModel> {
   readonly #loader: UneGouvernanceReadModelLoader
 
   constructor(loader: UneGouvernanceReadModelLoader) {
     this.#loader = loader
   }
 
-  async get({ codeDepartement }: Query): Promise<Partial<GouvernanceReadModel>> {
-    
+  async get({ codeDepartement }: Query): Promise<GouvernanceReadModel> {
+
     const gouvernance = await this.#loader.find(codeDepartement)
 
-    return gouvernance === null ? {} : {
+    return gouvernance === null ? null : {
       ...gouvernance,
-      totalMontantSubventionFormationAccorde: this.#calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionFormationAccorde))
+      membres: (gouvernance.membres ?? []).map(toMembreDetailAvecTotauxReadModel)
     }
   }
+}
 
-  #calculSubvention(array: ReadonlyArray<number>): number {
-    return array.reduce(
-      (result: number, montant: number) =>
-        result + (!isNaN(montant) ? montant : 0),
-      0
-    )
+function toMembreDetailAvecTotauxReadModel(membre: MembreDetailsReadModel): MembreDetailAvecTotauxMontantsReadModel {
+  return {
+    ...membre,
+    ...membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
+      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde + feuilleDeRoute.montantSubventionFormationAccorde,
+      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde
+    }), {
+      totalMontantSubventionFormationAccorde: 0,
+      totalMontantSubventionAccorde: 0
+    })
   }
 }
 
@@ -30,9 +35,9 @@ type Query = Readonly<{
   codeDepartement: string
 }>
 
-type GouvernanceReadModel = UneGouvernanceReadModel & Readonly<{
-  totalMontantSubventionFormationAccorde: number
-}>
+export type GouvernanceReadModel = Omit<UneGouvernanceReadModel, 'membres'> & Readonly<{
+  membres: ReadonlyArray<MembreDetailAvecTotauxMontantsReadModel>
+}> | null
 
 export interface UneGouvernanceReadModelLoader {
   find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
@@ -47,14 +52,7 @@ export type UneGouvernanceReadModel = Readonly<{
   uid: string
 }>
 
-type NoteDeContexteReadModel = Readonly<{
-  dateDeModification: Date
-  nomAuteur: string
-  prenomAuteur: string
-  texte: string
-}>
-
-type ComiteReadModel = Readonly<{
+export type ComiteReadModel = Readonly<{
   commentaire?: string
   dateProchainComite?: Date
   nom?: string
@@ -80,7 +78,20 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-export type MembreDetailsReadModel = Readonly<{
+export type MembreDetailAvecTotauxMontantsReadModel = MembreDetailsReadModel & {
+  totalMontantSubventionFormationAccorde: number
+  totalMontantSubventionAccorde: number
+}
+export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
+
+type NoteDeContexteReadModel = Readonly<{
+  dateDeModification: Date
+  nomAuteur: string
+  prenomAuteur: string
+  texte: string
+}>
+
+type MembreDetailsReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
@@ -99,5 +110,3 @@ export type MembreDetailsReadModel = Readonly<{
     montantSubventionFormationAccorde: number
   }>>
 }>
-
-export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'

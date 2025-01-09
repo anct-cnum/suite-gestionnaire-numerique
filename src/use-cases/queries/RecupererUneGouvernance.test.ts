@@ -2,32 +2,41 @@ import {
   UneGouvernanceReadModel,
   UneGouvernanceReadModelLoader,
   RecupererUneGouvernance,
+  GouvernanceReadModel,
 } from './RecupererUneGouvernance'
 
 describe('RecupererUneGouvernance', () => {
-  it("quand une gouvernance est demander sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
+  it("quand une gouvernance est demandée sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
     // GIVEN
     const queryHandler = new RecupererUneGouvernance(new GouvernanceInexistanteLoaderStub())
-    // WHEN
 
+    // WHEN
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
     //THEN
-    expect(gouvernance).toStrictEqual({})
+    expect(gouvernance).toBeNull()
   })
 
-  it("quand une gouvernance est demander sur un département et qu'elle existe alors on la récupère", async () => {
+  it("quand une gouvernance sans membre est demandée sur un département et qu'elle existe alors on la récupère", async () => {
     // GIVEN
     const queryHandler = new RecupererUneGouvernance(new GouvernanceExistanteLoaderStub())
-    // WHEN
 
+    // WHEN
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
     //THEN
-    expect(gouvernance).toStrictEqual({
-        ...uneGouvernance,
-        totalMontantSubventionFormationAccorde: 10_000
-    })
+    expect(gouvernance).toStrictEqual(gouvernanceReadModel)
+  })
+
+  it("quand une gouvernance est demandée sur un département et qu'elle existe alors on la récupère en calculant les totaux des montants de subvention", async () => {
+    // GIVEN
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceSansMembreLoaderStub())
+
+    // WHEN
+    const gouvernance = await queryHandler.get({ codeDepartement: '93' })
+
+    //THEN
+    expect(gouvernance).toStrictEqual(gouvernanceSansMembreReadModel)
   })
 })
 
@@ -143,9 +152,46 @@ const uneGouvernance = {
   uid: '123456',
 }
 
+const uneGouvernanceSansMembre = {
+  ...uneGouvernance,
+  membres: undefined
+}
+
+const gouvernanceReadModel: GouvernanceReadModel = {
+  ...uneGouvernance,
+  membres: [
+    {
+      ...uneGouvernance.membres[0],
+      totalMontantSubventionFormationAccorde: 10_000,
+      totalMontantSubventionAccorde: 10_000
+    },
+    {
+      ...uneGouvernance.membres[1],
+      totalMontantSubventionFormationAccorde: 20_000,
+      totalMontantSubventionAccorde: 30_000
+    },
+    {
+      ...uneGouvernance.membres[2],
+      totalMontantSubventionFormationAccorde: 0,
+      totalMontantSubventionAccorde: 0
+    }
+  ]
+}
+
+const gouvernanceSansMembreReadModel = {
+  ...uneGouvernance,
+  membres: []
+}
+
 class GouvernanceInexistanteLoaderStub implements UneGouvernanceReadModelLoader {
   find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
     return Promise.resolve(null)
+  }
+}
+
+class GouvernanceSansMembreLoaderStub implements UneGouvernanceReadModelLoader {
+  find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+    return Promise.resolve(uneGouvernanceSansMembre)
   }
 }
 

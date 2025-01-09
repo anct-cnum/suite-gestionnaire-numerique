@@ -1,12 +1,12 @@
 import { formaterEnDateFrancaise } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailsReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, GouvernanceReadModel, MembreDetailAvecTotauxMontantsReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
-  gouvernanceReadModel: UneGouvernanceReadModel
+  gouvernanceReadModel: GouvernanceReadModel
 ): GouvernanceViewModel {
-  return {
+  return gouvernanceReadModel === null ? {} as GouvernanceViewModel : {
     ...{ comites: gouvernanceReadModel.comites?.map(toComitesViewModel) },
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
@@ -62,7 +62,7 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
   ].every(isNullish)
 }
 
-function toComitesViewModel(comite: UneGouvernanceReadModel['comites'][number]): ComiteViewModel {
+function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
   const dateProchainComite = comite.dateProchainComite ?
     `: ${formaterEnDateFrancaise(comite.dateProchainComite)}` :
     'en attente de planification'
@@ -106,19 +106,8 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
-function calculSubvention(array: ReadonlyArray<number>): number {
-  return array.reduce(
-    (result: number, montant: number) =>
-      result + (!isNaN(montant) ? montant : 0),
-    0
-  )
-}
-
-function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetailsViewModel {
+function toMembresDetailsViewModel(membre: MembreDetailAvecTotauxMontantsReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
-  const montantSubventionAccorde = calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionAccorde))
-  const montantSubventionFormationAccorde =
-  calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionFormationAccorde))
 
   const affichageMembrePrefecture: MembreDetailsViewModel['details'] = [
     ...(membre.feuillesDeRoute.length >= 1
@@ -148,11 +137,11 @@ function toMembresDetailsViewModel(membre: MembreDetailsReadModel): MembreDetail
       ]
       : []),
     {
-      information: `${formaterEnNombreFrancais(montantSubventionAccorde)} €`,
+      information: `${formaterEnNombreFrancais(membre.totalMontantSubventionAccorde)} €`,
       intitule: 'Total subventions accordées',
     },
     {
-      information: `${formaterEnNombreFrancais(montantSubventionFormationAccorde)} €`,
+      information: `${formaterEnNombreFrancais(membre.totalMontantSubventionFormationAccorde)} €`,
       intitule: 'Total subventions formations accordées',
     },
     { information: contactReferent, intitule: 'Contact référent' },
