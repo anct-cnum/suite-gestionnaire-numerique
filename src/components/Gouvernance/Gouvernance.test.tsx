@@ -70,6 +70,20 @@ describe('gouvernance', () => {
     expect(ajouterUnComite).toHaveAttribute('type', 'button')
   })
 
+  it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors elle s’affiche le formulaire de création', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const ajouterUnComite = screen.getByRole('button', { name: 'Ajouter un comité' })
+    fireEvent.click(ajouterUnComite)
+
+    // THEN
+    const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+    expect(ajouterUnComiteDrawer).toBeVisible()
+  })
+
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
