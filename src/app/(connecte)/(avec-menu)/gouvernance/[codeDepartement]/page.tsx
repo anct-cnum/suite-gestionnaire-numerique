@@ -5,6 +5,7 @@ import prisma from '../../../../../../prisma/prismaClient'
 import Gouvernance from '@/components/Gouvernance/Gouvernance'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
   const codeDepartement = (await params).codeDepartement
@@ -13,7 +14,8 @@ export default async function GouvernanceController({ params }: Props): Promise<
     notFound()
   }
 
-  const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma.gouvernanceRecord).find(codeDepartement)
+  // const gouvernanceReadModel = await new PrismaGouvernanceLoader(prisma.gouvernanceRecord).find(codeDepartement)
+  const gouvernanceReadModel = await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
 
   if (gouvernanceReadModel === null) {
     notFound()
