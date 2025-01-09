@@ -1,3 +1,39 @@
+import { QueryHandler } from '../QueryHandler'
+
+export class RecupererUneGouvernance implements QueryHandler<Query, Partial<GouvernanceReadModel>> {
+  readonly #loader: UneGouvernanceReadModelLoader
+
+  constructor(loader: UneGouvernanceReadModelLoader) {
+    this.#loader = loader
+  }
+
+  async get({ codeDepartement }: Query): Promise<Partial<GouvernanceReadModel>> {
+    
+    const gouvernance = await this.#loader.find(codeDepartement)
+
+    return gouvernance === null ? {} : {
+      ...gouvernance,
+      totalMontantSubventionFormationAccorde: this.#calculSubvention(membre.feuillesDeRoute.map((i) => i.montantSubventionFormationAccorde))
+    }
+  }
+
+  #calculSubvention(array: ReadonlyArray<number>): number {
+    return array.reduce(
+      (result: number, montant: number) =>
+        result + (!isNaN(montant) ? montant : 0),
+      0
+    )
+  }
+}
+
+type Query = Readonly<{
+  codeDepartement: string
+}>
+
+type GouvernanceReadModel = UneGouvernanceReadModel & Readonly<{
+  totalMontantSubventionFormationAccorde: number
+}>
+
 export interface UneGouvernanceReadModelLoader {
   find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
 }
@@ -18,7 +54,7 @@ type NoteDeContexteReadModel = Readonly<{
   texte: string
 }>
 
-export type ComiteReadModel = Readonly<{
+type ComiteReadModel = Readonly<{
   commentaire?: string
   dateProchainComite?: Date
   nom?: string
@@ -48,15 +84,15 @@ export type MembreDetailsReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
-  contactTechnique: string,
+  contactTechnique: string
   contactReferent: Readonly<{
     nom: string
     prenom: string
     poste: string
     mailContact: string
-  }>,
-  telephone: string,
-  typologieMembre: string,
+  }>
+  telephone: string
+  typologieMembre: string
   feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
     montantSubventionAccorde: number
