@@ -70,7 +70,7 @@ describe('gouvernance', () => {
     expect(ajouterUnComite).toHaveAttribute('type', 'button')
   })
 
-  it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors elle s’affiche le formulaire de création', () => {
+  it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors s’affiche le formulaire de création', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -82,6 +82,20 @@ describe('gouvernance', () => {
     // THEN
     const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
     expect(ajouterUnComiteDrawer).toBeVisible()
+  })
+
+  it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    jOuvreLeFormulairePourAjouterUnComite()
+    jeFermeLeFormulairePourAjouterUnComite()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Ajouter un comité' })
+    expect(drawer).not.toBeInTheDocument()
   })
 
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
@@ -509,4 +523,12 @@ describe('gouvernance', () => {
     expect(columns1Body[1].textContent).toBe('Comité stratégique en attente de planification')
     expect(columns1Body[2].textContent).toBe('Semestriel')
   })
+
+  function jOuvreLeFormulairePourAjouterUnComite(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Ajouter un comité' }))
+  }
+
+  function jeFermeLeFormulairePourAjouterUnComite(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer le formulaire de création d’un comité' }))
+  }
 })

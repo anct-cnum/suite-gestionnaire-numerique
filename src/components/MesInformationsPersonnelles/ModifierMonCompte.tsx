@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, RefObject, SetStateAction, useContext, useId, useState } from 'react'
+import { FormEvent, ReactElement, RefObject, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -15,7 +15,7 @@ export default function ModifierMonCompte({
   labelId,
   nom,
   prenom,
-  setIsOpen,
+  closeDrawer,
   telephone,
 }: Props): ReactElement {
   const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
@@ -106,9 +106,7 @@ export default function ModifierMonCompte({
             <button
               aria-controls={id}
               className="fr-btn fr-btn--secondary"
-              onClick={() => {
-                setIsOpen(false)
-              }}
+              onClick={closeDrawer}
               type="reset"
             >
               Annuler
@@ -138,7 +136,7 @@ export default function ModifierMonCompte({
         setIsDisabled(false)
       })
 
-    setIsOpen(false)
+    closeDrawer()
     window.dsfr(dialogRef.current).modal.conceal()
   }
 }
@@ -150,6 +148,6 @@ type Props = Readonly<{
   labelId: string
   nom: string
   prenom: string
-  setIsOpen: Dispatch<SetStateAction<boolean>>
   telephone: string
+  closeDrawer(): void
 }>

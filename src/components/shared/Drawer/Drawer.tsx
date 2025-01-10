@@ -1,11 +1,11 @@
-import { Dispatch, PropsWithChildren, ReactElement, ReactNode, Ref, SetStateAction } from 'react'
+import { PropsWithChildren, ReactElement, ReactNode, Ref } from 'react'
 
 import styles from './Drawer.module.css'
 
 export default function Drawer({
   id,
   isOpen,
-  setIsOpen,
+  closeDrawer,
   boutonFermeture,
   isFixedWidth,
   labelId,
@@ -34,9 +34,7 @@ export default function Drawer({
                 <button
                   aria-controls={id}
                   className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
-                  onClick={() => {
-                    setIsOpen(false)
-                  }}
+                  onClick={closeDrawer}
                   title={boutonFermeture}
                   type="button"
                 />
@@ -55,10 +53,10 @@ export default function Drawer({
 type Props = PropsWithChildren<Readonly<{
   id: string
   isOpen: boolean
-  setIsOpen: Dispatch<SetStateAction<boolean>>
   boutonFermeture: string
   labelId: string
   isFixedWidth: boolean
   icon?: ReactNode
   ref?: Ref<HTMLDialogElement>
+  closeDrawer(): void
 }>>

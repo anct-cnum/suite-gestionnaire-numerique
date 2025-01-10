@@ -197,30 +197,36 @@ export default function MesInformationsPersonnelles(
           </button>
         </section>
         <SupprimerMonCompte
+          closeDrawer={() => {
+            setIsModalOpen(false)
+          }}
           email={mesInformationsPersonnellesViewModel.emailDeContact}
           id={supprimerMonCompteModalId}
           isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
         />
       </div>
       <Drawer
         boutonFermeture="Fermer la modification"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelId}
         ref={drawerModifierMonCompteRef}
-        setIsOpen={setIsDrawerOpen}
       >
         <ModifierMonCompte
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
           dialogRef={drawerModifierMonCompteRef}
           email={mesInformationsPersonnellesViewModel.emailDeContact}
           id={drawerId}
           labelId={labelId}
           nom={mesInformationsPersonnellesViewModel.nom}
           prenom={mesInformationsPersonnellesViewModel.prenom}
-          setIsOpen={setIsDrawerOpen}
           telephone={mesInformationsPersonnellesViewModel.telephoneBrut}
         />
       </Drawer>

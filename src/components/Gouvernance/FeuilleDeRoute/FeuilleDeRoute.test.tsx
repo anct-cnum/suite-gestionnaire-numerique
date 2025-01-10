@@ -6,7 +6,7 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('feuille de route', () => {
   it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
-  // GIVEN
+    // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
@@ -25,8 +25,7 @@ describe('feuille de route', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
-    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
-    fireEvent.click(feuilleDeRoute)
+    jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
@@ -77,7 +76,7 @@ describe('feuille de route', () => {
   })
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
-  // GIVEN
+    // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
@@ -96,8 +95,7 @@ describe('feuille de route', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
-    const feuilleDeRoute = screen.getByRole('button', { name: 'Feuille de route inclusion 1' })
-    fireEvent.click(feuilleDeRoute)
+    jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
@@ -108,4 +106,40 @@ describe('feuille de route', () => {
     const tirets = within(drawer).getAllByText('-')
     expect(tirets).toHaveLength(2)
   })
+
+  it('quand je clique sur une feuille de route puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          budgetGlobal: 145_000,
+          montantSubventionAccorde: 100_000,
+          montantSubventionDemande: 115_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion 1',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          totalActions: 3,
+        },
+      ],
+    }))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    jOuvreLesDetailsDUneFeuilleDeRoute()
+    jeFermeLesDetailsDUneFeuilleDeRoute()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Feuille de route inclusion 1' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
+  function jOuvreLesDetailsDUneFeuilleDeRoute(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Feuille de route inclusion 1' }))
+  }
+
+  function jeFermeLesDetailsDUneFeuilleDeRoute(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails de la feuille de route' }))
+  }
 })

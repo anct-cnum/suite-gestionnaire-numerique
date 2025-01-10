@@ -65,13 +65,15 @@ export default function MembreRempli({ membres }: Props): ReactElement {
       </Table>
       <Drawer
         boutonFermeture={`Fermer les détails du membre : ${membreDetails.nom}`}
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
         icon={<Icon icon={membreDetails.logo} />}
         id={drawerMembreId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelMembreId}
-        setIsOpen={setIsDrawerOpen}
       >
         <Membre
           labelId={labelMembreId}
