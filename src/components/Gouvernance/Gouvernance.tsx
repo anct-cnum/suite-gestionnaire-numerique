@@ -95,7 +95,10 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
       }
       <section aria-labelledby="comitologie">
         <Drawer
-          boutonFermeture="Fermer"
+          boutonFermeture="Fermer le formulaire de création d’un comité"
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
           icon={<Icon icon="calendar-event-line" />}
           id={drawerComiteId}
           // Stryker disable next-line BooleanLiteral
@@ -103,12 +106,13 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           isOpen={isDrawerOpen}
           labelId={labelComiteId}
           ref={drawerRef}
-          setIsOpen={setIsDrawerOpen}
         >
           <AjouterUnComite
+            closeDrawer={() => {
+              setIsDrawerOpen(false)
+            }}
             dialogRef={drawerRef}
             labelId={labelComiteId}
-            setIsOpen={setIsDrawerOpen}
             uidGouvernance={gouvernanceViewModel.uid}
           />
         </Drawer>

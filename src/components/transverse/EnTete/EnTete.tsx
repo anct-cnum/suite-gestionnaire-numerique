@@ -150,12 +150,14 @@ export default function EnTete(): ReactElement {
       </header>
       <Drawer
         boutonFermeture="Fermer le menu"
+        closeDrawer={() => {
+          setIsOpen(false)
+        }}
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={true}
         isOpen={isOpen}
         labelId={labelId}
-        setIsOpen={setIsOpen}
       >
         <MenuUtilisateur ariaControlsId={drawerId} />
       </Drawer>

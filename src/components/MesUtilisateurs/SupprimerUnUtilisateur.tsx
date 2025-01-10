@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, SetStateAction, useContext, useId } from 'react'
+import { ReactElement, useContext, useId } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
@@ -8,7 +8,7 @@ export default function SupprimerUnUtilisateur({
   id,
   isOpen,
   utilisateurASupprimer,
-  setIsOpen,
+  closeDrawer,
 }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
   const modaleTitreId = useId()
@@ -57,7 +57,7 @@ export default function SupprimerUnUtilisateur({
   )
 
   function close(): void {
-    setIsOpen(false)
+    closeDrawer()
   }
 
   async function supprimer(uidUtilisateurASupprimer: string): Promise<void> {
@@ -70,8 +70,7 @@ type Props = Readonly<{
   id: string
   isOpen: boolean
   utilisateurASupprimer: UtilisateurASupprimer
-  setIsOpen: Dispatch<SetStateAction<boolean>>
-  setUtilisateurASupprimer: Dispatch<SetStateAction<UtilisateurASupprimer>>
+  closeDrawer(): void
 }>
 
 type UtilisateurASupprimer = Readonly<{

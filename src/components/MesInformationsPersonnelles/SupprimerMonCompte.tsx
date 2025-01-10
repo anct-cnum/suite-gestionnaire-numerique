@@ -1,5 +1,5 @@
 import { signOut } from 'next-auth/react'
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
 import styles from './SupprimerMonCompte.module.css'
 import { clientContext } from '../shared/ClientContext'
@@ -8,7 +8,7 @@ import ModalTitle from '../shared/ModalTitle/ModalTitle'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { emailPattern } from '@/shared/patterns'
 
-export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Props): ReactElement {
+export default function SupprimerMonCompte({ id, email, isOpen, closeDrawer }: Props): ReactElement {
   const { supprimerMonCompteAction } = useContext(clientContext)
   const [emailValidationInfo, setEmailValidationInfo] =
     useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
@@ -92,7 +92,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, setIsOpen }: Pro
 
   function close(): void {
     setEmailValidationInfo(emailValidationInfoByState.invalid)
-    setIsOpen(false)
+    closeDrawer()
   }
 
   function handleInput({ currentTarget }: FormEvent<HTMLInputElement>): void {
@@ -118,7 +118,7 @@ type Props = Readonly<{
   id: string
   email: string
   isOpen: boolean
-  setIsOpen: Dispatch<SetStateAction<boolean>>
+  closeDrawer(): void
 }>
 
 type EmailValidationState = 'correct' | 'incorrect' | 'invalid'

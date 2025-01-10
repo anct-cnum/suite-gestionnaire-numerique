@@ -13,7 +13,7 @@ export default function AjouterUnComite({
   dialogRef,
   uidGouvernance,
   labelId,
-  setIsOpen,
+  closeDrawer,
 }: Props): ReactElement {
   const { ajouterUnComiteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -90,8 +90,7 @@ export default function AjouterUnComite({
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-    // Stryker disable next-line BooleanLiteral
-    setIsOpen(false)
+    closeDrawer()
     window.dsfr(dialogRef.current).modal.conceal();
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
@@ -148,5 +147,5 @@ type Props = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
   uidGouvernance: string
   labelId: string
-  setIsOpen(isOpen: boolean): void
+  closeDrawer(): void
 }>

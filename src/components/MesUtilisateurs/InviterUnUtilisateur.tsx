@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, ReactNode, RefObject, SetStateAction, useContext, useId, useState } from 'react'
+import { FormEvent, ReactElement, ReactNode, RefObject, useContext, useId, useState } from 'react'
 
 import OrganisationInput from './OrganisationInput'
 import Badge from '../shared/Badge/Badge'
@@ -14,7 +14,7 @@ import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
 import { emailPattern } from '@/shared/patterns'
 
 export default function InviterUnUtilisateur({
-  setIsOpen,
+  closeDrawer,
   labelId,
   dialogRef,
   rolesAvecStructure,
@@ -184,7 +184,7 @@ export default function InviterUnUtilisateur({
   }
 
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
-    setIsOpen(false)
+    closeDrawer()
     setRoleSelectionne('')
     window.dsfr(dialogRef.current).modal.conceal()
     htmlFormElement.reset()
@@ -196,10 +196,10 @@ export default function InviterUnUtilisateur({
 }
 
 type Props = Readonly<{
-  setIsOpen: Dispatch<SetStateAction<boolean>>
   labelId: string
   dialogRef: RefObject<HTMLDialogElement | null>
   rolesAvecStructure: RolesAvecStructure
+  closeDrawer(): void
 }>
 
 type Erreur = Readonly<{

@@ -11,6 +11,7 @@ import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouv
 export default function FeuilleDeRouteRemplie({
   feuillesDeRoute,
 }: Props): ReactElement {
+  // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [feuilleDeRoute, setFeuilleDeRoute] = useState<FeuilleDeRouteViewModel>(feuillesDeRoute[0])
   const drawerFeuilleDeRouteId = 'drawerFeuilleDeRouteId'
@@ -58,13 +59,15 @@ export default function FeuilleDeRouteRemplie({
       </Table>
       <Drawer
         boutonFermeture="Fermer les détails de la feuille de route"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
         icon={<Icon icon="survey-line" />}
         id={drawerFeuilleDeRouteId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelFeuilleDeRouteId}
-        setIsOpen={setIsDrawerOpen}
       >
         <DetailsFeuilleDeRoute
           feuilleDeRoute={feuilleDeRoute}

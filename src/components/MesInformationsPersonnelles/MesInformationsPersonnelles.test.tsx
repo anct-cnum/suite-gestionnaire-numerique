@@ -294,6 +294,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     function supprimerMonCompteModal(): HTMLElement {
       return screen.getByRole('dialog', { name: 'Supprimer mon compte' })
     }
+
     function formulaire(): HTMLElement {
       return screen.getByRole('form', { name: 'Supprimer' })
     }
@@ -317,7 +318,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       afficherMesInformationsPersonnelles()
 
       // WHEN
-      ouvrirDrawer()
+      jOuvreMesInformationsPersonnelles()
 
       // THEN
       const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
@@ -368,7 +369,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
 
       // WHEN
-      ouvrirDrawer()
+      jOuvreMesInformationsPersonnelles()
 
       // THEN
       const telephone = screen.getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
@@ -378,11 +379,24 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     it('et que j’appuie sur annuler alors la modale se ferme', () => {
       // GIVEN
       afficherMesInformationsPersonnelles()
-      ouvrirDrawer()
+      jOuvreMesInformationsPersonnelles()
 
       // WHEN
       const annuler = screen.getByRole('button', { name: 'Annuler' })
       fireEvent.click(annuler)
+
+      // THEN
+      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
+      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+    })
+
+    it('et que je clique sur fermer alors la modale se ferme', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles()
+
+      // WHEN
+      jOuvreMesInformationsPersonnelles()
+      jeFermeMesInformationsPersonnelles()
 
       // THEN
       const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
@@ -400,7 +414,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
         { modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' }
       )
-      ouvrirDrawer()
+      jOuvreMesInformationsPersonnelles()
       const nom = screen.getByLabelText('Nom *')
       fireEvent.change(nom, { target: { value: 'Tartempion' } })
       const prenom = screen.getByLabelText('Prénom *')
@@ -424,10 +438,14 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
     })
 
-    function ouvrirDrawer(): void {
+    function jOuvreMesInformationsPersonnelles(): void {
       const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
       const modifierMesInfosPersos = within(mesInformationsPersonnelles).getByRole('button', { name: 'Modifier' })
       fireEvent.click(modifierMesInfosPersos)
+    }
+
+    function jeFermeMesInformationsPersonnelles(): void {
+      fireEvent.click(screen.getByRole('button', { name: 'Fermer la modification' }))
     }
   })
 })

@@ -1,4 +1,4 @@
-import { Dispatch, ReactElement, RefObject, SetStateAction, useContext } from 'react'
+import { ReactElement, RefObject, useContext } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -8,7 +8,7 @@ export default function ReinviterUnUtilisateur({
   utilisateur,
   labelId,
   drawerId,
-  setIsOpen,
+  closeDrawer,
   dialogRef,
 }: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
@@ -50,7 +50,7 @@ export default function ReinviterUnUtilisateur({
   }
 
   function close(): void {
-    setIsOpen(false)
+    closeDrawer()
     window.dsfr(dialogRef.current).modal.conceal()
   }
 }
@@ -63,6 +63,6 @@ type Props = Readonly<{
     uid: string
   }>
   labelId: string
-  setIsOpen: Dispatch<SetStateAction<boolean>>
   drawerId: string
+  closeDrawer(): void
 }>

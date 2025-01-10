@@ -92,7 +92,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je clique sur le bouton de déconnexion alors je suis déconnecté', () => {
       // GIVEN
       vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
-      const menuUtilisateur = ouvrirLeMenuUtilisateur()
+      const menuUtilisateur = jOuvreLeMenuUtilisateur()
       const deconnexion = within(menuUtilisateur).getByRole('button', { name: 'Se déconnecter' })
 
       // WHEN
@@ -105,7 +105,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
       const changerMonRoleAction = vi.fn(async () => Promise.resolve(['OK']))
-      const menuUtilisateur = ouvrirLeMenuUtilisateur(changerMonRoleAction)
+      const menuUtilisateur = jOuvreLeMenuUtilisateur(changerMonRoleAction)
       const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
 
       // WHEN
@@ -115,6 +115,16 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       await waitFor(() => {
         expect(changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Instructeur', path: '/' })
       })
+    })
+
+    it('quand je clique sur fermer, alors le drawer se ferme', () => {
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+      jeFermeLeMenuUtilisateur()
+
+      // THEN
+      const drawer = screen.queryByRole('dialog')
+      expect(drawer).not.toBeInTheDocument()
     })
   })
 })
@@ -127,8 +137,12 @@ function monCompte(spiedChangerMonRoleAction = async (): Promise<Array<string>> 
   return within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
 }
 
-function ouvrirLeMenuUtilisateur(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
+function jOuvreLeMenuUtilisateur(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
   fireEvent.click(monCompte(spiedChangerMonRoleAction))
 
   return screen.getByRole('dialog')
+}
+
+function jeFermeLeMenuUtilisateur(): void {
+  fireEvent.click(screen.getByRole('button', { name: 'Fermer le menu' }))
 }
