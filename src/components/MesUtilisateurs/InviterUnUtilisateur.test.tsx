@@ -119,6 +119,20 @@ describe('inviter un utilisateur', () => {
     expect(envoyerInvitation).toBeEnabled()
   })
 
+  it('en tant qu’utilisateur, quand je clique sur inviter un utilisateur puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // WHEN
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeFermeLeFormulairePourInviterUnUtilisateur()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
   it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
@@ -609,4 +623,12 @@ describe('inviter un utilisateur', () => {
       expect(roleRadio).not.toBeChecked()
     })
   })
+
+  function jOuvreLeFormulairePourInviterUnUtilisateur(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Inviter une personne' }))
+  }
+
+  function jeFermeLeFormulairePourInviterUnUtilisateur(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer l’invitation' }))
+  }
 })

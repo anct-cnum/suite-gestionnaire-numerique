@@ -6,13 +6,11 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres', () => {
   it('quand je clique sur un membre, alors un drawer s’ouvre avec les détails du membre', () => {
-  // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    // GIVEN
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDUnMembre()
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -22,4 +20,30 @@ describe('membres', () => {
     const boutonFermeture = screen.getByRole('button', { name: 'Fermer les détails du membre : Préfecture du Rhône' })
     expect(boutonFermeture).toBeInTheDocument()
   })
+
+  it('quand je clique sur un membre puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    afficherGouvernance()
+
+    // WHEN
+    jOuvreLesDetailsDUnMembre()
+    jeFermeLesDetailsDUnMembre()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Préfecture du Rhône' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
+  function afficherGouvernance(): void {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+  }
+
+  function jOuvreLesDetailsDUnMembre(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Préfecture du Rhône' }))
+  }
+
+  function jeFermeLesDetailsDUnMembre(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails du membre : Préfecture du Rhône' }))
+  }
 })

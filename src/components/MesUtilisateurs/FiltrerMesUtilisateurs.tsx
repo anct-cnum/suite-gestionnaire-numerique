@@ -1,6 +1,6 @@
 'use client'
 
-import { Dispatch, FormEvent, ReactElement, SetStateAction, useContext, useId, useRef, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 'react'
 // eslint-disable-next-line import/no-unresolved
 import Select from 'react-select/dist/declarations/src/Select'
 
@@ -15,8 +15,8 @@ import { toutesLesRegions, urlDeFiltrage, ZoneGeographique, zoneGeographiqueToUR
 export default function FiltrerMesUtilisateurs({
   id,
   labelId,
-  setIsOpen,
-  setTermesDeRechercheNomOuEmail,
+  closeDrawer,
+  resetSearch,
 }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
@@ -90,14 +90,13 @@ export default function FiltrerMesUtilisateurs({
     ref.current?.setValue(toutesLesRegions, 'select-option')
     setStructure('')
     router.push('/mes-utilisateurs')
-    setTermesDeRechercheNomOuEmail('')
+    resetSearch()
   }
 
   function filtrer(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
 
-    // Stryker disable next-line BooleanLiteral
-    setIsOpen(false)
+    closeDrawer()
 
     const form = new FormData(event.currentTarget)
 
@@ -109,6 +108,6 @@ export default function FiltrerMesUtilisateurs({
 type Props = Readonly<{
   id: string
   labelId: string
-  setIsOpen: Dispatch<SetStateAction<boolean>>
-  setTermesDeRechercheNomOuEmail: Dispatch<SetStateAction<string>>
+  closeDrawer(): void
+  resetSearch(): void
 }>

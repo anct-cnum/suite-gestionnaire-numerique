@@ -76,19 +76,23 @@ export default function MesUtilisateurs(
       </div>
       <Drawer
         boutonFermeture="Fermer l’invitation"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
         id={drawerInvitationId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelInvitationId}
         ref={drawerInvitationRef}
-        setIsOpen={setIsDrawerOpen}
       >
         <InviterUnUtilisateur
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
           dialogRef={drawerInvitationRef}
           labelId={labelInvitationId}
           rolesAvecStructure={mesUtilisateursViewModel.rolesAvecStructure}
-          setIsOpen={setIsDrawerOpen}
         />
       </Drawer>
       {
@@ -96,18 +100,24 @@ export default function MesUtilisateurs(
           <>
             <Drawer
               boutonFermeture="Fermer les filtres"
+              closeDrawer={() => {
+                setIsDrawerOpen(false)
+              }}
               id={drawerFiltreId}
               // Stryker disable next-line BooleanLiteral
               isFixedWidth={false}
               isOpen={isDrawerOpen}
               labelId={labelFiltreId}
-              setIsOpen={setIsDrawerOpen}
             >
               <FiltrerMesUtilisateurs
+                closeDrawer={() => {
+                  setIsDrawerOpen(false)
+                }}
                 id={drawerFiltreId}
                 labelId={labelFiltreId}
-                setIsOpen={setIsDrawerOpen}
-                setTermesDeRechercheNomOuEmail={setTermesDeRechercheNomOuEmail}
+                resetSearch={() => {
+                  setTermesDeRechercheNomOuEmail('')
+                }}
               />
             </Drawer>
             <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
@@ -239,20 +249,23 @@ export default function MesUtilisateurs(
           ) : null
       }
       <SupprimerUnUtilisateur
+        closeDrawer={() => {
+          setIsModaleSuppressionOpen(false)
+        }}
         id={modalId}
         isOpen={isModaleSuppressionOpen}
-        setIsOpen={setIsModaleSuppressionOpen}
-        setUtilisateurASupprimer={setUtilisateurASupprimer}
         utilisateurASupprimer={utilisateurASupprimer}
       />
       <Drawer
-        boutonFermeture="Fermer le menu"
+        boutonFermeture="Fermer les détails"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
         id={drawerDetailsId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelDetailsId}
-        setIsOpen={setIsDrawerOpen}
       >
         <DetailsUtilisateur
           labelId={labelDetailsId}
@@ -260,20 +273,24 @@ export default function MesUtilisateurs(
         />
       </Drawer>
       <Drawer
-        boutonFermeture="Fermer le menu"
+        boutonFermeture="Fermer la réinvitation"
+        closeDrawer={() => {
+          setIsDrawerRenvoyerInvitationOpen(false)
+        }}
         id={drawerRenvoyerInvitationId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerRenvoyerInvitationOpen}
         labelId={labelRenvoyerInvitationId}
         ref={drawerRenvoyerInvitationRef}
-        setIsOpen={setIsDrawerRenvoyerInvitationOpen}
       >
         <ReinviterUnUtilisateur
+          closeDrawer={() => {
+            setIsDrawerRenvoyerInvitationOpen(false)
+          }}
           dialogRef={drawerRenvoyerInvitationRef}
           drawerId={drawerRenvoyerInvitationId}
           labelId={labelRenvoyerInvitationId}
-          setIsOpen={setIsDrawerRenvoyerInvitationOpen}
           utilisateur={utilisateurEnAttenteSelectionne}
         />
       </Drawer>

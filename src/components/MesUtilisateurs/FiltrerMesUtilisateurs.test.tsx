@@ -61,6 +61,20 @@ describe('filtrer mes utilisateurs', () => {
     expect(boutonAfficher).toHaveAttribute('aria-controls', 'drawer-filtre-utilisateurs')
   })
 
+  it('quand je clique sur filtrer puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // WHEN
+    jOuvreLesFiltres()
+    jeFermeLesFiltres()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Filtrer' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
@@ -88,15 +102,17 @@ describe('filtrer mes utilisateurs', () => {
     // GIVEN
     const spiedRouterPush = vi.fn()
     afficherLesFiltres(spiedRouterPush)
+    const champRechercher = jEcrisMaRecherche('martin')
 
     // WHEN
     jeReinitialiseLesFiltres()
 
     // THEN
     expect(spiedRouterPush).toHaveBeenCalledWith('/mes-utilisateurs')
+    expect(champRechercher).toHaveValue('')
   })
 
-  it('quand il n’y a aucun résultat après un filtrage alors une phrase s’affiche pour informer l’utilisateur', () => {
+  it('quand il n’y a aucun résultat après un filtrage alors une phrase s’affiche pour informer l’utilisateur et le drawer se ferme', () => {
     // WHEN
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 0, rolesAvecStructure)
     renderComponent(
@@ -121,6 +137,8 @@ describe('filtrer mes utilisateurs', () => {
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
+      const drawer = screen.queryByRole('dialog', { name: 'Filtrer' })
+      expect(drawer).not.toBeInTheDocument()
     })
 
     it('sur certains rôles alors je n’affiche qu’eux', () => {
@@ -256,6 +274,12 @@ describe('filtrer mes utilisateurs', () => {
     fireEvent.click(screen.getByRole('checkbox', { name: 'Uniquement les utilisateurs activés' }))
   }
 
+  function jEcrisMaRecherche(value: string): HTMLElement {
+    const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
+    fireEvent.change(rechercher, { target: { value } })
+    return rechercher
+  }
+
   async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
     await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
   }
@@ -284,6 +308,10 @@ describe('filtrer mes utilisateurs', () => {
 
   function jOuvreLesFiltres(): void {
     fireEvent.click(screen.getByRole('button', { name: 'Filtrer' }))
+  }
+
+  function jeFermeLesFiltres(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les filtres' }))
   }
 
   function afficherLesFiltres(spiedRouterPush: Mock): void {

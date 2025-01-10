@@ -294,6 +294,20 @@ describe('mes utilisateurs', () => {
     expect(structure).toBeInTheDocument()
   })
 
+  it('quand je clique sur un utilisateur actif puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+    // WHEN
+    jOuvreLesDetailsDunUtilisateur()
+    jeFermeLesDetailsDunUtilisateur()
+
+    // THEN
+    const drawer = screen.queryByRole('dialog', { name: 'Martin Tartempion' })
+    expect(drawer).not.toBeInTheDocument()
+  })
+
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
     it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
       // GIVEN
@@ -318,6 +332,20 @@ describe('mes utilisateurs', () => {
       expect(renvoyerCetteInvitation).toBeEnabled()
       expect(renvoyerCetteInvitation).toHaveAttribute('aria-controls', 'drawer-renvoyer-invitation')
       expect(renvoyerCetteInvitation).toHaveAttribute('type', 'button')
+    })
+
+    it('puis que je clique sur fermer, alors le drawer se ferme', () => {
+      // GIVEN
+      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+
+      // WHEN
+      jOuvreLaReinvitation()
+      jeFermeLaReinvitation()
+
+      // THEN
+      const drawer = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      expect(drawer).not.toBeInTheDocument()
     })
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
@@ -487,6 +515,22 @@ describe('mes utilisateurs', () => {
     const navigation = screen.queryByRole('navigation', { name: 'Pagination' })
     expect(navigation).not.toBeInTheDocument()
   })
+
+  function jOuvreLesDetailsDunUtilisateur(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Martin Tartempion' }))
+  }
+
+  function jeFermeLesDetailsDunUtilisateur(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails' }))
+  }
+
+  function jOuvreLaReinvitation(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Julien Deschamps' }))
+  }
+
+  function jeFermeLaReinvitation(): void {
+    fireEvent.click(screen.getByRole('button', { name: 'Fermer la réinvitation' }))
+  }
 })
 
 function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>; rowsBody: ReadonlyArray<HTMLElement> } {
