@@ -73,7 +73,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -151,8 +151,11 @@ describe('gouvernance loader', () => {
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
           telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Administration',
           typologieMembre: 'Préfecture départementale',
+
         },
         {
           contactReferent: {
@@ -172,6 +175,8 @@ describe('gouvernance loader', () => {
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -187,6 +192,8 @@ describe('gouvernance loader', () => {
           nom: 'CC des Monts du Lyonnais',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -219,10 +226,10 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartementInexistant)
+    const gouvernanceReadModel = gouvernanceLoader.trouverEtEnrichir(codeDepartementInexistant)
 
     // THEN
-    expect(gouvernanceReadModel).toBeNull()
+    await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
   })
 
   it('quand une gouvernance est demandée par son code département existant et qu‘elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
@@ -238,6 +245,7 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
+
     const user = await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({
         id: 123,
@@ -258,7 +266,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -289,6 +297,8 @@ describe('gouvernance loader', () => {
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
           telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Administration',
           typologieMembre: 'Préfecture départementale',
         },
@@ -310,6 +320,8 @@ describe('gouvernance loader', () => {
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -325,6 +337,8 @@ describe('gouvernance loader', () => {
           nom: 'CC des Monts du Lyonnais',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -333,6 +347,7 @@ describe('gouvernance loader', () => {
       uid: '123456',
     })
   })
+
   it('quand une gouvernance est demandée par son code département existant avec un comité sans date de prochain comité, alors elle est renvoyée sans date de prochain comité', async () => {
     // GIVEN
     await prisma.regionRecord.create({
@@ -377,7 +392,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -416,6 +431,9 @@ describe('gouvernance loader', () => {
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
           telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Administration',
           typologieMembre: 'Préfecture départementale',
         },
@@ -437,6 +455,9 @@ describe('gouvernance loader', () => {
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -452,6 +473,9 @@ describe('gouvernance loader', () => {
           nom: 'CC des Monts du Lyonnais',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -505,7 +529,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -544,6 +568,9 @@ describe('gouvernance loader', () => {
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
           telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Administration',
           typologieMembre: 'Préfecture départementale',
         },
@@ -565,6 +592,9 @@ describe('gouvernance loader', () => {
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -580,6 +610,9 @@ describe('gouvernance loader', () => {
           nom: 'CC des Monts du Lyonnais',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -633,7 +666,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -672,6 +705,8 @@ describe('gouvernance loader', () => {
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
           telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Administration',
           typologieMembre: 'Préfecture départementale',
         },
@@ -693,6 +728,8 @@ describe('gouvernance loader', () => {
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },
@@ -708,6 +745,8 @@ describe('gouvernance loader', () => {
           nom: 'CC des Monts du Lyonnais',
           roles: ['Co-porteur', 'Financeur'],
           telephone: '',
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
           type: 'Collectivité',
           typologieMembre: 'Collectivité, EPCI',
         },

@@ -23,14 +23,15 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   }
 }>
 
-export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
+export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
+    super()
     this.#dataResource = dataResource
   }
 
-  async find(codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+  protected override async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: true,
@@ -46,7 +47,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
       },
     })
     if (gouvernanceRecord === null) {
-      return null
+      throw new Error('Le département n’existe pas')
     }
 
     return transform(gouvernanceRecord)
@@ -129,6 +130,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
         telephone: '+33 4 45 00 45 00',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Administration',
         typologieMembre: 'Préfecture départementale',
       },
@@ -150,6 +153,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Collectivité',
         typologieMembre: 'Collectivité, EPCI',
       },
@@ -165,6 +170,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         nom: 'CC des Monts du Lyonnais',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Collectivité',
         typologieMembre: 'Collectivité, EPCI',
       },

@@ -1,6 +1,6 @@
 // Stryker disable all
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
-import { GouvernanceReadModel } from './queries/RecupererUneGouvernance'
+import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -48,8 +48,8 @@ export function mesInformationsPersonnellesReadModelFactory(
 }
 
 export function gouvernanceReadModelFactory(
-  override?: Partial<GouvernanceReadModel>
-): GouvernanceReadModel {
+  override?: Partial<UneGouvernanceReadModel>
+): UneGouvernanceReadModel {
   return {
     comites: [
       {

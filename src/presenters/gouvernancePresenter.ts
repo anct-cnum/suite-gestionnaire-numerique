@@ -1,12 +1,12 @@
 import { formaterEnDateFrancaise } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, GouvernanceReadModel, MembreDetailAvecTotauxMontantsReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
-  gouvernanceReadModel: GouvernanceReadModel
+  gouvernanceReadModel: UneGouvernanceReadModel
 ): GouvernanceViewModel {
-  return gouvernanceReadModel === null ? {} as GouvernanceViewModel : {
+  return {
     ...{ comites: gouvernanceReadModel.comites?.map(toComitesViewModel) },
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
@@ -52,6 +52,29 @@ export type GouvernanceViewModel = Readonly<{
   }>
   uid: string
 }>
+
+export const gouvernanceVideViewModel: GouvernanceViewModel = {
+  departement: 'Rhône',
+  isVide: true,
+  sectionFeuillesDeRoute: {
+    budgetTotalCumule: '',
+    lien: {
+      label: '',
+      url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
+    },
+    total: '',
+    wording: '',
+  },
+  sectionMembres: {
+    detailDuNombreDeChaqueMembre: '',
+    total: '',
+    wording: '',
+  },
+  sectionNoteDeContexte: {
+    sousTitre: '',
+  },
+  uid: '',
+}
 
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
   return [
@@ -106,28 +129,28 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
-function toMembresDetailsViewModel(membre: MembreDetailAvecTotauxMontantsReadModel): MembreDetailsViewModel {
+function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
 
   const affichageMembrePrefecture: MembreDetailsViewModel['details'] = [
-    ...(membre.feuillesDeRoute.length >= 1
+    ...membre.feuillesDeRoute.length >= 1
       ? [
         {
           feuillesDeRoute: membre.feuillesDeRoute,
           intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
         },
       ]
-      : []),
+      : [],
     { information: contactReferent, intitule: 'Contact politique de la collectivité' },
     { information: membre.contactTechnique, intitule: 'Contact technique' },
     {
-      information: membre.telephone !== '' ? membre.telephone : '-',
+      information: membre.telephone === '' ? '-' : membre.telephone,
       intitule: 'Téléphone',
     },
   ]
 
   const affichageAutreMembre: MembreDetailsViewModel['details'] = [
-    ...(membre.feuillesDeRoute.length >= 1
+    ...membre.feuillesDeRoute.length >= 1
       ? [
         {
           feuillesDeRoute: membre.feuillesDeRoute,
@@ -135,7 +158,7 @@ function toMembresDetailsViewModel(membre: MembreDetailAvecTotauxMontantsReadMod
           intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
         },
       ]
-      : []),
+      : [],
     {
       information: `${formaterEnNombreFrancais(membre.totalMontantSubventionAccorde)} €`,
       intitule: 'Total subventions accordées',
@@ -146,7 +169,7 @@ function toMembresDetailsViewModel(membre: MembreDetailAvecTotauxMontantsReadMod
     },
     { information: contactReferent, intitule: 'Contact référent' },
     {
-      information: membre.telephone !== '' ? membre.telephone : '-',
+      information: membre.telephone === '' ? '-' : membre.telephone,
       intitule: 'Téléphone',
     },
   ]

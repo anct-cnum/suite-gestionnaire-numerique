@@ -1,53 +1,40 @@
 import { QueryHandler } from '../QueryHandler'
+import { identity, UnaryOperator } from '@/shared/lang'
 
-export class RecupererUneGouvernance implements QueryHandler<Query, GouvernanceReadModel> {
+export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceReadModelLoader
 
   constructor(loader: UneGouvernanceReadModelLoader) {
     this.#loader = loader
   }
 
-  async get({ codeDepartement }: Query): Promise<GouvernanceReadModel> {
-    const gouvernance = await this.#loader.find(codeDepartement)
-
-    return gouvernance === null ? null : {
-      ...gouvernance,
-      membres: (gouvernance.membres ?? []).map(toMembreDetailAvecTotauxReadModel),
-    }
+  async get({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
+    return this.#loader.trouverEtEnrichir(
+      codeDepartement,
+      (gouvernance) => ({
+        ...gouvernance,
+        ...gouvernance.membres && { membres: gouvernance.membres.map(toMembreDetailAvecTotauxReadModel) },
+      })
+    )
   }
 }
 
-function toMembreDetailAvecTotauxReadModel(membre: MembreDetailsReadModel): MembreDetailAvecTotauxMontantsReadModel {
-  return {
-    ...membre,
-    ...membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
-      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
-      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
-        feuilleDeRoute.montantSubventionFormationAccorde,
-    }), {
-      totalMontantSubventionAccorde: 0,
-      totalMontantSubventionFormationAccorde: 0,
-    }),
+export abstract class UneGouvernanceReadModelLoader {
+  async trouverEtEnrichir(
+    codeDepartement: string,
+    enrichir: UnaryOperator<UneGouvernanceReadModel> = identity
+  ): Promise<UneGouvernanceReadModel> {
+    return this.find(codeDepartement).then(enrichir)
   }
-}
 
-type Query = Readonly<{
-  codeDepartement: string
-}>
-
-export type GouvernanceReadModel = Omit<UneGouvernanceReadModel, 'membres'> & Readonly<{
-  membres: ReadonlyArray<MembreDetailAvecTotauxMontantsReadModel>
-}> | null
-
-export interface UneGouvernanceReadModelLoader {
-  find(codeDepartement: string): Promise<UneGouvernanceReadModel | null>
+  protected abstract find(codeDepartement: string): Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
-  membres?: ReadonlyArray<MembreDetailsReadModel>
+  membres?: ReadonlyArray<MembreDetailReadModel>
   noteDeContexte?: NoteDeContexteReadModel
   uid: string
 }>
@@ -78,10 +65,6 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-export type MembreDetailAvecTotauxMontantsReadModel = MembreDetailsReadModel & {
-  totalMontantSubventionFormationAccorde: number
-  totalMontantSubventionAccorde: number
-}
 export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
 
 type NoteDeContexteReadModel = Readonly<{
@@ -91,7 +74,7 @@ type NoteDeContexteReadModel = Readonly<{
   texte: string
 }>
 
-type MembreDetailsReadModel = Readonly<{
+export type MembreDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
@@ -109,4 +92,24 @@ type MembreDetailsReadModel = Readonly<{
     montantSubventionAccorde: number
     montantSubventionFormationAccorde: number
   }>>
+  totalMontantSubventionFormationAccorde: number
+  totalMontantSubventionAccorde: number
 }>
+
+type Query = Readonly<{
+  codeDepartement: string
+}>
+
+function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+  return {
+    ...membre,
+    ...membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
+      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
+      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
+        feuilleDeRoute.montantSubventionFormationAccorde,
+    }), {
+      totalMontantSubventionAccorde: 0,
+      totalMontantSubventionFormationAccorde: 0,
+    }),
+  }
+}

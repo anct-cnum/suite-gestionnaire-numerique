@@ -1,8 +1,7 @@
 import {
-  UneGouvernanceReadModel,
   UneGouvernanceReadModelLoader,
   RecupererUneGouvernance,
-  GouvernanceReadModel,
+  UneGouvernanceReadModel,
 } from './RecupererUneGouvernance'
 
 describe('recupererUneGouvernance', () => {
@@ -14,7 +13,7 @@ describe('recupererUneGouvernance', () => {
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
     // THEN
-    expect(gouvernance).toBeNull()
+    expect(gouvernance).toStrictEqual({ departement: 'Seine-Saint-Denis', uid: '123456' })
   })
 
   it("quand une gouvernance sans membre est demandée sur un département et qu'elle existe alors on la récupère", async () => {
@@ -25,7 +24,7 @@ describe('recupererUneGouvernance', () => {
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
     // THEN
-    expect(gouvernance).toStrictEqual(gouvernanceReadModel)
+    expect(gouvernance).toStrictEqual(gouvernanceEnrichie)
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle existe alors on la récupère en calculant les totaux des montants de subvention", async () => {
@@ -36,7 +35,7 @@ describe('recupererUneGouvernance', () => {
     const gouvernance = await queryHandler.get({ codeDepartement: '93' })
 
     // THEN
-    expect(gouvernance).toStrictEqual(gouvernanceSansMembreReadModel)
+    expect(gouvernance).toStrictEqual(gouvernanceSansMembre)
   })
 })
 
@@ -108,6 +107,8 @@ const uneGouvernance = {
       nom: 'Préfecture du Rhône',
       roles: ['Co-porteur'],
       telephone: '+33 4 45 00 45 00',
+      totalMontantSubventionAccorde: NaN,
+      totalMontantSubventionFormationAccorde: NaN,
       type: 'Administration',
       typologieMembre: 'Préfecture départementale',
     },
@@ -129,6 +130,8 @@ const uneGouvernance = {
       nom: 'Département du Rhône',
       roles: ['Co-porteur', 'Financeur'],
       telephone: '+33 4 45 00 45 01',
+      totalMontantSubventionAccorde: NaN,
+      totalMontantSubventionFormationAccorde: NaN,
       type: 'Collectivité',
       typologieMembre: 'Collectivité, EPCI',
     },
@@ -144,6 +147,8 @@ const uneGouvernance = {
       nom: 'CC des Monts du Lyonnais',
       roles: ['Co-porteur', 'Financeur'],
       telephone: '',
+      totalMontantSubventionAccorde: NaN,
+      totalMontantSubventionFormationAccorde: NaN,
       type: 'Collectivité',
       typologieMembre: 'Collectivité, EPCI',
     },
@@ -152,12 +157,7 @@ const uneGouvernance = {
   uid: '123456',
 }
 
-const uneGouvernanceSansMembre = {
-  ...uneGouvernance,
-  membres: undefined,
-}
-
-const gouvernanceReadModel: GouvernanceReadModel = {
+const gouvernanceEnrichie: UneGouvernanceReadModel = {
   ...uneGouvernance,
   membres: [
     {
@@ -178,25 +178,25 @@ const gouvernanceReadModel: GouvernanceReadModel = {
   ],
 }
 
-const gouvernanceSansMembreReadModel = {
+const gouvernanceSansMembre = {
   ...uneGouvernance,
   membres: [],
 }
 
-class GouvernanceInexistanteLoaderStub implements UneGouvernanceReadModelLoader {
-  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    return Promise.resolve(null)
+class GouvernanceInexistanteLoaderStub extends UneGouvernanceReadModelLoader {
+  protected override async find(): Promise<UneGouvernanceReadModel> {
+    return Promise.resolve({ departement: uneGouvernance.departement, uid: uneGouvernance.uid })
   }
 }
 
-class GouvernanceSansMembreLoaderStub implements UneGouvernanceReadModelLoader {
-  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    return Promise.resolve(uneGouvernanceSansMembre)
+class GouvernanceSansMembreLoaderStub extends UneGouvernanceReadModelLoader {
+  protected async find(): Promise<UneGouvernanceReadModel> {
+    return Promise.resolve(gouvernanceSansMembre)
   }
 }
 
-class GouvernanceExistanteLoaderStub implements UneGouvernanceReadModelLoader {
-  async find(_codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
+class GouvernanceExistanteLoaderStub extends UneGouvernanceReadModelLoader {
+  protected async find(): Promise<UneGouvernanceReadModel> {
     return Promise.resolve(uneGouvernance)
   }
 }

@@ -166,6 +166,7 @@
     "@stylistic/multiline-ternary": "off",
     "@stylistic/multiline-comment-style": "off",
     "@stylistic/newline-per-chained-call": ["off"],
+    "@stylistic/no-confusing-arrow": "off",
     "@stylistic/no-extra-parens": ["error", "all", { "ignoreJSX": "all" }],
     "@stylistic/no-multiple-empty-lines": ["error", { "max": 1 }],
     "@stylistic/object-curly-spacing": ["error", "always"],
