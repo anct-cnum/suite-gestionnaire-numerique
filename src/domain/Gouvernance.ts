@@ -1,27 +1,27 @@
-import { ComiteUid } from './Comite'
+import { Departement, DepartementState } from './Departement'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
 export class Gouvernance extends Entity<State> {
+  readonly #departement: Departement
   #noteDeContexte?: NoteDeContexte
-  readonly #comites: Array<ComiteUid>
   readonly #uidUtilisateur: UtilisateurUid
 
   private constructor(
     uid: GouvernanceUid,
     uidUtilisateur: UtilisateurUid,
-    noteDeContexte?: NoteDeContexte,
-    comites?: ReadonlyArray<ComiteUid>
+    departement: Departement,
+    noteDeContexte?: NoteDeContexte
   ) {
     super(uid)
-    this.#comites = [...comites ?? []]
+    this.#departement = departement
     this.#noteDeContexte = noteDeContexte
     this.#uidUtilisateur = uidUtilisateur
   }
 
   override get state(): State {
     return {
-      comites: this.#comites.map((comite) => comite.state.value),
+      departement: this.#departement.state,
       noteDeContexte: this.#noteDeContexte?.state,
       uid: this.uid.state,
       utilisateurUid: this.#uidUtilisateur.state,
@@ -29,10 +29,10 @@ export class Gouvernance extends Entity<State> {
   }
 
   static create({
-    comites,
     noteDeContexte,
     uid,
-    utilisateurUid: utilisateur,
+    utilisateurUid,
+    departement,
   }: GouvernanceFactoryParams): Gouvernance {
     const noteDeContexteAjoutee = noteDeContexte
       ? new NoteDeContexte(
@@ -44,9 +44,9 @@ export class Gouvernance extends Entity<State> {
 
     return new Gouvernance(
       new GouvernanceUid(uid),
-      new UtilisateurUid({ email: utilisateur.email, value: utilisateur.value }),
-      noteDeContexteAjoutee,
-      comites
+      new UtilisateurUid({ email: utilisateurUid.email, value: utilisateurUid.value }),
+      new Departement(departement),
+      noteDeContexteAjoutee
     )
   }
 
@@ -54,12 +54,8 @@ export class Gouvernance extends Entity<State> {
     this.#noteDeContexte = noteDeContexte
   }
 
-  ajouterComite(comite: ComiteUid): void {
-    this.#comites.push(comite)
-  }
-
-  peutSeFaireGerer(autre: Utilisateur): boolean {
-    return autre.state.uid.value === this.#uidUtilisateur.state.value
+  peutEtreGererPar(utilisateur: Utilisateur): boolean {
+    return this.#departement.state.code === utilisateur.state.departement?.code || utilisateur.isAdmin
   }
 }
 
@@ -83,8 +79,14 @@ export class NoteDeContexte extends ValueObject<NoteDeContexteState> {
   }
 }
 
+export type GouvernanceUidState = Readonly<{ value: string }>
+
 type GouvernanceFactoryParams = Readonly<{
-  comites?: ReadonlyArray<ComiteUid>
+  departement: {
+    code: string
+    codeRegion: string
+    nom: string
+  }
   noteDeContexte?: Readonly<{
     contenu: string
     dateDeModification: Date
@@ -98,7 +100,7 @@ type GouvernanceFactoryParams = Readonly<{
 }>
 
 type State = Readonly<{
-  comites?: ReadonlyArray<string>
+  departement: DepartementState
   noteDeContexte?: NoteDeContexteState
   uid: GouvernanceUidState
   utilisateurUid: UtilisateurUidState
@@ -110,4 +112,3 @@ type NoteDeContexteState = Readonly<{
   value: string
 }>
 
-type GouvernanceUidState = Readonly<{ value: string }>
