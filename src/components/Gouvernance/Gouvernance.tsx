@@ -15,6 +15,7 @@ import MembreRempli from './Membre/MembreRempli'
 import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
 import ResumeMembreVide from './Membre/ResumeMembreVide'
+import AjouterNoteDeContext from './NoteDeContexte/AjouterNoteDeContext'
 import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
@@ -267,6 +268,22 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           )
         }
       </section>
+      <Drawer
+        boutonFermeture="Fermer"
+        id={drawerCreerNoteDeContextId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpenNoteDeContexteOpen}
+        labelId={labelCreerNoteDeContexteId}
+        ref={drawerCreerNoteDeContextRef}
+        setIsOpen={setIsDrawerOpenNoteDeContexte}
+      >
+        <AjouterNoteDeContext
+          dialogRef={drawerCreerNoteDeContextRef}
+          drawerId={drawerCreerNoteDeContextId}
+          labelId={labelCreerNoteDeContexteId}
+          setIsOpen={setIsDrawerOpenNoteDeContexte}
+        />
+      </Drawer>
     </>
   )
 }
