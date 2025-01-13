@@ -1,5 +1,5 @@
 // Stryker disable all
-import { Comite, ComiteUid } from './Comite'
+import { Comite } from './Comite'
 import { Departement, DepartementState } from './Departement'
 import { Gouvernance } from './Gouvernance'
 import { TypologieRole } from './Role'
@@ -28,13 +28,17 @@ export function utilisateurFactory(
 
 export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouvernance.create>[0]>): Gouvernance {
   return Gouvernance.create({
-    comites: [new ComiteUid(String(epochTime.getTime()))],
+    departement: {
+      code: '75',
+      codeRegion: '11',
+      nom: 'Paris',
+    },
     noteDeContexte: {
       contenu: '<p>contenu HTML</p>',
       dateDeModification: epochTime,
       uidUtilisateurLAyantModifiee: new UtilisateurUid(utilisateurFactory().state.uid),
     },
-    uid: 'fooGouvernanceUid',
+    uid: '1',
     utilisateurUid: {
       email: 'martin.tartempion@example.net',
       value: 'userFooId',
@@ -49,9 +53,11 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
     date: epochTime,
     dateDeCreation: epochTime,
     dateDeModification: epochTime,
-    frequence: 'Annuelle',
-    type: 'Stratégique',
-    uid: '',
+    frequence: 'annuelle',
+    type: 'strategique',
+    uidGouvernance: {
+      value: '1',
+    },
     uidUtilisateurCourant: {
       email: 'martin.tartempion@example.net',
       value: 'userFooId',
