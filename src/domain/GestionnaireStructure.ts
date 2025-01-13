@@ -4,6 +4,7 @@ import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, Utilisate
 
 export class GestionnaireStructure extends Utilisateur {
   readonly #structureUid: StructureUid
+  readonly #isAdmin = false
 
   constructor(
     uid: UtilisateurUid,
@@ -35,6 +36,10 @@ export class GestionnaireStructure extends Utilisateur {
       ...super.state,
       structureUid: this.#structureUid.state,
     }
+  }
+
+  override get isAdmin(): boolean {
+    return this.#isAdmin
   }
 
   override peutGerer(autre: Utilisateur): boolean {

@@ -13,7 +13,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par le gestionnaire de cette gouvernance, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
@@ -46,11 +46,44 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par quelqu’un d’autre que le gestionnaire de cette gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un comité est créé par un rôle appartenant au groupe admin, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
-      new UtilisateurUsurpateurRepositorySpy(),
+      new GestionnaireGroupeAdminRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidGouvernance,
+      uidUtilisateurCourant,
+    })
+
+    // THEN
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+    expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
+      gouvernanceFactory({
+        noteDeContexte: {
+          contenu,
+          dateDeModification: epochTime,
+          uidUtilisateurLAyantModifiee: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
+          ),
+        },
+        uid: uidGouvernance,
+      }).state
+    )
+    expect(result).toBe('OK')
+  })
+
+  it('étant donné une gouvernance existante, quand un comité est créé par un gestionnaire département mais qui n’a pas le même département que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+      new GouvernanceExistanteRepositorySpy(),
+      new GestionnaireAutreDepartementRepositorySpy(),
       epochTime
     )
 
@@ -121,6 +154,11 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
+        departement: {
+          code: '75',
+          codeRegion: '11',
+          nom: 'Paris',
+        },
         noteDeContexte: undefined,
         uid: uidGouvernance,
       })
@@ -143,7 +181,7 @@ class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepository
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory())
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
@@ -154,9 +192,16 @@ class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
   }
 }
 
-class UtilisateurUsurpateurRepositorySpy implements FindUtilisateurRepository {
+class GestionnaireGroupeAdminRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ uid: { email: 'utilisateurUsurpateur@example.com', value: 'utilisateurUsurpateur' } }))
+    return Promise.resolve(utilisateurFactory({ role: 'Administrateur dispositif' }))
+  }
+}
+
+class GestionnaireAutreDepartementRepositorySpy implements FindUtilisateurRepository {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
 }

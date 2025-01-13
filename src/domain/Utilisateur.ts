@@ -56,6 +56,8 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     }
   }
 
+  abstract get isAdmin(): boolean
+
   changerPrenom(prenom: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
       this.#prenom = new Prenom(prenom)

@@ -1,8 +1,8 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddComiteRepository } from './shared/ComiteRepository'
-import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
+import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { Comite, ComiteFailure, ComiteUid } from '@/domain/Comite'
+import { Comite, ComiteFailure } from '@/domain/Comite'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class AjouterUnComite implements CommandHandler<Command> {
@@ -36,6 +36,11 @@ export class AjouterUnComite implements CommandHandler<Command> {
       return 'utilisateurInexistant'
     }
 
+    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(uidGouvernance))
+    if (!gouvernance) {
+      return 'gouvernanceInexistante'
+    }
+
     const dateDeCreation = this.#date
     const comite = Comite.create({
       commentaire,
@@ -44,25 +49,18 @@ export class AjouterUnComite implements CommandHandler<Command> {
       dateDeModification: dateDeCreation,
       frequence,
       type,
-      uid: String(this.#date.getTime()),
+      uidGouvernance: gouvernance.state.uid,
       uidUtilisateurCourant: utilisateurCourant.state.uid,
     })
     if (!(comite instanceof Comite)) {
       return comite
     }
 
-    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
-
-    if (!gouvernance.peutSeFaireGerer(utilisateurCourant)) {
+    if (!gouvernance.peutEtreGererPar(utilisateurCourant)) {
       return 'utilisateurNePeutPasAjouterComite'
     }
 
-    gouvernance.ajouterComite(new ComiteUid(comite.state.uid.value))
     await this.#comiteRepository.add(comite)
-    await this.#gouvernanceRepository.update(gouvernance)
 
     return 'OK'
   }
@@ -79,7 +77,7 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
+type GouvernanceRepository = FindGouvernanceRepository
 
 type UtilisateurRepository = FindUtilisateurRepository
 

@@ -4,6 +4,7 @@ import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, Utilisate
 
 export class GestionnaireRegion extends Utilisateur {
   readonly #region: Region
+  readonly #isAdmin = false
 
   constructor(
     uid: UtilisateurUid,
@@ -35,6 +36,10 @@ export class GestionnaireRegion extends Utilisateur {
       ...super.state,
       region: this.#region.state,
     }
+  }
+
+  override get isAdmin(): boolean {
+    return this.#isAdmin
   }
 
   override peutGerer(autre: Utilisateur): boolean {

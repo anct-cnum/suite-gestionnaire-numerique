@@ -1,3 +1,4 @@
+import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
@@ -11,25 +12,27 @@ export class Comite extends Entity<State> {
   readonly #dateDeModification: ValidDate<ComiteFailure>
   readonly #frequence: Frequence
   readonly #type: Type
+  readonly #uidGouvernance: GouvernanceUid
   readonly #uidUtilisateurLAyantModifie: UtilisateurUid
 
   private constructor(
-    uid: ComiteUid,
     dateDeCreation: ValidDate<ComiteFailure>,
     dateDeModification: ValidDate<ComiteFailure>,
     frequence: Frequence,
     type: Type,
+    uidGouvernance: GouvernanceUid,
     uidUtilisateurLAyantModifie: UtilisateurUid,
     commentaire?: string,
     date?: ValidDate<ComiteFailure>
   ) {
-    super(uid)
+    super(new ComiteUid(String(dateDeCreation.getTime())))
     this.#commentaire = commentaire
     this.#date = date
     this.#dateDeCreation = dateDeCreation
     this.#dateDeModification = dateDeModification
     this.#frequence = frequence
     this.#type = type
+    this.#uidGouvernance = uidGouvernance
     this.#uidUtilisateurLAyantModifie = uidUtilisateurLAyantModifie
   }
 
@@ -42,17 +45,18 @@ export class Comite extends Entity<State> {
       frequence: this.#frequence.state.value,
       type: this.#type.state.value,
       uid: this.uid.state,
+      uidGouvernance: this.#uidGouvernance.state.value,
       uidUtilisateurLAyantModifie: this.#uidUtilisateurLAyantModifie.state.value,
     }
   }
 
   // eslint-disable-next-line sonarjs/function-return-type
   static create({
-    uid,
     dateDeCreation,
     dateDeModification,
     frequence,
     type,
+    uidGouvernance,
     uidUtilisateurCourant,
     commentaire,
     date,
@@ -62,11 +66,11 @@ export class Comite extends Entity<State> {
       const dateDuComiteValidee = date === undefined ? undefined : new ValidDate(date, 'dateDuComiteInvalide')
 
       const comite = new Comite(
-        new ComiteUid(uid),
         dateDeCreationValidee,
         new ValidDate(dateDeModification, 'dateDeModificationInvalide'),
         new Frequence(frequence),
         new Type(type),
+        new GouvernanceUid(uidGouvernance.value),
         new UtilisateurUid(uidUtilisateurCourant),
         commentaire,
         dateDuComiteValidee
@@ -81,12 +85,6 @@ export class Comite extends Entity<State> {
     } catch (error: unknown) {
       return (error as Exception<ComiteFailure>).message as ComiteFailure
     }
-  }
-}
-
-export class ComiteUid extends Uid<ComiteUidState> {
-  constructor(value: string) {
-    super({ value })
   }
 }
 
@@ -116,16 +114,22 @@ class Type extends ValueObject<AttributGouvernanceState> {
   }
 }
 
-const Frequences = ['Mensuelle', 'Trimestrielle', 'Semestrielle', 'Annuelle']
+class ComiteUid extends Uid<ComiteUidState> {
+  constructor(value: string) {
+    super({ value })
+  }
+}
 
-const Types = ['Stratégique', 'Technique', 'Consultatif', 'Autre']
+const Frequences = ['mensuelle', 'trimestrielle', 'semestrielle', 'annuelle']
+
+const Types = ['strategique', 'technique', 'consultatif', 'autre']
 
 type ComiteFactoryParams = Readonly<{
-  uid: string
   dateDeCreation: Date
   dateDeModification: Date
   frequence: string
   type: string
+  uidGouvernance: GouvernanceUidState
   uidUtilisateurCourant: UtilisateurUidState
   commentaire?: string
   date?: Date
@@ -139,6 +143,7 @@ type State = Readonly<{
   frequence: string
   type: string
   uid: ComiteUidState
+  uidGouvernance: string
   uidUtilisateurLAyantModifie: string
 }>
 
