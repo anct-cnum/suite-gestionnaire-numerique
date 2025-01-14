@@ -1,30 +1,30 @@
 'use client'
 
-import { Dispatch, ReactElement, RefObject, SetStateAction, useState } from 'react'
+import { FormEvent, ReactElement, RefObject, useState } from 'react'
 
 import EditeurDeTexte from '@/components/EditeurDeTexteEnrichi/EditeurDeTexte'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function AjouterNoteDeContext({
+  dialogRef,
   labelId,
+  closeDrawer,
 }: Props): ReactElement {
   const [content, setContent] = useState('')
+  const [isDisabled, setIsDisabled] = useState(false)
 
   function handleContentChange(newContent: string): void {
     setContent(newContent)
   }
-
-  function handleSubmit(event: React.FormEvent): void {
-    event.preventDefault()
-    // TO DO: Enregistrer en base
-    // eslint-disable-next-line no-console
-    console.log('Action enregistrement en base', content)
-  }
-
   return (
-    <div>
+    <form
+      aria-label="Ajouter une note de contexte"
+      method="dialog"
+      onSubmit={creerUneNoteDeContext}
+    >
       <DrawerTitle id={labelId}>
-        Note de contexte
+        Ajouter une note de contexte
       </DrawerTitle>
       <div className="fr-mb-4w">
         <div className="color-grey fr-text--sm">
@@ -33,35 +33,35 @@ export default function AjouterNoteDeContext({
           ou tout autre élément que vous souhaitez porter à notre connaissance
         </div>
       </div>
-      <form
-        aria-label="Formulaire d'ajout de note de contexte"
-        onSubmit={handleSubmit}
-      >
-        <EditeurDeTexte
-          initialContent=""
-          onChange={handleContentChange}
-        />
-        <div className="fr-my-3w">
-          <ul className="fr-btns-group">
-            <li>
-              <button
-                className="fr-btn"
-                disabled={!content.trim()}
-                type="submit"
-              >
-                Enregistrer
-              </button>
-            </li>
-          </ul>
-        </div>
-      </form>
-    </div>
+      <EditeurDeTexte
+        initialContent=""
+        onChange={handleContentChange}
+      />
+      <div className="fr-my-3w">
+        <ul className="fr-btns-group">
+          <li>
+            <SubmitButton
+              isDisabled={!content.trim()}
+              label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+            />
+          </li>
+        </ul>
+      </div>
+    </form>
   )
+
+  function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): void {
+    console.log('creerUneNoteDeContext', content)
+    event.preventDefault()
+    closeDrawer()
+    window.dsfr(dialogRef.current).modal.conceal();
+    (event.target as HTMLFormElement).reset()
+    setIsDisabled(false)
+  }
 }
 
 type Props = Readonly<{
   dialogRef: RefObject<HTMLDialogElement | null>
-  drawerId: string
   labelId: string
-  setIsOpen: Dispatch<SetStateAction<boolean>>
+  closeDrawer(): void
 }>

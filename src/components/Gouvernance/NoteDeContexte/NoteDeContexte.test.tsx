@@ -11,13 +11,20 @@ describe('note de contexte', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
-    const ajouterUneNoteDeContexte = screen.getByRole('button', { name: 'Ajouter une note de contexte' })
-    fireEvent.click(ajouterUneNoteDeContexte)
+    cliquerSurAjouterUneNoteDeContexte()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { name: 'Note de contexte' })
-    expect(drawer).toBeInTheDocument()
-    const texteDInstructions = within(drawer).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
+    const ajouterUneNoteDeContextDrawer = screen.getByRole('dialog', { name: 'Ajouter une note de contexte' })
+    expect(ajouterUneNoteDeContextDrawer).toHaveAttribute('aria-labelledby', 'drawer-ajouter-note-de-contexte-titre')
+    expect(ajouterUneNoteDeContextDrawer).toHaveAttribute('aria-modal', 'true')
+    expect(ajouterUneNoteDeContextDrawer).toHaveAttribute('id', 'drawer-ajouter-note-de-contexte')
+    expect(ajouterUneNoteDeContextDrawer).toHaveAttribute('open')
+    const formulaire = within(ajouterUneNoteDeContextDrawer).getByRole('form', {
+      name: 'Ajouter une note de contexte',
+    })
+    const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Ajouter une note de contexte' })
+    expect(titre).toBeInTheDocument()
+    const texteDInstructions = within(ajouterUneNoteDeContextDrawer).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
     expect(texteDInstructions).toBeInTheDocument()
     const boutonsEdition = [
       'Titre 1',
@@ -30,15 +37,16 @@ describe('note de contexte', () => {
       'Ajouter un lien',
     ]
     boutonsEdition.forEach((title) => {
-      expect(within(drawer).getByRole('button', { name: title })).toBeInTheDocument()
+      expect(within(ajouterUneNoteDeContextDrawer).getByRole('button', { name: title })).toBeInTheDocument()
     })
-    const formulaire = within(drawer).getByRole('form', {
-      name: "Formulaire d'ajout de note de contexte",
-    })
-    expect(formulaire).toBeInTheDocument()
-    const champDeTexte = within(formulaire).getByRole('textarea')
-    expect(champDeTexte.innerHTML).toBe('<p><br class="ProseMirror-trailingBreak"></p>')
+    const editeurDeTextEnrichi = within(formulaire).getByRole('textarea')
+    expect(editeurDeTextEnrichi.innerHTML).toBe('<p><br class="ProseMirror-trailingBreak"></p>')
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
   })
 })
+
+function cliquerSurAjouterUneNoteDeContexte(): void {
+  const ajouterUneNoteDeContexte = screen.getByRole('button', { name: 'Ajouter une note de contexte' })
+  fireEvent.click(ajouterUneNoteDeContexte)
+}
