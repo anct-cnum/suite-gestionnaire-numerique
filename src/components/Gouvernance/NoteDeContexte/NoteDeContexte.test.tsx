@@ -27,6 +27,7 @@ describe('note de contexte', () => {
       'Italique',
       'Liste ordonnée',
       'Liste non ordonnée',
+      'Ajouter un lien',
     ]
     boutonsEdition.forEach((title) => {
       expect(within(drawer).getByRole('button', { name: title })).toBeInTheDocument()
@@ -36,8 +37,8 @@ describe('note de contexte', () => {
     })
     expect(formulaire).toBeInTheDocument()
     const champDeTexte = within(formulaire).getByRole('textarea')
-    expect(champDeTexte.innerHTML).toBe('<p>Hello World! 🌎️</p>')
+    expect(champDeTexte.innerHTML).toBe('<p><br class="ProseMirror-trailingBreak"></p>')
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
-    expect(boutonEnregistrer).toBeInTheDocument()
+    expect(boutonEnregistrer).toBeDisabled()
   })
 })

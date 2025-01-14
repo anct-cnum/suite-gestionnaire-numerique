@@ -23,11 +23,6 @@
   &:hover&:not(.active) {
     background-color: var(--grey-975-75-hover) !important;
   }
-
-  &:active {
-    /* background-color: var(--grey-950-100-active) !important; */
-  }
-
   &::before {
     width: 16px;
     height: 16px;
@@ -46,10 +41,6 @@
   }
 }
 
-.active {
-  background-color: var(--grey-950-100-active) !important;
-}
-
 .separator {
   display: inline-block;
   width: 1px;
@@ -60,4 +51,8 @@
 :global(.ProseMirror) {
   resize: vertical;
   overflow: auto;
+}
+
+.button.isActive {
+  background-color: var(--grey-950-100-active) !important;
 }

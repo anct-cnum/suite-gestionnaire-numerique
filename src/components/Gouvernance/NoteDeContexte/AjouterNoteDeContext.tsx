@@ -1,13 +1,26 @@
 'use client'
 
-import { Dispatch, ReactElement, RefObject, SetStateAction } from 'react'
+import { Dispatch, ReactElement, RefObject, SetStateAction, useState } from 'react'
 
-import EditeurCreationNoteDeContext from './EditeurCreationNoteDeContext'
+import EditeurDeTexte from '@/components/EditeurDeTexteEnrichi/EditeurDeTexte'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 
 export default function AjouterNoteDeContext({
   labelId,
 }: Props): ReactElement {
+  const [content, setContent] = useState('')
+
+  function handleContentChange(newContent: string): void {
+    setContent(newContent)
+  }
+
+  function handleSubmit(event: React.FormEvent): void {
+    event.preventDefault()
+    // TO DO: Enregistrer en base
+    // eslint-disable-next-line no-console
+    console.log('Action enregistrement en base', content)
+  }
+
   return (
     <div>
       <DrawerTitle id={labelId}>
@@ -20,14 +33,20 @@ export default function AjouterNoteDeContext({
           ou tout autre élément que vous souhaitez porter à notre connaissance
         </div>
       </div>
-      <form aria-label="Formulaire d'ajout de note de contexte">
-        <EditeurCreationNoteDeContext initialContent="" />
+      <form
+        aria-label="Formulaire d'ajout de note de contexte"
+        onSubmit={handleSubmit}
+      >
+        <EditeurDeTexte
+          initialContent=""
+          onChange={handleContentChange}
+        />
         <div className="fr-my-3w">
           <ul className="fr-btns-group">
             <li>
               <button
                 className="fr-btn"
-                disabled
+                disabled={!content.trim()}
                 type="submit"
               >
                 Enregistrer
