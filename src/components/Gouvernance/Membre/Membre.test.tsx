@@ -27,11 +27,11 @@ describe('membres', () => {
 
     // WHEN
     jOuvreLesDetailsDUnMembre()
+    const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
     jeFermeLesDetailsDUnMembre()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Préfecture du Rhône' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawer).not.toBeVisible()
   })
 
   function afficherGouvernance(): void {

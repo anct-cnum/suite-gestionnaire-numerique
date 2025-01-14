@@ -1,13 +1,14 @@
-import { fireEvent, within, screen, render } from '@testing-library/react'
+import { within, screen, render } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
+import { presserLeBouton } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('feuille de route', () => {
   it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+    afficherUneGouvernance({
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
@@ -17,12 +18,11 @@ describe('feuille de route', () => {
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
       ],
-    }))
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    })
 
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
@@ -77,7 +77,7 @@ describe('feuille de route', () => {
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+    afficherUneGouvernance({
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [],
@@ -87,12 +87,11 @@ describe('feuille de route', () => {
           montantSubventionDemande: 15_000,
           montantSubventionFormationAccorde: 0,
           nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 1,
         },
       ],
-    }))
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    })
 
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
@@ -109,7 +108,7 @@ describe('feuille de route', () => {
 
   it('quand je clique sur une feuille de route puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+    afficherUneGouvernance({
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
@@ -119,27 +118,31 @@ describe('feuille de route', () => {
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
       ],
-    }))
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    })
 
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
+    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
     jeFermeLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Feuille de route inclusion 1' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawer).not.toBeVisible()
   })
 
   function jOuvreLesDetailsDUneFeuilleDeRoute(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Feuille de route inclusion 1' }))
+    presserLeBouton('Feuille de route inclusion 1')
   }
 
   function jeFermeLesDetailsDUneFeuilleDeRoute(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails de la feuille de route' }))
+    presserLeBouton('Fermer les détails de la feuille de route')
+  }
+
+  function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override))
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
   }
 })

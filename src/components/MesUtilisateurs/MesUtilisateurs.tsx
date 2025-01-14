@@ -249,7 +249,7 @@ export default function MesUtilisateurs(
           ) : null
       }
       <SupprimerUnUtilisateur
-        closeDrawer={() => {
+        closeModal={() => {
           setIsModaleSuppressionOpen(false)
         }}
         id={modalId}

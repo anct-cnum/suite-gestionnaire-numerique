@@ -2,20 +2,15 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('mes utilisateurs', () => {
-  const totalUtilisateur = 11
-
   it('quand j’affiche mes utilisateurs, alors s’affiche l’en-tête commune aux deux groupes', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // THEN
     const InviterUnePersonne = screen.getByRole('button', { name: 'Inviter une personne' })
@@ -39,30 +34,8 @@ describe('mes utilisateurs', () => {
   })
 
   it('étant du groupe admin quand j’affiche mes utilisateurs alors je peux rechercher un utilisateur, filtrer et exporter la liste', () => {
-    // GIVEN
-    const spiedRouterPush = vi.fn()
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      {
-        router: {
-          push: spiedRouterPush,
-        } as unknown as AppRouterInstance,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
-          {
-            role: {
-              doesItBelongToGroupeAdmin: true,
-              libelle: '',
-              nom: 'Support animation',
-              pictogramme: '',
-              rolesGerables: [],
-            },
-          }
-        ),
-      }
-    )
+    afficherMesUtilisateurs()
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Gestion de mes utilisateurs' })
@@ -72,72 +45,56 @@ describe('mes utilisateurs', () => {
     expect(rechercher).toHaveAttribute('type', 'search')
     const boutonRechercher = screen.getByRole('button', { name: 'Rechercher' })
     expect(boutonRechercher).toHaveAttribute('type', 'submit')
-    fireEvent.change(rechercher, { target: { value: 'martin' } })
-    const searchForm = screen.getByRole('search')
-    fireEvent.submit(searchForm)
-    expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('prenomOuNomOuEmail=martin'))
     const filtrer = screen.getByRole('button', { name: 'Filtrer' })
     expect(filtrer).toHaveAttribute('type', 'button')
     const exporter = screen.getByRole('button', { name: 'Exporter' })
     expect(exporter).toHaveAttribute('type', 'button')
   })
 
-  it('étant du groupe gestionnaire quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
+  it('étant du groupe admin quand je recherche un utilisateur par son nom alors il s’affiche dans la liste', () => {
     // GIVEN
     const spiedRouterPush = vi.fn()
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
-    // WHEN
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
+    afficherMesUtilisateurs(
+      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
       {
         router: {
           push: spiedRouterPush,
         } as unknown as AppRouterInstance,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(
-          {
-            role: {
-              doesItBelongToGroupeAdmin: true,
-              libelle: '',
-              nom: 'Support animation',
-              pictogramme: '',
-              rolesGerables: [],
-            },
-          }
-        ),
       }
     )
 
+    // WHEN
+    jeTapeUnNom('martin')
+    jeRecherche()
+
     // THEN
-    const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
-    fireEvent.change(rechercher, { target: { value: 'martin' } })
-    const searchForm = screen.getByRole('search')
-    fireEvent.submit(searchForm)
     expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('prenomOuNomOuEmail=martin'))
-    const boutonReinitialiser = screen.getByRole('button', { name: 'Reinitialiser' })
-    fireEvent.click(boutonReinitialiser)
+  })
+
+  it('étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
+    // GIVEN
+    const spiedRouterPush = vi.fn()
+    afficherMesUtilisateurs(
+      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
+      {
+        router: {
+          push: spiedRouterPush,
+        } as unknown as AppRouterInstance,
+      }
+    )
+
+    // WHEN
+    jeTapeUnNom('martin')
+    jeRecherche()
+    jeReinitialiseLaRecherche()
+
+    // THEN
     expect(spiedRouterPush).toHaveBeenCalledWith(expect.not.stringContaining('prenomOuNomOuEmail='))
   })
 
-  it('étant du groupe gestionnaire quand le champ de recherche est vide alors l’icône de réinitialisation n’est pas affichée', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
+  it('étant du groupe admin quand le champ de recherche est vide alors l’icône de réinitialisation n’est pas affichée', () => {
     // WHEN
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      {
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: '',
-            nom: 'Support animation',
-            pictogramme: '',
-            rolesGerables: [],
-          },
-        }),
-      }
-    )
+    afficherMesUtilisateurs()
 
     // THEN
     const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
@@ -147,14 +104,9 @@ describe('mes utilisateurs', () => {
   })
 
   it('étant du groupe gestionnaire quand j’affiche mes utilisateurs alors j’ai un autre titre et un sous titre', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(
-      <MesUtilisateurs
-        mesUtilisateursViewModel={mesUtilisateursViewModel}
-      />,
+    afficherMesUtilisateurs(
+      [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
       {
         sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
           role: {
@@ -187,11 +139,8 @@ describe('mes utilisateurs', () => {
   })
 
   it('sur la ligne d’un utilisateur actif quand j’affiche mes utilisateurs alors il s’affiche avec ses informations', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
     // THEN
     const { rowsBody } = getByTable()
@@ -209,11 +158,8 @@ describe('mes utilisateurs', () => {
   })
 
   it('sur la ligne d’un utilisateur inactif quand j’affiche mes utilisateurs alors il s’affiche avec ce statut et sa date d’invitation', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs([utilisateurEnAttenteReadModel])
 
     // THEN
     const { rowsBody } = getByTable()
@@ -226,11 +172,8 @@ describe('mes utilisateurs', () => {
   })
 
   it('sur ma ligne quand j’affiche mes utilisateurs alors je ne peux pas me supprimer', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // THEN
     const { rowsBody } = getByTable()
@@ -241,11 +184,8 @@ describe('mes utilisateurs', () => {
   })
 
   it('sur la ligne d’un utilisateur quand j’affiche mes utilisateurs alors je peux le supprimer', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // THEN
     const { rowsBody } = getByTable()
@@ -257,12 +197,10 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur actif alors ses détails s’affichent dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const utilisateurActif = screen.getByRole('button', { name: 'Martin Tartempion' })
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
     // WHEN
-    fireEvent.click(utilisateurActif)
+    jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
 
     // THEN
     const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Martin Tartempion' })
@@ -296,27 +234,24 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur actif puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
     // WHEN
-    jOuvreLesDetailsDunUtilisateur()
+    jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
+    const drawer = screen.getByRole('dialog', { name: 'Martin Tartempion' })
     jeFermeLesDetailsDunUtilisateur()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Martin Tartempion' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawer).not.toBeVisible()
   })
 
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
     it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
+      afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
       // WHEN
-      fireEvent.click(utilisateurEnAttente)
+      jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
 
       // THEN
       const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
@@ -336,49 +271,43 @@ describe('mes utilisateurs', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+      afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
       // WHEN
-      jOuvreLaReinvitation()
+      jOuvreLaReinvitation('Julien Deschamps')
+      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
       jeFermeLaReinvitation()
 
       // THEN
-      const drawer = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
-      expect(drawer).not.toBeInTheDocument()
+      expect(drawer).not.toBeVisible()
     })
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
       const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       vi.stubGlobal('dsfr', stubbedConceal())
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
-      const utilisateurEnAttente = screen.getByRole('button', { name: 'Julien Deschamps' })
-      fireEvent.click(utilisateurEnAttente)
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
 
       // WHEN
-      const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
-      fireEvent.click(renvoyerCetteInvitation)
+      jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
+      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      jeRenvoieLInvitation()
 
       // THEN
       await waitFor(() => {
         expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
       })
-      const drawerRenvoyerInvitation = screen.queryByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
-      expect(drawerRenvoyerInvitation).not.toBeInTheDocument()
+      expect(drawer).not.toBeVisible()
       const notification = screen.getByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
     })
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDAujourdhuiReadModel], '7396c91e-b9f2-4f9d-8547-87u7654rt678r5', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const utilisateurEnAttente = screen.getByRole('button', { name: 'Sebastien Palat' })
+      afficherMesUtilisateurs([utilisateurEnAttenteDAujourdhuiReadModel])
 
       // WHEN
-      fireEvent.click(utilisateurEnAttente)
+      jOuvreLaReinvitation('Sebastien Palat')
 
       // THEN
       const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée aujourd’hui' })
@@ -388,12 +317,10 @@ describe('mes utilisateurs', () => {
 
     it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteDHierReadModel], '7396c91e-b9f2-4f9d-8547-8765t54rf6', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const utilisateurEnAttente = screen.getByRole('button', { name: 'Stephane Raymond' })
+      afficherMesUtilisateurs([utilisateurEnAttenteDHierReadModel])
 
       // WHEN
-      fireEvent.click(utilisateurEnAttente)
+      jOuvreLaReinvitation('Stephane Raymond')
 
       // THEN
       const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée hier' })
@@ -404,12 +331,10 @@ describe('mes utilisateurs', () => {
 
   it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifSansTelephoneVideReadModel], '7396c91e-b9f2-4f9d-8547-5e9b876877669d', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-    const utilisateurSansTelephone = screen.getByRole('button', { name: 'Paul Provost' })
+    afficherMesUtilisateurs([utilisateurActifSansTelephoneVideReadModel])
 
     // WHEN
-    fireEvent.click(utilisateurSansTelephone)
+    jOuvreLesDetailsDunUtilisateur('Paul Provost')
 
     // THEN
     const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Paul Provost' })
@@ -444,14 +369,10 @@ describe('mes utilisateurs', () => {
   describe('quand j’escompte supprimer un utilisateur', () => {
     it('je clique sur le bouton de suppression, une modale de confirmation apparaît', () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
-      const { rowsBody } = getByTable()
-      const columnsBody = within(rowsBody[0]).getAllByRole('cell')
-      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel])
 
       // WHEN
-      fireEvent.click(supprimer)
+      jOuvreLaSuppressionDUnUtilisateur()
 
       // THEN
       const supprimerUnUtilisateurModal = screen.getByRole('dialog')
@@ -471,32 +392,39 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression', async () => {
       // GIVEN
-      const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
       const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
-      renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction })
-      const { rowsBody } = getByTable()
-      const columnsBody = within(rowsBody[1]).getAllByRole('cell')
-      const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
-      fireEvent.click(supprimer)
-      const supprimerUnUtilisateurModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
-      const confirmer = await within(supprimerUnUtilisateurModal).findByRole('button', { name: 'Confirmer' })
+      afficherMesUtilisateurs(
+        [utilisateurEnAttenteReadModel],
+        { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction }
+      )
 
       // WHEN
-      fireEvent.click(confirmer)
+      jOuvreLaSuppressionDUnUtilisateur()
+      jeSupprimeUnUtilisateur()
 
       // THEN
       const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
       expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
       expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
     })
+
+    it('je ferme la suppression', () => {
+      // GIVEN
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel])
+
+      // WHEN
+      jOuvreLaSuppressionDUnUtilisateur()
+      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      jeFermeLaSuppressionDUnUtilisateur()
+
+      // THEN
+      expect(supprimerMonCompteModal).not.toBeVisible()
+    })
   })
 
   it('quand j’affiche mes utilisateurs alors s’affiche la pagination', () => {
-    // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
-
     // WHEN
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Pagination' })
@@ -505,8 +433,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
-    const totalUtilisateur = 10
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', totalUtilisateur, rolesAvecStructure)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', 10, rolesAvecStructure)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -516,22 +443,61 @@ describe('mes utilisateurs', () => {
     expect(navigation).not.toBeInTheDocument()
   })
 
-  function jOuvreLesDetailsDunUtilisateur(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Martin Tartempion' }))
+  function jOuvreLesDetailsDunUtilisateur(name: string): void {
+    presserLeBouton(name)
   }
 
   function jeFermeLesDetailsDunUtilisateur(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails' }))
+    presserLeBouton('Fermer les détails')
   }
 
-  function jOuvreLaReinvitation(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Julien Deschamps' }))
+  function jOuvreLaReinvitation(name: string): void {
+    presserLeBouton(name)
+  }
+
+  function jeRenvoieLInvitation(): void {
+    presserLeBouton('Renvoyer cette invitation')
   }
 
   function jeFermeLaReinvitation(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer la réinvitation' }))
+    presserLeBouton('Fermer la réinvitation')
+  }
+
+  function jOuvreLaSuppressionDUnUtilisateur(): void {
+    const { rowsBody } = getByTable()
+    const columnsBody = within(rowsBody[0]).getAllByRole('cell')
+    const supprimer = within(columnsBody[6]).getByRole('button', { name: 'Supprimer' })
+    fireEvent.click(supprimer)
+  }
+
+  function jeSupprimeUnUtilisateur(): void {
+    presserLeBouton('Confirmer')
+  }
+
+  function jeFermeLaSuppressionDUnUtilisateur(): void {
+    presserLeBouton('Fermer')
+  }
+
+  function jeTapeUnNom(value: string): void {
+    saisirLeTexte('Rechercher par nom ou adresse électronique', value)
+  }
+
+  function jeRecherche(): void {
+    presserLeBouton('Rechercher')
+  }
+
+  function jeReinitialiseLaRecherche(): void {
+    presserLeBouton('Reinitialiser')
   }
 })
+
+function afficherMesUtilisateurs(
+  mesUtilisateursReadModel = [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
+  options?: Partial<Parameters<typeof renderComponent>[1]>
+): void {
+  const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, 'fooId', 11, rolesAvecStructure)
+  renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
+}
 
 function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>; rowsBody: ReadonlyArray<HTMLElement> } {
   const mesUtilisateurs = screen.getByRole('table', { name: 'Mes utilisateurs' })

@@ -2,12 +2,12 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
-import { renderComponent } from '@/components/testHelper'
+import { presserLeBouton, renderComponent } from '@/components/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
     // WHEN
-    renderComponent(<EnTete />)
+    afficherLEnTete()
 
     // THEN
     const accueil = screen.getByRole('link', { name: 'FNE / Mednum' })
@@ -33,8 +33,11 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   })
 
   it('quand je clique sur le bouton affichant mes nom et prénom alors le menu utilisateur s’ouvre', () => {
+    // GIVEN
+    afficherLEnTete()
+
     // WHEN
-    fireEvent.click(monCompte())
+    jOuvreLeMenuUtilisateur()
 
     // THEN
     const menuUtilisateur = screen.getByRole('dialog')
@@ -69,7 +72,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(mesUtilisateurs).toHaveAttribute('href', '/mes-utilisateurs')
     expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
 
-    const roles = screen.getByRole('combobox', { name: 'Rôle' })
+    const roles = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
     const admin = within(roles).getByRole('option', { name: 'Administrateur dispositif' })
     expect(admin).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const gestionnaireDepartement = within(roles).getByRole('option', { name: 'Gestionnaire département' })
@@ -92,11 +95,11 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je clique sur le bouton de déconnexion alors je suis déconnecté', () => {
       // GIVEN
       vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
-      const menuUtilisateur = jOuvreLeMenuUtilisateur()
-      const deconnexion = within(menuUtilisateur).getByRole('button', { name: 'Se déconnecter' })
+      afficherLEnTete()
 
       // WHEN
-      fireEvent.click(deconnexion)
+      jOuvreLeMenuUtilisateur()
+      jeMeDeconnecte()
 
       // THEN
       expect(nextAuth.signOut).toHaveBeenCalledWith({ callbackUrl: '/connexion' })
@@ -105,11 +108,11 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
       const changerMonRoleAction = vi.fn(async () => Promise.resolve(['OK']))
-      const menuUtilisateur = jOuvreLeMenuUtilisateur(changerMonRoleAction)
-      const role = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
+      afficherLEnTete(changerMonRoleAction)
 
       // WHEN
-      fireEvent.change(role, { target: { value: 'Instructeur' } })
+      jOuvreLeMenuUtilisateur()
+      jeChangeMonRole()
 
       // THEN
       await waitFor(() => {
@@ -118,31 +121,37 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     })
 
     it('quand je clique sur fermer, alors le drawer se ferme', () => {
+      // GIVEN
+      afficherLEnTete()
+
       // WHEN
       jOuvreLeMenuUtilisateur()
+      const drawer = screen.getByRole('dialog')
       jeFermeLeMenuUtilisateur()
 
       // THEN
-      const drawer = screen.queryByRole('dialog')
-      expect(drawer).not.toBeInTheDocument()
+      expect(drawer).not.toBeVisible()
     })
   })
+
+  function jOuvreLeMenuUtilisateur(): void {
+    presserLeBouton('Martin Tartempion')
+  }
+
+  function jeFermeLeMenuUtilisateur(): void {
+    presserLeBouton('Fermer le menu')
+  }
+
+  function jeChangeMonRole(): void {
+    fireEvent.change(screen.getByRole('combobox', { name: 'Rôle' }), { target: { value: 'Instructeur' } })
+  }
+
+  function jeMeDeconnecte(): void {
+    presserLeBouton('Se déconnecter')
+  }
+
+  function afficherLEnTete(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): void {
+    renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction })
+  }
 })
 
-function monCompte(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
-  renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction })
-
-  const menu = screen.getByRole('list', { name: 'menu' })
-  const menuItems = within(menu).getAllByRole('listitem')
-  return within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
-}
-
-function jOuvreLeMenuUtilisateur(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): HTMLElement {
-  fireEvent.click(monCompte(spiedChangerMonRoleAction))
-
-  return screen.getByRole('dialog')
-}
-
-function jeFermeLeMenuUtilisateur(): void {
-  fireEvent.click(screen.getByRole('button', { name: 'Fermer le menu' }))
-}

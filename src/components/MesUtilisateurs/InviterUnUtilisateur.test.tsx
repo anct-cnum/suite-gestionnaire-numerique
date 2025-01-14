@@ -1,41 +1,17 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
-import { select } from 'react-select-event'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, presserLeBouton, saisirLeTexte, selectionnerLElement } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('inviter un utilisateur', () => {
-  const totalUtilisateur = 11
-
   it('en tant qu’administrateur, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous les rôles sélectionnables', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        role: {
-          doesItBelongToGroupeAdmin: true,
-          libelle: 'Rhône',
-          nom: 'Administrateur dispositif',
-          pictogramme: 'maille',
-          rolesGerables: [
-            'Administrateur dispositif',
-            'Gestionnaire département',
-            'Gestionnaire groupement',
-            'Gestionnaire région',
-            'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
-          ],
-        },
-      }),
-    })
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
+    afficherMesUtilisateurs()
 
     // WHEN
-    fireEvent.click(inviter)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
     const drawerInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
@@ -121,87 +97,39 @@ describe('inviter un utilisateur', () => {
 
   it('en tant qu’utilisateur, quand je clique sur inviter un utilisateur puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
+    const drawerInvitation = drawer()
     jeFermeLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawerInvitation).not.toBeVisible()
   })
 
   it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        role: {
-          doesItBelongToGroupeAdmin: true,
-          libelle: 'Rhône',
-          nom: 'Administrateur dispositif',
-          pictogramme: 'maille',
-          rolesGerables: [
-            'Administrateur dispositif',
-            'Gestionnaire département',
-            'Gestionnaire groupement',
-            'Gestionnaire région',
-            'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
-          ],
-        },
-      }),
-    })
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
+    afficherMesUtilisateurs()
 
     // WHEN
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
-    fireEvent.click(gestionnaireDepartement)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeSelectionneUnGestionnaireDepartement()
 
     // THEN
-    const organisation = within(formulaireInvitation).getByLabelText('Département *')
+    const organisation = screen.getByLabelText('Département *')
     expect(organisation).toBeRequired()
     expect(organisation).toHaveAttribute('type', 'text')
   })
 
   it('en tant qu’administrateur, quand je cherche un département qui n’existe pas, alors un libellé me le signifie', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        role: {
-          doesItBelongToGroupeAdmin: true,
-          libelle: 'Rhône',
-          nom: 'Administrateur dispositif',
-          pictogramme: 'maille',
-          rolesGerables: [
-            'Administrateur dispositif',
-            'Gestionnaire département',
-            'Gestionnaire groupement',
-            'Gestionnaire région',
-            'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
-          ],
-        },
-      }),
-    })
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const gestionnaireDepartement = within(formulaireInvitation).getByLabelText('Gestionnaire département')
-    fireEvent.click(gestionnaireDepartement)
+    afficherMesUtilisateurs()
 
     // WHEN
-    const organisation = within(formulaireInvitation).getByLabelText('Département *')
-    fireEvent.change(organisation, { target: { value: 'departementInexistant' } })
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeSelectionneUnGestionnaireDepartement()
+    jeSelectionneUnDepartementInexistant()
 
     // THEN
     const pasDeResulat = await screen.findByText('Pas de résultat')
@@ -213,47 +141,20 @@ describe('inviter un utilisateur', () => {
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
     vi.stubGlobal('dsfr', stubbedConceal())
     vi.stubGlobal('fetch', vi.fn(structuresFetch))
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+    afficherMesUtilisateurs({
       inviterUnUtilisateurAction,
       pathname: '/mes-utilisateurs',
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        role: {
-          doesItBelongToGroupeAdmin: true,
-          libelle: 'Rhône',
-          nom: 'Administrateur dispositif',
-          pictogramme: 'maille',
-          rolesGerables: [
-            'Administrateur dispositif',
-            'Gestionnaire département',
-            'Gestionnaire groupement',
-            'Gestionnaire région',
-            'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
-          ],
-        },
-      }),
     })
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
-    fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-    fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
-    fireEvent.click(gestionnaireStructure)
 
     // WHEN
-    const structure = within(formulaireInvitation).getByLabelText('Structure *')
-    fireEvent.change(structure, { target: { value: 'ABC' } })
-    await select(structure, 'ABC FORMATION')
-    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-    fireEvent.click(envoyerInvitation)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeTapeSonNom('Tartempion')
+    jeTapeSonPrenom('Martin')
+    jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnGestionnaireStructure()
+    const structure = jeTapeSaStructure('ABC')
+    await jeSelectionneSaStructure(structure, 'ABC FORMATION')
+    jEnvoieLInvitation()
 
     // THEN
     await waitFor(() => {
@@ -275,36 +176,12 @@ describe('inviter un utilisateur', () => {
       nom: string
       uid: string
     }>> => Promise.resolve([]) })))
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        role: {
-          doesItBelongToGroupeAdmin: true,
-          libelle: 'Rhône',
-          nom: 'Administrateur dispositif',
-          pictogramme: 'maille',
-          rolesGerables: [
-            'Administrateur dispositif',
-            'Gestionnaire département',
-            'Gestionnaire groupement',
-            'Gestionnaire région',
-            'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
-          ],
-        },
-      }),
-    })
+    afficherMesUtilisateurs()
 
     // WHEN
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const gestionnaireStructure = within(formulaireInvitation).getByLabelText('Gestionnaire structure')
-    fireEvent.click(gestionnaireStructure)
-    const structure = screen.getByLabelText('Structure *')
-    fireEvent.change(structure, { target: { value: 'AB' } })
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeSelectionneUnGestionnaireStructure()
+    jeTapeSaStructure('AB')
 
     // THEN
     await waitFor(() => {
@@ -312,10 +189,9 @@ describe('inviter un utilisateur', () => {
     })
   })
 
-  it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous le rôle gestionnaire département sélectionné', async () => {
+  it('en tant que gestionnaire département, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec le rôle gestionnaire département sélectionné', async () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+    afficherMesUtilisateurs({
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {
           doesItBelongToGroupeAdmin: false,
@@ -326,10 +202,9 @@ describe('inviter un utilisateur', () => {
         },
       }),
     })
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
 
     // WHEN
-    fireEvent.click(inviter)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
     const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
@@ -376,56 +251,27 @@ describe('inviter un utilisateur', () => {
     expect(envoyerInvitation).toBeEnabled()
   })
 
-  it('quand je remplis correctement le formulaire et avec un nouveau mail, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+  it('quand je remplis correctement le formulaire et avec une nouvelle adresse électronique, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
     vi.stubGlobal('dsfr', stubbedConceal())
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        inviterUnUtilisateurAction,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: 'Rhône',
-            nom: 'Administrateur dispositif',
-            pictogramme: 'maille',
-            rolesGerables: [
-              'Administrateur dispositif',
-              'Gestionnaire département',
-              'Gestionnaire groupement',
-              'Gestionnaire région',
-              'Gestionnaire structure',
-              'Instructeur',
-              'Pilote politique publique',
-              'Support animation',
-            ],
-          },
-        }),
-      }
-    )
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
     // WHEN
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
-    fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-    fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const administrateurDispositif = within(formulaireInvitation).getByLabelText('Administrateur dispositif')
-    fireEvent.click(administrateurDispositif)
-    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-    fireEvent.click(envoyerInvitation)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    const drawerInvitation = drawer()
+    const roleRadios = screen.getAllByRole('radio')
+    const nom = jeTapeSonNom('Tartempion')
+    const prenom = jeTapeSonPrenom('Martin')
+    const email = jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnAdministrateur()
+    const envoyerInvitation = jEnvoieLInvitation()
 
     // THEN
     expect(envoyerInvitation).toBeDisabled()
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
-    expect(formulaireInvitation).not.toBeVisible()
+    expect(drawerInvitation).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -447,59 +293,28 @@ describe('inviter un utilisateur', () => {
       .mockResolvedValueOnce(['emailExistant'])
       .mockResolvedValueOnce(['OK'])
     vi.stubGlobal('dsfr', stubbedConceal())
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
-        inviterUnUtilisateurAction,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: 'Rhône',
-            nom: 'Administrateur dispositif',
-            pictogramme: 'maille',
-            rolesGerables: [
-              'Administrateur dispositif',
-              'Gestionnaire département',
-              'Gestionnaire groupement',
-              'Gestionnaire région',
-              'Gestionnaire structure',
-              'Instructeur',
-              'Pilote politique publique',
-              'Support animation',
-            ],
-          },
-        }),
-      }
-    )
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
     // WHEN
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
-    fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-    fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const gestionnaireRole = within(formulaireInvitation).getByLabelText('Gestionnaire département')
-    fireEvent.click(gestionnaireRole)
-    const departementSelect = within(formulaireInvitation).getByLabelText('Département *')
-    expect(departementSelect).toBeInTheDocument()
-    await select(departementSelect, 'Ain')
-    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-    fireEvent.click(envoyerInvitation)
-    const messageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
-    fireEvent.click(envoyerInvitation)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    const drawerInvitation = drawer()
+    const roleRadios = screen.getAllByRole('radio')
+    const nom = jeTapeSonNom('Tartempion')
+    const prenom = jeTapeSonPrenom('Martin')
+    const email = jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnGestionnaireDepartement()
+    await jeSelectionneSonDepartement('Ain')
+    jEnvoieLInvitation()
+    const messageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    jEnvoieLInvitation()
 
     // THEN
     expect(messageDErreur).toBeInTheDocument()
-    const absenceMessageDErreur = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceMessageDErreur).not.toBeInTheDocument()
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
-    expect(formulaireInvitation).not.toBeVisible()
+    expect(drawerInvitation).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -507,7 +322,7 @@ describe('inviter un utilisateur', () => {
       expect(roleRadio).not.toBeChecked()
     })
     Object.values(roleGestionnaireLabelSelectionMapping).forEach((labelChampSelection) => {
-      const champSelection = within(formulaireInvitation).queryByLabelText(`${labelChampSelection} *`)
+      const champSelection = within(drawerInvitation).queryByLabelText(`${labelChampSelection} *`)
       expect(champSelection).not.toBeInTheDocument()
     })
   })
@@ -515,107 +330,45 @@ describe('inviter un utilisateur', () => {
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['emailExistant']))
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      {
-        inviterUnUtilisateurAction,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: 'Rhône',
-            nom: 'Administrateur dispositif',
-            pictogramme: 'maille',
-            rolesGerables: [
-              'Administrateur dispositif',
-              'Gestionnaire département',
-              'Gestionnaire groupement',
-              'Gestionnaire région',
-              'Gestionnaire structure',
-              'Instructeur',
-              'Pilote politique publique',
-              'Support animation',
-            ],
-          },
-        }),
-      }
-    )
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
     // WHEN
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
-    fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-    fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const administrateurDispositif = within(formulaireInvitation).getByLabelText('Administrateur dispositif')
-    fireEvent.click(administrateurDispositif)
-    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-    fireEvent.click(envoyerInvitation)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    const drawerInvitation = drawer()
+    jeTapeSonNom('Tartempion')
+    jeTapeSonPrenom('Martin')
+    jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnAdministrateur()
+    jEnvoieLInvitation()
 
     // THEN
-    const erreurEmailDejaExistant = await within(formulaireInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const erreurEmailDejaExistant = await within(drawerInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(erreurEmailDejaExistant).toBeInTheDocument()
-    expect(formulaireInvitation).toBeVisible()
+    expect(drawerInvitation).toBeVisible()
   })
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['utilisateurNePeutPasGererUtilisateurACreer']))
     vi.stubGlobal('dsfr', stubbedConceal())
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      {
-        inviterUnUtilisateurAction,
-        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-          role: {
-            doesItBelongToGroupeAdmin: true,
-            libelle: 'Rhône',
-            nom: 'Administrateur dispositif',
-            pictogramme: 'maille',
-            rolesGerables: [
-              'Administrateur dispositif',
-              'Gestionnaire département',
-              'Gestionnaire groupement',
-              'Gestionnaire région',
-              'Gestionnaire structure',
-              'Instructeur',
-              'Pilote politique publique',
-              'Support animation',
-            ],
-          },
-        }),
-      }
-    )
-    const inviter = screen.getByRole('button', { name: 'Inviter une personne' })
-    fireEvent.click(inviter)
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const roleRadios = within(formulaireInvitation).getAllByRole('radio')
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
     // WHEN
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
-    fireEvent.change(nom, { target: { value: 'Tartempion' } })
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
-    fireEvent.change(prenom, { target: { value: 'Martin' } })
-    const email = within(formulaireInvitation).getByLabelText(/Adresse électronique/)
-    fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-    const administrateurDispositif = within(formulaireInvitation).getByLabelText('Administrateur dispositif')
-    fireEvent.click(administrateurDispositif)
-    const envoyerInvitation = await within(formulaireInvitation).findByRole('button', { name: 'Envoyer l’invitation' })
-    fireEvent.click(envoyerInvitation)
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    const drawerInvitation = drawer()
+    const roleRadios = within(drawerInvitation).getAllByRole('radio')
+    const nom = jeTapeSonNom('Tartempion')
+    const prenom = jeTapeSonPrenom('Martin')
+    const email = jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnAdministrateur()
+    jEnvoieLInvitation()
 
     // THEN
-    const absenceDeMessageDErreur = within(formulaireInvitation).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const absenceDeMessageDErreur = within(drawerInvitation).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceDeMessageDErreur).not.toBeInTheDocument()
-    const formulaireInvitationApresInvitationEnEchec = await screen.findByRole(
-      'dialog',
-      { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' }
-    )
-    expect(formulaireInvitationApresInvitationEnEchec).not.toBeVisible()
+    await waitFor(() => {
+      expect(drawerInvitation).not.toBeVisible()
+    })
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -625,10 +378,83 @@ describe('inviter un utilisateur', () => {
   })
 
   function jOuvreLeFormulairePourInviterUnUtilisateur(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Inviter une personne' }))
+    presserLeBouton('Inviter une personne')
   }
 
   function jeFermeLeFormulairePourInviterUnUtilisateur(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer l’invitation' }))
+    presserLeBouton('Fermer l’invitation')
+  }
+
+  function jeTapeSonNom(value: string): HTMLElement {
+    return saisirLeTexte('Nom *', value)
+  }
+
+  function jeTapeSonPrenom(value: string): HTMLElement {
+    return saisirLeTexte('Prénom *', value)
+  }
+
+  function jeTapeSonAdresseElectronique(value: string): HTMLElement {
+    return saisirLeTexte(/Adresse électronique/, value)
+  }
+
+  function jeSelectionneUnAdministrateur(): void {
+    fireEvent.click(within(drawer()).getByLabelText('Administrateur dispositif'))
+  }
+
+  function jeSelectionneUnGestionnaireDepartement(): void {
+    fireEvent.click(within(drawer()).getByLabelText('Gestionnaire département'))
+  }
+
+  function jeSelectionneUnGestionnaireStructure(): void {
+    fireEvent.click(within(drawer()).getByLabelText('Gestionnaire structure'))
+  }
+
+  function jeTapeSaStructure(value: string): HTMLElement {
+    return saisirLeTexte('Structure *', value)
+  }
+
+  async function jeSelectionneSaStructure(input: HTMLElement, nomStructure: string): Promise<void> {
+    await selectionnerLElement(input, nomStructure)
+  }
+
+  async function jeSelectionneSonDepartement(departement: string): Promise<void> {
+    await selectionnerLElement(screen.getByLabelText('Département *'), departement)
+  }
+
+  function jeSelectionneUnDepartementInexistant(): void {
+    saisirLeTexte('Département *', 'departementInexistant')
+  }
+
+  function jEnvoieLInvitation(): HTMLElement {
+    return presserLeBouton('Envoyer l’invitation')
+  }
+
+  function drawer(): HTMLElement {
+    return screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+  }
+
+  function afficherMesUtilisateurs(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 11, rolesAvecStructure)
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        role: {
+          doesItBelongToGroupeAdmin: true,
+          libelle: 'Rhône',
+          nom: 'Administrateur dispositif',
+          pictogramme: 'maille',
+          rolesGerables: [
+            'Administrateur dispositif',
+            'Gestionnaire département',
+            'Gestionnaire groupement',
+            'Gestionnaire région',
+            'Gestionnaire structure',
+            'Instructeur',
+            'Pilote politique publique',
+            'Support animation',
+          ],
+        },
+      }),
+      ...options,
+    })
   }
 })
