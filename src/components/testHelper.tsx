@@ -1,5 +1,6 @@
-import { render, RenderResult } from '@testing-library/react'
+import { fireEvent, render, RenderResult, screen } from '@testing-library/react'
 import { ReactElement } from 'react'
+import { select } from 'react-select-event'
 import { ToastContainer } from 'react-toastify'
 import { Mock } from 'vitest'
 
@@ -102,4 +103,28 @@ export function stubbedConceal() {
       conceal: vi.fn(),
     },
   })
+}
+
+export function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
+}
+
+export function cocherLaCase(name: string): void {
+  fireEvent.click(screen.getByRole('checkbox', { name }))
+}
+
+export function presserLeBoutonRadio(name: string): void {
+  fireEvent.click(screen.getByRole('radio', { name }))
+}
+
+export function saisirLeTexte(name: string | RegExp, value: string): HTMLElement {
+  const input = screen.getByLabelText(name)
+  fireEvent.change(input, { target: { value } })
+  return input
+}
+
+export async function selectionnerLElement(input: HTMLElement, nomStructure: string): Promise<void> {
+  await select(input, nomStructure)
 }

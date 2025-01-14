@@ -197,7 +197,7 @@ export default function MesInformationsPersonnelles(
           </button>
         </section>
         <SupprimerMonCompte
-          closeDrawer={() => {
+          closeModal={() => {
             setIsModalOpen(false)
           }}
           email={mesInformationsPersonnellesViewModel.emailDeContact}

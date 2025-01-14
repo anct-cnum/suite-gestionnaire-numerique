@@ -3,7 +3,6 @@ import { render, screen, within } from '@testing-library/react'
 import MesParametres from './MesParametres'
 
 describe('mes paramètres : en tant qu’utilisateur authentifié', () => {
-  // GIVEN
   describe('quand je me rends sur la page de visualisation et personnalisation de mes paramètres de compte', () => {
     const titre = 'Mes paramètres de compte'
     const sousTitre = 'Retrouvez ici, vos préférences de communication et d’affichage.'

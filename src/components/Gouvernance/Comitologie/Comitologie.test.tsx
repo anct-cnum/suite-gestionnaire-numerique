@@ -1,7 +1,7 @@
-import { fireEvent, within, screen } from '@testing-library/react'
+import { within, screen } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { FrozenDate, matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { FrozenDate, presserLeBouton, presserLeBoutonRadio, saisirLeTexte, matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
@@ -9,11 +9,10 @@ describe('comitologie', () => {
   it('quand je clique sur ajouter une comitologie, le drawer d’ajout de comitologie s’affiche', () => {
     // GIVEN
     vi.stubGlobal('Date', FrozenDate)
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherUneGouvernance()
 
     // WHEN
-    cliquerSurAjouterUnComite()
+    jOuvreLeFormulairePourAjouterUnComite()
 
     // THEN
     const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
@@ -68,28 +67,27 @@ describe('comitologie', () => {
     vi.stubGlobal('Date', FrozenDate)
     const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
     vi.stubGlobal('dsfr', stubbedConceal())
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, { ajouterUnComiteAction, pathname: '/gouvernance/11' })
-    cliquerSurAjouterUnComite()
+    afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
     // WHEN
-    cliquerSurUnType('Technique')
-    cliquerSurUneFrequence('Annuelle')
-    const date = choisirUneDate('1996-04-15')
-    const commentaire = ecrireUnCommentaire('commentaire')
-    const enregistrer = validerLeFormulaire()
+    jOuvreLeFormulairePourAjouterUnComite()
+    const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+    jeSelectionneUnType('Technique')
+    jeSelectionneUneFrequence('Annuelle')
+    const date = jeChoisisUneDate('1996-04-15')
+    const commentaire = jeTapeUnCommentaire('commentaire')
+    const enregistrer = jEnregistreLeComite()
 
     // THEN
     expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
     expect(enregistrer).toBeDisabled()
-    const formulaire = await screen.findByRole('form', { name: 'Ajouter un comité' })
-    expect(formulaire).not.toBeVisible()
-    const strategique = screen.getByRole('radio', { checked: true, hidden: true, name: 'Stratégique' })
+    const strategique = await screen.findByRole('radio', { checked: true, hidden: true, name: 'Stratégique' })
     expect(strategique).toBeInTheDocument()
     const mensuelle = screen.getByRole('radio', { checked: true, hidden: true, name: 'Mensuelle' })
     expect(mensuelle).toBeInTheDocument()
     expect(date).toHaveValue('')
     expect(commentaire).toHaveValue('')
+    expect(ajouterUnComiteDrawer).not.toBeVisible()
     expect(ajouterUnComiteAction).toHaveBeenCalledWith({
       commentaire: 'commentaire',
       date: '1996-04-15',
@@ -108,50 +106,43 @@ describe('comitologie', () => {
     // GIVEN
     const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
     vi.stubGlobal('dsfr', stubbedConceal())
-
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, { ajouterUnComiteAction, pathname: '/gouvernance/11' })
-    cliquerSurAjouterUnComite()
+    afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
     // WHEN
-    validerLeFormulaire()
+    jOuvreLeFormulairePourAjouterUnComite()
+    jEnregistreLeComite()
 
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
   })
+
+  function jOuvreLeFormulairePourAjouterUnComite(): void {
+    presserLeBouton('Ajouter')
+  }
+
+  function jeSelectionneUnType(name: string): void {
+    presserLeBoutonRadio(name)
+  }
+
+  function jeSelectionneUneFrequence(name: string): void {
+    presserLeBoutonRadio(name)
+  }
+
+  function jeChoisisUneDate(value: string): HTMLElement {
+    return saisirLeTexte('Date du prochain comité', value)
+  }
+
+  function jeTapeUnCommentaire(value: string): HTMLElement {
+    return saisirLeTexte('Laissez ici un commentaire général sur le comité', value)
+  }
+
+  function jEnregistreLeComite(): HTMLElement {
+    return presserLeBouton('Enregistrer')
+  }
+
+  function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+  }
 })
-
-function cliquerSurAjouterUnComite(): void {
-  const comitologie = screen.getByRole('region', { name: 'Comitologie' })
-  const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
-  fireEvent.click(ajouter)
-}
-
-function cliquerSurUnType(label: string): void {
-  const technique = screen.getByLabelText(label)
-  fireEvent.click(technique)
-}
-
-function cliquerSurUneFrequence(label: string): void {
-  const annuelle = screen.getByLabelText(label)
-  fireEvent.click(annuelle)
-}
-
-function choisirUneDate(value: string): HTMLElement {
-  const date = screen.getByLabelText('Date du prochain comité')
-  fireEvent.change(date, { target: { value } })
-  return date
-}
-
-function ecrireUnCommentaire(value: string): HTMLElement {
-  const commentaire = screen.getByLabelText('Laissez ici un commentaire général sur le comité')
-  fireEvent.change(commentaire, { target: { value } })
-  return commentaire
-}
-
-function validerLeFormulaire(): HTMLElement {
-  const enregistrer = screen.getByRole('button', { name: 'Enregistrer' })
-  fireEvent.click(enregistrer)
-  return enregistrer
-}

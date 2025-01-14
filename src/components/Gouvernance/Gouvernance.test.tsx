@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 
 import Gouvernance from './Gouvernance'
-import { matchWithoutMarkup } from '../testHelper'
+import { matchWithoutMarkup, presserLeBouton } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
@@ -76,8 +76,7 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
-    const ajouterUnComite = screen.getByRole('button', { name: 'Ajouter un comité' })
-    fireEvent.click(ajouterUnComite)
+    jOuvreLeFormulairePourAjouterUnComite()
 
     // THEN
     const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
@@ -91,11 +90,11 @@ describe('gouvernance', () => {
 
     // WHEN
     jOuvreLeFormulairePourAjouterUnComite()
+    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
     jeFermeLeFormulairePourAjouterUnComite()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Ajouter un comité' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawer).not.toBeVisible()
   })
 
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
@@ -487,8 +486,7 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
-    const lirePlus = screen.getByRole('button', { name: 'Lire plus' })
-    fireEvent.click(lirePlus)
+    const lirePlus = jeDeplieLaNoteDeContexte()
 
     // THEN
     expect(lirePlus).toHaveClass('fr-icon-arrow-up-s-line')
@@ -525,10 +523,14 @@ describe('gouvernance', () => {
   })
 
   function jOuvreLeFormulairePourAjouterUnComite(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Ajouter un comité' }))
+    presserLeBouton('Ajouter un comité')
   }
 
   function jeFermeLeFormulairePourAjouterUnComite(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer le formulaire de création d’un comité' }))
+    presserLeBouton('Fermer le formulaire de création d’un comité')
+  }
+
+  function jeDeplieLaNoteDeContexte(): HTMLElement {
+    return presserLeBouton('Lire plus')
   }
 })
