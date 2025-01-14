@@ -1,5 +1,3 @@
-'use client'
-
 import { ReactElement } from 'react'
 
 import Table from '@/components/shared/Table/Table'

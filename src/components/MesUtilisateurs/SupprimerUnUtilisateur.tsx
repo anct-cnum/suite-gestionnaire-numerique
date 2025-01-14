@@ -8,14 +8,14 @@ export default function SupprimerUnUtilisateur({
   id,
   isOpen,
   utilisateurASupprimer,
-  closeDrawer,
+  closeModal,
 }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
   const modaleTitreId = useId()
 
   return (
     <Modal
-      close={close}
+      close={closeModal}
       id={id}
       isOpen={isOpen}
       labelId={modaleTitreId}
@@ -38,7 +38,7 @@ export default function SupprimerUnUtilisateur({
           <button
             aria-controls={id}
             className="fr-btn fr-btn--secondary"
-            onClick={close}
+            onClick={closeModal}
             type="button"
           >
             Annuler
@@ -56,13 +56,9 @@ export default function SupprimerUnUtilisateur({
     </Modal>
   )
 
-  function close(): void {
-    closeDrawer()
-  }
-
   async function supprimer(uidUtilisateurASupprimer: string): Promise<void> {
     await supprimerUnUtilisateurAction({ path: pathname, uidUtilisateurASupprimer })
-    close()
+    closeModal()
   }
 }
 
@@ -70,7 +66,7 @@ type Props = Readonly<{
   id: string
   isOpen: boolean
   utilisateurASupprimer: UtilisateurASupprimer
-  closeDrawer(): void
+  closeModal(): void
 }>
 
 type UtilisateurASupprimer = Readonly<{

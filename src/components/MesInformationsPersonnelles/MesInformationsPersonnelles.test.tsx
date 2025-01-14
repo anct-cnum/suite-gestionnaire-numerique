@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -61,7 +61,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
   it('quand j’affiche mes informations personnelles mais avec un téléphone non renseigné alors il s’affiche cette notion', () => {
     // WHEN
-    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
+    afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
 
     // THEN
     const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
@@ -78,7 +78,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Support animation',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
     // WHEN
-    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ role }))
+    afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ role }))
 
     // THEN
     const maStructure = screen.queryByRole('region', { name: 'Ma structure' })
@@ -90,7 +90,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Gestionnaire groupement',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" s’affiche', (role) => {
     // WHEN
-    afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({
+    afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({
       role,
       structure: {
         adresse: '201 bis rue de la plaine, 69000 Lyon',
@@ -157,17 +157,16 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       afficherMesInformationsPersonnelles()
 
       // WHEN
-      fireEvent.click(supprimerMonCompte())
+      jOuvreLeFormulairePourSupprimerMonCompte()
 
       // THEN
-      const modal = supprimerMonCompteModal()
+      const modal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
       expect(modal).toBeVisible()
 
       const titre = within(modal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
       expect(titre).toBeInTheDocument()
 
-      const avertissement = within(modal)
-        .getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
+      const avertissement = within(modal).getByText('Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.')
       expect(avertissement).toBeInTheDocument()
 
       const formulaire = within(modal).getByRole('form', { name: 'Supprimer' })
@@ -187,78 +186,91 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(confirmer).toBeDisabled()
     })
 
-    it('et que j’appuie sur annuler alors la modale se ferme', () => {
+    it('et que je clique sur annuler alors la modale se ferme', () => {
       // GIVEN
       afficherMesInformationsPersonnelles()
-      fireEvent.click(supprimerMonCompte())
 
       // WHEN
-      fireEvent.click(annulerLaSuppressionDeMonCompte())
+      jOuvreLeFormulairePourSupprimerMonCompte()
+      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+      jAnnuleLaSuppressionDeMonCompte()
 
       // THEN
-      const supprimerMonCompteModal = screen.queryByRole('dialog', { name: 'Supprimer mon compte' })
-      expect(supprimerMonCompteModal).not.toBeInTheDocument()
+      expect(supprimerMonCompteModal).not.toBeVisible()
+    })
+
+    it('et que je clique sur fermer alors la modale se ferme', () => {
+      // GIVEN
+      afficherMesInformationsPersonnelles()
+
+      // WHEN
+      jOuvreLeFormulairePourSupprimerMonCompte()
+      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+      jeFermeLaSuppressionDeMonCompte()
+
+      // THEN
+      expect(supprimerMonCompteModal).not.toBeVisible()
     })
 
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
       it('je saisis une adresse électronique invalide', () => {
         // GIVEN
         afficherMesInformationsPersonnelles()
-        fireEvent.click(supprimerMonCompte())
 
         // WHEN
-        fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@' } })
+        jOuvreLeFormulairePourSupprimerMonCompte()
+        jeSaisieMonEMail('julien.deschamps@')
 
         // THEN
         const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
         expect(messageEmailKo).not.toBeInTheDocument()
-        expect(confirmerSuppressionCompte()).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
       })
 
       it('je saisis une adresse électronique valide mais qui n’est pas la mienne', () => {
         // GIVEN
         afficherMesInformationsPersonnelles()
-        fireEvent.click(supprimerMonCompte())
 
         // WHEN
-        fireEvent.input(saisirEmail(), { target: { value: 'deschamps.julien@example.com' } })
+        jOuvreLeFormulairePourSupprimerMonCompte()
+        jeSaisieMonEMail('deschamps.julien@example.com')
 
         // THEN
         const messageEmailKo = screen.getByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
         expect(messageEmailKo).toBeInTheDocument()
-        expect(confirmerSuppressionCompte()).toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
       })
     })
 
     it('et que j’appuie sur annuler alors qu’il y a un message en erreur ou pas, alors le formulaire est réinitialisé', () => {
       // GIVEN
       afficherMesInformationsPersonnelles()
-      fireEvent.click(supprimerMonCompte())
-      fireEvent.input(saisirEmail(), { target: { value: 'deschamps.julien@example.com' } })
-      fireEvent.click(annulerLaSuppressionDeMonCompte())
 
       // WHEN
-      fireEvent.click(supprimerMonCompte())
+      jOuvreLeFormulairePourSupprimerMonCompte()
+      jeSaisieMonEMail('deschamps.julien@example.com')
+      jAnnuleLaSuppressionDeMonCompte()
+      jOuvreLeFormulairePourSupprimerMonCompte()
 
       // THEN
-      const email = within(formulaire()).getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+      const email = screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
       expect(email).toHaveValue('')
       const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
       expect(messageEmailKo).not.toBeInTheDocument()
-      expect(confirmerSuppressionCompte()).toBeDisabled()
+      expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
     })
 
     describe('je peux supprimer mon compte, le bouton de confirmation s’activant si', () => {
       it('une fois que j’ai saisi mon adresse électronique (même avec des espaces en trop en début ou en fin de saisie)', () => {
         // GIVEN
         afficherMesInformationsPersonnelles()
-        fireEvent.click(supprimerMonCompte())
 
         // WHEN
-        fireEvent.input(saisirEmail(), { target: { value: '  julien.deschamps@example.com  ' } })
+        jOuvreLeFormulairePourSupprimerMonCompte()
+        jeSaisieMonEMail('  julien.deschamps@example.com  ')
 
         // THEN
-        expect(confirmerSuppressionCompte()).not.toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).not.toBeDisabled()
         const messageEmailOk = screen.getByText('L’adresse électronique saisie est valide')
         expect(messageEmailOk).toBeInTheDocument()
       })
@@ -267,17 +279,12 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         // GIVEN
         const supprimerMonCompteAction = vi.fn(async () => Promise.resolve(['OK']))
         vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
-        const mesInformationsPersonnellesViewModel =
-          mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
-        renderComponent(
-          <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
-          { supprimerMonCompteAction }
-        )
-        fireEvent.click(supprimerMonCompte())
-        fireEvent.input(saisirEmail(), { target: { value: 'julien.deschamps@example.com' } })
+        afficherMesInformationsPersonnelles({ supprimerMonCompteAction })
 
         // WHEN
-        fireEvent.click(confirmerSuppressionCompte())
+        jOuvreLeFormulairePourSupprimerMonCompte()
+        jeSaisieMonEMail('julien.deschamps@example.com')
+        jeSupprimeMonCompte()
 
         // THEN
         const boutonConfirmationDesactive = await screen.findByRole('button', { name: 'Suppression en cours...' })
@@ -287,28 +294,24 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       })
     })
 
-    function supprimerMonCompte(): HTMLElement {
-      return screen.getByRole('button', { name: 'Supprimer mon compte' })
+    function jOuvreLeFormulairePourSupprimerMonCompte(): void {
+      presserLeBouton('Supprimer mon compte')
     }
 
-    function supprimerMonCompteModal(): HTMLElement {
-      return screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+    function jeSaisieMonEMail(value: string): void {
+      fireEvent.input(screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous'), { target: { value } })
     }
 
-    function formulaire(): HTMLElement {
-      return screen.getByRole('form', { name: 'Supprimer' })
+    function jeSupprimeMonCompte(): void {
+      presserLeBouton('Confirmer la suppression')
     }
 
-    function saisirEmail(): HTMLElement {
-      return screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+    function jAnnuleLaSuppressionDeMonCompte(): void {
+      presserLeBouton('Annuler')
     }
 
-    function confirmerSuppressionCompte(): HTMLElement {
-      return screen.getByRole('button', { name: 'Confirmer la suppression' })
-    }
-
-    function annulerLaSuppressionDeMonCompte(): HTMLElement {
-      return screen.getByRole('button', { name: 'Annuler' })
+    function jeFermeLaSuppressionDeMonCompte(): void {
+      presserLeBouton('Fermer')
     }
   })
 
@@ -366,7 +369,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
       // GIVEN
-      afficherMesInformationsPersonnelles(mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
+      afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ telephone: '' }))
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
@@ -379,15 +382,14 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     it('et que j’appuie sur annuler alors la modale se ferme', () => {
       // GIVEN
       afficherMesInformationsPersonnelles()
-      jOuvreMesInformationsPersonnelles()
 
       // WHEN
-      const annuler = screen.getByRole('button', { name: 'Annuler' })
-      fireEvent.click(annuler)
+      jOuvreMesInformationsPersonnelles()
+      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      jAnnuleMesInformationsPersonnelles()
 
       // THEN
-      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
-      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
     })
 
     it('et que je clique sur fermer alors la modale se ferme', () => {
@@ -396,37 +398,27 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
+      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
       jeFermeMesInformationsPersonnelles()
 
       // THEN
-      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
-      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
     })
 
     it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
       // GIVEN
       const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
       vi.stubGlobal('dsfr', stubbedConceal())
-
-      const mesInformationsPersonnellesViewModel =
-        mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModelFactory())
-      renderComponent(
-        <MesInformationsPersonnelles mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel} />,
-        { modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' }
-      )
-      jOuvreMesInformationsPersonnelles()
-      const nom = screen.getByLabelText('Nom *')
-      fireEvent.change(nom, { target: { value: 'Tartempion' } })
-      const prenom = screen.getByLabelText('Prénom *')
-      fireEvent.change(prenom, { target: { value: 'Martin' } })
-      const email = screen.getByLabelText(/Adresse électronique/)
-      fireEvent.change(email, { target: { value: 'martin.tartempion@example.com' } })
-      const telephone = screen.getByLabelText(/Téléphone professionnel/)
-      fireEvent.change(telephone, { target: { value: '0102030405' } })
+      afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' })
 
       // WHEN
-      const enregistrer = screen.getByRole('button', { name: 'Enregistrer' })
-      fireEvent.click(enregistrer)
+      jOuvreMesInformationsPersonnelles()
+      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      jeTapeMonNom('Tartempion')
+      jeTapeMonPrenom('Martin')
+      jeTapeMonEMail('martin.tartempion@example.com')
+      jeTapeMonTéléphone('0102030405')
+      jEnregistreMesInformationsPersonnelles()
 
       // THEN
       const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours...' })
@@ -434,23 +426,45 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ emailDeContact: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
       const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours...' })
       expect(boutonModificationActive).toBeEnabled()
-      const modifierMesInfosPersosDrawer = screen.queryByRole('dialog', { name: 'Mes informations personnelles' })
-      expect(modifierMesInfosPersosDrawer).not.toBeInTheDocument()
+      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
     })
 
     function jOuvreMesInformationsPersonnelles(): void {
-      const mesInformationsPersonnelles = screen.getByRole('region', { name: 'Mes informations personnelles' })
-      const modifierMesInfosPersos = within(mesInformationsPersonnelles).getByRole('button', { name: 'Modifier' })
-      fireEvent.click(modifierMesInfosPersos)
+      presserLeBouton('Modifier')
+    }
+
+    function jeTapeMonNom(value: string): void {
+      saisirLeTexte('Nom *', value)
+    }
+
+    function jeTapeMonPrenom(value: string): void {
+      saisirLeTexte('Prénom *', value)
+    }
+
+    function jeTapeMonEMail(value: string): void {
+      saisirLeTexte(/Adresse électronique/, value)
+    }
+
+    function jeTapeMonTéléphone(value: string): void {
+      saisirLeTexte(/Téléphone professionnel/, value)
+    }
+
+    function jEnregistreMesInformationsPersonnelles(): void {
+      presserLeBouton('Enregistrer')
+    }
+
+    function jAnnuleMesInformationsPersonnelles(): void {
+      presserLeBouton('Annuler')
     }
 
     function jeFermeMesInformationsPersonnelles(): void {
-      fireEvent.click(screen.getByRole('button', { name: 'Fermer la modification' }))
+      presserLeBouton('Fermer la modification')
     }
   })
 })
 
 function afficherMesInformationsPersonnelles(
+  options: Partial<Parameters<typeof renderComponent>[1]> = { pathname: '/mes-informations-personnelles' },
   mesInformationsPersonnellesReadModel = mesInformationsPersonnellesReadModelFactory()
 ): void {
   const mesInformationsPersonnellesViewModel =
@@ -459,6 +473,6 @@ function afficherMesInformationsPersonnelles(
     <MesInformationsPersonnelles
       mesInformationsPersonnellesViewModel={mesInformationsPersonnellesViewModel}
     />,
-    { pathname: '/mes-informations-personnelles' }
+    options
   )
 }

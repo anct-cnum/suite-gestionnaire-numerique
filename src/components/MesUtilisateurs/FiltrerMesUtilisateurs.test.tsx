@@ -1,21 +1,17 @@
-import { fireEvent, screen, within } from '@testing-library/react'
-import { clearFirst, select } from 'react-select-event'
-import { Mock } from 'vitest'
+import { screen, within } from '@testing-library/react'
+import { clearFirst } from 'react-select-event'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, rolesAvecStructure, structuresFetch } from '@/components/testHelper'
+import { cocherLaCase, presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, structuresFetch, selectionnerLElement } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 
 describe('filtrer mes utilisateurs', () => {
-  const totalUtilisateur = 11
-
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // WHEN
-    jOuvreLesFiltres()
+    jOuvreLeFormulairePourFiltrer()
 
     // THEN
     const drawerFiltrer = screen.getByRole('dialog', { name: 'Filtrer' })
@@ -63,28 +59,23 @@ describe('filtrer mes utilisateurs', () => {
 
   it('quand je clique sur filtrer puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
+    afficherMesUtilisateurs()
 
     // WHEN
-    jOuvreLesFiltres()
-    jeFermeLesFiltres()
+    jOuvreLeFormulairePourFiltrer()
+    const drawer = screen.getByRole('dialog', { name: 'Filtrer' })
+    jeFermeLeFormulairePourFiltrer()
 
     // THEN
-    const drawer = screen.queryByRole('dialog', { name: 'Filtrer' })
-    expect(drawer).not.toBeInTheDocument()
+    expect(drawer).not.toBeVisible()
   })
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      { searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur&codeDepartement=978') }
-    )
+    afficherMesUtilisateurs({ searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur&codeDepartement=978') })
 
     // WHEN
-    jOuvreLesFiltres()
+    jOuvreLeFormulairePourFiltrer()
 
     // THEN
     const formulaire = screen.getByRole('form', { name: 'Filtrer' })
@@ -101,10 +92,20 @@ describe('filtrer mes utilisateurs', () => {
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
     // GIVEN
     const spiedRouterPush = vi.fn()
-    afficherLesFiltres(spiedRouterPush)
-    const champRechercher = jEcrisMaRecherche('martin')
+    afficherMesUtilisateurs({
+      router: {
+        back: vi.fn(),
+        forward: vi.fn(),
+        prefetch: vi.fn(),
+        push: spiedRouterPush,
+        refresh: vi.fn(),
+        replace: vi.fn(),
+      },
+    })
 
     // WHEN
+    jOuvreLeFormulairePourFiltrer()
+    const champRechercher = jeTapeMaRecherche('martin')
     jeReinitialiseLesFiltres()
 
     // THEN
@@ -114,11 +115,7 @@ describe('filtrer mes utilisateurs', () => {
 
   it('quand il n’y a aucun résultat après un filtrage alors une phrase s’affiche pour informer l’utilisateur et le drawer se ferme', () => {
     // WHEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 0, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      { searchParams: new URLSearchParams('roles=instructeur') }
-    )
+    afficherMesUtilisateurs({ searchParams: new URLSearchParams('roles=instructeur') }, 0)
 
     // THEN
     const phraseInformative = screen.getByText('Aucun utilisateur ne correspond aux filtres sélectionnés.', { selector: 'p' })
@@ -129,26 +126,46 @@ describe('filtrer mes utilisateurs', () => {
     it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      afficherLesFiltres(spiedRouterPush)
-      jeSelectionneUniquementLesUtilisateursActives()
+      afficherMesUtilisateurs({
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      })
 
       // WHEN
+      jOuvreLeFormulairePourFiltrer()
+      const drawer = screen.getByRole('dialog', { name: 'Filtrer' })
+      jeSelectionneUniquementLesUtilisateursActives()
       jeFiltreLesUtilisateurs()
 
       // THEN
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?utilisateursActives=on')
-      const drawer = screen.queryByRole('dialog', { name: 'Filtrer' })
-      expect(drawer).not.toBeInTheDocument()
+      expect(drawer).not.toBeVisible()
     })
 
     it('sur certains rôles alors je n’affiche qu’eux', () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      afficherLesFiltres(spiedRouterPush)
-      jeSelectionneGestionnaireRegion()
-      jeSelectionneGestionnaireDepartement()
+      afficherMesUtilisateurs({
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      })
 
       // WHEN
+      jOuvreLeFormulairePourFiltrer()
+      jeSelectionneGestionnaireRegion()
+      jeSelectionneGestionnaireDepartement()
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -158,10 +175,20 @@ describe('filtrer mes utilisateurs', () => {
     it('sur un département alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      afficherLesFiltres(spiedRouterPush)
-      await jeSelectionneUneZoneGeographique('(978) Saint-Martin')
+      afficherMesUtilisateurs({
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      })
 
       // WHEN
+      jOuvreLeFormulairePourFiltrer()
+      await jeSelectionneUneZoneGeographique('(978) Saint-Martin')
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -171,10 +198,20 @@ describe('filtrer mes utilisateurs', () => {
     it('sur une région alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn()
-      afficherLesFiltres(spiedRouterPush)
-      await jeSelectionneUneZoneGeographique("(93) Provence-Alpes-Côte d'Azur")
+      afficherMesUtilisateurs({
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      })
 
       // WHEN
+      jOuvreLeFormulairePourFiltrer()
+      await jeSelectionneUneZoneGeographique("(93) Provence-Alpes-Côte d'Azur")
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -185,10 +222,21 @@ describe('filtrer mes utilisateurs', () => {
       // GIVEN
       vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const spiedRouterPush = vi.fn()
-      afficherLesFiltres(spiedRouterPush)
-      await jeSelectionneUneStructure()
+      afficherMesUtilisateurs({
+        router: {
+          back: vi.fn(),
+          forward: vi.fn(),
+          prefetch: vi.fn(),
+          push: spiedRouterPush,
+          refresh: vi.fn(),
+          replace: vi.fn(),
+        },
+      })
 
       // WHEN
+      jOuvreLeFormulairePourFiltrer()
+      const structure = jeTapeUneStructure('tet')
+      await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
       jeFiltreLesUtilisateurs()
 
       // THEN
@@ -223,11 +271,22 @@ describe('filtrer mes utilisateurs', () => {
           // GIVEN
           vi.stubGlobal('fetch', vi.fn(structuresFetch))
           const spiedRouterPush = vi.fn()
-          afficherLesFiltres(spiedRouterPush)
-          await jeSelectionneUneZoneGeographique(zoneGeographique)
-          await jeSelectionneUneStructure()
+          afficherMesUtilisateurs({
+            router: {
+              back: vi.fn(),
+              forward: vi.fn(),
+              prefetch: vi.fn(),
+              push: spiedRouterPush,
+              refresh: vi.fn(),
+              replace: vi.fn(),
+            },
+          })
 
           // WHEN
+          jOuvreLeFormulairePourFiltrer()
+          await jeSelectionneUneZoneGeographique(zoneGeographique)
+          const structure = jeTapeUneStructure('tet')
+          await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
           jeFiltreLesUtilisateurs()
 
           // THEN
@@ -240,11 +299,22 @@ describe('filtrer mes utilisateurs', () => {
         // GIVEN
         vi.stubGlobal('fetch', structuresFetch)
         const spiedRouterPush = vi.fn()
-        afficherLesFiltres(spiedRouterPush)
-        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
-        await jeSelectionneUneStructure()
+        afficherMesUtilisateurs({
+          router: {
+            back: vi.fn(),
+            forward: vi.fn(),
+            prefetch: vi.fn(),
+            push: spiedRouterPush,
+            refresh: vi.fn(),
+            replace: vi.fn(),
+          },
+        })
 
         // WHEN
+        jOuvreLeFormulairePourFiltrer()
+        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        const structure = jeTapeUneStructure('tet')
+        await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
         await clearFirst(screen.getByLabelText('Par zone géographique'))
         jeFiltreLesUtilisateurs()
 
@@ -256,11 +326,22 @@ describe('filtrer mes utilisateurs', () => {
         // GIVEN
         vi.stubGlobal('fetch', structuresFetch)
         const spiedRouterPush = vi.fn()
-        afficherLesFiltres(spiedRouterPush)
-        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
-        await jeSelectionneUneStructure()
+        afficherMesUtilisateurs({
+          router: {
+            back: vi.fn(),
+            forward: vi.fn(),
+            prefetch: vi.fn(),
+            push: spiedRouterPush,
+            refresh: vi.fn(),
+            replace: vi.fn(),
+          },
+        })
 
         // WHEN
+        jOuvreLeFormulairePourFiltrer()
+        await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
+        const structure = jeTapeUneStructure('tet')
+        await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
         await jeSelectionneUneZoneGeographique('(27) Bourgogne-Franche-Comté')
         jeFiltreLesUtilisateurs()
 
@@ -271,64 +352,54 @@ describe('filtrer mes utilisateurs', () => {
   })
 
   function jeSelectionneUniquementLesUtilisateursActives(): void {
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Uniquement les utilisateurs activés' }))
+    cocherLaCase('Uniquement les utilisateurs activés')
   }
 
-  function jEcrisMaRecherche(value: string): HTMLElement {
-    const rechercher = screen.getByLabelText('Rechercher par nom ou adresse électronique')
-    fireEvent.change(rechercher, { target: { value } })
-    return rechercher
+  function jeTapeMaRecherche(value: string): HTMLElement {
+    return saisirLeTexte('Rechercher par nom ou adresse électronique', value)
   }
 
   async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
-    await select(screen.getByLabelText('Par zone géographique'), zoneGeographique)
+    await selectionnerLElement(screen.getByLabelText('Par zone géographique'), zoneGeographique)
   }
 
-  async function jeSelectionneUneStructure(): Promise<void> {
-    const filtreParStructure = screen.getByLabelText('Par structure')
-    fireEvent.input(filtreParStructure, { target: { value: 'tet' } })
-    await select(filtreParStructure, 'TETRIS — GRASSE')
+  function jeTapeUneStructure(value: string): HTMLElement {
+    return saisirLeTexte('Par structure', value)
+  }
+
+  async function jeSelectionneUneStructure(input: HTMLElement, nomStructure: string): Promise<void> {
+    await selectionnerLElement(input, nomStructure)
   }
 
   function jeSelectionneGestionnaireRegion(): void {
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire région' }))
+    cocherLaCase('Gestionnaire région')
   }
 
   function jeSelectionneGestionnaireDepartement(): void {
-    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire département' }))
+    cocherLaCase('Gestionnaire département')
   }
 
   function jeReinitialiseLesFiltres(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Réinitialiser les filtres' }))
+    presserLeBouton('Réinitialiser les filtres')
   }
 
   function jeFiltreLesUtilisateurs(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Afficher les utilisateurs' }))
+    presserLeBouton('Afficher les utilisateurs')
   }
 
-  function jOuvreLesFiltres(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Filtrer' }))
+  function jOuvreLeFormulairePourFiltrer(): void {
+    presserLeBouton('Filtrer')
   }
 
-  function jeFermeLesFiltres(): void {
-    fireEvent.click(screen.getByRole('button', { name: 'Fermer les filtres' }))
+  function jeFermeLeFormulairePourFiltrer(): void {
+    presserLeBouton('Fermer les filtres')
   }
 
-  function afficherLesFiltres(spiedRouterPush: Mock): void {
+  function afficherMesUtilisateurs(
+    options?: Partial<Parameters<typeof renderComponent>[1]>,
+    totalUtilisateur = 11
+  ): void {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
-    renderComponent(
-      <MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />,
-      {
-        router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
-          push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
-        },
-      }
-    )
-    jOuvreLesFiltres()
+    renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
   }
 })
