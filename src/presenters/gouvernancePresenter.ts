@@ -5,10 +5,10 @@ import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernan
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
-  now = (): Date => new Date()
+  now: Date
 ): GouvernanceViewModel {
   return {
-    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now())) },
+    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     sectionFeuillesDeRoute: {
@@ -65,11 +65,10 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteViewModel {
   const date = comite.date !== undefined && comite.date >= now
-    ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}`
+    ? formaterEnDateFrancaise(new Date(comite.date))
     : ''
   return {
-    date,
-    nom: `Comité ${comite.type}`,
+    intitule: date ? `Comité ${comite.type} : ${date}` : `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }
 }
@@ -199,8 +198,7 @@ function formatPluriel(count: number): 's' | '' {
 }
 
 type ComiteViewModel = Readonly<{
-  date: string
-  nom: string
+  intitule: string
   periodicite: string
 }>
 
