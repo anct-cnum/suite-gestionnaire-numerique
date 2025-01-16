@@ -63,7 +63,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
   const comites = gouvernanceRecord.comites.length > 0
     ? gouvernanceRecord.comites.map((comite) => ({
       commentaire: comite.commentaire ?? '',
-      dateProchainComite: comite.dateProchainComite ?? undefined,
+      date: comite.date ?? undefined,
       nom: comite.nom ?? '',
       periodicite: comite.frequence,
       type: comite.type as TypeDeComite,

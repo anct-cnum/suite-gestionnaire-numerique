@@ -3,12 +3,15 @@ import { render, screen, within } from '@testing-library/react'
 import Gouvernance from './Gouvernance'
 import { matchWithoutMarkup, presserLeBouton } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
+
+const now = new Date('2024-09-06')
 
 describe('gouvernance', () => {
   it('quand j’affiche une gouvernance, alors elle s’affiche avec son titre et son sous titre', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône' }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -27,7 +30,7 @@ describe('gouvernance', () => {
       feuillesDeRoute: undefined,
       membres: undefined,
       noteDeContexte: undefined,
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -51,7 +54,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité, alors elle s’affiche avec sa section lui demandant d’en ajouter un', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -72,7 +75,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors s’affiche le formulaire de création', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), now)
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -85,7 +88,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), now)
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -103,20 +106,20 @@ describe('gouvernance', () => {
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-09-06'),
+          date: new Date('2024-09-06'),
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
         },
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-03-01'),
+          date: new Date('2024-03-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'Trimestriel',
           type: 'technique',
         },
       ],
-    }))
+    }), epochTime)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -155,7 +158,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans membre, alors elle s’affiche avec son résumé et sa section lui demandant d’en ajouter un', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', membres: undefined }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', membres: undefined }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -195,7 +198,7 @@ describe('gouvernance', () => {
           type: 'Collectivité',
         },
       ],
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -259,7 +262,7 @@ describe('gouvernance', () => {
           type: 'Administration',
         },
       ],
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -278,7 +281,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans feuille de route, alors elle s’affiche avec son résumé à 0 et sa section lui demandant d’en ajouter une', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: undefined }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: undefined }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -327,7 +330,7 @@ describe('gouvernance', () => {
           totalActions: 1,
         },
       ],
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -391,7 +394,7 @@ describe('gouvernance', () => {
           totalActions: 3,
         },
       ],
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -412,7 +415,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans note de contexte, alors elle s’affiche avec son résumé vide et sa section lui demandant d’en ajouter une', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }))
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -443,7 +446,7 @@ describe('gouvernance', () => {
         prenomAuteur: 'Jean',
         texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       },
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -482,7 +485,7 @@ describe('gouvernance', () => {
         prenomAuteur: 'Jean',
         texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p>',
       },
-    }))
+    }), now)
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -494,32 +497,73 @@ describe('gouvernance', () => {
     expect(lireMoins).toBeInTheDocument()
   })
 
-  it('quand j’affiche une gouvernance avec un comité sans date de prochain comité, alors elle s’affiche avec la mention en attente de planification', () => {
+  it('quand j’affiche une gouvernance avec un comité sans date, alors le comité est affiché sans date', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: undefined,
+          date: undefined,
           nom: 'Comité stratégique 1',
           periodicite: 'Semestriel',
           type: 'stratégique',
         },
       ],
-    }))
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
-    const rowsGroup = within(comites).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    const columns1Body = within(rowsBody[0]).getAllByRole('cell')
-    expect(columns1Body).toHaveLength(3)
-    expect(columns1Body[1].textContent).toBe('Comité stratégique en attente de planification')
-    expect(columns1Body[2].textContent).toBe('Semestriel')
+    const columns1Body = within(comites).getAllByRole('cell')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique')
+  })
+
+  it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché sans date', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          date: new Date('2020-09-05'),
+          nom: 'Comité stratégique 1',
+          periodicite: 'Semestriel',
+          type: 'stratégique',
+        },
+      ],
+    }), now)
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const comites = screen.getByRole('table', { name: 'Comités' })
+    const columns1Body = within(comites).getAllByRole('cell')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique')
+  })
+
+  it('quand j’affiche une gouvernance avec un comité dont la date est le jour même ou dans le futur, alors le comité est affiché avec sa date', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: [
+        {
+          commentaire: 'commentaire',
+          date: new Date('1996-04-15'),
+          nom: 'Comité stratégique 1',
+          periodicite: 'Semestriel',
+          type: 'stratégique',
+        },
+      ],
+    }), epochTime)
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const comites = screen.getByRole('table', { name: 'Comités' })
+    const columns1Body = within(comites).getAllByRole('cell')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique : 15/04/1996')
   })
 
   function jOuvreLeFormulairePourAjouterUnComite(): void {

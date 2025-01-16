@@ -4,10 +4,11 @@ import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
-  gouvernanceReadModel: UneGouvernanceReadModel
+  gouvernanceReadModel: UneGouvernanceReadModel,
+  now: Date
 ): GouvernanceViewModel {
   return {
-    ...{ comites: gouvernanceReadModel.comites?.map(toComitesViewModel) },
+    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     sectionFeuillesDeRoute: {
@@ -62,13 +63,12 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
   ].every(isNullish)
 }
 
-function toComitesViewModel(comite: ComiteReadModel): ComiteViewModel {
-  const dateProchainComite = comite.dateProchainComite ?
-    `: ${formaterEnDateFrancaise(comite.dateProchainComite)}` :
-    'en attente de planification'
+function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteViewModel {
+  const date = comite.date !== undefined && comite.date >= now
+    ? formaterEnDateFrancaise(new Date(comite.date))
+    : ''
   return {
-    dateProchainComite,
-    nom: `Comité ${comite.type}`,
+    intitule: date ? `Comité ${comite.type} : ${date}` : `Comité ${comite.type}`,
     periodicite: comite.periodicite,
   }
 }
@@ -198,8 +198,7 @@ function formatPluriel(count: number): 's' | '' {
 }
 
 type ComiteViewModel = Readonly<{
-  dateProchainComite: string
-  nom: string
+  intitule: string
   periodicite: string
 }>
 

@@ -56,9 +56,9 @@ export default function AjouterUnComite({
       </SegmentedControl>
       <div className="fr-col-6 fr-mb-3w">
         <Datepicker
-          id="dateProchainComite"
+          id="date"
           min={formatForInputDate(new Date())}
-          name="dateProchainComite"
+          name="date"
         >
           Date du prochain comité
         </Datepicker>

@@ -153,7 +153,7 @@ model ComiteRecord {
   frequence            String
   commentaire          String?
   nom                  String?
-  dateProchainComite   DateTime?
+  date                 DateTime?
   editeurUtilisateurId String?   @map("editeur_utilisateur_id")
 
   relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceId], references: [id])

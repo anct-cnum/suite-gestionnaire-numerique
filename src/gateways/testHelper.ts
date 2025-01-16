@@ -100,7 +100,7 @@ export function comiteRecordFactory(
   return {
     commentaire: 'un commentaire',
     creation: epochTime,
-    dateProchainComite: epochTime,
+    date: epochTime,
     derniereEdition: epochTime,
     editeurUtilisateurId: '1',
     frequence: 'annuelle',

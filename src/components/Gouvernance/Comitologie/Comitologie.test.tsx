@@ -5,6 +5,8 @@ import { FrozenDate, presserLeBouton, presserLeBoutonRadio, saisirLeTexte, match
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
+const now = new Date('2024-09-06')
+
 describe('comitologie', () => {
   it('quand je clique sur ajouter une comitologie, le drawer d’ajout de comitologie s’affiche', () => {
     // GIVEN
@@ -49,10 +51,10 @@ describe('comitologie', () => {
     const annuelle = within(fieldsets[1]).getByRole('radio', { checked: false, name: 'Annuelle' })
     expect(annuelle).toHaveAttribute('value', 'annuelle')
 
-    const dateProchainComite = within(formulaire).getByLabelText('Date du prochain comité')
-    expect(dateProchainComite).not.toHaveAttribute('required')
-    expect(dateProchainComite).toHaveAttribute('type', 'date')
-    expect(dateProchainComite).toHaveAttribute('min', '1996-04-15')
+    const date = within(formulaire).getByLabelText('Date du prochain comité')
+    expect(date).not.toHaveAttribute('required')
+    expect(date).toHaveAttribute('type', 'date')
+    expect(date).toHaveAttribute('min', '1996-04-15')
 
     const commentaires = within(formulaire).getByLabelText('Laissez ici un commentaire général sur le comité', { selector: 'textarea' })
     expect(commentaires).not.toHaveAttribute('required')
@@ -142,7 +144,7 @@ describe('comitologie', () => {
   }
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(), now)
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
   }
 })
