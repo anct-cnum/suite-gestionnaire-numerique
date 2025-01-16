@@ -106,7 +106,9 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors s’affiche le formulaire de création', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' })
+    )
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -119,7 +121,9 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }))
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' })
+    )
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -133,24 +137,26 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec au moins un comité, alors elle s’affiche avec sa section comitologie', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-09-06'),
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
-          type: 'stratégique',
-        },
-        {
-          commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-03-01'),
-          nom: 'Comité stratégique 2',
-          periodicite: 'Trimestriel',
-          type: 'technique',
-        },
-      ],
-    }))
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            dateProchainComite: new Date('2024-09-06'),
+            nom: 'Comité stratégique 1',
+            periodicite: 'Semestriel',
+            type: 'stratégique',
+          },
+          {
+            commentaire: 'commentaire',
+            dateProchainComite: new Date('2024-03-01'),
+            nom: 'Comité stratégique 2',
+            periodicite: 'Trimestriel',
+            type: 'technique',
+          },
+        ],
+      })
+    )
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -380,7 +386,7 @@ describe('gouvernance', () => {
               {
                 montantSubventionAccorde: 5_000,
                 montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion 2',
+                nom: 'Feuille de route numérique du Rhône',
               },
             ],
             links: { plusDetails: '/' },
@@ -464,7 +470,7 @@ describe('gouvernance', () => {
             montantSubventionAccorde: 105_000,
             montantSubventionDemande: 120_000,
             montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion 1',
+            nom: 'Feuille de route inclusion',
             porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
             totalActions: 3,
           },
@@ -475,7 +481,7 @@ describe('gouvernance', () => {
             montantSubventionAccorde: 38_030,
             montantSubventionDemande: 50_000,
             montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion 2',
+            nom: 'Feuille de route numérique du Rhône',
             porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
             totalActions: 1,
           },
@@ -527,12 +533,12 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(4)
-    expect(columns1Body[1].textContent).toBe('Feuille de route inclusion 1')
+    expect(columns1Body[1].textContent).toBe('Feuille de route inclusion')
     expect(columns1Body[2].textContent).toBe('3 actions')
     expect(columns1Body[3].textContent).toBe('145 000 €')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(4)
-    expect(columns2Body[1].textContent).toBe('Feuille de route inclusion 2')
+    expect(columns2Body[1].textContent).toBe('Feuille de route numérique du Rhône')
     expect(columns2Body[2].textContent).toBe('1 action')
     expect(columns2Body[3].textContent).toBe('88 030 €')
   })
@@ -549,7 +555,7 @@ describe('gouvernance', () => {
             montantSubventionAccorde: 100_000,
             montantSubventionDemande: 115_000,
             montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion 1',
+            nom: 'Feuille de route inclusion',
             porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
             totalActions: 3,
           },
@@ -702,17 +708,19 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance avec un comité sans date de prochain comité, alors elle s’affiche avec la mention en attente de planification', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: [
-        {
-          commentaire: 'commentaire',
-          dateProchainComite: undefined,
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
-          type: 'stratégique',
-        },
-      ],
-    }))
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({
+        comites: [
+          {
+            commentaire: 'commentaire',
+            dateProchainComite: undefined,
+            nom: 'Comité stratégique 1',
+            periodicite: 'Semestriel',
+            type: 'stratégique',
+          },
+        ],
+      })
+    )
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)

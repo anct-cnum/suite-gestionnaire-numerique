@@ -1,6 +1,10 @@
 import { Prisma } from '@prisma/client'
 
-import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
+import {
+  TypeDeComite,
+  UneGouvernanceReadModel,
+  UneGouvernanceReadModelLoader,
+} from '@/use-cases/queries/RecupererUneGouvernance'
 
 type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
@@ -55,21 +59,24 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
 }
 
 function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
-  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
-    dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
-    nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
-    prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
-    texte: gouvernanceRecord.noteDeContexte.contenu,
-  } : undefined
-  const comites = gouvernanceRecord.comites.length > 0
-    ? gouvernanceRecord.comites.map((comite) => ({
-      commentaire: comite.commentaire ?? '',
-      dateProchainComite: comite.dateProchainComite ?? undefined,
-      nom: comite.nom ?? '',
-      periodicite: comite.frequence,
-      type: comite.type as TypeDeComite,
-    }))
+  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition
+    ? {
+      dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
+      nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
+      prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
+      texte: gouvernanceRecord.noteDeContexte.contenu,
+    }
     : undefined
+  const comites =
+    gouvernanceRecord.comites.length > 0
+      ? gouvernanceRecord.comites.map((comite) => ({
+        commentaire: comite.commentaire ?? '',
+        dateProchainComite: comite.dateProchainComite ?? undefined,
+        nom: comite.nom ?? '',
+        periodicite: comite.frequence,
+        type: comite.type as TypeDeComite,
+      }))
+      : undefined
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
@@ -87,7 +94,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion 1',
+        nom: 'Feuille de route inclusion',
         porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 3,
       },
@@ -101,7 +108,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion 2',
+        nom: 'Feuille de route numérique du Rhône',
         porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 2,
       },

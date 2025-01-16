@@ -1,5 +1,9 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
+import {
+  departementRecordFactory,
+  regionRecordFactory,
+  utilisateurRecordFactory,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -38,7 +42,8 @@ describe('gouvernance loader', () => {
     })
     await prisma.noteDeContexteRecord.create({
       data: {
-        contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        contenu:
+          '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
         derniereEdition: new Date('2024-11-23'),
         editeurId: 123,
         gouvernanceId: gouvernance.id,
@@ -108,7 +113,7 @@ describe('gouvernance loader', () => {
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
@@ -122,7 +127,7 @@ describe('gouvernance loader', () => {
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
+          nom: 'Feuille de route numérique du Rhône',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 2,
         },
@@ -772,24 +777,33 @@ describe('gouvernance loader', () => {
 
 const feuillesDeRoute = [
   {
-    beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubvention: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
+    beneficiairesSubventionFormation: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route inclusion 1',
+    nom: 'Feuille de route inclusion',
     porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 3,
   },
   {
     beneficiairesSubvention: [],
-    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubventionFormation: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route inclusion 2',
+    nom: 'Feuille de route numérique du Rhône',
     porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 2,
   },
