@@ -134,7 +134,7 @@ function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetails
 
   const detailsAffichage: MembreDetailsViewModel['details'] = [
     ...membre.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: membre.contactReferent.denomination }] : [],
-    ...membre.contactTechnique !== undefined && membre.contactTechnique !== '' ? [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
+    ...membre.contactTechnique !== undefined && membre.contactTechnique ? [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
     ...isNaN(membre.totalMontantSubventionAccorde ?? NaN) ? [] : [
       {
         information: `${membre.totalMontantSubventionAccorde} €`,
@@ -157,7 +157,7 @@ function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetails
   if (membre.feuillesDeRoute.length >= 1) {
     details.unshift(
       {
-        feuillesDeRoute: membre.feuillesDeRoute.map((f) => ({ nom: f.nom })),
+        feuillesDeRoute: membre.feuillesDeRoute.map((feuilleDeRoute) => ({ nom: feuilleDeRoute.nom })),
         information: '',
         intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
       }

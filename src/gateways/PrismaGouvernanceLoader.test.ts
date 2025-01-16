@@ -166,7 +166,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 30_000,
@@ -191,7 +190,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Dupont',
           },
-          contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           links: {},
           nom: 'CC des Monts du Lyonnais',
@@ -317,7 +315,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 30_000,
@@ -342,7 +339,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Dupont',
           },
-          contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           links: {},
           nom: 'CC des Monts du Lyonnais',
@@ -427,7 +423,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Laetitia',
           },
-          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 5_000,
@@ -458,7 +453,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 30_000,
@@ -484,7 +478,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Dupont',
           },
-          contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           links: {},
           nom: 'CC des Monts du Lyonnais',
@@ -600,7 +593,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 30_000,
@@ -626,7 +618,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Dupont',
           },
-          contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           links: {},
           nom: 'CC des Monts du Lyonnais',
@@ -741,7 +732,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
           feuillesDeRoute: [
             {
               montantSubventionAccorde: 30_000,
@@ -766,7 +756,6 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Dupont',
           },
-          contactTechnique: 'coco.dupont@rhones.gouv.fr',
           feuillesDeRoute: [],
           links: {},
           nom: 'CC des Monts du Lyonnais',

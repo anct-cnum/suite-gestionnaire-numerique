@@ -99,7 +99,7 @@ describe('membres', () => {
             },
             contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [],
-            links: { plusDetails: '/' },
+            links: {},
             nom: 'Préfecture du Rhône',
             roles: ['Co-porteur'],
             telephone: '',
@@ -197,12 +197,10 @@ describe('membres', () => {
               },
               contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
               feuillesDeRoute,
-              links: { plusDetails: '/' },
+              links: {},
               nom: 'Préfecture du Rhône',
               roles: ['Co-porteur'],
               telephone: '',
-              totalMontantSubventionAccorde: 0,
-              totalMontantSubventionFormationAccorde: 0,
               type: 'Administration',
               typologieMembre: 'Préfecture départementale',
             },
@@ -286,7 +284,6 @@ describe('membres', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
-            contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [],
             links: {},
             nom: 'Département du Rhône',
@@ -335,6 +332,24 @@ describe('membres', () => {
     ])
   })
 
+  it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas les intitulers totaux subvention et contact référent', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+    fireEvent.click(membre)
+
+    // THEN
+    const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+    const intitulerId = within(drawer).getAllByTestId('intitulerId')
+    const intituler = intitulerId.map((intitule) => intitule.textContent)
+    expect(intituler.includes('Total subventions accordées')).toBeFalsy()
+    expect(intituler.includes('Total subventions formations accordées')).toBeFalsy()
+    expect(intituler.includes('Contact référent')).toBeFalsy()
+  })
+
   it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas le bouton "Plus de détails" ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
@@ -351,7 +366,7 @@ describe('membres', () => {
     expect(plusDeDetails).not.toBeInTheDocument()
   })
 
-  it('quand je clique sur le membre est autre que la préfecture alors le drawer contient 5 intitulers ', () => {
+  it('quand je clique sur le membre autre que la préfecture alors le drawer contient 5 intitulers ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -373,7 +388,24 @@ describe('membres', () => {
     ])
   })
 
-  it('quand je clique sur le membre est autre que la préfecture alors le drawer contient le bouton "Plus de détails" ', () => {
+  it('quand je clique sur le membre autre que la préfecture alors le drawer ne contient pas les intitulers Contact politique de la collectivité & Contact technique', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
+    fireEvent.click(membre)
+
+    // THEN
+    const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+    const intitulerId = within(drawer).getAllByTestId('intitulerId')
+    const intituler = intitulerId.map((intitule) => intitule.textContent)
+    expect(intituler.includes('Contact politique de la collectivité')).toBeFalsy()
+    expect(intituler.includes('Contact technique')).toBeFalsy()
+  })
+
+  it('quand je clique sur le membre autre que la préfecture alors le drawer contient le bouton "Plus de détails" ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)

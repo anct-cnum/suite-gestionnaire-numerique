@@ -106,9 +106,10 @@ type Query = Readonly<{
 }>
 
 function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+  const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,
-    ...membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
+    ...categorieDuMembre === 'autre' && membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
       totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
       totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
         feuilleDeRoute.montantSubventionFormationAccorde,

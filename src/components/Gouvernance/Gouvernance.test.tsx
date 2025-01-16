@@ -277,7 +277,6 @@ describe('gouvernance', () => {
               poste: 'chargé de mission',
               prenom: 'Durant',
             },
-            contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [
               {
                 montantSubventionAccorde: 5_000,

@@ -145,7 +145,6 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
           poste: 'chargé de mission',
           prenom: 'Durant',
         },
-        contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [
           {
             montantSubventionAccorde: 30_000,
@@ -170,7 +169,6 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
           poste: 'chargé de mission',
           prenom: 'Dupont',
         },
-        contactTechnique: 'coco.dupont@rhones.gouv.fr',
         feuillesDeRoute: [],
         links: {},
         nom: 'CC des Monts du Lyonnais',
