@@ -8,20 +8,18 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
-  const codeDepartement = (await params).codeDepartement
+  try {
+    const codeDepartement = (await params).codeDepartement
+    const gouvernanceReadModel =
+       await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
 
-  if (!codeDepartement) {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel)
+    return (
+      <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
+    )
+  } catch {
     notFound()
   }
-
-  const gouvernanceReadModel =
-    await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
-
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel)
-
-  return (
-    <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
-  )
 }
 
 type Props = Readonly<{

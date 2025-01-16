@@ -91,6 +91,7 @@ describe('membres', () => {
         membres: [
           {
             contactReferent: {
+              denomination: 'Contact politique de la collectivité',
               mailContact: 'julien.deschamps@rhones.gouv.fr',
               nom: 'Henrich',
               poste: 'chargé de mission',
@@ -98,6 +99,7 @@ describe('membres', () => {
             },
             contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [],
+            links: { plusDetails: '/' },
             nom: 'Préfecture du Rhône',
             roles: ['Co-porteur'],
             telephone: '',
@@ -187,6 +189,7 @@ describe('membres', () => {
           membres: [
             {
               contactReferent: {
+                denomination: 'Contact politique de la collectivité',
                 mailContact: 'julien.deschamps@rhones.gouv.fr',
                 nom: 'Henrich',
                 poste: 'chargé de mission',
@@ -194,6 +197,7 @@ describe('membres', () => {
               },
               contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
               feuillesDeRoute,
+              links: { plusDetails: '/' },
               nom: 'Préfecture du Rhône',
               roles: ['Co-porteur'],
               telephone: '',
@@ -276,6 +280,7 @@ describe('membres', () => {
         membres: [
           {
             contactReferent: {
+              denomination: 'Contact politique de la collectivité',
               mailContact: 'didier.durand@exemple.com',
               nom: 'Didier',
               poste: 'chargé de mission',
@@ -283,6 +288,7 @@ describe('membres', () => {
             },
             contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
             feuillesDeRoute: [],
+            links: {},
             nom: 'Département du Rhône',
             roles: ['Co-porteur', 'Financeur'],
             telephone: '',
@@ -308,12 +314,7 @@ describe('membres', () => {
     expect(sectionFeuilleDeRoute).not.toBeInTheDocument()
   })
 
-  it.each([
-    'Contact politique de la collectivité',
-    'Contact technique',
-    'Feuilles de route',
-    'Téléphone',
-  ])('quand je clique sur le membre de la préfecture alors le drawer contient %s', (section) => {
+  it('quand je clique sur le membre de la préfecture alors le drawer contient 4 intitulers', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -324,8 +325,14 @@ describe('membres', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-    const contactReferentMembre = within(drawer).getByText(section)
-    expect(contactReferentMembre).toBeInTheDocument()
+    const intitulerId = within(drawer).getAllByTestId('intitulerId')
+    const intituler = intitulerId.map((intitule) => intitule.textContent)
+    expect(intituler).toStrictEqual([
+      'Feuilles de route',
+      'Contact politique de la collectivité',
+      'Contact technique',
+      'Téléphone',
+    ])
   })
 
   it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas le bouton "Plus de détails" ', () => {
@@ -344,13 +351,7 @@ describe('membres', () => {
     expect(plusDeDetails).not.toBeInTheDocument()
   })
 
-  it.each([
-    'Contact référent',
-    'Feuille de route',
-    'Total subventions accordées',
-    'Total subventions formations accordées',
-    'Téléphone',
-  ])('quand je clique sur le membre est autre que la préfecture alors le drawer contient %s ', (section) => {
+  it('quand je clique sur le membre est autre que la préfecture alors le drawer contient 5 intitulers ', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -361,8 +362,15 @@ describe('membres', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-    const contactReferentMembre = within(drawer).getByText(section)
-    expect(contactReferentMembre).toBeInTheDocument()
+    const intitulerId = within(drawer).getAllByTestId('intitulerId')
+    const intituler = intitulerId.map((intitule) => intitule.textContent)
+    expect(intituler).toStrictEqual([
+      'Feuille de route',
+      'Total subventions accordées',
+      'Total subventions formations accordées',
+      'Contact référent',
+      'Téléphone',
+    ])
   })
 
   it('quand je clique sur le membre est autre que la préfecture alors le drawer contient le bouton "Plus de détails" ', () => {

@@ -241,6 +241,7 @@ describe('gouvernance', () => {
         membres: [
           {
             contactReferent: {
+              denomination: 'Contact politique de la collectivité',
               mailContact: 'julien.deschamps@rhones.gouv.fr',
               nom: 'Henrich',
               poste: 'chargé de mission',
@@ -259,6 +260,7 @@ describe('gouvernance', () => {
                 nom: 'Feuille de route numérique du Rhône',
               },
             ],
+            links: {},
             nom: 'Préfecture du Rhône',
             roles: ['Co-porteur'],
             telephone: '+33 4 45 00 45 00',
@@ -269,6 +271,7 @@ describe('gouvernance', () => {
           },
           {
             contactReferent: {
+              denomination: 'Contact politique de la collectivité',
               mailContact: 'didier.durand@exemple.com',
               nom: 'Didier',
               poste: 'chargé de mission',
@@ -282,6 +285,7 @@ describe('gouvernance', () => {
                 nom: 'Feuille de route inclusion',
               },
             ],
+            links: {},
             nom: 'Département du Rhône',
             roles: ['Co-porteur', 'Financeur'],
             telephone: '+33 4 45 00 45 01',
@@ -361,6 +365,7 @@ describe('gouvernance', () => {
         membres: [
           {
             contactReferent: {
+              denomination: 'Contact politique de la collectivité',
               mailContact: 'julien.deschamps@rhones.gouv.fr',
               nom: 'Henrich',
               poste: 'chargé de mission',
@@ -379,6 +384,7 @@ describe('gouvernance', () => {
                 nom: 'Feuille de route inclusion 2',
               },
             ],
+            links: { plusDetails: '/' },
             nom: 'Préfecture du Rhône',
             roles: ['Co-porteur'],
             telephone: '+33 4 45 00 45 00',

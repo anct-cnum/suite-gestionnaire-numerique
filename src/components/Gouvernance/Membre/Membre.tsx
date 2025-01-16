@@ -10,7 +10,6 @@ export default function Membre({
   membreDetails,
   labelId,
   details,
-  affichagePlusDetails,
 }: Props): ReactElement {
   return (
     <>
@@ -39,7 +38,10 @@ export default function Membre({
           className="fr-mb-2w"
           key={membre.intitule}
         >
-          <div className="color-grey">
+          <div
+            className="color-grey"
+            data-testid="intitulerId"
+          >
             {membre.intitule}
           </div>
           {membre.feuillesDeRoute ? (
@@ -59,12 +61,12 @@ export default function Membre({
           )}
         </div>
       ))}
-      {affichagePlusDetails ? (
+      {membreDetails.plusDetailsHref !== undefined && membreDetails.plusDetailsHref !== '' ? (
         <ul className="fr-btns-group--icon-left fr-btns-group">
           <li>
             <Link
               className="fr-btn fr-btn--secondary"
-              href="/"
+              href={membreDetails.plusDetailsHref}
             >
               Plus de détails
             </Link>
@@ -79,5 +81,4 @@ type Props = Readonly<{
   membreDetails: MembreDetailsViewModel
   labelId: string
   details: MembreDetailsViewModel['details']
-  affichagePlusDetails: boolean
 }>

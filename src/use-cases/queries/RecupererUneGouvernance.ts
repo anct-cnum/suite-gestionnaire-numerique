@@ -9,13 +9,15 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
   }
 
   async get({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.trouverEtEnrichir(
-      codeDepartement,
-      (gouvernance) => ({
-        ...gouvernance,
-        ...gouvernance.membres && { membres: gouvernance.membres.map(toMembreDetailAvecTotauxReadModel) },
-      })
-    )
+    return this.#loader.trouverEtEnrichir(codeDepartement, (gouvernance) => ({
+      ...gouvernance,
+      ...gouvernance.membres && {
+        membres: gouvernance.membres.values()
+          .map(toMembreDetailAvecTotauxReadModel)
+          .map(toMembreDetailIntitulerReadModel)
+          .toArray(),
+      },
+    }))
   }
 }
 
@@ -73,17 +75,17 @@ type NoteDeContexteReadModel = Readonly<{
   prenomAuteur: string
   texte: string
 }>
-
 export type MembreDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
-  contactTechnique: string
+  contactTechnique?: string
   contactReferent: Readonly<{
     nom: string
     prenom: string
     poste: string
     mailContact: string
+    denomination: 'Contact référent' | 'Contact politique de la collectivité'
   }>
   telephone: string
   typologieMembre: string
@@ -92,8 +94,11 @@ export type MembreDetailReadModel = Readonly<{
     montantSubventionAccorde: number
     montantSubventionFormationAccorde: number
   }>>
-  totalMontantSubventionFormationAccorde: number
-  totalMontantSubventionAccorde: number
+  totalMontantSubventionFormationAccorde?: number
+  totalMontantSubventionAccorde?: number
+  links: Readonly<{
+    plusDetails?: string
+  }>
 }>
 
 type Query = Readonly<{
@@ -112,4 +117,23 @@ function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): Membr
       totalMontantSubventionFormationAccorde: 0,
     }),
   }
+}
+
+function toMembreDetailIntitulerReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+  const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
+  return {
+    ...membre,
+    contactReferent: {
+      ...membre.contactReferent,
+      denomination: categorieDuMembre === 'autre' ? 'Contact référent' : 'Contact politique de la collectivité',
+    },
+    links: {
+      ...categorieDuMembre === 'autre' && { plusDetails: '/' },
+    },
+  }
+}
+
+const typologieMembre: Record<string, string> = {
+  Autre: 'autre',
+  'Préfecture départementale': 'prefecture',
 }

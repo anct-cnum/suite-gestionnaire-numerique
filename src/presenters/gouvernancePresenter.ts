@@ -132,59 +132,43 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
 function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
 
-  const affichageMembrePrefecture: MembreDetailsViewModel['details'] = [
-    ...membre.feuillesDeRoute.length >= 1
-      ? [
-        {
-          feuillesDeRoute: membre.feuillesDeRoute,
-          intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
-        },
-      ]
-      : [],
-    { information: contactReferent, intitule: 'Contact politique de la collectivité' },
-    { information: membre.contactTechnique, intitule: 'Contact technique' },
+  const detailsAffichage: MembreDetailsViewModel['details'] = [
+    ...membre.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: membre.contactReferent.denomination }] : [],
+    ...membre.contactTechnique !== undefined && membre.contactTechnique !== '' ? [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
+    ...isNaN(membre.totalMontantSubventionAccorde ?? NaN) ? [] : [
+      {
+        information: `${membre.totalMontantSubventionAccorde} €`,
+        intitule: 'Total subventions accordées',
+      },
+    ],
+    ...isNaN(membre.totalMontantSubventionFormationAccorde ?? NaN) ? [] : [
+      {
+        information: `${membre.totalMontantSubventionFormationAccorde} €`,
+        intitule: 'Total subventions formations accordées',
+      },
+    ],
+    ...membre.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
     {
       information: membre.telephone === '' ? '-' : membre.telephone,
       intitule: 'Téléphone',
     },
   ]
+  const details = detailsAffichage.slice()
+  if (membre.feuillesDeRoute.length >= 1) {
+    details.unshift(
+      {
+        feuillesDeRoute: membre.feuillesDeRoute.map((f) => ({ nom: f.nom })),
+        information: '',
+        intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+      }
+    )
+  }
 
-  const affichageAutreMembre: MembreDetailsViewModel['details'] = [
-    ...membre.feuillesDeRoute.length >= 1
-      ? [
-        {
-          feuillesDeRoute: membre.feuillesDeRoute,
-          information: '',
-          intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
-        },
-      ]
-      : [],
-    {
-      information: `${formaterEnNombreFrancais(membre.totalMontantSubventionAccorde)} €`,
-      intitule: 'Total subventions accordées',
-    },
-    {
-      information: `${formaterEnNombreFrancais(membre.totalMontantSubventionFormationAccorde)} €`,
-      intitule: 'Total subventions formations accordées',
-    },
-    { information: contactReferent, intitule: 'Contact référent' },
-    {
-      information: membre.telephone === '' ? '-' : membre.telephone,
-      intitule: 'Téléphone',
-    },
-  ]
-  const categorieDuMembre =
-    typologieMembreEtAffichage[membre.typologieMembre] ?? typologieMembreEtAffichage.Autre
   return {
-    affichagePlusDetails: categorieDuMembre === 'affichageAutreMembre',
-    categorieDuMembre:
-      typologieMembreEtAffichage[membre.typologieMembre] ?? typologieMembreEtAffichage.Autre,
-    details:
-      categorieDuMembre === 'affichageMembrePrefecture'
-        ? affichageMembrePrefecture
-        : affichageAutreMembre,
+    details,
     logo: buildLogoMembre(membre),
     nom: membre.nom,
+    plusDetailsHref: membre.links.plusDetails,
     roles: membre.roles.map(toRoleViewModel),
     type: membre.type,
     typologieMembre: membre.typologieMembre,
@@ -323,15 +307,10 @@ export type MembreDetailsViewModel = Readonly<{
   roles: ReadonlyArray<RoleViewModel>
   type: string
   typologieMembre: string
-  feuillesDeRoute?: ReadonlyArray<
-    Readonly<{
-      nom: string
-    }>
-  >
   details: ReadonlyArray<
     Readonly<{
       intitule: string
-      information?: string
+      information: string
       feuillesDeRoute?: ReadonlyArray<
         Readonly<{
           nom: string
@@ -339,8 +318,7 @@ export type MembreDetailsViewModel = Readonly<{
       >
     }>
   >
-  categorieDuMembre: string
-  affichagePlusDetails: boolean
+  plusDetailsHref?: string
 }>
 
 type RoleViewModel = Readonly<{
@@ -365,9 +343,4 @@ const roleAndHisColor: Record<string, string> = {
   Observateur: 'beige-gris-galet',
   Porteur: 'info',
   Récipiendaire: 'green-archipel',
-}
-
-const typologieMembreEtAffichage: Record<string, string> = {
-  Autre: 'affichageAutreMembre',
-  'Préfecture départementale': 'affichageMembrePrefecture',
 }

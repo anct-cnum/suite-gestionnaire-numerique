@@ -109,6 +109,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     membres: [
       {
         contactReferent: {
+          denomination: 'Contact politique de la collectivité',
           mailContact: 'julien.deschamps@rhones.gouv.fr',
           nom: 'Henrich',
           poste: 'chargé de mission',
@@ -127,6 +128,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
             nom: 'Feuille de route numérique du Rhône',
           },
         ],
+        links: { plusDetails: '/' },
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
         telephone: '+33 4 45 00 45 00',
@@ -137,6 +139,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
       {
         contactReferent: {
+          denomination: 'Contact référent',
           mailContact: 'didier.durand@exemple.com',
           nom: 'Didier',
           poste: 'chargé de mission',
@@ -150,6 +153,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
             nom: 'Feuille de route inclusion',
           },
         ],
+        links: {},
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
@@ -160,6 +164,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
       {
         contactReferent: {
+          denomination: 'Contact référent',
           mailContact: 'coco.dupont@rhones.gouv.fr',
           nom: 'Coco',
           poste: 'chargé de mission',
@@ -167,6 +172,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         },
         contactTechnique: 'coco.dupont@rhones.gouv.fr',
         feuillesDeRoute: [],
+        links: {},
         nom: 'CC des Monts du Lyonnais',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '',

@@ -106,6 +106,7 @@ export function gouvernanceReadModelFactory(
     membres: [
       {
         contactReferent: {
+          denomination: 'Contact politique de la collectivité',
           mailContact: 'julien.deschamps@rhones.gouv.fr',
           nom: 'Henrich',
           poste: 'chargé de mission',
@@ -124,22 +125,21 @@ export function gouvernanceReadModelFactory(
             nom: 'Feuille de route numérique du Rhône',
           },
         ],
+        links: {},
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
         telephone: '+33 4 45 00 45 00',
-        totalMontantSubventionAccorde: 0,
-        totalMontantSubventionFormationAccorde: 0,
         type: 'Administration',
         typologieMembre: 'Préfecture départementale',
       },
       {
         contactReferent: {
+          denomination: 'Contact référent',
           mailContact: 'didier.durand@exemple.com',
           nom: 'Didier',
           poste: 'chargé de mission',
           prenom: 'Durant',
         },
-        contactTechnique: 'Simone.lagrange@rhones.gouv.fr',
         feuillesDeRoute: [
           {
             montantSubventionAccorde: 5_000,
@@ -147,6 +147,7 @@ export function gouvernanceReadModelFactory(
             nom: 'Feuille de route inclusion',
           },
         ],
+        links: { plusDetails: '/' },
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
