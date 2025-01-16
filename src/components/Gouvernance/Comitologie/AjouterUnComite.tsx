@@ -3,6 +3,7 @@ import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
 import { clientContext } from '@/components/shared/ClientContext'
 import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import Icon from '@/components/shared/Icon/Icon'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
@@ -25,6 +26,8 @@ export default function AjouterUnComite({
       onSubmit={creerUnComite}
     >
       <DrawerTitle id={labelId}>
+        <Icon icon="calendar-event-line" />
+        <br />
         Ajouter un comité
       </DrawerTitle>
       <p className="fr-text--sm color-grey">

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import Icon from '@/components/shared/Icon/Icon'
 import Tag from '@/components/shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -9,6 +10,8 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
   return (
     <>
       <DrawerTitle id={labelId}>
+        <Icon icon="survey-line" />
+        <br />
         {feuilleDeRoute.nom}
       </DrawerTitle>
       <div className="fr-mb-2w">
