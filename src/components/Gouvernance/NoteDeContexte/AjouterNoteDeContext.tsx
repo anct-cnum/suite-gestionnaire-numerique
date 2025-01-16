@@ -41,7 +41,7 @@ export default function AjouterNoteDeContext({
         <ul className="fr-btns-group">
           <li>
             <SubmitButton
-              isDisabled={!content.trim()}
+              isDisabled={!content.trim() || isDisabled}
               label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
             />
           </li>
@@ -51,8 +51,8 @@ export default function AjouterNoteDeContext({
   )
 
   function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): void {
-    console.log('creerUneNoteDeContext', content)
     event.preventDefault()
+    setIsDisabled(true)
     closeDrawer()
     window.dsfr(dialogRef.current).modal.conceal();
     (event.target as HTMLFormElement).reset()
