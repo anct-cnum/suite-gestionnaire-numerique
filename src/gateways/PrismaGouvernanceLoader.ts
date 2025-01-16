@@ -128,7 +128,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
             nom: 'Feuille de route numérique du Rhône',
           },
         ],
-        links: { plusDetails: '/' },
+        links: {},
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
         telephone: '+33 4 45 00 45 00',

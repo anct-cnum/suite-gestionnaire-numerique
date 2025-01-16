@@ -10,8 +10,8 @@ describe('membres', () => {
     afficherGouvernance()
 
     // WHEN
-    jOuvreLesDetailsDUnMembre()
-    jeFermeLesDetailsDUnMembre()
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
+    jeFermeLesDetailsDuMembre('Fermer les détails du membre : Préfecture du Rhône')
 
     // THEN
     const drawer = screen.queryByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -20,12 +20,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre de la préfecture, alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -76,9 +74,9 @@ describe('membres', () => {
     afficherGouvernance()
 
     // WHEN
-    jOuvreLesDetailsDUnMembre()
-    const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-    jeFermeLesDetailsDUnMembre()
+    jOuvreLesDetailsDuMembre('Département du Rhône')
+    const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+    jeFermeLesDetailsDuMembre('Fermer les détails du membre : Département du Rhône')
 
     // THEN
     expect(drawer).not.toBeVisible()
@@ -86,36 +84,32 @@ describe('membres', () => {
 
   it('quand je clique sur le membre de la préfecture, alors je vois les informations non-obligatoires remplacer par un tiret ou que l’intituler n’est pas affiché', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(
-      gouvernanceReadModelFactory({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
-            },
-            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-            feuillesDeRoute: [],
-            links: {},
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
+    afficherGouvernance({
+      membres: [
+        {
+          contactReferent: {
+            denomination: 'Contact politique de la collectivité',
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
           },
-        ],
-      })
-    )
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [],
+          links: {},
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          telephone: '',
+          totalMontantSubventionAccorde: 0,
+          totalMontantSubventionFormationAccorde: 0,
+          type: 'Administration',
+          typologieMembre: 'Préfecture départementale',
+        },
+      ],
+    })
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -184,34 +178,30 @@ describe('membres', () => {
     'quand je visualise le detail d’un membre et que j’ai $feuilleDeRouteTotal $result alors il s’affiche aux $version ',
     ({ feuillesDeRoute, totalTirets, result }) => {
       // GIVEN
-      const gouvernanceViewModel = gouvernancePresenter(
-        gouvernanceReadModelFactory({
-          membres: [
-            {
-              contactReferent: {
-                denomination: 'Contact politique de la collectivité',
-                mailContact: 'julien.deschamps@rhones.gouv.fr',
-                nom: 'Henrich',
-                poste: 'chargé de mission',
-                prenom: 'Laetitia',
-              },
-              contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-              feuillesDeRoute,
-              links: {},
-              nom: 'Préfecture du Rhône',
-              roles: ['Co-porteur'],
-              telephone: '',
-              type: 'Administration',
-              typologieMembre: 'Préfecture départementale',
+      afficherGouvernance({
+        membres: [
+          {
+            contactReferent: {
+              denomination: 'Contact politique de la collectivité',
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
             },
-          ],
-        })
-      )
-      render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+            feuillesDeRoute,
+            links: {},
+            nom: 'Préfecture du Rhône',
+            roles: ['Co-porteur'],
+            telephone: '',
+            type: 'Administration',
+            typologieMembre: 'Préfecture départementale',
+          },
+        ],
+      })
 
       // WHEN
-      const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-      fireEvent.click(membre)
+      jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -224,12 +214,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre autre que la préfecture alors un drawer s’ouvre avec les détails du membre rempli à 100%', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Département du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
@@ -273,35 +261,31 @@ describe('membres', () => {
 
   it('quand je clique sur le membre autre que la préfecture alors je vois les informations optionnelles remplacer par un tiret', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(
-      gouvernanceReadModelFactory({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
-            },
-            feuillesDeRoute: [],
-            links: {},
-            nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Financeur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
+    afficherGouvernance({
+      membres: [
+        {
+          contactReferent: {
+            denomination: 'Contact politique de la collectivité',
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
           },
-        ],
-      })
-    )
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+          feuillesDeRoute: [],
+          links: {},
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          telephone: '',
+          totalMontantSubventionAccorde: 0,
+          totalMontantSubventionFormationAccorde: 0,
+          type: 'Collectivité',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ],
+    })
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Département du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
@@ -313,12 +297,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre de la préfecture alors le drawer contient 4 intitulers', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -334,12 +316,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas les intitulers totaux subvention et contact référent', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -352,12 +332,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre de la préfecture alors le drawer ne contient pas le bouton "Plus de détails" ', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Préfecture du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
@@ -368,12 +346,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre autre que la préfecture alors le drawer contient 5 intitulers ', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Département du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
@@ -390,12 +366,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre autre que la préfecture alors le drawer ne contient pas les intitulers Contact politique de la collectivité & Contact technique', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Département du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
@@ -407,12 +381,10 @@ describe('membres', () => {
 
   it('quand je clique sur le membre autre que la préfecture alors le drawer contient le bouton "Plus de détails" ', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    afficherGouvernance()
 
     // WHEN
-    const membre = screen.getByRole('button', { name: 'Département du Rhône' })
-    fireEvent.click(membre)
+    jOuvreLesDetailsDuMembre('Département du Rhône')
 
     // THEN
     const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
@@ -421,15 +393,15 @@ describe('membres', () => {
   })
 })
 
-function afficherGouvernance(): void {
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory())
+function afficherGouvernance(gouvernance?: object): void {
+  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance))
   render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 }
 
-function jOuvreLesDetailsDUnMembre(): void {
-  fireEvent.click(screen.getByRole('button', { name: 'Préfecture du Rhône' }))
+function jOuvreLesDetailsDuMembre(nomDuMembre: string): void {
+  fireEvent.click(screen.getByRole('button', { name: nomDuMembre }))
 }
 
-function jeFermeLesDetailsDUnMembre(): void {
-  fireEvent.click(screen.getByRole('button', { name: 'Fermer les détails du membre : Préfecture du Rhône' }))
+function jeFermeLesDetailsDuMembre(nomDuMembre: string): void {
+  fireEvent.click(screen.getByRole('button', { name: nomDuMembre }))
 }
