@@ -63,7 +63,7 @@ describe('gouvernance loader', () => {
       data: {
         commentaire: 'commentaire',
         creation: new Date('2024-11-23'),
-        dateProchainComite: new Date('2024-11-23'),
+        date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
@@ -75,7 +75,7 @@ describe('gouvernance loader', () => {
       data: {
         commentaire: 'commentaire',
         creation: new Date('2024-11-23'),
-        dateProchainComite: new Date('2024-08-01'),
+        date: new Date('2024-08-01'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
@@ -94,14 +94,14 @@ describe('gouvernance loader', () => {
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-11-23'),
+          date: new Date('2024-11-23'),
           nom: 'Comité stratégique 1',
           periodicite: 'trimestrielle',
           type: 'stratégique',
         },
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-08-01'),
+          date: new Date('2024-08-01'),
           nom: 'Comité stratégique 2',
           periodicite: 'trimestrielle',
           type: 'technique',
@@ -272,7 +272,7 @@ describe('gouvernance loader', () => {
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: undefined,
+          date: undefined,
           nom: 'Comité stratégique 1',
           periodicite: 'trimestrielle',
           type: 'stratégique',
@@ -333,7 +333,7 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         creation: new Date('2024-11-23'),
-        dateProchainComite: new Date('2024-11-23'),
+        date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
@@ -354,7 +354,7 @@ describe('gouvernance loader', () => {
       comites: [
         {
           commentaire: '',
-          dateProchainComite: new Date('2024-11-23'),
+          date: new Date('2024-11-23'),
           nom: 'Comité stratégique 1',
           periodicite: 'trimestrielle',
           type: 'stratégique',
@@ -416,7 +416,7 @@ describe('gouvernance loader', () => {
       data: {
         commentaire: 'commentaire',
         creation: new Date('2024-11-23'),
-        dateProchainComite: new Date('2024-11-23'),
+        date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
@@ -435,7 +435,7 @@ describe('gouvernance loader', () => {
       comites: [
         {
           commentaire: 'commentaire',
-          dateProchainComite: new Date('2024-11-23'),
+          date: new Date('2024-11-23'),
           nom: '',
           periodicite: 'trimestrielle',
           type: 'stratégique',

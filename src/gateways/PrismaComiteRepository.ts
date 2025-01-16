@@ -15,7 +15,7 @@ export class PrismaComiteRepository implements AddComiteRepository {
       data: {
         commentaire: comite.state.commentaire,
         creation: comite.state.dateDeCreation,
-        dateProchainComite: comite.state.date,
+        date: comite.state.date,
         derniereEdition: comite.state.dateDeModification,
         editeurUtilisateurId: comite.state.uidUtilisateurLAyantModifie,
         frequence: comite.state.frequence,

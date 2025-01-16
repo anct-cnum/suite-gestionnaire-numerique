@@ -11,8 +11,8 @@ export default function ComitologieRemplie({ comites }: Props): ReactElement {
       titre="Comités"
     >
       {
-        comites.map(({ nom, dateProchainComite, periodicite }) => (
-          <tr key={`${nom}_${dateProchainComite}`}>
+        comites.map(({ intitule, periodicite }) => (
+          <tr key={intitule}>
             <td>
               <span
                 aria-hidden="true"
@@ -20,7 +20,7 @@ export default function ComitologieRemplie({ comites }: Props): ReactElement {
               />
             </td>
             <td className="font-weight-700">
-              {`${nom} ${dateProchainComite}`}
+              {intitule}
             </td>
             <td className="color-grey">
               {periodicite}

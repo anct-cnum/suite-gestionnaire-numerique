@@ -8,6 +8,7 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 
 export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
   const codeDepartement = (await params).codeDepartement
+  const now = new Date()
 
   if (!codeDepartement) {
     notFound()
@@ -19,7 +20,7 @@ export default async function GouvernanceController({ params }: Props): Promise<
     notFound()
   }
 
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel)
+  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, now)
 
   return (
     <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
