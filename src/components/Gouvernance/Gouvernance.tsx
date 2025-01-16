@@ -25,7 +25,6 @@ import SectionRemplie from './SectionRemplie'
 import SectionVide from './SectionVide'
 import SubSectionTitle from './SubSectionTitle'
 import Drawer from '../shared/Drawer/Drawer'
-import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -99,7 +98,6 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
-          icon={<Icon icon="calendar-event-line" />}
           id={drawerComiteId}
           // Stryker disable next-line BooleanLiteral
           isFixedWidth={false}

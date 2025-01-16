@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement, ReactNode, Ref } from 'react'
+import { PropsWithChildren, ReactElement, Ref } from 'react'
 
 import styles from './Drawer.module.css'
 
@@ -10,7 +10,6 @@ export default function Drawer({
   isFixedWidth,
   labelId,
   children,
-  icon,
   ref,
 }: Props): ReactElement {
   // istanbul ignore next @preserve
@@ -29,16 +28,13 @@ export default function Drawer({
         <div className="fr-grid-row fr-grid-row--right">
           <div className={`fr-col-5 ${styles['modal-box']} ${boxSize}`}>
             <div className={`fr-modal__body ${styles['fr-modal__body']}`}>
-              <div className="fr-modal__header">
-                {icon}
-                <button
-                  aria-controls={id}
-                  className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
-                  onClick={closeDrawer}
-                  title={boutonFermeture}
-                  type="button"
-                />
-              </div>
+              <button
+                aria-controls={id}
+                className={`fr-btn fr-btn--tertiary fr-icon-close-line ${styles.close}`}
+                onClick={closeDrawer}
+                title={boutonFermeture}
+                type="button"
+              />
               <div className={`fr-modal__content ${styles['fr-modal__content']}`}>
                 {children}
               </div>
@@ -56,7 +52,6 @@ type Props = PropsWithChildren<Readonly<{
   boutonFermeture: string
   labelId: string
   isFixedWidth: boolean
-  icon?: ReactNode
   ref?: Ref<HTMLDialogElement>
   closeDrawer(): void
 }>>
