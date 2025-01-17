@@ -19,7 +19,6 @@ export class PrismaGouvernanceRepository implements FindGouvernanceRepository {
             relationUtilisateur: true,
           },
         },
-        relationCreateur: true,
         relationDepartement: true,
       },
       where: {
@@ -48,10 +47,6 @@ export class PrismaGouvernanceRepository implements FindGouvernanceRepository {
       },
       noteDeContexte,
       uid: String(record.id),
-      utilisateurUid: {
-        email: record.relationCreateur.ssoEmail,
-        value: record.relationCreateur.ssoId,
-      },
     })
   }
 }
