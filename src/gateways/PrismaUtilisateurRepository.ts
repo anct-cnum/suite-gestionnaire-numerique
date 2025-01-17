@@ -85,10 +85,6 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return this.#drop(utilisateur.state.uid.value)
   }
 
-  async dropByUid(uid: UtilisateurUidState['value']): Promise<boolean> {
-    return this.#drop(uid)
-  }
-
   async update(utilisateur: Utilisateur): Promise<void> {
     const utilisateurState = utilisateur.state
 
