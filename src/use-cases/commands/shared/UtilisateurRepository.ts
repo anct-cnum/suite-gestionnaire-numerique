@@ -8,10 +8,6 @@ export interface DropUtilisateurRepository {
   drop(utilisateur: Utilisateur): Promise<boolean>
 }
 
-export interface DropUtilisateurByUidRepository {
-  dropByUid(uid: UtilisateurUidState['value']): Promise<boolean>
-}
-
 export interface UpdateUtilisateurRepository {
   update(utilisateur: Utilisateur): Promise<void>
 }
@@ -27,6 +23,5 @@ export interface AddUtilisateurRepository {
 export interface UtilisateurRepository extends
   FindUtilisateurRepository,
   DropUtilisateurRepository,
-  DropUtilisateurByUidRepository,
   AddUtilisateurRepository,
   UpdateUtilisateurRepository {}
