@@ -134,7 +134,8 @@ function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetails
 
   const detailsAffichage: MembreDetailsViewModel['details'] = [
     ...membre.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: membre.contactReferent.denomination }] : [],
-    ...membre.contactTechnique !== undefined && membre.contactTechnique ? [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
+    ...membre.contactTechnique !== undefined && membre.contactTechnique !== '' ?
+      [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
     ...isNaN(membre.totalMontantSubventionAccorde ?? NaN) ? [] : [
       {
         information: `${membre.totalMontantSubventionAccorde} €`,

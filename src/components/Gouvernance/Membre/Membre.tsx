@@ -40,7 +40,6 @@ export default function Membre({
         >
           <div
             className="color-grey"
-            data-testid="intitulerId"
           >
             {membre.intitule}
           </div>
@@ -61,7 +60,7 @@ export default function Membre({
           )}
         </div>
       ))}
-      {membreDetails.plusDetailsHref !== undefined && membreDetails.plusDetailsHref ? (
+      {membreDetails.plusDetailsHref !== undefined && membreDetails.plusDetailsHref !== '' ? (
         <ul className="fr-btns-group--icon-left fr-btns-group">
           <li>
             <Link

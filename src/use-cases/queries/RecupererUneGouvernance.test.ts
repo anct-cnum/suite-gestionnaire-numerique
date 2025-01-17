@@ -88,11 +88,36 @@ describe('recupererUneGouvernance', () => {
     const gouvernance = await queryHandler.get({ codeDepartement: '69' })
 
     // THEN
-    expect(gouvernance.membres?.[0].contactTechnique).toBeTypeOf('string')
-    expect(gouvernance.membres?.[0].totalMontantSubventionAccorde).toBeTypeOf('undefined')
-    expect(gouvernance.membres?.[0].totalMontantSubventionFormationAccorde).toBeTypeOf('undefined')
-    expect(gouvernance.membres?.[0].links.plusDetails).toBeTypeOf('undefined')
-    expect(gouvernance.membres?.[0].links).toStrictEqual({})
+    expect(gouvernance.membres).toStrictEqual([
+      {
+        contactReferent: {
+          denomination: 'Contact politique de la collectivité',
+          mailContact: 'julien.deschamps@rhones.gouv.fr',
+          nom: 'Henrich',
+          poste: 'chargé de mission',
+          prenom: 'Laetitia',
+        },
+        contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+        feuillesDeRoute: [
+          {
+            montantSubventionAccorde: 5_000,
+            montantSubventionFormationAccorde: 5_000,
+            nom: 'Feuille de route inclusion',
+          },
+          {
+            montantSubventionAccorde: 5_000,
+            montantSubventionFormationAccorde: 5_000,
+            nom: 'Feuille de route numérique du Rhône',
+          },
+        ],
+        links: { },
+        nom: 'Préfecture du Rhône',
+        roles: ['Co-porteur'],
+        telephone: '+33 4 45 00 45 00',
+        type: 'Administration',
+        typologieMembre: 'Préfecture départementale',
+      },
+    ])
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle existe contenant 1 membre autre que la prefecture departementale alors le total subvention est bien présent, le links n'est pas vide et le contact technique n'est pas renvoyer", async () => {
@@ -132,10 +157,37 @@ describe('recupererUneGouvernance', () => {
     const gouvernance = await queryHandler.get({ codeDepartement: '69' })
 
     // THEN
-    expect(gouvernance.membres?.[0].contactTechnique).toBeTypeOf('undefined')
-    expect(gouvernance.membres?.[0].totalMontantSubventionAccorde).toBeTypeOf('number')
-    expect(gouvernance.membres?.[0].totalMontantSubventionFormationAccorde).toBeTypeOf('number')
-    expect(gouvernance.membres?.[0].links.plusDetails).toBeTypeOf('string')
+    expect(gouvernance.membres).toStrictEqual([
+      {
+        contactReferent: {
+          denomination: 'Contact référent',
+          mailContact: 'didier.durand@exemple.com',
+          nom: 'Didier',
+          poste: 'chargé de mission',
+          prenom: 'Durant',
+        },
+        feuillesDeRoute: [
+          {
+            montantSubventionAccorde: 5000,
+            montantSubventionFormationAccorde: 5000,
+            nom: 'Feuille de route inclusion',
+          },
+        ],
+        links: {
+          plusDetails: '/',
+        },
+        nom: 'Département du Rhône',
+        roles: [
+          'Co-porteur',
+          'Financeur',
+        ],
+        telephone: '+33 4 45 00 45 01',
+        totalMontantSubventionAccorde: 5000,
+        totalMontantSubventionFormationAccorde: 5000,
+        type: 'Collectivité',
+        typologieMembre: 'Collectivité, EPCI',
+      },
+    ])
   })
 })
 
