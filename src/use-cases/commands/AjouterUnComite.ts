@@ -56,7 +56,7 @@ export class AjouterUnComite implements CommandHandler<Command> {
       return comite
     }
 
-    if (!gouvernance.peutEtreGererPar(utilisateurCourant)) {
+    if (!gouvernance.peutEtreGerePar(utilisateurCourant)) {
       return 'utilisateurNePeutPasAjouterComite'
     }
 

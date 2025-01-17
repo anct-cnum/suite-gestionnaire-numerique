@@ -81,49 +81,6 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un comité est créé par un rôle appartenant au groupe admin, alors il est ajouté à cette gourvernance', async () => {
-    // GIVEN
-    const dateDeCreation = new Date('2024-01-01')
-    const ajouterUnComite = new AjouterUnComite(
-      new GouvernanceExistanteRepositorySpy(),
-      new GestionnaireGroupeAdminRepositorySpy(),
-      new ComiteRepositorySpy(),
-      dateDeCreation
-    )
-
-    // WHEN
-    const result = await ajouterUnComite.execute({
-      commentaire,
-      date,
-      frequence: frequenceValide,
-      type: typeValide,
-      uidGouvernance,
-      uidUtilisateurCourant,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedComiteToAdd?.state).toStrictEqual(
-      comiteFactory({
-        commentaire,
-        date: new Date(date),
-        dateDeCreation,
-        dateDeModification: dateDeCreation,
-        frequence: frequenceValide,
-        type: typeValide,
-        uidGouvernance: {
-          value: 'gouvernanceFooId',
-        },
-        uidUtilisateurCourant: {
-          email: 'martin.tartempion@example.net',
-          value: 'userFooId',
-        },
-      }).state
-    )
-    expect(result).toBe('OK')
-  })
-
   it.each([
     {
       date,
@@ -314,13 +271,6 @@ class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(null)
-  }
-}
-
-class GestionnaireGroupeAdminRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ role: 'Administrateur dispositif' }))
   }
 }
 

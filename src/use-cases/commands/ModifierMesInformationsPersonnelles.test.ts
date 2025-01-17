@@ -57,7 +57,7 @@ describe('modifier mes informations personnelles', () => {
       })
     })
 
-    it('il et modifié si les modifications sont valides', async () => {
+    it('il est modifié si les modifications sont valides', async () => {
       // GIVEN
       const utilisateur = utilisateurFactory()
       const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
