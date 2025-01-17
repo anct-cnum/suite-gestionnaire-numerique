@@ -54,14 +54,14 @@ export function gouvernanceReadModelFactory(
     comites: [
       {
         commentaire: 'commentaire',
-        dateProchainComite: epochTime,
+        date: epochTime,
         nom: 'Comité stratégique',
         periodicite: 'Semestriel',
         type: 'stratégique',
       },
       {
         commentaire: 'commentaire',
-        dateProchainComite: new Date('2024-03-01'),
+        date: new Date('2024-03-01'),
         nom: 'Comité stratégique 2',
         periodicite: 'Trimestriel',
         type: 'technique',

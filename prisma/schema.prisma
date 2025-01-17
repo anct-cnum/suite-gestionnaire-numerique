@@ -102,6 +102,7 @@ model UtilisateurRecord {
 
   notesDeContexte NoteDeContexteRecord[]
   gouvernances    GouvernanceRecord[]
+  comites         ComiteRecord[]
 
   @@map("utilisateur")
 }
@@ -145,16 +146,18 @@ model NoteDeContexteRecord {
 model ComiteRecord {
   id Int @id @default(autoincrement())
 
-  gouvernanceId      Int
-  creation           DateTime
-  derniereEdition    DateTime
-  type               String
-  frequence          String
-  commentaire        String?
-  nom                String?
-  dateProchainComite DateTime?
+  gouvernanceId        Int
+  creation             DateTime
+  derniereEdition      DateTime
+  type                 String
+  frequence            String
+  commentaire          String?
+  nom                  String?
+  date                 DateTime?
+  editeurUtilisateurId String?   @map("editeur_utilisateur_id")
 
-  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
+  relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceId], references: [id])
+  relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
 
   @@map("comite")
 }

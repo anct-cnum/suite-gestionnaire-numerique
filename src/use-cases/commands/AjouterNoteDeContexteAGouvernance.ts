@@ -29,7 +29,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
     if (!gouvernance) {
       return 'gouvernanceInexistante'
     }
-    if (!gouvernance.peutEtreGererPar(utilisateurCourant)) {
+    if (!gouvernance.peutEtreGerePar(utilisateurCourant)) {
       return 'utilisateurNePeutPasAjouterNoteDeContexte'
     }
 

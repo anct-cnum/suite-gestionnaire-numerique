@@ -565,7 +565,7 @@ describe('membres', () => {
 })
 
 function afficherGouvernance(gouvernance?: object): void {
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance))
+  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance), new Date())
   render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 }
 

@@ -4,7 +4,6 @@ import { ReactElement, useState } from 'react'
 
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
-import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -62,7 +61,6 @@ export default function FeuilleDeRouteRemplie({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        icon={<Icon icon="survey-line" />}
         id={drawerFeuilleDeRouteId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}

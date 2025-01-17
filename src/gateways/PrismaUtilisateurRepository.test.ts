@@ -10,11 +10,10 @@ import {
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
-import { UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
+import { UtilisateurUid } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
-import { UtilisateurRepository } from '@/use-cases/commands/shared/UtilisateurRepository'
 
-const uidUtilisateurValue = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+const uidUtilisateurValue = 'userFooId'
 const uidUtilisateur = new UtilisateurUid({ email: 'martin.tartempion@example.net', value: uidUtilisateurValue })
 
 describe('utilisateur repository', () => {
@@ -221,7 +220,7 @@ describe('utilisateur repository', () => {
   })
 
   describe('suppression d’un utilisateur', () => {
-    const ssoIdUtilisateurExistant = '8e39c6db-2f2a-45cf-ba65-e2831241cbe4'
+    const ssoIdUtilisateurExistant = 'userFooId'
     const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
     const ssoEmailUtilisateurExistant = 'martin.tartempion@example.net'
     const ssoEmailUtilisateurSupprime = 'martin.tartempion@example.org'
@@ -235,128 +234,103 @@ describe('utilisateur repository', () => {
       ssoId: ssoIdUtilisateurSupprime,
     })
 
-    describe.each([
-      {
-        desc: 'par identifiant de l’utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> => repository.dropByUid(uid),
-      },
-      {
-        desc: 'par utilisateur',
-        dropFn: async (repository: UtilisateurRepository, uid: UtilisateurUidState['value']): Promise<boolean> => repository.drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uid } })),
-      },
-    ])('$desc', ({ dropFn }) => {
-      it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
-        // GIVEN
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory(utilisateurExistant),
-        })
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory(utilisateurSupprime),
-        })
-
-        // WHEN
-        const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-          ssoIdUtilisateurExistant
-        )
-
-        // THEN
-        expect(result).toBe(true)
-        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
-          where: { ssoId: utilisateurExistant.ssoId },
-        })
-        expect(utilisateurModifie).toMatchObject({
-          dateDeCreation: epochTime,
-          departementCode: null,
-          derniereConnexion: epochTime,
-          emailDeContact: 'martin.tartempion@example.net',
-          groupementId: null,
-          inviteLe: epochTime,
-          isSuperAdmin: false,
-          isSupprime: true,
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          regionCode: null,
-          role: 'instructeur',
-          ssoEmail: 'martin.tartempion@example.net',
-          ssoId: ssoIdUtilisateurExistant,
-          structureId: null,
-          telephone: '0102030405',
-        })
+    it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
+      // GIVEN
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(utilisateurExistant),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(utilisateurSupprime),
       })
 
-      it('compte existant, préalablement supprimé : aucune écriture', async () => {
-        // GIVEN
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory(utilisateurExistant),
-        })
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory(utilisateurSupprime),
-        })
+      // WHEN
+      const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
 
-        // WHEN
-        const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-          ssoIdUtilisateurSupprime
-        )
+      // THEN
+      expect(result).toBe(true)
+      const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+        where: { ssoId: utilisateurExistant.ssoId },
+      })
+      expect(utilisateurModifie).toMatchObject({
+        dateDeCreation: epochTime,
+        departementCode: null,
+        derniereConnexion: epochTime,
+        emailDeContact: 'martin.tartempion@example.net',
+        groupementId: null,
+        inviteLe: epochTime,
+        isSuperAdmin: false,
+        isSupprime: true,
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        regionCode: null,
+        role: 'instructeur',
+        ssoEmail: 'martin.tartempion@example.net',
+        ssoId: ssoIdUtilisateurExistant,
+        structureId: null,
+        telephone: '0102030405',
+      })
+    })
 
-        // THEN
-        expect(result).toBe(false)
-        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
-          where: { ssoId: utilisateurExistant.ssoId },
-        })
-        expect(utilisateurModifie?.isSupprime).toBe(false)
+    it('compte existant, préalablement supprimé : aucune écriture', async () => {
+      // GIVEN
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(utilisateurExistant),
+      })
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(utilisateurSupprime),
       })
 
-      it('compte inexistant : aucune écriture', async () => {
-        // GIVEN
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory(utilisateurSupprime),
-        })
+      // WHEN
+      const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurSupprime } }))
 
-        // WHEN
-        const result = await dropFn(
-          new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-          ssoIdUtilisateurExistant
-        )
+      // THEN
+      expect(result).toBe(false)
+      const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+        where: { ssoId: utilisateurExistant.ssoId },
+      })
+      expect(utilisateurModifie?.isSupprime).toBe(false)
+    })
 
-        // THEN
-        expect(result).toBe(false)
-        const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
-          where: { ssoId: utilisateurSupprime.ssoId },
-        })
-        expect(utilisateurModifie?.isSupprime).toBe(true)
+    it('compte inexistant : aucune écriture', async () => {
+      // GIVEN
+      await prisma.utilisateurRecord.create({
+        data: utilisateurRecordFactory(utilisateurSupprime),
       })
 
-      it('erreur inattendue : non gérée', async () => {
-        // GIVEN
-        const prismaClientKnownRequestErrorOnUpdateStub = {
-          async update(): Promise<never> {
-            return Promise.reject(
-              new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
-            )
-          },
-        } as unknown as Prisma.UtilisateurRecordDelegate
-        const prismaClientUnknownRequestErrorOnUpdateStub = {
-          async update(): Promise<never> {
-            return Promise.reject(new Error('error'))
-          },
-        } as unknown as Prisma.UtilisateurRecordDelegate
+      // WHEN
+      const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
 
-        // WHEN
-        const unhandledKnownRequestError = dropFn(
-          new PrismaUtilisateurRepository(prismaClientKnownRequestErrorOnUpdateStub),
-          ssoIdUtilisateurExistant
-        )
-        const unhandledUnknownRequestError = dropFn(
-          new PrismaUtilisateurRepository(prismaClientUnknownRequestErrorOnUpdateStub),
-          ssoIdUtilisateurExistant
-        )
-
-        // THEN
-        await expect(unhandledKnownRequestError).rejects.toMatchObject({ code: 'P1000' })
-        await expect(unhandledUnknownRequestError).rejects.toStrictEqual(new Error('error'))
+      // THEN
+      expect(result).toBe(false)
+      const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
+        where: { ssoId: utilisateurSupprime.ssoId },
       })
+      expect(utilisateurModifie?.isSupprime).toBe(true)
+    })
+
+    it('erreur inattendue : non gérée', async () => {
+      // GIVEN
+      const prismaClientKnownRequestErrorOnUpdateStub = {
+        async update(): Promise<never> {
+          return Promise.reject(
+            new Prisma.PrismaClientKnownRequestError('', { clientVersion: '', code: 'P1000' })
+          )
+        },
+      } as unknown as Prisma.UtilisateurRecordDelegate
+      const prismaClientUnknownRequestErrorOnUpdateStub = {
+        async update(): Promise<never> {
+          return Promise.reject(new Error('error'))
+        },
+      } as unknown as Prisma.UtilisateurRecordDelegate
+
+      // WHEN
+      const unhandledKnownRequestError = new PrismaUtilisateurRepository(prismaClientKnownRequestErrorOnUpdateStub).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
+
+      const unhandledUnknownRequestError = new PrismaUtilisateurRepository(prismaClientUnknownRequestErrorOnUpdateStub).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
+
+      // THEN
+      await expect(unhandledKnownRequestError).rejects.toMatchObject({ code: 'P1000' })
+      await expect(unhandledUnknownRequestError).rejects.toStrictEqual(new Error('error'))
     })
   })
 

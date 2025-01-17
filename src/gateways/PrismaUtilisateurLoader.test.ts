@@ -801,7 +801,7 @@ describe('prisma utilisateur query', () => {
       expect(mesUtilisateursReadModel.total).toBe(2)
       expect(mesUtilisateursReadModel.utilisateursCourants).toHaveLength(2)
       expect(mesUtilisateursReadModel.utilisateursCourants[0].uid).toBe('31512478-64eb-4993-af47-a728ec4d8e06')
-      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('8e39c6db-2f2a-45cf-ba65-e2831241cbe4')
+      expect(mesUtilisateursReadModel.utilisateursCourants[1].uid).toBe('userFooId')
       expect(mesUtilisateursReadModel.utilisateursCourants[0].structureId).toBe(structureId)
       expect(mesUtilisateursReadModel.utilisateursCourants[1].structureId).toBe(structureId)
     })

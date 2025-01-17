@@ -5,6 +5,8 @@ import { presserLeBouton } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
+const now = new Date('2024-09-06')
+
 describe('feuille de route', () => {
   it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
     // GIVEN
@@ -184,10 +186,8 @@ describe('feuille de route', () => {
     presserLeBouton('Fermer les détails de la feuille de route')
   }
 
-  function afficherUneGouvernance(
-    override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>
-  ): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override))
+  function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), now)
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
   }
 })

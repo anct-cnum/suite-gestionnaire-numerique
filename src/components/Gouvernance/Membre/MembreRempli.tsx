@@ -5,7 +5,6 @@ import { Fragment, ReactElement, useState } from 'react'
 import Membre from './Membre'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
-import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { MembreDetailsViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -68,7 +67,6 @@ export default function MembreRempli({ membres }: Props): ReactElement {
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        icon={<Icon icon={membreDetails.logo} />}
         id={drawerMembreId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}

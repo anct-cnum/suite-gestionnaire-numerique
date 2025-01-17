@@ -59,24 +59,21 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
 }
 
 function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvernanceReadModel {
-  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition
-    ? {
-      dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
-      nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
-      prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
-      texte: gouvernanceRecord.noteDeContexte.contenu,
-    }
+  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
+    dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
+    nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
+    prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
+    texte: gouvernanceRecord.noteDeContexte.contenu,
+  } : undefined
+  const comites = gouvernanceRecord.comites.length > 0
+    ? gouvernanceRecord.comites.map((comite) => ({
+      commentaire: comite.commentaire ?? '',
+      date: comite.date ?? undefined,
+      nom: comite.nom ?? '',
+      periodicite: comite.frequence,
+      type: comite.type as TypeDeComite,
+    }))
     : undefined
-  const comites =
-    gouvernanceRecord.comites.length > 0
-      ? gouvernanceRecord.comites.map((comite) => ({
-        commentaire: comite.commentaire ?? '',
-        dateProchainComite: comite.dateProchainComite ?? undefined,
-        nom: comite.nom ?? '',
-        periodicite: comite.frequence,
-        type: comite.type as TypeDeComite,
-      }))
-      : undefined
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
@@ -188,6 +185,6 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
     ],
     noteDeContexte,
-    uid: '123456',
+    uid: String(gouvernanceRecord.id),
   }
 }

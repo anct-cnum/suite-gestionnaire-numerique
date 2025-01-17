@@ -3,6 +3,7 @@ import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
 import { clientContext } from '@/components/shared/ClientContext'
 import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import Icon from '@/components/shared/Icon/Icon'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
@@ -25,6 +26,8 @@ export default function AjouterUnComite({
       onSubmit={creerUnComite}
     >
       <DrawerTitle id={labelId}>
+        <Icon icon="calendar-event-line" />
+        <br />
         Ajouter un comité
       </DrawerTitle>
       <p className="fr-text--sm color-grey">
@@ -56,9 +59,9 @@ export default function AjouterUnComite({
       </SegmentedControl>
       <div className="fr-col-6 fr-mb-3w">
         <Datepicker
-          id="dateProchainComite"
+          id="date"
           min={formatForInputDate(new Date())}
-          name="dateProchainComite"
+          name="date"
         >
           Date du prochain comité
         </Datepicker>
@@ -84,7 +87,14 @@ export default function AjouterUnComite({
     const form = new FormData(event.currentTarget)
     const [type, frequence, date, commentaire] = [...form.values()].map((value) => value as string)
     setIsDisabled(true)
-    const messages = await ajouterUnComiteAction({ commentaire, date, frequence, path: pathname, type, uidGouvernance })
+    const messages = await ajouterUnComiteAction({
+      commentaire: commentaire === '' ? undefined : commentaire,
+      date: date === '' ? undefined : date,
+      frequence,
+      path: pathname,
+      type,
+      uidGouvernance,
+    })
     if (messages.includes('OK')) {
       Notification('success', { description: 'bien ajouté', title: 'Comité ' })
     } else {
