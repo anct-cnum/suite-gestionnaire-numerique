@@ -2,8 +2,10 @@
 
 import { FormEvent, ReactElement, RefObject, useState } from 'react'
 
+import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import EditeurDeTexte from '@/components/EditeurDeTexteEnrichi/EditeurDeTexte'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function AjouterNoteDeContext({
@@ -50,12 +52,16 @@ export default function AjouterNoteDeContext({
     </form>
   )
 
-  function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): void {
+  async function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    closeDrawer()
-    window.dsfr(dialogRef.current).modal.conceal();
+    const result = await ajouterUneNoteDeContexteAction()
+    if (result === 'OK') {
+      Notification('success', { description: 'bien ajouté', title: 'Note de contexte ' })
+    }
+    closeDrawer();
     (event.target as HTMLFormElement).reset()
+    window.dsfr(dialogRef.current).modal.conceal()
     setIsDisabled(false)
   }
 }
