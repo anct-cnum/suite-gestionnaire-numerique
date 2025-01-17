@@ -39,10 +39,6 @@ export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouverna
       uidUtilisateurLAyantModifiee: new UtilisateurUid(utilisateurFactory().state.uid),
     },
     uid: '1',
-    utilisateurUid: {
-      email: 'martin.tartempion@example.net',
-      value: 'userFooId',
-    },
     ...override,
   })
 }
