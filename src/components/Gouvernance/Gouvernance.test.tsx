@@ -74,6 +74,7 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité, alors s’affiche le formulaire de création', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), now)
+
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN
@@ -306,6 +307,7 @@ describe('gouvernance', () => {
         },
       ],
     }), now)
+
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
@@ -356,7 +358,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 105_000,
           montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
         },
@@ -367,7 +369,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 38_030,
           montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
+          nom: 'Feuille de route numérique du Rhône',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 1,
         },
@@ -410,12 +412,12 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(4)
-    expect(columns1Body[1].textContent).toBe('Feuille de route inclusion 1')
+    expect(columns1Body[1].textContent).toBe('Feuille de route inclusion')
     expect(columns1Body[2].textContent).toBe('3 actions')
     expect(columns1Body[3].textContent).toBe('145 000 €')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(4)
-    expect(columns2Body[1].textContent).toBe('Feuille de route inclusion 2')
+    expect(columns2Body[1].textContent).toBe('Feuille de route numérique du Rhône')
     expect(columns2Body[2].textContent).toBe('1 action')
     expect(columns2Body[3].textContent).toBe('88 030 €')
   })
@@ -431,7 +433,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
         },

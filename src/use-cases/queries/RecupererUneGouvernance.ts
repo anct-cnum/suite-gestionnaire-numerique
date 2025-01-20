@@ -77,8 +77,7 @@ type NoteDeContexteReadModel = Readonly<{
   prenomAuteur: string
   texte: string
 }>
-
-type MembreDetailReadModel = Readonly<{
+export type MembreDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
