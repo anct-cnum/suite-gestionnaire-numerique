@@ -87,7 +87,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -137,10 +137,10 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = gouvernanceLoader.find(codeDepartementInexistant)
+    const gouvernanceReadModel = gouvernanceLoader.trouverEtEnrichir(codeDepartementInexistant)
 
     // THEN
-    await expect(async () => gouvernanceReadModel).rejects.toThrow(/not found/)
+    await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
   })
 
   it('quand une gouvernance est demandée par son code département existant et qu‘elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
@@ -156,6 +156,7 @@ describe('gouvernance loader', () => {
         nom: 'Seine-Saint-Denis',
       }),
     })
+
     const user = await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({
         id: 123,
@@ -176,7 +177,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -233,7 +234,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -299,7 +300,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -364,7 +365,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -388,25 +389,34 @@ describe('gouvernance loader', () => {
 
 const feuillesDeRoute = [
   {
-    beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubvention: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
+    beneficiairesSubventionFormation: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route inclusion 1',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    nom: 'Feuille de route inclusion',
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 3,
   },
   {
     beneficiairesSubvention: [],
-    beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubventionFormation: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route inclusion 2',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+    nom: 'Feuille de route numérique du Rhône',
+    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
     totalActions: 2,
   },
 ]

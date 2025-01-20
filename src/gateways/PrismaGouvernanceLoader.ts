@@ -31,8 +31,8 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
     this.#dataResource = dataResource
   }
 
-  async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
-    const gouvernanceRecord = await this.#dataResource.findFirstOrThrow({
+  protected override async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
+    const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: true,
         noteDeContexte: {
@@ -46,6 +46,9 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
         departementCode: codeDepartement,
       },
     })
+    if (gouvernanceRecord === null) {
+      throw new Error('Le département n’existe pas')
+    }
 
     return transform(gouvernanceRecord)
   }
@@ -78,8 +81,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion 1',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+        nom: 'Feuille de route inclusion',
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 3,
       },
       {
@@ -89,8 +92,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion 2',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+        nom: 'Feuille de route numérique du Rhône',
+        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
         totalActions: 2,
       },
     ],
