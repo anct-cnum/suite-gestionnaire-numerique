@@ -44,8 +44,10 @@ export type UneGouvernanceReadModel = Readonly<{
 export type ComiteReadModel = Readonly<{
   commentaire?: string
   date?: Date
-  nom?: string
-  periodicite: string
+  derniereEdition: Date
+  nomEditeur: string
+  frequence: string
+  prenomEditeur: string
   type: TypeDeComite
 }>
 

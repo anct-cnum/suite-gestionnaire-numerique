@@ -12,7 +12,7 @@ export default function MembreRempli({ membres }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [membreDetails, setMembreDetails] = useState<MembreViewModel>(membres[0])
-  const drawerMembreId = 'draweMembreId'
+  const drawerMembreId = 'drawerMembreId'
   const labelMembreId = 'labelMembreId'
 
   return (

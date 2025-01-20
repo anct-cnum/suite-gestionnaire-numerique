@@ -13,7 +13,11 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
         contenu: true
       }
     }
-    comites: true
+    comites: {
+      include: {
+        relationUtilisateur: true
+      }
+    }
     relationDepartement: {
       select: {
         code: true
@@ -34,7 +38,11 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
   protected override async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
-        comites: true,
+        comites: {
+          include: {
+            relationUtilisateur: true,
+          },
+        },
         noteDeContexte: {
           include: {
             relationUtilisateur: true,
@@ -65,11 +73,16 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     ? gouvernanceRecord.comites.map((comite) => ({
       commentaire: comite.commentaire ?? '',
       date: comite.date ?? undefined,
-      nom: comite.nom ?? '',
-      periodicite: comite.frequence,
+      derniereEdition: comite.derniereEdition,
+      frequence: comite.frequence,
+      // @ts-expect-error
+      nomEditeur: comite.relationUtilisateur.nom,
+      // @ts-expect-error
+      prenomEditeur: comite.relationUtilisateur.prenom,
       type: comite.type as TypeDeComite,
     }))
     : undefined
+
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,

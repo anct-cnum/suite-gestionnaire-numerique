@@ -1,4 +1,4 @@
-import { formaterEnDateFrancaise } from './shared/date'
+import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -9,6 +9,7 @@ export function gouvernancePresenter(
 ): GouvernanceViewModel {
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
+    comiteVide: buildComiteVide(),
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     sectionFeuillesDeRoute: {
@@ -28,7 +29,8 @@ export function gouvernancePresenter(
 }
 
 export type GouvernanceViewModel = Readonly<{
-  comites?: ReadonlyArray<ComiteViewModel>
+  comites?: ReadonlyArray<ComiteResumeViewModel>
+  comiteVide: ComiteViewModel
   departement: string
   isVide: boolean
   sectionFeuillesDeRoute: Readonly<{
@@ -63,13 +65,47 @@ function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boole
   ].every(isNullish)
 }
 
-function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteViewModel {
-  const date = comite.date !== undefined && comite.date >= now
-    ? formaterEnDateFrancaise(new Date(comite.date))
-    : ''
+function buildComiteVide(): ComiteViewModel {
   return {
-    intitule: date ? `Comité ${comite.type} : ${date}` : `Comité ${comite.type}`,
-    periodicite: comite.periodicite,
+    frequences,
+    types,
+  }
+}
+
+function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
+  const date = comite.date !== undefined && comite.date >= now
+    ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}`
+    : ''
+  const frequence: Record<string, string> = {
+    annuelle: 'Annuel',
+    mensuelle: 'Mensuel',
+    semestrielle: 'Semestriel',
+    trimestrielle: 'Trimestriel',
+  }
+
+  return {
+    commentaire: comite.commentaire,
+    date: comite.date === undefined ? undefined : formatForInputDate(comite.date),
+    derniereEdition: formaterEnDateFrancaise(comite.derniereEdition),
+    editeur: `${comite.prenomEditeur} ${comite.nomEditeur}`,
+    frequence: frequence[comite.frequence],
+    frequences: frequences.map((frequence) => {
+      return {
+        id: `${frequence.id}_modifier`,
+        isChecked: comite.frequence === frequence.value,
+        label: frequence.label,
+        value: frequence.value,
+      }
+    }),
+    intitule: `Comité ${comite.type}${date}`,
+    types: types.map((type) => {
+      return {
+        id: `${type.id}_modifier`,
+        isChecked: comite.type === type.value,
+        label: type.label,
+        value: type.value,
+      }
+    }),
   }
 }
 
@@ -197,9 +233,28 @@ function formatPluriel(count: number): 's' | '' {
   return count > 1 ? 's' : ''
 }
 
-type ComiteViewModel = Readonly<{
+type ComiteResumeViewModel = Readonly<{
   intitule: string
-  periodicite: string
+  frequence: string
+}> & ComiteViewModel
+
+export type ComiteViewModel = Readonly<{
+  commentaire?: string
+  date?: string
+  derniereEdition?: string
+  editeur?: string
+  frequences: ReadonlyArray<{
+    id: string
+    isChecked: boolean
+    label: string
+    value: string
+  }>
+  types: ReadonlyArray<{
+    id: string
+    isChecked: boolean
+    label: string
+    value: string
+  }>
 }>
 
 export type FeuilleDeRouteViewModel = Readonly<{
@@ -246,3 +301,57 @@ const roleAndHisColor: Record<string, string> = {
   Porteur: 'info',
   Récipiendaire: 'green-archipel',
 }
+
+const frequences = [
+  {
+    id: 'mensuelle',
+    isChecked: true,
+    label: 'Mensuelle',
+    value: 'mensuelle',
+  },
+  {
+    id: 'trimestrielle',
+    isChecked: false,
+    label: 'Trimestrielle',
+    value: 'trimestrielle',
+  },
+  {
+    id: 'semestrielle',
+    isChecked: false,
+    label: 'Semestrielle',
+    value: 'semestrielle',
+  },
+  {
+    id: 'annuelle',
+    isChecked: false,
+    label: 'Annuelle',
+    value: 'annuelle',
+  },
+]
+
+const types = [
+  {
+    id: 'strategique',
+    isChecked: true,
+    label: 'Stratégique',
+    value: 'strategique',
+  },
+  {
+    id: 'technique',
+    isChecked: false,
+    label: 'Technique',
+    value: 'technique',
+  },
+  {
+    id: 'consultatif',
+    isChecked: false,
+    label: 'Consultatif',
+    value: 'consultatif',
+  },
+  {
+    id: 'autre',
+    isChecked: false,
+    label: 'Autre',
+    value: 'autre',
+  },
+]
