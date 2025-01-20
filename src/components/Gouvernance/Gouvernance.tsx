@@ -234,7 +234,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
       </section>
       <section aria-labelledby="noteDeContexte">
         <Drawer
-          boutonFermeture="Fermer le formulaire de création d’un comité"
+          boutonFermeture="Fermer le formulaire de création d’une note de contexte"
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}

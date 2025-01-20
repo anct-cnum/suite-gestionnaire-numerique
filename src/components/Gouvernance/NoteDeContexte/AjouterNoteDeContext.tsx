@@ -1,9 +1,9 @@
 'use client'
 
-import { FormEvent, ReactElement, RefObject, useState } from 'react'
+import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
 
-import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import EditeurDeTexte from '@/components/EditeurDeTexteEnrichi/EditeurDeTexte'
+import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
@@ -13,6 +13,7 @@ export default function AjouterNoteDeContext({
   labelId,
   closeDrawer,
 }: Props): ReactElement {
+  const { ajouterUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [content, setContent] = useState('')
   const [isDisabled, setIsDisabled] = useState(false)
 
@@ -40,7 +41,18 @@ export default function AjouterNoteDeContext({
         onChange={handleContentChange}
       />
       <div className="fr-my-3w">
-        <ul className="fr-btns-group">
+        <ul className="fr-btns-group fr-btns-group--inline">
+          <li>
+            <button
+              className="fr-btn fr-btn--secondary"
+              onClick={() => {
+                setContent('')
+              }}
+              type="button"
+            >
+              Supprimer
+            </button>
+          </li>
           <li>
             <SubmitButton
               isDisabled={!content.trim() || isDisabled}
@@ -55,9 +67,11 @@ export default function AjouterNoteDeContext({
   async function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    const result = await ajouterUneNoteDeContexteAction()
-    if (result === 'OK') {
-      Notification('success', { description: 'bien ajouté', title: 'Note de contexte ' })
+    const result = await ajouterUneNoteDeContexteAction({ noteDeContexte: content, path: pathname })
+    if (result[0] === 'OK') {
+      Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
+    } else {
+      Notification('error', { description: (result as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
     closeDrawer();
     (event.target as HTMLFormElement).reset()

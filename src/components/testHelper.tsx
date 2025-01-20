@@ -23,6 +23,7 @@ export function renderComponent(
 ): RenderResult {
   const clientContextProviderDefaultValue = {
     ajouterUnComiteAction: vi.fn(),
+    ajouterUneNoteDeContexteAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
@@ -91,6 +92,13 @@ export const rolesAvecStructure: RolesAvecStructure = {
   },
 }
 
+export const mockEditor = {
+  getHTML: vi.fn().mockReturnValue('<p><br class="ProseMirror-trailingBreak"></p>'),
+  isActive: vi.fn(() => false),
+  onUpdate: vi.fn(),
+  setContent: vi.fn(),
+}
+
 export class FrozenDate extends Date {
   constructor(date: number | string | Date | undefined) {
     super(date ?? '1996-04-15T03:24:00')
@@ -127,4 +135,17 @@ export function saisirLeTexte(name: string | RegExp, value: string): HTMLElement
 
 export async function selectionnerLElement(input: HTMLElement, nomStructure: string): Promise<void> {
   await select(input, nomStructure)
+}
+
+export function jEcrisDansUnEditeurDeTextEnrichi(texte: string): void {
+  let onUpdateCallback: (params: { editor: unknown }) => void = vi.fn()
+  const mockEditorWithCallback = {
+    ...mockEditor,
+    onUpdate: (callback: (params: { editor: unknown }) => void): void => {
+      onUpdateCallback = callback
+    },
+  }
+
+  mockEditor.getHTML.mockReturnValue(`<p>${texte}</p>`)
+  onUpdateCallback({ editor: mockEditorWithCallback })
 }

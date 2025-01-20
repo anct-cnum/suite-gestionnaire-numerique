@@ -232,7 +232,10 @@ describe('comitologie', () => {
   }
 
   function jEnregistreLeComite(): HTMLElement {
-    return presserLeBouton('Enregistrer')
+    const form = screen.getByRole('form', { name: 'Ajouter un comité' })
+    const button = within(form).getByRole('button', { name: 'Enregistrer' })
+    fireEvent.click(button)
+    return button
   }
 
   function jOuvreLeFormulairePourModifierUnComite(): void {
