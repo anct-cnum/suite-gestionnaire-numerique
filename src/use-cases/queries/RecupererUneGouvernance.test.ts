@@ -95,7 +95,7 @@ describe('recupererUneGouvernance', () => {
     ])
   })
 
-  it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre autre que la prefecture departementale, alors on la récupère avec les totaux subventions et le lien mais sans le contact technique", async () => {
+  it("quand une gouvernance est demandée sur un département et qu'elle existe contenant 1 membre autre que la prefecture departementale alors le total subvention est bien présent, le links n'est pas vide et le contact technique n'est pas renvoyer", async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,

@@ -144,10 +144,12 @@ export function gouvernanceReadModelFactory(
         typologieMembre: 'Collectivité, EPCI',
       },
     ],
-    noteDeContexte: { dateDeModification: epochTime,
+    noteDeContexte: {
+      dateDeModification: epochTime,
       nomAuteur: 'Deschamps',
       prenomAuteur: 'Jean',
-      texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>' },
+      texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+    },
     uid: 'gouvernanceFooId',
     ...override,
   }
