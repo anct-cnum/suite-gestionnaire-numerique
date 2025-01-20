@@ -8,19 +8,19 @@ import { ReactElement } from 'react'
 import { BarreDeMenuEditeurDeTexte } from './BarreDeMenuEditeurDeTexte'
 
 type Props = Readonly<{
-  initialContent: string
+  contenu: string
   onChange(content: string): void
 }>
 
-export default function EditeurDeTexte({ initialContent, onChange }: Props): ReactElement {
+export default function EditeurDeTexte({ contenu, onChange }: Props): ReactElement {
   const editor = useEditor({
-    content: initialContent,
+    content: contenu,
     editorProps: {
       attributes: {
         'aria-label': 'Éditeur de note de contexte',
         class: 'fr-input',
         role: 'textarea',
-        style: 'min-height: 400px; resize: vertical;',
+        style: 'min-height: 380px; resize: vertical;',
       },
     },
     extensions: [
@@ -31,8 +31,14 @@ export default function EditeurDeTexte({ initialContent, onChange }: Props): Rea
         protocols: ['https'],
       }),
     ],
+    onCreate: ({ editor }) => {
+      window.dispatchEvent(new CustomEvent('editorReady', { detail: editor }))
+    },
+
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      const content = editor.getHTML()
+      const isEmptyContent = content === '<p></p>'
+      onChange(isEmptyContent ? '' : content)
     },
   })
 

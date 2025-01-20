@@ -2,9 +2,10 @@
 
 import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
 
-import EditeurDeTexte from '@/components/EditeurDeTexteEnrichi/EditeurDeTexte'
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import EditeurDeTexte from '@/components/shared/EditeurDeTexteEnrichi/EditeurDeTexte'
+import { useRichTextEditor } from '@/components/shared/EditeurDeTexteEnrichi/hooks/useRichTextEditor'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
@@ -14,12 +15,10 @@ export default function AjouterNoteDeContext({
   closeDrawer,
 }: Props): ReactElement {
   const { ajouterUneNoteDeContexteAction, pathname } = useContext(clientContext)
-  const [content, setContent] = useState('')
   const [isDisabled, setIsDisabled] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
 
-  function handleContentChange(newContent: string): void {
-    setContent(newContent)
-  }
   return (
     <form
       aria-label="Ajouter une note de contexte"
@@ -37,41 +36,41 @@ export default function AjouterNoteDeContext({
         </div>
       </div>
       <EditeurDeTexte
-        initialContent=""
-        onChange={handleContentChange}
+        contenu=""
+        onChange={gererLeChangementDeContenu}
       />
-      <div className="fr-my-3w">
-        <ul className="fr-btns-group fr-btns-group--inline">
+      <ul className="fr-btns-group fr-mt-2w">
+        <li>
+          <SubmitButton
+            isDisabled={!contenu.trim() || isDisabled}
+            label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+          />
+        </li>
+        {contenu ?
           <li>
             <button
-              className="fr-btn fr-btn--secondary"
-              onClick={() => {
-                setContent('')
-              }}
+              className="fr-btn red-button"
+              onClick={viderLeContenu}
               type="button"
             >
               Supprimer
             </button>
           </li>
-          <li>
-            <SubmitButton
-              isDisabled={!content.trim() || isDisabled}
-              label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-            />
-          </li>
-        </ul>
-      </div>
+          :
+          null}
+      </ul>
     </form>
   )
 
   async function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    const result = await ajouterUneNoteDeContexteAction({ noteDeContexte: content, path: pathname })
-    if (result[0] === 'OK') {
+    const messages = await ajouterUneNoteDeContexteAction({ noteDeContexte: contenu, path: pathname })
+    if (messages[0] === 'OK') {
       Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
+      viderLeContenu()
     } else {
-      Notification('error', { description: (result as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
     closeDrawer();
     (event.target as HTMLFormElement).reset()

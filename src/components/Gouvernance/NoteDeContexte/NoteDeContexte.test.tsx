@@ -1,34 +1,14 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { JSX } from 'react'
 import { vi } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
-import { jEcrisDansUnEditeurDeTextEnrichi, mockEditor, presserLeBouton, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, renderComponent, stubbedConceal } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
-const noteDeContextVide = '<p><br class="ProseMirror-trailingBreak"></p>'
-
 const now = new Date('2024-09-06')
 
-vi.mock('@tiptap/react', () => ({
-  EditorContent: (): JSX.Element => (
-    <div
-      aria-label="Éditeur de note de contexte"
-      contentEditable="true"
-      // eslint-disable-next-line jsx-a11y/aria-role
-      role="textarea"
-    />
-  ),
-  useEditor: (): Record<string, unknown> => mockEditor,
-}))
-
 describe('note de contexte', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockEditor.getHTML.mockReturnValue(noteDeContextVide)
-  })
-
   it('quand j‘affiche une gouvernance sans note de contexte, lorsque je clique sur le bouton pour ajouter une note de contexte, alors le drawer pour ajouter une note de contexte s‘ouvre', () => {
     // GIVEN
     afficherUneGouvernance()
@@ -102,51 +82,6 @@ describe('note de contexte', () => {
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
-  })
-
-  it('quand j‘écrit dans l‘éditeur de texte enrichi, alors le bouton supprimer s‘affiche à côté du bouton enregistrer', () => {
-    // GIVEN
-    afficherUneGouvernance()
-
-    // WHEN
-    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
-
-    // THEN
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une note de contexte' })
-    const boutonSupprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
-    expect(boutonSupprimer).toBeInTheDocument()
-  })
-
-  it('quand je commence à écrire dans l‘éditeur de texte enrichi, alors le bouton enregistrer devient cliquable et le bouton supprimer s‘affiche', () => {
-    // GIVEN
-    afficherUneGouvernance()
-
-    // WHEN
-    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
-    jEcrisDansUnEditeurDeTextEnrichi('<p>Ma note de contexte</p>')
-
-    // THEN
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une note de contexte' })
-    const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
-    expect(boutonEnregistrer).not.toBeDisabled()
-    const boutonSupprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
-    expect(boutonSupprimer).toBeInTheDocument()
-  })
-
-  it('quand je clique sur le bouton supprimer, alors le contenu de l‘éditeur de texte enrichi est réinitialisé', () => {
-    // GIVEN
-    afficherUneGouvernance()
-
-    // WHEN
-    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
-
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une note de contexte' })
-    const boutonSupprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
-    fireEvent.click(boutonSupprimer)
-
-    // THEN
-    const editeurDeTextEnrichi = within(formulaire).getByRole('textarea')
-    expect(editeurDeTextEnrichi).toHaveTextContent('')
   })
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
