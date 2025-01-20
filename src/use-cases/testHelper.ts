@@ -113,18 +113,7 @@ export function gouvernanceReadModelFactory(
           prenom: 'Laetitia',
         },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
         links: {},
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
@@ -140,13 +129,7 @@ export function gouvernanceReadModelFactory(
           poste: 'chargé de mission',
           prenom: 'Durant',
         },
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
         links: { plusDetails: '/' },
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
@@ -161,9 +144,7 @@ export function gouvernanceReadModelFactory(
       dateDeModification: epochTime,
       nomAuteur: 'Deschamps',
       prenomAuteur: 'Jean',
-      texte:
-        '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-    },
+      texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>' },
     uid: 'gouvernanceFooId',
     ...override,
   }

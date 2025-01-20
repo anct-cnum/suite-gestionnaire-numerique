@@ -20,8 +20,7 @@ describe('gouvernance', () => {
     const titre = screen.getByRole('heading', { level: 1, name: 'Inclusion numérique · Rhône' })
     expect(titre).toBeInTheDocument()
     const sousTitre = screen.getByText(
-      'Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.',
-      { selector: 'p' }
+      'Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.', { selector: 'p' }
     )
     expect(sousTitre).toBeInTheDocument()
   })
@@ -39,33 +38,19 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const membre = screen.queryByText(matchWithoutMarkup('2 membres de la gouvernance'), {
-      selector: 'p',
-    })
+    const membre = screen.queryByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
     expect(membre).not.toBeInTheDocument()
-    const membreAVide = screen.queryByText(matchWithoutMarkup('0 membre de la gouvernance'), {
-      selector: 'p',
-    })
+    const membreAVide = screen.queryByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'p' })
     expect(membreAVide).not.toBeInTheDocument()
-    const feuilleDeRoute = screen.queryByText(
-      matchWithoutMarkup('2 feuilles de route territoriale'),
-      { selector: 'p' }
-    )
+    const feuilleDeRoute = screen.queryByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
     expect(feuilleDeRoute).not.toBeInTheDocument()
-    const feuilleDeRouteVide = screen.queryByText(
-      matchWithoutMarkup('0 feuille de route territoriale'),
-      { selector: 'p' }
-    )
+    const feuilleDeRouteVide = screen.queryByText(matchWithoutMarkup('0 feuille de route territoriale'), { selector: 'p' })
     expect(feuilleDeRouteVide).not.toBeInTheDocument()
-    const auteurDeLaNote = screen.queryAllByText('Modifié le 01/01/1970 par Jean Deschamps', {
-      selector: 'p',
-    })
+    const auteurDeLaNote = screen.queryAllByText('Modifié le 01/01/1970 par Jean Deschamps', { selector: 'p' })
     expect(auteurDeLaNote).toStrictEqual([])
     const resume = screen.queryByText('Aucune note de contexte pour le moment.', { selector: 'p' })
     expect(resume).not.toBeInTheDocument()
-    const contenuTitreComitologie = screen.getByText('Actuellement, vous n’avez pas de comité', {
-      selector: 'p',
-    })
+    const contenuTitreComitologie = screen.getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
     expect(contenuTitreComitologie).toBeInTheDocument()
   })
 
@@ -79,25 +64,14 @@ describe('gouvernance', () => {
     // THEN
     const sectionComitologie = screen.getByRole('region', { name: 'Comitologie' })
     const enTeteComitologie = within(sectionComitologie).getByRole('banner')
-    const titreComitologie = within(enTeteComitologie).getByRole('heading', {
-      level: 2,
-      name: 'Comitologie',
-    })
+    const titreComitologie = within(enTeteComitologie).getByRole('heading', { level: 2, name: 'Comitologie' })
     expect(titreComitologie).toBeInTheDocument()
     const contenuComitologie = within(sectionComitologie).getByRole('article')
-    const contenuTitreComitologie = within(contenuComitologie).getByText(
-      'Actuellement, vous n’avez pas de comité',
-      { selector: 'p' }
-    )
+    const contenuTitreComitologie = within(contenuComitologie).getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
     expect(contenuTitreComitologie).toBeInTheDocument()
-    const comitologie = within(contenuComitologie).getByText(
-      'Renseignez les comités prévus et la fréquence à laquelle ils se réunissent.',
-      { selector: 'p' }
-    )
+    const comitologie = within(contenuComitologie).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent.', { selector: 'p' })
     expect(comitologie).toBeInTheDocument()
-    const ajouterUnComite = within(sectionComitologie).getByRole('button', {
-      name: 'Ajouter un comité',
-    })
+    const ajouterUnComite = within(sectionComitologie).getByRole('button', { name: 'Ajouter un comité' })
     expect(ajouterUnComite).toHaveAttribute('type', 'button')
   })
 
@@ -156,10 +130,7 @@ describe('gouvernance', () => {
     // THEN
     const comitologie = screen.getByRole('region', { name: 'Comitologie' })
     const enTeteComitologie = within(comitologie).getByRole('banner')
-    const titreComitologie = within(enTeteComitologie).getByRole('heading', {
-      level: 2,
-      name: 'Comitologie',
-    })
+    const titreComitologie = within(enTeteComitologie).getByRole('heading', { level: 2, name: 'Comitologie' })
     expect(titreComitologie).toBeInTheDocument()
     const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
     expect(ajouter).toHaveAttribute('type', 'button')
@@ -196,9 +167,7 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resumes = screen.getAllByText(matchWithoutMarkup('0 membre de la gouvernance'), {
-      selector: 'div',
-    })
+    const resumes = screen.getAllByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'div' })
     expect(resumes[0]).toBeInTheDocument()
 
     const sectionMembre = screen.getByRole('region', { name: '0 membre' })
@@ -206,98 +175,66 @@ describe('gouvernance', () => {
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '0 membre' })
     expect(titreMembre).toBeInTheDocument()
     const contenuMembre = within(sectionMembre).getByRole('article')
-    const contenuTitreMembre = within(contenuMembre).getByText(
-      'Actuellement, il n’y a aucun membre dans la gouvernance',
-      { selector: 'p' }
-    )
+    const contenuTitreMembre = within(contenuMembre).getByText('Actuellement, il n’y a aucun membre dans la gouvernance', { selector: 'p' })
     expect(contenuTitreMembre).toBeInTheDocument()
-    const membre = within(contenuMembre).getByText(
-      'Vous pouvez inviter les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer et/ou de porter une feuille de route territoriale en leur partageant ce lien vers les formulaires prévus à cet effet :',
-      { selector: 'p' }
-    )
+    const membre = within(contenuMembre).getByText('Vous pouvez inviter les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer et/ou de porter une feuille de route territoriale en leur partageant ce lien vers les formulaires prévus à cet effet :', { selector: 'p' })
     expect(membre).toBeInTheDocument()
-    const lienMembre = screen.getByRole('link', {
-      name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance',
-    })
-    expect(lienMembre).toHaveAttribute(
-      'href',
-      'https://inclusion-numerique.anct.gouv.fr/gouvernance'
-    )
+    const lienMembre = screen.getByRole('link', { name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance' })
+    expect(lienMembre).toHaveAttribute('href', 'https://inclusion-numerique.anct.gouv.fr/gouvernance')
     expect(lienMembre).toOpenInNewTab('Formulaire d’invitation à la gouvernance')
-    const ajouterDesMembres = within(sectionMembre).getByRole('button', {
-      name: 'Ajouter un membre',
-    })
+    const ajouterDesMembres = within(sectionMembre).getByRole('button', { name: 'Ajouter un membre' })
     expect(ajouterDesMembres).toHaveAttribute('type', 'button')
   })
 
   it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
-            },
-            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-            feuillesDeRoute: [
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion',
-              },
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route numérique du Rhône',
-              },
-            ],
-            links: {},
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '+33 4 45 00 45 00',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
+      membres: [
+        {
+          contactReferent: {
+            denomination: 'Contact politique de la collectivité',
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
           },
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
-            },
-            feuillesDeRoute: [
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion',
-              },
-            ],
-            links: {},
-            nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Financeur'],
-            telephone: '+33 4 45 00 45 01',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
+          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+          links: {},
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: 0,
+          totalMontantSubventionFormationAccorde: 0,
+          type: 'Administration',
+          typologieMembre: 'Préfecture départementale',
+        },
+        {
+          contactReferent: {
+            denomination: 'Contact politique de la collectivité',
+            mailContact: 'didier.durand@exemple.com',
+            nom: 'Didier',
+            poste: 'chargé de mission',
+            prenom: 'Durant',
           },
-        ],
-      }), now)
-    
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
+          links: {},
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur', 'Financeur'],
+          telephone: '+33 4 45 00 45 01',
+          totalMontantSubventionAccorde: 0,
+          totalMontantSubventionFormationAccorde: 0,
+          type: 'Collectivité',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ],
+    }), now)
+
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText(matchWithoutMarkup('2 membres de la gouvernance'), {
-      selector: 'p',
-    })
+    const resume = screen.getByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir les membres' })
     expect(lienResume).toHaveAttribute('href', '/')
@@ -306,9 +243,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '2 membres' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 1 financeur', {
-      selector: 'p',
-    })
+    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 1 financeur', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/')
@@ -331,9 +266,7 @@ describe('gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     const columns1Body = within(rowsBody[0]).getAllByRole('cell')
     expect(columns1Body).toHaveLength(4)
-    const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('button', {
-      name: 'Préfecture du Rhône',
-    })
+    const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('button', { name: 'Préfecture du Rhône' })
     expect(membrePrefectureDuRhone).toHaveAttribute('type', 'button')
     expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'draweMembreId')
     expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
@@ -341,9 +274,7 @@ describe('gouvernance', () => {
     expect(columns1Body[3].textContent).toBe('Co-porteur ')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(4)
-    const membreDepartementDuRhone = within(columns2Body[1]).getByRole('button', {
-      name: 'Département du Rhône',
-    })
+    const membreDepartementDuRhone = within(columns2Body[1]).getByRole('button', { name: 'Département du Rhône' })
     expect(membreDepartementDuRhone).toHaveAttribute('type', 'button')
     expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'draweMembreId')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
@@ -354,39 +285,28 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
-            },
-            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-            feuillesDeRoute: [
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion',
-              },
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route numérique du Rhône',
-              },
-            ],
-            links: { plusDetails: '/' },
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '+33 4 45 00 45 00',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
+      membres: [
+        {
+          contactReferent: {
+            denomination: 'Contact politique de la collectivité',
+            mailContact: 'julien.deschamps@rhones.gouv.fr',
+            nom: 'Henrich',
+            poste: 'chargé de mission',
+            prenom: 'Laetitia',
           },
-        ],
-      }), now)
+          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+          links: { plusDetails: '/' },
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          telephone: '+33 4 45 00 45 00',
+          totalMontantSubventionAccorde: 0,
+          totalMontantSubventionFormationAccorde: 0,
+          type: 'Administration',
+          typologieMembre: 'Préfecture départementale',
+        },
+      ],
+    }), now)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -420,25 +340,14 @@ describe('gouvernance', () => {
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '0 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
-      level: 2,
-      name: '0 feuille de route',
-    })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '0 feuille de route' })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
     const contenuFeuilleDeRoute = within(sectionFeuilleDeRoute).getAllByRole('article')
-    const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText(
-      'Aucune feuille de route',
-      { selector: 'p' }
-    )
+    const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Aucune feuille de route', { selector: 'p' })
     expect(contenuTitreFeuilleDeRoute).toBeInTheDocument()
-    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText(
-      'Commencez par créer des porteurs au sein de la gouvernance pour définir votre première feuille de route.',
-      { selector: 'p' }
-    )
+    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Commencez par créer des porteurs au sein de la gouvernance pour définir votre première feuille de route.', { selector: 'p' })
     expect(feuilleDeRoute).toBeInTheDocument()
-    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('button', {
-      name: 'Ajouter une feuille de route',
-    })
+    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('button', { name: 'Ajouter une feuille de route' })
     expect(ajouterDesFeuilleDeRoutes).toHaveAttribute('type', 'button')
   })
 
@@ -453,7 +362,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 105_000,
           montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
         },
@@ -464,7 +373,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 38_030,
           montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 2',
+          nom: 'Feuille de route numérique du Rhône',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 1,
         },
@@ -475,24 +384,16 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText(matchWithoutMarkup('2 feuilles de route territoriale'), {
-      selector: 'p',
-    })
+    const resume = screen.getByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir les feuilles de route' })
     expect(lienResume).toHaveAttribute('href', '/feuilles-de-route')
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '2 feuilles de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
-      level: 2,
-      name: '2 feuilles de route',
-    })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '2 feuilles de route' })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
-    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText(
-      '2 feuilles de route, 233 030 €',
-      { selector: 'p' }
-    )
+    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('2 feuilles de route, 233 030 €', { selector: 'p' })
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
     const gerer = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/')
@@ -536,7 +437,7 @@ describe('gouvernance', () => {
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
           totalActions: 3,
         },
@@ -547,24 +448,16 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText(matchWithoutMarkup('1 feuille de route territoriale'), {
-      selector: 'p',
-    })
+    const resume = screen.getByText(matchWithoutMarkup('1 feuille de route territoriale'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir la feuille de route' })
     expect(lienResume).toHaveAttribute('href', '/feuille-de-route')
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '1 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
-    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', {
-      level: 2,
-      name: '1 feuille de route',
-    })
+    const titreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByRole('heading', { level: 2, name: '1 feuille de route' })
     expect(titreFeuilleDeRoute).toBeInTheDocument()
-    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText(
-      '1 feuille de route, 145 000 €',
-      { selector: 'p' }
-    )
+    const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('1 feuille de route, 145 000 €', { selector: 'p' })
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
   })
 
@@ -581,25 +474,14 @@ describe('gouvernance', () => {
 
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
-    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', {
-      level: 2,
-      name: 'Note de contexte',
-    })
+    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
-    const contenuTitreNoteDeContexte = within(contenuNoteDeContexte).getByText(
-      'Aucune note de contexte',
-      { selector: 'p' }
-    )
+    const contenuTitreNoteDeContexte = within(contenuNoteDeContexte).getByText('Aucune note de contexte', { selector: 'p' })
     expect(contenuTitreNoteDeContexte).toBeInTheDocument()
-    const noteDeContexte = within(contenuNoteDeContexte).getByText(
-      'Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.',
-      { selector: 'p' }
-    )
+    const noteDeContexte = within(contenuNoteDeContexte).getByText('Précisez, au sein d’une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance.', { selector: 'p' })
     expect(noteDeContexte).toBeInTheDocument()
-    const ajouterUneNoteDeContexte = within(sectionNoteDeContexte).getByRole('button', {
-      name: 'Ajouter une note de contexte',
-    })
+    const ajouterUneNoteDeContexte = within(sectionNoteDeContexte).getByRole('button', { name: 'Ajouter une note de contexte' })
     expect(ajouterUneNoteDeContexte).toHaveAttribute('type', 'button')
   })
 
@@ -618,40 +500,24 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText(
-      'titre note de contexteun paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bol...',
-      { selector: 'p' }
-    )
+    const resume = screen.getByText('titre note de contexteun paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bol...', { selector: 'p' })
     expect(resume).toBeInTheDocument()
-    const auteurDeLaNote = screen.getAllByText('Modifié le 06/09/2024 par Jean Deschamps', {
-      selector: 'p',
-    })
+    const auteurDeLaNote = screen.getAllByText('Modifié le 06/09/2024 par Jean Deschamps', { selector: 'p' })
     expect(auteurDeLaNote[0]).toBeInTheDocument()
 
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
-    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', {
-      level: 2,
-      name: 'Note de contexte',
-    })
+    const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const modifier = within(sectionNoteDeContexte).getByRole('button', { name: 'Modifier' })
     expect(modifier).toHaveAttribute('type', 'button')
     expect(auteurDeLaNote[1]).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
-    const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText(
-      'titre note de contexte',
-      { selector: 'strong' }
-    )
+    const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText('titre note de contexte', { selector: 'strong' })
     expect(noteDeContexteElement1).toBeInTheDocument()
-    const noteDeContexteElement2 = within(contenuNoteDeContexte).getAllByText(
-      matchWithoutMarkup('un paragraphe avec du bold.'),
-      { selector: 'p' }
-    )
+    const noteDeContexteElement2 = within(contenuNoteDeContexte).getAllByText(matchWithoutMarkup('un paragraphe avec du bold.'), { selector: 'p' })
     expect(noteDeContexteElement2[0]).toBeInTheDocument()
-    const noteDeContexteElement3 = within(contenuNoteDeContexte).getAllByText('bold', {
-      selector: 'b',
-    })
+    const noteDeContexteElement3 = within(contenuNoteDeContexte).getAllByText('bold', { selector: 'b' })
     expect(noteDeContexteElement3[0]).toBeInTheDocument()
     const lirePlus = screen.getByRole('button', { name: 'Lire plus' })
     expect(lirePlus).toHaveAttribute('type', 'button')
@@ -668,7 +534,6 @@ describe('gouvernance', () => {
         texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p>',
       },
     }), now)
-
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // WHEN

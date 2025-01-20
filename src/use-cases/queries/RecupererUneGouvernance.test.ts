@@ -1,14 +1,11 @@
-import {
-  UneGouvernanceReadModelLoader,
-  RecupererUneGouvernance,
-  UneGouvernanceReadModel,
-} from './RecupererUneGouvernance'
+import { UneGouvernanceReadModelLoader, RecupererUneGouvernance, UneGouvernanceReadModel } from './RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '../testHelper'
 
 describe('recupererUneGouvernance', () => {
   afterEach(() => {
     uneGouvernance = gouvernanceReadModelFactory()
   })
+
   it("quand une gouvernance est demandée sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
     // GIVEN
 
@@ -61,18 +58,7 @@ describe('recupererUneGouvernance', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -98,18 +84,7 @@ describe('recupererUneGouvernance', () => {
           prenom: 'Laetitia',
         },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
         links: { },
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
@@ -133,13 +108,7 @@ describe('recupererUneGouvernance', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
@@ -166,21 +135,12 @@ describe('recupererUneGouvernance', () => {
           poste: 'chargé de mission',
           prenom: 'Durant',
         },
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 5000,
-            montantSubventionFormationAccorde: 5000,
-            nom: 'Feuille de route inclusion',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
         links: {
           plusDetails: '/',
         },
         nom: 'Département du Rhône',
-        roles: [
-          'Co-porteur',
-          'Financeur',
-        ],
+        roles: ['Co-porteur', 'Financeur'],
         telephone: '+33 4 45 00 45 01',
         totalMontantSubventionAccorde: 5000,
         totalMontantSubventionFormationAccorde: 5000,

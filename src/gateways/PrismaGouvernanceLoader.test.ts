@@ -1,9 +1,5 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import {
-  departementRecordFactory,
-  regionRecordFactory,
-  utilisateurRecordFactory,
-} from './testHelper'
+import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -57,8 +53,7 @@ describe('gouvernance loader', () => {
     })
     await prisma.noteDeContexteRecord.create({
       data: {
-        contenu:
-          '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
         derniereEdition: new Date('2024-11-23'),
         editeurId: 123,
         gouvernanceId: gouvernance.id,
@@ -115,14 +110,8 @@ describe('gouvernance loader', () => {
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [
-            { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-            { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
-          ],
-          beneficiairesSubventionFormation: [
-            { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-            { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
-          ],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 5_000,
           montantSubventionDemande: 40_000,
@@ -156,18 +145,7 @@ describe('gouvernance loader', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -185,13 +163,7 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 30_000,
-              montantSubventionFormationAccorde: 20_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
@@ -224,8 +196,7 @@ describe('gouvernance loader', () => {
         dateDeModification: new Date('2024-11-23'),
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
-        texte:
-          '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
       uid: '1',
     })
@@ -305,18 +276,7 @@ describe('gouvernance loader', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -334,13 +294,7 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 30_000,
-              montantSubventionFormationAccorde: 20_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
@@ -443,18 +397,7 @@ describe('gouvernance loader', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -472,13 +415,7 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 30_000,
-              montantSubventionFormationAccorde: 20_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
@@ -582,18 +519,7 @@ describe('gouvernance loader', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -611,13 +537,7 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 30_000,
-              montantSubventionFormationAccorde: 20_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],
@@ -720,18 +640,7 @@ describe('gouvernance loader', () => {
             prenom: 'Laetitia',
           },
           contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route inclusion',
-            },
-            {
-              montantSubventionAccorde: 5_000,
-              montantSubventionFormationAccorde: 5_000,
-              nom: 'Feuille de route numérique du Rhône',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
           roles: ['Co-porteur'],
@@ -749,13 +658,7 @@ describe('gouvernance loader', () => {
             poste: 'chargé de mission',
             prenom: 'Durant',
           },
-          feuillesDeRoute: [
-            {
-              montantSubventionAccorde: 30_000,
-              montantSubventionFormationAccorde: 20_000,
-              nom: 'Feuille de route inclusion',
-            },
-          ],
+          feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
           roles: ['Co-porteur', 'Financeur'],

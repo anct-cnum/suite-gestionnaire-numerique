@@ -15,7 +15,7 @@ export default function Membre({
   return (
     <>
       <DrawerTitle id={labelId}>
-       <Icon icon={membreDetails.logo} />
+        <Icon icon={membreDetails.logo} />
         <br />
         {membreDetails.nom}
       </DrawerTitle>

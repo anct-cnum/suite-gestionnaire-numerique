@@ -96,22 +96,16 @@ function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteViewModel
   }
 }
 
-function toFeuillesDeRouteViewModel(
-  feuilleDeRoute: FeuilleDeRouteReadModel
-): FeuilleDeRouteViewModel {
+function toFeuillesDeRouteViewModel(feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
   const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
-  const nombreDeBeneficiairesSubventionFormation =
-    feuilleDeRoute.beneficiairesSubventionFormation.length
+  const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
   return {
     beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
-    beneficiairesSubventionFormation:
-      feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
+    beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
     budgetGlobal: formaterEnNombreFrancais(feuilleDeRoute.budgetGlobal),
     montantSubventionAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionAccorde),
     montantSubventionDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionDemande),
-    montantSubventionFormationAccorde: formaterEnNombreFrancais(
-      feuilleDeRoute.montantSubventionFormationAccorde
-    ),
+    montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
     nom: feuilleDeRoute.nom,
     porteur: feuilleDeRoute.porteur.nom,
     totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
@@ -212,15 +206,13 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
     }
   }
 
-  const detailDuNombreDeChaqueMembre = Object.entries(
-    membres
-      .flatMap(({ roles }) => roles)
-      .reduce<Record<string, number>>((nombreParRole, role) => {
-        nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
+  const detailDuNombreDeChaqueMembre = Object.entries(membres
+    .flatMap(({ roles }) => roles)
+    .reduce<Record<string, number>>((nombreParRole, role) => {
+      nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
 
-        return nombreParRole
-      }, {})
-  )
+      return nombreParRole
+    }, {}))
     .map(([role, nombre]) => `${nombre} ${role.toLowerCase()}${formatPluriel(nombre)}`)
     .join(', ')
 

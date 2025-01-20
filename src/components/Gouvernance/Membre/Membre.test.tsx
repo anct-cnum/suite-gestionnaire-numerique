@@ -109,52 +109,19 @@ describe('membres', () => {
     it.each([
       {
         feuilleDeRouteTotal: 1,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }],
         result: 'Feuille de route',
         version: 'singulier',
       },
       {
         feuilleDeRouteTotal: 2,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône' }],
         result: 'Feuilles de route',
         version: 'pluriel',
       },
       {
         feuilleDeRouteTotal: 3,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône 2',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône 2' }],
         result: 'Feuilles de route',
         version: 'pluriel',
       },
@@ -255,18 +222,7 @@ describe('membres', () => {
               poste: 'chargé de mission',
               prenom: 'Laetitia',
             },
-            feuillesDeRoute: [
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion',
-              },
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route numérique du Rhône',
-              },
-            ],
+            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
             links: { plusDetails: value },
             nom: 'Préfecture du Rhône',
             roles: ['Co-porteur'],
@@ -386,52 +342,19 @@ describe('membres', () => {
     it.each([
       {
         feuilleDeRouteTotal: 1,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }],
         result: 'Feuille de route',
         version: 'singulier',
       },
       {
         feuilleDeRouteTotal: 2,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône' }],
         result: 'Feuilles de route',
         version: 'pluriel',
       },
       {
         feuilleDeRouteTotal: 3,
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-          {
-            montantSubventionAccorde: 0,
-            montantSubventionFormationAccorde: 0,
-            nom: 'Feuille de route numérique du Rhône 2',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône' }, { montantSubventionAccorde: 0, montantSubventionFormationAccorde: 0, nom: 'Feuille de route numérique du Rhône 2' }],
         result: 'Feuilles de route',
         version: 'pluriel',
       },
@@ -534,13 +457,7 @@ describe('membres', () => {
               prenom: 'Durant',
             },
             contactTechnique: value,
-            feuillesDeRoute: [
-              {
-                montantSubventionAccorde: 5_000,
-                montantSubventionFormationAccorde: 5_000,
-                nom: 'Feuille de route inclusion',
-              },
-            ],
+            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
             links: { plusDetails: '/' },
             nom: 'Département du Rhône',
             roles: ['Co-porteur', 'Financeur'],

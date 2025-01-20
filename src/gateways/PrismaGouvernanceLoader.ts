@@ -1,10 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import {
-  TypeDeComite,
-  UneGouvernanceReadModel,
-  UneGouvernanceReadModelLoader,
-} from '@/use-cases/queries/RecupererUneGouvernance'
+import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
 
 type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
@@ -79,14 +75,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: [
       {
-        beneficiairesSubvention: [
-          { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-          { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
-        ],
-        beneficiairesSubventionFormation: [
-          { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-          { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
-        ],
+        beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+        beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
         budgetGlobal: 145_000,
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
@@ -97,10 +87,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
       {
         beneficiairesSubvention: [],
-        beneficiairesSubventionFormation: [
-          { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-          { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
-        ],
+        beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
         budgetGlobal: 145_000,
         montantSubventionAccorde: 5_000,
         montantSubventionDemande: 40_000,
@@ -120,18 +107,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
           prenom: 'Laetitia',
         },
         contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route inclusion',
-          },
-          {
-            montantSubventionAccorde: 5_000,
-            montantSubventionFormationAccorde: 5_000,
-            nom: 'Feuille de route numérique du Rhône',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
         links: {},
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
@@ -149,13 +125,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
           poste: 'chargé de mission',
           prenom: 'Durant',
         },
-        feuillesDeRoute: [
-          {
-            montantSubventionAccorde: 30_000,
-            montantSubventionFormationAccorde: 20_000,
-            nom: 'Feuille de route inclusion',
-          },
-        ],
+        feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
         links: {},
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],

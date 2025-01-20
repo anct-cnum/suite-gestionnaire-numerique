@@ -124,13 +124,8 @@ function toMembreDetailIntitulerReadModel(membre: MembreDetailReadModel): Membre
   const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,
-    contactReferent: {
-      ...membre.contactReferent,
-      denomination: categorieDuMembre === 'autre' ? 'Contact référent' : 'Contact politique de la collectivité',
-    },
-    links: {
-      ...categorieDuMembre === 'autre' && { plusDetails: '/' },
-    },
+    contactReferent: { ...membre.contactReferent, denomination: categorieDuMembre === 'autre' ? 'Contact référent' : 'Contact politique de la collectivité' },
+    links: { ...categorieDuMembre === 'autre' && { plusDetails: '/' } },
   }
 }
 
