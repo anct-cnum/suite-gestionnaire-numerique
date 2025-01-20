@@ -6,13 +6,13 @@ import Membre from './Membre'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import Table from '@/components/shared/Table/Table'
-import { MembreViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import { MembreDetailsViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function MembreRempli({ membres }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [membreDetails, setMembreDetails] = useState<MembreViewModel>(membres[0])
-  const drawerMembreId = 'drawerMembreId'
+  const [membreDetails, setMembreDetails] = useState<MembreDetailsViewModel>(membres[0])
+  const drawerMembreId = 'draweMembreId'
   const labelMembreId = 'labelMembreId'
 
   return (
@@ -74,6 +74,7 @@ export default function MembreRempli({ membres }: Props): ReactElement {
         labelId={labelMembreId}
       >
         <Membre
+          details={membreDetails.details}
           labelId={labelMembreId}
           membreDetails={membreDetails}
         />

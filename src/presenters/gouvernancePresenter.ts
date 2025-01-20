@@ -1,7 +1,7 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
@@ -17,7 +17,7 @@ export function gouvernancePresenter(
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
     },
     sectionMembres: {
-      ...{ membres: gouvernanceReadModel.membres?.map(toMembresViewModel) },
+      ...{ membres: gouvernanceReadModel.membres?.map(toMembresDetailsViewModel) },
       ...buildSousTitreMembres(gouvernanceReadModel.membres),
     },
     sectionNoteDeContexte: {
@@ -45,7 +45,7 @@ export type GouvernanceViewModel = Readonly<{
   }>
   sectionMembres: Readonly<{
     detailDuNombreDeChaqueMembre: string
-    membres?: ReadonlyArray<MembreViewModel>
+    membres?: ReadonlyArray<MembreDetailsViewModel>
     total: string
     wording: string
   }>
@@ -55,6 +55,29 @@ export type GouvernanceViewModel = Readonly<{
   }>
   uid: string
 }>
+
+export const gouvernanceVideViewModel: GouvernanceViewModel = {
+  departement: 'Rhône',
+  isVide: true,
+  sectionFeuillesDeRoute: {
+    budgetTotalCumule: '',
+    lien: {
+      label: '',
+      url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
+    },
+    total: '',
+    wording: '',
+  },
+  sectionMembres: {
+    detailDuNombreDeChaqueMembre: '',
+    total: '',
+    wording: '',
+  },
+  sectionNoteDeContexte: {
+    sousTitre: '',
+  },
+  uid: '',
+}
 
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
   return [
@@ -133,6 +156,53 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
     nom: membre.nom,
     roles: membre.roles.map(toRoleViewModel),
     type: membre.type,
+  }
+}
+
+function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetailsViewModel {
+  const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
+
+  const detailsAffichage: MembreDetailsViewModel['details'] = [
+    ...membre.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: membre.contactReferent.denomination }] : [],
+    ...membre.contactTechnique !== undefined && membre.contactTechnique !== '' ?
+      [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
+    ...isNaN(membre.totalMontantSubventionAccorde ?? NaN) ? [] : [
+      {
+        information: `${membre.totalMontantSubventionAccorde} €`,
+        intitule: 'Total subventions accordées',
+      },
+    ],
+    ...isNaN(membre.totalMontantSubventionFormationAccorde ?? NaN) ? [] : [
+      {
+        information: `${membre.totalMontantSubventionFormationAccorde} €`,
+        intitule: 'Total subventions formations accordées',
+      },
+    ],
+    ...membre.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
+    {
+      information: membre.telephone === '' ? '-' : membre.telephone,
+      intitule: 'Téléphone',
+    },
+  ]
+  const details = detailsAffichage.slice()
+  if (membre.feuillesDeRoute.length >= 1) {
+    details.unshift(
+      {
+        feuillesDeRoute: membre.feuillesDeRoute.map((feuilleDeRoute) => ({ nom: feuilleDeRoute.nom })),
+        information: '',
+        intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+      }
+    )
+  }
+
+  return {
+    details,
+    logo: buildLogoMembre(membre),
+    nom: membre.nom,
+    plusDetailsHref: membre.links.plusDetails,
+    roles: membre.roles.map(toRoleViewModel),
+    type: membre.type,
+    typologieMembre: membre.typologieMembre,
   }
 }
 
@@ -271,11 +341,31 @@ export type FeuilleDeRouteViewModel = Readonly<{
   wordingBeneficiairesSubventionFormation: string
 }>
 
-export type MembreViewModel = Readonly<{
+type MembreViewModel = Readonly<{
   logo: string
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
+}>
+
+export type MembreDetailsViewModel = Readonly<{
+  nom: string
+  logo: string
+  roles: ReadonlyArray<RoleViewModel>
+  type: string
+  typologieMembre: string
+  details: ReadonlyArray<
+    Readonly<{
+      intitule: string
+      information: string
+      feuillesDeRoute?: ReadonlyArray<
+        Readonly<{
+          nom: string
+        }>
+      >
+    }>
+  >
+  plusDetailsHref?: string
 }>
 
 type RoleViewModel = Readonly<{
