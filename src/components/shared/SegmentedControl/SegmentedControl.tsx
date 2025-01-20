@@ -7,7 +7,7 @@ export default function SegmentedControl({ children, name, options }: Props): Re
         {children}
       </legend>
       <div className="fr-segmented__elements full-width">
-        {options.map(({ id, isChecked, label }) => (
+        {options.map(({ id, isChecked, label, value }) => (
           <div
             className="fr-segmented__element full-width"
             key={id}
@@ -17,7 +17,7 @@ export default function SegmentedControl({ children, name, options }: Props): Re
               id={id}
               name={name}
               type="radio"
-              value={id}
+              value={value}
             />
             <label
               className="fr-label justify-center"
@@ -38,5 +38,6 @@ type Props = PropsWithChildren<Readonly<{
     id: string
     isChecked: boolean
     label: string
+    value: string
   }>
 }>>

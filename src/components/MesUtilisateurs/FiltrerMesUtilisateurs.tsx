@@ -9,6 +9,7 @@ import ZonesGeographiques from './FiltrerParZonesGeographiques'
 import OrganisationInput from './OrganisationInput'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import Toggle from '../shared/Toggle/Toggle'
 import { toutesLesRegions, urlDeFiltrage, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 
@@ -68,13 +69,11 @@ export default function FiltrerMesUtilisateurs({
           >
             Réinitialiser les filtres
           </button>
-          <button
-            aria-controls={id}
-            className="fr-btn fr-col-5"
-            type="submit"
-          >
-            Afficher les utilisateurs
-          </button>
+          <SubmitButton
+            ariaControls={id}
+            className="fr-col-5"
+            label="Afficher les utilisateurs"
+          />
         </div>
       </form>
     </>

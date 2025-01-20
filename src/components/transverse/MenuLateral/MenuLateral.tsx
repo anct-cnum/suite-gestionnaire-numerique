@@ -23,11 +23,6 @@ export default function MenuLateral(): ReactElement {
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
     {
-      icon: 'compass-3-line',
-      label: 'Gouvernance vide',
-      url: `/gouvernance-vide/${sessionUtilisateurViewModel.codeDepartement}`,
-    },
-    {
       icon: 'pen-nib-line',
       label: 'Financements',
       url: '/financements',

@@ -31,8 +31,8 @@ import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 export default function Gouvernance({ gouvernanceViewModel }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerComiteId = 'drawer-comite'
-  const labelComiteId = 'drawer-comite-titre'
+  const drawerComiteId = 'drawerAjouterComiteId'
+  const labelComiteId = 'labelAjouterComiteId'
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
@@ -109,7 +109,8 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             closeDrawer={() => {
               setIsDrawerOpen(false)
             }}
-            dialogRef={drawerRef}
+            comite={gouvernanceViewModel.comiteVide}
+            id={drawerComiteId}
             labelId={labelComiteId}
             uidGouvernance={gouvernanceViewModel.uid}
           />
