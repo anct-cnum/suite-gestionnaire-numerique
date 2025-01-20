@@ -18,7 +18,6 @@ export default function Drawer({
   return (
     <dialog
       aria-labelledby={labelId}
-      aria-modal="true"
       className={`fr-modal ${styles['fr-modal']}`}
       id={id}
       open={isOpen}

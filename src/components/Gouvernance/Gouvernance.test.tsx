@@ -6,8 +6,6 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
-const now = new Date('2024-09-06')
-
 describe('gouvernance', () => {
   it('quand j’affiche une gouvernance, alors elle s’affiche avec son titre et son sous titre', () => {
     // GIVEN
@@ -107,15 +105,19 @@ describe('gouvernance', () => {
         {
           commentaire: 'commentaire',
           date: new Date('2024-09-06'),
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
+          derniereEdition: epochTime,
+          frequence: 'semestrielle',
+          nomEditeur: 'Tartempion',
+          prenomEditeur: 'Michel',
           type: 'stratégique',
         },
         {
           commentaire: 'commentaire',
           date: new Date('2024-03-01'),
-          nom: 'Comité stratégique 2',
-          periodicite: 'Trimestriel',
+          derniereEdition: epochTime,
+          frequence: 'trimestrielle',
+          nomEditeur: 'Tartempion',
+          prenomEditeur: 'Martin',
           type: 'technique',
         },
       ],
@@ -265,7 +267,7 @@ describe('gouvernance', () => {
     expect(columns1Body).toHaveLength(4)
     const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('button', { name: 'Préfecture du Rhône' })
     expect(membrePrefectureDuRhone).toHaveAttribute('type', 'button')
-    expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'draweMembreId')
+    expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
     expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
     expect(columns1Body[2].textContent).toBe('Administration')
     expect(columns1Body[3].textContent).toBe('Co-porteur ')
@@ -273,7 +275,7 @@ describe('gouvernance', () => {
     expect(columns2Body).toHaveLength(4)
     const membreDepartementDuRhone = within(columns2Body[1]).getByRole('button', { name: 'Département du Rhône' })
     expect(membreDepartementDuRhone).toHaveAttribute('type', 'button')
-    expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'draweMembreId')
+    expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
     expect(columns2Body[2].textContent).toBe('Collectivité')
     expect(columns2Body[3].textContent).toBe('Co-porteur Financeur ')
@@ -544,8 +546,10 @@ describe('gouvernance', () => {
         {
           commentaire: 'commentaire',
           date: undefined,
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
+          derniereEdition: epochTime,
+          frequence: 'semestrielle',
+          nomEditeur: 'Tartempion',
+          prenomEditeur: 'Martin',
           type: 'stratégique',
         },
       ],
@@ -567,8 +571,10 @@ describe('gouvernance', () => {
         {
           commentaire: 'commentaire',
           date: new Date('2020-09-05'),
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
+          derniereEdition: epochTime,
+          frequence: 'semestrielle',
+          nomEditeur: 'Tartempion',
+          prenomEditeur: 'Martin',
           type: 'stratégique',
         },
       ],
@@ -590,12 +596,14 @@ describe('gouvernance', () => {
         {
           commentaire: 'commentaire',
           date: new Date('1996-04-15'),
-          nom: 'Comité stratégique 1',
-          periodicite: 'Semestriel',
+          derniereEdition: epochTime,
+          frequence: 'semestrielle',
+          nomEditeur: 'Tartempion',
+          prenomEditeur: 'Martin',
           type: 'stratégique',
         },
       ],
-    }), epochTime)
+    }), new Date('1996-04-15'))
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -617,4 +625,6 @@ describe('gouvernance', () => {
   function jeDeplieLaNoteDeContexte(): HTMLElement {
     return presserLeBouton('Lire plus')
   }
+
+  const now = new Date('2024-09-06')
 })

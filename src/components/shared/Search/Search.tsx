@@ -1,5 +1,7 @@
 import { ReactElement } from 'react'
 
+import SubmitButton from '../SubmitButton/SubmitButton'
+
 export default function Search({
   labelBouton,
   reinitialiserBouton,
@@ -46,13 +48,10 @@ export default function Search({
             </button> : null}
         </div>
       </div>
-      <button
-        className="fr-btn"
+      <SubmitButton
+        label={labelBouton}
         title={labelBouton}
-        type="submit"
-      >
-        {labelBouton}
-      </button>
+      />
     </form>
   )
 }

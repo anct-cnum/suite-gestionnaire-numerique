@@ -1,10 +1,12 @@
 import { ReactElement } from 'react'
 
-export default function SubmitButton({ isDisabled, label }: Props): ReactElement {
+export default function SubmitButton({ ariaControls = undefined, className = '', isDisabled = false, label, title = undefined }: Props): ReactElement {
   return (
     <button
-      className="fr-btn"
+      aria-controls={ariaControls}
+      className={`fr-btn ${className}`}
       disabled={isDisabled}
+      title={title}
       type="submit"
     >
       {label}
@@ -13,6 +15,9 @@ export default function SubmitButton({ isDisabled, label }: Props): ReactElement
 }
 
 type Props = Readonly<{
-  isDisabled: boolean
+  ariaControls?: string
+  className?: string
+  isDisabled?: boolean
   label: string
+  title?: string
 }>

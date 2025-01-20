@@ -24,10 +24,10 @@ describe('menu lateral', () => {
     { index: 0, name: 'Gouvernance', url: '/gouvernance/93' },
     { index: 1, name: 'Membres', url: '/membres/93' },
     { index: 2, name: 'Feuilles de route', url: '/feuilles-de-routes/93' },
-    { index: 4, name: 'Financements', url: '/financements' },
-    { index: 5, name: 'Bénéficiaires', url: '/beneficiaires' },
-    { index: 6, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
-    { index: 7, name: 'Lieux d’inclusion', url: '/lieux-inclusion' },
+    { index: 3, name: 'Financements', url: '/financements' },
+    { index: 4, name: 'Bénéficiaires', url: '/beneficiaires' },
+    { index: 5, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
+    { index: 6, name: 'Lieux d’inclusion', url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     renderComponent(<MenuLateral />, {
@@ -42,7 +42,7 @@ describe('menu lateral', () => {
     expect(pilotage).toBeInTheDocument()
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[1]).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(8)
+    expect(menuItems).toHaveLength(7)
     expect(menuItems[index]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
     const element = within(menuItems[index]).getByRole('link', { name })
     expect(element).toHaveAttribute('href', url)

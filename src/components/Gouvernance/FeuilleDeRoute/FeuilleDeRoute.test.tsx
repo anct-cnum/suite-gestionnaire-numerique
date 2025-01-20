@@ -19,7 +19,7 @@ describe('feuille de route', () => {
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
         },
@@ -30,8 +30,8 @@ describe('feuille de route', () => {
     jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
-    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion 1' })
+    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
+    const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion' })
     expect(titreDrawer).toBeInTheDocument()
     const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
     expect(responsableLabel).toBeInTheDocument()
@@ -88,7 +88,7 @@ describe('feuille de route', () => {
           montantSubventionAccorde: 0,
           montantSubventionDemande: 15_000,
           montantSubventionFormationAccorde: 0,
-          nom: 'Feuille de route inclusion 1',
+          nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 1,
         },
@@ -99,7 +99,7 @@ describe('feuille de route', () => {
     jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
+    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
     const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
     const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation')
@@ -110,25 +110,11 @@ describe('feuille de route', () => {
 
   it('quand je clique sur une feuille de route puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
-    afficherUneGouvernance({
-      feuillesDeRoute: [
-        {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          budgetGlobal: 145_000,
-          montantSubventionAccorde: 100_000,
-          montantSubventionDemande: 115_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion 1',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
-          totalActions: 3,
-        },
-      ],
-    })
+    afficherUneGouvernance()
 
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion 1' })
+    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
     jeFermeLesDetailsDUneFeuilleDeRoute()
 
     // THEN
@@ -136,7 +122,7 @@ describe('feuille de route', () => {
   })
 
   function jOuvreLesDetailsDUneFeuilleDeRoute(): void {
-    presserLeBouton('Feuille de route inclusion 1')
+    presserLeBouton('Feuille de route inclusion')
   }
 
   function jeFermeLesDetailsDUneFeuilleDeRoute(): void {

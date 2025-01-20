@@ -47,7 +47,6 @@ export default defineConfig({
         statements: [90, 100],
       },
     },
-    environmentMatchGlobs: [['src/components/**', 'jsdom']],
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
     sequence: { shuffle: true },
@@ -59,5 +58,14 @@ export default defineConfig({
     setupFiles: ['vitest.setup.ts'],
     unstubEnvs: true,
     unstubGlobals: true,
+    workspace: [
+      {
+        extends: true,
+        test: {
+          environment: 'jsdom',
+          include: ['src/components/**.test.tsx'],
+        },
+      },
+    ],
   },
 })
