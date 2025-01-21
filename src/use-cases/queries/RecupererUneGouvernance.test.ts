@@ -44,7 +44,7 @@ describe('recupererUneGouvernance', () => {
     expect(gouvernance).toStrictEqual(gouvernanceSansMembre)
   })
 
-  it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre préfecture departementale, alors on la récupère sans les totaux subventions et sans links mais avec le contact technique", async () => {
+  it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre préfecture departementale, alors on la récupère sans les totaux subventions et sans lien mais avec le contact technique", async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -95,7 +95,7 @@ describe('recupererUneGouvernance', () => {
     ])
   })
 
-  it("quand une gouvernance est demandée sur un département et qu'elle existe contenant 1 membre autre que la prefecture departementale alors le total subvention est bien présent, le links n'est pas vide et le contact technique n'est pas renvoyer", async () => {
+  it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre autre que la préfecture departementale, alors on la récupère avec les totaux subventions et avec le lien mais sans le contact technique", async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
