@@ -1,4 +1,5 @@
-import { fireEvent, within, screen, render } from '@testing-library/react'
+// eslint-disable-next-line testing-library/no-manual-cleanup
+import { fireEvent, within, screen, render, cleanup } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { matchWithoutMarkup } from '@/components/testHelper'
@@ -30,12 +31,9 @@ describe('membres', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
       expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
-      const totaltirets = within(drawer).queryByText('-')
-      expect(totaltirets).not.toBeInTheDocument()
-      const titreDrawer = within(drawer).getByRole('heading', {
-        level: 1,
-        name: 'Préfecture du Rhône',
-      })
+      const absenceDeDonnee = within(drawer).queryByText('-')
+      expect(absenceDeDonnee).not.toBeInTheDocument()
+      const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Préfecture du Rhône' })
       expect(titreDrawer).toBeInTheDocument()
       const rolesList = within(drawer).getAllByRole('list')[0]
       const rolesItems = within(rolesList).getAllByRole('listitem')
@@ -47,29 +45,29 @@ describe('membres', () => {
       const feuillesDeRouteList = within(drawer).getAllByRole('list')[1]
       const feuillesDeRouteItems = within(feuillesDeRouteList).getAllByRole('listitem')
       expect(feuillesDeRouteItems).toHaveLength(2)
-      const feuilleDeRouteIntituler = within(drawer).getByText('Feuilles de route')
-      expect(feuilleDeRouteIntituler).toBeInTheDocument()
+      const feuilleDeRouteIntitule = within(drawer).getByText('Feuilles de route')
+      expect(feuilleDeRouteIntitule).toBeInTheDocument()
       const FeuilleDeRouteInclusion = within(feuillesDeRouteItems[0]).getByRole('link', { name: 'Feuille de route inclusion' })
       expect(FeuilleDeRouteInclusion).toHaveAttribute('href', '/')
       const FeuilleDeRouteNumerique = within(feuillesDeRouteItems[1]).getByRole('link', { name: 'Feuille de route numérique du Rhône' })
       expect(FeuilleDeRouteNumerique).toHaveAttribute('href', '/')
       const boutonFermeture = within(drawer).getByRole('button', { name: 'Fermer les détails du membre : Préfecture du Rhône' })
       expect(boutonFermeture).toBeInTheDocument()
-      const contactPolitiqueIntituler = within(drawer).getByText('Contact politique de la collectivité')
-      expect(contactPolitiqueIntituler).toBeInTheDocument()
+      const contactPolitiqueIntitule = within(drawer).getByText('Contact politique de la collectivité')
+      expect(contactPolitiqueIntitule).toBeInTheDocument()
       const contactPolitiqueMembre = within(drawer).getByText('Laetitia Henrich, chargé de mission julien.deschamps@rhones.gouv.fr')
       expect(contactPolitiqueMembre).toBeInTheDocument()
-      const contactTechniqueIntituler = within(drawer).getByText('Contact technique')
-      expect(contactTechniqueIntituler).toBeInTheDocument()
+      const contactTechniqueIntitule = within(drawer).getByText('Contact technique')
+      expect(contactTechniqueIntitule).toBeInTheDocument()
       const contactTechniqueMembre = within(drawer).getByText('Simon.lagrange@rhones.gouv.fr')
       expect(contactTechniqueMembre).toBeInTheDocument()
-      const telephoneIntituler = within(drawer).getByText('Téléphone')
-      expect(telephoneIntituler).toBeInTheDocument()
+      const telephoneIntitule = within(drawer).getByText('Téléphone')
+      expect(telephoneIntitule).toBeInTheDocument()
       const telephoneMembre = within(drawer).getByText('+33 4 45 00 45 00')
       expect(telephoneMembre).toBeInTheDocument()
     })
 
-    it('=> alors je vois les informations non-obligatoires remplacer par un tiret ou que l’intituler n’est pas affiché', () => {
+    it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
         membres: [
@@ -100,8 +98,41 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-      const totaltirets = within(drawer).getAllByText('-')
-      expect(totaltirets).toHaveLength(1)
+      const absenceDeDonnee = within(drawer).getAllByText('-')
+      expect(absenceDeDonnee).toHaveLength(1)
+    })
+
+    it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
+      // GIVEN
+      afficherGouvernance({
+        membres: [
+          {
+            contactReferent: {
+              denomination: 'Contact politique de la collectivité',
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
+            },
+            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+            feuillesDeRoute: [],
+            links: {},
+            nom: 'Préfecture du Rhône',
+            roles: ['Co-porteur'],
+            telephone: '',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Administration',
+            typologieMembre: 'Préfecture départementale',
+          },
+        ],
+      })
+
+      // WHEN
+      jOuvreLesDetailsDuMembre('Préfecture du Rhône')
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
       const sectionFeuilleDeRoute = within(drawer).queryByText('Feuille de route')
       expect(sectionFeuilleDeRoute).not.toBeInTheDocument()
     })
@@ -126,7 +157,7 @@ describe('membres', () => {
         version: 'pluriel',
       },
     ])(
-      '=> alors un drawer s’ouvre avec $feuilleDeRouteTotal $result alors il s’affiche aux $version ',
+      '=> alors un drawer s’ouvre avec $feuilleDeRouteTotal $result conjuguées au $version',
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
@@ -166,7 +197,7 @@ describe('membres', () => {
       'Contact politique de la collectivité',
       'Contact technique',
       'Téléphone',
-    ])('=> alors le drawer contient l’intituler: %s', (intituler) => {
+    ])('=> alors le drawer contient l’intitulé: %s', (intituleAttendu) => {
       // GIVEN
       afficherGouvernance()
 
@@ -175,15 +206,15 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-      const div = within(drawer).queryByText(intituler)
-      expect(div).toBeInTheDocument()
+      const intitule = within(drawer).queryByText(intituleAttendu)
+      expect(intitule).toBeInTheDocument()
     })
 
     it.each([
       'Total subventions accordées',
       'Total subventions formations accordées',
       'Contact référent',
-    ])('=> alors le drawer ne contient pas l’intituler: %s', (intituler) => {
+    ])('=> alors le drawer ne contient pas l’intitulé: %s', (intituleAttendu) => {
       // GIVEN
       afficherGouvernance()
 
@@ -192,53 +223,42 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-      const div = within(drawer).queryByText(intituler)
-      expect(div).not.toBeInTheDocument()
+      const intitule = within(drawer).queryByText(intituleAttendu)
+      expect(intitule).not.toBeInTheDocument()
     })
 
-    it('=> alors le drawer ne contient pas le bouton "Plus de détails" ', () => {
-      // GIVEN
-      afficherGouvernance()
-
-      // WHEN
-      jOuvreLesDetailsDuMembre('Préfecture du Rhône')
-
-      // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-
-      const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
-      expect(plusDeDetails).not.toBeInTheDocument()
-    })
-
-    it.each(['', undefined])('=> alors un drawer s’ouvre et etant donner que le links.plusDetailsHref est %s alors il ne s’affiche pas', (value) => {
-      // GIVEN
-      afficherGouvernance({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
+    it('=> alors un drawer s’ouvre sans le bouton plus de détails', () => {
+      ['', undefined].forEach((plusDetails) => {
+        cleanup()
+        afficherGouvernance({
+          membres: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+              links: { plusDetails },
+              nom: 'Préfecture du Rhône',
+              roles: ['Co-porteur'],
+              telephone: '+33 4 45 00 45 00',
+              type: 'Administration',
+              typologieMembre: 'Préfecture départementale',
             },
-            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-            links: { plusDetails: value },
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '+33 4 45 00 45 00',
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
-          },
-        ],
-      })
+          ],
+        })
 
-      // WHEN
-      jOuvreLesDetailsDuMembre('Préfecture du Rhône')
-      // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-      const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
-      expect(plusDeDetails).not.toBeInTheDocument()
+        // WHEN
+        jOuvreLesDetailsDuMembre('Préfecture du Rhône')
+
+        // THEN
+        const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+        const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
+        expect(plusDeDetails).not.toBeInTheDocument()
+      })
     })
   })
 
@@ -266,12 +286,9 @@ describe('membres', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
       expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
-      const totaltirets = within(drawer).queryByText('-')
-      expect(totaltirets).not.toBeInTheDocument()
-      const titreDrawer = within(drawer).getByRole('heading', {
-        level: 1,
-        name: 'Département du Rhône',
-      })
+      const absenceDeDonnee = within(drawer).queryByText('-')
+      expect(absenceDeDonnee).not.toBeInTheDocument()
+      const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Département du Rhône' })
       expect(titreDrawer).toBeInTheDocument()
       const rolesList = within(drawer).getAllByRole('list')[0]
       const rolesItems = within(rolesList).getAllByRole('listitem')
@@ -303,7 +320,7 @@ describe('membres', () => {
       expect(telephoneMembre).toBeInTheDocument()
     })
 
-    it('=> alors je vois les informations non-obligatoires remplacer par un tiret ou que l’intituler n’est pas affiché', () => {
+    it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
         membres: [
@@ -333,8 +350,40 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-      const totaltirets = within(drawer).getAllByText('-')
-      expect(totaltirets).toHaveLength(1)
+      const absenceDeDonnee = within(drawer).getAllByText('-')
+      expect(absenceDeDonnee).toHaveLength(1)
+    })
+
+    it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
+      // GIVEN
+      afficherGouvernance({
+        membres: [
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'didier.durand@exemple.com',
+              nom: 'Didier',
+              poste: 'chargé de mission',
+              prenom: 'Durant',
+            },
+            feuillesDeRoute: [],
+            links: { plusDetails: '/' },
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur', 'Financeur'],
+            telephone: '',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Collectivité',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+        ],
+      })
+
+      // WHEN
+      jOuvreLesDetailsDuMembre('Département du Rhône')
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
       const sectionFeuilleDeRoute = within(drawer).queryByText('Feuille de route')
       expect(sectionFeuilleDeRoute).not.toBeInTheDocument()
     })
@@ -359,7 +408,7 @@ describe('membres', () => {
         version: 'pluriel',
       },
     ])(
-      '=> alors un drawer s’ouvre avec $feuilleDeRouteTotal $result alors il s’affiche aux $version ',
+      '=> alors un drawer s’ouvre avec $feuilleDeRouteTotal $result conjuguées au $version',
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
@@ -401,7 +450,7 @@ describe('membres', () => {
       'Total subventions formations accordées',
       'Contact référent',
       'Téléphone',
-    ])('=> alors le drawer contient l’intituler: %s ', (intituler) => {
+    ])('=> alors le drawer contient l’intitulé: %s', (intituleAttendu) => {
       // GIVEN
       afficherGouvernance()
 
@@ -410,14 +459,14 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-      const div = within(drawer).queryByText(intituler)
-      expect(div).toBeInTheDocument()
+      const intitule = within(drawer).queryByText(intituleAttendu)
+      expect(intitule).toBeInTheDocument()
     })
 
     it.each([
       'Contact politique de la collectivité',
       'Contact technique',
-    ])('=> alors le drawer ne contient pas l’intituler: %s ', (intituler) => {
+    ])('=> alors le drawer ne contient pas l’intitulé: %s', (intituleAttendu) => {
       // GIVEN
       afficherGouvernance()
 
@@ -426,11 +475,11 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-      const div = within(drawer).queryByText(intituler)
-      expect(div).not.toBeInTheDocument()
+      const intitule = within(drawer).queryByText(intituleAttendu)
+      expect(intitule).not.toBeInTheDocument()
     })
 
-    it('=> alors le drawer contient le bouton "Plus de détails" ', () => {
+    it('=> alors le drawer contient le bouton "Plus de détails"', () => {
       // GIVEN
       afficherGouvernance()
 
@@ -444,39 +493,42 @@ describe('membres', () => {
       expect(plusDeDetails).toBeInTheDocument()
     })
 
-    it.each(['', undefined])('=> alors un drawer s’ouvre et etant donner que le contact technique est %s alors il ne s’affiche pas', (value) => {
-      // GIVEN
-      afficherGouvernance({
-        membres: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
+    it('=> alors un drawer s’ouvre sans le contact technique', () => {
+      ['', undefined].forEach((contactTechnique) => {
+        // GIVEN
+        cleanup()
+        afficherGouvernance({
+          membres: [
+            {
+              contactReferent: {
+                denomination: 'Contact référent',
+                mailContact: 'didier.durand@exemple.com',
+                nom: 'Didier',
+                poste: 'chargé de mission',
+                prenom: 'Durant',
+              },
+              contactTechnique,
+              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
+              links: { plusDetails: '/' },
+              nom: 'Département du Rhône',
+              roles: ['Co-porteur', 'Financeur'],
+              telephone: '+33 4 45 00 45 01',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Collectivité',
+              typologieMembre: 'Collectivité, EPCI',
             },
-            contactTechnique: value,
-            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
-            links: { plusDetails: '/' },
-            nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Financeur'],
-            telephone: '+33 4 45 00 45 01',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
-          },
-        ],
+          ],
+        })
+
+        // WHEN
+        jOuvreLesDetailsDuMembre('Département du Rhône')
+
+        // THEN
+        const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+        const contactTechniqueIntitule = within(drawer).queryByText('Contact technique')
+        expect(contactTechniqueIntitule).not.toBeInTheDocument()
       })
-
-      // WHEN
-      jOuvreLesDetailsDuMembre('Département du Rhône')
-
-      // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-      const contactTechniqueIntituler = within(drawer).queryByText('Contact technique')
-      expect(contactTechniqueIntituler).not.toBeInTheDocument()
     })
   })
 })
