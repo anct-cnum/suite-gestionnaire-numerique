@@ -23,15 +23,16 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   }
 }>
 
-export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
+export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
+    super()
     this.#dataResource = dataResource
   }
 
-  async find(codeDepartement: string): Promise<UneGouvernanceReadModel | null> {
-    const gouvernanceRecord = await this.#dataResource.findFirst({
+  async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
+    const gouvernanceRecord = await this.#dataResource.findFirstOrThrow({
       include: {
         comites: true,
         noteDeContexte: {
@@ -45,9 +46,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
         departementCode: codeDepartement,
       },
     })
-    if (gouvernanceRecord === null) {
-      return null
-    }
 
     return transform(gouvernanceRecord)
   }
@@ -98,19 +96,59 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     ],
     membres: [
       {
+        contactReferent: {
+          denomination: 'Contact politique de la collectivité',
+          mailContact: 'julien.deschamps@rhones.gouv.fr',
+          nom: 'Henrich',
+          poste: 'chargé de mission',
+          prenom: 'Laetitia',
+        },
+        contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+        feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+        links: {},
         nom: 'Préfecture du Rhône',
         roles: ['Co-porteur'],
+        telephone: '+33 4 45 00 45 00',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Administration',
+        typologieMembre: 'Préfecture départementale',
       },
       {
+        contactReferent: {
+          denomination: 'Contact référent',
+          mailContact: 'didier.durand@exemple.com',
+          nom: 'Didier',
+          poste: 'chargé de mission',
+          prenom: 'Durant',
+        },
+        feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
+        links: {},
         nom: 'Département du Rhône',
         roles: ['Co-porteur', 'Financeur'],
+        telephone: '+33 4 45 00 45 01',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Collectivité',
+        typologieMembre: 'Collectivité, EPCI',
       },
       {
+        contactReferent: {
+          denomination: 'Contact référent',
+          mailContact: 'coco.dupont@rhones.gouv.fr',
+          nom: 'Coco',
+          poste: 'chargé de mission',
+          prenom: 'Dupont',
+        },
+        feuillesDeRoute: [],
+        links: {},
         nom: 'CC des Monts du Lyonnais',
         roles: ['Co-porteur', 'Financeur'],
+        telephone: '',
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
         type: 'Collectivité',
+        typologieMembre: 'Collectivité, EPCI',
       },
     ],
     noteDeContexte,
