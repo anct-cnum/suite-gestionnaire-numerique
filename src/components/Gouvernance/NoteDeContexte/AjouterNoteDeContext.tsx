@@ -18,15 +18,14 @@ export default function AjouterNoteDeContext({
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
-
   return (
     <form
-      aria-label="Ajouter une note de contexte"
+      aria-label="Note de contexte"
       method="dialog"
       onSubmit={creerUneNoteDeContext}
     >
       <DrawerTitle id={labelId}>
-        Ajouter une note de contexte
+        Note de contexte
       </DrawerTitle>
       <div className="fr-mb-4w">
         <div className="color-grey fr-text--sm">

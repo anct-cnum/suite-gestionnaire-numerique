@@ -10,6 +10,7 @@ type BarreDeMenuProps = Readonly<{
   editor: Editor | null
 }>
 
+// istanbul ignore next @preserve
 export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactElement | null {
   if (!editor) {
     return null

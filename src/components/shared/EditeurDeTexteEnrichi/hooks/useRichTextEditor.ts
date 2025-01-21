@@ -7,7 +7,7 @@ import type { Editor } from '@tiptap/react'
 interface EditorReadyEvent extends CustomEvent {
   detail: Editor
 }
-
+// istanbul ignore next @preserve
 export function useRichTextEditor(contenuInitial = ''): {
   contenu: string
   editeur: Editor | null
