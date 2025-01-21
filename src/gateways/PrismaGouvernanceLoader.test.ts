@@ -387,7 +387,7 @@ describe('gouvernance loader', () => {
   })
 })
 
-const feuillesDeRoute = [
+const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
   {
     beneficiairesSubvention: [
       { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
