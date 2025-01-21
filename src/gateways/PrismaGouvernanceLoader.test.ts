@@ -109,23 +109,7 @@ describe('gouvernance loader', () => {
       ],
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres: [
-        {
-          nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
-          type: 'Administration',
-        },
-        {
-          nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-        {
-          nom: 'CC des Monts du Lyonnais',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-      ],
+      membres,
       noteDeContexte: {
         dateDeModification: new Date('2024-11-23'),
         nomAuteur: 'Deschamps',
@@ -153,10 +137,10 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartementInexistant)
+    const gouvernanceReadModel = gouvernanceLoader.find(codeDepartementInexistant)
 
     // THEN
-    expect(gouvernanceReadModel).toBeNull()
+    await expect(async () => gouvernanceReadModel).rejects.toThrow(/not found/)
   })
 
   it('quand une gouvernance est demandée par son code département existant et qu‘elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
@@ -199,23 +183,7 @@ describe('gouvernance loader', () => {
       comites: undefined,
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres: [
-        {
-          nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
-          type: 'Administration',
-        },
-        {
-          nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-        {
-          nom: 'CC des Monts du Lyonnais',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-      ],
+      membres,
       noteDeContexte: undefined,
       uid: '1',
     })
@@ -280,23 +248,7 @@ describe('gouvernance loader', () => {
       ],
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres: [
-        {
-          nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
-          type: 'Administration',
-        },
-        {
-          nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-        {
-          nom: 'CC des Monts du Lyonnais',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-      ],
+      membres,
       noteDeContexte: undefined,
       uid: '1',
     })
@@ -362,23 +314,7 @@ describe('gouvernance loader', () => {
       ],
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres: [
-        {
-          nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
-          type: 'Administration',
-        },
-        {
-          nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-        {
-          nom: 'CC des Monts du Lyonnais',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-      ],
+      membres,
       noteDeContexte: undefined,
       uid: '1',
     })
@@ -443,23 +379,7 @@ describe('gouvernance loader', () => {
       ],
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres: [
-        {
-          nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
-          type: 'Administration',
-        },
-        {
-          nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-        {
-          nom: 'CC des Monts du Lyonnais',
-          roles: ['Co-porteur', 'Financeur'],
-          type: 'Collectivité',
-        },
-      ],
+      membres,
       noteDeContexte: undefined,
       uid: '1',
     })
@@ -488,5 +408,63 @@ const feuillesDeRoute = [
     nom: 'Feuille de route inclusion 2',
     porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
     totalActions: 2,
+  },
+]
+
+const membres: UneGouvernanceReadModel['membres'] = [
+  {
+    contactReferent: {
+      denomination: 'Contact politique de la collectivité',
+      mailContact: 'julien.deschamps@rhones.gouv.fr',
+      nom: 'Henrich',
+      poste: 'chargé de mission',
+      prenom: 'Laetitia',
+    },
+    contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+    feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+    links: {},
+    nom: 'Préfecture du Rhône',
+    roles: ['Co-porteur'],
+    telephone: '+33 4 45 00 45 00',
+    totalMontantSubventionAccorde: NaN,
+    totalMontantSubventionFormationAccorde: NaN,
+    type: 'Administration',
+    typologieMembre: 'Préfecture départementale',
+  },
+  {
+    contactReferent: {
+      denomination: 'Contact référent',
+      mailContact: 'didier.durand@exemple.com',
+      nom: 'Didier',
+      poste: 'chargé de mission',
+      prenom: 'Durant',
+    },
+    feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
+    links: {},
+    nom: 'Département du Rhône',
+    roles: ['Co-porteur', 'Financeur'],
+    telephone: '+33 4 45 00 45 01',
+    totalMontantSubventionAccorde: NaN,
+    totalMontantSubventionFormationAccorde: NaN,
+    type: 'Collectivité',
+    typologieMembre: 'Collectivité, EPCI',
+  },
+  {
+    contactReferent: {
+      denomination: 'Contact référent',
+      mailContact: 'coco.dupont@rhones.gouv.fr',
+      nom: 'Coco',
+      poste: 'chargé de mission',
+      prenom: 'Dupont',
+    },
+    feuillesDeRoute: [],
+    links: {},
+    nom: 'CC des Monts du Lyonnais',
+    roles: ['Co-porteur', 'Financeur'],
+    telephone: '',
+    totalMontantSubventionAccorde: NaN,
+    totalMontantSubventionFormationAccorde: NaN,
+    type: 'Collectivité',
+    typologieMembre: 'Collectivité, EPCI',
   },
 ]
