@@ -75,10 +75,8 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       date: comite.date ?? undefined,
       derniereEdition: comite.derniereEdition,
       frequence: comite.frequence,
-      // @ts-expect-error
-      nomEditeur: comite.relationUtilisateur.nom,
-      // @ts-expect-error
-      prenomEditeur: comite.relationUtilisateur.prenom,
+      nomEditeur: comite.relationUtilisateur?.nom ?? '~',
+      prenomEditeur: comite.relationUtilisateur?.prenom ?? '~',
       type: comite.type as TypeDeComite,
     }))
     : undefined
