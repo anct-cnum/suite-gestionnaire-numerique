@@ -21,6 +21,35 @@ describe('gouvernance', () => {
     expect(sousTitre).toBeInTheDocument()
   })
 
+  it('quand j’affiche une gouvernance totalement vide, alors elle n’affiche pas ses résumés', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      comites: undefined,
+      feuillesDeRoute: undefined,
+      membres: undefined,
+      noteDeContexte: undefined,
+    }), now)
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // THEN
+    const membre = screen.queryByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
+    expect(membre).not.toBeInTheDocument()
+    const membreAVide = screen.queryByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'p' })
+    expect(membreAVide).not.toBeInTheDocument()
+    const feuilleDeRoute = screen.queryByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
+    expect(feuilleDeRoute).not.toBeInTheDocument()
+    const feuilleDeRouteVide = screen.queryByText(matchWithoutMarkup('0 feuille de route territoriale'), { selector: 'p' })
+    expect(feuilleDeRouteVide).not.toBeInTheDocument()
+    const auteurDeLaNote = screen.queryAllByText('Modifié le 01/01/1970 par Jean Deschamps', { selector: 'p' })
+    expect(auteurDeLaNote).toStrictEqual([])
+    const resume = screen.queryByText('Aucune note de contexte pour le moment.', { selector: 'p' })
+    expect(resume).not.toBeInTheDocument()
+    const contenuTitreComitologie = screen.getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
+    expect(contenuTitreComitologie).toBeInTheDocument()
+  })
+
   it('quand j’affiche une gouvernance sans comité, alors elle s’affiche avec sa section lui demandant d’en ajouter un', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), now)
