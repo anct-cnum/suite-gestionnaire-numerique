@@ -150,7 +150,7 @@ describe('gouvernance loader', () => {
     await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
   })
 
-  it('quand une gouvernance est demandée par son code département existant et qu‘elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
+  it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
     // GIVEN
     await prisma.regionRecord.create({
       data: regionRecordFactory({
@@ -246,8 +246,8 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
-      comites: [
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+      [
         {
           commentaire: 'commentaire',
           date: undefined,
@@ -257,13 +257,8 @@ describe('gouvernance loader', () => {
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
-      ],
-      departement: 'Seine-Saint-Denis',
-      feuillesDeRoute,
-      membres,
-      noteDeContexte: undefined,
-      uid: '1',
-    })
+      ]
+    )
   })
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans commentaire, alors elle est renvoyée sans commentaire', async () => {
@@ -316,8 +311,8 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
-      comites: [
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+      [
         {
           commentaire: '',
           date: new Date('2024-11-23'),
@@ -327,16 +322,11 @@ describe('gouvernance loader', () => {
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
-      ],
-      departement: 'Seine-Saint-Denis',
-      feuillesDeRoute,
-      membres,
-      noteDeContexte: undefined,
-      uid: '1',
-    })
+      ]
+    )
   })
 
-  it('quand une gouvernance est demandée par son code département existant avec un comité sans nom, alors elle est renvoyée sans nom', async () => {
+  it('quand une gouvernance est demandée par son code département existant avec un comité sans éditeur, alors elle est renvoyée sans éditeur', async () => {
     // GIVEN
     await prisma.regionRecord.create({
       data: regionRecordFactory({
@@ -371,7 +361,7 @@ describe('gouvernance loader', () => {
         creation: new Date('2024-11-23'),
         date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'FooId',
+        editeurUtilisateurId: null,
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'stratégique',
@@ -385,24 +375,19 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
-      comites: [
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+      [
         {
           commentaire: 'commentaire',
           date: new Date('2024-11-23'),
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
-          nomEditeur: 'Deschamps',
-          prenomEditeur: 'Jean',
+          nomEditeur: '~',
+          prenomEditeur: '~',
           type: 'stratégique',
         },
-      ],
-      departement: 'Seine-Saint-Denis',
-      feuillesDeRoute,
-      membres,
-      noteDeContexte: undefined,
-      uid: '1',
-    })
+      ]
+    )
   })
 })
 
