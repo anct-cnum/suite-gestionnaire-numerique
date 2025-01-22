@@ -1,6 +1,6 @@
-import { ReactElement } from 'react'
+import { PropsWithChildren, ReactElement } from 'react'
 
-export default function SubmitButton({ ariaControls = undefined, className = '', isDisabled = false, label, title = undefined }: Props): ReactElement {
+export default function SubmitButton({ ariaControls = undefined, children, className = '', isDisabled = false, title = undefined }: Props): ReactElement {
   return (
     <button
       aria-controls={ariaControls}
@@ -9,15 +9,14 @@ export default function SubmitButton({ ariaControls = undefined, className = '',
       title={title}
       type="submit"
     >
-      {label}
+      {children}
     </button>
   )
 }
 
-type Props = Readonly<{
+type Props = PropsWithChildren<Readonly<{
   ariaControls?: string
   className?: string
   isDisabled?: boolean
-  label: string
   title?: string
-}>
+}>>

@@ -27,14 +27,14 @@ export default function ModifierUnComite({
             <SubmitButton
               className="red-button"
               isDisabled={isDisabled}
-              label="Supprimer"
-            />
+            >
+              Supprimer
+            </SubmitButton>
           </div>
           <div className="fr-col-5">
-            <SubmitButton
-              isDisabled={isDisabled}
-              label="Enregistrer"
-            />
+            <SubmitButton isDisabled={isDisabled}>
+              Enregistrer
+            </SubmitButton>
           </div>
         </div>
       </FormulaireComite>
