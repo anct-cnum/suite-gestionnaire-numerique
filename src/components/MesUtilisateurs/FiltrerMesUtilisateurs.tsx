@@ -72,8 +72,9 @@ export default function FiltrerMesUtilisateurs({
           <SubmitButton
             ariaControls={id}
             className="fr-col-5"
-            label="Afficher les utilisateurs"
-          />
+          >
+            Afficher les utilisateurs
+          </SubmitButton>
         </div>
       </form>
     </>

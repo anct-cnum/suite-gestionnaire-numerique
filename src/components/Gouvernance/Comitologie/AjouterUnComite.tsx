@@ -26,8 +26,9 @@ export default function AjouterUnComite({
       <SubmitButton
         ariaControls={id}
         isDisabled={isDisabled}
-        label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-      />
+      >
+        {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+      </SubmitButton>
     </FormulaireComite>
   )
 

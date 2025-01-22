@@ -48,10 +48,9 @@ export default function Search({
             </button> : null}
         </div>
       </div>
-      <SubmitButton
-        label={labelBouton}
-        title={labelBouton}
-      />
+      <SubmitButton title={labelBouton}>
+        {labelBouton}
+      </SubmitButton>
     </form>
   )
 }

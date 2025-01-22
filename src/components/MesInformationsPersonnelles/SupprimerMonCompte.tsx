@@ -80,10 +80,9 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
             >
               Annuler
             </button>
-            <SubmitButton
-              isDisabled={isConfirmerDisabled()}
-              label={isDisabled ? 'Suppression en cours...' : 'Confirmer la suppression'}
-            />
+            <SubmitButton isDisabled={isConfirmerDisabled()}>
+              {isDisabled ? 'Suppression en cours...' : 'Confirmer la suppression'}
+            </SubmitButton>
           </div>
         </div>
       </form>

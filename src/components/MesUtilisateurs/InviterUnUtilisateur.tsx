@@ -138,10 +138,9 @@ export default function InviterUnUtilisateur({
             /> : null
         }
         <div className="fr-btns-group fr-mt-2w">
-          <SubmitButton
-            isDisabled={isDisabled}
-            label={isDisabled ? 'Envois en cours...' : 'Envoyer l’invitation'}
-          />
+          <SubmitButton isDisabled={isDisabled}>
+            {isDisabled ? 'Envois en cours...' : 'Envoyer l’invitation'}
+          </SubmitButton>
         </div>
       </form>
     </div>
