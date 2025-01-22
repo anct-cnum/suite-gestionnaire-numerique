@@ -113,10 +113,9 @@ export default function ModifierMonCompte({
             </button>
           </div>
           <div className="fr-col-5">
-            <SubmitButton
-              isDisabled={isDisabled}
-              label={isDisabled ? 'Modification en cours...' : 'Enregistrer'}
-            />
+            <SubmitButton isDisabled={isDisabled}>
+              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+            </SubmitButton>
           </div>
         </div>
       </form>
