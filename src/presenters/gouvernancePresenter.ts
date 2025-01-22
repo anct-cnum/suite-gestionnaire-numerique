@@ -1,6 +1,5 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
-import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
@@ -9,9 +8,8 @@ export function gouvernancePresenter(
 ): GouvernanceViewModel {
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
-    comiteVide: buildComiteVide(),
+    comiteVide,
     departement: gouvernanceReadModel.departement,
-    isVide: isGouvernanceVide(gouvernanceReadModel),
     sectionFeuillesDeRoute: {
       ...{ feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel) },
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
@@ -32,7 +30,6 @@ export type GouvernanceViewModel = Readonly<{
   comites?: ReadonlyArray<ComiteResumeViewModel>
   comiteVide: ComiteViewModel
   departement: string
-  isVide: boolean
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteViewModel>
@@ -55,45 +52,6 @@ export type GouvernanceViewModel = Readonly<{
   }>
   uid: string
 }>
-
-export const gouvernanceVideViewModel: GouvernanceViewModel = {
-  departement: 'Rhône',
-  isVide: true,
-  sectionFeuillesDeRoute: {
-    budgetTotalCumule: '',
-    lien: {
-      label: '',
-      url: new URL('/', process.env.NEXT_PUBLIC_HOST).toString(),
-    },
-    total: '',
-    wording: '',
-  },
-  sectionMembres: {
-    detailDuNombreDeChaqueMembre: '',
-    total: '',
-    wording: '',
-  },
-  sectionNoteDeContexte: {
-    sousTitre: '',
-  },
-  uid: '',
-}
-
-function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
-  return [
-    gouvernanceReadModel.comites,
-    gouvernanceReadModel.membres,
-    gouvernanceReadModel.feuillesDeRoute,
-    gouvernanceReadModel.noteDeContexte,
-  ].every(isNullish)
-}
-
-function buildComiteVide(): ComiteViewModel {
-  return {
-    frequences,
-    types,
-  }
-}
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
   const date = comite.date !== undefined && comite.date >= now
@@ -445,3 +403,8 @@ const types = [
     value: 'autre',
   },
 ]
+
+const comiteVide: ComiteViewModel = {
+  frequences,
+  types,
+}
