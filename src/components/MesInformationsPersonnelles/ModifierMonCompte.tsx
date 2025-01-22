@@ -126,7 +126,7 @@ export default function ModifierMonCompte({
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
-    const [nom, prenom, email, telephone] = [...form.values()].map((value) => value as string)
+    const [nom, prenom, email, telephone] = form.values() as FormDataIterator<string>
 
     setIsDisabled(true)
 

@@ -75,6 +75,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       date: comite.date ?? undefined,
       derniereEdition: comite.derniereEdition,
       frequence: comite.frequence,
+      id: comite.id,
       nomEditeur: comite.relationUtilisateur?.nom ?? '~',
       prenomEditeur: comite.relationUtilisateur?.prenom ?? '~',
       type: comite.type as TypeDeComite,

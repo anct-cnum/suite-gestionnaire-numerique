@@ -139,6 +139,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             >
               <ComitologieRemplie
                 comites={gouvernanceViewModel.comites}
+                uidGouvernance={gouvernanceViewModel.uid}
               />
             </SectionRemplie>
           ) : (

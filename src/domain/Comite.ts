@@ -12,10 +12,12 @@ export class Comite extends Entity<State> {
   readonly #dateDeModification: ValidDate<ComiteFailure>
   readonly #frequence: Frequence
   readonly #type: Type
+  readonly #uid: ComiteUid
   readonly #uidGouvernance: GouvernanceUid
   readonly #uidUtilisateurLAyantModifie: UtilisateurUid
 
   private constructor(
+    uid: ComiteUid,
     dateDeCreation: ValidDate<ComiteFailure>,
     dateDeModification: ValidDate<ComiteFailure>,
     frequence: Frequence,
@@ -25,7 +27,8 @@ export class Comite extends Entity<State> {
     commentaire?: string,
     date?: ValidDate<ComiteFailure>
   ) {
-    super(new ComiteUid(String(dateDeCreation.getTime())))
+    super(uid)
+    this.#uid = uid
     this.#commentaire = commentaire
     this.#date = date
     this.#dateDeCreation = dateDeCreation
@@ -44,7 +47,7 @@ export class Comite extends Entity<State> {
       dateDeModification: this.#dateDeModification.toJSON(),
       frequence: this.#frequence.state.value,
       type: this.#type.state.value,
-      uid: this.uid.state,
+      uid: this.#uid.state,
       uidGouvernance: this.#uidGouvernance.state.value,
       uidUtilisateurLAyantModifie: this.#uidUtilisateurLAyantModifie.state.value,
     }
@@ -56,6 +59,7 @@ export class Comite extends Entity<State> {
     dateDeModification,
     frequence,
     type,
+    uid,
     uidGouvernance,
     uidUtilisateurCourant,
     commentaire,
@@ -64,10 +68,12 @@ export class Comite extends Entity<State> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const dateDuComiteValidee = date === undefined ? undefined : new ValidDate(date, 'dateDuComiteInvalide')
+      const dateDeModificationValidee = new ValidDate(dateDeModification, 'dateDeModificationInvalide')
 
       const comite = new Comite(
+        new ComiteUid(uid.value),
         dateDeCreationValidee,
-        new ValidDate(dateDeModification, 'dateDeModificationInvalide'),
+        dateDeModificationValidee,
         new Frequence(frequence),
         new Type(type),
         new GouvernanceUid(uidGouvernance.value),
@@ -78,7 +84,7 @@ export class Comite extends Entity<State> {
 
       if (date !== undefined) {
         // @ts-expect-error
-        validerQueLadateDuComiteDoitEtreDansLeFutur(dateDuComiteValidee, dateDeCreationValidee)
+        validerQueLadateDuComiteDoitEtreDansLeFutur(dateDuComiteValidee, dateDeModificationValidee)
       }
 
       return comite
@@ -129,6 +135,7 @@ type ComiteFactoryParams = Readonly<{
   dateDeModification: Date
   frequence: string
   type: string
+  uid: ComiteUidState
   uidGouvernance: GouvernanceUidState
   uidUtilisateurCourant: UtilisateurUidState
   commentaire?: string
