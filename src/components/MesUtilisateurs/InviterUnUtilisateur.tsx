@@ -151,7 +151,7 @@ export default function InviterUnUtilisateur({
 
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, prenom, email, role, codeOrganisation] = [...form.values()].map((value) => value as string)
+    const [nom, prenom, email, role, codeOrganisation] = form.values() as FormDataIterator<string>
     const messages = await inviterUnUtilisateurAction({
       codeOrganisation,
       email,

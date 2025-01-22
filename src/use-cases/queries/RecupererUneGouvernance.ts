@@ -45,6 +45,7 @@ export type ComiteReadModel = Readonly<{
   commentaire?: string
   date?: Date
   derniereEdition: Date
+  id: number
   nomEditeur: string
   frequence: string
   prenomEditeur: string

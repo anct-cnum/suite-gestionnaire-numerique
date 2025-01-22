@@ -68,6 +68,11 @@ export default function FormulaireComite({
       >
         Laissez ici un commentaire général sur le comité
       </TextArea>
+      <input
+        name="uid"
+        type="hidden"
+        value={comite.uid}
+      />
       <div className="fr-btns-group">
         {children}
       </div>

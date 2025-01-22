@@ -99,6 +99,7 @@ function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeVie
         value: type.value,
       }
     }),
+    uid: comite.id,
   }
 }
 
@@ -295,6 +296,7 @@ export type ComiteViewModel = Readonly<{
     label: string
     value: string
   }>
+  uid: number
 }>
 
 export type FeuilleDeRouteViewModel = Readonly<{
@@ -419,4 +421,5 @@ const types = [
 const comiteARemplir: ComiteViewModel = {
   frequences,
   types,
+  uid: -1,
 }

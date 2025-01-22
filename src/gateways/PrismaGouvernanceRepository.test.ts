@@ -57,7 +57,7 @@ describe('gouvernance repository', () => {
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(String(gouvernanceId)))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ noteDeContexte: undefined }).state)
+    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ noteDeContexte: undefined, uid: '1' }).state)
   })
 
   it('rechercher une gouvernance qui existe avec note de contexte', async () => {
@@ -84,6 +84,6 @@ describe('gouvernance repository', () => {
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(String(gouvernanceId)))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory().state)
+    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ uid: '1' }).state)
   })
 })

@@ -93,7 +93,7 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
+    expect(gouvernanceReadModel).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>({
       comites: [
         {
           commentaire: 'commentaire',
@@ -246,7 +246,7 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
       [
         {
           commentaire: 'commentaire',
@@ -311,7 +311,7 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
       [
         {
           commentaire: '',
@@ -375,7 +375,7 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
+    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
       [
         {
           commentaire: 'commentaire',

@@ -27,6 +27,7 @@ export function renderComponent(
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
+    modifierUnComiteAction: vi.fn(),
     pathname: '/',
     reinviterUnUtilisateurAction: vi.fn(),
     roles: Roles,
