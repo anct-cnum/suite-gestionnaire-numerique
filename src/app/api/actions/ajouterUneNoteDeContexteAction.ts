@@ -35,8 +35,5 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  contenu: z.string().min(1, { message: 'Le contenu doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  uidGouvernance: z.string().min(1, { message: 'L‘identifiant de la gouvernance doit être renseigné' }),
-  uidUtilisateurCourant: z.string().min(1, { message: 'L‘identifiant de l‘utilisateur courant doit être renseigné' }),
 })
