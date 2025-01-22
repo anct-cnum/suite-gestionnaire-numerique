@@ -1,5 +1,5 @@
-import { AjouterUnComite } from './AjouterUnComite'
-import { AddComiteRepository } from './shared/ComiteRepository'
+import { ModifierUnComite } from './ModifierUnComite'
+import { FindComiteRepository, UpdateComiteRepository } from './shared/ComiteRepository'
 import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Comite } from '@/domain/Comite'
@@ -8,11 +8,12 @@ import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
-describe('ajouter un comité à une gouvernance', () => {
+describe('modifier un comité', () => {
   beforeEach(() => {
     spiedGouvernanceUidToFind = null
     spiedUtilisateurUidToFind = null
-    spiedComiteToAdd = null
+    spiedComiteToModify = null
+    spiedComiteUidToFind = null
   })
 
   it.each([
@@ -32,7 +33,7 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'sans date ni commentaire',
       type: typeValide,
     },
-  ])('étant donné une gouvernance existante, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gourvernance', async ({
+  ])('étant donné une gouvernance existante, quand un comité est modifié $intention par son gestionnaire, alors il est modifié', async ({
     commentaire,
     date,
     expectedDate,
@@ -40,20 +41,21 @@ describe('ajouter un comité à une gouvernance', () => {
     type,
   }) => {
     // GIVEN
-    const dateDeCreation = new Date('2024-01-01')
-    const ajouterUnComite = new AjouterUnComite(
+    const dateDeModification = new Date('2024-01-01')
+    const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
-      dateDeCreation
+      dateDeModification
     )
 
     // WHEN
-    const result = await ajouterUnComite.execute({
+    const result = await modifierUnComite.execute({
       commentaire,
       date,
       frequence,
       type,
+      uid: uidComite,
       uidGouvernance,
       uidUtilisateurCourant,
     })
@@ -61,23 +63,21 @@ describe('ajouter un comité à une gouvernance', () => {
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedComiteToAdd?.state).toStrictEqual(
+    expect(spiedComiteUidToFind).toBe(uidComite)
+    expect(spiedComiteToModify?.state).toStrictEqual(
       comiteFactory({
         commentaire,
         date: expectedDate,
-        dateDeCreation,
-        dateDeModification: dateDeCreation,
+        dateDeCreation: new Date(epochTime),
+        dateDeModification,
         frequence,
         type,
-        uid: {
-          value: 'identifiantPourLaCreation',
-        },
         uidGouvernance: {
           value: uidGouvernance,
         },
         uidUtilisateurCourant: {
-          email: 'martin.tartempion@example.net',
-          value: 'userFooId',
+          email: emailUtilisateurCourant,
+          value: uidUtilisateurCourant,
         },
       }).state
     )
@@ -87,7 +87,7 @@ describe('ajouter un comité à une gouvernance', () => {
   it.each([
     {
       date,
-      dateDeCreation: date,
+      dateDeModification: date,
       expectedFailure: 'frequenceInvalide',
       frequence: 'frequenceInvalide',
       intention: 'd’une fréquence invalide',
@@ -95,7 +95,7 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date,
-      dateDeCreation: date,
+      dateDeModification: date,
       expectedFailure: 'typeInvalide',
       frequence: frequenceValide,
       intention: 'd’un type invalide',
@@ -103,7 +103,7 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date: 'dateDuComiteInvalide',
-      dateDeCreation: date,
+      dateDeModification: date,
       expectedFailure: 'dateDuComiteInvalide',
       frequence: frequenceValide,
       intention: 'de la date invalide',
@@ -111,34 +111,35 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date,
-      dateDeCreation: 'dateDeCreationInvalide',
-      expectedFailure: 'dateDeCreationInvalide',
+      dateDeModification: 'dateDeModificationInvalide',
+      expectedFailure: 'dateDeModificationInvalide',
       frequence: frequenceValide,
-      intention: 'de la date de création invalide',
+      intention: 'de la date de modification invalide',
       type: typeValide,
     },
     {
       date: '2024-01-01',
-      dateDeCreation: '2024-01-02',
+      dateDeModification: '2024-01-02',
       expectedFailure: 'dateDuComiteDoitEtreDansLeFutur',
       frequence: frequenceValide,
       intention: 'de la date de comité qui est dans le passé',
       type: typeValide,
     },
-  ])('étant donné une gouvernance existante, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
+  ])('étant donné une gouvernance existante, quand un comité est modifié par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeModification, expectedFailure, frequence, type }) => {
     // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
+    const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
-      new Date(dateDeCreation)
+      new Date(dateDeModification)
     )
 
     // WHEN
-    const result = await ajouterUnComite.execute({
+    const result = await modifierUnComite.execute({
       date,
       frequence,
       type,
+      uid: uidComite,
       uidGouvernance,
       uidUtilisateurCourant,
     })
@@ -147,12 +148,12 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe(expectedFailure)
-    expect(spiedComiteToAdd).toBeNull()
+    expect(spiedComiteToModify).toBeNull()
   })
 
-  it('étant donné une gouvernance existante, quand un comité est créé par un gestionnaire département mais qui n’a pas le même département que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un comité est modifié par un gestionnaire département mais qui n’a pas le même département que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
+    const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireAutreDepartementRepositorySpy(),
       new ComiteRepositorySpy(),
@@ -160,11 +161,12 @@ describe('ajouter un comité à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterUnComite.execute({
+    const result = await modifierUnComite.execute({
       commentaire,
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uid: uidComite,
       uidGouvernance,
       uidUtilisateurCourant,
     })
@@ -172,13 +174,13 @@ describe('ajouter un comité à une gouvernance', () => {
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('userFooId')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('utilisateurNePeutPasAjouterComite')
-    expect(spiedComiteToAdd).toBeNull()
+    expect(result).toBe('utilisateurNePeutPasModifierComite')
+    expect(spiedComiteToModify).toBeNull()
   })
 
-  it('étant donné une gouvernance inexistante, quand un comité est créé, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance inexistante, quand un comité est modifié, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
+    const modifierUnComite = new ModifierUnComite(
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
@@ -186,11 +188,12 @@ describe('ajouter un comité à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterUnComite.execute({
+    const result = await modifierUnComite.execute({
       commentaire,
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uid: uidComite,
       uidGouvernance,
       uidUtilisateurCourant,
     })
@@ -199,12 +202,12 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe('gouvernanceInexistante')
-    expect(spiedComiteToAdd).toBeNull()
+    expect(spiedComiteToModify).toBeNull()
   })
 
-  it('étant donné un utilisateur inexistant, quand un comité est créé, alors une erreur est renvoyée', async () => {
+  it('étant donné un utilisateur inexistant, quand un comité est modifié, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
+    const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireInexistantRepositorySpy(),
       new ComiteRepositorySpy(),
@@ -212,20 +215,49 @@ describe('ajouter un comité à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterUnComite.execute({
+    const result = await modifierUnComite.execute({
       commentaire,
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uid: uidComite,
       uidGouvernance,
       uidUtilisateurCourant,
     })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
-    expect(spiedGouvernanceUidToFind).toBeNull()
     expect(result).toBe('utilisateurInexistant')
-    expect(spiedComiteToAdd).toBeNull()
+    expect(spiedGouvernanceUidToFind).toBeNull()
+    expect(spiedComiteToModify).toBeNull()
+  })
+
+  it('étant donné un comité inexistant, quand un comité est modifié, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const modifierUnComite = new ModifierUnComite(
+      new GouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      new ComiteInexistantRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await modifierUnComite.execute({
+      commentaire,
+      date,
+      frequence: frequenceValide,
+      type: typeValide,
+      uid: uidComite,
+      uidGouvernance,
+      uidUtilisateurCourant,
+    })
+
+    // THEN
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+    expect(spiedComiteUidToFind).toBe(uidComite)
+    expect(result).toBe('comiteInexistant')
+    expect(spiedComiteToModify).toBeNull()
   })
 })
 
@@ -233,11 +265,14 @@ const commentaire = 'un commentaire'
 const date = '2024-01-01'
 const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
+const uidComite = 'comiteFooId'
 const uidGouvernance = 'gouvernanceFooId'
+const emailUtilisateurCourant = 'martin.tartempion@example.net'
 const uidUtilisateurCourant = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: string | null
-let spiedComiteToAdd: Comite | null
+let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
+let spiedComiteToModify: Comite | null
+let spiedComiteUidToFind: Comite['uid']['state']['value'] | null
 
 class GouvernanceRepositorySpy implements FindGouvernanceRepository {
   async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
@@ -266,7 +301,11 @@ class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
+    return Promise.resolve(utilisateurFactory({
+      codeOrganisation: '75',
+      role: 'Gestionnaire département',
+      uid: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+    }))
   }
 }
 
@@ -284,9 +323,25 @@ class GestionnaireAutreDepartementRepositorySpy implements FindUtilisateurReposi
   }
 }
 
-class ComiteRepositorySpy implements AddComiteRepository {
-  async add(comite: Comite): Promise<boolean> {
-    spiedComiteToAdd = comite
-    return Promise.resolve(true)
+class ComiteRepositorySpy implements UpdateComiteRepository, FindComiteRepository {
+  async find(uid: Comite['uid']['state']['value']): Promise<Comite | null> {
+    spiedComiteUidToFind = uid
+    return Promise.resolve(comiteFactory({
+      uid: { value: uidComite },
+      uidGouvernance: { value: uidGouvernance },
+      uidUtilisateurCourant: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+    }))
+  }
+
+  async update(comite: Comite): Promise<void> {
+    spiedComiteToModify = comite
+    return Promise.resolve()
+  }
+}
+
+class ComiteInexistantRepositorySpy extends ComiteRepositorySpy {
+  override async find(uid: Comite['uid']['state']['value']): Promise<Comite | null> {
+    spiedComiteUidToFind = uid
+    return Promise.resolve(null)
   }
 }

@@ -36,10 +36,10 @@ export default function AjouterUnComite({
     event.preventDefault()
 
     const form = new FormData(event.currentTarget)
-    const [type, frequence, date, commentaire] = [...form.values()].map((value) => value as string)
+    const [type, frequence, date, commentaire] = form.values() as FormDataIterator<string>
     setIsDisabled(true)
     const messages = await ajouterUnComiteAction({
-      commentaire: commentaire === '' ? undefined : commentaire,
+      commentaire,
       date: date === '' ? undefined : date,
       frequence,
       path: pathname,

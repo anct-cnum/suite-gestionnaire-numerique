@@ -1,13 +1,13 @@
-import { within, screen, fireEvent } from '@testing-library/react'
+import { within, screen, fireEvent, waitFor } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { FrozenDate, presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { FrozenDate, presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('comitologie', () => {
   describe('quand je clique sur ajouter une comitologie,', () => {
-    it('le drawer pour ajouter un comité s’affiche', () => {
+    it('alors le drawer pour ajouter un comité s’affiche', () => {
       // GIVEN
       vi.stubGlobal('Date', FrozenDate)
       afficherUneGouvernance()
@@ -57,6 +57,7 @@ describe('comitologie', () => {
       expect(commentaire).toHaveAttribute('maxLength', '500')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterComiteId')
       expect(enregistrer).not.toBeDisabled()
     })
 
@@ -77,7 +78,6 @@ describe('comitologie', () => {
       // GIVEN
       vi.stubGlobal('Date', FrozenDate)
       const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
-      vi.stubGlobal('dsfr', stubbedConceal())
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -87,9 +87,7 @@ describe('comitologie', () => {
       jeSelectionneUneFrequence('Annuelle')
       const date = jeChoisisUneDate(ajouterUnComiteDrawer, '1996-04-15')
       const commentaire = jeTapeUnCommentaire(ajouterUnComiteDrawer, 'commentaire')
-      const form = screen.getByRole('form', { name: 'Ajouter un comité' })
-      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
-      fireEvent.click(enregistrer)
+      const enregistrer = jEnregistreLeComite()
 
       // THEN
       expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
@@ -112,29 +110,55 @@ describe('comitologie', () => {
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Comité bien ajouté')
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
-      expect(enregistrer).not.toBeDisabled()
+      expect(enregistrer).toBeEnabled()
     })
 
-    it('puis que je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification apparaît', async () => {
+    it('puis que je ne remplis pas la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
       // GIVEN
-      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
-      vi.stubGlobal('dsfr', stubbedConceal())
+      vi.stubGlobal('Date', FrozenDate)
+      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnComite()
-      const form = screen.getByRole('form', { name: 'Ajouter un comité' })
-      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
-      fireEvent.click(enregistrer)
+      jEnregistreLeComite()
 
+      // THEN
+      await waitFor(() => {
+        expect(ajouterUnComiteAction).toHaveBeenCalledWith({
+          commentaire: '',
+          date: undefined,
+          frequence: 'mensuelle',
+          path: '/gouvernance/11',
+          type: 'strategique',
+          uidGouvernance: 'gouvernanceFooId',
+        })
+      })
+    })
+
+    it('puis que je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
+
+      // WHEN
+      jOuvreLeFormulairePourAjouterUnComite()
+      jEnregistreLeComite()
       // THEN
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
+
+    function jEnregistreLeComite(): HTMLElement {
+      const form = screen.getByRole('form', { name: 'Ajouter un comité' })
+      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
+      fireEvent.click(enregistrer)
+      return enregistrer
+    }
   })
 
   describe('quand je clique sur un comité,', () => {
-    it('alors j’affiche le détail du comité', () => {
+    it('alors le drawer des détails du comité s’affiche', () => {
       // GIVEN
       vi.stubGlobal('Date', FrozenDate)
       afficherUneGouvernance()
@@ -187,6 +211,7 @@ describe('comitologie', () => {
       const supprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
       expect(supprimer).not.toBeDisabled()
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+      expect(enregistrer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
       expect(enregistrer).not.toBeDisabled()
 
       const modifierPar = screen.getByText('Modifié le 01/02/2024 par Martin Tartempion')
@@ -199,12 +224,97 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
       jeFermeLeFormulairePourModifierUnComite()
 
       // THEN
-      expect(drawer).not.toBeVisible()
+      expect(modifierUnComiteDrawer).not.toBeVisible()
     })
+
+    it('puis que je le modifie et que je l’enregistre, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
+      // GIVEN
+      vi.stubGlobal('Date', FrozenDate)
+      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
+
+      // WHEN
+      jOuvreLeFormulairePourModifierUnComite()
+      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      jeSelectionneUnType('Technique')
+      jeSelectionneUneFrequence('Trimestrielle')
+      jeChoisisUneDate(modifierUnComiteDrawer, '2990-04-15')
+      jeTapeUnCommentaire(modifierUnComiteDrawer, 'un nouveau commentaire')
+      const enregistrer = jEnregistreLeComite()
+
+      // THEN
+      expect(enregistrer).toHaveAccessibleName('Modification en cours...')
+      expect(enregistrer).toBeDisabled()
+      await waitFor(() => {
+        expect(modifierUnComiteAction).toHaveBeenCalledWith({
+          commentaire: 'un nouveau commentaire',
+          date: '2990-04-15',
+          frequence: 'trimestrielle',
+          path: '/gouvernance/11',
+          type: 'technique',
+          uid: '2',
+          uidGouvernance: 'gouvernanceFooId',
+        })
+      })
+      expect(modifierUnComiteDrawer).not.toBeVisible()
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Comité bien modifié')
+      expect(enregistrer).toHaveAccessibleName('Enregistrer')
+      expect(enregistrer).toBeEnabled()
+    })
+
+    it('puis que je modifie sans remplir la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
+      // GIVEN
+      vi.stubGlobal('Date', FrozenDate)
+      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
+
+      // WHEN
+      jOuvreLeFormulairePourModifierUnComite()
+      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      jeChoisisUneDate(modifierUnComiteDrawer, '')
+      jeTapeUnCommentaire(modifierUnComiteDrawer, '')
+      jEnregistreLeComite()
+
+      // THEN
+      await waitFor(() => {
+        expect(modifierUnComiteAction).toHaveBeenCalledWith({
+          commentaire: '',
+          date: undefined,
+          frequence: 'trimestrielle',
+          path: '/gouvernance/11',
+          type: 'technique',
+          uid: '2',
+          uidGouvernance: 'gouvernanceFooId',
+        })
+      })
+    })
+
+    it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      vi.stubGlobal('Date', FrozenDate)
+      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
+
+      // WHEN
+      jOuvreLeFormulairePourModifierUnComite()
+      jEnregistreLeComite()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+    })
+
+    function jEnregistreLeComite(): HTMLElement {
+      const form = screen.getByRole('form', { name: 'Détail du Comité technique' })
+      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
+      fireEvent.click(enregistrer)
+      return enregistrer
+    }
   })
 
   function jOuvreLeFormulairePourAjouterUnComite(): void {
