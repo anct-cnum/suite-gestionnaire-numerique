@@ -33,9 +33,8 @@ describe('note de contexte', () => {
     jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
     // THEN
-    expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('aria-labelledby', 'drawer-ajouter-note-de-contexte-titre')
-    expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('aria-modal', 'true')
-    expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('id', 'drawer-ajouter-note-de-contexte')
+    expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('aria-labelledby', 'labelAjouterNoteDeContexteId')
+    expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('id', 'drawerAjouterNoteDeContexteId')
     expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('open')
     const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
     const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Note de contexte' })

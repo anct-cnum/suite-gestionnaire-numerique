@@ -249,8 +249,9 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             closeDrawer={() => {
               setIsDrawerOpen(false)
             }}
-            dialogRef={drawerRef}
+            id={drawerComiteId}
             labelId={labelNoteDeContexteId}
+            uidGouvernance={gouvernanceViewModel.uid}
           />
         </Drawer>
         {

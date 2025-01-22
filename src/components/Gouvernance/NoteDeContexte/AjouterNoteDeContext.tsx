@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, RefObject, useContext, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
@@ -10,8 +10,9 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function AjouterNoteDeContext({
-  dialogRef,
+  id,
   labelId,
+  uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
   const { ajouterUneNoteDeContexteAction, pathname } = useContext(clientContext)
@@ -41,6 +42,7 @@ export default function AjouterNoteDeContext({
       <ul className="fr-btns-group fr-mt-2w">
         <li>
           <SubmitButton
+            ariaControls={id}
             isDisabled={!contenu.trim() || isDisabled}
             label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
           />
@@ -64,7 +66,7 @@ export default function AjouterNoteDeContext({
   async function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    const messages = await ajouterUneNoteDeContexteAction({ noteDeContexte: contenu, path: pathname })
+    const messages = await ajouterUneNoteDeContexteAction({  contenu, path: pathname , uidGouvernance})
     if (messages[0] === 'OK') {
       Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
       viderLeContenu()
@@ -73,13 +75,13 @@ export default function AjouterNoteDeContext({
     }
     closeDrawer();
     (event.target as HTMLFormElement).reset()
-    window.dsfr(dialogRef.current).modal.conceal()
     setIsDisabled(false)
   }
 }
 
 type Props = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement | null>
+  id: string
   labelId: string
+  uidGouvernance: string
   closeDrawer(): void
 }>

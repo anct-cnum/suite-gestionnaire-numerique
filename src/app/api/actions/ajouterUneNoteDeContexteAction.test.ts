@@ -3,11 +3,13 @@ import * as nextCache from 'next/cache'
 import { describe, it } from 'vitest'
 
 import { ajouterUneNoteDeContexteAction } from './ajouterUneNoteDeContexteAction'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { AjouterNoteDeContexteAGouvernance } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
 describe('ajouter une note de contexte', () => {
   it('quand une note de contexte est ajoutée avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
     // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
     vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
 
@@ -16,7 +18,6 @@ describe('ajouter une note de contexte', () => {
       contenu: '<p>ma note de contexte</p>',
       path: '/gouvernance/11',
       uidGouvernance: 'uidGouvernance',
-      uidUtilisateurCourant: 'uidUtilisateurCourant',
     })
 
     // THEN
@@ -24,9 +25,8 @@ describe('ajouter une note de contexte', () => {
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
       contenu: '<p>ma note de contexte</p>',
-      path: '/gouvernance/11',
       uidGouvernance: 'uidGouvernance',
-      uidUtilisateurCourant: 'uidUtilisateurCourant',
+      uidUtilisateurCourant: 'userFooId',
     })
   })
 
@@ -36,7 +36,6 @@ describe('ajouter une note de contexte', () => {
       contenu: '<p>ma note de contexte</p>',
       path: '',
       uidGouvernance: 'uidGouvernance',
-      uidUtilisateurCourant: 'uidUtilisateurCourant',
     })
 
     // THEN

@@ -1,3 +1,5 @@
+'use server'
+
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
@@ -6,6 +8,7 @@ import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceReposit
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterNoteDeContexteAGouvernance } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 
 export async function ajouterUneNoteDeContexteAction(
   actionParam: ActionParams
@@ -22,7 +25,11 @@ export async function ajouterUneNoteDeContexteAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )
-  const result = await ajouterNoteDeContexteAGouvernance.execute(actionParam)
+  const result = await ajouterNoteDeContexteAGouvernance.execute({
+    contenu: actionParam.contenu,
+    uidGouvernance: actionParam.uidGouvernance,
+    uidUtilisateurCourant: await getSessionSub(),
+  })
   revalidatePath(validationResult.data.path)
   return [result]
 }
@@ -30,7 +37,6 @@ export async function ajouterUneNoteDeContexteAction(
 type ActionParams = Readonly<{
   contenu: string
   uidGouvernance: string
-  uidUtilisateurCourant: string
   path: string
 }>
 
