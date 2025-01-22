@@ -48,45 +48,50 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
       </p>
-
-      <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-        {
-          gouvernanceViewModel.sectionMembres.membres ?
-            <ResumeMembre
-              total={gouvernanceViewModel.sectionMembres.total}
-              type={gouvernanceViewModel.sectionMembres.wording}
-            /> : (
-              <Resume style={styles['resume-membres']}>
-                <ResumeMembreVide />
-              </Resume>
-            )
-        }
-        {
-          gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ?
-            <ResumeFeuilleDeRoute
-              link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
-              linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
-              total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
-              wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
-            /> : (
-              <Resume style={styles['resume-feuilles-de-route']}>
-                <ResumeFeuilleDeRouteVide />
-              </Resume>
-            )
-        }
-        {
-          gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
-            <ResumeNoteDeContexte
-              sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
-              texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteSansHTML}
-            />
-          ) : (
-            <Resume style={styles['resume-note-de-contexte']}>
-              <ResumeNoteDeContexteVide />
-            </Resume>
+      {
+        gouvernanceViewModel.isVide ?
+          null :
+          (
+            <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+              {
+                gouvernanceViewModel.sectionMembres.membres ?
+                  <ResumeMembre
+                    total={gouvernanceViewModel.sectionMembres.total}
+                    type={gouvernanceViewModel.sectionMembres.wording}
+                  /> : (
+                    <Resume style={styles['resume-membres']}>
+                      <ResumeMembreVide />
+                    </Resume>
+                  )
+              }
+              {
+                gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ?
+                  <ResumeFeuilleDeRoute
+                    link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
+                    linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
+                    total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
+                    wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
+                  /> : (
+                    <Resume style={styles['resume-feuilles-de-route']}>
+                      <ResumeFeuilleDeRouteVide />
+                    </Resume>
+                  )
+              }
+              {
+                gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
+                  <ResumeNoteDeContexte
+                    sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
+                    texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteSansHTML}
+                  />
+                ) : (
+                  <Resume style={styles['resume-note-de-contexte']}>
+                    <ResumeNoteDeContexteVide />
+                  </Resume>
+                )
+              }
+            </div>
           )
-        }
-      </div>
+      }
       <section aria-labelledby="comitologie">
         <Drawer
           boutonFermeture="Fermer le formulaire de création d’un comité"
@@ -104,7 +109,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             closeDrawer={() => {
               setIsDrawerOpen(false)
             }}
-            comite={gouvernanceViewModel.comiteVide}
+            comite={gouvernanceViewModel.comiteARemplir}
             id={drawerComiteId}
             labelId={labelComiteId}
             uidGouvernance={gouvernanceViewModel.uid}
