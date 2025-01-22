@@ -87,7 +87,9 @@ describe('comitologie', () => {
       jeSelectionneUneFrequence('Annuelle')
       const date = jeChoisisUneDate(ajouterUnComiteDrawer, '1996-04-15')
       const commentaire = jeTapeUnCommentaire(ajouterUnComiteDrawer, 'commentaire')
-      const enregistrer = jEnregistreLeComite()
+      const form = screen.getByRole('form', { name: 'Ajouter un comité' })
+      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
+      fireEvent.click(enregistrer)
 
       // THEN
       expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
@@ -121,7 +123,9 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnComite()
-      jEnregistreLeComite()
+      const form = screen.getByRole('form', { name: 'Ajouter un comité' })
+      const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
+      fireEvent.click(enregistrer)
 
       // THEN
       const notification = await screen.findByRole('alert')
@@ -229,13 +233,6 @@ describe('comitologie', () => {
     const input = within(container).getByLabelText('Laissez ici un commentaire général sur le comité')
     fireEvent.change(input, { target: { value } })
     return input
-  }
-
-  function jEnregistreLeComite(): HTMLElement {
-    const form = screen.getByRole('form', { name: 'Ajouter un comité' })
-    const button = within(form).getByRole('button', { name: 'Enregistrer' })
-    fireEvent.click(button)
-    return button
   }
 
   function jOuvreLeFormulairePourModifierUnComite(): void {

@@ -36,7 +36,7 @@ export function useRichTextEditor(contenuInitial = ''): {
   useEffect((): () => void => {
     window.addEventListener('editorReady', gererEditeurPret)
 
-    return function nettoyage(): void {
+    return (): void => {
       window.removeEventListener('editorReady', gererEditeurPret)
     }
   }, [])

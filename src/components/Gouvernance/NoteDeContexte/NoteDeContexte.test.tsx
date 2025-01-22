@@ -15,7 +15,7 @@ const mockRichTextEditor = {
   viderLeContenu: vi.fn(),
 }
 
-vi.mock('@/components/shared/EditeurDeTexteEnrichi/hooks/useRichTextEditor', () => ({
+vi.mock('@/components/shared/RichTextEditor/hooks/useRichTextEditor', () => ({
   useRichTextEditor: (): typeof mockRichTextEditor => mockRichTextEditor,
 }))
 
@@ -98,7 +98,7 @@ describe('note de contexte', () => {
     expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
   })
 
-  it('quand je commence à écrire dans l‘éditeur de texte enrichi, le bouton enregistrer et supprimer deviennent actifs', () => {
+  it('quand je commence à écrire dans l‘éditeur de texte enrichi, les boutons enregistrer et supprimer deviennent actifs', () => {
     // GIVEN
     afficherUneGouvernance()
     mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'

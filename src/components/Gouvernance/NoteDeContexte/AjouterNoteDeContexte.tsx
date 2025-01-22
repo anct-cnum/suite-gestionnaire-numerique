@@ -4,12 +4,12 @@ import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
-import EditeurDeTexte from '@/components/shared/EditeurDeTexteEnrichi/EditeurDeTexte'
-import { useRichTextEditor } from '@/components/shared/EditeurDeTexteEnrichi/hooks/useRichTextEditor'
 import { Notification } from '@/components/shared/Notification/Notification'
+import { useRichTextEditor } from '@/components/shared/RichTextEditor/hooks/useRichTextEditor'
+import EditeurDeTexte from '@/components/shared/RichTextEditor/TextEditor'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
-export default function AjouterNoteDeContext({
+export default function AjouterNoteDeContexte({
   id,
   labelId,
   uidGouvernance,
@@ -23,7 +23,7 @@ export default function AjouterNoteDeContext({
     <form
       aria-label="Note de contexte"
       method="dialog"
-      onSubmit={creerUneNoteDeContext}
+      onSubmit={creerUneNoteDeContexte}
     >
       <DrawerTitle id={labelId}>
         Note de contexte
@@ -36,7 +36,7 @@ export default function AjouterNoteDeContext({
         </div>
       </div>
       <EditeurDeTexte
-        contenu=""
+        contenu={contenu}
         onChange={gererLeChangementDeContenu}
       />
       <ul className="fr-btns-group fr-mt-2w">
@@ -63,13 +63,13 @@ export default function AjouterNoteDeContext({
     </form>
   )
 
-  async function creerUneNoteDeContext(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function creerUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    const messages = await ajouterUneNoteDeContexteAction({  contenu, path: pathname , uidGouvernance})
+    const messages = await ajouterUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
     if (messages[0] === 'OK') {
-      Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
       viderLeContenu()
+      Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

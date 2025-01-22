@@ -5,7 +5,7 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import { ReactElement } from 'react'
 
-import { BarreDeMenuEditeurDeTexte } from './BarreDeMenuEditeurDeTexte'
+import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
 type Props = Readonly<{
   contenu: string
@@ -13,7 +13,7 @@ type Props = Readonly<{
 }>
 
 // istanbul ignore next @preserve
-export default function EditeurDeTexte({ contenu, onChange }: Props): ReactElement {
+export default function TextEditor({ contenu, onChange }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
     editorProps: {

@@ -1,20 +1,20 @@
 import { MouseEventHandler, ReactElement } from 'react'
 
-import styles from './RichTextFormMenuBar.module.css'
+import styles from './RichTextEditor.module.css'
 
-type BoutonDeMenuProps = Readonly<{
+type MenuButtonProps = Readonly<{
   title: string
   icon: string
   onClick: MouseEventHandler<HTMLButtonElement>
   isActive: boolean
 }>
 // istanbul ignore next @preserve
-export function BoutonDeMenu({
+export function MenuButton({
   title,
   icon,
   onClick,
   isActive,
-}: BoutonDeMenuProps): ReactElement {
+}: MenuButtonProps): ReactElement {
   function handleClick(event: React.MouseEvent<HTMLButtonElement>): void {
     event.preventDefault()
     event.stopPropagation()

@@ -4,11 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterNoteDeContexteAGouvernance } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
-import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 
 export async function ajouterUneNoteDeContexteAction(
   actionParam: ActionParams
@@ -21,7 +21,7 @@ export async function ajouterUneNoteDeContexteAction(
 
   const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord) as any,
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )

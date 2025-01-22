@@ -15,7 +15,7 @@ import MembreRempli from './Membre/MembreRempli'
 import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
 import ResumeMembreVide from './Membre/ResumeMembreVide'
-import AjouterNoteDeContext from './NoteDeContexte/AjouterNoteDeContext'
+import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
@@ -245,11 +245,11 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           labelId={labelNoteDeContexteId}
           ref={drawerRef}
         >
-          <AjouterNoteDeContext
+          <AjouterNoteDeContexte
             closeDrawer={() => {
               setIsDrawerOpen(false)
             }}
-            id={drawerComiteId}
+            id={drawerNoteDeContexteId}
             labelId={labelNoteDeContexteId}
             uidGouvernance={gouvernanceViewModel.uid}
           />

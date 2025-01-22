@@ -3,8 +3,8 @@
 import { Editor } from '@tiptap/react'
 import { ReactElement } from 'react'
 
-import { BoutonDeMenu } from './BoutonDeMenu'
-import styles from './RichTextFormMenuBar.module.css'
+import { MenuButton } from './MenuButton'
+import styles from './RichTextEditor.module.css'
 
 type BarreDeMenuProps = Readonly<{
   editor: Editor | null
@@ -51,52 +51,52 @@ export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactEl
 
   return (
     <div className={styles.menuBar}>
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-h-1"
         isActive={editor.isActive('heading', { level: 2 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         title="Titre 1"
       />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-h-2"
         isActive={editor.isActive('heading', { level: 3 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         title="Titre 2"
       />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-h-3"
         isActive={editor.isActive('heading', { level: 4 })}
         onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
         title="Titre 3"
       />
       <div className={styles.separator} />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-bold"
         isActive={editor.isActive('bold')}
         onClick={() => editor.chain().focus().toggleBold().run()}
         title="Gras"
       />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-italic"
         isActive={editor.isActive('italic')}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         title="Italique"
       />
       <div className={styles.separator} />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-list-ordered"
         isActive={editor.isActive('orderedList')}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         title="Liste ordonnée"
       />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-list-unordered"
         isActive={editor.isActive('bulletList')}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         title="Liste non ordonnée"
       />
       <div className={styles.separator} />
-      <BoutonDeMenu
+      <MenuButton
         icon="fr-icon-link"
         isActive={editor.isActive('link')}
         onClick={toggleLink}
