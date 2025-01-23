@@ -48,8 +48,8 @@ export class ModifierUnComite implements CommandHandler<Command> {
       frequence: command.frequence,
       type: command.type,
       uid: comite.state.uid,
+      uidEditeur: utilisateurCourant.state.uid,
       uidGouvernance: gouvernance.state.uid,
-      uidUtilisateurCourant: utilisateurCourant.state.uid,
     })
     if (!(comiteModifie instanceof Comite)) {
       return comiteModifie

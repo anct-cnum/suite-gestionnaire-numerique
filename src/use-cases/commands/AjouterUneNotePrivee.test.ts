@@ -1,4 +1,4 @@
-import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouvernance'
+import { AjouterUneNotePrivee } from './AjouterUneNotePrivee'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
@@ -6,23 +6,23 @@ import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
-describe('ajouter une note de contexte à une gouvernance', () => {
+describe('ajouter une note privée à une gouvernance', () => {
   beforeEach(() => {
     spiedGouvernanceUidToFind = null
     spiedGouvernanceToUpdate = null
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance existante, quand une note privée est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteRepositorySpy(),
+    const ajouterNotePrivee = new AjouterUneNotePrivee(
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
+    const result = await ajouterNotePrivee.execute({
       contenu,
       uidGouvernance,
       uidUtilisateurCourant,
@@ -33,7 +33,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       gouvernanceFactory({
-        noteDeContexte: {
+        notePrivee: {
           contenu,
           dateDeModification: epochTime,
           uidEditeur: new UtilisateurUid(
@@ -46,34 +46,52 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un note privée est créée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteRepositorySpy(),
+    const ajouterNotePrivee = new AjouterUneNotePrivee(
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidGouvernance, uidUtilisateurCourant: 'utilisateurUsurpateur' })
+    const result = await ajouterNotePrivee.execute({ contenu, uidGouvernance, uidUtilisateurCourant: 'utilisateurUsurpateur' })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
+    expect(result).toBe('utilisateurNePeutPasAjouterNotePrivee')
   })
 
-  it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un note privée est créée par un gestionnaire département mais qu’une note privée existe déjà, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+    const ajouterNotePrivee = new AjouterUneNotePrivee(
+      new GouvernanceAvecNotePriveeRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await ajouterNotePrivee.execute({ contenu, uidGouvernance, uidUtilisateurCourant })
+
+    // THEN
+    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+    expect(spiedGouvernanceToUpdate).toBeNull()
+    expect(result).toBe('notePriveeDejaExistante')
+  })
+
+  it('étant donné une gouvernance inexistante, quand une note privée est créée, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
+    const result = await ajouterNotePrivee.execute({
       contenu,
       uidGouvernance,
       uidUtilisateurCourant,
@@ -86,16 +104,16 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('gouvernanceInexistante')
   })
 
-  it('étant donné un utilisateur inexistant, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
+  it('étant donné un utilisateur inexistant, quand une note privée est créée, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+    const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceInexistanteRepositorySpy(),
       new GestionnaireInexistantRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
+    const result = await ajouterNotePrivee.execute({
       contenu,
       uidGouvernance,
       uidUtilisateurCourant,
@@ -109,14 +127,14 @@ describe('ajouter une note de contexte à une gouvernance', () => {
   })
 })
 
-const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
+const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
 const uidGouvernance = 'gouvernanceFooId'
 const uidUtilisateurCourant = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
-class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
+class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
   async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
@@ -126,7 +144,7 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
           codeRegion: '11',
           nom: 'Paris',
         },
-        noteDeContexte: undefined,
+        notePrivee: undefined,
         uid: uidGouvernance,
       })
     )
@@ -138,10 +156,27 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepositorySpy {
+class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
   override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(null)
+  }
+}
+
+class GouvernanceAvecNotePriveeRepositorySpy extends GouvernanceRepositorySpy {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+    spiedGouvernanceUidToFind = uid
+    return Promise.resolve(
+      gouvernanceFactory({
+        notePrivee: {
+          contenu: 'contenu',
+          dateDeModification: epochTime,
+          uidEditeur: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
+          ),
+        },
+      })
+    )
   }
 }
 

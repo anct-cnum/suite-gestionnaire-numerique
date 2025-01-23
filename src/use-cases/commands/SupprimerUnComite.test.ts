@@ -39,12 +39,12 @@ describe('supprimer un comité', () => {
         uid: {
           value: uidComite,
         },
-        uidGouvernance: {
-          value: uidGouvernance,
-        },
-        uidUtilisateurCourant: {
+        uidEditeur: {
           email: emailUtilisateurCourant,
           value: uidUtilisateurCourant,
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
         },
       }).state
     )
@@ -204,8 +204,8 @@ class ComiteRepositorySpy implements DropComiteRepository, FindComiteRepository 
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },
+      uidEditeur: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
       uidGouvernance: { value: uidGouvernance },
-      uidUtilisateurCourant: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
     }))
   }
 

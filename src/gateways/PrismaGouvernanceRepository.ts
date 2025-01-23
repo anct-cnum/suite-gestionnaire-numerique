@@ -33,7 +33,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     const noteDeContexte = record.noteDeContexte ? {
       contenu: record.noteDeContexte.contenu,
       dateDeModification: record.noteDeContexte.derniereEdition,
-      uidUtilisateurLAyantModifiee: new UtilisateurUid({
+      uidEditeur: new UtilisateurUid({
         email: record.noteDeContexte.relationUtilisateur.ssoEmail,
         value: record.noteDeContexte.relationUtilisateur.ssoId,
       }),
