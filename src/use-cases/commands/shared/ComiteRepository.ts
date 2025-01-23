@@ -11,3 +11,13 @@ export interface AddComiteRepository {
 export interface UpdateComiteRepository {
   update(comite: Comite): Promise<void>
 }
+
+export interface DropComiteRepository {
+  drop(comite: Comite): Promise<void>
+}
+
+export interface ComiteRepository extends
+  FindComiteRepository,
+  DropComiteRepository,
+  AddComiteRepository,
+  UpdateComiteRepository {}
