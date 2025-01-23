@@ -15,7 +15,7 @@ export default function ModifierUnComite({
   uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
-  const { modifierUnComiteAction, pathname } = useContext(clientContext)
+  const { modifierUnComiteAction, pathname, supprimerUnComiteAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
   return (
@@ -28,12 +28,15 @@ export default function ModifierUnComite({
       >
         <div className="fr-btns-group fr-btns-group--space-between">
           <div className="fr-col-5">
-            <SubmitButton
-              className="red-button"
-              isDisabled={isDisabled}
+            <button
+              aria-controls={id}
+              className="fr-btn red-button"
+              disabled={isDisabled}
+              onClick={supprimerUnComite}
+              type="button"
             >
-              Supprimer
-            </SubmitButton>
+              {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
+            </button>
           </div>
           <div className="fr-col-5">
             <SubmitButton
@@ -74,6 +77,22 @@ export default function ModifierUnComite({
     })
     if (messages.includes('OK')) {
       Notification('success', { description: 'bien modifié', title: 'Comité ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+    closeDrawer()
+    setIsDisabled(false)
+  }
+
+  async function supprimerUnComite(): Promise<void> {
+    setIsDisabled(true)
+    const messages = await supprimerUnComiteAction({
+      path: pathname,
+      uid: String(comite.uid),
+      uidGouvernance,
+    })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'bien supprimé', title: 'Comité ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

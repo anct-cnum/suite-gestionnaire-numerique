@@ -14,6 +14,7 @@ import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/mod
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
+import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
@@ -42,6 +43,7 @@ export default function ClientContext({
       searchParams,
       sessionUtilisateurViewModel,
       supprimerMonCompteAction,
+      supprimerUnComiteAction,
       supprimerUnUtilisateurAction,
       utilisateursParPage,
     }),
@@ -71,6 +73,7 @@ export type ClientContextProviderValue = Readonly<{
   searchParams: URLSearchParams
   sessionUtilisateurViewModel: SessionUtilisateurViewModel
   supprimerMonCompteAction: typeof supprimerMonCompteAction
+  supprimerUnComiteAction: typeof supprimerUnComiteAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number
 }>

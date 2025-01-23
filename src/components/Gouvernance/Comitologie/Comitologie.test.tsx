@@ -209,9 +209,12 @@ describe('comitologie', () => {
       expect(commentaire).toHaveValue('commentaire')
 
       const supprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
+      expect(supprimer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
+      expect(supprimer).toHaveAttribute('type', 'button')
       expect(supprimer).not.toBeDisabled()
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
+      expect(enregistrer).toHaveAttribute('type', 'submit')
       expect(enregistrer).not.toBeDisabled()
 
       const modifierPar = screen.getByText('Modifié le 01/02/2024 par Martin Tartempion')
@@ -309,11 +312,58 @@ describe('comitologie', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
+    it('puis que je le supprime, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
+      // GIVEN
+      vi.stubGlobal('Date', FrozenDate)
+      const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
+
+      // WHEN
+      jOuvreLeFormulairePourModifierUnComite()
+      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const supprimer = jeSupprimeLeComite()
+
+      // THEN
+      expect(supprimer).toHaveAccessibleName('Suppression en cours...')
+      expect(supprimer).toBeDisabled()
+      await waitFor(() => {
+        expect(supprimerUnComiteAction).toHaveBeenCalledWith({
+          path: '/gouvernance/11',
+          uid: '2',
+          uidGouvernance: 'gouvernanceFooId',
+        })
+      })
+      expect(modifierUnComiteDrawer).not.toBeVisible()
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Comité bien supprimé')
+      expect(supprimer).toHaveAccessibleName('Supprimer')
+      expect(supprimer).toBeEnabled()
+    })
+
+    it('puis que je le supprime mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      vi.stubGlobal('Date', FrozenDate)
+      const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
+
+      // WHEN
+      jOuvreLeFormulairePourModifierUnComite()
+      jeSupprimeLeComite()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+    })
+
     function jEnregistreLeComite(): HTMLElement {
       const form = screen.getByRole('form', { name: 'Détail du Comité technique' })
       const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(enregistrer)
       return enregistrer
+    }
+
+    function jeSupprimeLeComite(): HTMLElement {
+      return presserLeBouton('Supprimer')
     }
   })
 

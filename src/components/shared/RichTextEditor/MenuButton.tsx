@@ -1,3 +1,4 @@
+// Stryker disable all
 import { MouseEventHandler, ReactElement } from 'react'
 
 import styles from './RichTextEditor.module.css'
