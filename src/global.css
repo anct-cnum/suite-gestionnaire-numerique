@@ -111,3 +111,9 @@ table button {
 input[type='search']::-webkit-search-cancel-button {
   display: none;
 }
+
+/* c'est une classe de la librairie tip tap nécessaire afin de gérer le scroll dans l'éditeur */
+.ProseMirror {
+  overflow: auto;
+  resize: vertical;
+}
