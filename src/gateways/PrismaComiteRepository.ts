@@ -17,7 +17,7 @@ export class PrismaComiteRepository implements ComiteRepository {
         creation: comite.state.dateDeCreation,
         date: comite.state.date,
         derniereEdition: comite.state.dateDeModification,
-        editeurUtilisateurId: comite.state.uidUtilisateurLAyantModifie,
+        editeurUtilisateurId: comite.state.uidEditeur,
         frequence: comite.state.frequence,
         gouvernanceId: Number(comite.state.uidGouvernance),
         type: comite.state.type,
@@ -49,11 +49,11 @@ export class PrismaComiteRepository implements ComiteRepository {
       frequence: record.frequence,
       type: record.type,
       uid: { value: String(record.id) },
-      uidGouvernance: { value: String(record.gouvernanceId) },
-      uidUtilisateurCourant: {
+      uidEditeur: {
         email: record.relationUtilisateur?.ssoEmail ?? '',
         value: record.relationUtilisateur?.ssoId ?? '',
       },
+      uidGouvernance: { value: String(record.gouvernanceId) },
     })
 
     if (!(comite instanceof Comite)) {
@@ -70,7 +70,7 @@ export class PrismaComiteRepository implements ComiteRepository {
         creation: comite.state.dateDeCreation,
         date: comite.state.date ?? null,
         derniereEdition: comite.state.dateDeModification,
-        editeurUtilisateurId: comite.state.uidUtilisateurLAyantModifie,
+        editeurUtilisateurId: comite.state.uidEditeur,
         frequence: comite.state.frequence,
         type: comite.state.type,
       },

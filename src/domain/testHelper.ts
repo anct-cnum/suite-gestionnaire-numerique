@@ -36,8 +36,9 @@ export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouverna
     noteDeContexte: {
       contenu: '<p>contenu HTML</p>',
       dateDeModification: epochTime,
-      uidUtilisateurLAyantModifiee: new UtilisateurUid(utilisateurFactory().state.uid),
+      uidEditeur: new UtilisateurUid(utilisateurFactory().state.uid),
     },
+    notePrivee: undefined,
     uid: 'gouvernanceFooId',
     ...override,
   })
@@ -54,12 +55,12 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
     uid: {
       value: 'comiteFooId',
     },
-    uidGouvernance: {
-      value: 'gouvernanceFooId',
-    },
-    uidUtilisateurCourant: {
+    uidEditeur: {
       email: 'martin.tartempion@example.net',
       value: 'userFooId',
+    },
+    uidGouvernance: {
+      value: 'gouvernanceFooId',
     },
     ...override,
   }) as Comite

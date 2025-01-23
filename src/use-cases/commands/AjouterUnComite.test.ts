@@ -72,12 +72,12 @@ describe('ajouter un comité à une gouvernance', () => {
         uid: {
           value: 'identifiantPourLaCreation',
         },
-        uidGouvernance: {
-          value: uidGouvernance,
-        },
-        uidUtilisateurCourant: {
+        uidEditeur: {
           email: 'martin.tartempion@example.net',
           value: 'userFooId',
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
         },
       }).state
     )

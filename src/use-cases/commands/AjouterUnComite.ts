@@ -45,8 +45,8 @@ export class AjouterUnComite implements CommandHandler<Command> {
       uid: {
         value: 'identifiantPourLaCreation',
       },
+      uidEditeur: utilisateurCourant.state.uid,
       uidGouvernance: gouvernance.state.uid,
-      uidUtilisateurCourant: utilisateurCourant.state.uid,
     })
     if (!(comite instanceof Comite)) {
       return comite
