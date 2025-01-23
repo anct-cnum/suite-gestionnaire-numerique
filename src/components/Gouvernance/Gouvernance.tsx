@@ -15,6 +15,7 @@ import MembreRempli from './Membre/MembreRempli'
 import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
 import ResumeMembreVide from './Membre/ResumeMembreVide'
+import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
@@ -33,6 +34,8 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawerAjouterComiteId'
   const labelComiteId = 'labelAjouterComiteId'
+  const drawerNoteDeContexteId = 'drawerAjouterNoteDeContexteId'
+  const labelNoteDeContexteId = 'labelAjouterNoteDeContexteId'
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
@@ -230,11 +233,33 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
         }
       </section>
       <section aria-labelledby="noteDeContexte">
+        <Drawer
+          boutonFermeture="Fermer le formulaire de création d’une note de contexte"
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
+          id={drawerNoteDeContexteId}
+          // Stryker disable next-line BooleanLiteral
+          isFixedWidth={false}
+          isOpen={isDrawerOpen}
+          labelId={labelNoteDeContexteId}
+          ref={drawerRef}
+        >
+          <AjouterNoteDeContexte
+            closeDrawer={() => {
+              setIsDrawerOpen(false)
+            }}
+            id={drawerNoteDeContexteId}
+            labelId={labelNoteDeContexteId}
+            uidGouvernance={gouvernanceViewModel.uid}
+          />
+        </Drawer>
         {
           gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
             <SectionRemplie
               button={(
                 <button
+                  aria-controls={drawerNoteDeContexteId}
                   className="fr-btn fr-btn--secondary"
                   type="button"
                 >
@@ -256,10 +281,11 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           ) : (
             <SectionVide
               buttonLabel="Ajouter une note de contexte"
-              drawerComiteId=""
+              drawerComiteId={drawerNoteDeContexteId}
               id="noteDeContexte"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              showDrawer={() => {}}
+              showDrawer={() => {
+                setIsDrawerOpen(true)
+              }}
               title="Note de contexte"
             >
               <NoteDeContexteVide />

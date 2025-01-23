@@ -13,6 +13,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-user/icons-user.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-weather/icons-weather.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-editor/icons-editor.min.css'
 import '../global.css'
 
 export default function Layout({ children }: Readonly<PropsWithChildren>): ReactElement {

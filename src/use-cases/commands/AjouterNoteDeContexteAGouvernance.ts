@@ -50,6 +50,6 @@ type Command = Readonly<{
   uidGouvernance: string
 }>
 
-interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
+export interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
 
 type UtilisateurRepository = FindUtilisateurRepository
