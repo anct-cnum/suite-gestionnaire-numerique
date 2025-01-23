@@ -6,7 +6,7 @@
   "scripts": {
     "bash:production": "scalingo -a suite-gestionnaire-numerique run --size XL bash",
     "build": "yarn prisma:migrate && yarn prisma:generate:fne && next build",
-    "check": "yarn dedupe --check && yarn deadcode && yarn typecheck && yarn prisma format --check && yarn prisma format --check --schema seeds/fne/schema.prisma && yarn format:check && yarn lint:css && yarn lint:ts && yarn test:coverage",
+    "check": "yarn build && yarn dedupe --check && yarn deadcode && yarn typecheck && yarn prisma format --check && yarn prisma format --check --schema seeds/fne/schema.prisma && yarn format:check && yarn lint:css && yarn lint:ts && yarn test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
     "deadcode": "knip",
     "depcheck": "depcheck",
