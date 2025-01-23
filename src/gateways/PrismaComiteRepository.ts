@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client'
 
 import { Comite } from '@/domain/Comite'
-import { AddComiteRepository, FindComiteRepository, UpdateComiteRepository } from '@/use-cases/commands/shared/ComiteRepository'
+import { ComiteRepository } from '@/use-cases/commands/shared/ComiteRepository'
 
-export class PrismaComiteRepository implements AddComiteRepository, FindComiteRepository, UpdateComiteRepository {
+export class PrismaComiteRepository implements ComiteRepository {
   readonly #dataResource: Prisma.ComiteRecordDelegate
 
   constructor(dataResource: Prisma.ComiteRecordDelegate) {
@@ -74,6 +74,14 @@ export class PrismaComiteRepository implements AddComiteRepository, FindComiteRe
         frequence: comite.state.frequence,
         type: comite.state.type,
       },
+      where: {
+        id: Number(comite.state.uid.value),
+      },
+    })
+  }
+
+  async drop(comite: Comite): Promise<void> {
+    await this.#dataResource.delete({
       where: {
         id: Number(comite.state.uid.value),
       },
