@@ -46,7 +46,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un comité est créé par un rôle appartenant au groupe admin, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par un rôle appartenant au groupe admin, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
@@ -79,11 +79,11 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un comité est créé par un gestionnaire département mais qui n’a pas le même département que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est créée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceExistanteRepositorySpy(),
-      new GestionnaireAutreDepartementRepositorySpy(),
+      new GestionnaireAutreRepositorySpy(),
       epochTime
     )
 
@@ -199,7 +199,7 @@ class GestionnaireGroupeAdminRepositorySpy implements FindUtilisateurRepository 
   }
 }
 
-class GestionnaireAutreDepartementRepositorySpy implements FindUtilisateurRepository {
+class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
