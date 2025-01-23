@@ -44,8 +44,9 @@ export default function AjouterNoteDeContexte({
           <SubmitButton
             ariaControls={id}
             isDisabled={!contenu.trim() || isDisabled}
-            label={isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-          />
+          >
+            {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+          </SubmitButton>
         </li>
         {contenu ?
           <li>
