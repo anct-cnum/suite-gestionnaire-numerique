@@ -289,4 +289,72 @@ describe('comité repository', () => {
     })
     expect(comiteRecord?.date).toBeNull()
   })
+
+  it('supprimer un comité', async () => {
+    // GIVEN
+    const gouvernanceId = 1
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({ code: '11' }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({ code: '75' }),
+    })
+    await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
+    })
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+    })
+    await prisma.comiteRecord.create({
+      data: comiteRecordFactory({
+        commentaire: 'premier commentaire',
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
+        editeurUtilisateurId: 'userFooId',
+        frequence: 'annuelle',
+        gouvernanceId,
+        id: 1,
+        type: 'strategique',
+      }),
+    })
+    await prisma.comiteRecord.create({
+      data: comiteRecordFactory({ commentaire: 'tata', editeurUtilisateurId: 'userFooId', gouvernanceId, id: 2 }),
+    })
+    const repository = new PrismaComiteRepository(prisma.comiteRecord)
+
+    // WHEN
+    await repository.drop(comiteFactory({
+      commentaire: '',
+      date: epochTime,
+      dateDeCreation: epochTime,
+      dateDeModification: epochTime,
+      frequence: 'mensuelle',
+      type: 'autre',
+      uid: {
+        value: '1',
+      },
+      uidGouvernance: {
+        value: '1',
+      },
+      uidUtilisateurCourant: {
+        email: 'martin.tartempion@example.net',
+        value: 'userFooId',
+      },
+    }))
+
+    // THEN
+    const comiteRecord1 = await prisma.comiteRecord.findUnique({
+      where: {
+        id: 1,
+      },
+    })
+    expect(comiteRecord1).toBeNull()
+    const comiteRecord2 = await prisma.comiteRecord.findUnique({
+      where: {
+        id: 2,
+      },
+    })
+    expect(comiteRecord2).not.toBeNull()
+  })
 })
