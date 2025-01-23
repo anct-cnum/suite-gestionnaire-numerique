@@ -1,5 +1,7 @@
 import { Gouvernance } from './Gouvernance'
 import { utilisateurFactory } from './testHelper'
+import { UtilisateurUid } from './Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('gouvernance', () => {
   it.each([
@@ -36,6 +38,7 @@ describe('gouvernance', () => {
         nom: 'Paris',
       },
       noteDeContexte: undefined,
+      notePrivee: undefined,
       uid: 'gouvernanceFooId',
     })
 
@@ -64,11 +67,55 @@ describe('gouvernance', () => {
         nom: 'Paris',
       },
       noteDeContexte: undefined,
+      notePrivee: undefined,
       uid: 'gouvernanceFooId',
     })
 
     // WHEN
     const result = gouvernance.peutEtreGerePar(utilisateur)
+
+    // THEN
+    expect(result).toBe(false)
+  })
+
+  it.each([
+    {
+      intention: 'un administrateur dispositif ne peut pas gérer une note privée',
+      utilisateur: utilisateurFactory({ role: 'Administrateur dispositif' }),
+    },
+    {
+      intention: 'un instructeur ne peut pas gérer une note privée',
+      utilisateur: utilisateurFactory({ role: 'Instructeur' }),
+    },
+    {
+      intention: 'un pilote politique publique ne peut pas gérer une note privée',
+      utilisateur: utilisateurFactory({ role: 'Pilote politique publique' }),
+    },
+    {
+      intention: 'un support animation ne peut pas gérer une note privée',
+      utilisateur: utilisateurFactory({ role: 'Support animation' }),
+    },
+  ])('$intention', ({ utilisateur }) => {
+    // GIVEN
+    const gouvernance = Gouvernance.create({
+      departement: {
+        code: '75',
+        codeRegion: '11',
+        nom: 'Paris',
+      },
+      noteDeContexte: undefined,
+      notePrivee: {
+        contenu: 'contenu',
+        dateDeModification: epochTime,
+        uidEditeur: new UtilisateurUid(
+          utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: 'userFooId' } }).state.uid
+        ),
+      },
+      uid: 'gouvernanceFooId',
+    })
+
+    // WHEN
+    const result = gouvernance.laNotePriveePeutEtreGerePar(utilisateur)
 
     // THEN
     expect(result).toBe(false)

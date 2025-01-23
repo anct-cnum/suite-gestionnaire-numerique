@@ -14,7 +14,7 @@ export class Comite extends Entity<State> {
   readonly #type: Type
   readonly #uid: ComiteUid
   readonly #uidGouvernance: GouvernanceUid
-  readonly #uidUtilisateurLAyantModifie: UtilisateurUid
+  readonly #uidEditeur: UtilisateurUid
 
   private constructor(
     uid: ComiteUid,
@@ -23,7 +23,7 @@ export class Comite extends Entity<State> {
     frequence: Frequence,
     type: Type,
     uidGouvernance: GouvernanceUid,
-    uidUtilisateurLAyantModifie: UtilisateurUid,
+    uidEditeur: UtilisateurUid,
     commentaire?: string,
     date?: ValidDate<ComiteFailure>
   ) {
@@ -36,7 +36,7 @@ export class Comite extends Entity<State> {
     this.#frequence = frequence
     this.#type = type
     this.#uidGouvernance = uidGouvernance
-    this.#uidUtilisateurLAyantModifie = uidUtilisateurLAyantModifie
+    this.#uidEditeur = uidEditeur
   }
 
   override get state(): State {
@@ -48,8 +48,8 @@ export class Comite extends Entity<State> {
       frequence: this.#frequence.state.value,
       type: this.#type.state.value,
       uid: this.#uid.state,
+      uidEditeur: this.#uidEditeur.state.value,
       uidGouvernance: this.#uidGouvernance.state.value,
-      uidUtilisateurLAyantModifie: this.#uidUtilisateurLAyantModifie.state.value,
     }
   }
 
@@ -61,7 +61,7 @@ export class Comite extends Entity<State> {
     type,
     uid,
     uidGouvernance,
-    uidUtilisateurCourant,
+    uidEditeur: uidUtilisateurCourant,
     commentaire,
     date,
   }: ComiteFactoryParams): Result<ComiteFailure, Comite> {
@@ -137,7 +137,7 @@ type ComiteFactoryParams = Readonly<{
   type: string
   uid: ComiteUidState
   uidGouvernance: GouvernanceUidState
-  uidUtilisateurCourant: UtilisateurUidState
+  uidEditeur: UtilisateurUidState
   commentaire?: string
   date?: Date
 }>
@@ -151,7 +151,7 @@ type State = Readonly<{
   type: string
   uid: ComiteUidState
   uidGouvernance: string
-  uidUtilisateurLAyantModifie: string
+  uidEditeur: string
 }>
 
 type AttributGouvernanceState = Readonly<{ value: string }>

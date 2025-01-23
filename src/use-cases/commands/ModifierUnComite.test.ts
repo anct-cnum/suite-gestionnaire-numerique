@@ -72,12 +72,12 @@ describe('modifier un comité', () => {
         dateDeModification,
         frequence,
         type,
-        uidGouvernance: {
-          value: uidGouvernance,
-        },
-        uidUtilisateurCourant: {
+        uidEditeur: {
           email: emailUtilisateurCourant,
           value: uidUtilisateurCourant,
+        },
+        uidGouvernance: {
+          value: uidGouvernance,
         },
       }).state
     )
@@ -328,8 +328,8 @@ class ComiteRepositorySpy implements UpdateComiteRepository, FindComiteRepositor
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },
+      uidEditeur: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
       uidGouvernance: { value: uidGouvernance },
-      uidUtilisateurCourant: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
     }))
   }
 
