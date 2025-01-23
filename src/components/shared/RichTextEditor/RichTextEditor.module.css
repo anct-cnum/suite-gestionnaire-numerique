@@ -47,11 +47,6 @@
   background: var(--border-default-grey);
 }
 
-:global(.ProseMirror) {
-  resize: vertical;
-  overflow: auto;
-}
-
 .button.isActive {
   background-color: var(--grey-950-100-active) !important;
 }
