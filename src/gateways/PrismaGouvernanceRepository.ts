@@ -2,9 +2,9 @@ import { Prisma } from '@prisma/client'
 
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
-import { FindGouvernanceRepository } from '@/use-cases/commands/shared/GouvernanceRepository'
+import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
-export class PrismaGouvernanceRepository implements FindGouvernanceRepository {
+export class PrismaGouvernanceRepository implements GouvernanceRepository {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
@@ -48,5 +48,10 @@ export class PrismaGouvernanceRepository implements FindGouvernanceRepository {
       noteDeContexte,
       uid: String(record.id),
     })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/no-unused-vars
+  async update(_gouvernance: Gouvernance): Promise<void> {
+    return Promise.resolve()
   }
 }

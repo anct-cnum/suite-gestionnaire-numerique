@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
+import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
@@ -28,6 +29,7 @@ export default function ClientContext({
   const clientContextProviderValue = useMemo(
     () => ({
       ajouterUnComiteAction,
+      ajouterUneNoteDeContexteAction,
       changerMonRoleAction,
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
@@ -60,6 +62,7 @@ export type ClientContextProviderValue = Readonly<{
   pathname: string
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   ajouterUnComiteAction: typeof ajouterUnComiteAction
+  ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams

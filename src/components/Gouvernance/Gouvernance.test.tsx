@@ -520,6 +520,20 @@ describe('gouvernance', () => {
     expect(lirePlus).toHaveClass('fr-icon-arrow-down-s-line')
   })
 
+  it('quand j’affiche une gouvernance sans note de contexte et que je clique sur ajouter une note de contexte puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ noteDeContexte: undefined }), now)
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    jouvreLeFormulairePourAjouterUneNoteDeContexte()
+    const drawer = screen.getByRole('dialog', { name: 'Note de contexte' })
+    jeFermeLeFormulairePourAjouterUneNoteDeContexte()
+
+    // THEN
+    expect(drawer).not.toBeVisible()
+  })
+
   it('quand j’affiche une gouvernance avec une note de contexte, je peux la déplier', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
@@ -622,6 +636,14 @@ describe('gouvernance', () => {
 
   function jeFermeLeFormulairePourAjouterUnComite(): void {
     presserLeBouton('Fermer le formulaire de création d’un comité')
+  }
+
+  function jouvreLeFormulairePourAjouterUneNoteDeContexte(): void {
+    presserLeBouton('Ajouter une note de contexte')
+  }
+
+  function jeFermeLeFormulairePourAjouterUneNoteDeContexte(): void {
+    presserLeBouton('Fermer le formulaire de création d’une note de contexte')
   }
 
   function jeDeplieLaNoteDeContexte(): HTMLElement {

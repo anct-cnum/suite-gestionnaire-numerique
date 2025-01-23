@@ -23,6 +23,7 @@ export function renderComponent(
 ): RenderResult {
   const clientContextProviderDefaultValue = {
     ajouterUnComiteAction: vi.fn(),
+    ajouterUneNoteDeContexteAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
@@ -90,7 +91,6 @@ export const rolesAvecStructure: RolesAvecStructure = {
     placeholder: 'Nom de la structure',
   },
 }
-
 export class FrozenDate extends Date {
   constructor(date: number | string | Date | undefined) {
     super(date ?? '1996-04-15T03:24:00')
