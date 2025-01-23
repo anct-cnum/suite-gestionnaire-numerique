@@ -151,11 +151,11 @@ describe('modifier un comité', () => {
     expect(spiedComiteToModify).toBeNull()
   })
 
-  it('étant donné une gouvernance existante, quand un comité est modifié par un gestionnaire département mais qui n’a pas le même département que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un comité est modifié par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
-      new GestionnaireAutreDepartementRepositorySpy(),
+      new GestionnaireAutreRepositorySpy(),
       new ComiteRepositorySpy(),
       epochTime
     )
@@ -316,7 +316,7 @@ class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
   }
 }
 
-class GestionnaireAutreDepartementRepositorySpy implements FindUtilisateurRepository {
+class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
