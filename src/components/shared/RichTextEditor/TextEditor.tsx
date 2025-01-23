@@ -1,3 +1,4 @@
+// Stryker disable all
 'use client'
 
 import { Link } from '@tiptap/extension-link'

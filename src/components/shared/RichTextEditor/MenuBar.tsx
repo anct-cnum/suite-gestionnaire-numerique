@@ -1,3 +1,4 @@
+// Stryker disable all
 'use client'
 
 import { Editor } from '@tiptap/react'

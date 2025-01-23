@@ -42,6 +42,7 @@ export function renderComponent(
     searchParams: new URLSearchParams(),
     sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(),
     supprimerMonCompteAction: vi.fn(),
+    supprimerUnComiteAction: vi.fn(),
     supprimerUnUtilisateurAction: vi.fn(),
     utilisateursParPage: 10,
   }

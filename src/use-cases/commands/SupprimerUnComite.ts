@@ -2,7 +2,6 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropComiteRepository, FindComiteRepository } from './shared/ComiteRepository'
 import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { ComiteFailure } from '@/domain/Comite'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class SupprimerUnComite implements CommandHandler<Command> {
@@ -46,7 +45,7 @@ export class SupprimerUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'utilisateurInexistant' | 'comiteInexistant' | 'utilisateurNePeutPasSupprimerComite' | ComiteFailure
+type Failure = 'gouvernanceInexistante' | 'utilisateurInexistant' | 'comiteInexistant' | 'utilisateurNePeutPasSupprimerComite'
 
 type Command = Readonly<{
   uid: string

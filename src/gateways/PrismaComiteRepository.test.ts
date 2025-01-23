@@ -303,7 +303,7 @@ describe('comité repository', () => {
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.comiteRecord.create({
       data: comiteRecordFactory({

@@ -17,6 +17,7 @@ export default function TextArea({ children, defaultValue = '', maxLength }: Pro
         id={id}
         maxLength={maxLength}
         name="textarea"
+        rows={5}
       />
     </div>
   )
