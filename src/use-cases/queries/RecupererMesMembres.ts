@@ -14,10 +14,12 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
       autorisations: {
         ...pouvoirAjouteOuSupprime(mesMembres.roles),
       },
-      membres: mesMembres.membres.map(
-        (membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre)
-      ),
-
+      membres:
+        cleanMembre(mesMembres.membres.values()
+          // .map((membre: Membre) => pouvoirFiltrerParRoleEtTypologie(membre, mesMembres.filtre))
+          .map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre))
+          .toArray(),
+        mesMembres.filtre),
     }))
   }
 }
@@ -51,9 +53,27 @@ function eligibleALaSuppression(membre: Membre, typeMembreConnecter: string): Me
   }
 }
 
-type Query = Readonly<{
-  codeDepartementGouvernance: string
-}>
+function cleanMembre(membres: MesMembresReadModel['membres'], filtre: MesMembresReadModel['filtre']): MesMembresReadModel['membres'] {
+  const membre = membres.map((membre) => pouvoirFiltrerParRoleEtTypologie(membre, filtre))
+  return membre.filter((membre) => membre !== undefined)
+}
+
+function pouvoirFiltrerParRoleEtTypologie(membre: Membre, filtre: MesMembresReadModel['filtre']): Membre | undefined {
+  const matchRolesSelectionner = membre.roles.some((role) => filtre.roles.includes(role)) && !filtre.roles.includes('')
+  if (membre.statut === filtre.statut && filtre.roles.includes('') && filtre.typologie === '' && membre.statut === filtre.statut) {
+    // filtre par default
+    return membre
+  }
+  if (matchRolesSelectionner && filtre.typologie === membre.typologieMembre && membre.statut === filtre.statut) {
+    // filtre sur la typologie
+    return membre
+  }
+  if (matchRolesSelectionner && filtre.typologie === '' && membre.statut === filtre.statut) {
+    // filtre uniquement sur le role
+    return membre
+  }
+  return undefined
+}
 
 export type MesMembresReadModel = Readonly<{
   autorisations: Readonly<{
@@ -63,8 +83,8 @@ export type MesMembresReadModel = Readonly<{
   roles: ReadonlyArray<string>
   departement: string
   filtre: Readonly<{
-    roles: string
-    statut: string
+    roles: ReadonlyArray<Roles | ''>
+    statut: Statut
     typologie: string
   }>
   membres: ReadonlyArray<Membre>
@@ -79,6 +99,15 @@ type Membre = Readonly<{
     prenom: string
   }>
   nom: string
-  roles: ReadonlyArray<string>
+  statut: Statut
+  roles: ReadonlyArray<Roles>
   typologieMembre: string
 }>
+
+type Query = Readonly<{
+  codeDepartementGouvernance: string
+}>
+
+type Statut = 'Membre' | 'Suggestion' | 'Candidat'
+
+type Roles = 'Co-porteur' | 'Co-financeur' | 'Bénéficiaire' | 'Récipiendaire' | 'Observateur'
