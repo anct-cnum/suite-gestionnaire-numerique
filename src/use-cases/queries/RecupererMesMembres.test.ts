@@ -92,10 +92,331 @@ describe('recuperer mes membres', () => {
         roles: ['Co-porteur', 'Co-Financeur'],
       }))
     })
+
+    it('et que je filtre sur "Membre", alors je récupère uniquement les Membres', async () => {
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Henrich',
+            prenom: 'Laetitia',
+          },
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          suppressionDuMembreNonAutorise: true,
+          typologieMembre: 'Préfecture départementale',
+        },
+        {
+          contactReferent: {
+            nom: 'Didier',
+            prenom: 'Durant',
+          },
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ])
+    })
+    it('et que je filtre sur "Suggestion", alors je récupère uniquement les Suggestions', async () => {
+      mesMembresLoaderPrisma = {
+        ...mesMembresLoaderPrisma,
+        filtre: {
+          roles: [''],
+          statut: 'Suggestion',
+          typologie: '',
+        },
+      }
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Veronique',
+            prenom: 'Dupont',
+          },
+          nom: 'Bouygues',
+          roles: [],
+          statut: 'Suggestion',
+          // roles: ['Co-Financeur'], ont il des roles ?
+          typologieMembre: 'Entreprise privée',
+        },
+      ])
+    })
+    it('et que je filtre sur "Candidat", alors je récupère uniquement les Candidats', async () => {
+      mesMembresLoaderPrisma = {
+        ...mesMembresLoaderPrisma,
+        filtre: {
+          roles: [''],
+          statut: 'Candidat',
+          typologie: '',
+        },
+      }
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Chantal',
+            prenom: 'Dubois',
+          },
+          nom: 'Orange',
+          roles: [],
+          statut: 'Candidat',
+          // roles: ['Co-Financeur'], ont il des roles ?
+          typologieMembre: 'Entreprise privée',
+        },
+      ])
+    })
+    it('et que je filtre sur "Membre" et sur le role Co-porteur, alors je récupère uniquement les Membres ayant le role co-porteur', async () => {
+      mesMembresLoaderPrisma = {
+        ...mesMembresLoaderPrisma,
+        filtre: {
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologie: '',
+        },
+        membres: [
+          {
+            contactReferent: {
+              nom: 'Henrich',
+              prenom: 'Laetitia',
+            },
+            nom: 'Préfecture du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            typologieMembre: 'Préfecture départementale',
+          },
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-financeur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+        ],
+      }
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Henrich',
+            prenom: 'Laetitia',
+          },
+          nom: 'Préfecture du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          suppressionDuMembreNonAutorise: true,
+          typologieMembre: 'Préfecture départementale',
+        },
+        {
+          contactReferent: {
+            nom: 'Didier',
+            prenom: 'Durant',
+          },
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ])
+    })
+    it('et que je filtre sur "Membre" et sur le role "Co-porteur" et sur la typologie "Collectivité, EPCI", alors je récupère uniquement les Membres ayant le role co-porteur', async () => {
+      mesMembresLoaderPrisma = {
+        ...mesMembresLoaderPrisma,
+        filtre: {
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologie: 'Collectivité, EPCI',
+        },
+        membres: [
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-financeur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+        ],
+      }
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Didier',
+            prenom: 'Durant',
+          },
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ])
+    })
+
+    it('et que je filtre sur "Membre" et sur le role "Co-porteur" et "Co-financeur" et sur la typologie "Collectivité, EPCI", alors je récupère uniquement les Membres ayant le role co-porteur', async () => {
+      mesMembresLoaderPrisma = {
+        ...mesMembresLoaderPrisma,
+        filtre: {
+          roles: ['Co-porteur', 'Co-financeur'],
+          statut: 'Membre',
+          typologie: 'Collectivité, EPCI',
+        },
+        membres: [
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-financeur'],
+            statut: 'Membre',
+            typologieMembre: 'Collectivité, EPCI',
+          },
+          {
+            contactReferent: {
+              nom: 'Chantal',
+              prenom: 'Dubois',
+            },
+            nom: 'La Poste',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            typologieMembre: 'Entreprise privée',
+          },
+        ],
+      }
+      const queryHandler = new RecupererMesMembres(new MesMembresReadModelLoaderStub())
+      const mesMembres = await queryHandler.get({ codeDepartementGouvernance: '69' })
+      expect(mesMembres.membres).toStrictEqual([
+        {
+          contactReferent: {
+            nom: 'Didier',
+            prenom: 'Durant',
+          },
+          nom: 'Département du Rhône',
+          roles: ['Co-porteur'],
+          statut: 'Membre',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+        {
+          contactReferent: {
+            nom: 'Didier',
+            prenom: 'Durant',
+          },
+          nom: 'Département du Rhône',
+          roles: ['Co-financeur'],
+          statut: 'Membre',
+          typologieMembre: 'Collectivité, EPCI',
+        },
+      ])
+    })
   })
 })
 
+<<<<<<< HEAD
 let mesMembresLoader: MesMembresReadModel = mesMembresReadModelFactory()
+=======
+const original: MesMembresReadModel = {
+  autorisations: {
+    AjouterUnMembre: true,
+    SupprimerUnMembre: true,
+  },
+  departement: 'Rhône',
+  filtre: {
+    roles: [''],
+    statut: 'Membre',
+    typologie: '',
+  },
+  membres: [
+    {
+      contactReferent: {
+        nom: 'Henrich',
+        prenom: 'Laetitia',
+      },
+      nom: 'Préfecture du Rhône',
+      roles: ['Co-porteur'],
+      statut: 'Membre',
+      typologieMembre: 'Préfecture départementale',
+    },
+    {
+      contactReferent: {
+        nom: 'Didier',
+        prenom: 'Durant',
+      },
+      nom: 'Département du Rhône',
+      roles: ['Co-porteur'],
+      statut: 'Membre',
+      typologieMembre: 'Collectivité, EPCI',
+    },
+    {
+      contactReferent: {
+        nom: 'Veronique',
+        prenom: 'Dupont',
+      },
+      nom: 'Bouygues',
+      roles: [],
+      statut: 'Suggestion',
+      // roles: ['Co-Financeur'], ont il des roles ?
+      typologieMembre: 'Entreprise privée',
+    },
+    {
+      contactReferent: {
+        nom: 'Chantal',
+        prenom: 'Dubois',
+      },
+      nom: 'Orange',
+      roles: [],
+      statut: 'Candidat',
+      // roles: ['Co-Financeur'], ont il des roles ?
+      typologieMembre: 'Entreprise privée',
+    },
+  ],
+  roles: ['Co-porteur'],
+  typologieMembre: 'Préfecture départementale',
+  uid: 'gouvernanceFooId',
+}
+let mesMembresLoaderPrisma: MesMembresReadModel = { ...original }
+>>>>>>> uses cases filter
 
 class MesMembresLoaderStub extends MesMembresLoader {
   protected async find(): Promise<MesMembresReadModel> {
