@@ -171,7 +171,7 @@ implements FindGouvernanceRepository, UpdateGouvernanceRepository {
         noteDeContexte: {
           contenu: 'note de contexte',
           dateDeModification: epochTime,
-          uidUtilisateurLAyantModifiee: new UtilisateurUid(
+          uidEditeur: new UtilisateurUid(
             utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
           ),
         },

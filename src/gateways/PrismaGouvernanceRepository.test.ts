@@ -102,8 +102,9 @@ describe('gouvernance repository', () => {
     await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
     })
+
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ createurId: 1, departementCode: '75', id: gouvernanceId, idFNE: 'fneFooId1' }),
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
 
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
@@ -111,7 +112,7 @@ describe('gouvernance repository', () => {
       noteDeContexte: {
         contenu: 'contenu',
         dateDeModification: new Date(),
-        uidUtilisateurLAyantModifiee: new UtilisateurUid({
+        uidEditeur: new UtilisateurUid({
           email: 'martin.tartempion@example.net',
           value: 'userFooId',
         }),
@@ -123,5 +124,23 @@ describe('gouvernance repository', () => {
 
     const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
     expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernanceMiseAJourAvecNoteDeContexte.state)
+  })
+
+  it('ajouter une gouvernance sans note de contexte', async () => {
+    const gouvernanceId = 1
+    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
+    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
+    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+    })
+
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: String(gouvernanceId) })
+
+    await repository.update(gouvernance)
+
+    const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
+    expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernance.state)
   })
 })

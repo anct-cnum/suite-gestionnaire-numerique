@@ -1,4 +1,6 @@
+/* eslint-disable id-length */
 import { Prisma } from '@prisma/client'
+// eslint-disable-next-line import/no-restricted-paths
 import sanitize from 'sanitize-html'
 
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
@@ -82,19 +84,14 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         create: {
           contenu: sanitize(noteDeContexte.value, defaultOptions),
           derniereEdition: noteDeContexte.dateDeModification,
-          relationGouvernance: {
-            connect: { id: Number(gouvernance.state.uid.value) },
-          },
-          relationUtilisateur: {
-            connect: { ssoId: noteDeContexte.uidUtilisateurAyantModifiee },
-          },
+          editeurId: noteDeContexte.uidUtilisateurAyantModifiee,
+          gouvernanceId: Number(gouvernance.state.uid.value),
+
         },
         update: {
           contenu: sanitize(noteDeContexte.value, defaultOptions),
           derniereEdition: noteDeContexte.dateDeModification,
-          relationUtilisateur: {
-            connect: { ssoId: noteDeContexte.uidUtilisateurAyantModifiee },
-          },
+          editeurId: noteDeContexte.uidUtilisateurAyantModifiee,
         },
         where: {
           gouvernanceId: Number(gouvernance.state.uid.value),
