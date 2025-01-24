@@ -64,6 +64,25 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('editeurNePeutPasAjouterNoteDeContexte')
   })
 
+  it('étant donné une gouvernance existante contenant déjà une note de contexte, quand une nouvelle note de contexte est créée, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+      new GouvernanceExistanteAvecNoteDeContexteRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidGouvernance,
+      uidUtilisateurCourant,
+    })
+
+    // THEN
+    expect(result).toBe('noteDeContexteDejaExistante')
+  })
+
   it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
@@ -127,6 +146,35 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
           nom: 'Paris',
         },
         noteDeContexte: undefined,
+        uid: uidGouvernance,
+      })
+    )
+  }
+
+  async update(gouvernance: Gouvernance): Promise<void> {
+    spiedGouvernanceToUpdate = gouvernance
+    return Promise.resolve()
+  }
+}
+
+class GouvernanceExistanteAvecNoteDeContexteRepositorySpy
+implements FindGouvernanceRepository, UpdateGouvernanceRepository {
+  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+    spiedGouvernanceUidToFind = uid
+    return Promise.resolve(
+      gouvernanceFactory({
+        departement: {
+          code: '75',
+          codeRegion: '11',
+          nom: 'Paris',
+        },
+        noteDeContexte: {
+          contenu: 'note de contexte',
+          dateDeModification: epochTime,
+          uidUtilisateurLAyantModifiee: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
+          ),
+        },
         uid: uidGouvernance,
       })
     )

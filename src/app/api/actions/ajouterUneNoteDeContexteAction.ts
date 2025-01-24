@@ -20,8 +20,7 @@ export async function ajouterUneNoteDeContexteAction(
   }
 
   const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )
