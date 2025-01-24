@@ -14,12 +14,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
       autorisations: {
         ...pouvoirAjouteOuSupprime(mesMembres.roles),
       },
-      membres:
-        cleanMembre(mesMembres.membres.values()
-          // .map((membre: Membre) => pouvoirFiltrerParRoleEtTypologie(membre, mesMembres.filtre))
-          .map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre))
-          .toArray(),
-        mesMembres.filtre),
+      membres: mesMembres.membres.map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre)),
     }))
   }
 }
@@ -51,28 +46,6 @@ function eligibleALaSuppression(membre: Membre, typeMembreConnecter: string): Me
     ...membre,
     ...typeMembreConnecter === membre.typologieMembre && { suppressionDuMembreNonAutorise: true },
   }
-}
-
-function cleanMembre(membres: MesMembresReadModel['membres'], filtre: MesMembresReadModel['filtre']): MesMembresReadModel['membres'] {
-  const membre = membres.map((membre) => pouvoirFiltrerParRoleEtTypologie(membre, filtre))
-  return membre.filter((membre) => membre !== undefined)
-}
-
-function pouvoirFiltrerParRoleEtTypologie(membre: Membre, filtre: MesMembresReadModel['filtre']): Membre | undefined {
-  const matchRolesSelectionner = membre.roles.some((role) => filtre.roles.includes(role)) && !filtre.roles.includes('')
-  if (membre.statut === filtre.statut && filtre.roles.includes('') && filtre.typologie === '' && membre.statut === filtre.statut) {
-    // filtre par default
-    return membre
-  }
-  if (matchRolesSelectionner && filtre.typologie === membre.typologieMembre && membre.statut === filtre.statut) {
-    // filtre sur la typologie
-    return membre
-  }
-  if (matchRolesSelectionner && filtre.typologie === '' && membre.statut === filtre.statut) {
-    // filtre uniquement sur le role
-    return membre
-  }
-  return undefined
 }
 
 export type MesMembresReadModel = Readonly<{
