@@ -4589,6 +4589,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/sanitize-html@npm:^2.13.0":
+  version: 2.13.0
+  resolution: "@types/sanitize-html@npm:2.13.0"
+  dependencies:
+    htmlparser2: "npm:^8.0.0"
+  checksum: 10c0/c6614b38f67dd6fb3a94c9163a55fa43b9aa81a845fe9584d9ffbd5da0e00e0ac8162ede9f4bde095840b2ef9db12265f5fcc40b707f48a420405c6aa7c3ff51
+  languageName: node
+  linkType: hard
+
 "@types/shimmer@npm:^1.2.0":
   version: 1.2.0
   resolution: "@types/shimmer@npm:1.2.0"
@@ -6314,7 +6323,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deepmerge@npm:^4.3.1":
+"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.1":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
   checksum: 10c0/e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
@@ -8272,7 +8281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmlparser2@npm:^8.0.1":
+"htmlparser2@npm:^8.0.0, htmlparser2@npm:^8.0.1":
   version: 8.0.2
   resolution: "htmlparser2@npm:8.0.2"
   dependencies:
@@ -10698,6 +10707,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"parse-srcset@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "parse-srcset@npm:1.0.2"
+  checksum: 10c0/2f268e3d110d4c53d06ed2a8e8ee61a7da0cee13bf150819a6da066a8ca9b8d15b5600d6e6cae8be940e2edc50ee7c1e1052934d6ec858324065ecef848f0497
+  languageName: node
+  linkType: hard
+
 "parse5-htmlparser2-tree-adapter@npm:^7.0.0":
   version: 7.1.0
   resolution: "parse5-htmlparser2-tree-adapter@npm:7.1.0"
@@ -11941,6 +11957,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sanitize-html@npm:^2.14.0":
+  version: 2.14.0
+  resolution: "sanitize-html@npm:2.14.0"
+  dependencies:
+    deepmerge: "npm:^4.2.2"
+    escape-string-regexp: "npm:^4.0.0"
+    htmlparser2: "npm:^8.0.0"
+    is-plain-object: "npm:^5.0.0"
+    parse-srcset: "npm:^1.0.2"
+    postcss: "npm:^8.3.11"
+  checksum: 10c0/7e001ab18d09ce5c4d0dbb6837c7a36f132874267e5b724cdef79b21188b55e652a591d79d297f9473aaf80cf96bb1894c3fa1046ccba977ed9aa365d6eb3a5c
+  languageName: node
+  linkType: hard
+
 "saxes@npm:^6.0.0":
   version: 6.0.0
   resolution: "saxes@npm:6.0.0"
@@ -12656,6 +12686,7 @@ __metadata:
     "@types/nodemailer": "npm:^6"
     "@types/react": "npm:^19.0.8"
     "@types/react-dom": "npm:^19"
+    "@types/sanitize-html": "npm:^2.13.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.18.2"
     "@vitejs/plugin-react": "npm:^4.3.4"
     "@vitest/coverage-istanbul": "npm:^3.0.4"
@@ -12689,6 +12720,7 @@ __metadata:
     react-select-event: "npm:^5.5.1"
     react-toastify: "npm:^11.0.3"
     stylelint: "npm:^16.14.1"
+    sanitize-html: "npm:^2.14.0"
     stylelint-config-standard: "npm:^37.0.0"
     stylelint-order: "npm:^6.0.4"
     tsx: "npm:^4.19.2"

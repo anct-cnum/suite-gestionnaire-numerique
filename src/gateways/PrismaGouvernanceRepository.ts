@@ -1,18 +1,44 @@
 import { Prisma } from '@prisma/client'
+import sanitize from 'sanitize-html'
 
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
-export class PrismaGouvernanceRepository implements GouvernanceRepository {
-  readonly #dataResource: Prisma.GouvernanceRecordDelegate
+const defaultOptions = {
+  allowedAttributes: {
+    a: ['href'],
+  },
+  allowedTags: [
+    'p',
+    'h2',
+    'h3',
+    'h4',
+    'b',
+    'strong',
+    'i',
+    'em',
+    'ul',
+    'ol',
+    'li',
+    'a',
+  ],
+}
 
-  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
-    this.#dataResource = dataResource
+export class PrismaGouvernanceRepository implements GouvernanceRepository {
+  readonly #noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
+  readonly #gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
+
+  constructor(
+    gouvernanceDataResource: Prisma.GouvernanceRecordDelegate,
+    noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
+  ) {
+    this.#noteDeContexteDataResource = noteDeContexteDataResource
+    this.#gouvernanceDataResource = gouvernanceDataResource
   }
 
   async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    const record = await this.#dataResource.findUnique({
+    const record = await this.#gouvernanceDataResource.findUnique({
       include: {
         noteDeContexte: {
           include: {
@@ -25,7 +51,6 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         departementCode: uid.state.value,
       },
     })
-
     if (!record) {
       return null
     }
@@ -50,8 +75,31 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/no-unused-vars
-  async update(_gouvernance: Gouvernance): Promise<void> {
-    return Promise.resolve()
+  async update(gouvernance: Gouvernance): Promise<void> {
+    const noteDeContexte = gouvernance.state.noteDeContexte
+    if (noteDeContexte) {
+      await this.#noteDeContexteDataResource.upsert({
+        create: {
+          contenu: sanitize(noteDeContexte.value, defaultOptions),
+          derniereEdition: noteDeContexte.dateDeModification,
+          relationGouvernance: {
+            connect: { id: Number(gouvernance.state.uid.value) },
+          },
+          relationUtilisateur: {
+            connect: { ssoId: noteDeContexte.uidUtilisateurAyantModifiee },
+          },
+        },
+        update: {
+          contenu: sanitize(noteDeContexte.value, defaultOptions),
+          derniereEdition: noteDeContexte.dateDeModification,
+          relationUtilisateur: {
+            connect: { ssoId: noteDeContexte.uidUtilisateurAyantModifiee },
+          },
+        },
+        where: {
+          gouvernanceId: Number(gouvernance.state.uid.value),
+        },
+      })
+    }
   }
 }
