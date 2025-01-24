@@ -1,4 +1,3 @@
-import { Result } from '@/shared/lang'
 import { Departement, DepartementState } from './Departement'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid } from './Utilisateur'
@@ -60,12 +59,12 @@ export class Gouvernance extends Entity<State> {
     )
   }
 
-  ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): Result<'noteDeContexteDejaExistante'> {
-    if (this.#noteDeContexte) {
-      return 'noteDeContexteDejaExistante'
+  ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): boolean {
+    if (this.#noteDeContexte === undefined) {
+      this.#noteDeContexte = noteDeContexte
+      return false
     }
-    this.#noteDeContexte = noteDeContexte
-    return 'OK'
+    return true
   }
 
   ajouterNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {

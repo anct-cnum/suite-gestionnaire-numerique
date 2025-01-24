@@ -33,7 +33,7 @@ describe('gouvernance loader', () => {
         id: 123,
         nom: 'Deschamps',
         prenom: 'Jean',
-        ssoId: 'FooId',
+        ssoId: 'userFooId',
       }),
     })
     await prisma.gouvernanceRecord.create({
@@ -52,7 +52,7 @@ describe('gouvernance loader', () => {
       data: {
         contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
         derniereEdition: new Date('2024-11-23'),
-        editeurId: 123,
+        editeurId: 'userFooId',
         gouvernanceId: gouvernance.id,
       },
     })
@@ -62,7 +62,7 @@ describe('gouvernance loader', () => {
         creation: new Date('2024-11-23'),
         date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'FooId',
+        editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'stratégique',
@@ -74,7 +74,7 @@ describe('gouvernance loader', () => {
         creation: new Date('2024-11-23'),
         date: new Date('2024-08-01'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'FooId',
+        editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'technique',
@@ -204,14 +204,14 @@ describe('gouvernance loader', () => {
       },
     })
     await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'FooId' }),
+      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' }),
     })
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
         creation: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'FooId',
+        editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'stratégique',
@@ -261,14 +261,14 @@ describe('gouvernance loader', () => {
       },
     })
     await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'FooId' }),
+      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' }),
     })
     await prisma.comiteRecord.create({
       data: {
         creation: new Date('2024-11-23'),
         date: new Date('2024-11-23'),
         derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'FooId',
+        editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceId: gouvernance.id,
         type: 'stratégique',

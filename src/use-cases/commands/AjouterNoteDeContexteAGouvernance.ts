@@ -36,9 +36,6 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
     gouvernance.ajouterNoteDeContexte(
       new NoteDeContexte(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
     )
-    if (result === 'noteDeContexteDejaExistante') {
-      return result
-    }
     await this.#gouvernanceRepository.update(gouvernance)
 
     return 'OK'
