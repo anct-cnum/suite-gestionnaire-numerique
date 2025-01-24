@@ -75,7 +75,7 @@ describe('recupererMesMembres', () => {
     })
 
     it('et que le gestionnaire département n’est pas un co-porteur alors on le récupère mais je ne peux ni supprimer et ni ajouter un membre', () => {
-      ['Co-Financeur', 'Bénéficiaire', 'Formation', 'Observateur'].forEach(async (role) => {
+      ['Co-financeur', 'Bénéficiaire', 'Formation', 'Observateur'].forEach(async (role) => {
         mesMembresLoaderPrisma = {
           ...mesMembresLoaderPrisma,
           autorisations: {
@@ -146,7 +146,6 @@ const original: MesMembresReadModel = {
       },
       nom: 'Bouygues',
       roles: [],
-      // roles: ['Co-Financeur'], ont il des roles ?
       statut: 'Suggestion',
       typologieMembre: 'Entreprise privée',
     },
@@ -156,8 +155,7 @@ const original: MesMembresReadModel = {
         prenom: 'Dubois',
       },
       nom: 'Orange',
-      roles: [],
-      // roles: ['Co-Financeur'], ont il des roles ?
+      roles: ['Co-porteur'],
       statut: 'Candidat',
       typologieMembre: 'Entreprise privée',
     },
