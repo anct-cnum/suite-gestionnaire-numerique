@@ -14,16 +14,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
       autorisations: {
         ...pouvoirAjouteOuSupprime(mesMembres.roles),
       },
-<<<<<<< HEAD
       membres: mesMembres.membres.map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologie)),
-=======
-      membres:
-        cleanMembre(mesMembres.membres.values()
-          // .map((membre: Membre) => pouvoirFiltrerParRoleEtTypologie(membre, mesMembres.filtre))
-          .map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre))
-          .toArray(),
-        mesMembres.filtre),
->>>>>>> uses cases filter
     }))
   }
 }
