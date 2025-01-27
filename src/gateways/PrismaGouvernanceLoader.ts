@@ -6,7 +6,6 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
     noteDeContexte: {
       select: {
-        id: true
         gouvernanceId: true
         derniereEdition: true
         relationUtilisateur: true

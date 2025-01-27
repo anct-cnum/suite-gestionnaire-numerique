@@ -79,7 +79,7 @@ describe('gouvernance repository', () => {
       data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
     await prisma.noteDeContexteRecord.create({
-      data: noteDeContexteRecordFactory({ gouvernanceId, id: 1 }),
+      data: noteDeContexteRecordFactory({ gouvernanceId }),
     })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
