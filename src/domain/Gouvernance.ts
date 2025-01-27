@@ -72,6 +72,15 @@ export class Gouvernance extends Entity<State> {
     return 'notePriveeDejaExistante'
   }
 
+  modifierNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {
+    if (this.#notePrivee !== undefined) {
+      this.#notePrivee = notePrivee
+      return 'OK'
+    }
+
+    return 'notePriveeInexistante'
+  }
+
   peutEtreGerePar(utilisateur: Utilisateur): boolean {
     return utilisateur.isAdmin
       || this.#departement.state.code === utilisateur.state.departement?.code
@@ -120,7 +129,7 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 
 export type GouvernanceUidState = Readonly<{ value: string }>
 
-type GouvernanceFailure = 'notePriveeDejaExistante'
+export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante'
 
 type GouvernanceFactoryParams = Readonly<{
   departement: {
