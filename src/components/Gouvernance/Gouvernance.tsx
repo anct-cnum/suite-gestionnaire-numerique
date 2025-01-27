@@ -36,6 +36,8 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const labelComiteId = 'labelAjouterComiteId'
   const drawerNoteDeContexteId = 'drawerAjouterNoteDeContexteId'
   const labelNoteDeContexteId = 'labelAjouterNoteDeContexteId'
+  const labelModifierNoteDeContexteId = 'labelModifierNoteDeContexteId'
+  const drawerModifierNoteDeContexteId = 'drawerModifierNoteDeContexteId'
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
@@ -260,8 +262,11 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             <SectionRemplie
               button={(
                 <button
-                  aria-controls={drawerNoteDeContexteId}
+                  aria-controls={drawerModifierNoteDeContexteId}
                   className="fr-btn fr-btn--secondary"
+                  onClick={() => {
+                    setIsDrawerOpen(true)
+                  }}
                   type="button"
                 >
                   Modifier
@@ -276,7 +281,12 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               title="Note de contexte"
             >
               <NoteDeContexteRemplie
+                drawerModifierNoteDeContexteId={drawerModifierNoteDeContexteId}
+                isDrawerOpen={isDrawerOpen}
+                labelId={labelModifierNoteDeContexteId}
+                setIsDrawerOpen={setIsDrawerOpen}
                 texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
+                uidGouvernance={gouvernanceViewModel.uid}
               />
             </SectionRemplie>
           ) : (
