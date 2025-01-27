@@ -56,12 +56,12 @@ describe('modifier un comité', () => {
       frequence,
       type,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedComiteUidToFind).toBe(uidComite)
     expect(spiedComiteToModify?.state).toStrictEqual(
@@ -73,8 +73,8 @@ describe('modifier un comité', () => {
         frequence,
         type,
         uidEditeur: {
-          email: emailUtilisateurCourant,
-          value: uidUtilisateurCourant,
+          email: emailEditeur,
+          value: uidEditeur,
         },
         uidGouvernance: {
           value: uidGouvernance,
@@ -140,12 +140,12 @@ describe('modifier un comité', () => {
       frequence,
       type,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe(expectedFailure)
     expect(spiedComiteToModify).toBeNull()
@@ -167,14 +167,14 @@ describe('modifier un comité', () => {
       frequence: frequenceValide,
       type: typeValide,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('userFooId')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('utilisateurNePeutPasModifierComite')
+    expect(result).toBe('editeurNePeutPasModifierComite')
     expect(spiedComiteToModify).toBeNull()
   })
 
@@ -194,12 +194,12 @@ describe('modifier un comité', () => {
       frequence: frequenceValide,
       type: typeValide,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe('gouvernanceInexistante')
     expect(spiedComiteToModify).toBeNull()
@@ -221,13 +221,13 @@ describe('modifier un comité', () => {
       frequence: frequenceValide,
       type: typeValide,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
-    expect(result).toBe('utilisateurInexistant')
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
+    expect(result).toBe('editeurInexistant')
     expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedComiteToModify).toBeNull()
   })
@@ -248,12 +248,12 @@ describe('modifier un comité', () => {
       frequence: frequenceValide,
       type: typeValide,
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedComiteUidToFind).toBe(uidComite)
     expect(result).toBe('comiteInexistant')
@@ -267,8 +267,8 @@ const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
 const uidComite = 'comiteFooId'
 const uidGouvernance = 'gouvernanceFooId'
-const emailUtilisateurCourant = 'martin.tartempion@example.net'
-const uidUtilisateurCourant = 'userFooId'
+const emailEditeur = 'martin.tartempion@example.net'
+const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
 let spiedComiteToModify: Comite | null
@@ -304,7 +304,7 @@ class GestionnaireRepositorySpy implements FindUtilisateurRepository {
     return Promise.resolve(utilisateurFactory({
       codeOrganisation: '75',
       role: 'Gestionnaire département',
-      uid: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+      uid: { email: emailEditeur, value: uidEditeur },
     }))
   }
 }
@@ -328,7 +328,7 @@ class ComiteRepositorySpy implements UpdateComiteRepository, FindComiteRepositor
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },
-      uidEditeur: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+      uidEditeur: { email: emailEditeur, value: uidEditeur },
       uidGouvernance: { value: uidGouvernance },
     }))
   }

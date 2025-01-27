@@ -24,12 +24,12 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // WHEN
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       gouvernanceFactory({
@@ -37,7 +37,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
           contenu,
           dateDeModification: epochTime,
           uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidEditeur } }).state.uid
           ),
         },
         uid: uidGouvernance,
@@ -55,13 +55,13 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidGouvernance, uidUtilisateurCourant: 'utilisateurUsurpateur' })
+    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
+    expect(result).toBe('editeurNePeutPasAjouterNoteDeContexte')
   })
 
   it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
@@ -75,12 +75,12 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // WHEN
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('gouvernanceInexistante')
@@ -97,21 +97,21 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // WHEN
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurCourantInexistant')
+    expect(result).toBe('editeurInexistant')
   })
 })
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
 const uidGouvernance = 'gouvernanceFooId'
-const uidUtilisateurCourant = 'userFooId'
+const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null

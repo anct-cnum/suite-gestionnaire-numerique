@@ -29,8 +29,8 @@ describe('modifier un comité action', () => {
       frequence: 'Mensuelle',
       type: 'Stratégique',
       uid: '1',
+      uidEditeur: 'userFooId',
       uidGouvernance: 'gouvernanceFooId',
-      uidUtilisateurCourant: 'userFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(messages).toStrictEqual(['OK'])

@@ -21,8 +21,8 @@ describe('supprimer un comité action', () => {
     // THEN
     expect(SupprimerUnComite.prototype.execute).toHaveBeenCalledWith({
       uid: '1',
+      uidEditeur: 'userFooId',
       uidGouvernance: 'gouvernanceFooId',
-      uidUtilisateurCourant: 'userFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(messages).toStrictEqual(['OK'])

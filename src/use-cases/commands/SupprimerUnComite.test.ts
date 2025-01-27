@@ -26,12 +26,12 @@ describe('supprimer un comité', () => {
     // WHEN
     const result = await supprimerUnComite.execute({
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedComiteUidToFind).toBe(uidComite)
     expect(spiedComiteToDrop?.state).toStrictEqual(
@@ -40,8 +40,8 @@ describe('supprimer un comité', () => {
           value: uidComite,
         },
         uidEditeur: {
-          email: emailUtilisateurCourant,
-          value: uidUtilisateurCourant,
+          email: emailEditeur,
+          value: uidEditeur,
         },
         uidGouvernance: {
           value: uidGouvernance,
@@ -62,14 +62,14 @@ describe('supprimer un comité', () => {
     // WHEN
     const result = await supprimerUnComite.execute({
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('userFooId')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('utilisateurNePeutPasSupprimerComite')
+    expect(result).toBe('editeurNePeutPasSupprimerComite')
     expect(spiedComiteToDrop).toBeNull()
   })
 
@@ -84,12 +84,12 @@ describe('supprimer un comité', () => {
     // WHEN
     const result = await supprimerUnComite.execute({
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe('gouvernanceInexistante')
     expect(spiedComiteToDrop).toBeNull()
@@ -106,13 +106,13 @@ describe('supprimer un comité', () => {
     // WHEN
     const result = await supprimerUnComite.execute({
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
-    expect(result).toBe('utilisateurInexistant')
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
+    expect(result).toBe('editeurInexistant')
     expect(spiedGouvernanceUidToFind).toBeNull()
     expect(spiedComiteToDrop).toBeNull()
   })
@@ -128,12 +128,12 @@ describe('supprimer un comité', () => {
     // WHEN
     const result = await supprimerUnComite.execute({
       uid: uidComite,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedComiteUidToFind).toBe(uidComite)
     expect(result).toBe('comiteInexistant')
@@ -143,8 +143,8 @@ describe('supprimer un comité', () => {
 
 const uidComite = 'comiteFooId'
 const uidGouvernance = 'gouvernanceFooId'
-const emailUtilisateurCourant = 'martin.tartempion@example.net'
-const uidUtilisateurCourant = 'userFooId'
+const emailEditeur = 'martin.tartempion@example.net'
+const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
 let spiedComiteToDrop: Comite | null
@@ -180,7 +180,7 @@ class GestionnaireRepositorySpy implements FindUtilisateurRepository {
     return Promise.resolve(utilisateurFactory({
       codeOrganisation: '75',
       role: 'Gestionnaire département',
-      uid: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+      uid: { email: emailEditeur, value: uidEditeur },
     }))
   }
 }
@@ -204,7 +204,7 @@ class ComiteRepositorySpy implements DropComiteRepository, FindComiteRepository 
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },
-      uidEditeur: { email: emailUtilisateurCourant, value: uidUtilisateurCourant },
+      uidEditeur: { email: emailEditeur, value: uidEditeur },
       uidGouvernance: { value: uidGouvernance },
     }))
   }

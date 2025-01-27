@@ -32,7 +32,7 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
     }
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
-      return 'utilisateurNePeutPasAjouterNotePrivee'
+      return 'editeurNePeutPasAjouterNotePrivee'
     }
 
     const result = gouvernance.modifierNotePrivee(
@@ -48,7 +48,7 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'utilisateurNePeutPasAjouterNotePrivee' | GouvernanceFailure
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasAjouterNotePrivee' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string

@@ -20,21 +20,21 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   }
 
   async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
+    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
+    if (!editeur) {
+      return 'editeurInexistant'
     }
 
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance) {
       return 'gouvernanceInexistante'
     }
-    if (!gouvernance.peutEtreGerePar(utilisateurCourant)) {
-      return 'utilisateurNePeutPasAjouterNoteDeContexte'
+    if (!gouvernance.peutEtreGerePar(editeur)) {
+      return 'editeurNePeutPasAjouterNoteDeContexte'
     }
 
     gouvernance.ajouterNoteDeContexte(
-      new NoteDeContexte(this.#date, new UtilisateurUid(utilisateurCourant.state.uid), command.contenu)
+      new NoteDeContexte(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
     )
     await this.#gouvernanceRepository.update(gouvernance)
 
@@ -42,11 +42,11 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'utilisateurCourantInexistant' | 'utilisateurNePeutPasAjouterNoteDeContexte'
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasAjouterNoteDeContexte'
 
 type Command = Readonly<{
   contenu: string
-  uidUtilisateurCourant: string
+  uidEditeur: string
   uidGouvernance: string
 }>
 

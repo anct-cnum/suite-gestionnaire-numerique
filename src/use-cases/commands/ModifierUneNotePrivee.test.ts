@@ -63,7 +63,7 @@ describe('modifier une note privée à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurNePeutPasAjouterNotePrivee')
+    expect(result).toBe('editeurNePeutPasAjouterNotePrivee')
   })
 
   it('étant donné une gouvernance existante, quand un note privée est modifiée par un gestionnaire département mais qu’une note privée n’existe pas, alors une erreur est renvoyée', async () => {
