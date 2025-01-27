@@ -264,6 +264,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                 <button
                   aria-controls={drawerModifierNoteDeContexteId}
                   className="fr-btn fr-btn--secondary"
+                  data-fr-opened="false"
                   onClick={() => {
                     setIsDrawerOpen(true)
                   }}
@@ -285,6 +286,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                 isDrawerOpen={isDrawerOpen}
                 labelId={labelModifierNoteDeContexteId}
                 setIsDrawerOpen={setIsDrawerOpen}
+                sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
                 texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
                 uidGouvernance={gouvernanceViewModel.uid}
               />

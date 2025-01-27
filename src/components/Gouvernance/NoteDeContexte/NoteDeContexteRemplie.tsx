@@ -7,7 +7,7 @@ import ModifierNoteDeContexte from './ModifierNoteDeContexte'
 import Drawer from '@/components/shared/Drawer/Drawer'
 
 export default function NoteDeContexteRemplie({
-  texte, uidGouvernance, drawerModifierNoteDeContexteId, labelId, isDrawerOpen, setIsDrawerOpen,
+  texte, uidGouvernance, drawerModifierNoteDeContexteId, labelId, isDrawerOpen, sousTitre, setIsDrawerOpen,
 }: Props): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true)
   const drawerRef = useRef<HTMLDialogElement>(null)
@@ -33,7 +33,7 @@ export default function NoteDeContexteRemplie({
         </button>
       </div>
       <Drawer
-        boutonFermeture="Fermer la modification"
+        boutonFermeture="Fermer le formulaire de modification d’une note de contexte"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
@@ -51,6 +51,7 @@ export default function NoteDeContexteRemplie({
           id={drawerModifierNoteDeContexteId}
           label="Modifier note de contexte"
           labelId={labelId}
+          sousTitre={sousTitre}
           texte={texte}
           uidGouvernance={uidGouvernance}
         />
@@ -61,6 +62,7 @@ export default function NoteDeContexteRemplie({
 
 type Props = Readonly<{
   texte: string
+  sousTitre: string
   uidGouvernance: string
   drawerModifierNoteDeContexteId: string
   labelId: string

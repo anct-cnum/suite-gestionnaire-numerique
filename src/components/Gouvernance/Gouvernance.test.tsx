@@ -511,7 +511,7 @@ describe('gouvernance', () => {
     expect(modifier).toHaveAttribute('type', 'button')
     expect(auteurDeLaNote[1]).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
-    const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText('titre note de contexte', { selector: 'strong' })
+    const noteDeContexteElement1 = within(contenuNoteDeContexte).getAllByText('titre note de contexte', { selector: 'strong' })[0]
     expect(noteDeContexteElement1).toBeInTheDocument()
     const noteDeContexteElement2 = within(contenuNoteDeContexte).getAllByText(matchWithoutMarkup('un paragraphe avec du bold.'), { selector: 'p' })
     expect(noteDeContexteElement2[0]).toBeInTheDocument()
