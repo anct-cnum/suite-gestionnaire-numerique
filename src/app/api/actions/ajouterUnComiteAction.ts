@@ -30,8 +30,8 @@ export async function ajouterUnComiteAction(
     date: actionParams.date,
     frequence: actionParams.frequence,
     type: actionParams.type,
+    uidEditeur: await getSessionSub(),
     uidGouvernance: actionParams.uidGouvernance,
-    uidUtilisateurCourant: await getSessionSub(),
   })
 
   revalidatePath(validationResult.data.path)

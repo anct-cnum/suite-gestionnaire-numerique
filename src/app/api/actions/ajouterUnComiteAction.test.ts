@@ -27,8 +27,8 @@ describe('ajouter un comité action', () => {
       date: '2024-01-01',
       frequence: 'Mensuelle',
       type: 'Stratégique',
+      uidEditeur: 'userFooId',
       uidGouvernance: 'gouvernanceFooId',
-      uidUtilisateurCourant: 'userFooId',
     })
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(messages).toStrictEqual(['OK'])

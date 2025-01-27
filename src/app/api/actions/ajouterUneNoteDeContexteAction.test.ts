@@ -25,8 +25,8 @@ describe('ajouter une note de contexte', () => {
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
     expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
       contenu: '<p>ma note de contexte</p>',
+      uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',
-      uidUtilisateurCourant: 'userFooId',
     })
   })
 

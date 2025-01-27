@@ -20,9 +20,9 @@ export class SupprimerUnComite implements CommandHandler<Command> {
   }
 
   async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurInexistant'
+    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
+    if (!editeur) {
+      return 'editeurInexistant'
     }
 
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
@@ -35,8 +35,8 @@ export class SupprimerUnComite implements CommandHandler<Command> {
       return 'comiteInexistant'
     }
 
-    if (!gouvernance.peutEtreGerePar(utilisateurCourant)) {
-      return 'utilisateurNePeutPasSupprimerComite'
+    if (!gouvernance.peutEtreGerePar(editeur)) {
+      return 'editeurNePeutPasSupprimerComite'
     }
 
     await this.#comiteRepository.drop(comite)
@@ -45,12 +45,12 @@ export class SupprimerUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'utilisateurInexistant' | 'comiteInexistant' | 'utilisateurNePeutPasSupprimerComite'
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'comiteInexistant' | 'editeurNePeutPasSupprimerComite'
 
 type Command = Readonly<{
   uid: string
+  uidEditeur: string
   uidGouvernance: string
-  uidUtilisateurCourant: string
 }>
 
 type GouvernanceRepository = FindGouvernanceRepository

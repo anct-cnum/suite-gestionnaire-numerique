@@ -24,9 +24,9 @@ export class ModifierUnComite implements CommandHandler<Command> {
   }
 
   async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurInexistant'
+    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
+    if (!editeur) {
+      return 'editeurInexistant'
     }
 
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
@@ -48,15 +48,15 @@ export class ModifierUnComite implements CommandHandler<Command> {
       frequence: command.frequence,
       type: command.type,
       uid: comite.state.uid,
-      uidEditeur: utilisateurCourant.state.uid,
+      uidEditeur: editeur.state.uid,
       uidGouvernance: gouvernance.state.uid,
     })
     if (!(comiteModifie instanceof Comite)) {
       return comiteModifie
     }
 
-    if (!gouvernance.peutEtreGerePar(utilisateurCourant)) {
-      return 'utilisateurNePeutPasModifierComite'
+    if (!gouvernance.peutEtreGerePar(editeur)) {
+      return 'editeurNePeutPasModifierComite'
     }
 
     await this.#comiteRepository.update(comiteModifie)
@@ -65,7 +65,7 @@ export class ModifierUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'utilisateurInexistant' | 'comiteInexistant' | 'utilisateurNePeutPasModifierComite' | ComiteFailure
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'comiteInexistant' | 'editeurNePeutPasModifierComite' | ComiteFailure
 
 type Command = Readonly<{
   commentaire?: string
@@ -73,8 +73,8 @@ type Command = Readonly<{
   frequence: string
   type: string
   uid: string
+  uidEditeur: string
   uidGouvernance: string
-  uidUtilisateurCourant: string
 }>
 
 type GouvernanceRepository = FindGouvernanceRepository
