@@ -7,7 +7,6 @@ import { GestionnaireStructure } from './GestionnaireStructure'
 import { GroupementUid } from './Groupement'
 import { Region, RegionState } from './Region'
 import { Role, TypologieRole } from './Role'
-import { ValidDate } from './shared/ValidDate'
 import { StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
@@ -18,8 +17,8 @@ export class UtilisateurFactory {
   readonly #emailDeContact: Email
   readonly #isSuperAdmin: boolean
   readonly #inviteLe: Date
-  readonly #derniereConnexion: Date
   readonly #telephone: Telephone
+  readonly #derniereConnexion?: Date
   readonly #departement?: DepartementState
   readonly #region?: RegionState
   readonly #structureUid?: number
@@ -32,7 +31,7 @@ export class UtilisateurFactory {
     this.#emailDeContact = new Email(params.emailDeContact)
     this.#isSuperAdmin = params.isSuperAdmin
     this.#inviteLe = params.inviteLe
-    this.#derniereConnexion = params.derniereConnexion ?? new Date(0)
+    this.#derniereConnexion = params.derniereConnexion
     this.#telephone = new Telephone(params.telephone ?? '')
     // TEMPORAIRE, EN ATTENDANT D'IMPLÉMENTER LES CONTRÔLES DE COHÉRENCE
     this.#departement = params.departement
@@ -45,7 +44,7 @@ export class UtilisateurFactory {
     const state = utilisateur.state
     return new UtilisateurFactory({
       departement: state.departement,
-      derniereConnexion: new Date(state.derniereConnexion),
+      derniereConnexion: undefined,
       emailDeContact: state.emailDeContact,
       groupementUid: state.groupementUid?.value,
       inviteLe: new Date(state.inviteLe),
@@ -83,9 +82,9 @@ export class UtilisateurFactory {
       this.#emailDeContact,
       this.#isSuperAdmin,
       this.#inviteLe,
-      this.#derniereConnexion,
       this.#telephone,
-      departement
+      departement,
+      this.#derniereConnexion
     )
   }
 
@@ -97,10 +96,10 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
-      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
+      this.#inviteLe,
       this.#telephone,
-      region
+      region,
+      this.#derniereConnexion
     )
   }
 
@@ -112,10 +111,10 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
-      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
+      this.#inviteLe,
       this.#telephone,
-      structureUid
+      structureUid,
+      this.#derniereConnexion
     )
   }
 
@@ -127,10 +126,10 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
-      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
+      this.#inviteLe,
       this.#telephone,
-      groupementUid
+      groupementUid,
+      this.#derniereConnexion
     )
   }
 
@@ -142,9 +141,9 @@ export class UtilisateurFactory {
       this.#prenom,
       this.#emailDeContact,
       this.#isSuperAdmin,
-      new ValidDate(this.#inviteLe, 'dateDInvitationInvalide'),
-      new ValidDate(this.#derniereConnexion, 'dateDeDerniereConnexionInvalide'),
-      this.#telephone
+      this.#inviteLe,
+      this.#telephone,
+      this.#derniereConnexion
     )
   }
 }
