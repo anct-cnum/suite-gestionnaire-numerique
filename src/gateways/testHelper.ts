@@ -110,7 +110,7 @@ export function noteDeContexteRecordFactory(
   return {
     contenu: '<p>contenu HTML</p>',
     derniereEdition: epochTime,
-    editeurId: 1,
+    editeurId: 'userFooId',
     gouvernanceId: 1,
     ...override,
   }

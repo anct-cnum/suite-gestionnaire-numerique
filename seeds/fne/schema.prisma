@@ -38,24 +38,18 @@ model UserFNE {
 }
 
 model Gouvernance {
-  id                              String                 @id
-  userCreateurId                  String                 @map("createur_id")
-  departementCode                 String                 @map("departement_code")
-  userDerniereModificationId      String                 @map("derniere_modification_par_id")
+  id                              String    @id
+  userCreateurId                  String    @map("createur_id")
+  departementCode                 String    @map("departement_code")
+  userDerniereModificationId      String    @map("derniere_modification_par_id")
   modification                    DateTime
-  suppression                     DateTime?              @map("supression")
-  noteDeContexte                  String                 @map("note_de_contexte")
-  perimetre                       perimetre_gouvernance? @map("v1_perimetre")
-  porteurRegionCode               String?                @map("v1_porteur_region_code")
-  porteurDepartementCode          String?                @map("v1_porteur_departement_code")
-  porteurEpciCode                 String?                @map("v1_porteur_epci_code")
-  porteurSiret                    String?                @map("v1_porteur_siret")
-  beneficiaireDotationFormationId String?                @map("beneficiaire_dotation_formation_id")
+  suppression                     DateTime? @map("supression")
+  noteDeContexte                  String    @map("note_de_contexte")
+  beneficiaireDotationFormationId String?   @map("beneficiaire_dotation_formation_id")
+  enregistree                     DateTime? @map("v2_enregistree")
 
-  relationEpci                          Epci?              @relation(fields: [porteurEpciCode], references: [code])
   relationUserCreateur                  UserFNE            @relation("gouvernancesCrees", fields: [userCreateurId], references: [id])
   relationUserDerniereModification      UserFNE            @relation("gouvernancesDernierementModifiees", fields: [userDerniereModificationId], references: [id])
-  relationInformationSiret              InformationSiret?  @relation(fields: [porteurSiret], references: [siret])
   relationBeneficiaireDotationFormation MembreGouvernance? @relation("beneficiaireDotationFormation", fields: [beneficiaireDotationFormationId], references: [id])
 
   comites         Comite[]
@@ -124,7 +118,6 @@ model Epci {
   code String @id
   nom  String
 
-  gouvernance        Gouvernance[]
   membresGouvernance MembreGouvernance[]
 
   @@map("epcis")
@@ -143,7 +136,6 @@ model InformationSiret {
   siret String  @id
   nom   String?
 
-  gouvernances      Gouvernance[]
   membreGouvernance MembreGouvernance[]
 
   @@map("informations_siret")
