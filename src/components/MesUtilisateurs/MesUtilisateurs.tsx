@@ -288,7 +288,6 @@ export default function MesUtilisateurs(
           closeDrawer={() => {
             setIsDrawerRenvoyerInvitationOpen(false)
           }}
-          dialogRef={drawerRenvoyerInvitationRef}
           drawerId={drawerRenvoyerInvitationId}
           labelId={labelRenvoyerInvitationId}
           utilisateur={utilisateurEnAttenteSelectionne}

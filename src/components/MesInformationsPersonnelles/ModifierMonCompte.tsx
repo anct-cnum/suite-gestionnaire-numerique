@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, RefObject, useContext, useId, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -10,7 +10,6 @@ import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export default function ModifierMonCompte({
   email,
-  dialogRef,
   id,
   labelId,
   nom,
@@ -113,7 +112,10 @@ export default function ModifierMonCompte({
             </button>
           </div>
           <div className="fr-col-5">
-            <SubmitButton isDisabled={isDisabled}>
+            <SubmitButton
+              ariaControls={id}
+              isDisabled={isDisabled}
+            >
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
           </div>
@@ -136,12 +138,10 @@ export default function ModifierMonCompte({
       })
 
     closeDrawer()
-    window.dsfr(dialogRef.current).modal.conceal()
   }
 }
 
 type Props = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement | null>
   email: string
   id: string
   labelId: string

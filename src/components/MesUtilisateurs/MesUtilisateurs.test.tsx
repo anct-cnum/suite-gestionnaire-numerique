@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
@@ -285,7 +285,6 @@ describe('mes utilisateurs', () => {
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
       // GIVEN
       const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
-      vi.stubGlobal('dsfr', stubbedConceal())
       afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
 
       // WHEN

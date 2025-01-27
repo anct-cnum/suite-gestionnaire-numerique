@@ -1,4 +1,4 @@
-import { ReactElement, RefObject, useContext } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -9,7 +9,6 @@ export default function ReinviterUnUtilisateur({
   labelId,
   drawerId,
   closeDrawer,
-  dialogRef,
 }: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
 
@@ -45,18 +44,12 @@ export default function ReinviterUnUtilisateur({
       path: pathname,
       uidUtilisateurAReinviter: utilisateur.uid,
     })
-    close()
-    Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
-  }
-
-  function close(): void {
     closeDrawer()
-    window.dsfr(dialogRef.current).modal.conceal()
+    Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
   }
 }
 
 type Props = Readonly<{
-  dialogRef: RefObject<HTMLDialogElement | null>
   utilisateur: Readonly<{
     email: string
     inviteLe: string
