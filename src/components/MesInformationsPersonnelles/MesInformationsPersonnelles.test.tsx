@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -365,6 +365,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
       expect(enregistrer).toHaveAttribute('type', 'submit')
+      expect(enregistrer).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
     })
 
     it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
@@ -408,7 +409,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
       // GIVEN
       const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
-      vi.stubGlobal('dsfr', stubbedConceal())
       afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' })
 
       // WHEN
