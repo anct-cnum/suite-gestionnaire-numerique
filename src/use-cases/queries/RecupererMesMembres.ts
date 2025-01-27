@@ -2,71 +2,69 @@ import { QueryHandler } from '../QueryHandler'
 import { identity, UnaryOperator } from '@/shared/lang'
 
 export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadModel> {
-  readonly #mesMembresLoader: MesMembresReadModelLoader
+  readonly #mesMembresLoader: MesMembresLoader
 
-  constructor(mesMembresLoader: MesMembresReadModelLoader) {
+  constructor(mesMembresLoader: MesMembresLoader) {
     this.#mesMembresLoader = mesMembresLoader
   }
 
-  async get({ codeDepartementGouvernance }: Query): Promise<MesMembresReadModel> {
-    return this.#mesMembresLoader.findMesMembres(codeDepartementGouvernance, (mesMembres) => ({
+  async get(query: Query): Promise<MesMembresReadModel> {
+    return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => ({
       ...mesMembres,
       autorisations: {
         ...pouvoirAjouteOuSupprime(mesMembres.roles),
       },
-      membres: mesMembres.membres.map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologieMembre)),
+      membres: mesMembres.membres.map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologie)),
     }))
   }
 }
 
-export abstract class MesMembresReadModelLoader {
+export abstract class MesMembresLoader {
   async findMesMembres(
-    codeDepartementGouvernance: string,
+    codeDepartement: string,
     autorisations: UnaryOperator<MesMembresReadModel> = identity
   ): Promise<MesMembresReadModel> {
-    return this.find(codeDepartementGouvernance).then(autorisations)
+    return this.find(codeDepartement).then(autorisations)
   }
 
-  protected abstract find(codeDepartementGouvernance: string): Promise<MesMembresReadModel>
+  protected abstract find(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
 function pouvoirAjouteOuSupprime(roles: MesMembresReadModel['roles']): MesMembresReadModel['autorisations'] {
   const rolesAutoriser = ['Co-porteur']
+  const estAutotiser = roles.some((role) => rolesAutoriser.includes(role))
   return {
-    ...roles.some((role) => rolesAutoriser.includes(role)) &&
-      {
-        AjouterUnMembre: true,
-        SupprimerUnMembre: true,
-      },
+    ajouterUnMembre: estAutotiser,
+    supprimerUnMembre: estAutotiser,
   }
 }
 
 function eligibleALaSuppression(membre: Membre, typeMembreConnecter: string): Membre {
   return {
     ...membre,
-    ...typeMembreConnecter === membre.typologieMembre && { suppressionDuMembreNonAutorise: true },
+    suppressionDuMembreAutorise: typeMembreConnecter !== membre.typologie,
   }
 }
 
 export type MesMembresReadModel = Readonly<{
   autorisations: Readonly<{
-    AjouterUnMembre?: boolean
-    SupprimerUnMembre?: boolean
+    ajouterUnMembre: boolean
+    supprimerUnMembre: boolean
   }>
   roles: ReadonlyArray<string>
   departement: string
+  statut: Statut
   filtre: Readonly<{
     roles: ReadonlyArray<Roles | ''>
-    statut: Statut
-    typologie: string
+    typologies: ReadonlyArray<string>
   }>
   membres: ReadonlyArray<Membre>
-  typologieMembre: string
+  typologie: string
   uid: string
 }>
 
 type Membre = Readonly<{
-  suppressionDuMembreNonAutorise?: boolean
+  suppressionDuMembreAutorise: boolean
   contactReferent: Readonly<{
     nom: string
     prenom: string
@@ -74,11 +72,11 @@ type Membre = Readonly<{
   nom: string
   statut: Statut
   roles: ReadonlyArray<Roles>
-  typologieMembre: string
+  typologie: string
 }>
 
 type Query = Readonly<{
-  codeDepartementGouvernance: string
+  codeDepartement: string
 }>
 
 type Statut = 'Membre' | 'Suggestion' | 'Candidat'

@@ -1,5 +1,6 @@
 // Stryker disable all
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
+import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
@@ -152,6 +153,73 @@ export function gouvernanceReadModelFactory(
       prenomAuteur: 'Jean',
       texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
     },
+    uid: 'gouvernanceFooId',
+    ...override,
+  }
+}
+
+export function mesMembresReadModelFactory(
+  override?: Partial<MesMembresReadModel>
+): MesMembresReadModel {
+  return {
+    autorisations: {
+      ajouterUnMembre: true,
+      supprimerUnMembre: true,
+    },
+    departement: 'Rhône',
+    filtre: {
+      roles: [''],
+      typologies: [''],
+    },
+    membres: [
+      {
+        contactReferent: {
+          nom: 'Henrich',
+          prenom: 'Laetitia',
+        },
+        nom: 'Préfecture du Rhône',
+        roles: ['Co-porteur'],
+        statut: 'Membre',
+        suppressionDuMembreAutorise: false,
+        typologie: 'Préfecture départementale',
+      },
+      {
+        contactReferent: {
+          nom: 'Didier',
+          prenom: 'Durant',
+        },
+        nom: 'Département du Rhône',
+        roles: ['Co-porteur'],
+        statut: 'Membre',
+        suppressionDuMembreAutorise: true,
+        typologie: 'Collectivité, EPCI',
+      },
+      {
+        contactReferent: {
+          nom: 'Veronique',
+          prenom: 'Dupont',
+        },
+        nom: 'Bouygues',
+        roles: [],
+        statut: 'Suggestion',
+        suppressionDuMembreAutorise: true,
+        typologie: 'Entreprise privée',
+      },
+      {
+        contactReferent: {
+          nom: 'Chantal',
+          prenom: 'Dubois',
+        },
+        nom: 'Orange',
+        roles: ['Co-porteur'],
+        statut: 'Candidat',
+        suppressionDuMembreAutorise: true,
+        typologie: 'Entreprise privée',
+      },
+    ],
+    roles: ['Co-porteur'],
+    statut: 'Membre',
+    typologie: 'Préfecture départementale',
     uid: 'gouvernanceFooId',
     ...override,
   }
