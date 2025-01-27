@@ -5,7 +5,7 @@ import { GouvernanceFailure, GouvernanceUid, NotePrivee } from '@/domain/Gouvern
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
-export class AjouterUneNotePrivee implements CommandHandler<Command> {
+export class ModifierUneNotePrivee implements CommandHandler<Command> {
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
   readonly #date: Date
@@ -31,16 +31,18 @@ export class AjouterUneNotePrivee implements CommandHandler<Command> {
       return 'gouvernanceInexistante'
     }
 
-    if (!gouvernance.laNotePriveePeutEtreGerePar(editeur)) {
+    if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'utilisateurNePeutPasAjouterNotePrivee'
     }
 
-    const result = gouvernance.ajouterNotePrivee(
+    const result = gouvernance.modifierNotePrivee(
       new NotePrivee(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
     )
-    if (isOk(result)) {
-      await this.#gouvernanceRepository.update(gouvernance)
+    if (!isOk(result)) {
+      return result
     }
+
+    await this.#gouvernanceRepository.update(gouvernance)
 
     return result
   }

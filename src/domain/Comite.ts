@@ -61,7 +61,7 @@ export class Comite extends Entity<State> {
     type,
     uid,
     uidGouvernance,
-    uidEditeur: uidUtilisateurCourant,
+    uidEditeur,
     commentaire,
     date,
   }: ComiteFactoryParams): Result<ComiteFailure, Comite> {
@@ -77,7 +77,7 @@ export class Comite extends Entity<State> {
         new Frequence(frequence),
         new Type(type),
         new GouvernanceUid(uidGouvernance.value),
-        new UtilisateurUid(uidUtilisateurCourant),
+        new UtilisateurUid(uidEditeur),
         commentaire,
         dateDuComiteValidee
       )
