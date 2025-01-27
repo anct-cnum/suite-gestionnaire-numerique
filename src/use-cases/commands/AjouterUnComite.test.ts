@@ -54,12 +54,12 @@ describe('ajouter un comité à une gouvernance', () => {
       date,
       frequence,
       type,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedComiteToAdd?.state).toStrictEqual(
       comiteFactory({
@@ -139,12 +139,12 @@ describe('ajouter un comité à une gouvernance', () => {
       date,
       frequence,
       type,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe(expectedFailure)
     expect(spiedComiteToAdd).toBeNull()
@@ -165,14 +165,14 @@ describe('ajouter un comité à une gouvernance', () => {
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('userFooId')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('utilisateurNePeutPasAjouterComite')
+    expect(result).toBe('editeurNePeutPasAjouterComite')
     expect(spiedComiteToAdd).toBeNull()
   })
 
@@ -191,12 +191,12 @@ describe('ajouter un comité à une gouvernance', () => {
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(result).toBe('gouvernanceInexistante')
     expect(spiedComiteToAdd).toBeNull()
@@ -217,14 +217,14 @@ describe('ajouter un comité à une gouvernance', () => {
       date,
       frequence: frequenceValide,
       type: typeValide,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidUtilisateurCourant)
+    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(result).toBe('utilisateurInexistant')
+    expect(result).toBe('editeurInexistant')
     expect(spiedComiteToAdd).toBeNull()
   })
 })
@@ -234,7 +234,7 @@ const date = '2024-01-01'
 const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
 const uidGouvernance = 'gouvernanceFooId'
-const uidUtilisateurCourant = 'userFooId'
+const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedUtilisateurUidToFind: string | null
 let spiedComiteToAdd: Comite | null

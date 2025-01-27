@@ -26,8 +26,8 @@ export async function supprimerUnComiteAction(
     new PrismaComiteRepository(prisma.comiteRecord)
   ).execute({
     uid: actionParams.uid,
+    uidEditeur: await getSessionSub(),
     uidGouvernance: actionParams.uidGouvernance,
-    uidUtilisateurCourant: await getSessionSub(),
   })
 
   revalidatePath(validationResult.data.path)

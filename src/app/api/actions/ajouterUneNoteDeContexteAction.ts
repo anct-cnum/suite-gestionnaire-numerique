@@ -27,8 +27,8 @@ export async function ajouterUneNoteDeContexteAction(
   )
   const result = await ajouterNoteDeContexteAGouvernance.execute({
     contenu: actionParam.contenu,
+    uidEditeur: await getSessionSub(),
     uidGouvernance: actionParam.uidGouvernance,
-    uidUtilisateurCourant: await getSessionSub(),
   })
   revalidatePath(validationResult.data.path)
   return [result]
