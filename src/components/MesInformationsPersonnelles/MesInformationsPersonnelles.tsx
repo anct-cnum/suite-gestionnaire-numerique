@@ -221,7 +221,6 @@ export default function MesInformationsPersonnelles(
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
-          dialogRef={drawerModifierMonCompteRef}
           email={mesInformationsPersonnellesViewModel.emailDeContact}
           id={drawerId}
           labelId={labelId}

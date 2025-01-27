@@ -3,7 +3,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, renderComponent, stubbedConceal } from '@/components/testHelper'
+import { presserLeBouton, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
@@ -62,7 +62,6 @@ describe('note de contexte', () => {
 
   it('quand je clique sur le bouton enregistrer le drawer se ferme et une notification s‘affiche', async () => {
     // GIVEN
-    vi.stubGlobal('dsfr', stubbedConceal())
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
 
@@ -86,7 +85,6 @@ describe('note de contexte', () => {
   it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
     // GIVEN
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
-    vi.stubGlobal('dsfr', stubbedConceal())
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
 
     // WHEN
