@@ -1,5 +1,5 @@
 /* eslint-disable id-length */
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
@@ -111,6 +111,30 @@ describe('note de contexte', () => {
     expect(boutonSupprimer).not.toBeDisabled()
   })
 
+  it.skip('quand j’affiche une gouvernance avec une note de contexte, lorsque je clique sur le bouton modifier, le drawer s‘ouvre avec le contenu de la note de contexte', () => {
+    // GIVEN
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      noteDeContexte: {
+        dateDeModification: new Date('2024-09-06'),
+        nomAuteur: 'Deschamps',
+        prenomAuteur: 'Jean',
+        texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du bold <b>bold</b></p>',
+      },
+    }), now)
+
+    // WHEN
+    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+
+    // WHEN
+    presserLeBouton('Modifier')
+
+    // THEN
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const editeurDeTextEnrichi = within(drawer).getByRole('textarea')
+    expect(editeurDeTextEnrichi).toBeInTheDocument()
+    // expect(mockRichTextEditor.contenu).toBe('<strong>titre note de contexte</strong><p>un paragraphe avec du bold <b>bold</b></p>')
+  })
+
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ noteDeContexte: undefined }), now)
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
@@ -128,6 +152,10 @@ describe('note de contexte', () => {
 
   function ajouterUneNoteDeContextDrawer(): HTMLElement {
     return screen.getByRole('dialog', { name: 'Note de contexte' })
+  }
+
+  function modifierUneNoteDeContexteDrawer(): HTMLElement {
+    return screen.getByRole('dialog', { name: 'Modifier note de contexte' })
   }
 })
 

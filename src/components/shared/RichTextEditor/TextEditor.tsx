@@ -15,6 +15,8 @@ type Props = Readonly<{
 
 // istanbul ignore next @preserve
 export default function TextEditor({ contenu, onChange }: Props): ReactElement {
+
+  console.log('===========>contenu', contenu)
   const editor = useEditor({
     content: contenu,
     editorProps: {
