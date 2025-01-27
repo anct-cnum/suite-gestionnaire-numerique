@@ -138,6 +138,7 @@ describe('inviter un utilisateur', () => {
         // THEN
         const expectedUtilisateurInvite = utilisateurFactory({
           codeOrganisation: utilisateurAInviter.codeOrganisation,
+          derniereConnexion: undefined,
           emailDeContact: 'martine.dugenoux@example.com',
           inviteLe: date,
           isSuperAdmin: utilisateurCourant.isSuperAdmin,
@@ -208,6 +209,7 @@ describe('inviter un utilisateur', () => {
     // GIVEN
     const date = new Date('2024-01-01')
     const utilisateurACreer = utilisateurFactory({
+      derniereConnexion: undefined,
       inviteLe: date,
       telephone: '',
       uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },

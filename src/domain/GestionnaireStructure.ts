@@ -13,9 +13,9 @@ export class GestionnaireStructure extends Utilisateur {
     emailDeContact: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
-    derniereConnexion: Date,
     telephone: Telephone,
-    structureUid: StructureUid
+    structureUid: StructureUid,
+    derniereConnexion?: Date
   ) {
     super(
       uid,
@@ -25,8 +25,8 @@ export class GestionnaireStructure extends Utilisateur {
       emailDeContact,
       isSuperAdmin,
       inviteLe,
-      derniereConnexion,
-      telephone
+      telephone,
+      derniereConnexion
     )
     this.#structureUid = structureUid
   }

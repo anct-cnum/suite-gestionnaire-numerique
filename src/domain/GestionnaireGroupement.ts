@@ -13,9 +13,9 @@ export class GestionnaireGroupement extends Utilisateur {
     emailDeContact: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
-    derniereConnexion: Date,
     telephone: Telephone,
-    groupementUid: GroupementUid
+    groupementUid: GroupementUid,
+    derniereConnexion?: Date
   ) {
     super(
       uid,
@@ -25,8 +25,8 @@ export class GestionnaireGroupement extends Utilisateur {
       emailDeContact,
       isSuperAdmin,
       inviteLe,
-      derniereConnexion,
-      telephone
+      telephone,
+      derniereConnexion
     )
     this.#groupementUid = groupementUid
   }
