@@ -13,9 +13,9 @@ export class GestionnaireRegion extends Utilisateur {
     emailDeContact: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
-    derniereConnexion: Date,
     telephone: Telephone,
-    region: Region
+    region: Region,
+    derniereConnexion?: Date
   ) {
     super(
       uid,
@@ -25,8 +25,8 @@ export class GestionnaireRegion extends Utilisateur {
       emailDeContact,
       isSuperAdmin,
       inviteLe,
-      derniereConnexion,
-      telephone
+      telephone,
+      derniereConnexion
     )
     this.#region = region
   }

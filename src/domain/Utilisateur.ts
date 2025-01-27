@@ -11,13 +11,13 @@ import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export abstract class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
-  #derniereConnexion: ValidDate<UtilisateurFailure>
   #role: Role
   #nom: Nom
   #prenom: Prenom
   #emailDeContact: Email
   #telephone: Telephone
   #inviteLe: ValidDate<UtilisateurFailure>
+  #derniereConnexion?: ValidDate<UtilisateurFailure>
 
   constructor(
     uid: UtilisateurUid,
@@ -26,9 +26,9 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     prenom: Prenom,
     emailDeContact: Email,
     isSuperAdmin: boolean,
-    inviteLe: ValidDate<UtilisateurFailure>,
-    derniereConnexion: ValidDate<UtilisateurFailure>,
-    telephone: Telephone
+    inviteLe: Date,
+    telephone: Telephone,
+    derniereConnexion?: Date
   ) {
     super(uid)
     this.#role = role
@@ -37,16 +37,18 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#emailDeContact = emailDeContact
     this.#isSuperAdmin = isSuperAdmin
     this.#derniereConnexion = derniereConnexion
-    this.#inviteLe = inviteLe
+      ? new ValidDate(derniereConnexion, 'dateDeDerniereConnexionInvalide')
+      : derniereConnexion
+    this.#inviteLe = new ValidDate(inviteLe, 'dateDInvitationInvalide')
     this.#telephone = telephone
   }
 
   override get state(): UtilisateurState {
     return {
-      derniereConnexion: this.#derniereConnexion.toJSON(),
+      derniereConnexion: this.#derniereConnexion?.toJSON(),
       emailDeContact: this.#emailDeContact.state.value,
       inviteLe: this.#inviteLe.toJSON(),
-      isActive: this.#derniereConnexion.getTime() !== 0,
+      isActive: Boolean(this.#derniereConnexion),
       isSuperAdmin: this.#isSuperAdmin,
       nom: this.#nom.state.value,
       prenom: this.#prenom.state.value,
@@ -110,7 +112,6 @@ export type UtilisateurUidState = Readonly<{
 
 export type UtilisateurState = Readonly<{
   uid: UtilisateurUidState
-  derniereConnexion: string
   emailDeContact: string
   inviteLe: string
   isActive: boolean
@@ -119,6 +120,7 @@ export type UtilisateurState = Readonly<{
   prenom: string
   role: RoleState
   telephone: string
+  derniereConnexion?: string
   departement?: DepartementState
   groupementUid?: GroupementState['uid']
   region?: RegionState

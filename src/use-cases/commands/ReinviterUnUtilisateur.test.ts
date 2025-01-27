@@ -27,6 +27,7 @@ describe('réinviter un utilisateur', () => {
     // THEN
     expect(result).toBe('OK')
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
+      derniereConnexion: undefined,
       inviteLe: date,
       role: 'Gestionnaire structure',
       uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },
@@ -136,6 +137,7 @@ const utilisateursByUid: Record<string, Utilisateur> = {
     uid: { email: 'uidUtilisateurAReinviterActif', value: 'uidUtilisateurAReinviterActif' },
   }),
   uidUtilisateurAReinviterInactif: utilisateurFactory({
+    derniereConnexion: undefined,
     inviteLe: new Date('2024-01-01'),
     role: 'Gestionnaire structure',
     uid: { email: 'uidUtilisateurAReinviterInactif', value: 'uidUtilisateurAReinviterInactif' },

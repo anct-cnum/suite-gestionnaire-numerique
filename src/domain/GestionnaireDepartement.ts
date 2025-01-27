@@ -13,9 +13,9 @@ export class GestionnaireDepartement extends Utilisateur {
     emailDeContact: Email,
     isSuperAdmin: boolean,
     inviteLe: Date,
-    derniereConnexion: Date,
     telephone: Telephone,
-    departement: Departement
+    departement: Departement,
+    derniereConnexion?: Date
   ) {
     super(
       uid,
@@ -25,8 +25,8 @@ export class GestionnaireDepartement extends Utilisateur {
       emailDeContact,
       isSuperAdmin,
       inviteLe,
-      derniereConnexion,
-      telephone
+      telephone,
+      derniereConnexion
     )
     this.#departement = departement
   }

@@ -22,6 +22,7 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
     expect(result).toBe('OK')
     expect(spiedUidToFind).toBe('martin.tartempion@example.net')
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
+      derniereConnexion: undefined,
       uid: {
         email: emailAsUid,
         value: uid,
@@ -54,6 +55,7 @@ class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository, FindUt
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({
+      derniereConnexion: undefined,
       uid: { email: 'martin.tartempion@example.net', value: 'martin.tartempion@example.net' },
     }))
   }
