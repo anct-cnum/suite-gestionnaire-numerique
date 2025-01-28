@@ -2,7 +2,7 @@
 
 **Sur ce projet, `yarn` est le gestionnaire de paquets utilisé**
 
-## 🛠️ Prérequis
+## ✅️ Prérequis
 
 Avoir la version LTS de Node décrite dans le fichier `.nvmrc`.
 
@@ -157,7 +157,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 - Permet de lancer des tests de mutation
 - Renforce la robutesse des tests
 
-## Arboresence
+## 🧱 Architecture applicative
 
 ```text
 📦 Suite gestionnaire numérique
@@ -237,3 +237,23 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
   - erreur : PascalCase (classe), erreur métier (ex : `UtilisateurNonTrouveError`)
 - Convention : PascalCase (classe)
 - Test : à définir
+
+## ⚡Production
+
+### Importer les données FNE et CoNum (<ins>avant mise en service</ins>)
+
+- Se connecter à un _one-off container_ Scalingo :  
+  `yarn bash:production`  
+  Il s'agit d'un environnement éphémère identique à celui de production et connecté à la même base de données.
+
+- Installer **prisma** :  
+  `yarn add @prisma/client`
+
+- Si le déploiement inclut des migrations "cassantes", c'est à dire qui ne peuvent s'exécuter sans reconstruire
+  intégralement la structure de la base de données, recréer la structure :  
+  `yarn prisma:reset`
+
+- Déclencher le déploiement (via un _commit_ ou _merge_ de branche sur **main**)
+
+- Lancer le script d'import :  
+  `yarn migration`
