@@ -98,7 +98,7 @@ export function comiteRecordFactory(
     derniereEdition: epochTime,
     editeurUtilisateurId: '1',
     frequence: 'annuelle',
-    gouvernanceId: 1,
+    gouvernanceDepartementCode: '11',
     type: 'strategique',
     ...override,
   }
@@ -111,7 +111,7 @@ export function noteDeContexteRecordFactory(
     contenu: '<p>contenu HTML</p>',
     derniereEdition: epochTime,
     editeurId: 'userFooId',
-    gouvernanceId: 1,
+    gouvernanceDepartementCode: '11',
     ...override,
   }
 }

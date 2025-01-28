@@ -19,7 +19,7 @@ export class PrismaComiteRepository implements ComiteRepository {
         derniereEdition: comite.state.dateDeModification,
         editeurUtilisateurId: comite.state.uidEditeur,
         frequence: comite.state.frequence,
-        gouvernanceId: Number(comite.state.uidGouvernance),
+        gouvernanceDepartementCode: comite.state.uidGouvernance,
         type: comite.state.type,
       },
     })
@@ -53,7 +53,7 @@ export class PrismaComiteRepository implements ComiteRepository {
         email: record.relationUtilisateur?.ssoEmail ?? '',
         value: record.relationUtilisateur?.ssoId ?? '',
       },
-      uidGouvernance: { value: String(record.gouvernanceId) },
+      uidGouvernance: { value: record.gouvernanceDepartementCode },
     })
 
     if (!(comite instanceof Comite)) {

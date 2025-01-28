@@ -6,7 +6,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
     noteDeContexte: {
       select: {
-        gouvernanceId: true
+        gouvernanceDepartementCode: true
         derniereEdition: true
         relationUtilisateur: true
         contenu: true
@@ -167,6 +167,6 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
     ],
     noteDeContexte,
-    uid: String(gouvernanceRecord.id),
+    uid: gouvernanceRecord.departementCode,
   }
 }
