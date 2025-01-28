@@ -1,5 +1,5 @@
 import { QueryHandler } from '../QueryHandler'
-import { identity, UnaryOperator } from '@/shared/lang'
+import { UnaryOperator } from '@/shared/lang'
 
 export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadModel> {
   readonly #mesMembresLoader: MesMembresLoader
@@ -8,16 +8,14 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     this.#mesMembresLoader = mesMembresLoader
   }
 
-  async get({ codeDepartement }: Query): Promise<MesMembresReadModel> {
-    return this.#mesMembresLoader.findMesMembres(codeDepartement, (mesMembres) => {
-      const ongletStatut = preFiltrageStatut(mesMembres.membres, mesMembres.statut)
+  async get(query: Query): Promise<MesMembresReadModel> {
+    return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => {
+      const membres = preFiltrageStatut(mesMembres.membres, query.statut)
       return {
         ...mesMembres,
-        autorisations: {
-          ...pouvoirAjouteOuSupprime(mesMembres.roles),
-        },
-        membres: filtreRolesEtTypologies(ongletStatut, mesMembres.filtre)
-          .map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologie)),
+        filtres: filtresDistinct(membres),
+        membres,
+        statut: statutDistinct(mesMembres.membres),
       }
     })
   }
@@ -26,50 +24,26 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 export abstract class MesMembresLoader {
   async findMesMembres(
     codeDepartement: string,
-    autorisations: UnaryOperator<MesMembresReadModel> = identity
+    filtrations: UnaryOperator<MesMembresReadModel>
   ): Promise<MesMembresReadModel> {
-    return this.find(codeDepartement).then(autorisations)
+    return this.find(codeDepartement).then(filtrations)
   }
 
   protected abstract find(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
-function pouvoirAjouteOuSupprime(roles: MesMembresReadModel['roles']): MesMembresReadModel['autorisations'] {
-  const rolesAutoriser = ['Co-porteur']
-  const estAutotiser = roles.some((role) => rolesAutoriser.includes(role))
-  return {
-    accesMembreValide: true,
-    ajouterUnMembre: estAutotiser,
-    supprimerUnMembre: estAutotiser,
-  }
-}
-
-function preFiltrageStatut(mesMembres: MesMembresReadModel['membres'], statut: MesMembresReadModel['statut']): MesMembresReadModel['membres'] {
+function preFiltrageStatut(mesMembres: MesMembresReadModel['membres'], statut: Query['statut']): MesMembresReadModel['membres'] {
   return mesMembres.filter((membre) => membre.statut === statut)
 }
-function filtreRolesEtTypologies(mesMembres: MesMembresReadModel['membres'], filtre: MesMembresReadModel['filtre']): MesMembresReadModel['membres'] {
-  let membresFiltrer = mesMembres
-  const tousLesRoles = filtre.roles.includes('')
-  const tousLesTypologies = filtre.typologies.includes('')
 
-  if (!tousLesRoles) {
-    membresFiltrer = membresFiltrer.filter((membre) => membre.roles.some((role) => filtre.roles.includes(role)))
-  }
-
-  if (!tousLesTypologies) {
-    membresFiltrer = membresFiltrer.filter(
-      (membre) => filtre.typologies.some((typologie) => typologie === membre.typologie)
-    )
-  }
-
-  return membresFiltrer
-}
-
-function eligibleALaSuppression(membre: Membre, typeMembreConnecter: string): Membre {
+function filtresDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['filtres'] {
   return {
-    ...membre,
-    suppressionDuMembreAutorise: typeMembreConnecter !== membre.typologie,
+    roles: [...new Set(membres.flatMap((membre) => membre.roles))],
+    typologies: [...new Set(membres.flatMap((membre) => membre.typologie))],
   }
+}
+function statutDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['statut'] {
+  return [...new Set(membres.map((membre) => membre.statut))]
 }
 
 export type MesMembresReadModel = Readonly<{
@@ -78,16 +52,13 @@ export type MesMembresReadModel = Readonly<{
     supprimerUnMembre: boolean
     accesMembreValide: boolean
   }>
-  roles: ReadonlyArray<string>
   departement: string
-  statut: Statut
-  filtre: Readonly<{
-    roles: ReadonlyArray<Roles | ''>
+  statut: ReadonlyArray<string>
+  filtres: Readonly<{
+    roles: ReadonlyArray<string>
     typologies: ReadonlyArray<string>
   }>
   membres: ReadonlyArray<Membre>
-  typologie: string
-  uid: string
 }>
 
 type Membre = Readonly<{
@@ -97,8 +68,8 @@ type Membre = Readonly<{
     prenom: string
   }>
   nom: string
-  statut: Statut
-  roles: ReadonlyArray<Roles>
+  statut: string
+  roles: ReadonlyArray<string>
   typologie: string
 }>
 
@@ -107,6 +78,3 @@ type Query = Readonly<{
   statut: string
 }>
 
-type Statut = 'Membre' | 'Suggestion' | 'Candidat'
-
-type Roles = 'Co-porteur' | 'Co-financeur' | 'Bénéficiaire' | 'Récipiendaire' | 'Observateur'

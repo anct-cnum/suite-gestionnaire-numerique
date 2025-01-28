@@ -168,9 +168,9 @@ export function mesMembresReadModelFactory(
       supprimerUnMembre: true,
     },
     departement: 'Rhône',
-    filtre: {
-      roles: [''],
-      typologies: [''],
+    filtres: {
+      roles: [],
+      typologies: [],
     },
     membres: [
       {
@@ -196,10 +196,7 @@ export function mesMembresReadModelFactory(
         typologie: 'Collectivité, EPCI',
       },
     ],
-    roles: ['Co-porteur'],
-    statut: 'Membre',
-    typologie: 'Préfecture départementale',
-    uid: 'gouvernanceFooId',
+    statut: [],
     ...override,
   }
 }
