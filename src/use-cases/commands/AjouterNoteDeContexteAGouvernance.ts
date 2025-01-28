@@ -1,6 +1,3 @@
-// eslint-disable-next-line import/no-restricted-paths
-import sanitize from 'sanitize-html'
-
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -40,7 +37,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
       new NoteDeContexte(
         this.#date,
         new UtilisateurUid(editeur.state.uid),
-        sanitize(command.contenu, defaultOptions)
+        command.contenu
       )
     )
     if (isOk(result)) {
@@ -63,23 +60,3 @@ export interface GouvernanceRepository extends FindGouvernanceRepository, Update
 
 type UtilisateurRepository = FindUtilisateurRepository
 
-const defaultOptions = {
-  allowedAttributes: {
-    /* eslint-disable id-length */
-    a: ['href'],
-  },
-  allowedTags: [
-    'p',
-    'h2',
-    'h3',
-    'h4',
-    'b',
-    'strong',
-    'i',
-    'em',
-    'ul',
-    'ol',
-    'li',
-    'a',
-  ],
-}

@@ -126,26 +126,6 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurInexistant')
   })
-
-  it('étant donné une note de contexte avec du HTML malveillant, quand elle est créée, alors le HTML est assaini', async () => {
-    // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      epochTime
-    )
-    const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
-
-    // WHEN
-    await ajouterNoteDeContexteAGouvernance.execute({
-      contenu: contenuMalveillant,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedGouvernanceToUpdate?.state.noteDeContexte?.value).toBe('<p>Contenu légitime</p>')
-  })
 })
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'

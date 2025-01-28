@@ -111,7 +111,7 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
-        contenu: 'contenu',
+        contenu: '<p>lorem ipsum dolor sit amet</p>',
         dateDeModification: new Date(),
         uidEditeur: new UtilisateurUid({
           email: 'martin.tartempion@example.net',
@@ -125,8 +125,23 @@ describe('gouvernance repository', () => {
     await repository.update(gouvernanceMiseAJourAvecNoteDeContexte)
 
     // THEN
-    const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
-    expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernanceMiseAJourAvecNoteDeContexte.state)
+    const gouvernanceRecord = await prisma.gouvernanceRecord.findUnique({
+      include: {
+        noteDeContexte: true,
+      },
+      where: {
+        id: gouvernanceId,
+      },
+    })
+
+    expect(gouvernanceRecord).toMatchObject({
+      ...gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+      noteDeContexte: {
+        contenu: '<p>lorem ipsum dolor sit amet</p>',
+        editeurId: 'userFooId',
+        gouvernanceId,
+      },
+    })
   })
 
   it('modifier une gouvernance sans note de contexte', async () => {
@@ -146,7 +161,11 @@ describe('gouvernance repository', () => {
     await repository.update(gouvernance)
 
     // THEN
-    const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
-    expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernance.state)
+    const gouvernanceMiseAJour = await prisma.gouvernanceRecord.findUnique({
+      where: {
+        id: gouvernanceId,
+      },
+    })
+    expect(gouvernanceMiseAJour).toStrictEqual(gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }))
   })
 })
