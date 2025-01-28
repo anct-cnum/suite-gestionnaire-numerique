@@ -1,31 +1,8 @@
-/* eslint-disable id-length */
 import { Prisma } from '@prisma/client'
-// eslint-disable-next-line import/no-restricted-paths
-import sanitize from 'sanitize-html'
 
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
-
-const defaultOptions = {
-  allowedAttributes: {
-    a: ['href'],
-  },
-  allowedTags: [
-    'p',
-    'h2',
-    'h3',
-    'h4',
-    'b',
-    'strong',
-    'i',
-    'em',
-    'ul',
-    'ol',
-    'li',
-    'a',
-  ],
-}
 
 export class PrismaGouvernanceRepository implements GouvernanceRepository {
   readonly #noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
@@ -82,16 +59,16 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     if (noteDeContexte) {
       await this.#noteDeContexteDataResource.upsert({
         create: {
-          contenu: sanitize(noteDeContexte.value, defaultOptions),
+          contenu: noteDeContexte.value,
           derniereEdition: noteDeContexte.dateDeModification,
-          editeurId: noteDeContexte.uidUtilisateurAyantModifiee,
+          editeurId: noteDeContexte.uidEditeur,
           gouvernanceId: Number(gouvernance.state.uid.value),
 
         },
         update: {
-          contenu: sanitize(noteDeContexte.value, defaultOptions),
+          contenu: noteDeContexte.value,
           derniereEdition: noteDeContexte.dateDeModification,
-          editeurId: noteDeContexte.uidUtilisateurAyantModifiee,
+          editeurId: noteDeContexte.uidEditeur,
         },
         where: {
           gouvernanceId: Number(gouvernance.state.uid.value),

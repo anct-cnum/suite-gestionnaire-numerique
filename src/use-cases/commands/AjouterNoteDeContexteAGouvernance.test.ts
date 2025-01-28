@@ -61,7 +61,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurNePeutPasAjouterNoteDeContexte')
+    expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
   })
 
   it('étant donné une gouvernance existante contenant déjà une note de contexte, quand une nouvelle note de contexte est créée, alors une erreur est renvoyée', async () => {
@@ -75,8 +75,8 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     // WHEN
     const result = await ajouterNoteDeContexteAGouvernance.execute({
       contenu,
+      uidEditeur,
       uidGouvernance,
-      uidUtilisateurCourant,
     })
 
     // THEN
@@ -126,6 +126,26 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurInexistant')
   })
+
+  it('étant donné une note de contexte avec du HTML malveillant, quand elle est créée, alors le HTML est assaini', async () => {
+    // GIVEN
+    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+      new GouvernanceExistanteRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      epochTime
+    )
+    const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
+
+    // WHEN
+    await ajouterNoteDeContexteAGouvernance.execute({
+      contenu: contenuMalveillant,
+      uidEditeur,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(spiedGouvernanceToUpdate?.state.noteDeContexte?.value).toBe('<p>Contenu légitime</p>')
+  })
 })
 
 const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.</p>'
@@ -157,9 +177,9 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
   }
 }
 
-class GouvernanceExistanteAvecNoteDeContexteRepositorySpy
-implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+class GouvernanceExistanteAvecNoteDeContexteRepositorySpy extends
+  GouvernanceExistanteRepositorySpy {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -172,7 +192,7 @@ implements FindGouvernanceRepository, UpdateGouvernanceRepository {
           contenu: 'note de contexte',
           dateDeModification: epochTime,
           uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidUtilisateurCourant } }).state.uid
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidEditeur } }).state.uid
           ),
         },
         uid: uidGouvernance,
@@ -180,7 +200,7 @@ implements FindGouvernanceRepository, UpdateGouvernanceRepository {
     )
   }
 
-  async update(gouvernance: Gouvernance): Promise<void> {
+  override async update(gouvernance: Gouvernance): Promise<void> {
     spiedGouvernanceToUpdate = gouvernance
     return Promise.resolve()
   }
