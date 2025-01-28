@@ -195,48 +195,8 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
  ┣ 📜 vitest.setup.js             -> Actions à exécuter avant tous les tests
 ```
 
-### Controller
-
-- Définition : la porte d'entrée d'un utilisateur : une page au sens Next ou une route API et font office d'orchestrateur pour séparer les responsabilités
-- Convention : PascalCase (fonction), avec comme suffixe `Controller` (ex : `AccueilController`)
-- Test : à définir
-
-### Component
-
-- Définition : un composant TSX
-- Convention : PascalCase (classe) et aucune logique dedans (ex : `MesInformationsPersonnelles`), elle est dans un hook custom à côté pour séparer les responsabilités
-- Test : test de sémantique et d'actions utilisateur
-
-### Domain
-
-- Définition : c'est le métier, agnostisque de l'infrastructure
-- Convention : PascalCase (classe) (ex : `Utilisateur`)
-- Test : test unitaire classique
-
-### Gateway
-
-- Définition : manipulation de données
-  - Loader : lecture de données qui retourne un `Record` et qui le transforme en `ReadModel` (ex : `InMemoryMesInformationsPersonnellesLoader`)
-  - Repository : écriture de données qui ne retourne rien
-  - Gateway : lecture et écriture de données qui retourne autre chose que du métier (`DTO`) (ex : `ProConnectAuthentificationGateway`)
-- Convention : PascalCase (classe), avec comme préfixe son implémentation et comme suffixe son type de gateway
-- Test : test d'intégration qui commnunique avec la base de données mais en transcation rollbackée pour être plus rapide
-
-### Presenter
-
-- Définition : transforme un `ReadModel` en un `ViewModel` de manière à ce qu'un composant puisse l'afficher
-- Convention : camelCase (fonction) (ex : `mesInformationsPersonnellesPresenter`)
-- Test : à définir
-
-### Use case
-
-- Définition :
-  - use case : à définir
-  - interface : interface que doit implémenter une gateway (ex : `UnUtilisateurLoader`)
-  - read model : read model (type) que doit utiliser une gateway (ex : `UtilisateurReadModel`)
-  - erreur : PascalCase (classe), erreur métier (ex : `UtilisateurNonTrouveError`)
-- Convention : PascalCase (classe)
-- Test : à définir
+Se référer à [cette page de dicussion](https://github.com/anct-cnum/suite-gestionnaire-numerique/discussions/202)
+dédiée à une description exhaustive de l'architecture applicative en vigueur sur l'application.
 
 ## ⚡Production
 
