@@ -7,6 +7,7 @@ import Icon from '@/components/shared/Icon/Icon'
 import Tag from '@/components/shared/Tag/Tag'
 import { MembreDetailsViewModel } from '@/presenters/gouvernancePresenter'
 
+import Select from 'react-select/dist/declarations/src/Select'
 export default function Membre({
   membreDetails,
   labelId,

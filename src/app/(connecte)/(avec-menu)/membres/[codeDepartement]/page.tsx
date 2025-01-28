@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import Membres from '@/components/Gouvernance/Membres/Membres'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
@@ -14,9 +15,12 @@ export default async function MembresController({ params }: Props): Promise<Reac
   }
 
   return (
-    <PageTitle icon="compass-3-line">
-      Membres
-    </PageTitle>
+    <>
+      <PageTitle icon="compass-3-line">
+        Membres
+      </PageTitle>
+      <Membres />
+    </>
   )
 }
 
