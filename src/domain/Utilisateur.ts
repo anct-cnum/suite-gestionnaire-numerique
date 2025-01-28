@@ -11,6 +11,7 @@ import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export abstract class Utilisateur extends Entity<UtilisateurState> {
   readonly #isSuperAdmin: boolean
+  readonly #isAdmin = false
   #role: Role
   #nom: Nom
   #prenom: Prenom
@@ -58,7 +59,9 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     }
   }
 
-  abstract get isAdmin(): boolean
+  get isAdmin(): boolean {
+    return this.#isAdmin
+  }
 
   changerPrenom(prenom: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {

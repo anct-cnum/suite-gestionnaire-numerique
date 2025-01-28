@@ -188,6 +188,7 @@
     "@typescript-eslint/array-type": ["error", { "default": "generic", "readonly": "generic" }],
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/consistent-type-imports": "off",
+    "@typescript-eslint/class-methods-use-this": ["error", { "ignoreOverrideMethods": true }],
     "@typescript-eslint/explicit-member-accessibility": "off",
     "@typescript-eslint/init-declarations": "off",
     "@typescript-eslint/max-params": "off",
