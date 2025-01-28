@@ -1,5 +1,5 @@
 /* eslint-disable id-length */
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
@@ -66,14 +66,13 @@ describe('note de contexte', () => {
     // GIVEN
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
-
-    // WHEN
     jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
-    const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
+    // WHEN
     jeSoumetLeFormulaireDeCreationDeNoteDeContexte()
 
-    // THEN
+    // THEN@
+    const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Ajout en cours...' })
     expect(boutonEnregistrer).toHaveAccessibleName('Ajout en cours...')
     expect(boutonEnregistrer).toBeDisabled()
@@ -88,9 +87,9 @@ describe('note de contexte', () => {
     // GIVEN
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
+    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
     // WHEN
-    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
     jeSoumetLeFormulaireDeCreationDeNoteDeContexte()
 
     // THEN
@@ -134,10 +133,10 @@ describe('note de contexte', () => {
   it('puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
     afficherUneGouvernanceAvecNoteDeContexte()
-
-    // WHEN
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
     const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+
+    // WHEN
     jeFermeLeFormulairePourModifierUneNoteDeContexte()
 
     // THEN
@@ -147,9 +146,9 @@ describe('note de contexte', () => {
   it('puis lorsque je modifie le contenu de la note de contexte, les boutons enregistrer et supprimer deviennent actifs', () => {
     // GIVEN
     afficherUneGouvernanceAvecNoteDeContexte()
+    mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
 
     // WHEN
-    mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
 
     // THEN
@@ -161,21 +160,21 @@ describe('note de contexte', () => {
 
   it('quand je clique sur le bouton enregistrer le drawer se ferme et une notification s‘affiche', async () => {
     // GIVEN
-    vi.stubGlobal('dsfr', stubbedConceal())
     const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
     afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
     presserLeBouton('Modifier')
-
-    // WHEN
     const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'labelModifierNoteDeContexteId' })
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+
+    // WHEN
     fireEvent.submit(formulaire)
 
     // THEN
     expect(boutonEnregistrer).toHaveAccessibleName('Modification en cours...')
     expect(boutonEnregistrer).toBeDisabled()
-    const modifierUneNoteDeContexteDrawer2 = await screen.findByRole('dialog', { name: 'Modifier note de contexte' })
-    expect(modifierUneNoteDeContexteDrawer2).not.toBeVisible()
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: 'Modifier note de contexte' })).not.toBeInTheDocument()
+    })
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Note de contexte bien modifiée')
     expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
@@ -183,13 +182,12 @@ describe('note de contexte', () => {
 
   it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
     // GIVEN
-    vi.stubGlobal('dsfr', stubbedConceal())
     const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
     afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'labelModifierNoteDeContexteId' })
 
     // WHEN
-    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'labelModifierNoteDeContexteId' })
     fireEvent.submit(formulaire)
 
     // THEN

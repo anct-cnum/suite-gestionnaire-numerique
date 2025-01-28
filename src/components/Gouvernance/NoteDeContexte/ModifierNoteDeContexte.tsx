@@ -77,7 +77,9 @@ export default function ModifierNoteDeContexte({
   async function modifierUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
     const messages = await modifierUneNoteDeContexteAction()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (messages[0] === 'OK') {
       Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
     } else {
