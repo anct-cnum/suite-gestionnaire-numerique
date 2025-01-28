@@ -128,11 +128,11 @@ model NoteDeContexteRecord {
   id Int @id @default(autoincrement())
 
   gouvernanceId   Int      @unique
-  editeurId       Int
+  editeurId       String
   contenu         String
   derniereEdition DateTime
 
-  relationUtilisateur UtilisateurRecord @relation(fields: [editeurId], references: [id])
+  relationUtilisateur UtilisateurRecord @relation(fields: [editeurId], references: [ssoId])
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceId], references: [id])
 
   @@map("note_de_contexte")

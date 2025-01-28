@@ -164,10 +164,10 @@ async function associerDonneesFNEAuxUtilisateurs(
             ssoEmail: gouvernanceFNE.relationUserCreateur.email,
           },
         })
-        .then(({ ssoId, id }) => [ssoId, id] as const),
-    ]).then(([gouvernanceFNE, gouvernance, [createurId, utilisateurId]]) => ({
+        .then(({ ssoId }) => ssoId),
+    ]).then(([gouvernanceFNE, gouvernance, createurId]) => ({
       createurId,
-      editeurNoteDeContexteId: utilisateurId,
+      editeurNoteDeContexteId: createurId,
       gouvernance,
       gouvernanceFNE,
     })))
@@ -346,7 +346,7 @@ function formaterDonneesACreer(
 }
 
 function noteDeContexteFromGouvernanceFNE(
-  editeurId: number,
+  editeurId: string,
   gouvernanceFNE: GouvernanceFNE,
   gouvernanceId: number
 ): NoteDeContexte {
@@ -385,7 +385,7 @@ type GouvernanceEtAssociations = Readonly<{
   gouvernanceFNE: GouvernanceFNE
   gouvernance: GouvernanceRecord
   createurId: string
-  editeurNoteDeContexteId: number
+  editeurNoteDeContexteId: string
 }>
 
 type NoteDeContexte = Omit<NoteDeContexteRecord, 'id'>

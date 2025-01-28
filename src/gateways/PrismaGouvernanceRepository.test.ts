@@ -3,6 +3,7 @@ import { departementRecordFactory, gouvernanceRecordFactory, noteDeContexteRecor
 import prisma from '../../prisma/prismaClient'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory } from '@/domain/testHelper'
+import { UtilisateurUid } from '@/domain/Utilisateur'
 
 describe('gouvernance repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -24,7 +25,7 @@ describe('gouvernance repository', () => {
     await prisma.gouvernanceRecord.create({
       data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
     })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid('3'))
@@ -54,7 +55,7 @@ describe('gouvernance repository', () => {
     await prisma.gouvernanceRecord.create({
       data: gouvernanceRecordFactory({ departementCode: '76', id: 2 }),
     })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(String(gouvernanceId)))
@@ -81,12 +82,71 @@ describe('gouvernance repository', () => {
     await prisma.noteDeContexteRecord.create({
       data: noteDeContexteRecordFactory({ gouvernanceId, id: 1 }),
     })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(String(gouvernanceId)))
 
     // THEN
     expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ uid: '1' }).state)
+  })
+
+  it('ajouter une note de contexte à une gouvernance', async () => {
+    // GIVEN
+    const gouvernanceId = 1
+    await prisma.regionRecord.create({
+      data: regionRecordFactory({ code: '11' }),
+    })
+    await prisma.departementRecord.create({
+      data: departementRecordFactory({ code: '75' }),
+    })
+    await prisma.utilisateurRecord.create({
+      data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }),
+    })
+
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+    })
+
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
+      noteDeContexte: {
+        contenu: 'contenu',
+        dateDeModification: new Date(),
+        uidEditeur: new UtilisateurUid({
+          email: 'martin.tartempion@example.net',
+          value: 'userFooId',
+        }),
+      },
+      uid: String(gouvernanceId),
+    })
+
+    // WHEN
+    await repository.update(gouvernanceMiseAJourAvecNoteDeContexte)
+
+    // THEN
+    const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
+    expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernanceMiseAJourAvecNoteDeContexte.state)
+  })
+
+  it('modifier une gouvernance sans note de contexte', async () => {
+    // GIVEN
+    const gouvernanceId = 1
+    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
+    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
+    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+    })
+
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: String(gouvernanceId) })
+
+    // WHEN
+    await repository.update(gouvernance)
+
+    // THEN
+    const gouvernanceMiseAJour = await repository.find(new GouvernanceUid(String(gouvernanceId)))
+    expect(gouvernanceMiseAJour?.state).toStrictEqual(gouvernance.state)
   })
 })
