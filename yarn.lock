@@ -10938,7 +10938,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.32, postcss@npm:^8.4.48, postcss@npm:^8.4.49, postcss@npm:^8.5.1":
+"postcss@npm:^8.3.11, postcss@npm:^8.4.32, postcss@npm:^8.4.48, postcss@npm:^8.4.49, postcss@npm:^8.5.1":
   version: 8.5.1
   resolution: "postcss@npm:8.5.1"
   dependencies:
@@ -12719,8 +12719,8 @@ __metadata:
     react-select: "npm:^5.10.0"
     react-select-event: "npm:^5.5.1"
     react-toastify: "npm:^11.0.3"
-    stylelint: "npm:^16.14.1"
     sanitize-html: "npm:^2.14.0"
+    stylelint: "npm:^16.14.1"
     stylelint-config-standard: "npm:^37.0.0"
     stylelint-order: "npm:^6.0.4"
     tsx: "npm:^4.19.2"

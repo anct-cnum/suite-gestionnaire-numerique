@@ -105,7 +105,7 @@ describe('gouvernance repository', () => {
     })
 
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75' }),
     })
 
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
@@ -130,16 +130,15 @@ describe('gouvernance repository', () => {
         noteDeContexte: true,
       },
       where: {
-        id: gouvernanceId,
+        departementCode: '75',
       },
     })
 
     expect(gouvernanceRecord).toMatchObject({
-      ...gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+      ...gouvernanceRecordFactory({ departementCode: '75' }),
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
         editeurId: 'userFooId',
-        gouvernanceId,
       },
     })
   })
@@ -151,7 +150,7 @@ describe('gouvernance repository', () => {
     await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
     await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
     await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }),
+      data: gouvernanceRecordFactory({ departementCode: '75' }),
     })
 
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
@@ -163,9 +162,9 @@ describe('gouvernance repository', () => {
     // THEN
     const gouvernanceMiseAJour = await prisma.gouvernanceRecord.findUnique({
       where: {
-        id: gouvernanceId,
+        departementCode: '75',
       },
     })
-    expect(gouvernanceMiseAJour).toStrictEqual(gouvernanceRecordFactory({ departementCode: '75', id: gouvernanceId }))
+    expect(gouvernanceMiseAJour).toStrictEqual(gouvernanceRecordFactory({ departementCode: '75' }))
   })
 })
