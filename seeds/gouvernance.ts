@@ -126,11 +126,11 @@ function grouperDonneesACreer(
         ...groupe,
         ...gouvernanceFNE.membres.reduce(extraireMembresGouvernances(gouvernanceFNE, gouvernance), groupe),
         comites: groupe.comites.concat(
-          gouvernanceFNE.comites.map(comiteFromComiteFNE(gouvernance.id, ssoId))
+          gouvernanceFNE.comites.map(comiteFromComiteFNE(gouvernance.departementCode, ssoId))
         ),
         gouvernances: groupe.gouvernances.concat(gouvernance),
         notesDeContexte: groupe.notesDeContexte.concat(
-          noteDeContexteFromGouvernanceFNE(gouvernanceFNE, gouvernance.id, ssoId)
+          noteDeContexteFromGouvernanceFNE(gouvernanceFNE, gouvernance.departementCode, ssoId)
         ),
       }
     },
@@ -146,7 +146,7 @@ function grouperDonneesACreer(
     }
   )
 
-  function comiteFromComiteFNE(gouvernanceFNEId: number, editeurUtilisateurId: string) {
+  function comiteFromComiteFNE(departementCode: string, editeurUtilisateurId: string) {
     return (comiteFNE: GouvernanceFNE['comites'][number]): Comite => ({
       commentaire: comiteFNE.commentaire,
       creation: comiteFNE.creation,
@@ -154,7 +154,7 @@ function grouperDonneesACreer(
       derniereEdition: comiteFNE.modification,
       editeurUtilisateurId,
       frequence: comiteFNE.frequence,
-      gouvernanceId: gouvernanceFNEId,
+      gouvernanceDepartementCode: departementCode,
       type:
         comiteFNE.type === 'autre'
           ? comiteFNE.typeAutrePrecision ?? ''
@@ -164,14 +164,14 @@ function grouperDonneesACreer(
 
   function noteDeContexteFromGouvernanceFNE(
     gouvernanceFNE: GouvernanceFNE,
-    gouvernanceId: number,
+    departementCode: string,
     editeurId: string
   ): NoteDeContexte {
     return {
       contenu: gouvernanceFNE.noteDeContexte,
       derniereEdition: gouvernanceFNE.modification,
       editeurId,
-      gouvernanceId,
+      gouvernanceDepartementCode: departementCode,
     }
   }
 
@@ -180,14 +180,14 @@ function grouperDonneesACreer(
       const isCoporteur = membreFNE.coporteur
       const isBeneficiaire = isDemandeSubventionAcceptee(membreFNE)
       const isRecipiendaire = gouvernanceFNE.relationBeneficiaireDotationFormation
-      const ajouterMembres = ajouterMembresGouvernance(membreFNE, gouvernance.id)
+      const ajouterMembres = ajouterMembresGouvernance(membreFNE, gouvernance.departementCode)
       let membres: GroupeMembres = {
         membresCommunes: groupeMembres.membresCommunes,
         membresDepartements: [
           ...groupeMembres.membresDepartements,
           {
             departementCode: gouvernance.departementCode,
-            gouvernanceId: gouvernance.id,
+            gouvernanceDepartementCode: gouvernance.departementCode,
             role: 'coporteur',
           },
         ],
@@ -212,10 +212,10 @@ function grouperDonneesACreer(
     }
   }
 
-  function ajouterMembresGouvernance(membreFNE: GouvernanceFNE['membres'][number], gouvernanceId: number) {
+  function ajouterMembresGouvernance(membreFNE: GouvernanceFNE['membres'][number], departementCode: string) {
     return (groupeMembres: GroupeMembres, role: string): GroupeMembres => {
       let membres: GroupeMembres = { ...groupeMembres }
-      const gouvernanceIdEtRole = { gouvernanceId, role }
+      const gouvernanceIdEtRole = { gouvernanceDepartementCode: departementCode, role }
       switch (true) {
         case Boolean(membreFNE.departementCode):
           membres = {
