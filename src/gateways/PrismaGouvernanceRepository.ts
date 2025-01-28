@@ -22,7 +22,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         relationDepartement: true,
       },
       where: {
-        id: Number(uid.state.value),
+        departementCode: uid.state.value,
       },
     })
 
@@ -46,7 +46,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         nom: record.relationDepartement.nom,
       },
       noteDeContexte,
-      uid: String(record.id),
+      uid: record.departementCode,
     })
   }
 

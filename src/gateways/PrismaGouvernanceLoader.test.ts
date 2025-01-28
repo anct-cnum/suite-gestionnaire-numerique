@@ -10,7 +10,6 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant, alors elle est renvoyée', async () => {
     // GIVEN
-    const codeDepartement = '93'
     await prisma.regionRecord.create({
       data: regionRecordFactory({
         code: '11',
@@ -39,13 +38,11 @@ describe('gouvernance loader', () => {
     await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '75',
-        id: 2,
       },
     })
-    const gouvernance = await prisma.gouvernanceRecord.create({
+    await prisma.gouvernanceRecord.create({
       data: {
-        departementCode: codeDepartement,
-        id: 1,
+        departementCode: '93',
       },
     })
     await prisma.noteDeContexteRecord.create({
@@ -53,7 +50,7 @@ describe('gouvernance loader', () => {
         contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
         derniereEdition: new Date('2024-11-23'),
         editeurId: 'userFooId',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: '93',
       },
     })
     await prisma.comiteRecord.create({
@@ -64,7 +61,7 @@ describe('gouvernance loader', () => {
         derniereEdition: new Date('2024-11-23'),
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: '93',
         type: 'stratégique',
       },
     })
@@ -76,7 +73,7 @@ describe('gouvernance loader', () => {
         derniereEdition: new Date('2024-11-23'),
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: '93',
         type: 'technique',
       },
     })
@@ -84,7 +81,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir('93')
 
     // THEN
     expect(gouvernanceReadModel).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>({
@@ -119,7 +116,7 @@ describe('gouvernance loader', () => {
         prenomAuteur: 'Jean',
         texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
-      uid: '1',
+      uid: '93',
     })
   })
 
@@ -163,7 +160,6 @@ describe('gouvernance loader', () => {
     await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
-        id: 1,
       },
     })
 
@@ -180,7 +176,7 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres,
       noteDeContexte: undefined,
-      uid: '1',
+      uid: '93',
     })
   })
 
@@ -200,7 +196,6 @@ describe('gouvernance loader', () => {
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
-        id: 1,
       },
     })
     await prisma.utilisateurRecord.create({
@@ -213,7 +208,7 @@ describe('gouvernance loader', () => {
         derniereEdition: new Date('2024-11-23'),
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: gouvernance.departementCode,
         type: 'stratégique',
       },
     })
@@ -257,7 +252,6 @@ describe('gouvernance loader', () => {
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
-        id: 1,
       },
     })
     await prisma.utilisateurRecord.create({
@@ -270,7 +264,7 @@ describe('gouvernance loader', () => {
         derniereEdition: new Date('2024-11-23'),
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: gouvernance.departementCode,
         type: 'stratégique',
       },
     })
@@ -314,7 +308,6 @@ describe('gouvernance loader', () => {
     const gouvernance = await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
-        id: 1,
       },
     })
     await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory() })
@@ -326,7 +319,7 @@ describe('gouvernance loader', () => {
         derniereEdition: new Date('2024-11-23'),
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
-        gouvernanceId: gouvernance.id,
+        gouvernanceDepartementCode: gouvernance.departementCode,
         type: 'stratégique',
       },
     })
