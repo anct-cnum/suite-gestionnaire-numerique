@@ -7,7 +7,7 @@ describe('recuperer mes membres', () => {
     mesMembresLoader = mesMembresReadModelFactory()
   })
   describe('quand les membres rattachés à une gouvernance existante sont demandés', () => {
-    it('alors il a la possibilité de choisir seulement les membres qui sont validés', async () => {
+    it('alors il ont la possibilité de choisir seulement les membres qui sont validés', async () => {
       // WHEN
       const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
       const mesMembres = await queryHandler.get({ codeDepartement: '69', statut: 'Membre' })
@@ -22,7 +22,46 @@ describe('recuperer mes membres', () => {
       }))
     })
 
-    it('sans filtrer par rôle et typologie, alors on récupère tous les membres', async () => {
+    it('sans filtrer par rôle et typologie, alors on récupère tous les membres validé', async () => {
+      // GIVEN
+      mesMembresLoader = {
+        ...mesMembresLoader,
+        membres: [
+          {
+            contactReferent: {
+              nom: 'Henrich',
+              prenom: 'Laetitia',
+            },
+            nom: 'Préfecture du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            suppressionDuMembreAutorise: false,
+            typologie: 'Préfecture départementale',
+          },
+          {
+            contactReferent: {
+              nom: 'Didier',
+              prenom: 'Durant',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Co-porteur'],
+            statut: 'Membre',
+            suppressionDuMembreAutorise: true,
+            typologie: 'Collectivité, EPCI',
+          },
+          {
+            contactReferent: {
+              nom: 'Durpont',
+              prenom: 'Tom',
+            },
+            nom: 'Département du Rhône',
+            roles: ['Récipiendaire'],
+            statut: 'Candidat',
+            suppressionDuMembreAutorise: true,
+            typologie: 'Collectivité, EPCI',
+          },
+        ],
+      }
       // WHEN
       const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
       const mesMembres = await queryHandler.get({ codeDepartement: '69', statut: 'Membre' })
@@ -203,12 +242,12 @@ describe('recuperer mes membres', () => {
       ] }))
     })
 
-    it('et que je filtre par plusieurs rôle "Co-porteur" & "Co-financeur", alors on récupère uniquement les membres ayant ce rôle', async () => {
+    it('et que je filtre par plusieurs rôle "Co-porteur" & "Co-financeur" & "Bénéficiaire", alors on récupère uniquement les membres ayant ce rôle', async () => {
     // GIVEN
       mesMembresLoader = {
         ...mesMembresLoader,
         filtre: {
-          roles: ['Co-porteur', 'Co-financeur'],
+          roles: ['Co-porteur', 'Co-financeur', 'Bénéficiaire'],
           typologies: [''],
         },
         membres: [
@@ -229,7 +268,7 @@ describe('recuperer mes membres', () => {
               prenom: 'Durant',
             },
             nom: 'Département du Rhône',
-            roles: ['Co-financeur'],
+            roles: ['Co-financeur', 'Récipiendaire'],
             statut: 'Membre',
             suppressionDuMembreAutorise: true,
             typologie: 'Collectivité, EPCI',
@@ -254,7 +293,7 @@ describe('recuperer mes membres', () => {
 
       // THEN
       expect(mesMembres).toStrictEqual(mesMembresReadModelFactory({ filtre: {
-        roles: ['Co-porteur', 'Co-financeur'],
+        roles: ['Co-porteur', 'Co-financeur', 'Bénéficiaire'],
         typologies: [''],
       },
       membres: [
@@ -275,7 +314,7 @@ describe('recuperer mes membres', () => {
             prenom: 'Durant',
           },
           nom: 'Département du Rhône',
-          roles: ['Co-financeur'],
+          roles: ['Co-financeur', 'Récipiendaire'],
           statut: 'Membre',
           suppressionDuMembreAutorise: true,
           typologie: 'Collectivité, EPCI',
@@ -432,7 +471,7 @@ describe('recuperer mes membres', () => {
       ] }))
     })
 
-    it('et que je filtre par plusieurs typologies "Collectivité, EPCI" & "Préfecture départementale" et par plusieurs rôles "Récipiendaire" & "Co-porteur", alors je récupère uniquement les membres ayant ces typologies et ces rôles', async () => {
+    it('et que je filtre par plusieurs typologies "Collectivité, EPCI" & "Préfecture départementale" et par plusieurs rôles "Récipiendaire" & "Co-porteur", alors on récupère uniquement les membres ayant ces typologies et ces rôles', async () => {
     // GIVEN
       mesMembresLoader = {
         ...mesMembresLoader,

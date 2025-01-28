@@ -49,17 +49,14 @@ function preFiltrageStatut(mesMembres: MesMembresReadModel['membres'], statut: M
 }
 function filtreRolesEtTypologies(mesMembres: MesMembresReadModel['membres'], filtre: MesMembresReadModel['filtre']): MesMembresReadModel['membres'] {
   let membresFiltrer = mesMembres
-  const toutLesRoles = filtre.roles.includes('')
-  const toutLesTypologies = filtre.typologies.includes('')
+  const tousLesRoles = filtre.roles.includes('')
+  const tousLesTypologies = filtre.typologies.includes('')
 
-  if (toutLesRoles && toutLesTypologies) {
-    return membresFiltrer
-  }
-  if (!toutLesRoles) {
+  if (!tousLesRoles) {
     membresFiltrer = membresFiltrer.filter((membre) => membre.roles.some((role) => filtre.roles.includes(role)))
   }
 
-  if (!toutLesTypologies) {
+  if (!tousLesTypologies) {
     membresFiltrer = membresFiltrer.filter(
       (membre) => filtre.typologies.some((typologie) => typologie === membre.typologie)
     )
