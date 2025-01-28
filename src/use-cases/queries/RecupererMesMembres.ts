@@ -8,14 +8,18 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     this.#mesMembresLoader = mesMembresLoader
   }
 
-  async get(query: Query): Promise<MesMembresReadModel> {
-    return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => ({
-      ...mesMembres,
-      autorisations: {
-        ...pouvoirAjouteOuSupprime(mesMembres.roles),
-      },
-      membres: mesMembres.membres.map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologie)),
-    }))
+  async get({ codeDepartement }: Query): Promise<MesMembresReadModel> {
+    return this.#mesMembresLoader.findMesMembres(codeDepartement, (mesMembres) => {
+      const ongletStatut = preFiltrageStatut(mesMembres.membres, mesMembres.statut)
+      return {
+        ...mesMembres,
+        autorisations: {
+          ...pouvoirAjouteOuSupprime(mesMembres.roles),
+        },
+        membres: filtreRolesEtTypologies(ongletStatut, mesMembres.filtre)
+          .map((membre: Membre) => eligibleALaSuppression(membre, mesMembres.typologie)),
+      }
+    })
   }
 }
 
@@ -34,9 +38,34 @@ function pouvoirAjouteOuSupprime(roles: MesMembresReadModel['roles']): MesMembre
   const rolesAutoriser = ['Co-porteur']
   const estAutotiser = roles.some((role) => rolesAutoriser.includes(role))
   return {
+    accesMembreValide: true,
     ajouterUnMembre: estAutotiser,
     supprimerUnMembre: estAutotiser,
   }
+}
+
+function preFiltrageStatut(mesMembres: MesMembresReadModel['membres'], statut: MesMembresReadModel['statut']): MesMembresReadModel['membres'] {
+  return mesMembres.filter((membre) => membre.statut === statut)
+}
+function filtreRolesEtTypologies(mesMembres: MesMembresReadModel['membres'], filtre: MesMembresReadModel['filtre']): MesMembresReadModel['membres'] {
+  let membresFiltrer = mesMembres
+  const toutLesRoles = filtre.roles.includes('')
+  const toutLesTypologies = filtre.typologies.includes('')
+
+  if (toutLesRoles && toutLesTypologies) {
+    return membresFiltrer
+  }
+  if (!toutLesRoles) {
+    membresFiltrer = membresFiltrer.filter((membre) => membre.roles.some((role) => filtre.roles.includes(role)))
+  }
+
+  if (!toutLesTypologies) {
+    membresFiltrer = membresFiltrer.filter(
+      (membre) => filtre.typologies.some((typologie) => typologie === membre.typologie)
+    )
+  }
+
+  return membresFiltrer
 }
 
 function eligibleALaSuppression(membre: Membre, typeMembreConnecter: string): Membre {
@@ -50,6 +79,7 @@ export type MesMembresReadModel = Readonly<{
   autorisations: Readonly<{
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
+    accesMembreValide: boolean
   }>
   roles: ReadonlyArray<string>
   departement: string
@@ -77,6 +107,7 @@ type Membre = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
+  statut: string
 }>
 
 type Statut = 'Membre' | 'Suggestion' | 'Candidat'

@@ -163,6 +163,7 @@ export function mesMembresReadModelFactory(
 ): MesMembresReadModel {
   return {
     autorisations: {
+      accesMembreValide: true,
       ajouterUnMembre: true,
       supprimerUnMembre: true,
     },
@@ -193,28 +194,6 @@ export function mesMembresReadModelFactory(
         statut: 'Membre',
         suppressionDuMembreAutorise: true,
         typologie: 'Collectivité, EPCI',
-      },
-      {
-        contactReferent: {
-          nom: 'Veronique',
-          prenom: 'Dupont',
-        },
-        nom: 'Bouygues',
-        roles: [],
-        statut: 'Suggestion',
-        suppressionDuMembreAutorise: true,
-        typologie: 'Entreprise privée',
-      },
-      {
-        contactReferent: {
-          nom: 'Chantal',
-          prenom: 'Dubois',
-        },
-        nom: 'Orange',
-        roles: ['Co-porteur'],
-        statut: 'Candidat',
-        suppressionDuMembreAutorise: true,
-        typologie: 'Entreprise privée',
       },
     ],
     roles: ['Co-porteur'],
