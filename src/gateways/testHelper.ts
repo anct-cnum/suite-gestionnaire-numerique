@@ -84,6 +84,11 @@ export function gouvernanceRecordFactory(
 ): Prisma.GouvernanceRecordUncheckedCreateInput {
   return {
     departementCode: '75',
+    editeurNotePriveeId: 'userFooId',
+    notePrivee: {
+      contenu: 'un contenu quelconque',
+      derniereEdition: '2000-01-01T00:00:00.000Z',
+    },
     ...override,
   }
 }

@@ -15,6 +15,11 @@ declare global {
       prenom: string
       telephone: string
     }>
+
+    type NotePrivee = Readonly<{
+      contenu: string
+      derniereEdition: string
+    }>
   }
 }
 

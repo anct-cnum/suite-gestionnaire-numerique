@@ -102,14 +102,19 @@ model UtilisateurRecord {
 
   notesDeContexte NoteDeContexteRecord[]
   comites         ComiteRecord[]
+  notesPrivees    GouvernanceRecord[]
 
   @@map("utilisateur")
 }
 
 model GouvernanceRecord {
-  departementCode String @id
+  departementCode     String  @id
+  /// [NotePrivee]
+  notePrivee          Json?   @map("note_privee")
+  editeurNotePriveeId String? @map("editeur_note_privee_id")
 
-  relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
+  relationDepartement       DepartementRecord  @relation(fields: [departementCode], references: [code])
+  relationEditeurNotePrivee UtilisateurRecord? @relation(fields: [editeurNotePriveeId], references: [ssoId])
 
   noteDeContexte      NoteDeContexteRecord?
   comites             ComiteRecord[]
