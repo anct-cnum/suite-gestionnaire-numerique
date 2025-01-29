@@ -25,6 +25,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
           },
         },
         relationDepartement: true,
+        relationEditeurNotePrivee: true,
       },
       where: {
         departementCode: uid.state.value,
@@ -43,6 +44,15 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
       }),
     } : undefined
 
+    const notePrivee = record.notePrivee && record.relationEditeurNotePrivee ? {
+      contenu: record.notePrivee.contenu,
+      dateDeModification: new Date(record.notePrivee.derniereEdition),
+      uidEditeur: new UtilisateurUid({
+        email: record.relationEditeurNotePrivee.ssoEmail,
+        value: record.relationEditeurNotePrivee.ssoId,
+      }),
+    } : undefined
+
     return Gouvernance.create({
       departement: {
         code: record.relationDepartement.code,
@@ -50,11 +60,28 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         nom: record.relationDepartement.nom,
       },
       noteDeContexte,
+      notePrivee,
       uid: record.departementCode,
     })
   }
 
   async update(gouvernance: Gouvernance): Promise<void> {
+    const notePrivee = gouvernance.state.notePrivee
+    if (notePrivee) {
+      await this.#gouvernanceDataResource.update({
+        data: {
+          editeurNotePriveeId: notePrivee.uidEditeur,
+          notePrivee: {
+            contenu: notePrivee.value,
+            derniereEdition: notePrivee.dateDeModification,
+          },
+        },
+        where: {
+          departementCode: gouvernance.state.uid.value,
+        },
+      })
+    }
+
     const noteDeContexte = gouvernance.state.noteDeContexte
     if (noteDeContexte) {
       await this.#noteDeContexteDataResource.upsert({
@@ -63,7 +90,6 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
           derniereEdition: noteDeContexte.dateDeModification,
           editeurId: noteDeContexte.uidEditeur,
           gouvernanceDepartementCode: gouvernance.state.uid.value,
-
         },
         update: {
           contenu: noteDeContexte.value,
