@@ -142,7 +142,7 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 
 export type GouvernanceUidState = Readonly<{ value: string }>
 
-export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante' | 'noteDeContexteDejaExistante'
+export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante' | 'noteDeContexteDejaExistante' | 'noteDeContexteInexistante'
 
 type GouvernanceFactoryParams = Readonly<{
   departement: {

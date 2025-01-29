@@ -129,7 +129,7 @@ describe('modifier une note de contexte à une gouvernance', () => {
   })
 })
 
-const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
+const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>'
 const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
 const uidEditeur = 'userFooId'
