@@ -61,7 +61,26 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurNePeutPasAjouterNoteDeContexte')
+    expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
+  })
+
+  it('étant donné une gouvernance existante contenant déjà une note de contexte, quand une nouvelle note de contexte est créée, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
+      new GouvernanceExistanteAvecNoteDeContexteRepositorySpy(),
+      new GestionnaireRepositorySpy(),
+      epochTime
+    )
+
+    // WHEN
+    const result = await ajouterNoteDeContexteAGouvernance.execute({
+      contenu,
+      uidEditeur,
+      uidGouvernance,
+    })
+
+    // THEN
+    expect(result).toBe('noteDeContexteDejaExistante')
   })
 
   it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
@@ -135,6 +154,30 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
   async update(gouvernance: Gouvernance): Promise<void> {
     spiedGouvernanceToUpdate = gouvernance
     return Promise.resolve()
+  }
+}
+
+class GouvernanceExistanteAvecNoteDeContexteRepositorySpy extends
+  GouvernanceExistanteRepositorySpy {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+    spiedGouvernanceUidToFind = uid
+    return Promise.resolve(
+      gouvernanceFactory({
+        departement: {
+          code: '75',
+          codeRegion: '11',
+          nom: 'Paris',
+        },
+        noteDeContexte: {
+          contenu: 'note de contexte',
+          dateDeModification: epochTime,
+          uidEditeur: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: uidEditeur } }).state.uid
+          ),
+        },
+        uid: uidGouvernance,
+      })
+    )
   }
 }
 
