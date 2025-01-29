@@ -1,5 +1,6 @@
 // Stryker disable all
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
+import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
@@ -153,6 +154,54 @@ export function gouvernanceReadModelFactory(
       texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
     },
     uid: 'gouvernanceFooId',
+    ...override,
+  }
+}
+
+export function mesMembresReadModelFactory(
+  override?: Partial<MesMembresReadModel>
+): MesMembresReadModel {
+  return {
+    autorisations: {
+      accesMembreValide: true,
+      ajouterUnMembre: true,
+      supprimerUnMembre: true,
+    },
+    departement: 'Rhône',
+    membres: [
+      {
+        contactReferent: {
+          nom: 'Henrich',
+          prenom: 'Laetitia',
+        },
+        nom: 'Préfecture du Rhône',
+        roles: ['coporteur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Préfecture départementale',
+      },
+      {
+        contactReferent: {
+          nom: 'Didier',
+          prenom: 'Durant',
+        },
+        nom: 'Département du Rhône',
+        roles: ['coporteur', 'cofinanceur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Collectivité, EPCI',
+      },
+      {
+        contactReferent: {
+          nom: 'Dupont',
+          prenom: 'Tom',
+        },
+        nom: 'Département du Rhône',
+        roles: [],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Collectivité, EPCI',
+      },
+    ],
+    roles: [],
+    typologies: [],
     ...override,
   }
 }
