@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useRef, useState } from 'react'
+import { ReactElement, useState } from 'react'
 
 import styles from '../Gouvernance.module.css'
 import ModifierNoteDeContexte from './ModifierNoteDeContexte'
@@ -10,7 +10,6 @@ export default function NoteDeContexteRemplie({
   texte, uidGouvernance, drawerModifierNoteDeContexteId, labelId, isDrawerOpen, sousTitre, setIsDrawerOpen,
 }: Props): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true)
-  const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
     <>
@@ -42,14 +41,13 @@ export default function NoteDeContexteRemplie({
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelId}
-        ref={drawerRef}
       >
         <ModifierNoteDeContexte
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
           id={drawerModifierNoteDeContexteId}
-          label="Modifier note de contexte"
+          label="Note de contexte"
           labelId={labelId}
           sousTitre={sousTitre}
           texte={texte}

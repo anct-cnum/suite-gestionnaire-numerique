@@ -27,7 +27,7 @@ export default function ModifierNoteDeContexte({
   return (
     <>
       <form
-        aria-label={labelId}
+        aria-labelledby={labelId}
         method="dialog"
         onSubmit={modifierUneNoteDeContexte}
       >
@@ -79,7 +79,7 @@ export default function ModifierNoteDeContexte({
     setIsDisabled(true)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
     const messages = await modifierUneNoteDeContexteAction()
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line
     if (messages[0] === 'OK') {
       Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
     } else {

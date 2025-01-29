@@ -1,5 +1,5 @@
 /* eslint-disable id-length */
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import { vi } from 'vitest'
 
 import Gouvernance from '../Gouvernance'
@@ -71,7 +71,7 @@ describe('note de contexte', () => {
     // WHEN
     jeSoumetLeFormulaireDeCreationDeNoteDeContexte()
 
-    // THEN@
+    // THEN
     const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Ajout en cours...' })
     expect(boutonEnregistrer).toHaveAccessibleName('Ajout en cours...')
@@ -124,7 +124,7 @@ describe('note de contexte', () => {
     const editeurDeTextEnrichi = within(drawer).getByRole('textarea')
     expect(editeurDeTextEnrichi).toBeInTheDocument()
     expect(editeurDeTextEnrichi.innerHTML).toBe('<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <strong>bold</strong></p>')
-    const boutonEnregistrer = within(modifierUneNoteDeContexteDrawer()).getByRole('button', { name: 'Enregistrer' })
+    const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
     const modifierPar = within(drawer).getByText('Modifié le 06/09/2024 par Jean Deschamps')
     expect(modifierPar).toBeInTheDocument()
@@ -133,10 +133,10 @@ describe('note de contexte', () => {
   it('puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
     afficherUneGouvernanceAvecNoteDeContexte()
-    jOuvreLeFormulairePourModifierUneNoteDeContexte()
-    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
 
     // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
     jeFermeLeFormulairePourModifierUneNoteDeContexte()
 
     // THEN
@@ -152,30 +152,30 @@ describe('note de contexte', () => {
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
 
     // THEN
-    const boutonEnregistrer = within(modifierUneNoteDeContexteDrawer()).getByRole('button', { name: 'Enregistrer' })
-    const boutonSupprimer = within(modifierUneNoteDeContexteDrawer()).getByRole('button', { name: 'Supprimer' })
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
+    const boutonSupprimer = within(drawer).getByRole('button', { name: 'Supprimer' })
     expect(boutonEnregistrer).not.toBeDisabled()
     expect(boutonSupprimer).not.toBeDisabled()
   })
 
-  it('quand je clique sur le bouton enregistrer le drawer se ferme et une notification s‘affiche', async () => {
+  it('quand je clique sur le bouton enregistrer, alors le drawer se ferme et une notification s‘affiche', async () => {
     // GIVEN
     const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
     afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
-    presserLeBouton('Modifier')
-    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'labelModifierNoteDeContexteId' })
-    const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
 
     // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
+    const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
     fireEvent.submit(formulaire)
 
     // THEN
     expect(boutonEnregistrer).toHaveAccessibleName('Modification en cours...')
     expect(boutonEnregistrer).toBeDisabled()
-    await waitFor(() => {
-      expect(screen.queryByRole('dialog', { name: 'Modifier note de contexte' })).not.toBeInTheDocument()
-    })
     const notification = await screen.findByRole('alert')
+    expect(drawer).not.toBeVisible()
     expect(notification.textContent).toBe('Note de contexte bien modifiée')
     expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
   })
@@ -185,7 +185,7 @@ describe('note de contexte', () => {
     const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
     afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
-    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'labelModifierNoteDeContexteId' })
+    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'Note de contexte' })
 
     // WHEN
     fireEvent.submit(formulaire)
@@ -223,11 +223,11 @@ describe('note de contexte', () => {
   }
 
   function ajouterUneNoteDeContextDrawer(): HTMLElement {
-    return screen.getByRole('dialog', { name: 'Note de contexte' })
+    return screen.getAllByRole('dialog', { name: 'Note de contexte' })[0]
   }
 
   function modifierUneNoteDeContexteDrawer(): HTMLElement {
-    return screen.getByRole('dialog', { name: 'Modifier note de contexte' })
+    return screen.getAllByRole('dialog', { name: 'Note de contexte' })[1]
   }
 })
 
