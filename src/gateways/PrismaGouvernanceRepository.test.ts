@@ -111,7 +111,7 @@ describe('gouvernance repository', () => {
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
-        dateDeModification: new Date(),
+        dateDeModification: new Date('3000-01-01'),
         uidEditeur: new UtilisateurUid({
           email: 'martin.tartempion@example.net',
           value: 'userFooId',
