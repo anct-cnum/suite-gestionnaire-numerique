@@ -62,7 +62,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
           contenu: noteDeContexte.value,
           derniereEdition: noteDeContexte.dateDeModification,
           editeurId: noteDeContexte.uidEditeur,
-          gouvernanceDepartementCode: gouvernance.state.departement.code,
+          gouvernanceDepartementCode: gouvernance.state.uid.value,
 
         },
         update: {
@@ -71,7 +71,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
           editeurId: noteDeContexte.uidEditeur,
         },
         where: {
-          gouvernanceDepartementCode: gouvernance.state.departement.code,
+          gouvernanceDepartementCode: gouvernance.state.uid.value,
         },
       })
     }

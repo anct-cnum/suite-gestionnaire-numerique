@@ -93,7 +93,6 @@ describe('gouvernance repository', () => {
 
   it('ajouter une note de contexte à une gouvernance', async () => {
     // GIVEN
-    const gouvernanceId = 1
     await prisma.regionRecord.create({
       data: regionRecordFactory({ code: '11' }),
     })
@@ -118,7 +117,7 @@ describe('gouvernance repository', () => {
           value: 'userFooId',
         }),
       },
-      uid: String(gouvernanceId),
+      uid: '75',
     })
 
     // WHEN
@@ -135,7 +134,7 @@ describe('gouvernance repository', () => {
     })
 
     expect(gouvernanceRecord).toMatchObject({
-      ...gouvernanceRecordFactory({ departementCode: '75' }),
+      departementCode: '75',
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
         editeurId: 'userFooId',
@@ -145,7 +144,6 @@ describe('gouvernance repository', () => {
 
   it('modifier une gouvernance sans note de contexte', async () => {
     // GIVEN
-    const gouvernanceId = 1
     await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
     await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
     await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
@@ -154,7 +152,7 @@ describe('gouvernance repository', () => {
     })
 
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
-    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: String(gouvernanceId) })
+    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: '75' })
 
     // WHEN
     await repository.update(gouvernance)

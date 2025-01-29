@@ -42,11 +42,11 @@ describe('ajouter une note de contexte', () => {
     expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
   })
 
-  it('quand une note de contexte contient du HTML malveillant, alors le contenu est assaini avant d‘être envoyé au use case', async () => {
+  it('quand une note de contexte contient du HTML malveillant, alors le contenu est assaini', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    const executeSpy = vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
 
     const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
 
@@ -58,7 +58,7 @@ describe('ajouter une note de contexte', () => {
     })
 
     // THEN
-    expect(executeSpy).toHaveBeenCalledWith({
+    expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
       contenu: '<p>Contenu légitime</p>',
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',

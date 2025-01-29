@@ -179,11 +179,6 @@ class GouvernanceExistanteAvecNoteDeContexteRepositorySpy extends
       })
     )
   }
-
-  override async update(gouvernance: Gouvernance): Promise<void> {
-    spiedGouvernanceToUpdate = gouvernance
-    return Promise.resolve()
-  }
 }
 
 class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepositorySpy {
