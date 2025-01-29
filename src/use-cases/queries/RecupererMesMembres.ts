@@ -10,12 +10,12 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 
   async get(query: Query): Promise<MesMembresReadModel> {
     return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => {
-      const membres = preFiltrageStatut(mesMembres.membres, query.statut)
+      const membres = statutsDisponibles(mesMembres.membres, query.statut)
       return {
         ...mesMembres,
-        filtres: filtresDistinct(membres),
+        ...roleEtTypologieDistinct(membres),
         membres,
-        statut: statutDistinct(mesMembres.membres),
+        statuts: statutDistinct(mesMembres.membres),
       }
     })
   }
@@ -24,26 +24,27 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 export abstract class MesMembresLoader {
   async findMesMembres(
     codeDepartement: string,
-    filtrations: UnaryOperator<MesMembresReadModel>
+    operator: UnaryOperator<MesMembresReadModel>
   ): Promise<MesMembresReadModel> {
-    return this.find(codeDepartement).then(filtrations)
+    return this.find(codeDepartement).then(operator)
   }
 
   protected abstract find(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
-function preFiltrageStatut(mesMembres: MesMembresReadModel['membres'], statut: Query['statut']): MesMembresReadModel['membres'] {
+function statutsDisponibles(mesMembres: MesMembresReadModel['membres'], statut: Query['statut']): MesMembresReadModel['membres'] {
   return mesMembres.filter((membre) => membre.statut === statut)
 }
 
-function filtresDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['filtres'] {
+function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): { roles: MesMembresReadModel['roles']; typologies: MesMembresReadModel['typologies'] } {
   return {
-    roles: [...new Set(membres.flatMap((membre) => membre.roles))],
-    typologies: [...new Set(membres.flatMap((membre) => membre.typologie))],
+    roles: [...new Set(membres.flatMap(({ roles }) => roles))],
+    typologies: [...new Set(membres.flatMap(({ typologie }) => typologie))],
   }
 }
-function statutDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['statut'] {
-  return [...new Set(membres.map((membre) => membre.statut))]
+
+function statutDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['statuts'] {
+  return [...new Set(membres.map(({ statut }) => statut))]
 }
 
 export type MesMembresReadModel = Readonly<{
@@ -53,11 +54,9 @@ export type MesMembresReadModel = Readonly<{
     accesMembreValide: boolean
   }>
   departement: string
-  statut: ReadonlyArray<string>
-  filtres: Readonly<{
-    roles: ReadonlyArray<string>
-    typologies: ReadonlyArray<string>
-  }>
+  typologies: ReadonlyArray<string>
+  statuts: ReadonlyArray<Statuts>
+  roles: ReadonlyArray<Roles>
   membres: ReadonlyArray<Membre>
 }>
 
@@ -68,8 +67,8 @@ type Membre = Readonly<{
     prenom: string
   }>
   nom: string
-  statut: string
-  roles: ReadonlyArray<string>
+  statut: Statuts
+  roles: ReadonlyArray<Roles>
   typologie: string
 }>
 
@@ -78,3 +77,6 @@ type Query = Readonly<{
   statut: string
 }>
 
+type Statuts = 'membre' | 'suggestion' | 'candidat'
+
+type Roles = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'

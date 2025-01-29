@@ -18,8 +18,8 @@ describe('recuperer mes membres', () => {
               prenom: 'Laetitia',
             },
             nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            statut: 'Membre',
+            roles: ['coporteur'],
+            statut: 'membre',
             suppressionDuMembreAutorise: false,
             typologie: 'Préfecture départementale',
           },
@@ -29,8 +29,8 @@ describe('recuperer mes membres', () => {
               prenom: 'Durant',
             },
             nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Co-financeur'],
-            statut: 'Membre',
+            roles: ['coporteur', 'cofinanceur'],
+            statut: 'membre',
             suppressionDuMembreAutorise: true,
             typologie: 'Collectivité, EPCI',
           },
@@ -41,7 +41,7 @@ describe('recuperer mes membres', () => {
             },
             nom: 'Département du Rhône',
             roles: [],
-            statut: 'Candidat',
+            statut: 'candidat',
             suppressionDuMembreAutorise: true,
             typologie: 'Collectivité, EPCI',
           },
@@ -51,8 +51,8 @@ describe('recuperer mes membres', () => {
               prenom: 'Valérie',
             },
             nom: 'La Voie Du Num',
-            roles: ['Co-porteur'],
-            statut: 'Suggestion',
+            roles: ['coporteur'],
+            statut: 'suggestion',
             suppressionDuMembreAutorise: true,
             typologie: 'Association',
           },
@@ -61,7 +61,7 @@ describe('recuperer mes membres', () => {
 
       // WHEN
       const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
-      const mesMembres = await queryHandler.get({ codeDepartement: '69', statut: 'Membre' })
+      const mesMembres = await queryHandler.get({ codeDepartement: '69', statut: 'membre' })
 
       // THEN
       expect(mesMembres).toStrictEqual(mesMembresReadModelFactory({
@@ -70,10 +70,6 @@ describe('recuperer mes membres', () => {
           ajouterUnMembre: true,
           supprimerUnMembre: true,
         },
-        filtres: {
-          roles: ['Co-porteur', 'Co-financeur'],
-          typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
-        },
         membres: [
           {
             contactReferent: {
@@ -81,8 +77,8 @@ describe('recuperer mes membres', () => {
               prenom: 'Laetitia',
             },
             nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            statut: 'Membre',
+            roles: ['coporteur'],
+            statut: 'membre',
             suppressionDuMembreAutorise: false,
             typologie: 'Préfecture départementale',
           },
@@ -92,13 +88,15 @@ describe('recuperer mes membres', () => {
               prenom: 'Durant',
             },
             nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Co-financeur'],
-            statut: 'Membre',
+            roles: ['coporteur', 'cofinanceur'],
+            statut: 'membre',
             suppressionDuMembreAutorise: true,
             typologie: 'Collectivité, EPCI',
           },
         ],
-        statut: ['Membre', 'Candidat', 'Suggestion'],
+        roles: ['coporteur', 'cofinanceur'],
+        statuts: ['membre', 'candidat', 'suggestion'],
+        typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
       }))
     })
   })

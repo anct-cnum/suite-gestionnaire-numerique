@@ -168,10 +168,6 @@ export function mesMembresReadModelFactory(
       supprimerUnMembre: true,
     },
     departement: 'Rhône',
-    filtres: {
-      roles: [],
-      typologies: [],
-    },
     membres: [
       {
         contactReferent: {
@@ -179,8 +175,8 @@ export function mesMembresReadModelFactory(
           prenom: 'Laetitia',
         },
         nom: 'Préfecture du Rhône',
-        roles: ['Co-porteur'],
-        statut: 'Membre',
+        roles: ['coporteur'],
+        statut: 'membre',
         suppressionDuMembreAutorise: false,
         typologie: 'Préfecture départementale',
       },
@@ -190,13 +186,48 @@ export function mesMembresReadModelFactory(
           prenom: 'Durant',
         },
         nom: 'Département du Rhône',
-        roles: ['Co-porteur'],
-        statut: 'Membre',
-        suppressionDuMembreAutorise: true,
+        roles: ['coporteur'],
+        statut: 'membre',
+        suppressionDuMembreAutorise: false,
         typologie: 'Collectivité, EPCI',
       },
+      {
+        contactReferent: {
+          nom: 'Dupont',
+          prenom: 'Tom',
+        },
+        nom: 'Département du Rhône',
+        roles: [],
+        statut: 'candidat',
+        suppressionDuMembreAutorise: false,
+        typologie: 'Collectivité, EPCI',
+      },
+      {
+        contactReferent: {
+          nom: 'Dufour',
+          prenom: 'Arianne',
+        },
+        nom: 'Croix rouge Française',
+        roles: ['coporteur'],
+        statut: 'candidat',
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Dupont',
+          prenom: 'Valérie',
+        },
+        nom: 'La Voie Du Num',
+        roles: ['coporteur'],
+        statut: 'suggestion',
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
     ],
-    statut: [],
+    roles: [],
+    statuts: [],
+    typologies: [],
     ...override,
   }
 }
