@@ -67,6 +67,15 @@ export class Gouvernance extends Entity<State> {
     return 'noteDeContexteDejaExistante'
   }
 
+  modifierNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
+    if (this.#noteDeContexte !== undefined) {
+      this.#noteDeContexte = noteDeContexte
+      return 'OK'
+    }
+
+    return 'noteDeContexteInexistante'
+  }
+
   ajouterNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {
     if (this.#notePrivee === undefined) {
       this.#notePrivee = notePrivee

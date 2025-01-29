@@ -1,0 +1,44 @@
+
+import * as nextCache from 'next/cache'
+import { describe, it } from 'vitest'
+
+import { modifierUneNoteDeContexteAction } from './modifierUneNoteDeContexteAction'
+import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
+import { AjouterNoteDeContexteAGouvernance } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
+
+describe('modifier une note de contexte', () => {
+  it('quand une note de contexte est modifiée avec tous ses champs, alors cela renvoie un succès et le cache de la page appelante est purgé', async () => {
+    // GIVEN
+    vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
+    vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
+    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
+
+    // WHEN
+    const messages = await modifierUneNoteDeContexteAction({
+      contenu: '<p>ma note de contexte modifiée</p>',
+      path: '/gouvernance/11',
+      uidGouvernance: 'uidGouvernance',
+    })
+
+    // THEN
+    expect(messages).toStrictEqual(['OK'])
+    expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
+    expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
+      contenu: '<p>ma note de contexte modifiée</p>',
+      uidEditeur: 'userFooId',
+      uidGouvernance: 'uidGouvernance',
+    })
+  })
+
+  it('quand une note de contexte est ajoutée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
+    // WHEN
+    const messages = await modifierUneNoteDeContexteAction({
+      contenu: '<p>ma note de contexte modifiée</p>',
+      path: '',
+      uidGouvernance: 'uidGouvernance',
+    })
+
+    // THEN
+    expect(messages).toStrictEqual(['Le chemin doit être renseigné'])
+  })
+})
