@@ -223,11 +223,11 @@ describe('note de contexte', () => {
   }
 
   function ajouterUneNoteDeContextDrawer(): HTMLElement {
-    return screen.getAllByRole('dialog', { name: 'Note de contexte' })[0]
+    return screen.getByRole('dialog', { name: 'Note de contexte' })
   }
 
   function modifierUneNoteDeContexteDrawer(): HTMLElement {
-    return screen.getAllByRole('dialog', { name: 'Note de contexte' })[1]
+    return screen.getByRole('dialog', { name: 'Note de contexte' })
   }
 })
 
