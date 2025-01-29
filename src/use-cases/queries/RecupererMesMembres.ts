@@ -10,12 +10,9 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 
   async get(query: Query): Promise<MesMembresReadModel> {
     return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => {
-      const membres = statutsDisponibles(mesMembres.membres, query.statut)
       return {
         ...mesMembres,
-        ...roleEtTypologieDistinct(membres),
-        membres,
-        statuts: statutDistinct(mesMembres.membres),
+        ...roleEtTypologieDistinct(mesMembres.membres),
       }
     })
   }
@@ -32,19 +29,14 @@ export abstract class MesMembresLoader {
   protected abstract find(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
-function statutsDisponibles(mesMembres: MesMembresReadModel['membres'], statut: Query['statut']): MesMembresReadModel['membres'] {
-  return mesMembres.filter((membre) => membre.statut === statut)
-}
-
-function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): { roles: MesMembresReadModel['roles']; typologies: MesMembresReadModel['typologies'] } {
-  return {
-    roles: [...new Set(membres.flatMap(({ roles }) => roles))],
-    typologies: [...new Set(membres.flatMap(({ typologie }) => typologie))],
-  }
-}
-
-function statutDistinct(membres: MesMembresReadModel['membres']): MesMembresReadModel['statuts'] {
-  return [...new Set(membres.map(({ statut }) => statut))]
+function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {
+  return membres.reduce<Pick<MesMembresReadModel, 'roles' | 'typologies'>>((rolesEtTypologies, membre) => ({
+    roles: [...new Set(rolesEtTypologies.roles.concat(membre.roles))],
+    typologies: [...new Set(rolesEtTypologies.typologies.concat(membre.typologie))],
+  }), {
+    roles: [],
+    typologies: [],
+  })
 }
 
 export type MesMembresReadModel = Readonly<{
@@ -55,8 +47,7 @@ export type MesMembresReadModel = Readonly<{
   }>
   departement: string
   typologies: ReadonlyArray<string>
-  statuts: ReadonlyArray<Statuts>
-  roles: ReadonlyArray<Roles>
+  roles: ReadonlyArray<Role>
   membres: ReadonlyArray<Membre>
 }>
 
@@ -67,16 +58,12 @@ type Membre = Readonly<{
     prenom: string
   }>
   nom: string
-  statut: Statuts
-  roles: ReadonlyArray<Roles>
+  roles: ReadonlyArray<Role>
   typologie: string
 }>
 
 type Query = Readonly<{
   codeDepartement: string
-  statut: string
 }>
 
-type Statuts = 'membre' | 'suggestion' | 'candidat'
-
-type Roles = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'
+type Role = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'

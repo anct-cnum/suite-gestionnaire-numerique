@@ -9,59 +9,10 @@ describe('recuperer mes membres', () => {
   describe('quand les membres rattachés à une gouvernance existante sont demandés', () => {
     it('alors on retourne les membres validés si le gestionnaire a les droits', async () => {
       // GIVEN
-      mesMembresLoader = {
-        ...mesMembresLoader,
-        membres: [
-          {
-            contactReferent: {
-              nom: 'Henrich',
-              prenom: 'Laetitia',
-            },
-            nom: 'Préfecture du Rhône',
-            roles: ['coporteur'],
-            statut: 'membre',
-            suppressionDuMembreAutorise: false,
-            typologie: 'Préfecture départementale',
-          },
-          {
-            contactReferent: {
-              nom: 'Didier',
-              prenom: 'Durant',
-            },
-            nom: 'Département du Rhône',
-            roles: ['coporteur', 'cofinanceur'],
-            statut: 'membre',
-            suppressionDuMembreAutorise: true,
-            typologie: 'Collectivité, EPCI',
-          },
-          {
-            contactReferent: {
-              nom: 'Dupont',
-              prenom: 'Tom',
-            },
-            nom: 'Département du Rhône',
-            roles: [],
-            statut: 'candidat',
-            suppressionDuMembreAutorise: true,
-            typologie: 'Collectivité, EPCI',
-          },
-          {
-            contactReferent: {
-              nom: 'Dupont',
-              prenom: 'Valérie',
-            },
-            nom: 'La Voie Du Num',
-            roles: ['coporteur'],
-            statut: 'suggestion',
-            suppressionDuMembreAutorise: true,
-            typologie: 'Association',
-          },
-        ],
-      }
+      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
 
       // WHEN
-      const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
-      const mesMembres = await queryHandler.get({ codeDepartement: '69', statut: 'membre' })
+      const mesMembres = await queryHandler.get({ codeDepartement: '69' })
 
       // THEN
       expect(mesMembres).toStrictEqual(mesMembresReadModelFactory({
@@ -70,32 +21,7 @@ describe('recuperer mes membres', () => {
           ajouterUnMembre: true,
           supprimerUnMembre: true,
         },
-        membres: [
-          {
-            contactReferent: {
-              nom: 'Henrich',
-              prenom: 'Laetitia',
-            },
-            nom: 'Préfecture du Rhône',
-            roles: ['coporteur'],
-            statut: 'membre',
-            suppressionDuMembreAutorise: false,
-            typologie: 'Préfecture départementale',
-          },
-          {
-            contactReferent: {
-              nom: 'Didier',
-              prenom: 'Durant',
-            },
-            nom: 'Département du Rhône',
-            roles: ['coporteur', 'cofinanceur'],
-            statut: 'membre',
-            suppressionDuMembreAutorise: true,
-            typologie: 'Collectivité, EPCI',
-          },
-        ],
         roles: ['coporteur', 'cofinanceur'],
-        statuts: ['membre', 'candidat', 'suggestion'],
         typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
       }))
     })
