@@ -59,8 +59,12 @@ export class Gouvernance extends Entity<State> {
     )
   }
 
-  ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): void {
-    this.#noteDeContexte = noteDeContexte
+  ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
+    if (this.#noteDeContexte === undefined) {
+      this.#noteDeContexte = noteDeContexte
+      return 'OK'
+    }
+    return 'noteDeContexteDejaExistante'
   }
 
   ajouterNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {
@@ -129,7 +133,7 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 
 export type GouvernanceUidState = Readonly<{ value: string }>
 
-export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante'
+export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante' | 'noteDeContexteDejaExistante'
 
 type GouvernanceFactoryParams = Readonly<{
   departement: {

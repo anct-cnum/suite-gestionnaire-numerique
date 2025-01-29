@@ -21,7 +21,7 @@ export async function ajouterUnComiteAction(
   }
 
   const result = await new AjouterUnComite(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaComiteRepository(prisma.comiteRecord),
     new Date()

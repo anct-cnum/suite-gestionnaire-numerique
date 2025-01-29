@@ -1,8 +1,9 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { GouvernanceUid, NoteDeContexte } from '@/domain/Gouvernance'
+import { GouvernanceFailure, GouvernanceUid, NoteDeContexte } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
+import { isOk } from '@/shared/lang'
 
 export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command> {
   readonly #gouvernanceRepository: GouvernanceRepository
@@ -30,19 +31,24 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
       return 'gouvernanceInexistante'
     }
     if (!gouvernance.peutEtreGerePar(editeur)) {
-      return 'editeurNePeutPasAjouterNoteDeContexte'
+      return 'utilisateurNePeutPasAjouterNoteDeContexte'
+    }
+    const result = gouvernance.ajouterNoteDeContexte(
+      new NoteDeContexte(
+        this.#date,
+        new UtilisateurUid(editeur.state.uid),
+        command.contenu
+      )
+    )
+    if (isOk(result)) {
+      await this.#gouvernanceRepository.update(gouvernance)
     }
 
-    gouvernance.ajouterNoteDeContexte(
-      new NoteDeContexte(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
-    )
-    await this.#gouvernanceRepository.update(gouvernance)
-
-    return 'OK'
+    return result
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasAjouterNoteDeContexte'
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'utilisateurNePeutPasAjouterNoteDeContexte' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string
@@ -53,3 +59,4 @@ type Command = Readonly<{
 export interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
 
 type UtilisateurRepository = FindUtilisateurRepository
+

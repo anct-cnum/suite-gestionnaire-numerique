@@ -5,14 +5,19 @@ import { UtilisateurUid } from '@/domain/Utilisateur'
 import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
 export class PrismaGouvernanceRepository implements GouvernanceRepository {
-  readonly #dataResource: Prisma.GouvernanceRecordDelegate
+  readonly #noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
+  readonly #gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
 
-  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
-    this.#dataResource = dataResource
+  constructor(
+    gouvernanceDataResource: Prisma.GouvernanceRecordDelegate,
+    noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
+  ) {
+    this.#noteDeContexteDataResource = noteDeContexteDataResource
+    this.#gouvernanceDataResource = gouvernanceDataResource
   }
 
   async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    const record = await this.#dataResource.findUnique({
+    const record = await this.#gouvernanceDataResource.findUnique({
       include: {
         noteDeContexte: {
           include: {
@@ -25,7 +30,6 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         departementCode: uid.state.value,
       },
     })
-
     if (!record) {
       return null
     }
@@ -50,8 +54,26 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/no-unused-vars
-  async update(_gouvernance: Gouvernance): Promise<void> {
-    return Promise.resolve()
+  async update(gouvernance: Gouvernance): Promise<void> {
+    const noteDeContexte = gouvernance.state.noteDeContexte
+    if (noteDeContexte) {
+      await this.#noteDeContexteDataResource.upsert({
+        create: {
+          contenu: noteDeContexte.value,
+          derniereEdition: noteDeContexte.dateDeModification,
+          editeurId: noteDeContexte.uidEditeur,
+          gouvernanceDepartementCode: gouvernance.state.uid.value,
+
+        },
+        update: {
+          contenu: noteDeContexte.value,
+          derniereEdition: noteDeContexte.dateDeModification,
+          editeurId: noteDeContexte.uidEditeur,
+        },
+        where: {
+          gouvernanceDepartementCode: gouvernance.state.uid.value,
+        },
+      })
+    }
   }
 }
