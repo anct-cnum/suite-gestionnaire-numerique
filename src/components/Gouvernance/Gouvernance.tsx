@@ -16,6 +16,7 @@ import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
 import ResumeMembreVide from './Membre/ResumeMembreVide'
 import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
+import ModifierNoteDeContexte from './NoteDeContexte/ModifierNoteDeContexte'
 import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
@@ -36,6 +37,8 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const labelComiteId = 'labelAjouterComiteId'
   const drawerNoteDeContexteId = 'drawerAjouterNoteDeContexteId'
   const labelNoteDeContexteId = 'labelAjouterNoteDeContexteId'
+  const labelModifierNoteDeContexteId = 'labelModifierNoteDeContexteId'
+  const drawerModifierNoteDeContexteId = 'drawerModifierNoteDeContexteId'
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
@@ -234,63 +237,95 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
         }
       </section>
       <section aria-labelledby="noteDeContexte">
-        <Drawer
-          boutonFermeture="Fermer le formulaire de création d’une note de contexte"
-          closeDrawer={() => {
-            setIsDrawerOpen(false)
-          }}
-          id={drawerNoteDeContexteId}
-          // Stryker disable next-line BooleanLiteral
-          isFixedWidth={false}
-          isOpen={isDrawerOpen}
-          labelId={labelNoteDeContexteId}
-          ref={drawerRef}
-        >
-          <AjouterNoteDeContexte
-            closeDrawer={() => {
-              setIsDrawerOpen(false)
-            }}
-            id={drawerNoteDeContexteId}
-            labelId={labelNoteDeContexteId}
-            uidGouvernance={gouvernanceViewModel.uid}
-          />
-        </Drawer>
         {
           gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
-            <SectionRemplie
-              button={(
-                <button
-                  aria-controls={drawerNoteDeContexteId}
-                  className="fr-btn fr-btn--secondary"
-                  type="button"
-                >
-                  Modifier
-                </button>
-              )}
-              id="noteDeContexte"
-              subButton={(
-                <SubSectionButton>
-                  {gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
-                </SubSectionButton>
-              )}
-              title="Note de contexte"
-            >
-              <NoteDeContexteRemplie
-                texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
-              />
-            </SectionRemplie>
+            <>
+              <SectionRemplie
+                button={(
+                  <button
+                    aria-controls={drawerModifierNoteDeContexteId}
+                    className="fr-btn fr-btn--secondary"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setIsDrawerOpen(true)
+                    }}
+                    type="button"
+                  >
+                    Modifier
+                  </button>
+                )}
+                id="noteDeContexte"
+                subButton={(
+                  <SubSectionButton>
+                    {gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
+                  </SubSectionButton>
+                )}
+                title="Note de contexte"
+              >
+                <NoteDeContexteRemplie
+                  texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
+                />
+              </SectionRemplie>
+              <Drawer
+                boutonFermeture="Fermer le formulaire de modification d’une note de contexte"
+                closeDrawer={() => {
+                  setIsDrawerOpen(false)
+                }}
+                id={drawerModifierNoteDeContexteId}
+                // Stryker disable next-line BooleanLiteral
+                isFixedWidth={false}
+                isOpen={isDrawerOpen}
+                labelId={labelModifierNoteDeContexteId}
+              >
+                <ModifierNoteDeContexte
+                  closeDrawer={() => {
+                    setIsDrawerOpen(false)
+                  }}
+                  id={drawerModifierNoteDeContexteId}
+                  label="Note de contexte"
+                  labelId={labelModifierNoteDeContexteId}
+                  sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
+                  texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
+                  uidGouvernance={gouvernanceViewModel.uid}
+                />
+              </Drawer>
+            </>
           ) : (
-            <SectionVide
-              buttonLabel="Ajouter une note de contexte"
-              drawerComiteId={drawerNoteDeContexteId}
-              id="noteDeContexte"
-              showDrawer={() => {
-                setIsDrawerOpen(true)
-              }}
-              title="Note de contexte"
-            >
-              <NoteDeContexteVide />
-            </SectionVide>
+            <>
+              <SectionVide
+                buttonLabel="Ajouter une note de contexte"
+                drawerComiteId={drawerNoteDeContexteId}
+                id="noteDeContexte"
+                showDrawer={() => {
+                  setIsDrawerOpen(true)
+                }}
+                title="Note de contexte"
+              >
+                <NoteDeContexteVide />
+              </SectionVide>
+
+              <Drawer
+                boutonFermeture="Fermer le formulaire de création d’une note de contexte"
+                closeDrawer={() => {
+                  setIsDrawerOpen(false)
+                }}
+                id={drawerNoteDeContexteId}
+                // Stryker disable next-line BooleanLiteral
+                isFixedWidth={false}
+                isOpen={isDrawerOpen}
+                labelId={labelNoteDeContexteId}
+                ref={drawerRef}
+              >
+                <AjouterNoteDeContexte
+                  closeDrawer={() => {
+                    setIsDrawerOpen(false)
+                  }}
+                  id={drawerNoteDeContexteId}
+                  labelId={labelNoteDeContexteId}
+                  uidGouvernance={gouvernanceViewModel.uid}
+                />
+              </Drawer>
+            </>
           )
         }
       </section>
