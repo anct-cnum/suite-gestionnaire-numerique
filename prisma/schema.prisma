@@ -123,6 +123,7 @@ model GouvernanceRecord {
   membresEpcis        MembreGouvernanceEpciRecord[]
   membresCommunes     MembreGouvernanceCommuneRecord[]
   membresStructures   MembreGouvernanceStructureRecord[]
+  feuillesDeRoute     FeuilleDeRouteRecord[]
 
   @@map("gouvernance")
 }
@@ -156,6 +157,18 @@ model ComiteRecord {
   relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
+}
+
+model FeuilleDeRouteRecord {
+  id Int @id @default(autoincrement())
+
+  gouvernanceDepartementCode String
+  creation                   DateTime
+  nom                        String
+
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+
+  @@map("feuille_de_route")
 }
 
 model MembreGouvernanceDepartementRecord {

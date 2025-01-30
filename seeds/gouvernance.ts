@@ -6,6 +6,7 @@
 
 import {
   ComiteRecord,
+  FeuilleDeRouteRecord,
   GouvernanceRecord,
   MembreGouvernanceDepartementRecord,
   MembreGouvernanceSgarRecord,
@@ -48,6 +49,7 @@ void (async function migrate(): Promise<void> {
       const groupe = grouperDonneesACreer(gouvernancesFNEGouvernancesEtCreateurs)
       return Promise.all([
         prisma.comiteRecord.createMany({ data: groupe.comites, skipDuplicates: true }),
+        prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute, skipDuplicates: true }),
         prisma.noteDeContexteRecord.createMany({ data: groupe.notesDeContexte, skipDuplicates: true }),
         prisma.membreGouvernanceDepartementRecord.createMany({
           data: groupe.membresDepartements,
@@ -59,8 +61,9 @@ void (async function migrate(): Promise<void> {
         prisma.membreGouvernanceStructureRecord.createMany({ data: groupe.membresStructures, skipDuplicates: true }),
       ])
     })
-    .then(async ([comitesCrees]) => {
+    .then(async ([comitesCrees, feuillesDeRouteCreees]) => {
       console.log(greenColor, `${comitesCrees.count} comites sont insérés`)
+      console.log(greenColor, `${feuillesDeRouteCreees.count} feuilles de route sont insérées`)
       return prisma.$queryRaw`SELECT
         (SELECT COUNT(distinct commune) FROM membre_gouvernance_commune)
         + (SELECT COUNT(distinct "sgarCode") FROM  membre_gouvernance_sgar)
@@ -78,6 +81,7 @@ function gouvernancesFNEQuery(): Parameters<typeof prismaFNE.gouvernance.findMan
   return {
     include: {
       comites: true,
+      feuillesDeRoute: true,
       membres: {
         include: {
           beneficiairesSubventions: {
@@ -128,6 +132,9 @@ function grouperDonneesACreer(
         comites: groupe.comites.concat(
           gouvernanceFNE.comites.map(comiteFromComiteFNE(gouvernance.departementCode, ssoId))
         ),
+        feuillesDeRoute: groupe.feuillesDeRoute.concat(
+          gouvernanceFNE.feuillesDeRoute.map(feuilleDeRouteFromFeuilleDeRouteFNE(gouvernance.departementCode))
+        ),
         gouvernances: groupe.gouvernances.concat(gouvernance),
         notesDeContexte: groupe.notesDeContexte.concat(
           noteDeContexteFromGouvernanceFNE(gouvernanceFNE, gouvernance.departementCode, ssoId)
@@ -136,6 +143,7 @@ function grouperDonneesACreer(
     },
     {
       comites: [],
+      feuillesDeRoute: [],
       gouvernances: [],
       membresCommunes: [],
       membresDepartements: [],
@@ -159,6 +167,14 @@ function grouperDonneesACreer(
         comiteFNE.type === 'autre'
           ? comiteFNE.typeAutrePrecision ?? ''
           : comiteFNE.type.toString(),
+    })
+  }
+
+  function feuilleDeRouteFromFeuilleDeRouteFNE(gouvernanceDepartementCode: string) {
+    return (feuilleDeRoute: GouvernanceFNE['feuillesDeRoute'][number]): FeuilleDeRoute => ({
+      creation: feuilleDeRoute.creation,
+      gouvernanceDepartementCode,
+      nom: feuilleDeRoute.nom,
     })
   }
 
@@ -294,6 +310,7 @@ type GouvernanceFNE = PrismaFNE.$GouvernancePayload['scalars'] &
     relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
     relationBeneficiaireDotationFormation: MembreGouvernanceFNE | null
     comites: ReadonlyArray<PrismaFNE.$ComitePayload['scalars']>
+    feuillesDeRoute: ReadonlyArray<PrismaFNE.$FeuilleDeRoutePayload['scalars']>
     membres: ReadonlyArray<MembreGouvernanceFNE>
   }>
 
@@ -301,10 +318,13 @@ type NoteDeContexte = Omit<NoteDeContexteRecord, 'id'>
 
 type Comite = Omit<ComiteRecord, 'id'>
 
+type FeuilleDeRoute = Omit<FeuilleDeRouteRecord, 'id'>
+
 type GroupeGouvernance = Readonly<{
   gouvernances: Array<GouvernanceRecord>
   notesDeContexte: Array<NoteDeContexte>
   comites: Array<Comite>
+  feuillesDeRoute: Array<FeuilleDeRoute>
 }> & GroupeMembres
 
 type GroupeMembres = Readonly<{
