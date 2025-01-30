@@ -153,6 +153,12 @@ export function gouvernanceReadModelFactory(
       prenomAuteur: 'Jean',
       texte: '<strong>Note privée (interne)</strong><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
     },
+    notePrivee: {
+      dateDEdition: epochTime,
+      nomEditeur: 'Lu',
+      prenomEditeur: 'Lucie',
+      texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
+    },
     uid: 'gouvernanceFooId',
     ...override,
   }

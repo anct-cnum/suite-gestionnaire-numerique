@@ -26,27 +26,23 @@ export default function ModifierUnComite({
         labelId={labelId}
         validerFormulaire={modifierUnComite}
       >
-        <div className="fr-btns-group fr-btns-group--space-between">
-          <div className="fr-col-5">
-            <button
-              aria-controls={id}
-              className="fr-btn red-button"
-              disabled={isDisabled}
-              onClick={supprimerUnComite}
-              type="button"
-            >
-              {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
-            </button>
-          </div>
-          <div className="fr-col-5">
-            <SubmitButton
-              ariaControls={id}
-              isDisabled={isDisabled}
-            >
-              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
-            </SubmitButton>
-          </div>
-        </div>
+        <>
+          <SubmitButton
+            ariaControls={id}
+            isDisabled={isDisabled}
+          >
+            {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+          </SubmitButton>
+          <button
+            aria-controls={id}
+            className="fr-btn red-button"
+            disabled={isDisabled}
+            onClick={supprimerUnComite}
+            type="button"
+          >
+            {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
+          </button>
+        </>
       </FormulaireComite>
       <p className={`fr-text--xs ${styles.center}`}>
         Modifié le

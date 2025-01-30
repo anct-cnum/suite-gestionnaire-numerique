@@ -24,11 +24,13 @@ export function renderComponent(
   const clientContextProviderDefaultValue = {
     ajouterUnComiteAction: vi.fn(),
     ajouterUneNoteDeContexteAction: vi.fn(),
+    ajouterUneNotePriveeAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
     modifierUnComiteAction: vi.fn(),
     modifierUneNoteDeContexteAction: vi.fn(),
+    modifierUneNotePriveeAction: vi.fn(),
     pathname: '/',
     reinviterUnUtilisateurAction: vi.fn(),
     roles: Roles,
