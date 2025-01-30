@@ -135,8 +135,9 @@ model Commune {
 }
 
 model InformationSiret {
-  siret String  @id
-  nom   String?
+  siret          String  @id
+  nom            String?
+  formeJuridique String? @map("forme_juridique_libelle")
 
   membreGouvernance MembreGouvernance[]
 

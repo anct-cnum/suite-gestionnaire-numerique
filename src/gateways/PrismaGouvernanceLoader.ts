@@ -73,37 +73,37 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
     }
 
     const membres = (await prisma.$queryRaw`
-    SELECT commune as nom, 'commune' as type, ARRAY_AGG(role) AS roles
+    SELECT commune as nom, type, 'commune' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_commune where "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY commune
+    GROUP BY commune, type
     UNION all
 
-    SELECT epci as nom, 'epci' as type, ARRAY_AGG(role) AS role
+    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role) AS role
     FROM membre_gouvernance_epci
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY epci
+    GROUP BY epci, type
     UNION all
 
-    SELECT structure as nom, 'structure' as type, ARRAY_AGG(role) AS roles
+    SELECT structure as nom, type,'structure' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_structure
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY structure
+    GROUP BY structure, type
     UNION all
 
-    SELECT departement.nom as nom, 'departement' as type, ARRAY_AGG(membre_gouvernance_departement.role) AS roles
-    FROM membre_gouvernance_departement
+    SELECT departement.nom as nom, mgd.type,'departement' as typologie, ARRAY_AGG(mgd.role) AS roles
+    FROM membre_gouvernance_departement mgd
     INNER JOIN departement
-    ON membre_gouvernance_departement."departementCode" = departement.code
-    WHERE membre_gouvernance_departement."gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY departement.nom
+    ON mgd."departementCode" = departement.code
+    WHERE mgd."gouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY departement.nom, mgd.type
     UNION ALL
 
-    SELECT region.nom as nom, 'sgar' as type, ARRAY_AGG(membre_gouvernance_sgar.role) AS roles
-    FROM membre_gouvernance_sgar
+    SELECT region.nom as nom, mgs.type, 'sgar' as typologie, ARRAY_AGG(mgs.role) AS roles
+    FROM membre_gouvernance_sgar mgs
     INNER JOIN region
-    ON membre_gouvernance_sgar."sgarCode" = region.code
-    WHERE membre_gouvernance_sgar."gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY region.nom
+    ON mgs."sgarCode" = region.code
+    WHERE mgs."gouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY region.nom, mgs.type
 
     ORDER BY nom;`) as ReadonlyArray<Readonly<AggregatedMembre>>
 
@@ -204,8 +204,8 @@ function transform(
       telephone: '+33 4 45 00 45 00',
       totalMontantSubventionAccorde: NaN,
       totalMontantSubventionFormationAccorde: NaN,
-      type: 'Administration',
-      typologieMembre: membre.type,
+      type: membre.type,
+      typologieMembre: membre.typologie,
     })),
     noteDeContexte,
     notePrivee,
@@ -217,4 +217,5 @@ type AggregatedMembre = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
+  typologie: string
 }>

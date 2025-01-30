@@ -205,6 +205,7 @@ function grouperDonneesACreer(
             departementCode: gouvernance.departementCode,
             gouvernanceDepartementCode: gouvernance.departementCode,
             role: 'coporteur',
+            type: 'Préfecture départementale',
           },
         ],
         membresEpcis: groupeMembres.membresEpcis,
@@ -231,13 +232,17 @@ function grouperDonneesACreer(
   function ajouterMembresGouvernance(membreFNE: GouvernanceFNE['membres'][number], departementCode: string) {
     return (groupeMembres: GroupeMembres, role: string): GroupeMembres => {
       let membres: GroupeMembres = { ...groupeMembres }
-      const gouvernanceIdEtRole = { gouvernanceDepartementCode: departementCode, role }
+      const common = {
+        gouvernanceDepartementCode: departementCode,
+        role,
+        type: membreFNE.relationInformationSiret?.formeJuridique ?? null,
+      }
       switch (true) {
         case Boolean(membreFNE.departementCode):
           membres = {
             ...membres,
             membresDepartements: membres.membresDepartements.concat({
-              ...gouvernanceIdEtRole,
+              ...common,
               departementCode: membreFNE.departementCode!,
             }),
           }
@@ -246,7 +251,7 @@ function grouperDonneesACreer(
           membres = {
             ...membres,
             membresCommunes: membres.membresCommunes.concat({
-              ...gouvernanceIdEtRole,
+              ...common,
               commune: membreFNE.relationCommune!.nom,
             }),
           }
@@ -255,7 +260,7 @@ function grouperDonneesACreer(
           membres = {
             ...membres,
             membresEpcis: membres.membresEpcis.concat({
-              ...gouvernanceIdEtRole,
+              ...common,
               epci: membreFNE.relationEpci!.nom,
             }),
           }
@@ -264,7 +269,7 @@ function grouperDonneesACreer(
           membres = {
             ...membres,
             membresSgars: membres.membresSgars.concat({
-              ...gouvernanceIdEtRole,
+              ...common,
               sgarCode: membreFNE.regionCode!,
             }),
           }
@@ -273,7 +278,7 @@ function grouperDonneesACreer(
           membres = {
             ...membres,
             membresStructures: membres.membresStructures.concat({
-              ...gouvernanceIdEtRole,
+              ...common,
               structure: membreFNE.relationInformationSiret!.nom ?? membreFNE.relationInformationSiret!.siret,
             }),
           }
