@@ -24,6 +24,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
       }
     }
     relationEditeurNotePrivee: true
+    feuillesDeRoute: true
   }
 }>
 
@@ -43,6 +44,7 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
             relationUtilisateur: true,
           },
         },
+        feuillesDeRoute: true,
         noteDeContexte: {
           include: {
             relationUtilisateur: true,
@@ -93,30 +95,18 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
-    feuillesDeRoute: [
-      {
-        beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-        beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-        budgetGlobal: 145_000,
-        montantSubventionAccorde: 5_000,
-        montantSubventionDemande: 40_000,
-        montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
-        totalActions: 3,
-      },
-      {
-        beneficiairesSubvention: [],
-        beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-        budgetGlobal: 145_000,
-        montantSubventionAccorde: 5_000,
-        montantSubventionDemande: 40_000,
-        montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route numérique du Rhône',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
-        totalActions: 2,
-      },
-    ],
+    feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
+
+      beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+      beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+      budgetGlobal: 145_000,
+      montantSubventionAccorde: 5_000,
+      montantSubventionDemande: 40_000,
+      montantSubventionFormationAccorde: 5_000,
+      nom: feuilleDeRoute.nom,
+      porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+      totalActions: 3,
+    })),
     membres: [
       {
         contactReferent: {
