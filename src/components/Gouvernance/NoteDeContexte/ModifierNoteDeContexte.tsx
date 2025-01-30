@@ -16,9 +16,10 @@ export default function ModifierNoteDeContexte({
   id,
   label,
   labelId,
+  uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
-  const { modifierUneNoteDeContexteAction } = useContext(clientContext)
+  const { modifierUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
@@ -77,9 +78,7 @@ export default function ModifierNoteDeContexte({
   async function modifierUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-    const messages = await modifierUneNoteDeContexteAction()
-    // eslint-disable-next-line
+    const messages = await modifierUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
     if (messages[0] === 'OK') {
       Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
     } else {
