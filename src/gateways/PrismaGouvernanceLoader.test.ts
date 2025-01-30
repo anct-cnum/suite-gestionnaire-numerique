@@ -341,41 +341,49 @@ const membres: UneGouvernanceReadModel['membres'] = [
   {
     nom: 'CA Tulle Agglo',
     roles: ['observateur'],
+    type: 'Collectivité',
     typologieMembre: 'epci',
   },
   {
     nom: 'CC Porte du Jura',
     roles: ['beneficiaire', 'coporteur'],
+    type: 'Collectivité',
     typologieMembre: 'epci',
   },
   {
     nom: 'Créteil',
     roles: ['coporteur'],
+    type: 'Collectivité',
     typologieMembre: 'commune',
   },
   {
     nom: 'Orange',
     roles: ['coporteur', 'recipiendaire'],
+    type: 'Entreprise privée',
     typologieMembre: 'structure',
   },
   {
     nom: 'Paris',
     roles: ['N/A'],
+    type: 'Conseil départemental',
     typologieMembre: 'departement',
   },
   {
     nom: 'Seine-Saint-Denis',
     roles: ['coporteur'],
+    type: 'Préfecture départementale',
     typologieMembre: 'departement',
   },
   {
     nom: 'Trévérien',
     roles: ['beneficiaire', 'recipiendaire'],
+    type: 'Collectivité',
     typologieMembre: 'commune',
   },
   {
     nom: 'Île-de-France',
     roles: ['N/A'],
+    type: 'Préfecture régionale',
     typologieMembre: 'sgar',
   },
 ].map((partialMembre) => ({
@@ -403,7 +411,6 @@ const membres: UneGouvernanceReadModel['membres'] = [
   telephone: '+33 4 45 00 45 00',
   totalMontantSubventionAccorde: NaN,
   totalMontantSubventionFormationAccorde: NaN,
-  type: 'Administration',
   ...partialMembre,
 }))
 
@@ -501,6 +508,7 @@ async function creerMembres(): Promise<void> {
       commune: 'Trévérien',
       gouvernanceDepartementCode: '93',
       role: 'recipiendaire',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceCommuneRecord.create({
@@ -508,6 +516,7 @@ async function creerMembres(): Promise<void> {
       commune: 'Trévérien',
       gouvernanceDepartementCode: '93',
       role: 'beneficiaire',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceCommuneRecord.create({
@@ -515,6 +524,7 @@ async function creerMembres(): Promise<void> {
       commune: 'Créteil',
       gouvernanceDepartementCode: '93',
       role: 'coporteur',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceDepartementRecord.create({
@@ -522,6 +532,7 @@ async function creerMembres(): Promise<void> {
       departementCode: '93',
       gouvernanceDepartementCode: '93',
       role: 'coporteur',
+      type: 'Préfecture départementale',
     },
   })
   await prisma.membreGouvernanceDepartementRecord.create({
@@ -529,6 +540,7 @@ async function creerMembres(): Promise<void> {
       departementCode: '75',
       gouvernanceDepartementCode: '93',
       role: 'N/A',
+      type: 'Conseil départemental',
     },
   })
   await prisma.membreGouvernanceEpciRecord.create({
@@ -536,6 +548,7 @@ async function creerMembres(): Promise<void> {
       epci: 'CA Tulle Agglo',
       gouvernanceDepartementCode: '93',
       role: 'observateur',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceEpciRecord.create({
@@ -543,6 +556,7 @@ async function creerMembres(): Promise<void> {
       epci: 'CC Porte du Jura',
       gouvernanceDepartementCode: '93',
       role: 'coporteur',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceEpciRecord.create({
@@ -550,6 +564,7 @@ async function creerMembres(): Promise<void> {
       epci: 'CC Porte du Jura',
       gouvernanceDepartementCode: '93',
       role: 'beneficiaire',
+      type: 'Collectivité',
     },
   })
   await prisma.membreGouvernanceSgarRecord.create({
@@ -557,6 +572,7 @@ async function creerMembres(): Promise<void> {
       gouvernanceDepartementCode: '93',
       role: 'N/A',
       sgarCode: '11',
+      type: 'Préfecture régionale',
     },
   })
   await prisma.membreGouvernanceStructureRecord.create({
@@ -564,6 +580,7 @@ async function creerMembres(): Promise<void> {
       gouvernanceDepartementCode: '93',
       role: 'recipiendaire',
       structure: 'Orange',
+      type: 'Entreprise privée',
     },
   })
   await prisma.membreGouvernanceStructureRecord.create({
@@ -571,6 +588,7 @@ async function creerMembres(): Promise<void> {
       gouvernanceDepartementCode: '93',
       role: 'coporteur',
       structure: 'Orange',
+      type: 'Entreprise privée',
     },
   })
 }
