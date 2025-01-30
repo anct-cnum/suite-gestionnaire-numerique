@@ -66,4 +66,4 @@ type Query = Readonly<{
   codeDepartement: string
 }>
 
-export type Role = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'
+type Role = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'

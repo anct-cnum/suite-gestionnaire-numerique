@@ -1,4 +1,3 @@
-
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'
 import { departementRecordFactory, regionRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -10,7 +9,9 @@ describe('mes membres loader', () => {
 
   it('quand les membres rattachés à une gouvernance existante sont demandés, alors elle sont renvoyée', async () => {
     // GIVEN
-    await preRequisGouvernanceRhone()
+    await ajoutRegionGouvernance()
+    await ajoutDepartementGouvernance()
+    await ajoutGouvernance()
     await ajoutMembreGouvernanceCommune()
     await ajoutMembreGouvernanceEpci()
     await ajoutMembreGouvernanceStructure()
@@ -97,14 +98,16 @@ describe('mes membres loader', () => {
   })
 })
 
-async function preRequisGouvernanceRhone(): Promise<void> {
+async function ajoutRegionGouvernance(): Promise<void> {
   await prisma.regionRecord.create({
     data: regionRecordFactory({
       code: '84',
       nom: 'Auvergne-Rhône-Alpes',
     }),
   })
+}
 
+async function ajoutDepartementGouvernance(): Promise<void> {
   await prisma.departementRecord.create({
     data: departementRecordFactory({
       code: '69',
@@ -112,7 +115,9 @@ async function preRequisGouvernanceRhone(): Promise<void> {
       regionCode: '84',
     }),
   })
+}
 
+async function ajoutGouvernance(): Promise<void> {
   await prisma.gouvernanceRecord.create({
     data: {
       departementCode: '69',

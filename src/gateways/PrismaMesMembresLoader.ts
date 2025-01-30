@@ -1,33 +1,28 @@
 import { PrismaClient } from '@prisma/client'
 
-import { MesMembresLoader, MesMembresReadModel, Role } from '@/use-cases/queries/RecupererMesMembres'
+import { MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
-interface Membres {
-  nomMembre: string
-  role: ReadonlyArray<string>
-}
 export class PrismaMesMembresLoader extends MesMembresLoader {
-  readonly #dataResourceGouvernance: PrismaClient
+  readonly #dataResource: PrismaClient
 
-  constructor(dataResourceGouvernance: PrismaClient) {
+  constructor(dataResource: PrismaClient) {
     super()
-    this.#dataResourceGouvernance = dataResourceGouvernance
+    this.#dataResource = dataResource
   }
 
   protected override async find(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const result = (await this.#dataResourceGouvernance.$queryRaw`
+    const result: ReadonlyArray<Membres> = await this.#dataResource.$queryRaw`
       SELECT commune AS "nomMembre", ARRAY_AGG(role) AS role FROM membre_gouvernance_commune WHERE "gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY commune
       UNION ALL
       SELECT epci AS "nomMembre", ARRAY_AGG(role) AS role FROM membre_gouvernance_epci WHERE "gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY epci
       UNION ALL
       SELECT structure AS "nomMembre", ARRAY_AGG(role) AS role FROM membre_gouvernance_structure WHERE "gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY structure
       UNION ALL
-      SELECT departement.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_departement.role) AS role FROM membre_gouvernance_departement INNER JOIN departement ON membre_gouvernance_departement."departementCode" = departement.code 
+      SELECT departement.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_departement.role) AS role FROM membre_gouvernance_departement INNER JOIN departement ON membre_gouvernance_departement."departementCode" = departement.code
       WHERE membre_gouvernance_departement."gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY departement.nom
       UNION ALL
       SELECT region.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_sgar.role) AS role FROM membre_gouvernance_sgar INNER JOIN region ON membre_gouvernance_sgar."sgarCode" = region.code WHERE membre_gouvernance_sgar."gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY region.nom`
-    ) as ReadonlyArray<Membres>
 
     const membres: MesMembresReadModel['membres'] = [
       {
@@ -86,7 +81,7 @@ export class PrismaMesMembresLoader extends MesMembresLoader {
       },
     ].map((membre) => ({
       ...membre,
-      roles: (result.find((membreDb: Membres) => membreDb.nomMembre === membre.nom)?.role ?? []) as ReadonlyArray<Role>,
+      roles: (result.find((membreDb: Membres) => membreDb.nomMembre === membre.nom)?.role ?? []) as MesMembresReadModel['roles'],
     }))
     return {
       autorisations: {
@@ -101,3 +96,8 @@ export class PrismaMesMembresLoader extends MesMembresLoader {
     }
   }
 }
+
+type Membres = Readonly<{
+  nomMembre: string
+  role: ReadonlyArray<string>
+}>
