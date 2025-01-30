@@ -11,7 +11,9 @@ const now = new Date('2024-09-06')
 
 const mockRichTextEditor = {
   contenu: '',
-  gererLeChangementDeContenu: vi.fn(),
+  gererLeChangementDeContenu: vi.fn().mockImplementation((content: string): void => {
+    mockRichTextEditor.contenu = content
+  }),
   viderLeContenu: vi.fn(),
 }
 
@@ -64,14 +66,13 @@ describe('note de contexte', () => {
     // GIVEN
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
-
-    // WHEN
     jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
-    const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
+    // WHEN
     jeSoumetLeFormulaireDeCreationDeNoteDeContexte()
 
     // THEN
+    const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
     const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Ajout en cours...' })
     expect(boutonEnregistrer).toHaveAccessibleName('Ajout en cours...')
     expect(boutonEnregistrer).toBeDisabled()
@@ -86,9 +87,9 @@ describe('note de contexte', () => {
     // GIVEN
     const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
     afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
+    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
     // WHEN
-    jOuvreLeFormulairePourAjouterUneNoteDeContexte()
     jeSoumetLeFormulaireDeCreationDeNoteDeContexte()
 
     // THEN
@@ -111,8 +112,103 @@ describe('note de contexte', () => {
     expect(boutonSupprimer).not.toBeDisabled()
   })
 
+  it('quand j’affiche une gouvernance avec une note de contexte, lorsque je clique sur le bouton modifier, le drawer s‘ouvre avec le contenu de la note de contexte', () => {
+    // GIVEN
+    afficherUneGouvernanceAvecNoteDeContexte()
+
+    // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+
+    // THEN
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const editeurDeTextEnrichi = within(drawer).getByRole('textarea')
+    expect(editeurDeTextEnrichi).toBeInTheDocument()
+    expect(editeurDeTextEnrichi.innerHTML).toBe('<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <strong>bold</strong></p>')
+    const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
+    expect(boutonEnregistrer).toBeDisabled()
+    const modifierPar = within(drawer).getByText('Modifié le 06/09/2024 par Jean Deschamps')
+    expect(modifierPar).toBeInTheDocument()
+  })
+
+  it('puis que je clique sur fermer, alors le drawer se ferme', () => {
+    // GIVEN
+    afficherUneGouvernanceAvecNoteDeContexte()
+
+    // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+    jeFermeLeFormulairePourModifierUneNoteDeContexte()
+
+    // THEN
+    expect(drawer).not.toBeVisible()
+  })
+
+  it('puis lorsque je modifie le contenu de la note de contexte, les boutons enregistrer et supprimer deviennent actifs', () => {
+    // GIVEN
+    afficherUneGouvernanceAvecNoteDeContexte()
+    mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
+
+    // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+
+    // THEN
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
+    const boutonSupprimer = within(drawer).getByRole('button', { name: 'Supprimer' })
+    expect(boutonEnregistrer).not.toBeDisabled()
+    expect(boutonSupprimer).not.toBeDisabled()
+  })
+
+  it('quand je clique sur le bouton enregistrer, alors le drawer se ferme et une notification s‘affiche', async () => {
+    // GIVEN
+    const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
+    afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
+
+    // WHEN
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
+    const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
+    fireEvent.submit(formulaire)
+
+    // THEN
+    expect(boutonEnregistrer).toHaveAccessibleName('Modification en cours...')
+    expect(boutonEnregistrer).toBeDisabled()
+    const notification = await screen.findByRole('alert')
+    expect(drawer).not.toBeVisible()
+    expect(notification.textContent).toBe('Note de contexte bien modifiée')
+    expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
+  })
+
+  it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
+    // GIVEN
+    const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+    afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const formulaire = within(modifierUneNoteDeContexteDrawer()).getByRole('form', { name: 'Note de contexte' })
+
+    // WHEN
+    fireEvent.submit(formulaire)
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+  })
+
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ noteDeContexte: undefined }), now)
+    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+  }
+
+  function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      noteDeContexte: {
+        dateDeModification: new Date('2024-09-06'),
+        nomAuteur: 'Deschamps',
+        prenomAuteur: 'Jean',
+        texte: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
+      },
+    }), now)
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
   }
 
@@ -129,5 +225,16 @@ describe('note de contexte', () => {
   function ajouterUneNoteDeContextDrawer(): HTMLElement {
     return screen.getByRole('dialog', { name: 'Note de contexte' })
   }
+
+  function modifierUneNoteDeContexteDrawer(): HTMLElement {
+    return screen.getByRole('dialog', { name: 'Note de contexte' })
+  }
 })
 
+function jeFermeLeFormulairePourModifierUneNoteDeContexte(): void {
+  presserLeBouton('Fermer le formulaire de modification d’une note de contexte')
+}
+
+function jOuvreLeFormulairePourModifierUneNoteDeContexte(): void {
+  presserLeBouton('Modifier')
+}

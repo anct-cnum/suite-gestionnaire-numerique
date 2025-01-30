@@ -28,6 +28,7 @@ export function renderComponent(
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
     modifierUnComiteAction: vi.fn(),
+    modifierUneNoteDeContexteAction: vi.fn(),
     pathname: '/',
     reinviterUnUtilisateurAction: vi.fn(),
     roles: Roles,
