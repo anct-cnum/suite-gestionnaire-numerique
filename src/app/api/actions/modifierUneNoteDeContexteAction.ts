@@ -5,6 +5,7 @@ import sanitize from 'sanitize-html'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
+import { sanitizeDefaultOptions } from '@/app/shared/sanitizeDefaultOptions'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
@@ -26,7 +27,7 @@ export async function modifierUneNoteDeContexteAction(
     new Date()
   )
   const result = await modifierUneNoteDeContexte.execute({
-    contenu: sanitize(actionParam.contenu, defaultOptions),
+    contenu: sanitize(actionParam.contenu, sanitizeDefaultOptions),
     uidEditeur: await getSessionSub(),
     uidGouvernance: actionParam.uidGouvernance,
   })
@@ -44,23 +45,3 @@ const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })
 
-const defaultOptions = {
-  allowedAttributes: {
-    /* eslint-disable id-length */
-    a: ['href'],
-  },
-  allowedTags: [
-    'p',
-    'h2',
-    'h3',
-    'h4',
-    'b',
-    'strong',
-    'i',
-    'em',
-    'ul',
-    'ol',
-    'li',
-    'a',
-  ],
-}
