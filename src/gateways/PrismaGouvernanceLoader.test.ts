@@ -16,18 +16,7 @@ describe('gouvernance loader', () => {
         code: '11',
       }),
     })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '75',
-        nom: 'Paris',
-      }),
-    })
+    await creerDepartements()
     await prisma.utilisateurRecord.create({
       data: utilisateurRecordFactory({
         id: 123,
@@ -36,67 +25,11 @@ describe('gouvernance loader', () => {
         ssoId: 'userFooId',
       }),
     })
-    await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '75',
-      },
-    })
-    await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '93',
-        editeurNotePriveeId: 'userFooId',
-        notePrivee: {
-          contenu: 'un contenu quelconque',
-          derniereEdition: epochTime.toISOString(),
-        },
-      },
-    })
-    await prisma.noteDeContexteRecord.create({
-      data: {
-        contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-        derniereEdition: new Date('2024-11-23'),
-        editeurId: 'userFooId',
-        gouvernanceDepartementCode: '93',
-      },
-    })
-    await prisma.comiteRecord.create({
-      data: {
-        commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'userFooId',
-        frequence: 'trimestrielle',
-        gouvernanceDepartementCode: '93',
-        type: 'stratégique',
-      },
-    })
-    await prisma.comiteRecord.create({
-      data: {
-        commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-08-01'),
-        derniereEdition: new Date('2024-11-23'),
-        editeurUtilisateurId: 'userFooId',
-        frequence: 'trimestrielle',
-        gouvernanceDepartementCode: '93',
-        type: 'technique',
-      },
-    })
-    await prisma.feuilleDeRouteRecord.create({
-      data: {
-        creation: epochTime,
-        gouvernanceDepartementCode: '93',
-        nom: 'Feuille de route inclusion',
-      },
-    })
-    await prisma.feuilleDeRouteRecord.create({
-      data: {
-        creation: epochTime,
-        gouvernanceDepartementCode: '93',
-        nom: 'Feuille de route numérique du Rhône',
-      },
-    })
+    await creerGouvernances()
+    await creerNoteDeContexte()
+    await creerComites()
+    await creerFeuillesDeRoute()
+    await creerMembres()
 
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
@@ -131,7 +64,7 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres,
       noteDeContexte: {
-        dateDeModification: new Date('2024-11-23'),
+        dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
         texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
@@ -153,12 +86,7 @@ describe('gouvernance loader', () => {
         code: '11',
       }),
     })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
+    await creerDepartements()
     const codeDepartementInexistant = 'zzz'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
@@ -176,33 +104,15 @@ describe('gouvernance loader', () => {
         code: '11',
       }),
     })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
+    await creerDepartements()
 
     await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
       },
     })
-
-    await prisma.feuilleDeRouteRecord.create({
-      data: {
-        creation: epochTime,
-        gouvernanceDepartementCode: '93',
-        nom: 'Feuille de route inclusion',
-      },
-    })
-    await prisma.feuilleDeRouteRecord.create({
-      data: {
-        creation: epochTime,
-        gouvernanceDepartementCode: '93',
-        nom: 'Feuille de route numérique du Rhône',
-      },
-    })
+    await creerFeuillesDeRoute()
+    await creerMembres()
 
     const codeDepartement = '93'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
@@ -409,7 +319,10 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     totalActions: 3,
   },
   {
-    beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+    beneficiairesSubvention: [
+      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+    ],
     beneficiairesSubventionFormation: [
       { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
       { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
@@ -426,58 +339,238 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
 
 const membres: UneGouvernanceReadModel['membres'] = [
   {
-    contactReferent: {
-      denomination: 'Contact politique de la collectivité',
-      mailContact: 'julien.deschamps@rhones.gouv.fr',
-      nom: 'Henrich',
-      poste: 'chargé de mission',
-      prenom: 'Laetitia',
-    },
-    contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-    feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-    links: {},
-    nom: 'Préfecture du Rhône',
-    roles: ['Co-porteur'],
-    telephone: '+33 4 45 00 45 00',
-    totalMontantSubventionAccorde: NaN,
-    totalMontantSubventionFormationAccorde: NaN,
-    type: 'Administration',
-    typologieMembre: 'Préfecture départementale',
+    nom: 'CA Tulle Agglo',
+    roles: ['observateur'],
+    typologieMembre: 'epci',
   },
   {
-    contactReferent: {
-      denomination: 'Contact référent',
-      mailContact: 'didier.durand@exemple.com',
-      nom: 'Didier',
-      poste: 'chargé de mission',
-      prenom: 'Durant',
-    },
-    feuillesDeRoute: [{ montantSubventionAccorde: 30_000, montantSubventionFormationAccorde: 20_000, nom: 'Feuille de route inclusion' }],
-    links: {},
-    nom: 'Département du Rhône',
-    roles: ['Co-porteur', 'Financeur'],
-    telephone: '+33 4 45 00 45 01',
-    totalMontantSubventionAccorde: NaN,
-    totalMontantSubventionFormationAccorde: NaN,
-    type: 'Collectivité',
-    typologieMembre: 'Collectivité, EPCI',
+    nom: 'CC Porte du Jura',
+    roles: ['beneficiaire', 'coporteur'],
+    typologieMembre: 'epci',
   },
   {
-    contactReferent: {
-      denomination: 'Contact référent',
-      mailContact: 'coco.dupont@rhones.gouv.fr',
-      nom: 'Coco',
-      poste: 'chargé de mission',
-      prenom: 'Dupont',
-    },
-    feuillesDeRoute: [],
-    links: {},
-    nom: 'CC des Monts du Lyonnais',
-    roles: ['Co-porteur', 'Financeur'],
-    telephone: '',
-    totalMontantSubventionAccorde: NaN,
-    totalMontantSubventionFormationAccorde: NaN,
-    type: 'Collectivité',
-    typologieMembre: 'Collectivité, EPCI',
+    nom: 'Créteil',
+    roles: ['coporteur'],
+    typologieMembre: 'commune',
   },
-]
+  {
+    nom: 'Orange',
+    roles: ['coporteur', 'recipiendaire'],
+    typologieMembre: 'structure',
+  },
+  {
+    nom: 'Paris',
+    roles: ['N/A'],
+    typologieMembre: 'departement',
+  },
+  {
+    nom: 'Seine-Saint-Denis',
+    roles: ['coporteur'],
+    typologieMembre: 'departement',
+  },
+  {
+    nom: 'Trévérien',
+    roles: ['beneficiaire', 'recipiendaire'],
+    typologieMembre: 'commune',
+  },
+  {
+    nom: 'Île-de-France',
+    roles: ['N/A'],
+    typologieMembre: 'sgar',
+  },
+].map((partialMembre) => ({
+  contactReferent: {
+    denomination: 'Contact politique de la collectivité',
+    mailContact: 'julien.deschamps@example.com',
+    nom: 'Henrich',
+    poste: 'chargé de mission',
+    prenom: 'Laetitia',
+  },
+  contactTechnique: 'Simon.lagrange@example.com',
+  feuillesDeRoute: [
+    {
+      montantSubventionAccorde: 5_000,
+      montantSubventionFormationAccorde: 5_000,
+      nom: 'Feuille de route inclusion',
+    },
+    {
+      montantSubventionAccorde: 5_000,
+      montantSubventionFormationAccorde: 5_000,
+      nom: 'Feuille de route numérique du Rhône',
+    },
+  ],
+  links: {},
+  telephone: '+33 4 45 00 45 00',
+  totalMontantSubventionAccorde: NaN,
+  totalMontantSubventionFormationAccorde: NaN,
+  type: 'Administration',
+  ...partialMembre,
+}))
+
+async function creerDepartements(): Promise<void> {
+  await prisma.departementRecord.create({
+    data: departementRecordFactory({
+      code: '93',
+      nom: 'Seine-Saint-Denis',
+    }),
+  })
+  await prisma.departementRecord.create({
+    data: departementRecordFactory({
+      code: '75',
+      nom: 'Paris',
+    }),
+  })
+}
+
+async function creerGouvernances(): Promise<void> {
+  await prisma.gouvernanceRecord.create({
+    data: {
+      departementCode: '75',
+    },
+  })
+  await prisma.gouvernanceRecord.create({
+    data: {
+      departementCode: '93',
+      editeurNotePriveeId: 'userFooId',
+      notePrivee: {
+        contenu: 'un contenu quelconque',
+        derniereEdition: epochTime.toISOString(),
+      },
+    },
+  })
+}
+
+async function creerNoteDeContexte(): Promise<void> {
+  await prisma.noteDeContexteRecord.create({
+    data: {
+      contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      derniereEdition: epochTime,
+      editeurId: 'userFooId',
+      gouvernanceDepartementCode: '93',
+    },
+  })
+}
+
+async function creerComites(): Promise<void> {
+  await prisma.comiteRecord.create({
+    data: {
+      commentaire: 'commentaire',
+      creation: new Date('2024-11-23'),
+      date: new Date('2024-11-23'),
+      derniereEdition: new Date('2024-11-23'),
+      editeurUtilisateurId: 'userFooId',
+      frequence: 'trimestrielle',
+      gouvernanceDepartementCode: '93',
+      type: 'stratégique',
+    },
+  })
+  await prisma.comiteRecord.create({
+    data: {
+      commentaire: 'commentaire',
+      creation: new Date('2024-11-23'),
+      date: new Date('2024-08-01'),
+      derniereEdition: new Date('2024-11-23'),
+      editeurUtilisateurId: 'userFooId',
+      frequence: 'trimestrielle',
+      gouvernanceDepartementCode: '93',
+      type: 'technique',
+    },
+  })
+}
+
+async function creerFeuillesDeRoute(): Promise<void> {
+  await prisma.feuilleDeRouteRecord.create({
+    data: {
+      creation: epochTime,
+      gouvernanceDepartementCode: '93',
+      nom: 'Feuille de route inclusion',
+    },
+  })
+  await prisma.feuilleDeRouteRecord.create({
+    data: {
+      creation: epochTime,
+      gouvernanceDepartementCode: '93',
+      nom: 'Feuille de route numérique du Rhône',
+    },
+  })
+}
+
+async function creerMembres(): Promise<void> {
+  await prisma.membreGouvernanceCommuneRecord.create({
+    data: {
+      commune: 'Trévérien',
+      gouvernanceDepartementCode: '93',
+      role: 'recipiendaire',
+    },
+  })
+  await prisma.membreGouvernanceCommuneRecord.create({
+    data: {
+      commune: 'Trévérien',
+      gouvernanceDepartementCode: '93',
+      role: 'beneficiaire',
+    },
+  })
+  await prisma.membreGouvernanceCommuneRecord.create({
+    data: {
+      commune: 'Créteil',
+      gouvernanceDepartementCode: '93',
+      role: 'coporteur',
+    },
+  })
+  await prisma.membreGouvernanceDepartementRecord.create({
+    data: {
+      departementCode: '93',
+      gouvernanceDepartementCode: '93',
+      role: 'coporteur',
+    },
+  })
+  await prisma.membreGouvernanceDepartementRecord.create({
+    data: {
+      departementCode: '75',
+      gouvernanceDepartementCode: '93',
+      role: 'N/A',
+    },
+  })
+  await prisma.membreGouvernanceEpciRecord.create({
+    data: {
+      epci: 'CA Tulle Agglo',
+      gouvernanceDepartementCode: '93',
+      role: 'observateur',
+    },
+  })
+  await prisma.membreGouvernanceEpciRecord.create({
+    data: {
+      epci: 'CC Porte du Jura',
+      gouvernanceDepartementCode: '93',
+      role: 'coporteur',
+    },
+  })
+  await prisma.membreGouvernanceEpciRecord.create({
+    data: {
+      epci: 'CC Porte du Jura',
+      gouvernanceDepartementCode: '93',
+      role: 'beneficiaire',
+    },
+  })
+  await prisma.membreGouvernanceSgarRecord.create({
+    data: {
+      gouvernanceDepartementCode: '93',
+      role: 'N/A',
+      sgarCode: '11',
+    },
+  })
+  await prisma.membreGouvernanceStructureRecord.create({
+    data: {
+      gouvernanceDepartementCode: '93',
+      role: 'recipiendaire',
+      structure: 'Orange',
+    },
+  })
+  await prisma.membreGouvernanceStructureRecord.create({
+    data: {
+      gouvernanceDepartementCode: '93',
+      role: 'coporteur',
+      structure: 'Orange',
+    },
+  })
+}
