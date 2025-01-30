@@ -8,11 +8,13 @@ import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
+import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
+import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
@@ -33,11 +35,13 @@ export default function ClientContext({
     () => ({
       ajouterUnComiteAction,
       ajouterUneNoteDeContexteAction,
+      ajouterUneNotePriveeAction,
       changerMonRoleAction,
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
       modifierUneNoteDeContexteAction,
+      modifierUneNotePriveeAction,
       pathname,
       reinviterUnUtilisateurAction,
       roles,
@@ -70,7 +74,9 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUnComiteAction: typeof ajouterUnComiteAction
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
+  ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   modifierUnComiteAction: typeof modifierUnComiteAction
+  modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams

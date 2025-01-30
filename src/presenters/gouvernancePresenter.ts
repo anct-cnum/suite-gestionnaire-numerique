@@ -12,6 +12,7 @@ export function gouvernancePresenter(
     comiteARemplir,
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
+    notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     sectionFeuillesDeRoute: {
       ...{ feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel) },
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
@@ -33,6 +34,11 @@ export type GouvernanceViewModel = Readonly<{
   comiteARemplir: ComiteViewModel
   departement: string
   isVide: boolean
+  notePrivee?: Readonly<{
+    edition: string
+    resume: string
+    texte: string
+  }>
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteViewModel>
@@ -50,7 +56,12 @@ export type GouvernanceViewModel = Readonly<{
     wording: string
   }>
   sectionNoteDeContexte: Readonly<{
-    noteDeContexte?: NoteDeContexteViewModel
+    noteDeContexte?: Readonly<{
+      dateDeModification: string
+      nomAuteur: string
+      prenomAuteur: string
+      texteAvecHTML: string
+    }>
     sousTitre: string
   }>
   uid: string
@@ -199,8 +210,18 @@ function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['note
     nomAuteur: noteDeContexte.nomAuteur,
     prenomAuteur: noteDeContexte.prenomAuteur,
     texteAvecHTML: noteDeContexte.texte,
-    // eslint-disable-next-line sonarjs/slow-regex
-    texteSansHTML: `${noteDeContexte.texte.replace(/(?:<(?:[^>]+)>)/g, '').substring(0, 290)}...`,
+  }
+}
+
+function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']): GouvernanceViewModel['notePrivee'] {
+  if (!notePrivee) {
+    return undefined
+  }
+
+  return {
+    edition: `Modifié le ${formaterEnDateFrancaise(notePrivee.dateDEdition)} par ${notePrivee.prenomEditeur} ${notePrivee.nomEditeur}`,
+    resume: `${notePrivee.texte.substring(0, 290)}...`,
+    texte: notePrivee.texte,
   }
 }
 
@@ -343,14 +364,6 @@ export type MembreDetailsViewModel = Readonly<{
 type RoleViewModel = Readonly<{
   color: string
   nom: string
-}>
-
-type NoteDeContexteViewModel = Readonly<{
-  dateDeModification: string
-  nomAuteur: string
-  prenomAuteur: string
-  texteAvecHTML: string
-  texteSansHTML: string
 }>
 
 // Stryker disable next-line ObjectLiteral

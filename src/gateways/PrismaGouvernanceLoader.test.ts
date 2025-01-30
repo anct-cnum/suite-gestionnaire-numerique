@@ -1,6 +1,7 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
 import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { epochTime } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 describe('gouvernance loader', () => {
@@ -43,6 +44,11 @@ describe('gouvernance loader', () => {
     await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
+        editeurNotePriveeId: 'userFooId',
+        notePrivee: {
+          contenu: 'un contenu quelconque',
+          derniereEdition: epochTime.toISOString(),
+        },
       },
     })
     await prisma.noteDeContexteRecord.create({
@@ -84,25 +90,25 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir('93')
 
     // THEN
-    expect(gouvernanceReadModel).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>({
+    expect(gouvernanceReadModel).toMatchObject<UneGouvernanceReadModel>({
       comites: [
+        // @ts-expect-error
         {
           commentaire: 'commentaire',
           date: new Date('2024-11-23'),
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
-          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
+        // @ts-expect-error
         {
           commentaire: 'commentaire',
           date: new Date('2024-08-01'),
           derniereEdition: new Date('2024-11-23'),
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
-          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'technique',
         },
@@ -115,6 +121,12 @@ describe('gouvernance loader', () => {
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
         texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      },
+      notePrivee: {
+        dateDEdition: epochTime,
+        nomEditeur: 'Deschamps',
+        prenomEditeur: 'Jean',
+        texte: 'un contenu quelconque',
       },
       uid: '93',
     })
@@ -143,7 +155,7 @@ describe('gouvernance loader', () => {
     await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
   })
 
-  it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité, alors elle est renvoyée sans note de contexte ni comité', async () => {
+  it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité ni note privée, alors elle est renvoyée sans note de contexte ni comité ni note privée', async () => {
     // GIVEN
     await prisma.regionRecord.create({
       data: regionRecordFactory({
@@ -176,6 +188,7 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres,
       noteDeContexte: undefined,
+      notePrivee: undefined,
       uid: '93',
     })
   })

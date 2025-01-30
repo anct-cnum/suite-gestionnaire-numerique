@@ -19,9 +19,11 @@ import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import ModifierNoteDeContexte from './NoteDeContexte/ModifierNoteDeContexte'
 import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
-import ResumeNoteDeContexte from './NoteDeContexte/ResumeNoteDeContexte'
-import ResumeNoteDeContexteVide from './NoteDeContexte/ResumeNoteDeContexteVide'
 import SubSectionButton from './NoteDeContexte/SubSectionButton'
+import AjouterUneNotePrivee from './NotePrivee/AjouterUneNotePrivee'
+import ModifierUneNotePrivee from './NotePrivee/ModifierUneNotePrivee'
+import ResumeNotePrivee from './NotePrivee/ResumeNotePrivee'
+import ResumeNotePriveeVide from './NotePrivee/ResumeNotePriveeVide'
 import Resume from './Resume'
 import SectionRemplie from './SectionRemplie'
 import SectionVide from './SectionVide'
@@ -39,6 +41,8 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const labelNoteDeContexteId = 'labelAjouterNoteDeContexteId'
   const labelModifierNoteDeContexteId = 'labelModifierNoteDeContexteId'
   const drawerModifierNoteDeContexteId = 'drawerModifierNoteDeContexteId'
+  const drawerNotePriveeId = 'drawerAjouterNotePriveeId'
+  const labelNotePriveeId = 'labelAjouterNotePriveeId'
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (
@@ -84,15 +88,74 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                   )
               }
               {
-                gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
-                  <ResumeNoteDeContexte
-                    sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
-                    texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteSansHTML}
-                  />
+                gouvernanceViewModel.notePrivee ? (
+                  <>
+                    <Drawer
+                      boutonFermeture="Fermer le formulaire de modification d’une note privée"
+                      closeDrawer={() => {
+                        setIsDrawerOpen(false)
+                      }}
+                      id={drawerNotePriveeId}
+                      // Stryker disable next-line BooleanLiteral
+                      isFixedWidth={false}
+                      isOpen={isDrawerOpen}
+                      labelId={labelNotePriveeId}
+                      ref={drawerRef}
+                    >
+                      <ModifierUneNotePrivee
+                        closeDrawer={() => {
+                          setIsDrawerOpen(false)
+                        }}
+                        edition={gouvernanceViewModel.notePrivee.edition}
+                        id={drawerNotePriveeId}
+                        labelId={labelNotePriveeId}
+                        texte={gouvernanceViewModel.notePrivee.texte}
+                        uidGouvernance={gouvernanceViewModel.uid}
+                      />
+                    </Drawer>
+                    <Resume style={styles['resume-note-privee']}>
+                      <ResumeNotePrivee
+                        edition={gouvernanceViewModel.notePrivee.edition}
+                        id={drawerNotePriveeId}
+                        showDrawer={() => {
+                          setIsDrawerOpen(true)
+                        }}
+                        texte={gouvernanceViewModel.notePrivee.resume}
+                      />
+                    </Resume>
+                  </>
                 ) : (
-                  <Resume style={styles['resume-note-de-contexte']}>
-                    <ResumeNoteDeContexteVide />
-                  </Resume>
+                  <>
+                    <Drawer
+                      boutonFermeture="Fermer le formulaire de création d’une note privée"
+                      closeDrawer={() => {
+                        setIsDrawerOpen(false)
+                      }}
+                      id={drawerNotePriveeId}
+                      // Stryker disable next-line BooleanLiteral
+                      isFixedWidth={false}
+                      isOpen={isDrawerOpen}
+                      labelId={labelNotePriveeId}
+                      ref={drawerRef}
+                    >
+                      <AjouterUneNotePrivee
+                        closeDrawer={() => {
+                          setIsDrawerOpen(false)
+                        }}
+                        id={drawerNotePriveeId}
+                        labelId={labelNotePriveeId}
+                        uidGouvernance={gouvernanceViewModel.uid}
+                      />
+                    </Drawer>
+                    <Resume style={styles['resume-note-privee-vide']}>
+                      <ResumeNotePriveeVide
+                        id={drawerNotePriveeId}
+                        showDrawer={() => {
+                          setIsDrawerOpen(true)
+                        }}
+                      />
+                    </Resume>
+                  </>
                 )
               }
             </div>

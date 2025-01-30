@@ -38,6 +38,7 @@ export type UneGouvernanceReadModel = Readonly<{
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
   membres?: ReadonlyArray<MembreDetailReadModel>
   noteDeContexte?: NoteDeContexteReadModel
+  notePrivee?: NotePriveeReadModel
   uid: string
 }>
 
@@ -76,6 +77,13 @@ type NoteDeContexteReadModel = Readonly<{
   dateDeModification: Date
   nomAuteur: string
   prenomAuteur: string
+  texte: string
+}>
+
+type NotePriveeReadModel = Readonly<{
+  dateDEdition: Date
+  nomEditeur: string
+  prenomEditeur: string
   texte: string
 }>
 

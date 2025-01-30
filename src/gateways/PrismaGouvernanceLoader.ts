@@ -23,6 +23,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
         nom: true
       }
     }
+    relationEditeurNotePrivee: true
   }
 }>
 
@@ -48,6 +49,7 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
           },
         },
         relationDepartement: true,
+        relationEditeurNotePrivee: true,
       },
       where: {
         departementCode: codeDepartement,
@@ -67,6 +69,12 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
     nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
     prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
     texte: gouvernanceRecord.noteDeContexte.contenu,
+  } : undefined
+  const notePrivee = gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee ? {
+    dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),
+    nomEditeur: gouvernanceRecord.relationEditeurNotePrivee.nom,
+    prenomEditeur: gouvernanceRecord.relationEditeurNotePrivee.prenom,
+    texte: gouvernanceRecord.notePrivee.contenu,
   } : undefined
   const comites = gouvernanceRecord.comites.length > 0
     ? gouvernanceRecord.comites.map((comite) => ({
@@ -167,6 +175,7 @@ function transform(gouvernanceRecord: GouvernanceWithNoteDeContexte): UneGouvern
       },
     ],
     noteDeContexte,
+    notePrivee,
     uid: gouvernanceRecord.departementCode,
   }
 }

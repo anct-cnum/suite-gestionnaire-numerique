@@ -48,12 +48,12 @@ describe('comitologie', () => {
       expect(annuelle).toHaveAttribute('value', 'annuelle')
 
       const date = within(formulaire).getByLabelText('Date du prochain comité')
-      expect(date).not.toHaveAttribute('required')
+      expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
       expect(date).toHaveAttribute('min', '1996-04-15')
 
       const commentaire = within(formulaire).getByLabelText('Laissez ici un commentaire général sur le comité', { selector: 'textarea' })
-      expect(commentaire).not.toHaveAttribute('required')
+      expect(commentaire).not.toBeRequired()
       expect(commentaire).toHaveAttribute('maxLength', '500')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
@@ -198,13 +198,13 @@ describe('comitologie', () => {
       expect(annuelle).toHaveAttribute('value', 'annuelle')
 
       const date = within(formulaire).getByLabelText('Date du prochain comité')
-      expect(date).not.toHaveAttribute('required')
+      expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
       expect(date).toHaveAttribute('min', '1996-04-15')
       expect(date).toHaveValue('2024-03-01')
 
       const commentaire = within(formulaire).getByLabelText('Laissez ici un commentaire général sur le comité', { selector: 'textarea' })
-      expect(commentaire).not.toHaveAttribute('required')
+      expect(commentaire).not.toBeRequired()
       expect(commentaire).toHaveAttribute('maxLength', '500')
       expect(commentaire).toHaveValue('commentaire')
 
@@ -252,20 +252,18 @@ describe('comitologie', () => {
       // THEN
       expect(enregistrer).toHaveAccessibleName('Modification en cours...')
       expect(enregistrer).toBeDisabled()
-      await waitFor(() => {
-        expect(modifierUnComiteAction).toHaveBeenCalledWith({
-          commentaire: 'un nouveau commentaire',
-          date: '2990-04-15',
-          frequence: 'trimestrielle',
-          path: '/gouvernance/11',
-          type: 'technique',
-          uid: '2',
-          uidGouvernance: 'gouvernanceFooId',
-        })
+      expect(modifierUnComiteAction).toHaveBeenCalledWith({
+        commentaire: 'un nouveau commentaire',
+        date: '2990-04-15',
+        frequence: 'trimestrielle',
+        path: '/gouvernance/11',
+        type: 'technique',
+        uid: '2',
+        uidGouvernance: 'gouvernanceFooId',
       })
-      expect(modifierUnComiteDrawer).not.toBeVisible()
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Comité bien modifié')
+      expect(modifierUnComiteDrawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
@@ -326,16 +324,14 @@ describe('comitologie', () => {
       // THEN
       expect(supprimer).toHaveAccessibleName('Suppression en cours...')
       expect(supprimer).toBeDisabled()
-      await waitFor(() => {
-        expect(supprimerUnComiteAction).toHaveBeenCalledWith({
-          path: '/gouvernance/11',
-          uid: '2',
-          uidGouvernance: 'gouvernanceFooId',
-        })
+      expect(supprimerUnComiteAction).toHaveBeenCalledWith({
+        path: '/gouvernance/11',
+        uid: '2',
+        uidGouvernance: 'gouvernanceFooId',
       })
-      expect(modifierUnComiteDrawer).not.toBeVisible()
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Comité bien supprimé')
+      expect(modifierUnComiteDrawer).not.toBeVisible()
       expect(supprimer).toHaveAccessibleName('Supprimer')
       expect(supprimer).toBeEnabled()
     })
