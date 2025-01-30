@@ -121,7 +121,7 @@ describe('gouvernance repository', () => {
 
     expect(gouvernanceRecord).toStrictEqual({
       departementCode: '75',
-      editeurNotePriveeId: 'userFooId',
+      editeurNotePriveeId: null,
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
         derniereEdition: new Date('2000-01-01'),
@@ -266,6 +266,41 @@ describe('gouvernance repository', () => {
     }))
     expect(modifiedRecords[1]).toStrictEqual(gouvernanceRecordFactory({
       departementCode: '93',
+      editeurNotePriveeId: null,
+      // @ts-expect-error
+      notePrivee: null,
+    }))
+  })
+
+  it('supprimer une note privée d’une gouvernance', async () => {
+    // GIVEN
+    const departementCode = '75'
+    const uidEditeur = 'userFooId'
+    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
+    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
+    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur }) })
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({
+        departementCode,
+        editeurNotePriveeId: uidEditeur,
+        notePrivee: {
+          contenu: 'un contenu quelconque',
+          derniereEdition: epochTime.toISOString(),
+        },
+      }),
+    })
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+
+    // WHEN
+    await repository.update(gouvernanceFactory({
+      notePrivee: undefined,
+      uid: departementCode,
+    }))
+
+    // THEN
+    const modifiedRecord = await prisma.gouvernanceRecord.findUnique({ where: { departementCode } })
+    expect(modifiedRecord).toStrictEqual(gouvernanceRecordFactory({
+      departementCode: '75',
       editeurNotePriveeId: null,
       // @ts-expect-error
       notePrivee: null,

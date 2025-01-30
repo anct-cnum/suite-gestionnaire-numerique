@@ -18,6 +18,7 @@ import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePr
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
+import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
@@ -51,6 +52,7 @@ export default function ClientContext({
       supprimerMonCompteAction,
       supprimerUnComiteAction,
       supprimerUnUtilisateurAction,
+      supprimerUneNotePriveeAction,
       utilisateursParPage,
     }),
     [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
@@ -83,6 +85,7 @@ export type ClientContextProviderValue = Readonly<{
   sessionUtilisateurViewModel: SessionUtilisateurViewModel
   supprimerMonCompteAction: typeof supprimerMonCompteAction
   supprimerUnComiteAction: typeof supprimerUnComiteAction
+  supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number
 }>

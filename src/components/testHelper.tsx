@@ -47,6 +47,7 @@ export function renderComponent(
     supprimerMonCompteAction: vi.fn(),
     supprimerUnComiteAction: vi.fn(),
     supprimerUnUtilisateurAction: vi.fn(),
+    supprimerUneNotePriveeAction: vi.fn(),
     utilisateursParPage: 10,
   }
 

@@ -1,31 +1,28 @@
-import { ModifierUneNotePrivee } from './ModifierUneNotePrivee'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { SupprimerUneNotePrivee } from './SupprimerUneNotePrivee'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
-describe('modifier une note privée à une gouvernance', () => {
+describe('supprimer une note privée d’une gouvernance', () => {
   beforeEach(() => {
     spiedGouvernanceUidToFind = null
     spiedGouvernanceToUpdate = null
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note privée est modifiée par son gestionnaire, alors elle est modifiée', async () => {
+  it('étant donné une gouvernance existante, quand une note privée est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
-    const dateDeModification = new Date('3000-01-01')
     const uidEditeur = 'userFooId2'
-    const modifierNotePrivee = new ModifierUneNotePrivee(
+    const supprimerNotePrivee = new SupprimerUneNotePrivee(
       new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      dateDeModification
+      new GestionnaireRepositorySpy()
     )
 
     // WHEN
-    const result = await modifierNotePrivee.execute({
-      contenu,
+    const result = await supprimerNotePrivee.execute({
       uidEditeur,
       uidGouvernance,
     })
@@ -35,66 +32,39 @@ describe('modifier une note privée à une gouvernance', () => {
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate?.state).toStrictEqual(
       gouvernanceFactory({
-        notePrivee: {
-          contenu,
-          dateDeModification,
-          uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: 'michel.tartempion@example.net', value: uidEditeur } }).state.uid
-          ),
-        },
+        notePrivee: undefined,
         uid: uidGouvernance,
       }).state
     )
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un note privée est modifiée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un note privée est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const modifierNotePrivee = new ModifierUneNotePrivee(
+    const supprimerNotePrivee = new SupprimerUneNotePrivee(
       new GouvernanceRepositorySpy(),
-      new GestionnaireAutreRepositorySpy(),
-      epochTime
+      new GestionnaireAutreRepositorySpy()
     )
 
     // WHEN
-    const result = await modifierNotePrivee.execute({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await supprimerNotePrivee.execute({ uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurNePeutPasModifierNotePrivee')
+    expect(result).toBe('editeurNePeutPasSupprimerNotePrivee')
   })
 
-  it('étant donné une gouvernance existante, quand un note privée est modifiée par un gestionnaire département mais qu’une note privée n’existe pas, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance inexistante, quand une note privée est supprimée, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const modifierNotePrivee = new ModifierUneNotePrivee(
-      new GouvernanceSansNotePriveeRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await modifierNotePrivee.execute({ contenu, uidEditeur, uidGouvernance })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('notePriveeInexistante')
-  })
-
-  it('étant donné une gouvernance inexistante, quand une note privée est modifiée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const modifierNotePrivee = new ModifierUneNotePrivee(
+    const supprimerNotePrivee = new SupprimerUneNotePrivee(
       new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      epochTime
+      new GestionnaireRepositorySpy()
     )
 
     // WHEN
-    const result = await modifierNotePrivee.execute({
-      contenu,
+    const result = await supprimerNotePrivee.execute({
       uidEditeur,
       uidGouvernance,
     })
@@ -106,17 +76,15 @@ describe('modifier une note privée à une gouvernance', () => {
     expect(result).toBe('gouvernanceInexistante')
   })
 
-  it('étant donné un utilisateur inexistant, quand une note privée est modifiée, alors une erreur est renvoyée', async () => {
+  it('étant donné un utilisateur inexistant, quand une note privée est supprimée, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const modifierNotePrivee = new ModifierUneNotePrivee(
+    const supprimerNotePrivee = new SupprimerUneNotePrivee(
       new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy(),
-      epochTime
+      new GestionnaireInexistantRepositorySpy()
     )
 
     // WHEN
-    const result = await modifierNotePrivee.execute({
-      contenu,
+    const result = await supprimerNotePrivee.execute({
       uidEditeur,
       uidGouvernance,
     })
@@ -129,7 +97,6 @@ describe('modifier une note privée à une gouvernance', () => {
   })
 })
 
-const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
 const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
 const uidEditeur = 'userFooId'
@@ -169,17 +136,6 @@ class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
   override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(null)
-  }
-}
-
-class GouvernanceSansNotePriveeRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(
-      gouvernanceFactory({
-        notePrivee: undefined,
-      })
-    )
   }
 }
 
