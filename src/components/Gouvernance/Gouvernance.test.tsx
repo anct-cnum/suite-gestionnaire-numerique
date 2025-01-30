@@ -459,7 +459,7 @@ describe('gouvernance', () => {
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
   })
 
-  it('quand j’affiche une gouvernance sans note de contexte, alors elle s’affiche avec son résumé vide et sa section lui demandant d’en ajouter une', () => {
+  it('quand j’affiche une gouvernance sans note de contexte, alors elle s’affiche avec sa section lui demandant d’en ajouter une', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }), now)
 
@@ -467,9 +467,6 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText('Aucune note de contexte pour le moment.', { selector: 'p' })
-    expect(resume).toBeInTheDocument()
-
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
     const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
@@ -483,7 +480,7 @@ describe('gouvernance', () => {
     expect(ajouterUneNoteDeContexte).toHaveAttribute('type', 'button')
   })
 
-  it('quand j’affiche une gouvernance avec une note de contexte, alors elle s’affiche avec son résumé de 290 caractères maximum et sa section note de contexte repliée', () => {
+  it('quand j’affiche une gouvernance avec une note de contexte, alors elle s’affiche avec sa section note de contexte repliée', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       noteDeContexte: {
@@ -498,18 +495,14 @@ describe('gouvernance', () => {
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 
     // THEN
-    const resume = screen.getByText('titre note de contexteun paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bold.un paragraphe avec du bol...', { selector: 'p' })
-    expect(resume).toBeInTheDocument()
-    const auteurDeLaNote = screen.getAllByText('Modifié le 06/09/2024 par Jean Deschamps', { selector: 'p' })
-    expect(auteurDeLaNote[0]).toBeInTheDocument()
-
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
     const enTeteNoteDeContexte = within(sectionNoteDeContexte).getByRole('banner')
     const titreNoteDeContexte = within(enTeteNoteDeContexte).getByRole('heading', { level: 2, name: 'Note de contexte' })
     expect(titreNoteDeContexte).toBeInTheDocument()
     const modifier = within(sectionNoteDeContexte).getByRole('button', { name: 'Modifier' })
     expect(modifier).toHaveAttribute('type', 'button')
-    expect(auteurDeLaNote[1]).toBeInTheDocument()
+    const auteurDeLaNote = screen.getAllByText('Modifié le 06/09/2024 par Jean Deschamps', { selector: 'p' })[0]
+    expect(auteurDeLaNote).toBeInTheDocument()
     const contenuNoteDeContexte = within(sectionNoteDeContexte).getByRole('article')
     const noteDeContexteElement1 = within(contenuNoteDeContexte).getByText('titre note de contexte', { selector: 'strong' })
     expect(noteDeContexteElement1).toBeInTheDocument()
