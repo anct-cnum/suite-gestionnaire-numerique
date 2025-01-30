@@ -75,19 +75,21 @@ model Comite {
 }
 
 model FeuilleDeRoute {
-  id                          String   @id
-  gouvernanceId               String   @map("gouvernance_id")
+  id                          String        @id
+  gouvernanceId               String        @map("gouvernance_id")
   creation                    DateTime
   modification                DateTime
   nom                         String
-  contratPreexistant          Boolean  @map("contrat_preexistant")
-  typeContrat                 String?  @map("type_contrat")
-  typeContratAutreDescription String?  @map("type_contrat_autre_description")
-  perimetreRegionCode         String?  @map("perimetre_region_code")
-  perimetreDepartmentCode     String?  @map("perimetre_departement_code")
-  pieceJointe                 String?  @map("piece_jointe")
+  contratPreexistant          Boolean       @map("contrat_preexistant")
+  typeContrat                 type_contrat? @map("type_contrat")
+  typeContratAutreDescription String?       @map("type_contrat_autre_description")
+  perimetreRegionCode         String?       @map("perimetre_region_code")
+  perimetreDepartmentCode     String?       @map("perimetre_departement_code")
+  pieceJointe                 String?       @map("piece_jointe")
 
   relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
+
+  @@map("feuille_de_route")
 }
 
 model MembreGouvernance {
@@ -192,4 +194,12 @@ enum perimetre_gouvernance {
   departement
   epci
   region
+}
+
+enum type_contrat {
+  crte
+  sdaasap
+  sdin
+  sdun
+  autre
 }
