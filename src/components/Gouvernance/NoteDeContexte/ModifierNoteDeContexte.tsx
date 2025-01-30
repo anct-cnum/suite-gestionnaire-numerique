@@ -19,7 +19,7 @@ export default function ModifierNoteDeContexte({
   uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
-  const { modifierUneNoteDeContexteAction, pathname } = useContext(clientContext)
+  const { modifierUneNoteDeContexteAction, supprimerUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
@@ -55,18 +55,16 @@ export default function ModifierNoteDeContexte({
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
           </li>
-          {hasContent ?
-            <li>
-              <button
-                className="fr-btn red-button"
-                onClick={viderLeContenu}
-                type="button"
-              >
-                Supprimer
-              </button>
-            </li>
-            :
-            null}
+          <li>
+            <button
+              aria-controls={id}
+              className="fr-btn red-button"
+              onClick={supprimerNoteDeContexte}
+              type="button"
+            >
+              Supprimer
+            </button>
+          </li>
         </ul>
       </form>
       <p className={`fr-text--xs ${styles.center}`}>
@@ -86,6 +84,20 @@ export default function ModifierNoteDeContexte({
     }
     closeDrawer();
     (event.target as HTMLFormElement).reset()
+    setIsDisabled(false)
+  }
+
+  async function supprimerNoteDeContexte(event: React.MouseEvent): Promise<void> {
+    event.preventDefault()
+    setIsDisabled(true)
+    const messages = await supprimerUneNoteDeContexteAction({ path: pathname, uidGouvernance })
+    if (messages[0] === 'OK') {
+      viderLeContenu()
+      Notification('success', { description: 'bien supprimée', title: 'Note de contexte ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+    closeDrawer()
     setIsDisabled(false)
   }
 }

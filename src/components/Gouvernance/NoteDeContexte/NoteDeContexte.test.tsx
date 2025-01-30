@@ -125,6 +125,8 @@ describe('note de contexte', () => {
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
     const modifierPar = within(drawer).getByText('Modifié le 01/01/1970 par Jean Deschamps')
+    const boutonSupprimer = within(drawer).getByRole('button', { name: 'Supprimer' })
+    expect(boutonSupprimer).toBeEnabled()
     expect(modifierPar).toBeInTheDocument()
   })
 
@@ -191,6 +193,25 @@ describe('note de contexte', () => {
     // THEN
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+  })
+
+  it('quand j‘ouvre une gouvernance avec une note de contexte, lorsque je clique sur le bouton supprimer, le contenu de la note de contexte est effacé et le drawer se ferme', async () => {
+    // GIVEN
+    const supprimerUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
+    afficherUneGouvernanceAvecNoteDeContexte({ pathname: '/gouvernance/11', supprimerUneNoteDeContexteAction })
+    mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
+    jOuvreLeFormulairePourModifierUneNoteDeContexte()
+    const drawer = modifierUneNoteDeContexteDrawer()
+    const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
+    const boutonSupprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
+
+    // WHEN
+    fireEvent.click(boutonSupprimer)
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Note de contexte bien supprimée')
+    expect(mockRichTextEditor.viderLeContenu).toHaveBeenNthCalledWith(1)
   })
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
