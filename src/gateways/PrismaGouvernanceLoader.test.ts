@@ -83,6 +83,20 @@ describe('gouvernance loader', () => {
         type: 'technique',
       },
     })
+    await prisma.feuilleDeRouteRecord.create({
+      data: {
+        creation: epochTime,
+        gouvernanceDepartementCode: '93',
+        nom: 'Feuille de route inclusion',
+      },
+    })
+    await prisma.feuilleDeRouteRecord.create({
+      data: {
+        creation: epochTime,
+        gouvernanceDepartementCode: '93',
+        nom: 'Feuille de route numérique du Rhône',
+      },
+    })
 
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
@@ -172,6 +186,21 @@ describe('gouvernance loader', () => {
     await prisma.gouvernanceRecord.create({
       data: {
         departementCode: '93',
+      },
+    })
+
+    await prisma.feuilleDeRouteRecord.create({
+      data: {
+        creation: epochTime,
+        gouvernanceDepartementCode: '93',
+        nom: 'Feuille de route inclusion',
+      },
+    })
+    await prisma.feuilleDeRouteRecord.create({
+      data: {
+        creation: epochTime,
+        gouvernanceDepartementCode: '93',
+        nom: 'Feuille de route numérique du Rhône',
       },
     })
 
@@ -380,7 +409,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     totalActions: 3,
   },
   {
-    beneficiairesSubvention: [],
+    beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
     beneficiairesSubventionFormation: [
       { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
       { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
@@ -391,7 +420,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route numérique du Rhône',
     porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
-    totalActions: 2,
+    totalActions: 3,
   },
 ]
 
