@@ -175,6 +175,7 @@ model MembreGouvernanceDepartementRecord {
   departementCode            String
   gouvernanceDepartementCode String
   role                       String
+  type                       String?
 
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
@@ -187,6 +188,7 @@ model MembreGouvernanceSgarRecord {
   sgarCode                   String
   gouvernanceDepartementCode String
   role                       String
+  type                       String?
 
   relationSgar        RegionRecord?     @relation(fields: [sgarCode], references: [code])
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
@@ -199,6 +201,7 @@ model MembreGouvernanceEpciRecord {
   epci                       String
   gouvernanceDepartementCode String
   role                       String
+  type                       String?
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
@@ -210,6 +213,7 @@ model MembreGouvernanceCommuneRecord {
   commune                    String
   gouvernanceDepartementCode String
   role                       String
+  type                       String?
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
@@ -221,6 +225,7 @@ model MembreGouvernanceStructureRecord {
   structure                  String
   gouvernanceDepartementCode String
   role                       String
+  type                       String?
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
