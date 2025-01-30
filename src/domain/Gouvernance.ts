@@ -94,6 +94,10 @@ export class Gouvernance extends Entity<State> {
     return 'notePriveeInexistante'
   }
 
+  supprimerNotePrivee(): void {
+    this.#notePrivee = undefined
+  }
+
   peutEtreGerePar(utilisateur: Utilisateur): boolean {
     return utilisateur.isAdmin
       || this.#departement.state.code === utilisateur.state.departement?.code

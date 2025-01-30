@@ -199,12 +199,41 @@ describe('note privée', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
+    it('puis que je veux supprimer la note privée, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
+      // GIVEN
+      const supprimerUneNotePriveeAction = vi.fn(async () => Promise.resolve(['OK']))
+      afficherUneGouvernanceAvecNotePrivee({ pathname: '/gouvernance/11', supprimerUneNotePriveeAction })
+
+      // WHEN
+      jouvreLeFormulairePourModifierUneNotePrivee()
+      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
+      jEffaceLaNotePrivee()
+      const enregistrer = jEnregistreLaNotePrivee()
+
+      // THEN
+      expect(enregistrer).toHaveAccessibleName('Modification en cours...')
+      expect(enregistrer).toBeDisabled()
+      expect(supprimerUneNotePriveeAction).toHaveBeenCalledWith({
+        path: '/gouvernance/11',
+        uidGouvernance: 'gouvernanceFooId',
+      })
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Note privée bien supprimée')
+      expect(ajouterUneNotePriveeDrawer).not.toBeVisible()
+      expect(enregistrer).toHaveAccessibleName('Enregistrer')
+      expect(enregistrer).toBeEnabled()
+    })
+
     function jouvreLeFormulairePourModifierUneNotePrivee(): void {
       presserLeBouton('Modifier la note')
     }
 
     function jeFermeLeFormulairePourModifierUneNotePrivee(): void {
       presserLeBouton('Fermer le formulaire de modification d’une note privée')
+    }
+
+    function jEffaceLaNotePrivee(): void {
+      presserLeBouton('Effacer')
     }
   })
 

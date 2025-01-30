@@ -1,23 +1,18 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
-import { GouvernanceFailure, GouvernanceUid, NotePrivee } from '@/domain/Gouvernance'
-import { UtilisateurUid } from '@/domain/Utilisateur'
-import { isOk } from '@/shared/lang'
+import { GouvernanceUid } from '@/domain/Gouvernance'
 
-export class ModifierUneNotePrivee implements CommandHandler<Command> {
+export class SupprimerUneNotePrivee implements CommandHandler<Command> {
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
-  readonly #date: Date
 
   constructor(
     gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: UtilisateurRepository,
-    date: Date
+    utilisateurRepository: UtilisateurRepository
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
-    this.#date = date
   }
 
   async execute(command: Command): ResultAsync<Failure> {
@@ -32,26 +27,20 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
     }
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
-      return 'editeurNePeutPasModifierNotePrivee'
+      return 'editeurNePeutPasSupprimerNotePrivee'
     }
 
-    const result = gouvernance.modifierNotePrivee(
-      new NotePrivee(this.#date, new UtilisateurUid(editeur.state.uid), command.contenu)
-    )
-    if (!isOk(result)) {
-      return result
-    }
+    gouvernance.supprimerNotePrivee()
 
     await this.#gouvernanceRepository.update(gouvernance)
 
-    return result
+    return 'OK'
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasModifierNotePrivee' | GouvernanceFailure
+type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasSupprimerNotePrivee'
 
 type Command = Readonly<{
-  contenu: string
   uidEditeur: string
   uidGouvernance: string
 }>
