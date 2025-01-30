@@ -66,21 +66,31 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
   }
 
   async update(gouvernance: Gouvernance): Promise<void> {
+    let notePriveeData
     const notePrivee = gouvernance.state.notePrivee
+
     if (notePrivee) {
-      await this.#gouvernanceDataResource.update({
-        data: {
-          editeurNotePriveeId: notePrivee.uidEditeur,
-          notePrivee: {
-            contenu: notePrivee.value,
-            derniereEdition: notePrivee.dateDeModification,
-          },
+      notePriveeData = {
+        editeurNotePriveeId: notePrivee.uidEditeur,
+        notePrivee: {
+          contenu: notePrivee.value,
+          derniereEdition: notePrivee.dateDeModification,
         },
-        where: {
-          departementCode: gouvernance.state.uid.value,
-        },
-      })
+      }
+    } else {
+      notePriveeData = {
+        editeurNotePriveeId: null,
+        notePrivee: null,
+      }
     }
+
+    await this.#gouvernanceDataResource.update({
+      // @ts-expect-error
+      data: notePriveeData,
+      where: {
+        departementCode: gouvernance.state.uid.value,
+      },
+    })
 
     const noteDeContexte = gouvernance.state.noteDeContexte
     if (noteDeContexte) {

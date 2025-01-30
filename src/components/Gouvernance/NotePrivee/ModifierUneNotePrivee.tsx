@@ -14,7 +14,7 @@ export default function ModifierUneNotePrivee({
   uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
-  const { modifierUneNotePriveeAction, pathname } = useContext(clientContext)
+  const { modifierUneNotePriveeAction, pathname, supprimerUneNotePriveeAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
   return (
@@ -32,6 +32,7 @@ export default function ModifierUneNotePrivee({
         </SubmitButton>
         <button
           className="fr-btn red-button"
+          onClick={viderLeContenu}
           type="reset"
         >
           Effacer
@@ -45,22 +46,43 @@ export default function ModifierUneNotePrivee({
 
   async function modifierLaNotePrivee(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
+    setIsDisabled(true)
 
     const form = new FormData(event.currentTarget)
     const [contenu] = form.values() as FormDataIterator<string>
-    setIsDisabled(true)
-    const messages = await modifierUneNotePriveeAction({
-      contenu,
-      path: pathname,
-      uidGouvernance,
-    })
-    if (messages.includes('OK')) {
-      Notification('success', { description: 'bien modifiée', title: 'Note privée ' })
+
+    if (contenu === '') {
+      const messages = await supprimerUneNotePriveeAction({
+        path: pathname,
+        uidGouvernance,
+      })
+      if (messages.includes('OK')) {
+        Notification('success', { description: 'bien supprimée', title: 'Note privée ' })
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      }
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      const messages = await modifierUneNotePriveeAction({
+        contenu,
+        path: pathname,
+        uidGouvernance,
+      })
+      if (messages.includes('OK')) {
+        Notification('success', { description: 'bien modifiée', title: 'Note privée ' })
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      }
     }
+
     closeDrawer()
     setIsDisabled(false)
+  }
+
+  function viderLeContenu(event: FormEvent<HTMLButtonElement>): void {
+    event.preventDefault()
+    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    event.target.form.querySelector('textarea').value = ''
   }
 }
 
