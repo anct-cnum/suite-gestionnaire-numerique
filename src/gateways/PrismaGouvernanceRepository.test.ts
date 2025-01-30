@@ -295,4 +295,40 @@ describe('gouvernance repository', () => {
       notePrivee: null,
     }))
   })
+  it('supprimer une note de contexte d’une gouvernance', async () => {
+    // GIVEN
+    const departementCode = '75'
+    const uidEditeur = 'userFooId'
+    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
+    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
+    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur }) })
+    await prisma.gouvernanceRecord.create({
+      data: gouvernanceRecordFactory({
+        departementCode,
+        editeurNotePriveeId: uidEditeur,
+      }),
+    })
+    await prisma.noteDeContexteRecord.create({
+      data: noteDeContexteRecordFactory({
+        contenu: '<p>un contenu quelconque<p>',
+        derniereEdition: epochTime.toISOString(),
+        editeurId: uidEditeur,
+        gouvernanceDepartementCode: departementCode,
+      }),
+    })
+
+    // WHEN
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+
+    await repository.update(gouvernanceFactory({
+      noteDeContexte: undefined,
+      uid: departementCode,
+    }))
+
+    // THEN
+    const noteDeContexteRecord = await prisma.noteDeContexteRecord.findUnique({
+      where: { gouvernanceDepartementCode: departementCode },
+    })
+    expect(noteDeContexteRecord).toBeNull()
+  })
 })
