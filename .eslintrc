@@ -224,13 +224,33 @@
   },
   "overrides": [
     {
+      "files": ["**/*"],
+      "excludedFiles": ["src/app/**/*", "seeds/**/*"],
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "message": "La date doit être injectée dans un controller",
+            "selector": "NewExpression[callee.name='Date'][arguments.length=0]"
+          }
+        ]
+      }
+    },
+    {
       "files": ["**/*.test.ts?(x)"],
       "extends": ["plugin:vitest/all"],
       "rules": {
+        "func-style": "off",
+        "no-restricted-syntax": [
+          "error",
+          {
+            "message": "Utiliser plutôt epochTime",
+            "selector": "NewExpression[callee.name='Date']"
+          }
+        ],
+        "no-undef": "off",
         "@typescript-eslint/class-methods-use-this": "off",
         "@typescript-eslint/unbound-method": "off",
-        "func-style": "off",
-        "no-undef": "off",
         "vitest/max-expects": "off",
         "vitest/no-conditional-expect": "off",
         "vitest/no-hooks": "off",

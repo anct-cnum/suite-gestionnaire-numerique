@@ -179,6 +179,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               setIsDrawerOpen(false)
             }}
             comite={gouvernanceViewModel.comiteARemplir}
+            dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
             id={drawerComiteId}
             labelId={labelComiteId}
             uidGouvernance={gouvernanceViewModel.uid}
@@ -205,6 +206,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
             >
               <ComitologieRemplie
                 comites={gouvernanceViewModel.comites}
+                dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
                 uidGouvernance={gouvernanceViewModel.uid}
               />
             </SectionRemplie>

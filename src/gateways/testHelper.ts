@@ -88,7 +88,7 @@ export function gouvernanceRecordFactory(
     editeurNotePriveeId: 'userFooId',
     notePrivee: {
       contenu: 'un contenu quelconque',
-      derniereEdition: '2000-01-01T00:00:00.000Z',
+      derniereEdition: '1970-01-01T00:00:00.000Z',
     },
     ...override,
   }

@@ -6,11 +6,11 @@ import Icon from '@/components/shared/Icon/Icon'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import TextArea from '@/components/shared/TextArea/TextArea'
 import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
-import { formatForInputDate } from '@/presenters/shared/date'
 
 export default function FormulaireComite({
   children,
   comite,
+  dateAujourdhui,
   label,
   labelId,
   validerFormulaire,
@@ -56,7 +56,7 @@ export default function FormulaireComite({
       <div className="fr-col-6 fr-mb-3w">
         <Datepicker
           defaultValue={comite.date}
-          min={formatForInputDate(new Date())}
+          min={dateAujourdhui}
           name="date"
         >
           Date du prochain comité
@@ -82,6 +82,7 @@ export default function FormulaireComite({
 
 type Props = PropsWithChildren<Readonly<{
   comite: ComiteViewModel
+  dateAujourdhui: string
   label: string
   labelId: string
   validerFormulaire(event: FormEvent<HTMLFormElement>): void

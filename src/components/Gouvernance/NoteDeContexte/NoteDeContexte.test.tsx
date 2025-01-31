@@ -5,9 +5,8 @@ import { vi } from 'vitest'
 import Gouvernance from '../Gouvernance'
 import { presserLeBouton, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
-
-const now = new Date('2024-09-06')
 
 const mockRichTextEditor = {
   contenu: '',
@@ -126,7 +125,7 @@ describe('note de contexte', () => {
     expect(editeurDeTextEnrichi.innerHTML).toBe('<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <strong>bold</strong></p>')
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
-    const modifierPar = within(drawer).getByText('Modifié le 06/09/2024 par Jean Deschamps')
+    const modifierPar = within(drawer).getByText('Modifié le 01/01/1970 par Jean Deschamps')
     expect(modifierPar).toBeInTheDocument()
   })
 
@@ -196,19 +195,22 @@ describe('note de contexte', () => {
   })
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ noteDeContexte: undefined }), now)
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory({ noteDeContexte: undefined }),
+      epochTime
+    )
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
   }
 
   function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       noteDeContexte: {
-        dateDeModification: new Date('2024-09-06'),
+        dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
         texte: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
       },
-    }), now)
+    }), epochTime)
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
   }
 

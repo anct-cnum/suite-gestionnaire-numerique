@@ -96,7 +96,7 @@ describe('gouvernance repository', () => {
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
-        dateDeModification: new Date('2000-01-01'),
+        dateDeModification: epochTime,
         uidEditeur: new UtilisateurUid({
           email: 'martin.tartempion@example.net',
           value: 'userFooId',
@@ -124,7 +124,7 @@ describe('gouvernance repository', () => {
       editeurNotePriveeId: null,
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
-        derniereEdition: new Date('2000-01-01'),
+        derniereEdition: epochTime,
         editeurId: 'userFooId',
         gouvernanceDepartementCode: '75',
       },
@@ -243,7 +243,7 @@ describe('gouvernance repository', () => {
     await repository.update(gouvernanceFactory({
       notePrivee: {
         contenu: 'un autre contenu quelconque',
-        dateDeModification: new Date('2000-01-01'),
+        dateDeModification: epochTime,
         uidEditeur: new UtilisateurUid(utilisateurFactory({
           uid: {
             email: 'userFooId2@example.com',
@@ -261,7 +261,7 @@ describe('gouvernance repository', () => {
       editeurNotePriveeId: 'userFooId2',
       notePrivee: {
         contenu: 'un autre contenu quelconque',
-        derniereEdition: new Date('2000-01-01').toISOString(),
+        derniereEdition: epochTime.toISOString(),
       },
     }))
     expect(modifiedRecords[1]).toStrictEqual(gouvernanceRecordFactory({

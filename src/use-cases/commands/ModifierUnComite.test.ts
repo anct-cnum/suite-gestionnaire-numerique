@@ -6,7 +6,7 @@ import { Comite } from '@/domain/Comite'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay, invalidDate } from '@/shared/testHelper'
 
 describe('modifier un comité', () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('modifier un comité', () => {
     {
       commentaire,
       date,
-      expectedDate: new Date(date),
+      expectedDate: epochTime,
       frequence: frequenceValide,
       intention: 'complètement',
       type: typeValide,
@@ -41,7 +41,7 @@ describe('modifier un comité', () => {
     type,
   }) => {
     // GIVEN
-    const dateDeModification = new Date('2024-01-01')
+    const dateDeModification = epochTime
     const modifierUnComite = new ModifierUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
@@ -68,7 +68,7 @@ describe('modifier un comité', () => {
       comiteFactory({
         commentaire,
         date: expectedDate,
-        dateDeCreation: new Date(epochTime),
+        dateDeCreation: epochTime,
         dateDeModification,
         frequence,
         type,
@@ -87,7 +87,7 @@ describe('modifier un comité', () => {
   it.each([
     {
       date,
-      dateDeModification: date,
+      dateDeModification: epochTime,
       expectedFailure: 'frequenceInvalide',
       frequence: 'frequenceInvalide',
       intention: 'd’une fréquence invalide',
@@ -95,7 +95,7 @@ describe('modifier un comité', () => {
     },
     {
       date,
-      dateDeModification: date,
+      dateDeModification: epochTime,
       expectedFailure: 'typeInvalide',
       frequence: frequenceValide,
       intention: 'd’un type invalide',
@@ -103,7 +103,7 @@ describe('modifier un comité', () => {
     },
     {
       date: 'dateDuComiteInvalide',
-      dateDeModification: date,
+      dateDeModification: epochTime,
       expectedFailure: 'dateDuComiteInvalide',
       frequence: frequenceValide,
       intention: 'de la date invalide',
@@ -111,15 +111,15 @@ describe('modifier un comité', () => {
     },
     {
       date,
-      dateDeModification: 'dateDeModificationInvalide',
+      dateDeModification: invalidDate,
       expectedFailure: 'dateDeModificationInvalide',
       frequence: frequenceValide,
       intention: 'de la date de modification invalide',
       type: typeValide,
     },
     {
-      date: '2024-01-01',
-      dateDeModification: '2024-01-02',
+      date,
+      dateDeModification: epochTimePlusOneDay,
       expectedFailure: 'dateDuComiteDoitEtreDansLeFutur',
       frequence: frequenceValide,
       intention: 'de la date de comité qui est dans le passé',
@@ -131,7 +131,7 @@ describe('modifier un comité', () => {
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
-      new Date(dateDeModification)
+      dateDeModification
     )
 
     // WHEN
@@ -262,7 +262,7 @@ describe('modifier un comité', () => {
 })
 
 const commentaire = 'un commentaire'
-const date = '2024-01-01'
+const date = epochTime.toISOString()
 const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
 const uidComite = 'comiteFooId'

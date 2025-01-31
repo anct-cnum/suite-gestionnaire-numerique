@@ -1,10 +1,11 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
 import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
+import { epochTime, epochTimeMinusOneDay, epochTimeMinusTwoDays, epochTimePlusOneDay } from '@/shared/testHelper'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('mes utilisateurs', () => {
@@ -153,7 +154,7 @@ describe('mes utilisateurs', () => {
     expect(boutonDrawer).toHaveAttribute('aria-controls', 'drawer-details-utilisateur')
     expect(columnsBody[2].textContent).toBe('martin.tartempion@example.net')
     expect(columnsBody[3].textContent).toBe('Administrateur dispositif')
-    expect(columnsBody[4].textContent).toBe('05/03/2024')
+    expect(columnsBody[4].textContent).toBe('02/01/1970')
     expect(columnsBody[5].textContent).toBe('Activé')
   })
 
@@ -167,7 +168,7 @@ describe('mes utilisateurs', () => {
     const boutonDrawer = within(columnsBody[1]).getByRole('button', { name: 'Julien Deschamps' })
     expect(boutonDrawer).toHaveAttribute('type', 'button')
     expect(boutonDrawer).toHaveAttribute('aria-controls', 'drawer-renvoyer-invitation')
-    expect(columnsBody[4].textContent).toBe('invité le 12/02/2024')
+    expect(columnsBody[4].textContent).toBe('invité le 30/12/1969')
     expect(columnsBody[5].textContent).toBe('En attente')
   })
 
@@ -195,7 +196,7 @@ describe('mes utilisateurs', () => {
     expect(supprimer).toBeEnabled()
   })
 
-  it('quand je clique sur un utilisateur actif alors ses détails s’affichent dans un drawer', async () => {
+  it('quand je clique sur un utilisateur actif alors ses détails s’affichent dans un drawer', () => {
     // GIVEN
     afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
@@ -203,7 +204,7 @@ describe('mes utilisateurs', () => {
     jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Martin Tartempion' })
+    const drawerDetailsUtilisateur = screen.getByRole('dialog', { name: 'Martin Tartempion' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -223,7 +224,7 @@ describe('mes utilisateurs', () => {
 
     const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
     expect(derniereConnexionLabel).toBeInTheDocument()
-    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('05/03/2024')
+    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('02/01/1970')
     expect(derniereConnexion).toBeInTheDocument()
 
     const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
@@ -246,7 +247,7 @@ describe('mes utilisateurs', () => {
   })
 
   describe('quand je clique sur un utilisateur en attente alors s’affiche le drawer pour renvoyer une invitation', () => {
-    it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', async () => {
+    it('contenant les informations d’invitation ainsi que le bouton pour réinviter l’utilisateur', () => {
       // GIVEN
       afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
 
@@ -254,8 +255,8 @@ describe('mes utilisateurs', () => {
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
 
       // THEN
-      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
-      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 12/02/2024' })
+      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée le 30/12/1969' })
+      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 30/12/1969' })
       expect(titre).toBeInTheDocument()
 
       const emailLabel = within(drawerRenvoyerInvitation).getByText('Adresse électronique')
@@ -271,11 +272,11 @@ describe('mes utilisateurs', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherMesUtilisateurs([utilisateurActifReadModel, utilisateurEnAttenteReadModel])
+      afficherMesUtilisateurs([utilisateurEnAttenteDHierReadModel])
 
       // WHEN
-      jOuvreLaReinvitation('Julien Deschamps')
-      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      jOuvreLaReinvitation('Stephane Raymond')
+      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée hier' })
       jeFermeLaReinvitation()
 
       // THEN
@@ -289,19 +290,17 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
-      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 12/02/2024' })
+      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 30/12/1969' })
       jeRenvoieLInvitation()
 
       // THEN
-      await waitFor(() => {
-        expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
-      })
-      expect(drawer).not.toBeVisible()
-      const notification = screen.getByRole('alert')
+      expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
+      const notification = await screen.findByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
+      expect(drawer).not.toBeVisible()
     })
 
-    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', async () => {
+    it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', () => {
       // GIVEN
       afficherMesUtilisateurs([utilisateurEnAttenteDAujourdhuiReadModel])
 
@@ -309,12 +308,12 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Sebastien Palat')
 
       // THEN
-      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée aujourd’hui' })
+      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée aujourd’hui' })
       const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée aujourd’hui' })
       expect(titre).toBeInTheDocument()
     })
 
-    it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', async () => {
+    it('si l’invitation a été envoyée hier alors le titre affiché est "Invitation envoyée hier"', () => {
       // GIVEN
       afficherMesUtilisateurs([utilisateurEnAttenteDHierReadModel])
 
@@ -322,13 +321,13 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Stephane Raymond')
 
       // THEN
-      const drawerRenvoyerInvitation = await screen.findByRole('dialog', { name: 'Invitation envoyée hier' })
+      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée hier' })
       const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée hier' })
       expect(titre).toBeInTheDocument()
     })
   })
 
-  it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', async () => {
+  it('quand je clique sur un utilisateur sans téléphone alors ses détails s’affichent sans le téléphone dans un drawer', () => {
     // GIVEN
     afficherMesUtilisateurs([utilisateurActifSansTelephoneVideReadModel])
 
@@ -336,7 +335,7 @@ describe('mes utilisateurs', () => {
     jOuvreLesDetailsDunUtilisateur('Paul Provost')
 
     // THEN
-    const drawerDetailsUtilisateur = await screen.findByRole('dialog', { name: 'Paul Provost' })
+    const drawerDetailsUtilisateur = screen.getByRole('dialog', { name: 'Paul Provost' })
     const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Paul Provost' })
     expect(prenomEtNom).toBeInTheDocument()
     const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
@@ -356,7 +355,7 @@ describe('mes utilisateurs', () => {
 
     const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
     expect(derniereConnexionLabel).toBeInTheDocument()
-    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('05/03/2024')
+    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('31/12/1969')
     expect(derniereConnexion).toBeInTheDocument()
 
     const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
@@ -432,7 +431,7 @@ describe('mes utilisateurs', () => {
 
   it('quand j’affiche au plus 10 utilisateurs alors la pagination ne s’affiche pas', () => {
     // GIVEN
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', 10, rolesAvecStructure)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([utilisateurActifReadModel, utilisateurEnAttenteReadModel], 'fooId', 10, rolesAvecStructure, epochTime)
 
     // WHEN
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />)
@@ -494,7 +493,7 @@ function afficherMesUtilisateurs(
   mesUtilisateursReadModel = [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
   options?: Partial<Parameters<typeof renderComponent>[1]>
 ): void {
-  const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, 'fooId', 11, rolesAvecStructure)
+  const mesUtilisateursViewModel = mesUtilisateursPresenter(mesUtilisateursReadModel, 'fooId', 11, rolesAvecStructure, epochTime)
   renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
 }
 
@@ -513,8 +512,8 @@ function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>; rowsBody: Read
 }
 
 const utilisateurActifReadModel = utilisateurReadModelFactory({
-  derniereConnexion: new Date('2024-03-05'),
-  inviteLe: new Date('2024-03-01'),
+  derniereConnexion: epochTimePlusOneDay,
+  inviteLe: epochTimeMinusOneDay,
   isSuperAdmin: true,
   role: {
     categorie: 'anct',
@@ -528,7 +527,7 @@ const utilisateurActifReadModel = utilisateurReadModelFactory({
 
 const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
   email: 'julien.deschamps@example.com',
-  inviteLe: new Date('2024-02-12'),
+  inviteLe: epochTimeMinusTwoDays,
   isActive: false,
   nom: 'Deschamps',
   prenom: 'Julien',
@@ -537,23 +536,22 @@ const utilisateurEnAttenteReadModel = utilisateurReadModelFactory({
 
 const utilisateurEnAttenteDAujourdhuiReadModel = utilisateurReadModelFactory({
   email: 'sebastien.palat@example.net',
-  inviteLe: new Date(),
+  inviteLe: epochTime,
   isActive: false,
   nom: 'Palat',
   prenom: 'Sebastien',
 })
 
-const date = new Date()
 const utilisateurEnAttenteDHierReadModel = utilisateurReadModelFactory({
   email: 'stephane.raymond@example.net',
-  inviteLe: new Date(date.setDate(date.getDate() - 1)),
+  inviteLe: epochTimeMinusOneDay,
   isActive: false,
   nom: 'Raymond',
   prenom: 'Stephane',
 })
 
 const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
-  derniereConnexion: new Date('2024-03-05'),
+  derniereConnexion: epochTimeMinusOneDay,
   email: 'paul.provost@example.net',
   nom: 'Provost',
   prenom: 'Paul',

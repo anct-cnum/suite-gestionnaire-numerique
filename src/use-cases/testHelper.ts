@@ -4,7 +4,7 @@ import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 
 export function utilisateurReadModelFactory(
   override?: Partial<UnUtilisateurReadModel>
@@ -65,8 +65,8 @@ export function gouvernanceReadModelFactory(
       },
       {
         commentaire: 'commentaire',
-        date: new Date('2024-03-01'),
-        derniereEdition: new Date('2024-02-01'),
+        date: epochTime,
+        derniereEdition: epochTimeMinusOneDay,
         frequence: 'trimestrielle',
         id: 2,
         nomEditeur: 'Tartempion',

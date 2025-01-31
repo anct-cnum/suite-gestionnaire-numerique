@@ -10,6 +10,7 @@ export function gouvernancePresenter(
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
     comiteARemplir,
+    dateAujourdhui: formatForInputDate(now),
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
@@ -32,6 +33,7 @@ export function gouvernancePresenter(
 export type GouvernanceViewModel = Readonly<{
   comites?: ReadonlyArray<ComiteResumeViewModel>
   comiteARemplir: ComiteViewModel
+  dateAujourdhui: string
   departement: string
   isVide: boolean
   notePrivee?: Readonly<{
