@@ -110,6 +110,19 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
           gouvernanceDepartementCode: gouvernance.state.uid.value,
         },
       })
+    } else {
+      const noteDeContexteASupprimer = await this.#noteDeContexteDataResource.findUnique({
+        where: {
+          gouvernanceDepartementCode: gouvernance.state.uid.value,
+        },
+      })
+      if (noteDeContexteASupprimer) {
+        await this.#noteDeContexteDataResource.delete({
+          where: {
+            gouvernanceDepartementCode: gouvernance.state.uid.value,
+          },
+        })
+      }
     }
   }
 }
