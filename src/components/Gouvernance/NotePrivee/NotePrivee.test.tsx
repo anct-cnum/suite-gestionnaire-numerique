@@ -224,6 +224,21 @@ describe('note privée', () => {
       expect(enregistrer).toBeEnabled()
     })
 
+    it('puis que je veux supprimer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      const supprimerUneNotePriveeAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherUneGouvernanceAvecNotePrivee({ pathname: '/gouvernance/11', supprimerUneNotePriveeAction })
+
+      // WHEN
+      jouvreLeFormulairePourModifierUneNotePrivee()
+      jEffaceLaNotePrivee()
+      jEnregistreLaNotePrivee()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+    })
+
     function jouvreLeFormulairePourModifierUneNotePrivee(): void {
       presserLeBouton('Modifier la note')
     }

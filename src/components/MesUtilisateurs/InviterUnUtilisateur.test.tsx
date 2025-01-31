@@ -4,6 +4,7 @@ import MesUtilisateurs from './MesUtilisateurs'
 import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, presserLeBouton, saisirLeTexte, selectionnerLElement } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
+import { epochTime } from '@/shared/testHelper'
 
 describe('inviter un utilisateur', () => {
   it('en tant qu’administrateur, quand je clique sur le bouton inviter, alors le drawer s’ouvre avec tous les rôles sélectionnables', async () => {
@@ -434,7 +435,7 @@ describe('inviter un utilisateur', () => {
   }
 
   function afficherMesUtilisateurs(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 11, rolesAvecStructure)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', 11, rolesAvecStructure, epochTime)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, {
       sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
         role: {

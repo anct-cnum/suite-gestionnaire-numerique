@@ -11,7 +11,7 @@ import {
 import prisma from '../../prisma/prismaClient'
 import { departementFactory, utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 const uidUtilisateurValue = 'userFooId'
 const uidUtilisateur = new UtilisateurUid({ email: 'martin.tartempion@example.net', value: uidUtilisateurValue })
@@ -188,7 +188,7 @@ describe('utilisateur repository', () => {
           expectedIsActive: false,
         },
         {
-          derniereConnexion: new Date(1),
+          derniereConnexion: epochTimePlusOneDay,
           desc: 'un utilisateur s’étant déjà connecté est marqué actif',
           expectedIsActive: true,
         },

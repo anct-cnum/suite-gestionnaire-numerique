@@ -6,7 +6,7 @@ import { Comite } from '@/domain/Comite'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay, invalidDate } from '@/shared/testHelper'
 
 describe('ajouter un comité à une gouvernance', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('ajouter un comité à une gouvernance', () => {
     {
       commentaire,
       date,
-      expectedDate: new Date(date),
+      expectedDate: epochTime,
       frequence: frequenceValide,
       intention: 'complètement',
       type: typeValide,
@@ -40,7 +40,7 @@ describe('ajouter un comité à une gouvernance', () => {
     type,
   }) => {
     // GIVEN
-    const dateDeCreation = new Date('2024-01-01')
+    const dateDeCreation = epochTime
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
@@ -87,7 +87,7 @@ describe('ajouter un comité à une gouvernance', () => {
   it.each([
     {
       date,
-      dateDeCreation: date,
+      dateDeCreation: epochTime,
       expectedFailure: 'frequenceInvalide',
       frequence: 'frequenceInvalide',
       intention: 'd’une fréquence invalide',
@@ -95,7 +95,7 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date,
-      dateDeCreation: date,
+      dateDeCreation: epochTime,
       expectedFailure: 'typeInvalide',
       frequence: frequenceValide,
       intention: 'd’un type invalide',
@@ -103,7 +103,7 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date: 'dateDuComiteInvalide',
-      dateDeCreation: date,
+      dateDeCreation: epochTime,
       expectedFailure: 'dateDuComiteInvalide',
       frequence: frequenceValide,
       intention: 'de la date invalide',
@@ -111,15 +111,15 @@ describe('ajouter un comité à une gouvernance', () => {
     },
     {
       date,
-      dateDeCreation: 'dateDeCreationInvalide',
+      dateDeCreation: invalidDate,
       expectedFailure: 'dateDeCreationInvalide',
       frequence: frequenceValide,
       intention: 'de la date de création invalide',
       type: typeValide,
     },
     {
-      date: '2024-01-01',
-      dateDeCreation: '2024-01-02',
+      date,
+      dateDeCreation: epochTimePlusOneDay,
       expectedFailure: 'dateDuComiteDoitEtreDansLeFutur',
       frequence: frequenceValide,
       intention: 'de la date de comité qui est dans le passé',
@@ -131,7 +131,7 @@ describe('ajouter un comité à une gouvernance', () => {
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       new ComiteRepositorySpy(),
-      new Date(dateDeCreation)
+      dateDeCreation
     )
 
     // WHEN
@@ -230,7 +230,7 @@ describe('ajouter un comité à une gouvernance', () => {
 })
 
 const commentaire = 'un commentaire'
-const date = '2024-01-01'
+const date = epochTime.toISOString()
 const frequenceValide = 'mensuelle'
 const typeValide = 'strategique'
 const uidGouvernance = 'gouvernanceFooId'

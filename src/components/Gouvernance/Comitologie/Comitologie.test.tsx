@@ -1,15 +1,15 @@
 import { within, screen, fireEvent, waitFor } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { FrozenDate, presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
+import { presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('comitologie', () => {
   describe('quand je clique sur ajouter une comitologie,', () => {
     it('alors le drawer pour ajouter un comité s’affiche', () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       afficherUneGouvernance()
 
       // WHEN
@@ -50,7 +50,7 @@ describe('comitologie', () => {
       const date = within(formulaire).getByLabelText('Date du prochain comité')
       expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
-      expect(date).toHaveAttribute('min', '1996-04-15')
+      expect(date).toHaveAttribute('min', '1970-01-02')
 
       const commentaire = within(formulaire).getByLabelText('Laissez ici un commentaire général sur le comité', { selector: 'textarea' })
       expect(commentaire).not.toBeRequired()
@@ -76,7 +76,6 @@ describe('comitologie', () => {
 
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour et le formulaire est réinitialisé', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
@@ -85,7 +84,7 @@ describe('comitologie', () => {
       const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
       jeSelectionneUnType('Technique')
       jeSelectionneUneFrequence('Annuelle')
-      const date = jeChoisisUneDate(ajouterUnComiteDrawer, '1996-04-15')
+      const date = jeChoisisUneDate(ajouterUnComiteDrawer, '1970-01-02')
       const commentaire = jeTapeUnCommentaire(ajouterUnComiteDrawer, 'commentaire')
       const enregistrer = jEnregistreLeComite()
 
@@ -101,7 +100,7 @@ describe('comitologie', () => {
       expect(ajouterUnComiteDrawer).not.toBeVisible()
       expect(ajouterUnComiteAction).toHaveBeenCalledWith({
         commentaire: 'commentaire',
-        date: '1996-04-15',
+        date: '1970-01-02',
         frequence: 'annuelle',
         path: '/gouvernance/11',
         type: 'technique',
@@ -115,7 +114,6 @@ describe('comitologie', () => {
 
     it('puis que je ne remplis pas la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
@@ -160,7 +158,6 @@ describe('comitologie', () => {
   describe('quand je clique sur un comité,', () => {
     it('alors le drawer des détails du comité s’affiche', () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       afficherUneGouvernance()
 
       // WHEN
@@ -200,8 +197,8 @@ describe('comitologie', () => {
       const date = within(formulaire).getByLabelText('Date du prochain comité')
       expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
-      expect(date).toHaveAttribute('min', '1996-04-15')
-      expect(date).toHaveValue('2024-03-01')
+      expect(date).toHaveAttribute('min', '1970-01-02')
+      expect(date).toHaveValue('1970-01-01')
 
       const commentaire = within(formulaire).getByLabelText('Laissez ici un commentaire général sur le comité', { selector: 'textarea' })
       expect(commentaire).not.toBeRequired()
@@ -217,7 +214,7 @@ describe('comitologie', () => {
       expect(enregistrer).toHaveAttribute('type', 'submit')
       expect(enregistrer).not.toBeDisabled()
 
-      const modifierPar = screen.getByText('Modifié le 01/02/2024 par Martin Tartempion')
+      const modifierPar = screen.getByText('Modifié le 31/12/1969 par Martin Tartempion')
       expect(modifierPar).toBeInTheDocument()
     })
 
@@ -236,7 +233,6 @@ describe('comitologie', () => {
 
     it('puis que je le modifie et que je l’enregistre, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
@@ -270,7 +266,6 @@ describe('comitologie', () => {
 
     it('puis que je modifie sans remplir la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
@@ -297,12 +292,13 @@ describe('comitologie', () => {
 
     it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
+      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      jeChoisisUneDate(modifierUnComiteDrawer, epochTimePlusOneDay.toISOString())
       jEnregistreLeComite()
 
       // THEN
@@ -312,7 +308,6 @@ describe('comitologie', () => {
 
     it('puis que je le supprime, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
 
@@ -338,7 +333,6 @@ describe('comitologie', () => {
 
     it('puis que je le supprime mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      vi.stubGlobal('Date', FrozenDate)
       const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
       afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
 
@@ -400,9 +394,7 @@ describe('comitologie', () => {
   }
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(), now)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(), epochTimePlusOneDay)
     renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
   }
-
-  const now = new Date('2024-09-06')
 })

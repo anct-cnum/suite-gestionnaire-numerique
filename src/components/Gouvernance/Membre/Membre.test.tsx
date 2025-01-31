@@ -4,6 +4,7 @@ import { fireEvent, within, screen, render, cleanup } from '@testing-library/rea
 import Gouvernance from '../Gouvernance'
 import { matchWithoutMarkup } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres', () => {
@@ -534,7 +535,7 @@ describe('membres', () => {
 })
 
 function afficherGouvernance(gouvernance?: object): void {
-  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance), new Date())
+  const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance), epochTime)
   render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 }
 

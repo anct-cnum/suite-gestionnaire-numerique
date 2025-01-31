@@ -108,7 +108,7 @@ describe('inviter un utilisateur', () => {
       '$desc puis un e-mail lui est envoyé',
       async ({ utilisateurCourant, utilisateurAInviter }) => {
         // GIVEN
-        const date = new Date('2024-01-01')
+        const date = epochTime
         const repository = new RepositorySpy(
           utilisateurFactory({
             codeOrganisation: utilisateurCourant.codeOrganisation,
@@ -207,7 +207,7 @@ describe('inviter un utilisateur', () => {
 
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
-    const date = new Date('2024-01-01')
+    const date = epochTime
     const utilisateurACreer = utilisateurFactory({
       derniereConnexion: undefined,
       inviteLe: date,

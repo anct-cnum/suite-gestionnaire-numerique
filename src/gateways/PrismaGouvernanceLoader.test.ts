@@ -1,7 +1,7 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
 import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 describe('gouvernance loader', () => {
@@ -42,8 +42,8 @@ describe('gouvernance loader', () => {
         // @ts-expect-error
         {
           commentaire: 'commentaire',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -52,8 +52,8 @@ describe('gouvernance loader', () => {
         // @ts-expect-error
         {
           commentaire: 'commentaire',
-          date: new Date('2024-08-01'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTimeMinusOneDay,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -156,8 +156,8 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -177,7 +177,7 @@ describe('gouvernance loader', () => {
         {
           commentaire: 'commentaire',
           date: undefined,
-          derniereEdition: new Date('2024-11-23'),
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           periodicite: 'trimestrielle',
@@ -211,9 +211,9 @@ describe('gouvernance loader', () => {
     })
     await prisma.comiteRecord.create({
       data: {
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -233,8 +233,8 @@ describe('gouvernance loader', () => {
       [
         {
           commentaire: '',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -266,9 +266,9 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -287,8 +287,8 @@ describe('gouvernance loader', () => {
       [
         {
           commentaire: 'commentaire',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Tartempion',
           periodicite: 'trimestrielle',
@@ -462,9 +462,9 @@ async function creerComites(): Promise<void> {
   await prisma.comiteRecord.create({
     data: {
       commentaire: 'commentaire',
-      creation: new Date('2024-11-23'),
-      date: new Date('2024-11-23'),
-      derniereEdition: new Date('2024-11-23'),
+      creation: epochTime,
+      date: epochTime,
+      derniereEdition: epochTime,
       editeurUtilisateurId: 'userFooId',
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: '93',
@@ -474,9 +474,9 @@ async function creerComites(): Promise<void> {
   await prisma.comiteRecord.create({
     data: {
       commentaire: 'commentaire',
-      creation: new Date('2024-11-23'),
-      date: new Date('2024-08-01'),
-      derniereEdition: new Date('2024-11-23'),
+      creation: epochTime,
+      date: epochTimeMinusOneDay,
+      derniereEdition: epochTime,
       editeurUtilisateurId: 'userFooId',
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: '93',

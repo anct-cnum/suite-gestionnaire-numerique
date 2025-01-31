@@ -15,7 +15,7 @@ describe('modifier une note privée à une gouvernance', () => {
 
   it('étant donné une gouvernance existante, quand une note privée est modifiée par son gestionnaire, alors elle est modifiée', async () => {
     // GIVEN
-    const dateDeModification = new Date('3000-01-01')
+    const dateDeModification = epochTime
     const uidEditeur = 'userFooId2'
     const modifierNotePrivee = new ModifierUneNotePrivee(
       new GouvernanceRepositorySpy(),
