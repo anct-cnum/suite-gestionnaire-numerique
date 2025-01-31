@@ -534,7 +534,7 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: new Date('2024-01-01'), nom: 'a', ssoId }),
+        data: utilisateurRecordFactory({ derniereConnexion: epochTime, nom: 'a', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),
@@ -558,9 +558,8 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs actifs alors je trouve tous ceux qui sont actifs', async () => {
       // GIVEN
-      const derniereConnexion = new Date('2024-01-01')
       await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion, nom: 'a', ssoId }),
+        data: utilisateurRecordFactory({ derniereConnexion: epochTime, nom: 'a', ssoId }),
       })
       await prisma.utilisateurRecord.create({
         data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),

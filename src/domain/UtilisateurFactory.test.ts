@@ -5,7 +5,7 @@ import { GestionnaireRegion } from './GestionnaireRegion'
 import { GestionnaireStructure } from './GestionnaireStructure'
 import { Utilisateur } from './Utilisateur'
 import { UtilisateurFactory } from './UtilisateurFactory'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay, invalidDate } from '@/shared/testHelper'
 
 describe('utilisateur factory', () => {
   it.each([
@@ -105,7 +105,7 @@ describe('utilisateur factory', () => {
       expectedIsActive: false,
     },
     {
-      derniereConnexion: new Date(1),
+      derniereConnexion: epochTimePlusOneDay,
       desc: 'un utilisateur s’étant déjà connecté est créé comme actif',
       expectedIsActive: true,
     },
@@ -162,7 +162,7 @@ describe('utilisateur factory', () => {
   it('la date de dernière connexion doit être une date valide', () => {
     // GIVEN
     const utilisateurParams = {
-      derniereConnexion: new Date('foo'),
+      derniereConnexion: invalidDate,
       emailDeContact: 'martin.tartempion@example.net',
       inviteLe: epochTime,
       isSuperAdmin: false,
@@ -183,7 +183,7 @@ describe('utilisateur factory', () => {
     const utilisateurParams = {
       derniereConnexion: epochTime,
       emailDeContact: 'martin.tartempion@example.net',
-      inviteLe: new Date('foo'),
+      inviteLe: invalidDate,
       isSuperAdmin: false,
       nom: 'Tartempion',
       prenom: 'Martin',

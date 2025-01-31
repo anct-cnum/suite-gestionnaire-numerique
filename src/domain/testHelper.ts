@@ -40,7 +40,7 @@ export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouverna
     },
     notePrivee: {
       contenu: 'un contenu quelconque',
-      dateDeModification: new Date('2000-01-01'),
+      dateDeModification: epochTime,
       uidEditeur: new UtilisateurUid(utilisateurFactory().state.uid),
     },
     uid: 'gouvernanceFooId',

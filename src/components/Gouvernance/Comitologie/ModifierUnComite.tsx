@@ -9,6 +9,7 @@ import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ModifierUnComite({
   comite,
+  dateAujourdhui,
   id,
   label,
   labelId,
@@ -22,6 +23,7 @@ export default function ModifierUnComite({
     <>
       <FormulaireComite
         comite={comite}
+        dateAujourdhui={dateAujourdhui}
         label={label}
         labelId={labelId}
         validerFormulaire={modifierUnComite}
@@ -99,6 +101,7 @@ export default function ModifierUnComite({
 
 type Props = Readonly<{
   comite: ComiteViewModel
+  dateAujourdhui: string
   id: string
   label: string
   labelId: string

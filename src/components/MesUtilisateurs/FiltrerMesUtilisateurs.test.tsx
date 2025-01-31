@@ -4,6 +4,7 @@ import { clearFirst } from 'react-select-event'
 import MesUtilisateurs from './MesUtilisateurs'
 import { cocherLaCase, presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, structuresFetch, selectionnerLElement } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
+import { epochTime } from '@/shared/testHelper'
 
 describe('filtrer mes utilisateurs', () => {
   it('quand je clique sur le bouton pour filtrer alors les filtres apparaissent', () => {
@@ -399,7 +400,7 @@ describe('filtrer mes utilisateurs', () => {
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     totalUtilisateur = 11
   ): void {
-    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure)
+    const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure, epochTime)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
   }
 })
