@@ -1,6 +1,7 @@
 // Stryker disable all
 import { Prisma } from '@prisma/client'
 
+import prisma from '../../prisma/prismaClient'
 import { epochTime } from '@/shared/testHelper'
 
 export function regionRecordFactory(
@@ -119,4 +120,105 @@ export function noteDeContexteRecordFactory(
     gouvernanceDepartementCode: '11',
     ...override,
   }
+}
+
+export async function ajouterUneRegion(
+  override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.regionRecord.create({
+    data: regionRecordFactory({
+      code: '84',
+      nom: 'Auvergne-Rhône-Alpes',
+      ...override,
+    }),
+  })
+}
+
+export async function ajouterUnDepartement(
+  override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.departementRecord.create({
+    data: departementRecordFactory({
+      code: '69',
+      nom: 'Rhône',
+      regionCode: '84',
+      ...override,
+    }),
+  })
+}
+
+export async function ajouterUneGouvernance(
+  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.gouvernanceRecord.create({
+    data: {
+      departementCode: '69',
+      ...override,
+    },
+  })
+}
+
+export async function ajouterUnMembreStructure(
+  override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceStructureRecord.create({
+    data: {
+      gouvernanceDepartementCode: '69',
+      role: 'coporteur',
+      structure: 'Préfecture du Rhône',
+      ...override,
+    },
+  })
+}
+
+export async function ajouterUnMembreCommune(
+  override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceCommuneRecord.create({
+    data: {
+      commune: 'Mornant',
+      gouvernanceDepartementCode: '69',
+      role: 'cofinanceur',
+      ...override,
+    },
+  })
+}
+
+export async function ajouterUnMembreEpci(
+  override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceEpciRecord.create({
+    data: {
+      epci: 'Métropole de Lyon',
+      gouvernanceDepartementCode: '69',
+      role: 'recipiendaire',
+      ...override,
+    },
+  })
+}
+
+export async function ajouterUnMembreDepartement(
+  override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceDepartementRecord.create({
+    data: {
+      departementCode: '69',
+      gouvernanceDepartementCode: '69',
+      role: 'cofinanceur',
+      ...override,
+    },
+  })
+}
+
+export async function ajouterUnMembreSgar(
+  override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceSgarRecord.create({
+    data: {
+      gouvernanceDepartementCode: '69',
+      role: 'recipiendaire',
+      sgarCode: '84',
+      ...override,
+    },
+  })
 }
