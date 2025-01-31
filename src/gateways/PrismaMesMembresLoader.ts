@@ -21,9 +21,10 @@ export class PrismaMesMembresLoader extends MesMembresLoader {
       SELECT departement.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_departement.role) AS role FROM membre_gouvernance_departement INNER JOIN departement ON membre_gouvernance_departement."departementCode" = departement.code
       WHERE membre_gouvernance_departement."gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY departement.nom
       UNION ALL
-      SELECT region.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_sgar.role) AS role FROM membre_gouvernance_sgar INNER JOIN region ON membre_gouvernance_sgar."sgarCode" = region.code WHERE membre_gouvernance_sgar."gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY region.nom`
+      SELECT region.nom AS "nomMembre", ARRAY_AGG(membre_gouvernance_sgar.role) AS role FROM membre_gouvernance_sgar INNER JOIN region ON membre_gouvernance_sgar."sgarCode" = region.code WHERE membre_gouvernance_sgar."gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY region.nom
+      ORDER BY "nomMembre"`
 
-    const membres: MesMembresReadModel['membres'] = [
+    const membresBouchonner = [
       {
         contactReferent: {
           nom: 'Henrich',
@@ -78,10 +79,19 @@ export class PrismaMesMembresLoader extends MesMembresLoader {
         suppressionDuMembreAutorise: false,
         typologie: 'Collectivité',
       },
-    ].map((membre) => ({
-      ...membre,
-      roles: (result.find((membreDb: Membres) => membreDb.nomMembre === membre.nom)?.role ?? []) as MesMembresReadModel['roles'],
+    ]
+    const membres: MesMembresReadModel['membres'] = result.map((membreResult) => ({
+      contactReferent: {
+        nom: '',
+        prenom: '',
+      },
+      nom: '',
+      roles: membreResult.role as MesMembresReadModel['roles'],
+      suppressionDuMembreAutorise: false,
+      typologie: '',
+      ...membresBouchonner.find((membre) => membre.nom === membreResult.nomMembre),
     }))
+
     return {
       autorisations: {
         accesMembreValide: false,
