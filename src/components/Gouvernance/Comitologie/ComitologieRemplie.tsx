@@ -5,7 +5,7 @@ import Drawer from '@/components/shared/Drawer/Drawer'
 import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function ComitologieRemplie({ comites, uidGouvernance }: Props): ReactElement {
+export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvernance }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [comite, setComite] = useState(comites[0])
@@ -70,6 +70,7 @@ export default function ComitologieRemplie({ comites, uidGouvernance }: Props): 
             setIsDrawerOpen(false)
           }}
           comite={comite}
+          dateAujourdhui={dateAujourdhui}
           id={drawerModifierComiteId}
           label={`Détail du ${comite.intitule}`}
           labelId={labelModifierComiteId}
@@ -82,5 +83,6 @@ export default function ComitologieRemplie({ comites, uidGouvernance }: Props): 
 
 type Props = Readonly<{
   comites: NonNullable<GouvernanceViewModel['comites']>
+  dateAujourdhui: string
   uidGouvernance: string
 }>

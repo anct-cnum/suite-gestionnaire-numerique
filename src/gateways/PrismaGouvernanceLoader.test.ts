@@ -54,7 +54,7 @@ describe('gouvernance loader', () => {
     await prisma.noteDeContexteRecord.create({
       data: {
         contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-        derniereEdition: new Date('2024-11-23'),
+        derniereEdition: epochTime,
         editeurId: 'userFooId',
         gouvernanceDepartementCode: '93',
       },
@@ -62,9 +62,9 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: '93',
@@ -74,9 +74,9 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-08-01'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: '93',
@@ -109,8 +109,8 @@ describe('gouvernance loader', () => {
         // @ts-expect-error
         {
           commentaire: 'commentaire',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -119,8 +119,8 @@ describe('gouvernance loader', () => {
         // @ts-expect-error
         {
           commentaire: 'commentaire',
-          date: new Date('2024-08-01'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -131,7 +131,7 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       membres,
       noteDeContexte: {
-        dateDeModification: new Date('2024-11-23'),
+        dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
         texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
@@ -246,8 +246,8 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -267,7 +267,7 @@ describe('gouvernance loader', () => {
         {
           commentaire: 'commentaire',
           date: undefined,
-          derniereEdition: new Date('2024-11-23'),
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           periodicite: 'trimestrielle',
@@ -301,9 +301,9 @@ describe('gouvernance loader', () => {
     })
     await prisma.comiteRecord.create({
       data: {
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -323,8 +323,8 @@ describe('gouvernance loader', () => {
       [
         {
           commentaire: '',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
@@ -356,9 +356,9 @@ describe('gouvernance loader', () => {
     await prisma.comiteRecord.create({
       data: {
         commentaire: 'commentaire',
-        creation: new Date('2024-11-23'),
-        date: new Date('2024-11-23'),
-        derniereEdition: new Date('2024-11-23'),
+        creation: epochTime,
+        date: epochTime,
+        derniereEdition: epochTime,
         editeurUtilisateurId: 'userFooId',
         frequence: 'trimestrielle',
         gouvernanceDepartementCode: gouvernance.departementCode,
@@ -377,8 +377,8 @@ describe('gouvernance loader', () => {
       [
         {
           commentaire: 'commentaire',
-          date: new Date('2024-11-23'),
-          derniereEdition: new Date('2024-11-23'),
+          date: epochTime,
+          derniereEdition: epochTime,
           frequence: 'trimestrielle',
           nomEditeur: 'Tartempion',
           periodicite: 'trimestrielle',

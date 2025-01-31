@@ -15,7 +15,7 @@ describe('modifier une note de contexte à une gouvernance', () => {
 
   it('étant donné une gouvernance existante, quand une note de contexte est modifiée par son gestionnaire, alors elle est modifiée', async () => {
     // GIVEN
-    const dateDeModification = new Date('3000-01-01')
+    const dateDeModification = epochTime
     const uidEditeur = 'userFooId2'
     const modifierNoteDeContexte = new ModifierUneNoteDeContexte(
       new GouvernanceRepositorySpy(),

@@ -2,7 +2,7 @@ import { PrismaComiteRepository } from './PrismaComiteRepository'
 import { comiteRecordFactory, departementRecordFactory, gouvernanceRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { comiteFactory } from '@/domain/testHelper'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 describe('comité repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -163,7 +163,7 @@ describe('comité repository', () => {
       data: gouvernanceRecordFactory({ departementCode: '75' }),
     })
     await prisma.comiteRecord.create({
-      data: comiteRecordFactory({ date: epochTime, derniereEdition: new Date('1970-01-02'), editeurUtilisateurId: 'userFooId', gouvernanceDepartementCode: '75', id: 2 }),
+      data: comiteRecordFactory({ date: epochTime, derniereEdition: epochTimePlusOneDay, editeurUtilisateurId: 'userFooId', gouvernanceDepartementCode: '75', id: 2 }),
     })
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
@@ -210,9 +210,9 @@ describe('comité repository', () => {
     // WHEN
     await repository.update(comiteFactory({
       commentaire: 'deuxième commentaire',
-      date: new Date('2025-01-01'),
+      date: epochTimePlusOneDay,
       dateDeCreation: epochTime,
-      dateDeModification: new Date('2025-01-01'),
+      dateDeModification: epochTimePlusOneDay,
       frequence: 'mensuelle',
       type: 'autre',
       uid: {
@@ -236,8 +236,8 @@ describe('comité repository', () => {
     expect(comiteRecord).toMatchObject(comiteRecordFactory({
       commentaire: 'deuxième commentaire',
       creation: epochTime,
-      date: new Date('2025-01-01'),
-      derniereEdition: new Date('2025-01-01'),
+      date: epochTimePlusOneDay,
+      derniereEdition: epochTimePlusOneDay,
       editeurUtilisateurId: 'userFooId',
       frequence: 'mensuelle',
       gouvernanceDepartementCode: '75',
