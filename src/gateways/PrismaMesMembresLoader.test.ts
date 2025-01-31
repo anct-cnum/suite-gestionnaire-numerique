@@ -7,7 +7,7 @@ describe('mes membres loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('quand les membres rattachés à une gouvernance existante sont demandés, alors elle sont renvoyée', async () => {
+  it('quand les membres rattachés à une gouvernance existante sont demandés, alors elle sont renvoyée dans l’ordre alphabétique', async () => {
     // GIVEN
     await ajouterUneRegion()
     await ajouterUnDepartement()
@@ -90,98 +90,6 @@ describe('mes membres loader', () => {
           },
           nom: 'Rhône',
           roles: ['cofinanceur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité',
-        },
-      ],
-      roles: [],
-      typologies: [],
-    })
-  })
-
-  it('quand les membres rattachés à une gouvernance existante sont demandés, alors elles sont renvoyées sans qu’on s’attende à l’ordre d’insertion.', async () => {
-    // GIVEN
-    await ajouterUneRegion()
-    await ajouterUnDepartement()
-    await ajouterUneGouvernance()
-    await ajouterUnMembreCommune()
-    await ajouterUnMembreEpci()
-    await ajouterUnMembreStructure()
-    await ajouterUnMembreStructure({ structure: 'Département du Rhône' })
-    await ajouterUnMembreStructure({ role: 'cofinanceur', structure: 'Département du Rhône' })
-    await ajouterUnMembreDepartement()
-    await ajouterUnMembreSgar()
-
-    // WHEN
-    const mesMembresLoader = new PrismaMesMembresLoader(prisma)
-    const mesMembresReadModel = await mesMembresLoader.findMesMembres('69', (mesMembres) => mesMembres)
-
-    // THEN
-    expect(mesMembresReadModel).not.toStrictEqual({
-      autorisations: {
-        accesMembreValide: false,
-        ajouterUnMembre: false,
-        supprimerUnMembre: false,
-      },
-      departement: 'Rhône',
-      membres: [
-        {
-          contactReferent: {
-            nom: 'Dupont',
-            prenom: 'Valérie',
-          },
-          nom: 'Mornant',
-          roles: ['cofinanceur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité',
-        },
-        {
-          contactReferent: {
-            nom: 'Dupont',
-            prenom: 'Valérie',
-          },
-          nom: 'Métropole de Lyon',
-          roles: ['recipiendaire'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité, EPCI',
-        },
-        {
-          contactReferent: {
-            nom: 'Didier',
-            prenom: 'Durant',
-          },
-          nom: 'Département du Rhône',
-          roles: ['coporteur', 'cofinanceur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité',
-        },
-        {
-          contactReferent: {
-            nom: 'Henrich',
-            prenom: 'Laetitia',
-          },
-          nom: 'Préfecture du Rhône',
-          roles: ['coporteur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Préfecture départementale',
-        },
-        {
-          contactReferent: {
-            nom: 'Dupont',
-            prenom: 'Paul',
-          },
-          nom: 'Rhône',
-          roles: ['cofinanceur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité',
-        },
-        {
-          contactReferent: {
-            nom: 'Dupont',
-            prenom: 'Justine',
-          },
-          nom: 'Auvergne-Rhône-Alpes',
-          roles: ['recipiendaire'],
           suppressionDuMembreAutorise: false,
           typologie: 'Collectivité',
         },
