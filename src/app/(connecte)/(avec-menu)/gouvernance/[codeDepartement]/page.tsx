@@ -10,11 +10,10 @@ import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvern
 export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
   try {
     const codeDepartement = (await params).codeDepartement
-    const now = new Date()
     const gouvernanceReadModel =
        await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).get({ codeDepartement })
 
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, now)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
     return (
       <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
     )

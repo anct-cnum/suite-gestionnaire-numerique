@@ -3,9 +3,8 @@ import { within, screen, render } from '@testing-library/react'
 import Gouvernance from '../Gouvernance'
 import { presserLeBouton } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
-
-const now = new Date('2024-09-06')
 
 describe('feuille de route', () => {
   it('quand je clique sur une feuille de route, alors un drawer s’ouvre avec les détails de la feuille de route', () => {
@@ -130,7 +129,7 @@ describe('feuille de route', () => {
   }
 
   function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), now)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), epochTime)
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
   }
 })

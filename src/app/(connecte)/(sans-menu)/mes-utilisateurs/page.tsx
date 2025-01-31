@@ -76,7 +76,8 @@ export default async function MesUtilisateursController({ searchParams }: Props)
     utilisateursCourants,
     sub,
     total,
-    rolesAvecStructure
+    rolesAvecStructure,
+    new Date()
   )
 
   return (

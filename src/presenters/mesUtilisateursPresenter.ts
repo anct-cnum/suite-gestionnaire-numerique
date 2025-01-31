@@ -7,7 +7,7 @@ export function mesUtilisateursPresenter(
   uid: string,
   totalUtilisateur: number,
   rolesAvecStructure: RolesAvecStructure,
-  now = (): Date => new Date()
+  now: Date
 ): MesUtilisateursViewModel {
   return {
     displayPagination: totalUtilisateur > config.utilisateursParPage,
@@ -28,7 +28,7 @@ export function mesUtilisateursPresenter(
         },
         derniereConnexion: buildDate(monUtilisateur),
         emailDeContact: monUtilisateur.email,
-        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now()),
+        inviteLe: buildDateFrancaiseEnAttente(monUtilisateur.inviteLe, now),
         isActif: monUtilisateur.isActive,
         picto,
         prenomEtNom: `${monUtilisateur.prenom} ${monUtilisateur.nom}`,
@@ -97,15 +97,16 @@ function buildDate(utilisateurReadModel: UnUtilisateurReadModel): string {
 
 function buildDateFrancaiseEnAttente(dateDInvitation: Date, now: Date): string {
   const today = formaterEnDateFrancaise(now)
-  const yesterday = formaterEnDateFrancaise(new Date(now.setDate(now.getDate() - 1)))
+  const invitationDate = formaterEnDateFrancaise(dateDInvitation)
+  const yesterday = formaterEnDateFrancaise(new Date(new Date(now).setDate(new Date(now).getDate() - 1)))
 
-  if (formaterEnDateFrancaise(dateDInvitation) === today) {
+  if (invitationDate === today) {
     return 'Invitation envoyée aujourd’hui'
   }
 
-  if (formaterEnDateFrancaise(dateDInvitation) === yesterday) {
+  if (invitationDate === yesterday) {
     return 'Invitation envoyée hier'
   }
 
-  return `Invitation envoyée le ${formaterEnDateFrancaise(dateDInvitation)}`
+  return `Invitation envoyée le ${invitationDate}`
 }
