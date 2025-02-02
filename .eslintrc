@@ -38,6 +38,13 @@
     "multiline-comment-style": "off",
     "new-cap": ["error", { "capIsNewExceptions": ["GET", "NextAuth", "Notification"] }],
     "no-inline-comments": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "message": "Utiliser plutôt l'API React",
+        "selector": "Identifier[name=/window|document/]"
+      }
+    ],
     "no-ternary": "off",
     "no-undefined": "off",
     "no-void": ["error", { "allowAsStatement": true }],
@@ -246,6 +253,10 @@
           {
             "message": "Utiliser plutôt epochTime",
             "selector": "NewExpression[callee.name='Date']"
+          },
+          {
+            "message": "Utiliser waitFor() ou findByXXX()",
+            "selector": "Identifier[name='act']"
           }
         ],
         "no-undef": "off",

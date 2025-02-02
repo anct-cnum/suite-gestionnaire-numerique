@@ -69,7 +69,7 @@ describe('mes utilisateurs', () => {
     jeRecherche()
 
     // THEN
-    expect(spiedRouterPush).toHaveBeenCalledWith(expect.stringContaining('prenomOuNomOuEmail=martin'))
+    expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?prenomOuNomOuEmail=martin')
   })
 
   it('étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
@@ -90,7 +90,7 @@ describe('mes utilisateurs', () => {
     jeReinitialiseLaRecherche()
 
     // THEN
-    expect(spiedRouterPush).toHaveBeenCalledWith(expect.not.stringContaining('prenomOuNomOuEmail='))
+    expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs')
   })
 
   it('étant du groupe admin quand le champ de recherche est vide alors l’icône de réinitialisation n’est pas affichée', () => {

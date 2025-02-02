@@ -4,6 +4,7 @@ import { signIn } from 'next-auth/react'
 import { ReactElement } from 'react'
 
 import ProConnect from './ProConnect'
+import ExternalLink from '../shared/ExternalLink/ExternalLink'
 
 export default function Connexion({ idProvider }: Props): ReactElement {
   return (
@@ -27,14 +28,12 @@ export default function Connexion({ idProvider }: Props): ReactElement {
                 <ProConnect />
               </button>
               <p>
-                <a
+                <ExternalLink
                   href="/"
-                  rel="external noopener noreferrer"
-                  target="_blank"
                   title="Qu’est-ce que ProConnect ? (nouvelle fenêtre)"
                 >
                   Qu’est ce que ProConnect ?
-                </a>
+                </ExternalLink>
               </p>
             </div>
           </div>
