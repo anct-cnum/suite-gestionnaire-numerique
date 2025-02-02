@@ -6,6 +6,7 @@ import InformationPersonnelle from './InformationPersonnelle'
 import ModifierMonCompte from './ModifierMonCompte'
 import SupprimerMonCompte from './SupprimerMonCompte'
 import Drawer from '../shared/Drawer/Drawer'
+import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Role from '../shared/Role/Role'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
@@ -157,14 +158,12 @@ export default function MesInformationsPersonnelles(
           <p className="fr-text--sm color-grey">
             Le rôle qui vous est attribué donne accès à des fonctionnalités et des droits spécifiques.
             {' '}
-            <a
+            <ExternalLink
               href="https://aide.conseiller-numerique.gouv.fr/fr/"
-              rel="noopener external noreferrer"
-              target="_blank"
-              title="Aide - nouvelle fenêtre"
+              title="Aide"
             >
               Contacter le support
-            </a>
+            </ExternalLink>
             {' '}
             pour le modifier.
           </p>

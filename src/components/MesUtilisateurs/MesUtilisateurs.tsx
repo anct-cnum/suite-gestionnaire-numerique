@@ -314,7 +314,7 @@ export default function MesUtilisateurs(
 
   function soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    const cloneUrlAvecParametres = new URL(window.location.href)
+    const cloneUrlAvecParametres = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
     cloneUrlAvecParametres.searchParams.delete('page')
     cloneUrlAvecParametres.searchParams.set('prenomOuNomOuEmail', termesDeRechercheNomOuEmail)
     router.push(cloneUrlAvecParametres.toString())
@@ -322,7 +322,7 @@ export default function MesUtilisateurs(
 
   function reinitialiserLesTermesDeRechercheNomOuEmail(): void {
     setTermesDeRechercheNomOuEmail('')
-    const cloneUrlAvecParametres = new URL(window.location.href)
+    const cloneUrlAvecParametres = new URL('/mes-utilisateurs', process.env.NEXT_PUBLIC_HOST)
     cloneUrlAvecParametres.searchParams.delete('prenomOuNomOuEmail')
     router.push(cloneUrlAvecParametres.toString())
   }
