@@ -34,9 +34,11 @@ export function useRichTextEditor(contenuInitial = ''): {
   }
 
   useEffect((): () => void => {
+    // eslint-disable-next-line no-restricted-syntax
     window.addEventListener('editorReady', gererEditeurPret)
 
     return (): void => {
+      // eslint-disable-next-line no-restricted-syntax
       window.removeEventListener('editorReady', gererEditeurPret)
     }
   }, [])

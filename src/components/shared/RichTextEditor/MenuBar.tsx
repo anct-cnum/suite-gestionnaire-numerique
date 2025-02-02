@@ -26,7 +26,7 @@ export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactEl
       return
     }
 
-    // eslint-disable-next-line no-alert
+    // eslint-disable-next-line no-alert, no-restricted-syntax
     const url = window.prompt('URL du lien :')
 
     if (url === null || url === '') {
