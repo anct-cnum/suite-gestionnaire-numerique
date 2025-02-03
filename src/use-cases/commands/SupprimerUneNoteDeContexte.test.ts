@@ -13,7 +13,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de context est supprimée par son gestionnaire, alors elle est supprimée', async () => {
+  it('étant donné une gouvernance existante, quand une note de contexte est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
     const uidEditeur = 'userFooId2'
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContexte(
@@ -39,7 +39,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un note de context est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance existante, quand un note de contexte est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContexte(
       new GouvernanceRepositorySpy(),
@@ -56,7 +56,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
     expect(result).toBe('editeurNePeutPasSupprimerNoteDeContexte')
   })
 
-  it('étant donné une gouvernance inexistante, quand une note de context est supprimée, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance inexistante, quand une note de contexte est supprimée, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContexte(
       new GouvernanceInexistanteRepositorySpy(),
@@ -76,7 +76,7 @@ describe('supprimer une note de contexte d’une gouvernance', () => {
     expect(result).toBe('gouvernanceInexistante')
   })
 
-  it('étant donné un utilisateur inexistant, quand une note de context est supprimée, alors une erreur est renvoyée', async () => {
+  it('étant donné un utilisateur inexistant, quand une note de contexte est supprimée, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerNoteDeContexte = new SupprimerUneNoteDeContexte(
       new GouvernanceInexistanteRepositorySpy(),

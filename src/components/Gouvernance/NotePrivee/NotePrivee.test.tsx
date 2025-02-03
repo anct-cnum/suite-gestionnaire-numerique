@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, presserLeBouton, renderComponent, saisirLeTexte } from '@/components/testHelper'
+import { matchWithoutMarkup, presserLeBouton, presserLeBoutonDans, renderComponent, saisirLeTexte } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -207,7 +207,7 @@ describe('note privée', () => {
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
       const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
-      jEffaceLaNotePrivee()
+      jEffaceLaNotePrivee(ajouterUneNotePriveeDrawer)
       const enregistrer = jEnregistreLaNotePrivee()
 
       // THEN
@@ -247,8 +247,8 @@ describe('note privée', () => {
       presserLeBouton('Fermer le formulaire de modification d’une note privée')
     }
 
-    function jEffaceLaNotePrivee(): void {
-      presserLeBouton('Effacer')
+    function jEffaceLaNotePrivee(context: HTMLElement): void {
+      presserLeBoutonDans(context, 'Effacer')
     }
   })
 
