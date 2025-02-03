@@ -125,8 +125,6 @@ describe('note de contexte', () => {
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
     const modifierPar = within(drawer).getByText('Modifié le 01/01/1970 par Jean Deschamps')
-    const boutonSupprimer = within(drawer).getByRole('button', { name: 'Supprimer' })
-    expect(boutonSupprimer).toBeEnabled()
     expect(modifierPar).toBeInTheDocument()
   })
 

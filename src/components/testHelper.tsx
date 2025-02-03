@@ -1,4 +1,4 @@
-import { fireEvent, render, RenderResult, screen } from '@testing-library/react'
+import { fireEvent, render, RenderResult, screen, within } from '@testing-library/react'
 import { ReactElement } from 'react'
 import { select } from 'react-select-event'
 import { ToastContainer } from 'react-toastify'
@@ -109,6 +109,12 @@ export function stubbedConceal() {
 
 export function presserLeBouton(name: string): HTMLElement {
   const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
+}
+
+export function presserLeBoutonDans(context: HTMLElement, name: string): HTMLElement {
+  const button = within(context).getByRole('button', { name })
   fireEvent.click(button)
   return button
 }
