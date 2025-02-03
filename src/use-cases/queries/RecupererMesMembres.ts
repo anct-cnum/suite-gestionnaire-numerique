@@ -51,7 +51,7 @@ export type MesMembresReadModel = Readonly<{
   membres: ReadonlyArray<Membre>
 }>
 
-type Membre = Readonly<{
+export type Membre = Readonly<{
   suppressionDuMembreAutorise: boolean
   contactReferent: Readonly<{
     nom: string
