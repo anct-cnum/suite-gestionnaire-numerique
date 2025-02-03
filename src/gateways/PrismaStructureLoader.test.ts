@@ -1,5 +1,5 @@
 import { PrismaStructureLoader } from './PrismaStructureLoader'
-import { departementRecordFactory, regionRecordFactory, structureRecordFactory } from './testHelper'
+import { creerUnDepartement, creerUneRegion, creerUneStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 
 describe('structures loader', () => {
@@ -103,30 +103,10 @@ describe('structures loader', () => {
 })
 
 async function createStructures(): Promise<void> {
-  await prisma.regionRecord.create({
-    data: regionRecordFactory({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' }),
-  })
-  await prisma.regionRecord.create({ data: regionRecordFactory() })
-  await prisma.departementRecord.create({
-    data: departementRecordFactory({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' }),
-  })
-  await prisma.departementRecord.create({
-    data: departementRecordFactory({ code: '93', nom: 'Seine-Saint-Denis' }),
-  })
-  await prisma.structureRecord.create({
-    data: structureRecordFactory({
-      commune: 'GRASSE',
-      departementCode: '06',
-      id: 14,
-      nom: 'TETRIS',
-    }),
-  })
-  await prisma.structureRecord.create({
-    data: structureRecordFactory({
-      commune: 'NOISY-LE-GRAND',
-      departementCode: '93',
-      id: 416,
-      nom: 'GRAND PARIS GRAND EST',
-    }),
-  })
+  await creerUneRegion()
+  await creerUneRegion({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' })
+  await creerUnDepartement({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' })
+  await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
+  await creerUneStructure({ commune: 'GRASSE', departementCode: '06', id: 14, nom: 'TETRIS' })
+  await creerUneStructure({ commune: 'NOISY-LE-GRAND', departementCode: '93', id: 416, nom: 'GRAND PARIS GRAND EST' })
 }

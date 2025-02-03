@@ -4,7 +4,7 @@ import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient'
 import { epochTime } from '@/shared/testHelper'
 
-export function regionRecordFactory(
+function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
   return {
@@ -14,7 +14,7 @@ export function regionRecordFactory(
   }
 }
 
-export function departementRecordFactory(
+function departementRecordFactory(
   override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
 ): Prisma.DepartementRecordUncheckedCreateInput {
   return {
@@ -25,7 +25,7 @@ export function departementRecordFactory(
   }
 }
 
-export function groupementRecordFactory(
+function groupementRecordFactory(
   override?: Partial<Prisma.GroupementRecordUncheckedCreateInput>
 ): Prisma.GroupementRecordUncheckedCreateInput {
   return {
@@ -35,7 +35,7 @@ export function groupementRecordFactory(
   }
 }
 
-export function structureRecordFactory(
+function structureRecordFactory(
   override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
 ): Prisma.StructureRecordUncheckedCreateInput {
   return {
@@ -85,11 +85,9 @@ export function gouvernanceRecordFactory(
 ): Prisma.GouvernanceRecordUncheckedCreateInput {
   return {
     departementCode: '75',
-    editeurNotePriveeId: 'userFooId',
-    notePrivee: {
-      contenu: 'un contenu quelconque',
-      derniereEdition: '1970-01-01T00:00:00.000Z',
-    },
+    editeurNotePriveeId: null,
+    // @ts-expect-error
+    notePrivee: null,
     ...override,
   }
 }
@@ -110,7 +108,7 @@ export function comiteRecordFactory(
   }
 }
 
-export function noteDeContexteRecordFactory(
+function noteDeContexteRecordFactory(
   override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
 ): Prisma.NoteDeContexteRecordUncheckedCreateInput {
   return {
@@ -122,43 +120,87 @@ export function noteDeContexteRecordFactory(
   }
 }
 
-export async function ajouterUneRegion(
+export async function creerUneRegion(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.regionRecord.create({
     data: regionRecordFactory({
-      code: '84',
-      nom: 'Auvergne-Rhône-Alpes',
       ...override,
     }),
   })
 }
 
-export async function ajouterUnDepartement(
+export async function creerUnDepartement(
   override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.departementRecord.create({
     data: departementRecordFactory({
-      code: '69',
-      nom: 'Rhône',
-      regionCode: '84',
       ...override,
     }),
   })
 }
 
-export async function ajouterUneGouvernance(
-  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
+export async function creerUneStructure(
+  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
 ): Promise<void> {
-  await prisma.gouvernanceRecord.create({
-    data: {
-      departementCode: '69',
+  await prisma.structureRecord.create({
+    data: structureRecordFactory({
       ...override,
-    },
+    }),
   })
 }
 
-export async function ajouterUnMembreStructure(
+export async function creerUnGroupement(
+  override?: Partial<Prisma.GroupementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.groupementRecord.create({
+    data: groupementRecordFactory({
+      ...override,
+    }),
+  })
+}
+
+export async function creerUnUtilisateur(
+  override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.utilisateurRecord.create({
+    data: utilisateurRecordFactory({
+      ...override,
+    }),
+  })
+}
+
+export async function creerUneGouvernance(
+  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.gouvernanceRecord.create({
+    data: gouvernanceRecordFactory({
+      ...override,
+    }),
+  })
+}
+
+export async function creerUnComite(
+  override?: Partial<Prisma.ComiteRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.comiteRecord.create({
+    data: comiteRecordFactory({
+      ...override,
+    }),
+  })
+}
+
+export async function creerUneNoteDeContexte(
+  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.noteDeContexteRecord.create({
+    data: noteDeContexteRecordFactory({
+      ...override,
+    }),
+  })
+}
+
+export async function creerUnMembreStructure(
   override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceStructureRecord.create({
@@ -171,7 +213,7 @@ export async function ajouterUnMembreStructure(
   })
 }
 
-export async function ajouterUnMembreCommune(
+export async function creerUnMembreCommune(
   override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceCommuneRecord.create({
@@ -184,7 +226,7 @@ export async function ajouterUnMembreCommune(
   })
 }
 
-export async function ajouterUnMembreEpci(
+export async function creerUnMembreEpci(
   override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceEpciRecord.create({
@@ -197,7 +239,7 @@ export async function ajouterUnMembreEpci(
   })
 }
 
-export async function ajouterUnMembreDepartement(
+export async function creerUnMembreDepartement(
   override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceDepartementRecord.create({
@@ -210,7 +252,7 @@ export async function ajouterUnMembreDepartement(
   })
 }
 
-export async function ajouterUnMembreSgar(
+export async function creerUnMembreSgar(
   override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceSgarRecord.create({

@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 
 declare const globalThis: typeof global & {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

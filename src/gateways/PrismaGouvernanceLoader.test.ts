@@ -1,5 +1,5 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { departementRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
+import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneNoteDeContexte, creerUneRegion, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -11,22 +11,25 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant, alors elle est renvoyée', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
+    await creerUnDepartement({ code: '75', nom: 'Paris' })
+    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUneGouvernance({ departementCode: '75' })
+    await creerUneGouvernance({
+      departementCode: '93',
+      editeurNotePriveeId: 'userFooId',
+      notePrivee: {
+        contenu: 'un contenu quelconque',
+        derniereEdition: epochTime.toISOString(),
+      },
     })
-    await creerDepartements()
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        id: 123,
-        nom: 'Deschamps',
-        prenom: 'Jean',
-        ssoId: 'userFooId',
-      }),
+    await creerUneNoteDeContexte({
+      contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+      derniereEdition: epochTime,
+      editeurId: 'userFooId',
+      gouvernanceDepartementCode: '93',
     })
-    await creerGouvernances()
-    await creerNoteDeContexte()
     await creerComites()
     await creerFeuillesDeRoute()
     await creerMembres()
@@ -81,12 +84,9 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département inexistant, alors elle n’est pas renvoyée', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
-    })
-    await creerDepartements()
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
+    await creerUnDepartement({ code: '75', nom: 'Paris' })
     const codeDepartementInexistant = 'zzz'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
@@ -99,22 +99,13 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité ni note privée, alors elle est renvoyée sans note de contexte ni comité ni note privée', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
-    })
-    await creerDepartements()
-
-    await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '93',
-      },
-    })
+    const codeDepartement = '93'
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement, nom: 'Seine-Saint-Denis' })
+    await creerUnDepartement({ code: '75', nom: 'Paris' })
+    await creerUneGouvernance({ departementCode: codeDepartement })
     await creerFeuillesDeRoute()
     await creerMembres()
-
-    const codeDepartement = '93'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
@@ -128,44 +119,27 @@ describe('gouvernance loader', () => {
       membres,
       noteDeContexte: undefined,
       notePrivee: undefined,
-      uid: '93',
+      uid: codeDepartement,
     })
   })
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans date de prochain comité, alors elle est renvoyée sans date de prochain comité', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
-    })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
-    const gouvernance = await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '93',
-      },
-    })
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' }),
-    })
-    await prisma.comiteRecord.create({
-      data: {
-        commentaire: 'commentaire',
-        creation: epochTime,
-        derniereEdition: epochTime,
-        editeurUtilisateurId: 'userFooId',
-        frequence: 'trimestrielle',
-        gouvernanceDepartementCode: gouvernance.departementCode,
-        type: 'stratégique',
-      },
-    })
-
     const codeDepartement = '93'
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnComite({
+      commentaire: 'commentaire',
+      creation: epochTime,
+      date: undefined,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: 'userFooId',
+      frequence: 'trimestrielle',
+      gouvernanceDepartementCode: codeDepartement,
+      type: 'stratégique',
+    })
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
@@ -190,39 +164,21 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans commentaire, alors elle est renvoyée sans commentaire', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
-    })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
-    const gouvernance = await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '93',
-      },
-    })
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' }),
-    })
-    await prisma.comiteRecord.create({
-      data: {
-        creation: epochTime,
-        date: epochTime,
-        derniereEdition: epochTime,
-        editeurUtilisateurId: 'userFooId',
-        frequence: 'trimestrielle',
-        gouvernanceDepartementCode: gouvernance.departementCode,
-        type: 'stratégique',
-      },
-    })
-
     const codeDepartement = '93'
-
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnComite({
+      commentaire: '',
+      creation: epochTime,
+      date: epochTime,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: 'userFooId',
+      frequence: 'trimestrielle',
+      gouvernanceDepartementCode: codeDepartement,
+      type: 'stratégique',
+    })
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
@@ -246,37 +202,22 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant avec un comité sans éditeur, alors elle est renvoyée sans éditeur', async () => {
     // GIVEN
-    await prisma.regionRecord.create({
-      data: regionRecordFactory({
-        code: '11',
-      }),
-    })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory({
-        code: '93',
-        nom: 'Seine-Saint-Denis',
-      }),
-    })
-    const gouvernance = await prisma.gouvernanceRecord.create({
-      data: {
-        departementCode: '93',
-      },
-    })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory() })
-    await prisma.comiteRecord.create({
-      data: {
-        commentaire: 'commentaire',
-        creation: epochTime,
-        date: epochTime,
-        derniereEdition: epochTime,
-        editeurUtilisateurId: 'userFooId',
-        frequence: 'trimestrielle',
-        gouvernanceDepartementCode: gouvernance.departementCode,
-        type: 'stratégique',
-      },
+    const codeDepartement = '93'
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur()
+    await creerUnComite({
+      commentaire: 'commentaire',
+      creation: epochTime,
+      date: epochTime,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: 'userFooId',
+      frequence: 'trimestrielle',
+      gouvernanceDepartementCode: codeDepartement,
+      type: 'stratégique',
     })
 
-    const codeDepartement = '93'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
@@ -414,74 +355,26 @@ const membres: UneGouvernanceReadModel['membres'] = [
   ...partialMembre,
 }))
 
-async function creerDepartements(): Promise<void> {
-  await prisma.departementRecord.create({
-    data: departementRecordFactory({
-      code: '93',
-      nom: 'Seine-Saint-Denis',
-    }),
-  })
-  await prisma.departementRecord.create({
-    data: departementRecordFactory({
-      code: '75',
-      nom: 'Paris',
-    }),
-  })
-}
-
-async function creerGouvernances(): Promise<void> {
-  await prisma.gouvernanceRecord.create({
-    data: {
-      departementCode: '75',
-    },
-  })
-  await prisma.gouvernanceRecord.create({
-    data: {
-      departementCode: '93',
-      editeurNotePriveeId: 'userFooId',
-      notePrivee: {
-        contenu: 'un contenu quelconque',
-        derniereEdition: epochTime.toISOString(),
-      },
-    },
-  })
-}
-
-async function creerNoteDeContexte(): Promise<void> {
-  await prisma.noteDeContexteRecord.create({
-    data: {
-      contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-      derniereEdition: epochTime,
-      editeurId: 'userFooId',
-      gouvernanceDepartementCode: '93',
-    },
-  })
-}
-
 async function creerComites(): Promise<void> {
-  await prisma.comiteRecord.create({
-    data: {
-      commentaire: 'commentaire',
-      creation: epochTime,
-      date: epochTime,
-      derniereEdition: epochTime,
-      editeurUtilisateurId: 'userFooId',
-      frequence: 'trimestrielle',
-      gouvernanceDepartementCode: '93',
-      type: 'stratégique',
-    },
+  await creerUnComite({
+    commentaire: 'commentaire',
+    creation: epochTime,
+    date: epochTime,
+    derniereEdition: epochTime,
+    editeurUtilisateurId: 'userFooId',
+    frequence: 'trimestrielle',
+    gouvernanceDepartementCode: '93',
+    type: 'stratégique',
   })
-  await prisma.comiteRecord.create({
-    data: {
-      commentaire: 'commentaire',
-      creation: epochTime,
-      date: epochTimeMinusOneDay,
-      derniereEdition: epochTime,
-      editeurUtilisateurId: 'userFooId',
-      frequence: 'trimestrielle',
-      gouvernanceDepartementCode: '93',
-      type: 'technique',
-    },
+  await creerUnComite({
+    commentaire: 'commentaire',
+    creation: epochTime,
+    date: epochTimeMinusOneDay,
+    derniereEdition: epochTime,
+    editeurUtilisateurId: 'userFooId',
+    frequence: 'trimestrielle',
+    gouvernanceDepartementCode: '93',
+    type: 'technique',
   })
 }
 

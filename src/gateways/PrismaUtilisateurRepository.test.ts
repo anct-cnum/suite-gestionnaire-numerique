@@ -2,10 +2,11 @@ import { Prisma } from '@prisma/client'
 
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
 import {
-  departementRecordFactory,
-  groupementRecordFactory,
-  regionRecordFactory,
-  structureRecordFactory,
+  creerUnDepartement,
+  creerUneRegion,
+  creerUneStructure,
+  creerUnGroupement,
+  creerUnUtilisateur,
   utilisateurRecordFactory,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -27,9 +28,7 @@ describe('utilisateur repository', () => {
     it('l’utilisateur n’existe pas : pas de donnée', async () => {
       // GIVEN
       const ssoIdInexistant = '6513cfb5-5b46-4188-a71f-5476dfee0e8e'
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoId: ssoIdInexistant }),
-      })
+      await creerUnUtilisateur({ ssoId: ssoIdInexistant })
 
       // WHEN
       const result = await repository.find(uidUtilisateurValue)
@@ -40,9 +39,7 @@ describe('utilisateur repository', () => {
 
     it('l’utilisateur est supprimé : pas de donnée', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ isSupprime: true }),
-      })
+      await creerUnUtilisateur({ isSupprime: true })
 
       // WHEN
       const result = await repository.find(uidUtilisateurValue)
@@ -151,23 +148,11 @@ describe('utilisateur repository', () => {
         },
       ])('$desc', async ({ createRecordWith, expected }) => {
         // GIVEN
-        await prisma.regionRecord.create({
-          data: regionRecordFactory({ code: regionCode }),
-        })
-        await prisma.departementRecord.create({
-          data: departementRecordFactory({ code: departementCode }),
-        })
-        await prisma.groupementRecord.create({
-          data: groupementRecordFactory({ id: groupementId }),
-        })
-        await prisma.structureRecord.create({
-          data: structureRecordFactory({ id: structureId }),
-        })
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory({
-            ...createRecordWith,
-          }),
-        })
+        await creerUneRegion({ code: regionCode })
+        await creerUnDepartement({ code: departementCode })
+        await creerUnGroupement({ id: groupementId })
+        await creerUneStructure({ id: structureId })
+        await creerUnUtilisateur({ ...createRecordWith })
 
         // WHEN
         const result = await repository.find(uidUtilisateurValue)
@@ -194,21 +179,11 @@ describe('utilisateur repository', () => {
         },
       ])('$desc', async ({ derniereConnexion, expectedIsActive }) => {
         // GIVEN
-        await prisma.regionRecord.create({
-          data: regionRecordFactory({ code: regionCode }),
-        })
-        await prisma.departementRecord.create({
-          data: departementRecordFactory({ code: departementCode }),
-        })
-        await prisma.groupementRecord.create({
-          data: groupementRecordFactory({ id: groupementId }),
-        })
-        await prisma.structureRecord.create({
-          data: structureRecordFactory({ id: structureId }),
-        })
-        await prisma.utilisateurRecord.create({
-          data: utilisateurRecordFactory({ derniereConnexion }),
-        })
+        await creerUneRegion({ code: regionCode })
+        await creerUnDepartement({ code: departementCode })
+        await creerUnGroupement({ id: groupementId })
+        await creerUneStructure({ id: structureId })
+        await creerUnUtilisateur({ derniereConnexion })
 
         // WHEN
         const result = await repository.find(uidUtilisateurValue)
@@ -224,24 +199,20 @@ describe('utilisateur repository', () => {
     const ssoIdUtilisateurSupprime = 'adc38b16-b303-487e-b1c0-8d33bcb6d0e6'
     const ssoEmailUtilisateurExistant = 'martin.tartempion@example.net'
     const ssoEmailUtilisateurSupprime = 'martin.tartempion@example.org'
-    const utilisateurExistant = utilisateurRecordFactory({
+    const utilisateurExistant = {
       ssoEmail: ssoEmailUtilisateurExistant,
       ssoId: ssoIdUtilisateurExistant,
-    })
-    const utilisateurSupprime = utilisateurRecordFactory({
+    }
+    const utilisateurSupprime = {
       isSupprime: true,
       ssoEmail: ssoEmailUtilisateurSupprime,
       ssoId: ssoIdUtilisateurSupprime,
-    })
+    }
 
     it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(utilisateurExistant),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(utilisateurSupprime),
-      })
+      await creerUnUtilisateur(utilisateurExistant)
+      await creerUnUtilisateur(utilisateurSupprime)
 
       // WHEN
       const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
@@ -273,12 +244,8 @@ describe('utilisateur repository', () => {
 
     it('compte existant, préalablement supprimé : aucune écriture', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(utilisateurExistant),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(utilisateurSupprime),
-      })
+      await creerUnUtilisateur(utilisateurExistant)
+      await creerUnUtilisateur(utilisateurSupprime)
 
       // WHEN
       const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurSupprime } }))
@@ -293,9 +260,7 @@ describe('utilisateur repository', () => {
 
     it('compte inexistant : aucune écriture', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(utilisateurSupprime),
-      })
+      await creerUnUtilisateur(utilisateurSupprime)
 
       // WHEN
       const result = await new PrismaUtilisateurRepository(prisma.utilisateurRecord).drop(utilisateurFactory({ uid: { email: 'martin.tartempion@example.com', value: ssoIdUtilisateurExistant } }))
@@ -340,9 +305,7 @@ describe('utilisateur repository', () => {
     it('changement du rôle, du nom, du prénom, de la date d’invitation, de la date de dernière connexion et de l’email', async () => {
       // GIVEN
       const date = epochTime
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory(),
-      })
+      await creerUnUtilisateur()
 
       // WHEN
       await repository.update(
@@ -375,13 +338,11 @@ describe('utilisateur repository', () => {
   describe('mise à jour de l’identifiant unique d’un utilisateur', () => {
     it('changement de l’identifiant unique', async () => {
       // GIVEN
-      const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({
-          ssoEmail: 'martine.dugenoux@example.org',
-          ssoId: 'martine.dugenoux@example.org',
-        }),
+      await creerUnUtilisateur({
+        ssoEmail: 'martine.dugenoux@example.org',
+        ssoId: 'martine.dugenoux@example.org',
       })
+      const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
 
       // WHEN
       await repository.updateUid(utilisateurFactory({
@@ -408,19 +369,10 @@ describe('utilisateur repository', () => {
     it('dont le ssoId n’existe pas : insertion réussie', async () => {
       // GIVEN
       const ssoIdDifferent = '009d2df4-60c7-4704-b8b5-d007b436f681'
-
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: regionCode }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: departementCode }),
-      })
-      await prisma.groupementRecord.create({
-        data: groupementRecordFactory({ id: groupementId }),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ id: structureId }),
-      })
+      await creerUneRegion({ code: regionCode })
+      await creerUnDepartement({ code: departementCode })
+      await creerUnGroupement({ id: groupementId })
+      await creerUneStructure({ id: structureId })
       const utilisateur = utilisateurFactory({
         departement: departementFactory({ code: departementCode }).state,
         role: 'Gestionnaire département',
@@ -437,22 +389,19 @@ describe('utilisateur repository', () => {
         },
       })
       expect(resultatCreation).toBe(true)
-      const utilisateurRecord = utilisateurRecordFactory({
+      expect(createdRecord).toMatchObject(utilisateurRecordFactory({
         departementCode,
         derniereConnexion: null,
         role: 'gestionnaire_departement',
         ssoId: ssoIdDifferent,
         telephone: '',
-      })
-      expect(createdRecord).toMatchObject(utilisateurRecord)
+      }))
     })
 
     it('qui existe déjà par son ssoId : insertion en échec', async () => {
       // GIVEN
       const ssoIdExistant = uidUtilisateurValue
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoId: ssoIdExistant }),
-      })
+      await creerUnUtilisateur({ ssoId: ssoIdExistant })
       const utilisateur = utilisateurFactory({ uid: { email: 'martin.tartempion@example.net', value: ssoIdExistant } })
 
       // WHEN

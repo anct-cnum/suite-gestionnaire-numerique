@@ -1,5 +1,5 @@
 import { PrismaGouvernanceRepository } from './PrismaGouvernanceRepository'
-import { departementRecordFactory, gouvernanceRecordFactory, noteDeContexteRecordFactory, regionRecordFactory, utilisateurRecordFactory } from './testHelper'
+import { creerUnDepartement, creerUneGouvernance, creerUneNoteDeContexte, creerUneRegion, creerUnUtilisateur, gouvernanceRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
@@ -14,10 +14,10 @@ describe('gouvernance repository', () => {
   it('rechercher une gouvernance qui n’existe pas', async () => {
     // GIVEN
     const departementCode = '75'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode }) })
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur()
+    await creerUneGouvernance({ departementCode })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
@@ -30,68 +30,67 @@ describe('gouvernance repository', () => {
   it('rechercher une gouvernance qui existe sans note de contexte', async () => {
     // GIVEN
     const departementCode = '75'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '76' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode: '76' }) })
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnDepartement({ code: '76' })
+    await creerUnUtilisateur()
+    await creerUneGouvernance({ departementCode })
+    await creerUneGouvernance({ departementCode: '76' })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ noteDeContexte: undefined, uid: '75' }).state)
+    expect(gouvernanceTrouvee?.state).toStrictEqual(
+      gouvernanceFactory({ noteDeContexte: undefined, uid: departementCode }).state
+    )
   })
 
   it('rechercher une gouvernance qui existe avec note de contexte', async () => {
     // GIVEN
     const departementCode = '75'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode }) })
-    await prisma.noteDeContexteRecord.create({
-      data: noteDeContexteRecordFactory({ gouvernanceDepartementCode: departementCode }),
-    })
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur()
+    await creerUneGouvernance({ departementCode })
+    await creerUneNoteDeContexte({ gouvernanceDepartementCode: departementCode })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ uid: '75' }).state)
+    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ uid: departementCode }).state)
   })
 
   it('rechercher une gouvernance qui existe sans note privée', async () => {
     // GIVEN
     const departementCode = '75'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '76' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({
-      departementCode,
-      notePrivee: undefined,
-    }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode: '76' }) })
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnDepartement({ code: '76' })
+    await creerUnUtilisateur()
+    await creerUneGouvernance({ departementCode, notePrivee: undefined })
+    await creerUneGouvernance({ departementCode: '76' })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ noteDeContexte: undefined, notePrivee: undefined, uid: '75' }).state)
+    expect(gouvernanceTrouvee?.state).toStrictEqual(
+      gouvernanceFactory({ noteDeContexte: undefined, notePrivee: undefined, uid: departementCode }).state
+    )
   })
 
   it('ajouter une note de contexte à une gouvernance', async () => {
     // GIVEN
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoId: 'userFooId' }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode: '75', notePrivee: undefined }) })
-
+    const departementCode = '75'
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur({ ssoId: 'userFooId' })
+    await creerUneGouvernance({ departementCode, notePrivee: undefined })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
@@ -103,7 +102,7 @@ describe('gouvernance repository', () => {
         }),
       },
       notePrivee: undefined,
-      uid: '75',
+      uid: departementCode,
     })
 
     // WHEN
@@ -115,18 +114,18 @@ describe('gouvernance repository', () => {
         noteDeContexte: true,
       },
       where: {
-        departementCode: '75',
+        departementCode,
       },
     })
 
     expect(gouvernanceRecord).toStrictEqual({
-      departementCode: '75',
+      departementCode,
       editeurNotePriveeId: null,
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
         derniereEdition: epochTime,
         editeurId: 'userFooId',
-        gouvernanceDepartementCode: '75',
+        gouvernanceDepartementCode: departementCode,
       },
       notePrivee: null,
     })
@@ -134,13 +133,13 @@ describe('gouvernance repository', () => {
 
   it('modifier une gouvernance sans note de contexte', async () => {
     // GIVEN
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '75' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1 }) })
-    await prisma.gouvernanceRecord.create({ data: gouvernanceRecordFactory({ departementCode: '75' }) })
-
+    const departementCode = '75'
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur()
+    await creerUneGouvernance({ departementCode })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
-    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: '75' })
+    const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: departementCode })
 
     // WHEN
     await repository.update(gouvernance)
@@ -148,34 +147,22 @@ describe('gouvernance repository', () => {
     // THEN
     const gouvernanceMiseAJour = await prisma.gouvernanceRecord.findUnique({
       where: {
-        departementCode: '75',
+        departementCode,
       },
     })
-    expect(gouvernanceMiseAJour).toStrictEqual(gouvernanceRecordFactory({ departementCode: '75' }))
+    expect(gouvernanceMiseAJour).toStrictEqual(gouvernanceRecordFactory({ departementCode }))
   })
 
   it('ajouter une note privée à une gouvernance', async () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '93' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoId: uidEditeur }) })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode,
-        editeurNotePriveeId: undefined,
-        notePrivee: undefined,
-      }),
-    })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode: '93',
-        editeurNotePriveeId: undefined,
-        notePrivee: undefined,
-      }),
-    })
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnDepartement({ code: '93' })
+    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUneGouvernance({ departementCode, editeurNotePriveeId: undefined, notePrivee: undefined })
+    await creerUneGouvernance({ departementCode: '93', editeurNotePriveeId: undefined, notePrivee: undefined })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
@@ -215,27 +202,23 @@ describe('gouvernance repository', () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: '93' }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 2, ssoEmail: 'userFooId2@example.com', ssoId: 'userFooId2' }) })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode,
-        editeurNotePriveeId: uidEditeur,
-        notePrivee: {
-          contenu: 'un contenu quelconque',
-          derniereEdition: epochTime.toISOString(),
-        },
-      }),
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnDepartement({ code: '93' })
+    await creerUnUtilisateur({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUnUtilisateur({ id: 2, ssoEmail: 'userFooId2@example.com', ssoId: 'userFooId2' })
+    await creerUneGouvernance({
+      departementCode,
+      editeurNotePriveeId: uidEditeur,
+      notePrivee: {
+        contenu: 'un contenu quelconque',
+        derniereEdition: epochTime.toISOString(),
+      },
     })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode: '93',
-        editeurNotePriveeId: undefined,
-        notePrivee: undefined,
-      }),
+    await creerUneGouvernance({
+      departementCode: '93',
+      editeurNotePriveeId: undefined,
+      notePrivee: undefined,
     })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
@@ -276,18 +259,16 @@ describe('gouvernance repository', () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur }) })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode,
-        editeurNotePriveeId: uidEditeur,
-        notePrivee: {
-          contenu: 'un contenu quelconque',
-          derniereEdition: epochTime.toISOString(),
-        },
-      }),
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur({ ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUneGouvernance({
+      departementCode,
+      editeurNotePriveeId: uidEditeur,
+      notePrivee: {
+        contenu: 'un contenu quelconque',
+        derniereEdition: epochTime.toISOString(),
+      },
     })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
@@ -300,7 +281,7 @@ describe('gouvernance repository', () => {
     // THEN
     const modifiedRecord = await prisma.gouvernanceRecord.findUnique({ where: { departementCode } })
     expect(modifiedRecord).toStrictEqual(gouvernanceRecordFactory({
-      departementCode: '75',
+      departementCode,
       editeurNotePriveeId: null,
       // @ts-expect-error
       notePrivee: null,

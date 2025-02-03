@@ -1,5 +1,5 @@
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
-import { departementRecordFactory, groupementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
+import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -105,27 +105,17 @@ describe('prisma utilisateur query', () => {
     ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ isGestionnaireDepartement, role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await prisma.regionRecord.create({
-        data: regionRecordFactory(),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory(),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory(),
-      })
-      await prisma.groupementRecord.create({
-        data: groupementRecordFactory(),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({
-          departementCode: '75',
-          groupementId: 10,
-          regionCode: '11',
-          role,
-          ssoId: ssoIdExistant,
-          structureId: 10,
-        }),
+      await creerUneRegion()
+      await creerUnDepartement()
+      await creerUneStructure()
+      await creerUnGroupement()
+      await creerUnUtilisateur({
+        departementCode: '75',
+        groupementId: 10,
+        regionCode: '11',
+        role,
+        ssoId: ssoIdExistant,
+        structureId: 10,
       })
       const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
@@ -155,9 +145,7 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
       // GIVEN
       const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoId: '1234567890' }),
-      })
+      await creerUnUtilisateur({ ssoId: '1234567890' })
       const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
@@ -171,9 +159,7 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche un utilisateur qui existe par son ssoId et dont le compte a été supprimé alors je ne le trouve pas', async () => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ isSupprime: true, ssoId: ssoIdExistant }),
-      })
+      await creerUnUtilisateur({ isSupprime: true, ssoId: ssoIdExistant })
       const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
@@ -188,29 +174,17 @@ describe('prisma utilisateur query', () => {
   describe('chercher mes utilisateurs', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN
-      await prisma.groupementRecord.create({
-        data: groupementRecordFactory(),
-      })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory(),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory(),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory(),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({
-          departementCode: '75',
-          nom: 'dupont',
-          role: 'gestionnaire_departement',
-          ssoEmail: 'martin.tartempion2@example.net',
-          ssoId: '123456',
-        }),
+      await creerUnGroupement()
+      await creerUneRegion()
+      await creerUnDepartement()
+      await creerUneStructure()
+      await creerUnUtilisateur({ nom: 'Tartempion', role: 'administrateur_dispositif', ssoId })
+      await creerUnUtilisateur({
+        departementCode: '75',
+        nom: 'dupont',
+        role: 'gestionnaire_departement',
+        ssoEmail: 'martin.tartempion2@example.net',
+        ssoId: '123456',
       })
 
       // WHEN
@@ -293,21 +267,11 @@ describe('prisma utilisateur query', () => {
         },
         uid: ssoId,
       })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: regionCode }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: departementCode, regionCode }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode, nom: 'Tartempion', role: 'gestionnaire_departement', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode, nom: 'Dupont', role: 'gestionnaire_departement', ssoEmail: 'alois.leroy@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' }),
-      })
+      await creerUneRegion({ code: regionCode })
+      await creerUnDepartement({ code: departementCode, regionCode })
+      await creerUnUtilisateur({ departementCode, nom: 'Tartempion', role: 'gestionnaire_departement', ssoId })
+      await creerUnUtilisateur({ departementCode, nom: 'Dupont', role: 'gestionnaire_departement', ssoEmail: 'alois.leroy@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -343,18 +307,10 @@ describe('prisma utilisateur query', () => {
         },
         uid: ssoId,
       })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: regionCode }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Tartempion', regionCode, role: 'gestionnaire_region', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Dupont', regionCode, role: 'gestionnaire_region', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' }),
-      })
+      await creerUneRegion({ code: regionCode })
+      await creerUnUtilisateur({ nom: 'Tartempion', regionCode, role: 'gestionnaire_region', ssoId })
+      await creerUnUtilisateur({ nom: 'Dupont', regionCode, role: 'gestionnaire_region', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456' })
+      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -390,18 +346,10 @@ describe('prisma utilisateur query', () => {
         },
         uid: ssoId,
       })
-      await prisma.groupementRecord.create({
-        data: groupementRecordFactory({ id: groupementId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ groupementId, nom: 'Tartempion', role: 'gestionnaire_groupement', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ groupementId, nom: 'Dupont', role: 'gestionnaire_groupement', ssoEmail: 'martin.tartempion@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' }),
-      })
+      await creerUnGroupement({ id: groupementId })
+      await creerUnUtilisateur({ groupementId, nom: 'Tartempion', role: 'gestionnaire_groupement', ssoId })
+      await creerUnUtilisateur({ groupementId, nom: 'Dupont', role: 'gestionnaire_groupement', ssoEmail: 'martin.tartempion@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -437,24 +385,12 @@ describe('prisma utilisateur query', () => {
         structureId,
         uid: ssoId,
       })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory(),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory(),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ id: structureId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Tartempion', role: 'gestionnaire_structure', ssoId, structureId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Dupont', role: 'gestionnaire_structure', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456', structureId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' }),
-      })
+      await creerUneRegion()
+      await creerUnDepartement()
+      await creerUneStructure({ id: structureId })
+      await creerUnUtilisateur({ nom: 'Tartempion', role: 'gestionnaire_structure', ssoId, structureId })
+      await creerUnUtilisateur({ nom: 'Dupont', role: 'gestionnaire_structure', ssoEmail: 'martin.tartempion@example.org', ssoId: '123456', structureId })
+      await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -478,12 +414,8 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs de la page 2 alors je les trouve tous', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Tartempion', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Dupont', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),
-      })
+      await creerUnUtilisateur({ nom: 'Tartempion', ssoId })
+      await creerUnUtilisateur({ nom: 'Dupont', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
       const pageCourante = 1
       const utilisateursParPage = 1
 
@@ -506,12 +438,8 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs alors je les trouve sauf ceux supprimés', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ isSupprime: false, ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ isSupprime: true, ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),
-      })
+      await creerUnUtilisateur({ isSupprime: false, ssoId })
+      await creerUnUtilisateur({ isSupprime: true, ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -533,12 +461,8 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs alors je distingue ceux inactifs', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: epochTime, nom: 'a', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),
-      })
+      await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
+      await creerUnUtilisateur({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -558,12 +482,8 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs actifs alors je trouve tous ceux qui sont actifs', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: epochTime, nom: 'a', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' }),
-      })
+      await creerUnUtilisateur({ derniereConnexion: epochTime, nom: 'a', ssoId })
+      await creerUnUtilisateur({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
       const isActive = true
 
       // WHEN
@@ -586,15 +506,9 @@ describe('prisma utilisateur query', () => {
 
     it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'a', role: 'administrateur_dispositif', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'b', role: 'instructeur', ssoEmail: 'marcus.florent@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'c', role: 'gestionnaire_structure', ssoEmail: 'nicolas.james@example.com', ssoId: '67890' }),
-      })
+      await creerUnUtilisateur({ nom: 'a', role: 'administrateur_dispositif', ssoId })
+      await creerUnUtilisateur({ nom: 'b', role: 'instructeur', ssoEmail: 'marcus.florent@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ nom: 'c', role: 'gestionnaire_structure', ssoEmail: 'nicolas.james@example.com', ssoId: '67890' })
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 
       // WHEN
@@ -622,33 +536,15 @@ describe('prisma utilisateur query', () => {
           - une structure rattachée à ce département`, async () => {
       // GIVEN
       const codeDepartement = '93'
-      await prisma.regionRecord.create({
-        data: regionRecordFactory(),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: codeDepartement }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '75' }),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ departementCode: '75' }),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ departementCode: codeDepartement, id: 11 }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: codeDepartement, nom: 'a', ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: '75', nom: 'b', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoEmail: 'nicolas.james@example.net', ssoId: '1234567', structureId: 10 }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 }),
-      })
+      await creerUneRegion()
+      await creerUnDepartement({ code: codeDepartement })
+      await creerUnDepartement({ code: '75' })
+      await creerUneStructure({ departementCode: '75' })
+      await creerUneStructure({ departementCode: codeDepartement, id: 11 })
+      await creerUnUtilisateur({ departementCode: codeDepartement, nom: 'a', ssoId })
+      await creerUnUtilisateur({ departementCode: '75', nom: 'b', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.net', ssoId: '1234567', structureId: 10 })
+      await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -676,43 +572,18 @@ describe('prisma utilisateur query', () => {
           - une structure rattachée à un département rattaché à cette région`, async () => {
       // GIVEN
       const codeRegion = '11'
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: codeRegion }),
-      })
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: '21' }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '75' }),
-      })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '10', regionCode: '21' }),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ departementCode: '75' }),
-      })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({ departementCode: '10', id: 11 }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'a', regionCode: codeRegion, ssoId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'b', regionCode: '21', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: '75', nom: 'c', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ departementCode: '10', nom: 'D', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' }),
-      })
-
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoEmail: 'anthony.parquet@example.net', ssoId: 'uiopq', structureId: 10 }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 }),
-      })
+      await creerUneRegion({ code: codeRegion })
+      await creerUneRegion({ code: '21' })
+      await creerUnDepartement({ code: '75' })
+      await creerUnDepartement({ code: '10', regionCode: '21' })
+      await creerUneStructure({ departementCode: '75' })
+      await creerUneStructure({ departementCode: '10', id: 11 })
+      await creerUnUtilisateur({ nom: 'a', regionCode: codeRegion, ssoId })
+      await creerUnUtilisateur({ nom: 'b', regionCode: '21', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ departementCode: '75', nom: 'c', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' })
+      await creerUnUtilisateur({ departementCode: '10', nom: 'D', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' })
+      await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.net', ssoId: 'uiopq', structureId: 10 })
+      await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 })
 
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
@@ -739,51 +610,36 @@ describe('prisma utilisateur query', () => {
     it('quand des utilisateurs sont recherchés par structure, alors tous ceux qui lui appartiennent sont trouvés', async () => {
       // GIVEN
       const structureId = 14
-      await prisma.regionRecord.create({
-        data: regionRecordFactory({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' }),
+      await creerUneRegion({ code: '93', nom: 'Provence-Alpes-Côte d’Azur' })
+      await creerUneRegion()
+      await creerUnDepartement({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' })
+      await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
+      await creerUneStructure({
+        departementCode: '06',
+        id: structureId,
+        nom: 'TETRIS',
       })
-      await prisma.regionRecord.create({ data: regionRecordFactory() })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '06', nom: 'Alpes-Maritimes', regionCode: '93' }),
+      await creerUneStructure({
+        departementCode: '93',
+        id: 416,
+        nom: 'GRAND PARIS GRAND EST',
       })
-      await prisma.departementRecord.create({
-        data: departementRecordFactory({ code: '93', nom: 'Seine-Saint-Denis' }),
+      await creerUnUtilisateur({ nom: 'Tartempion', prenom: 'Martin', structureId })
+      await creerUnUtilisateur({
+        nom: 'Dugenoux',
+        prenom: 'Martine',
+        ssoEmail: 'martine.dugenoux@example.com',
+        ssoId: 'd6895238-e15b-43a6-9868-5d21ae29490e',
+        structureId: 416,
       })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({
-          departementCode: '06',
-          id: structureId,
-          nom: 'TETRIS',
-        }),
+      await creerUnUtilisateur({
+        nom: 'Duchmolle',
+        prenom: 'Martine',
+        ssoEmail: 'martine.duchmolle@example.com',
+        ssoId: '31512478-64eb-4993-af47-a728ec4d8e06',
+        structureId,
       })
-      await prisma.structureRecord.create({
-        data: structureRecordFactory({
-          departementCode: '93',
-          id: 416,
-          nom: 'GRAND PARIS GRAND EST',
-        }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({ nom: 'Tartempion', prenom: 'Martin', structureId }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({
-          nom: 'Dugenoux',
-          prenom: 'Martine',
-          ssoEmail: 'martine.dugenoux@example.com',
-          ssoId: 'd6895238-e15b-43a6-9868-5d21ae29490e',
-          structureId: 416,
-        }),
-      })
-      await prisma.utilisateurRecord.create({
-        data: utilisateurRecordFactory({
-          nom: 'Duchmolle',
-          prenom: 'Martine',
-          ssoEmail: 'martine.duchmolle@example.com',
-          ssoId: '31512478-64eb-4993-af47-a728ec4d8e06',
-          structureId,
-        }),
-      })
+
       // WHEN
       const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
@@ -971,81 +827,54 @@ describe('prisma utilisateur query', () => {
 })
 
 async function creationDesUtilisateurs(structureId: number): Promise<void> {
-  await prisma.regionRecord.create({
-    data: regionRecordFactory({
-      code: '92',
-      nom: 'Provence-Alpes-Côte d\'Azur',
-    }),
+  await creerUneRegion({ code: '92', nom: 'Provence-Alpes-Côte d\'Azur' })
+
+  await creerUnDepartement({ code: '07', nom: 'Alpes-Maritimes', regionCode: '92' })
+
+  await creerUneStructure({ departementCode: '07', id: structureId, nom: 'LAPOSTE' })
+
+  await creerUnUtilisateur({
+    emailDeContact: 'gregory.logeais@example.net',
+    nom: 'Logeais',
+    prenom: 'Gregory',
+    ssoEmail: 'gregory.logeais@example.net',
+    ssoId: 'fooId1',
+    structureId,
   })
 
-  await prisma.departementRecord.create({
-    data: departementRecordFactory({
-      code: '07',
-      nom: 'Alpes-Maritimes',
-      regionCode: '92',
-    }),
+  await creerUnUtilisateur({
+    emailDeContact: 'structure@example.net',
+    nom: 'Belleville',
+    prenom: 'Romain',
+    ssoEmail: 'romain.belleville@example.net',
+    ssoId: 'barId1',
+    structureId,
   })
 
-  await prisma.structureRecord.create({
-    data: structureRecordFactory({
-      departementCode: '07',
-      id: structureId,
-      nom: 'LAPOSTE',
-    }),
+  await creerUnUtilisateur({
+    emailDeContact: 'structure@example.net',
+    nom: 'Belleville',
+    prenom: 'Romain',
+    ssoEmail: 'robin.desmurs@example.net',
+    ssoId: 'barId2',
+    structureId,
   })
 
-  await prisma.utilisateurRecord.create({
-    data: utilisateurRecordFactory({
-      emailDeContact: 'gregory.logeais@example.net',
-      nom: 'Logeais',
-      prenom: 'Gregory',
-      ssoEmail: 'gregory.logeais@example.net',
-      ssoId: 'fooId1',
-      structureId,
-    }),
+  await creerUnUtilisateur({
+    emailDeContact: 'structure1@example.net',
+    nom: 'Deschamps',
+    prenom: 'Baptiste',
+    ssoEmail: 'romain.sceller@example.net',
+    ssoId: 'barId23',
+    structureId,
   })
 
-  await prisma.utilisateurRecord.create({
-    data: utilisateurRecordFactory({
-      emailDeContact: 'structure@example.net',
-      nom: 'Belleville',
-      prenom: 'Romain',
-      ssoEmail: 'romain.belleville@example.net',
-      ssoId: 'barId1',
-      structureId,
-    }),
-  })
-
-  await prisma.utilisateurRecord.create({
-    data: utilisateurRecordFactory({
-      emailDeContact: 'structure@example.net',
-      nom: 'Belleville',
-      prenom: 'Romain',
-      ssoEmail: 'robin.desmurs@example.net',
-      ssoId: 'barId2',
-      structureId,
-    }),
-  })
-
-  await prisma.utilisateurRecord.create({
-    data: utilisateurRecordFactory({
-      emailDeContact: 'structure1@example.net',
-      nom: 'Deschamps',
-      prenom: 'Baptiste',
-      ssoEmail: 'romain.sceller@example.net',
-      ssoId: 'barId23',
-      structureId,
-    }),
-  })
-
-  await prisma.utilisateurRecord.create({
-    data: utilisateurRecordFactory({
-      emailDeContact: 'structure3@example.net',
-      nom: 'Nogent',
-      prenom: 'Eric',
-      ssoEmail: 'foo.bar@example.net',
-      ssoId: 'barId234',
-      structureId,
-    }),
+  await creerUnUtilisateur({
+    emailDeContact: 'structure3@example.net',
+    nom: 'Nogent',
+    prenom: 'Eric',
+    ssoEmail: 'foo.bar@example.net',
+    ssoId: 'barId234',
+    structureId,
   })
 }
