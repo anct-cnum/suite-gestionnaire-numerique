@@ -12,8 +12,8 @@ describe('feuille de route', () => {
     afficherUneGouvernance({
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,

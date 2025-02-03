@@ -148,24 +148,24 @@ function transform(
       beneficiairesSubvention: [
         {
           nom: 'Préfecture du Rhône',
-          roles: ['Porteur'],
+          roles: ['coporteur'],
           type: 'Structure',
         },
         {
           nom: 'CC des Monts du Lyonnais',
-          roles: ['Porteur'],
+          roles: ['coporteur'],
           type: 'Structure',
         },
       ],
       beneficiairesSubventionFormation: [
         {
           nom: 'Préfecture du Rhône',
-          roles: ['Porteur'],
+          roles: ['coporteur'],
           type: 'Structure',
         },
         {
           nom: 'CC des Monts du Lyonnais',
-          roles: ['Porteur'],
+          roles: ['coporteur'],
           type: 'Structure',
         },
       ],
