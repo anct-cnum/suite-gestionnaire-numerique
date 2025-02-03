@@ -188,7 +188,7 @@ describe('gouvernance', () => {
     expect(ajouterDesMembres).toHaveAttribute('type', 'button')
   })
 
-  it.only('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
+  it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       membres: [
@@ -300,7 +300,7 @@ describe('gouvernance', () => {
           feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: { plusDetails: '/' },
           nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
+          roles: ['coporteur'],
           telephone: '+33 4 45 00 45 00',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,

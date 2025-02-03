@@ -1,5 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
+import { formaterLeRoleViewModel, toRoleViewModel } from './shared/role'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -195,14 +196,6 @@ function buildLogoMembre(membre: MembreReadModel): string {
   return membre.type === 'Administration' ? 'bank-line' : 'community-line'
 }
 
-function toRoleViewModel(role: string): RoleViewModel {
-  const formaterLeRole = roleformat[role]
-  return {
-    color: roleAndHisColor[formaterLeRole],
-    nom: formaterLeRole,
-  }
-}
-
 function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['noteDeContexte']): GouvernanceViewModel['sectionNoteDeContexte']['noteDeContexte'] {
   if (!noteDeContexte) {
     return undefined
@@ -239,9 +232,8 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
   const detailDuNombreDeChaqueMembre = Object.entries(membres
     .flatMap(({ roles }) => roles)
     .reduce<Record<string, number>>((nombreParRole, role) => {
-      const formaterLeRole = roleformat[role]
-      nombreParRole[formaterLeRole] = nombreParRole[formaterLeRole] ? nombreParRole[formaterLeRole] + 1 : 1
-
+      const roleFormater = formaterLeRoleViewModel(role)
+      nombreParRole[roleFormater] = nombreParRole[roleFormater] ? nombreParRole[roleFormater] + 1 : 1
       return nombreParRole
     }, {}))
     .map(([role, nombre]) => `${nombre} ${role.toLowerCase()}${formatPluriel(nombre)}`)
@@ -368,27 +360,6 @@ type RoleViewModel = Readonly<{
   color: string
   nom: string
 }>
-
-// Stryker disable next-line ObjectLiteral
-const roleAndHisColor: Record<string, string> = {
-  Bénéficiaire: 'purple-glycine',
-  'Co-financeur': 'warning',
-  'Co-porteur': 'info',
-  Formation: 'green-tilleul-verveine',
-  Observateur: 'beige-gris-galet',
-  Porteur: 'info',
-  Récipiendaire: 'green-archipel',
-}
-
-// Stryker disable next-line ObjectLiteral
-const roleformat: Record<string, string> = {
-  Formation: 'Formation',
-  beneficiaire: 'Bénéficiaire',
-  cofinanceur: 'Co-financeur',
-  coporteur: 'Co-porteur',
-  observateur: 'Observateur',
-  recipiendaire: 'Récipiendaire',
-}
 
 const frequences = [
   {
