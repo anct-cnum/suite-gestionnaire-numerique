@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client'
 
 import { PrismaMesInformationsPersonnellesLoader } from './PrismaMesInformationsPersonnellesLoader'
-import { departementRecordFactory, regionRecordFactory, structureRecordFactory, utilisateurRecordFactory } from './testHelper'
+import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
@@ -42,12 +42,7 @@ describe('mes informations personnelles loader', () => {
   ])('cherchant un utilisateur $roleLabel qui existe par son ssoId alors cela retourne ses informations personnelles sans notion de structure', async ({ role, roleLabel }) => {
     // GIVEN
     const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        role,
-        ssoId: ssoIdExistant,
-      }),
-    })
+    await creerUnUtilisateur({ role, ssoId: ssoIdExistant })
     const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
@@ -67,21 +62,13 @@ describe('mes informations personnelles loader', () => {
     // GIVEN
     const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     const structureId = 10
-    await prisma.regionRecord.create({
-      data: regionRecordFactory(),
-    })
-    await prisma.departementRecord.create({
-      data: departementRecordFactory(),
-    })
-    await prisma.structureRecord.create({
-      data: structureRecordFactory({ id: structureId }),
-    })
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory({
-        role: 'gestionnaire_structure',
-        ssoId: ssoIdExistant,
-        structureId,
-      }),
+    await creerUneRegion()
+    await creerUnDepartement()
+    await creerUneStructure({ id: structureId })
+    await creerUnUtilisateur({
+      role: 'gestionnaire_structure',
+      ssoId: ssoIdExistant,
+      structureId,
     })
     const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
@@ -113,9 +100,7 @@ describe('mes informations personnelles loader', () => {
   it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
     // GIVEN
     const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
-    await prisma.utilisateurRecord.create({
-      data: utilisateurRecordFactory(),
-    })
+    await creerUnUtilisateur({ ssoId: 'userFooId' })
     const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN

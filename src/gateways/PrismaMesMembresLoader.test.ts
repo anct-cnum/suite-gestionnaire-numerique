@@ -1,5 +1,5 @@
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'
-import { ajouterUnDepartement, ajouterUneGouvernance, ajouterUneRegion, ajouterUnMembreCommune, ajouterUnMembreDepartement, ajouterUnMembreEpci, ajouterUnMembreSgar, ajouterUnMembreStructure } from './testHelper'
+import { creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 
 describe('mes membres loader', () => {
@@ -9,16 +9,16 @@ describe('mes membres loader', () => {
 
   it('quand les membres rattachés à une gouvernance existante sont demandés, alors elle sont renvoyée dans l’ordre alphabétique', async () => {
     // GIVEN
-    await ajouterUneRegion()
-    await ajouterUnDepartement()
-    await ajouterUneGouvernance()
-    await ajouterUnMembreCommune()
-    await ajouterUnMembreEpci()
-    await ajouterUnMembreStructure()
-    await ajouterUnMembreStructure({ structure: 'Département du Rhône' })
-    await ajouterUnMembreStructure({ role: 'cofinanceur', structure: 'Département du Rhône' })
-    await ajouterUnMembreDepartement()
-    await ajouterUnMembreSgar()
+    await creerUneRegion({ code: '84', nom: 'Auvergne-Rhône-Alpes' })
+    await creerUnDepartement({ code: '69', nom: 'Rhône', regionCode: '84' })
+    await creerUneGouvernance({ departementCode: '69' })
+    await creerUnMembreCommune()
+    await creerUnMembreEpci()
+    await creerUnMembreStructure()
+    await creerUnMembreStructure({ structure: 'Département du Rhône' })
+    await creerUnMembreStructure({ role: 'cofinanceur', structure: 'Département du Rhône' })
+    await creerUnMembreDepartement()
+    await creerUnMembreSgar()
 
     // WHEN
     const mesMembresLoader = new PrismaMesMembresLoader(prisma)
