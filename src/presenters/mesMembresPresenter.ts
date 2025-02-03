@@ -5,7 +5,7 @@ export function mesMembresPresenter(mesMembresReadModel: MesMembresReadModel): M
   return {
     autorisations: mesMembresReadModel.autorisations,
     membres: mesMembresReadModel.membres.map(toMembreViewModel),
-    roles: mesMembresReadModel.roles,
+    roles: mesMembresReadModel.roles.map(formaterLeRoleViewModel),
     titre: `Gérer les membres - ${mesMembresReadModel.departement}`,
     typologies: mesMembresReadModel.typologies,
   }

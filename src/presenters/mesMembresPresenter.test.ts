@@ -5,7 +5,10 @@ import { mesMembresReadModelFactory } from '@/use-cases/testHelper'
 describe('mes membres presenter', () => {
   it('affichage des membres', () => {
     // GIVEN
-    const mesMembres = mesMembresReadModelFactory()
+    const mesMembres = mesMembresReadModelFactory({
+      roles: ['coporteur', 'cofinanceur'],
+      typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
+    })
 
     // WHEN
     const mesMembresViewModel = mesMembresPresenter(mesMembres)
