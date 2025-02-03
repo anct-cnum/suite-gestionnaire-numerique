@@ -196,9 +196,10 @@ function buildLogoMembre(membre: MembreReadModel): string {
 }
 
 function toRoleViewModel(role: string): RoleViewModel {
+  const formaterLeRole = roleformat[role]
   return {
-    color: roleAndHisColor[role],
-    nom: role,
+    color: roleAndHisColor[formaterLeRole],
+    nom: formaterLeRole,
   }
 }
 
@@ -235,11 +236,11 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
       wording: 'membre',
     }
   }
-
   const detailDuNombreDeChaqueMembre = Object.entries(membres
     .flatMap(({ roles }) => roles)
     .reduce<Record<string, number>>((nombreParRole, role) => {
-      nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
+      const formaterLeRole = roleformat[role]
+      nombreParRole[formaterLeRole] = nombreParRole[formaterLeRole] ? nombreParRole[formaterLeRole] + 1 : 1
 
       return nombreParRole
     }, {}))
@@ -371,12 +372,22 @@ type RoleViewModel = Readonly<{
 // Stryker disable next-line ObjectLiteral
 const roleAndHisColor: Record<string, string> = {
   Bénéficiaire: 'purple-glycine',
+  'Co-financeur': 'warning',
   'Co-porteur': 'info',
-  Financeur: 'warning',
   Formation: 'green-tilleul-verveine',
   Observateur: 'beige-gris-galet',
   Porteur: 'info',
   Récipiendaire: 'green-archipel',
+}
+
+// Stryker disable next-line ObjectLiteral
+const roleformat: Record<string, string> = {
+  Formation: 'Formation',
+  beneficiaire: 'Bénéficiaire',
+  cofinanceur: 'Co-financeur',
+  coporteur: 'Co-porteur',
+  observateur: 'Observateur',
+  recipiendaire: 'Récipiendaire',
 }
 
 const frequences = [

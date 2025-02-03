@@ -296,7 +296,7 @@ describe('membres', () => {
       expect(rolesItems).toHaveLength(3)
       const roleCoPorteur = within(rolesItems[0]).getByText('Co-porteur', { selector: 'p' })
       expect(roleCoPorteur).toBeInTheDocument()
-      const roleFinanceur = within(rolesItems[1]).getByText('Financeur', { selector: 'p' })
+      const roleFinanceur = within(rolesItems[1]).getByText('Co-financeur', { selector: 'p' })
       expect(roleFinanceur).toBeInTheDocument()
       const typologieMembre = screen.getByText('Collectivité, EPCI')
       expect(typologieMembre).toBeInTheDocument()
@@ -336,7 +336,7 @@ describe('membres', () => {
             feuillesDeRoute: [],
             links: { plusDetails: '/' },
             nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Financeur'],
+            roles: ['Co-porteur', 'Co-financeur'],
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
@@ -370,7 +370,7 @@ describe('membres', () => {
             feuillesDeRoute: [],
             links: { plusDetails: '/' },
             nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Financeur'],
+            roles: ['Co-porteur', 'Co-financeur'],
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
@@ -425,7 +425,7 @@ describe('membres', () => {
               feuillesDeRoute,
               links: { plusDetails: '/' },
               nom: 'Département du Rhône',
-              roles: ['Co-porteur', 'Financeur'],
+              roles: ['Co-porteur', 'Co-financeur'],
               telephone: '+33 4 45 00 45 01',
               totalMontantSubventionAccorde: 0,
               totalMontantSubventionFormationAccorde: 0,
@@ -512,7 +512,7 @@ describe('membres', () => {
               feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
               links: { plusDetails: '/' },
               nom: 'Département du Rhône',
-              roles: ['Co-porteur', 'Financeur'],
+              roles: ['Co-porteur', 'Co-financeur'],
               telephone: '+33 4 45 00 45 01',
               totalMontantSubventionAccorde: 0,
               totalMontantSubventionFormationAccorde: 0,
