@@ -17,9 +17,6 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<Comma
     } = command
 
     const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
 
     const changerPrenomResult = utilisateurCourant.changerPrenom(prenom)
     if (!isOk(changerPrenomResult)) {
@@ -56,6 +53,6 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-type Failure = 'utilisateurCourantInexistant' | UtilisateurFailure
+type Failure = UtilisateurFailure
 
 interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}

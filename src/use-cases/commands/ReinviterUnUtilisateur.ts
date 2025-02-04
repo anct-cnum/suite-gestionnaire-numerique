@@ -20,14 +20,8 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
 
     const utilisateurAReinviter = await this.#utilisateurRepository.find(command.uidUtilisateurAReinviter)
-    if (!utilisateurAReinviter) {
-      return 'utilisateurAReinviterInexistant'
-    }
     if (utilisateurAReinviter.state.isActive) {
       return 'utilisateurAReinviterDejaActif'
     }
@@ -44,12 +38,7 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
   }
 }
 
-type Failure =
-  | 'utilisateurCourantInexistant'
-  | 'utilisateurAReinviterInexistant'
-  | 'utilisateurAReinviterDejaActif'
-  | 'utilisateurNePeutPasGererUtilisateurAReinviter'
-  | UtilisateurFailure
+type Failure = 'utilisateurAReinviterDejaActif' | 'utilisateurNePeutPasGererUtilisateurAReinviter' | UtilisateurFailure
 
 type Command = Readonly<{
   uidUtilisateurAReinviter: string

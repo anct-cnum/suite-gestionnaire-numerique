@@ -16,8 +16,8 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     this.#gouvernanceDataResource = gouvernanceDataResource
   }
 
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    const record = await this.#gouvernanceDataResource.findUnique({
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
+    const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
         noteDeContexte: {
           include: {
@@ -31,9 +31,6 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         departementCode: uid.state.value,
       },
     })
-    if (!record) {
-      return null
-    }
 
     const noteDeContexte = record.noteDeContexte ? {
       contenu: record.noteDeContexte.contenu,

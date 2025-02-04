@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 import { ToastContainer } from 'react-toastify'
@@ -15,7 +16,6 @@ import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisate
 import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
 import { MettreAJourUidALaPremiereConnexion } from '@/use-cases/commands/MettreAJourUidALaPremiereConnexion'
 import config from '@/use-cases/config.json'
-import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export default async function Layout({ children }: Readonly<PropsWithChildren>): Promise<ReactElement> {
@@ -32,16 +32,12 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   try {
     utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
   } catch (error) {
-    if (error instanceof UtilisateurNonTrouveError) {
-      const result = await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
         .execute({
           emailAsUid: session.user.email,
           uid: session.user.sub,
         })
-
-      if (result === 'utilisateurCourantInexistant') {
-        throw error
-      }
     }
     utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
   }

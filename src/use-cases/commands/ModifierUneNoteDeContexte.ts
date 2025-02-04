@@ -22,14 +22,7 @@ export class ModifierUneNoteDeContexte implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    if (!editeur) {
-      return 'editeurInexistant'
-    }
-
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'editeurNePeutPasModifierNoteDeContexte'
     }
@@ -44,7 +37,7 @@ export class ModifierUneNoteDeContexte implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasModifierNoteDeContexte' | GouvernanceFailure
+type Failure = 'editeurNePeutPasModifierNoteDeContexte' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string

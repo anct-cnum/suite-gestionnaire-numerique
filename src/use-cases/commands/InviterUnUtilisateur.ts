@@ -21,10 +21,6 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
-
     const utilisateurCourantState = utilisateurCourant.state
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
@@ -69,6 +65,6 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-type Failure = 'utilisateurNePeutPasGererUtilisateurACreer' | 'emailExistant' | 'utilisateurCourantInexistant'
+type Failure = 'utilisateurNePeutPasGererUtilisateurACreer' | 'emailExistant'
 
 interface UtilisateurRepository extends FindUtilisateurRepository, AddUtilisateurRepository {}

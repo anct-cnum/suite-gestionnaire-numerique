@@ -13,7 +13,7 @@ describe('supprimer une note privée d’une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note privée est supprimée par son gestionnaire, alors elle est supprimée', async () => {
+  it('étant donné une gouvernance, quand une note privée est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
     const uidEditeur = 'userFooId2'
     const supprimerNotePrivee = new SupprimerUneNotePrivee(
@@ -39,7 +39,7 @@ describe('supprimer une note privée d’une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un note privée est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand un note privée est supprimée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerNotePrivee = new SupprimerUneNotePrivee(
       new GouvernanceRepositorySpy(),
@@ -55,46 +55,6 @@ describe('supprimer une note privée d’une gouvernance', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurNePeutPasSupprimerNotePrivee')
   })
-
-  it('étant donné une gouvernance inexistante, quand une note privée est supprimée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const supprimerNotePrivee = new SupprimerUneNotePrivee(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimerNotePrivee.execute({
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('gouvernanceInexistante')
-  })
-
-  it('étant donné un utilisateur inexistant, quand une note privée est supprimée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const supprimerNotePrivee = new SupprimerUneNotePrivee(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimerNotePrivee.execute({
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurInexistant')
-  })
 })
 
 const uidGouvernance = 'gouvernanceFooId'
@@ -105,7 +65,7 @@ let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
 class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -132,15 +92,8 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouve
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({
       codeOrganisation: '75',
@@ -150,15 +103,8 @@ class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   }
 }
 
-class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }

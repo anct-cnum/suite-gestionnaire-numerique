@@ -181,30 +181,6 @@ describe('inviter un utilisateur', () => {
     expect(spiedIsSuperAdmin).toBeNull()
   })
 
-  it('étant donné que le compte de l’utilisateur courant n’existe plus, quand il invite un autre utilisateur, alors il y a une erreur', async () => {
-    // GIVEN
-    const repository = new RepositorySpy(null)
-    const emailGatewayFactory = emailGatewayFactorySpy
-    const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, epochTime)
-    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
-
-    // WHEN
-    const result = await inviterUnUtilisateur.execute({
-      email: 'martin.tartempion@example.net',
-      nom: 'Tartempion',
-      prenom: 'Martin',
-      role: { type: roleUtilisateurAInviter },
-      uidUtilisateurCourant: 'utilisateurInexistantUid',
-    })
-
-    // THEN
-    expect(result).toBe('utilisateurCourantInexistant')
-    expect(spiedUidToFind).toBe('utilisateurInexistantUid')
-    expect(spiedUtilisateurToAdd).toBeNull()
-    expect(spiedDestinataire).toBe('')
-    expect(spiedIsSuperAdmin).toBeNull()
-  })
-
   it('étant donné que l’utilisateur à inviter existe déjà, quand l’utilisateur courant l’invite, alors il y a une erreur', async () => {
     // GIVEN
     const date = epochTime
@@ -243,13 +219,13 @@ let spiedDestinataire: string
 let spiedIsSuperAdmin: boolean | null
 
 class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurRepository {
-  readonly #utilisateurCourant: Utilisateur | null
+  readonly #utilisateurCourant: Utilisateur
 
-  constructor(utilisateurCourant: Utilisateur | null) {
+  constructor(utilisateurCourant: Utilisateur) {
     this.#utilisateurCourant = utilisateurCourant
   }
 
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(this.#utilisateurCourant)
   }

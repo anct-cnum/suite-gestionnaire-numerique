@@ -7,7 +7,7 @@ describe('mes membres loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('quand les membres rattachés à une gouvernance existante sont demandés, alors elle sont renvoyée dans l’ordre alphabétique', async () => {
+  it('quand les membres rattachés à une gouvernance sont demandés, alors elle sont renvoyée dans l’ordre alphabétique', async () => {
     // GIVEN
     await creerUneRegion({ code: '84', nom: 'Auvergne-Rhône-Alpes' })
     await creerUnDepartement({ code: '69', nom: 'Rhône', regionCode: '84' })

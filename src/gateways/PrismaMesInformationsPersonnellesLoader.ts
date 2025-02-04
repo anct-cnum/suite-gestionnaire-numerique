@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
 
 import { UtilisateurEtSesRelationsRecord, toTypologieRole } from './shared/RoleMapper'
-import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
@@ -11,8 +10,8 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
     this.dataResource = dataResource
   }
 
-  async findByUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
-    const utilisateurRecord = await this.dataResource.findUnique({
+  async byUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
+    const utilisateurRecord = await this.dataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -23,10 +22,6 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
         ssoId: uid,
       },
     })
-
-    if (utilisateurRecord === null) {
-      throw new UtilisateurNonTrouveError()
-    }
 
     return transform(utilisateurRecord)
   }

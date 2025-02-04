@@ -41,50 +41,6 @@ describe('corriger nom prenom si absents', () => {
 
   it.each([
     {
-      desc: 'le nom est absent',
-      nomAvantCorrection: valeurNomOuPrenomAbsent,
-      prenomAvantCorrection: 'Michel',
-    },
-    {
-      desc: 'le prénom est absent',
-      nomAvantCorrection: 'Tartempion',
-      prenomAvantCorrection: valeurNomOuPrenomAbsent,
-    },
-    {
-      desc: 'le prénom et le nom sont absents',
-      nomAvantCorrection: valeurNomOuPrenomAbsent,
-      prenomAvantCorrection: valeurNomOuPrenomAbsent,
-    },
-  ])(
-    '$desc, mais l’utilisateur est introuvable : la notification de compte inexistant est émise et aucune mise à jour n’est effectuée',
-    async ({ nomAvantCorrection, prenomAvantCorrection }) => {
-      // GIVEN
-      const nom = nomAvantCorrection
-      const prenom = prenomAvantCorrection
-      const utilisateurRepository = new UtilisateurRepositoryUtilisateurIntrouvableSpy()
-
-      // WHEN
-      const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).execute({
-        actuels: {
-          nom,
-          prenom,
-        },
-        corriges: {
-          nom: 'Dugenoux',
-          prenom: 'Micheline',
-        },
-        uidUtilisateurCourant: 'fooId',
-      })
-
-      // THEN
-      expect(result).toBe('utilisateurCourantInexistant')
-      expect(spiedUidToFind).toBe('fooId')
-      expect(spiedUtilisateurToUpdate).toBeNull()
-    }
-  )
-
-  it.each([
-    {
       correctionNom: valeurNomOuPrenomAbsent,
       correctionPrenom: 'Micheline',
       desc: 'le nom est absent',
@@ -207,19 +163,6 @@ class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtili
   async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({ nom: 'Tartempion', prenom: 'Michel' }))
-  }
-
-  async update(utilisateur: Utilisateur): Promise<void> {
-    spiedUtilisateurToUpdate = utilisateur
-    return Promise.resolve()
-  }
-}
-
-class UtilisateurRepositoryUtilisateurIntrouvableSpy
-implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<null> {
-    spiedUidToFind = uid
-    return Promise.resolve(null)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

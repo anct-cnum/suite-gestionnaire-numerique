@@ -27,8 +27,8 @@ export class PrismaComiteRepository implements ComiteRepository {
     return true
   }
 
-  async find(uid: Comite['uid']['state']['value']): Promise<Comite | null> {
-    const record = await this.#dataResource.findUnique({
+  async find(uid: Comite['uid']['state']['value']): Promise<Comite> {
+    const record = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationUtilisateur: true,
       },
@@ -36,10 +36,6 @@ export class PrismaComiteRepository implements ComiteRepository {
         id: Number(uid),
       },
     })
-
-    if (!record) {
-      return null
-    }
 
     const comite = Comite.create({
       commentaire: record.commentaire ?? undefined,

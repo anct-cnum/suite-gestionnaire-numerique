@@ -32,7 +32,7 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'sans date ni commentaire',
       type: typeValide,
     },
-  ])('étant donné une gouvernance existante, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gourvernance', async ({
+  ])('étant donné une gouvernance, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gourvernance', async ({
     commentaire,
     date,
     expectedDate,
@@ -125,7 +125,7 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'de la date de comité qui est dans le passé',
       type: typeValide,
     },
-  ])('étant donné une gouvernance existante, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
+  ])('étant donné une gouvernance, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {
     // GIVEN
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceRepositorySpy(),
@@ -150,7 +150,7 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(spiedComiteToAdd).toBeNull()
   })
 
-  it('étant donné une gouvernance existante, quand un comité est créé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand un comité est créé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterUnComite = new AjouterUnComite(
       new GouvernanceRepositorySpy(),
@@ -175,58 +175,6 @@ describe('ajouter un comité à une gouvernance', () => {
     expect(result).toBe('editeurNePeutPasAjouterComite')
     expect(spiedComiteToAdd).toBeNull()
   })
-
-  it('étant donné une gouvernance inexistante, quand un comité est créé, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterUnComite.execute({
-      commentaire,
-      date,
-      frequence: frequenceValide,
-      type: typeValide,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('gouvernanceInexistante')
-    expect(spiedComiteToAdd).toBeNull()
-  })
-
-  it('étant donné un utilisateur inexistant, quand un comité est créé, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterUnComite = new AjouterUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy(),
-      new ComiteRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterUnComite.execute({
-      commentaire,
-      date,
-      frequence: frequenceValide,
-      type: typeValide,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(result).toBe('editeurInexistant')
-    expect(spiedComiteToAdd).toBeNull()
-  })
 })
 
 const commentaire = 'un commentaire'
@@ -240,7 +188,7 @@ let spiedUtilisateurUidToFind: string | null
 let spiedComiteToAdd: Comite | null
 
 class GouvernanceRepositorySpy implements FindGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -256,29 +204,15 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository {
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
-class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
