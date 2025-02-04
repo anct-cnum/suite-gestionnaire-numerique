@@ -22,14 +22,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
 
   async execute(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    if (!editeur) {
-      return 'editeurInexistant'
-    }
-
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'utilisateurNePeutPasAjouterNoteDeContexte'
     }
@@ -48,7 +41,7 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'utilisateurNePeutPasAjouterNoteDeContexte' | GouvernanceFailure
+type Failure = 'utilisateurNePeutPasAjouterNoteDeContexte' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string
@@ -59,4 +52,3 @@ type Command = Readonly<{
 export interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
 
 type UtilisateurRepository = FindUtilisateurRepository
-

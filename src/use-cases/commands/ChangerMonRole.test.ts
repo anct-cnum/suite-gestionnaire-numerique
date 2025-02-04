@@ -43,22 +43,6 @@ describe('changer mon rôle', () => {
     expect(result).toBe('utilisateurNonAutoriseAChangerSonRole')
     expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
   })
-
-  it('mon compte est introuvable : pas de modification possible', async () => {
-    // GIVEN
-    const nouveauRole = 'Pilote politique publique'
-    const changerMonRole = new ChangerMonRole(utilisateurRepository)
-
-    // WHEN
-    const result = await changerMonRole.execute({
-      nouveauRole,
-      uidUtilisateurCourant: 'utilisateurIntrouvableUid',
-    })
-
-    // THEN
-    expect(result).toBe('utilisateurCourantInexistant')
-    expect(spiedUtilisateur).toStrictEqual(nullUtilisateur)
-  })
 })
 
 const nullUtilisateur = {} as Utilisateur
@@ -77,8 +61,8 @@ const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
 }
 
 const utilisateurRepository = new class implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    return Promise.resolve(utilisateurByUid[uid] ?? null)
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    return Promise.resolve(utilisateurByUid[uid])
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

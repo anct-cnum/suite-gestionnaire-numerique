@@ -13,10 +13,6 @@ export class ChangerMonRole implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
-
     const result = utilisateurCourant.changerRole(command.nouveauRole)
     if (isOk(result)) {
       await this.#utilisateurRepository.update(utilisateurCourant)
@@ -26,7 +22,7 @@ export class ChangerMonRole implements CommandHandler<Command> {
   }
 }
 
-type Failure = UtilisateurFailure | 'utilisateurCourantInexistant'
+type Failure = UtilisateurFailure
 
 type Command = Readonly<{
   nouveauRole: TypologieRole

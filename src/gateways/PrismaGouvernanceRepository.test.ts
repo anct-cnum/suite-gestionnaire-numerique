@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import { PrismaGouvernanceRepository } from './PrismaGouvernanceRepository'
 import { creerUnDepartement, creerUneGouvernance, creerUneNoteDeContexte, creerUneRegion, creerUnUtilisateur, gouvernanceRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -21,10 +23,11 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
-    const gouvernanceTrouvee = await repository.find(new GouvernanceUid('3'))
+    const gouvernanceTrouvee = repository.find(new GouvernanceUid('3'))
 
     // THEN
-    expect(gouvernanceTrouvee).toBeNull()
+    await expect(gouvernanceTrouvee).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernanceTrouvee).rejects.toMatchObject({ code: 'P2025' })
   })
 
   it('rechercher une gouvernance qui existe sans note de contexte', async () => {
@@ -42,7 +45,7 @@ describe('gouvernance repository', () => {
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(
+    expect(gouvernanceTrouvee.state).toStrictEqual(
       gouvernanceFactory({ noteDeContexte: undefined, uid: departementCode }).state
     )
   })
@@ -61,7 +64,7 @@ describe('gouvernance repository', () => {
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(gouvernanceFactory({ uid: departementCode }).state)
+    expect(gouvernanceTrouvee.state).toStrictEqual(gouvernanceFactory({ uid: departementCode }).state)
   })
 
   it('rechercher une gouvernance qui existe sans note privée', async () => {
@@ -79,7 +82,7 @@ describe('gouvernance repository', () => {
     const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee?.state).toStrictEqual(
+    expect(gouvernanceTrouvee.state).toStrictEqual(
       gouvernanceFactory({ noteDeContexte: undefined, notePrivee: undefined, uid: departementCode }).state
     )
   })

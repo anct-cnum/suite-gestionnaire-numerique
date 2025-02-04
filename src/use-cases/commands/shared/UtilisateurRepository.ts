@@ -1,7 +1,7 @@
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 export interface FindUtilisateurRepository {
-  find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null>
+  find(uid: UtilisateurUidState['value']): Promise<Utilisateur>
 }
 
 export interface DropUtilisateurRepository {

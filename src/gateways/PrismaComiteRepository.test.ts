@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import { PrismaComiteRepository } from './PrismaComiteRepository'
 import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur, comiteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -92,7 +94,7 @@ describe('comité repository', () => {
     const comiteRecord = await repository.find('1')
 
     // THEN
-    expect(comiteRecord?.state).toStrictEqual(comiteFactory({
+    expect(comiteRecord.state).toStrictEqual(comiteFactory({
       commentaire,
       date,
       dateDeCreation: epochTime,
@@ -121,10 +123,11 @@ describe('comité repository', () => {
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = await repository.find('666')
+    const comiteRecord = repository.find('666')
 
     // THEN
-    expect(comiteRecord).toBeNull()
+    await expect(comiteRecord).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(comiteRecord).rejects.toMatchObject({ code: 'P2025' })
   })
 
   it('ne trouve pas un comité quand une de ses données n’est pas valide', async () => {
@@ -148,8 +151,7 @@ describe('comité repository', () => {
     const comiteRecord = repository.find('2')
 
     // THEN
-    // eslint-disable-next-line vitest/require-to-throw-message
-    await expect(async () => comiteRecord).rejects.toThrow()
+    await expect(async () => comiteRecord).rejects.toThrow('dateDuComiteDoitEtreDansLeFutur')
   })
 
   it('modifier un comité', async () => {

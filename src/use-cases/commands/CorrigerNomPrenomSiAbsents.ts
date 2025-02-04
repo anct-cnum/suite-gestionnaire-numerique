@@ -20,10 +20,6 @@ export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failu
     }
 
     const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return Promise.resolve('utilisateurCourantInexistant')
-    }
-
     if (isPrenomAbsent) {
       if (this.#valeurNomOuPrenomAbsent === corriges.prenom) {
         return 'miseAJourInvalide'
@@ -54,7 +50,7 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-type Failure = 'utilisateurCourantInexistant' | 'miseAJourInvalide'
+type Failure = 'miseAJourInvalide'
 
 type Success = 'okAvecMiseAJour' | 'okSansMiseAJour'
 

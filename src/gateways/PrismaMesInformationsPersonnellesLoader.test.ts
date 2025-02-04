@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client'
+import { Prisma, Role } from '@prisma/client'
 
 import { PrismaMesInformationsPersonnellesLoader } from './PrismaMesInformationsPersonnellesLoader'
 import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnUtilisateur } from './testHelper'
@@ -109,6 +109,7 @@ describe('mes informations personnelles loader', () => {
     }
 
     // THEN
-    await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
+    await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(utilisateurReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 })

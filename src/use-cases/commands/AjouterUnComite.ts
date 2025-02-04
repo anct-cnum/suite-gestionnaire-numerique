@@ -25,15 +25,7 @@ export class AjouterUnComite implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    if (!editeur) {
-      return 'editeurInexistant'
-    }
-
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
-
     const dateDeCreation = this.#date
     const comite = Comite.create({
       commentaire: command.commentaire,
@@ -62,7 +54,7 @@ export class AjouterUnComite implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasAjouterComite' | ComiteFailure
+type Failure = 'editeurNePeutPasAjouterComite' | ComiteFailure
 
 type Command = Readonly<{
   commentaire?: string
