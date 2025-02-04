@@ -22,7 +22,7 @@ export async function modifierUneNoteDeContexteAction(
   }
 
   const modifierUneNoteDeContexte = new ModifierUneNoteDeContexte(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )

@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaGouvernanceRepository } from './PrismaGouvernanceRepository'
-import { creerUnDepartement, creerUneGouvernance, creerUneNoteDeContexte, creerUneRegion, creerUnUtilisateur, gouvernanceRecordFactory } from './testHelper'
+import { creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur, gouvernanceRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
@@ -20,7 +20,7 @@ describe('gouvernance repository', () => {
     await creerUnDepartement({ code: departementCode })
     await creerUnUtilisateur()
     await creerUneGouvernance({ departementCode })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceTrouvee = repository.get(new GouvernanceUid('3'))
@@ -39,7 +39,7 @@ describe('gouvernance repository', () => {
     await creerUnUtilisateur()
     await creerUneGouvernance({ departementCode })
     await creerUneGouvernance({ departementCode: '76' })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
@@ -57,8 +57,7 @@ describe('gouvernance repository', () => {
     await creerUnDepartement({ code: departementCode })
     await creerUnUtilisateur()
     await creerUneGouvernance({ departementCode })
-    await creerUneNoteDeContexte({ gouvernanceDepartementCode: departementCode })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
@@ -76,7 +75,7 @@ describe('gouvernance repository', () => {
     await creerUnUtilisateur()
     await creerUneGouvernance({ departementCode, notePrivee: undefined })
     await creerUneGouvernance({ departementCode: '76' })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
@@ -94,7 +93,7 @@ describe('gouvernance repository', () => {
     await creerUnDepartement({ code: departementCode })
     await creerUnUtilisateur({ ssoId: 'userFooId' })
     await creerUneGouvernance({ departementCode, notePrivee: undefined })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
     const gouvernanceMiseAJourAvecNoteDeContexte = gouvernanceFactory({
       noteDeContexte: {
         contenu: '<p>lorem ipsum dolor sit amet</p>',
@@ -113,9 +112,6 @@ describe('gouvernance repository', () => {
 
     // THEN
     const gouvernanceRecord = await prisma.gouvernanceRecord.findUnique({
-      include: {
-        noteDeContexte: true,
-      },
       where: {
         departementCode,
       },
@@ -131,6 +127,7 @@ describe('gouvernance repository', () => {
         gouvernanceDepartementCode: departementCode,
       },
       notePrivee: null,
+      notesDeContexte: '<p>lorem ipsum dolor sit amet</p>',
     })
   })
 
@@ -141,7 +138,7 @@ describe('gouvernance repository', () => {
     await creerUnDepartement({ code: departementCode })
     await creerUnUtilisateur()
     await creerUneGouvernance({ departementCode })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
     const gouvernance = gouvernanceFactory({ noteDeContexte: undefined, uid: departementCode })
 
     // WHEN
@@ -166,7 +163,7 @@ describe('gouvernance repository', () => {
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode, editeurNotePriveeId: undefined, notePrivee: undefined })
     await creerUneGouvernance({ departementCode: '93', editeurNotePriveeId: undefined, notePrivee: undefined })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     await repository.update(gouvernanceFactory({
@@ -223,7 +220,7 @@ describe('gouvernance repository', () => {
       editeurNotePriveeId: undefined,
       notePrivee: undefined,
     })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     await repository.update(gouvernanceFactory({
@@ -273,7 +270,7 @@ describe('gouvernance repository', () => {
         derniereEdition: epochTime.toISOString(),
       },
     })
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     await repository.update(gouvernanceFactory({
@@ -283,6 +280,7 @@ describe('gouvernance repository', () => {
 
     // THEN
     const modifiedRecord = await prisma.gouvernanceRecord.findUnique({ where: { departementCode } })
+    console.log(modifiedRecord)
     expect(modifiedRecord).toStrictEqual(gouvernanceRecordFactory({
       departementCode,
       editeurNotePriveeId: null,

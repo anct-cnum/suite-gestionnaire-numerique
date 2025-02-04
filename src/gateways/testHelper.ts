@@ -108,19 +108,7 @@ export function comiteRecordFactory(
   }
 }
 
-function noteDeContexteRecordFactory(
-  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
-): Prisma.NoteDeContexteRecordUncheckedCreateInput {
-  return {
-    contenu: '<p>contenu HTML</p>',
-    derniereEdition: epochTime,
-    editeurId: 'userFooId',
-    gouvernanceDepartementCode: '11',
-    ...override,
-  }
-}
-
-export async function creerUneRegion(
+export async function ajouterUneRegion(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.regionRecord.create({
@@ -185,16 +173,6 @@ export async function creerUnComite(
 ): Promise<void> {
   await prisma.comiteRecord.create({
     data: comiteRecordFactory({
-      ...override,
-    }),
-  })
-}
-
-export async function creerUneNoteDeContexte(
-  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.noteDeContexteRecord.create({
-    data: noteDeContexteRecordFactory({
       ...override,
     }),
   })

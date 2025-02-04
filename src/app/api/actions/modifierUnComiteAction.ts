@@ -21,7 +21,7 @@ export async function modifierUnComiteAction(
   }
 
   const result = await new ModifierUnComite(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaComiteRepository(prisma.comiteRecord),
     new Date()

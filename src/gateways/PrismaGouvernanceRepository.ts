@@ -5,41 +5,35 @@ import { UtilisateurUid } from '@/domain/Utilisateur'
 import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
 export class PrismaGouvernanceRepository implements GouvernanceRepository {
-  readonly #noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
   readonly #gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(
-    gouvernanceDataResource: Prisma.GouvernanceRecordDelegate,
-    noteDeContexteDataResource: Prisma.NoteDeContexteRecordDelegate
+    gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
   ) {
-    this.#noteDeContexteDataResource = noteDeContexteDataResource
     this.#gouvernanceDataResource = gouvernanceDataResource
   }
 
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
-        noteDeContexte: {
-          include: {
-            relationUtilisateur: true,
+        relationDepartement: true,
+        relationEditeurNotePrivee: {
+          select: {
+            ssoEmail: true,
+            ssoId: true,
           },
         },
-        relationDepartement: true,
-        relationEditeurNotePrivee: true,
+        relationEditeurNotesDeContexte: {
+          select: {
+            ssoEmail: true,
+            ssoId: true,
+          },
+        },
       },
       where: {
         departementCode: uid.state.value,
       },
     })
-
-    const noteDeContexte = record.noteDeContexte ? {
-      contenu: record.noteDeContexte.contenu,
-      dateDeModification: record.noteDeContexte.derniereEdition,
-      uidEditeur: new UtilisateurUid({
-        email: record.noteDeContexte.relationUtilisateur.ssoEmail,
-        value: record.noteDeContexte.relationUtilisateur.ssoId,
-      }),
-    } : undefined
 
     const notePrivee = record.notePrivee && record.relationEditeurNotePrivee ? {
       contenu: record.notePrivee.contenu,
@@ -49,6 +43,19 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         value: record.relationEditeurNotePrivee.ssoId,
       }),
     } : undefined
+
+    const noteDeContexte = Boolean(record.notesDeContexte) &&
+      record.relationEditeurNotesDeContexte &&
+      record.derniereEditionNoteDeContexte
+      ? {
+        contenu: record.notesDeContexte ?? '',
+        dateDeModification: new Date(record.derniereEditionNoteDeContexte),
+        uidEditeur: new UtilisateurUid({
+          email: record.relationEditeurNotesDeContexte.ssoEmail,
+          value: record.relationEditeurNotesDeContexte.ssoId,
+        }),
+      }
+      : undefined
 
     return Gouvernance.create({
       departement: {
@@ -91,20 +98,14 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
 
     const noteDeContexte = gouvernance.state.noteDeContexte
     if (noteDeContexte) {
-      await this.#noteDeContexteDataResource.upsert({
-        create: {
-          contenu: noteDeContexte.value,
-          derniereEdition: noteDeContexte.dateDeModification,
-          editeurId: noteDeContexte.uidEditeur,
-          gouvernanceDepartementCode: gouvernance.state.uid.value,
-        },
-        update: {
-          contenu: noteDeContexte.value,
-          derniereEdition: noteDeContexte.dateDeModification,
-          editeurId: noteDeContexte.uidEditeur,
+      await this.#gouvernanceDataResource.update({
+        data: {
+          derniereEditionNoteDeContexte: noteDeContexte.dateDeModification,
+          editeurNotesDeContexteId: noteDeContexte.uidEditeur,
+          notesDeContexte: noteDeContexte.value,
         },
         where: {
-          gouvernanceDepartementCode: gouvernance.state.uid.value,
+          departementCode: gouvernance.state.uid.value,
         },
       })
     }
