@@ -22,14 +22,7 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    if (!editeur) {
-      return 'editeurInexistant'
-    }
-
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'editeurNePeutPasModifierNotePrivee'
@@ -48,7 +41,7 @@ export class ModifierUneNotePrivee implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasModifierNotePrivee' | GouvernanceFailure
+type Failure = 'editeurNePeutPasModifierNotePrivee' | GouvernanceFailure
 
 type Command = Readonly<{
   contenu: string

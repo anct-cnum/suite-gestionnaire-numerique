@@ -9,12 +9,8 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
     this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
+  async execute(command: Command): ResultAsync<never> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.emailAsUid)
-
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
 
     const utilisateurAvecNouvelUid = UtilisateurFactory.avecNouvelUid(utilisateurCourant, command.uid)
     await this.#utilisateurRepository.updateUid(utilisateurAvecNouvelUid)
@@ -22,8 +18,6 @@ export class MettreAJourUidALaPremiereConnexion implements CommandHandler<Comman
     return 'OK'
   }
 }
-
-type Failure = 'utilisateurCourantInexistant'
 
 type Command = Readonly<{
   emailAsUid: string

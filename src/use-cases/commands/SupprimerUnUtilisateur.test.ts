@@ -9,38 +9,6 @@ describe('supprimer un utilisateur', () => {
     spiedUtilisateurToDrop = null
   })
 
-  it('l’utilisateur courant n’existe pas : échec de suppression', async () => {
-    // GIVEN
-    const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
-
-    // WHEN
-    const result = await supprimerUnUtilisateur.execute({
-      uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
-      uidUtilisateurCourant: 'utilisateurCourantInexistantUid',
-    })
-
-    // THEN
-    expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantInexistantUid'])
-    expect(spiedUtilisateurToDrop).toBeNull()
-    expect(result).toBe('utilisateurCourantInexistant')
-  })
-
-  it('l’utilisateur à supprimer n’existe pas : échec de suppression', async () => {
-    // GIVEN
-    const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
-
-    // WHEN
-    const result = await supprimerUnUtilisateur.execute({
-      uidUtilisateurASupprimer: 'utilisateurASupprimerInexistantUid',
-      uidUtilisateurCourant: 'utilisateurCourantExistantUid',
-    })
-
-    // THEN
-    expect(spiedUidsToFind).toStrictEqual(['utilisateurCourantExistantUid', 'utilisateurASupprimerInexistantUid'])
-    expect(spiedUtilisateurToDrop).toBeNull()
-    expect(result).toBe('compteASupprimerInexistant')
-  })
-
   it('l’utilisateur courant n’est pas autorisé à supprimer l’utilisateur qu’il souhaite supprimer : échec de suppression', async () => {
     // GIVEN
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
@@ -60,8 +28,8 @@ describe('supprimer un utilisateur', () => {
     expect(result).toBe('suppressionNonAutorisee')
   })
 
-  it('les deux utilisateurs existent et l’utilisateur courant est autorisé à supprimer celui qu’il souhaite' +
-    ' supprimer, mais ce dernier a été supprimé entre-temps : échec de la suppression', async () => {
+  it('l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, mais ce dernier a été supprimé'
+    + ' entre-temps : échec de la suppression', async () => {
     // GIVEN
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateursSuppressionConcurrenteRepositorySpy())
 
@@ -81,8 +49,8 @@ describe('supprimer un utilisateur', () => {
     expect(result).toBe('compteASupprimerDejaSupprime')
   })
 
-  it('les deux utilisateurs existent et l’utilisateur courant est autorisé à supprimer celui qu’il souhaite' +
-    ' supprimer, qui n’a pas été supprimé entre-temps : succès de la suppression', async () => {
+  it('l’utilisateur courant est autorisé à supprimer celui qu’il souhaite supprimer, qui n’a pas été supprimé'
+    + ' entre-temps : succès de la suppression', async () => {
     // GIVEN
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
@@ -121,7 +89,7 @@ const spiedUidsToFind: Array<string> = []
 let spiedUtilisateurToDrop: Utilisateur | null
 
 class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidsToFind.push(uid)
     return Promise.resolve(utilisateursByUid[uid])
   }

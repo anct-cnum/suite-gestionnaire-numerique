@@ -4,7 +4,6 @@ import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from '
 import { Role } from '@/domain/Role'
 import { isNullish } from '@/shared/lang'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
-import { UtilisateurNonTrouveError } from '@/use-cases/queries/RechercherUnUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
@@ -130,7 +129,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   }
 
   async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    const utilisateurRecord = await this.#dataResource.findUnique({
+    const utilisateurRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -142,10 +141,6 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         ssoId: uid,
       },
     })
-
-    if (utilisateurRecord === null) {
-      throw new UtilisateurNonTrouveError()
-    }
 
     return transform(utilisateurRecord)
   }

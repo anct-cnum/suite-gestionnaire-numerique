@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
 import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -153,7 +155,8 @@ describe('prisma utilisateur query', () => {
         async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdInexistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
+      await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+      await expect(utilisateurReadModel).rejects.toMatchObject({ code: 'P2025' })
     })
 
     it('quand je cherche un utilisateur qui existe par son ssoId et dont le compte a été supprimé alors je ne le trouve pas', async () => {
@@ -167,7 +170,8 @@ describe('prisma utilisateur query', () => {
         async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdExistant)
 
       // THEN
-      await expect(utilisateurReadModel).rejects.toThrow('L’utilisateur n’existe pas.')
+      await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+      await expect(utilisateurReadModel).rejects.toMatchObject({ code: 'P2025' })
     })
   })
 

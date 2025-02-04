@@ -25,27 +25,29 @@ describe('utilisateur repository', () => {
   describe('recherche d’un utilisateur', () => {
     const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
 
-    it('l’utilisateur n’existe pas : pas de donnée', async () => {
+    it('l’utilisateur n’existe pas : erreur', async () => {
       // GIVEN
       const ssoIdInexistant = '6513cfb5-5b46-4188-a71f-5476dfee0e8e'
       await creerUnUtilisateur({ ssoId: ssoIdInexistant })
 
       // WHEN
-      const result = await repository.find(uidUtilisateurValue)
+      const result = repository.find(uidUtilisateurValue)
 
       // THEN
-      expect(result).toBeNull()
+      await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+      await expect(result).rejects.toMatchObject({ code: 'P2025' })
     })
 
-    it('l’utilisateur est supprimé : pas de donnée', async () => {
+    it('l’utilisateur est supprimé : erreur', async () => {
       // GIVEN
       await creerUnUtilisateur({ isSupprime: true })
 
       // WHEN
-      const result = await repository.find(uidUtilisateurValue)
+      const result = repository.find(uidUtilisateurValue)
 
       // THEN
-      expect(result).toBeNull()
+      await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+      await expect(result).rejects.toMatchObject({ code: 'P2025' })
     })
 
     describe('l’utilisateur existe : les données utilisateur sont reçues', () => {
@@ -158,7 +160,7 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateurValue)
 
         // THEN
-        expect(result?.state).toStrictEqual(
+        expect(result.state).toStrictEqual(
           utilisateurFactory({
             uid: uidUtilisateur.state,
             ...expected,
@@ -189,7 +191,7 @@ describe('utilisateur repository', () => {
         const result = await repository.find(uidUtilisateurValue)
 
         // THEN
-        expect(result?.state.isActive).toBe(expectedIsActive)
+        expect(result.state.isActive).toBe(expectedIsActive)
       })
     })
   })

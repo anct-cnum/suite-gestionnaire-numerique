@@ -53,24 +53,6 @@ describe('réinviter un utilisateur', () => {
     expect(spiedUtilisateurToUpdate).toBeNull()
   })
 
-  it('étant donné que le compte de l’utilisateur courant est inexistant, quand il réinvite un autre utilisateur, alors il y a une erreur', async () => {
-    // GIVEN
-    const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
-    const command = {
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInactif',
-      uidUtilisateurCourant: 'utilisateurInexistantUid',
-    }
-
-    // WHEN
-    const result = await reinviterUnUtilisateur.execute(command)
-
-    // THEN
-    expect(result).toBe('utilisateurCourantInexistant')
-    expect(spiedUidToFind).toBe('utilisateurInexistantUid')
-    expect(spiedUtilisateurToUpdate).toBeNull()
-  })
-
   it('étant donné que le compte de l’utilisateur à réinviter est déjà actif, quand il est réinvité, alors il y a une erreur', async () => {
     // GIVEN
     const repository = new RepositorySpy()
@@ -86,24 +68,6 @@ describe('réinviter un utilisateur', () => {
     // THEN
     expect(result).toBe('utilisateurAReinviterDejaActif')
     expect(spiedUidToFind).toBe('uidUtilisateurAReinviterActif')
-    expect(spiedUtilisateurToUpdate).toBeNull()
-  })
-
-  it('étant donné que le compte de l’utilisateur est inexistant, quand il est réinvité, alors il y a une erreur', async () => {
-    // GIVEN
-    const repository = new RepositorySpy()
-    const reinviterUnUtilisateur = new ReinviterUnUtilisateur(repository, emailGatewayFactorySpy, epochTime)
-    const command = {
-      uidUtilisateurAReinviter: 'uidUtilisateurAReinviterInexistant',
-      uidUtilisateurCourant: 'uidUtilisateurCourantAvecRoleDifferent',
-    }
-
-    // WHEN
-    const result = await reinviterUnUtilisateur.execute(command)
-
-    // THEN
-    expect(result).toBe('utilisateurAReinviterInexistant')
-    expect(spiedUidToFind).toBe('uidUtilisateurAReinviterInexistant')
     expect(spiedUtilisateurToUpdate).toBeNull()
   })
 
@@ -156,7 +120,7 @@ let spiedUtilisateurToUpdate: Utilisateur | null
 let spiedDestinataire: string
 
 class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateursByUid[uid])
   }

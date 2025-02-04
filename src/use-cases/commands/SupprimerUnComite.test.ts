@@ -15,7 +15,7 @@ describe('supprimer un comité', () => {
     spiedComiteUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand un comité est supprimé par son gestionnaire, alors il est supprimé', async () => {
+  it('étant donné une gouvernance, quand un comité est supprimé par son gestionnaire, alors il est supprimé', async () => {
     // GIVEN
     const supprimerUnComite = new SupprimerUnComite(
       new GouvernanceRepositorySpy(),
@@ -51,7 +51,7 @@ describe('supprimer un comité', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un comité est supprimé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand un comité est supprimé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const supprimerUnComite = new SupprimerUnComite(
       new GouvernanceRepositorySpy(),
@@ -72,73 +72,6 @@ describe('supprimer un comité', () => {
     expect(result).toBe('editeurNePeutPasSupprimerComite')
     expect(spiedComiteToDrop).toBeNull()
   })
-
-  it('étant donné une gouvernance inexistante, quand un comité est supprimé, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const supprimerUnComite = new SupprimerUnComite(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimerUnComite.execute({
-      uid: uidComite,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('gouvernanceInexistante')
-    expect(spiedComiteToDrop).toBeNull()
-  })
-
-  it('étant donné un utilisateur inexistant, quand un comité est supprimé, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const supprimerUnComite = new SupprimerUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy(),
-      new ComiteRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimerUnComite.execute({
-      uid: uidComite,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(result).toBe('editeurInexistant')
-    expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(spiedComiteToDrop).toBeNull()
-  })
-
-  it('étant donné un comité inexistant, quand un comité est supprimé, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const supprimerUnComite = new SupprimerUnComite(
-      new GouvernanceRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      new ComiteInexistantRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimerUnComite.execute({
-      uid: uidComite,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedComiteUidToFind).toBe(uidComite)
-    expect(result).toBe('comiteInexistant')
-    expect(spiedComiteToDrop).toBeNull()
-  })
 })
 
 const uidComite = 'comiteFooId'
@@ -151,7 +84,7 @@ let spiedComiteToDrop: Comite | null
 let spiedComiteUidToFind: Comite['uid']['state']['value'] | null
 
 class GouvernanceRepositorySpy implements FindGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -167,15 +100,8 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository {
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({
       codeOrganisation: '75',
@@ -185,22 +111,15 @@ class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   }
 }
 
-class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
 }
 
 class ComiteRepositorySpy implements DropComiteRepository, FindComiteRepository {
-  async find(uid: Comite['uid']['state']['value']): Promise<Comite | null> {
+  async find(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },
@@ -212,12 +131,5 @@ class ComiteRepositorySpy implements DropComiteRepository, FindComiteRepository 
   async drop(comite: Comite): Promise<void> {
     spiedComiteToDrop = comite
     return Promise.resolve()
-  }
-}
-
-class ComiteInexistantRepositorySpy extends ComiteRepositorySpy {
-  override async find(uid: Comite['uid']['state']['value']): Promise<Comite | null> {
-    spiedComiteUidToFind = uid
-    return Promise.resolve(null)
   }
 }

@@ -17,14 +17,8 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    if (!editeur) {
-      return 'editeurInexistant'
-    }
 
     const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance) {
-      return 'gouvernanceInexistante'
-    }
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'editeurNePeutPasSupprimerNotePrivee'
@@ -38,7 +32,7 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'gouvernanceInexistante' | 'editeurInexistant' | 'editeurNePeutPasSupprimerNotePrivee'
+type Failure = 'editeurNePeutPasSupprimerNotePrivee'
 
 type Command = Readonly<{
   uidEditeur: string

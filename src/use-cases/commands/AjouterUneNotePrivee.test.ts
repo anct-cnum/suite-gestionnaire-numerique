@@ -13,7 +13,7 @@ describe('ajouter une note privée à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note privée est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance, quand une note privée est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceRepositorySpy(),
@@ -46,7 +46,7 @@ describe('ajouter une note privée à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand un note privée est créée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand un note privée est créée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceRepositorySpy(),
@@ -64,7 +64,7 @@ describe('ajouter une note privée à une gouvernance', () => {
     expect(result).toBe('utilisateurNePeutPasAjouterNotePrivee')
   })
 
-  it('étant donné une gouvernance existante, quand un note privée est créée par un gestionnaire département mais qu’une note privée existe déjà, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand un note privée est créée par un gestionnaire département mais qu’une note privée existe déjà, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceAvecNotePriveeRepositorySpy(),
@@ -81,50 +81,6 @@ describe('ajouter une note privée à une gouvernance', () => {
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('notePriveeDejaExistante')
   })
-
-  it('étant donné une gouvernance inexistante, quand une note privée est créée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterNotePrivee = new AjouterUneNotePrivee(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterNotePrivee.execute({
-      contenu,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('gouvernanceInexistante')
-  })
-
-  it('étant donné un utilisateur inexistant, quand une note privée est créée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterNotePrivee = new AjouterUneNotePrivee(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterNotePrivee.execute({
-      contenu,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurInexistant')
-  })
 })
 
 const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
@@ -135,7 +91,7 @@ let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
 class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -156,15 +112,8 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouve
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GouvernanceAvecNotePriveeRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -181,21 +130,14 @@ class GouvernanceAvecNotePriveeRepositorySpy extends GouvernanceRepositorySpy {
 }
 
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
-class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }

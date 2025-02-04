@@ -13,17 +13,13 @@ export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Comman
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
-
     utilisateurCourant.changerDateDeDerniereConnexion(this.#date)
     await this.#utilisateurRepository.update(utilisateurCourant)
     return 'OK'
   }
 }
 
-type Failure = 'utilisateurCourantInexistant' | 'dateInvalide' | UtilisateurFailure
+type Failure = 'dateInvalide' | UtilisateurFailure
 
 type Command = Readonly<{
   uidUtilisateurCourant: string

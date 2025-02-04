@@ -13,10 +13,10 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -46,10 +46,10 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('OK')
   })
 
-  it('étant donné une gouvernance existante, quand une note de contexte est créée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand une note de contexte est créée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteRepositorySpy(),
+      new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
       epochTime
     )
@@ -64,10 +64,10 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
   })
 
-  it('étant donné une gouvernance existante contenant déjà une note de contexte, quand une nouvelle note de contexte est créée, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance contenant déjà une note de contexte, quand une nouvelle note de contexte est créée, alors une erreur est renvoyée', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceExistanteAvecNoteDeContexteRepositorySpy(),
+      new GouvernanceAvecNoteDeContexteRepositorySpy(),
       new GestionnaireRepositorySpy(),
       epochTime
     )
@@ -81,50 +81,9 @@ describe('ajouter une note de contexte à une gouvernance', () => {
 
     // THEN
     expect(result).toBe('noteDeContexteDejaExistante')
-  })
-
-  it('étant donné une gouvernance inexistante, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
-      contenu,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('gouvernanceInexistante')
-  })
-
-  it('étant donné un utilisateur inexistant, quand une note de contexte est créée, alors une erreur est renvoyée', async () => {
-    // GIVEN
-    const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-      new GouvernanceInexistanteRepositorySpy(),
-      new GestionnaireInexistantRepositorySpy(),
-      epochTime
-    )
-
-    // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
-      contenu,
-      uidEditeur,
-      uidGouvernance,
-    })
-
-    // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind).toBeNull()
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('editeurInexistant')
   })
 })
 
@@ -135,8 +94,8 @@ let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
-class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
+  async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -157,9 +116,8 @@ class GouvernanceExistanteRepositorySpy implements FindGouvernanceRepository, Up
   }
 }
 
-class GouvernanceExistanteAvecNoteDeContexteRepositorySpy extends
-  GouvernanceExistanteRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
+class GouvernanceAvecNoteDeContexteRepositorySpy extends GouvernanceRepositorySpy {
+  override async find(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -181,29 +139,15 @@ class GouvernanceExistanteAvecNoteDeContexteRepositorySpy extends
   }
 }
 
-class GouvernanceInexistanteRepositorySpy extends GouvernanceExistanteRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance | null> {
-    spiedGouvernanceUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
-class GestionnaireInexistantRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(null)
-  }
-}
-
 class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur | null> {
+  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }

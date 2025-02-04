@@ -10,14 +10,7 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
 
   async execute(command: Command): ResultAsync<Failure> {
     const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    if (!utilisateurCourant) {
-      return 'utilisateurCourantInexistant'
-    }
-
     const utilisateurASupprimer = await this.#utilisateurRepository.find(command.uidUtilisateurASupprimer)
-    if (!utilisateurASupprimer) {
-      return 'compteASupprimerInexistant'
-    }
     if (!utilisateurCourant.peutGerer(utilisateurASupprimer)) {
       return 'suppressionNonAutorisee'
     }
@@ -28,11 +21,7 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
   }
 }
 
-type Failure =
-  | 'utilisateurCourantInexistant'
-  | 'compteASupprimerInexistant'
-  | 'suppressionNonAutorisee'
-  | 'compteASupprimerDejaSupprime'
+type Failure = 'suppressionNonAutorisee' | 'compteASupprimerDejaSupprime'
 
 type Command = Readonly<{
   uidUtilisateurCourant: string
