@@ -100,26 +100,25 @@ model UtilisateurRecord {
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
 
-  comites         ComiteRecord[]
-  notesPrivees    GouvernanceRecord[] @relation("UtilisateurNotesPrivees")
-  notesDeContexte GouvernanceRecord[] @relation("UtilisateurNotesDeContexte")
+  comites        ComiteRecord[]
+  notesPrivees   GouvernanceRecord[] @relation("UtilisateurNotesPrivees")
+  noteDeContexte GouvernanceRecord[] @relation("UtilisateurnoteDeContexte")
 
   @@map("utilisateur")
 }
 
 model GouvernanceRecord {
-  departementCode     String  @id
+  departementCode               String    @id
   /// [NotePrivee]
-  notePrivee          Json?   @map("note_privee")
-  editeurNotePriveeId String? @map("editeur_note_privee_id")
-  // [Note de contexte]
-  notesDeContexte     String? @map("notes_de_contexte")
-  editeurNotesDeContexteId String? @map("editeur_notes_de_contexte_id")
+  notePrivee                    Json?     @map("note_privee")
+  editeurNotePriveeId           String?   @map("editeur_note_privee_id")
+  noteDeContexte                String?   @map("note_de_contexte")
+  editeurNoteDeContexteId       String?   @map("editeur_note_de_contexte_id")
   derniereEditionNoteDeContexte DateTime? @map("derniere_edition_note_de_contexte")
 
-  relationDepartement       DepartementRecord  @relation(fields: [departementCode], references: [code])
-  relationEditeurNotePrivee UtilisateurRecord? @relation("UtilisateurNotesPrivees",fields: [editeurNotePriveeId], references: [ssoId])
-  relationEditeurNotesDeContexte UtilisateurRecord? @relation("UtilisateurNotesDeContexte",fields: [editeurNotesDeContexteId], references: [ssoId])
+  relationDepartement           DepartementRecord  @relation(fields: [departementCode], references: [code])
+  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [ssoId])
+  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [ssoId])
 
   comites             ComiteRecord[]
   membresDepartements MembreGouvernanceDepartementRecord[]
@@ -131,8 +130,6 @@ model GouvernanceRecord {
 
   @@map("gouvernance")
 }
-
-
 
 model ComiteRecord {
   id Int @id @default(autoincrement())

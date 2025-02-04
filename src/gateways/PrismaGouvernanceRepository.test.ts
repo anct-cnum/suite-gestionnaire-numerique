@@ -56,14 +56,29 @@ describe('gouvernance repository', () => {
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUnUtilisateur()
-    await creerUneGouvernance({ departementCode })
+    await creerUneGouvernance({
+      departementCode,
+      derniereEditionNoteDeContexte: epochTime,
+      editeurNoteDeContexteId: 'userFooId',
+      noteDeContexte: '<p>contenu HTML</p>',
+    })
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
     const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
 
     // THEN
-    expect(gouvernanceTrouvee.state).toStrictEqual(gouvernanceFactory({ uid: departementCode }).state)
+    expect(gouvernanceTrouvee.state).toStrictEqual(gouvernanceFactory({
+      noteDeContexte: {
+        contenu: '<p>contenu HTML</p>',
+        dateDeModification: epochTime,
+        uidEditeur: new UtilisateurUid({
+          email: 'martin.tartempion@example.net',
+          value: 'userFooId',
+        }),
+      },
+      uid: departementCode,
+    }).state)
   })
 
   it('rechercher une gouvernance qui existe sans note privée', async () => {
@@ -118,16 +133,12 @@ describe('gouvernance repository', () => {
     })
 
     expect(gouvernanceRecord).toStrictEqual({
-      departementCode,
+      departementCode: '75',
+      derniereEditionNoteDeContexte: epochTime,
+      editeurNoteDeContexteId: 'userFooId',
       editeurNotePriveeId: null,
-      noteDeContexte: {
-        contenu: '<p>lorem ipsum dolor sit amet</p>',
-        derniereEdition: epochTime,
-        editeurId: 'userFooId',
-        gouvernanceDepartementCode: departementCode,
-      },
+      noteDeContexte: '<p>lorem ipsum dolor sit amet</p>',
       notePrivee: null,
-      notesDeContexte: '<p>lorem ipsum dolor sit amet</p>',
     })
   })
 
@@ -167,6 +178,7 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
+      noteDeContexte: undefined,
       notePrivee: {
         contenu: 'un contenu quelconque',
         dateDeModification: epochTime,
@@ -224,6 +236,7 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
+      noteDeContexte: undefined,
       notePrivee: {
         contenu: 'un autre contenu quelconque',
         dateDeModification: epochTime,
@@ -274,13 +287,13 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
+      noteDeContexte: undefined,
       notePrivee: undefined,
       uid: departementCode,
     }))
 
     // THEN
     const modifiedRecord = await prisma.gouvernanceRecord.findUnique({ where: { departementCode } })
-    console.log(modifiedRecord)
     expect(modifiedRecord).toStrictEqual(gouvernanceRecordFactory({
       departementCode,
       editeurNotePriveeId: null,

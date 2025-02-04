@@ -12,11 +12,11 @@ ALTER TABLE "note_de_contexte" DROP CONSTRAINT "note_de_contexte_gouvernanceDepa
 
 -- AlterTable
 ALTER TABLE "gouvernance" ADD COLUMN     "derniere_edition_note_de_contexte" TIMESTAMP(3),
-ADD COLUMN     "editeur_notes_de_contexte_id" TEXT,
-ADD COLUMN     "notes_de_contexte" TEXT;
+ADD COLUMN     "editeur_note_de_contexte_id" TEXT,
+ADD COLUMN     "note_de_contexte" TEXT;
 
 -- DropTable
 DROP TABLE "note_de_contexte";
 
 -- AddForeignKey
-ALTER TABLE "gouvernance" ADD CONSTRAINT "gouvernance_editeur_notes_de_contexte_id_fkey" FOREIGN KEY ("editeur_notes_de_contexte_id") REFERENCES "utilisateur"("ssoId") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "gouvernance" ADD CONSTRAINT "gouvernance_editeur_note_de_contexte_id_fkey" FOREIGN KEY ("editeur_note_de_contexte_id") REFERENCES "utilisateur"("ssoId") ON DELETE SET NULL ON UPDATE CASCADE;

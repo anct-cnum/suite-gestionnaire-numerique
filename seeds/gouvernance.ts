@@ -40,8 +40,8 @@ void (async function migrate(): Promise<void> {
         const gouvernance = await prisma.gouvernanceRecord.create({
           data: {
             departementCode: gouvernanceFNE.departementCode,
-            editeurNotesDeContexteId: utilisateur.ssoId,
-            notesDeContexte: gouvernanceFNE.noteDeContexte || null,
+            editeurNoteDeContexteId: utilisateur.ssoId,
+            noteDeContexte: gouvernanceFNE.noteDeContexte || null,
           },
         })
         return [gouvernanceFNE, gouvernance, utilisateur] as const

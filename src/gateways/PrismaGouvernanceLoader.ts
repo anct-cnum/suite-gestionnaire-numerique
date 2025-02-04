@@ -17,7 +17,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
       }
     }
     relationEditeurNotePrivee: true
-    relationEditeurNotesDeContexte: true
+    relationEditeurNoteDeContexte: true
     feuillesDeRoute: true
     membresCommunes: true
     membresDepartements: true
@@ -50,8 +50,8 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
         membresSgars: true,
         membresStructures: true,
         relationDepartement: true,
+        relationEditeurNoteDeContexte: true,
         relationEditeurNotePrivee: true,
-        relationEditeurNotesDeContexte: true,
       },
       where: {
         departementCode: codeDepartement,
@@ -104,13 +104,13 @@ function transform(
   gouvernanceRecord: GouvernanceWithNoteDeContexte,
   membres: ReadonlyArray<AggregatedMembre>
 ): UneGouvernanceReadModel {
-  const noteDeContexte = Boolean(gouvernanceRecord.notesDeContexte) &&
-    gouvernanceRecord.relationEditeurNotesDeContexte &&
+  const noteDeContexte = Boolean(gouvernanceRecord.noteDeContexte) &&
+    gouvernanceRecord.relationEditeurNoteDeContexte &&
     gouvernanceRecord.derniereEditionNoteDeContexte ? {
       dateDeModification: gouvernanceRecord.derniereEditionNoteDeContexte,
-      nomAuteur: gouvernanceRecord.relationEditeurNotesDeContexte.nom,
-      prenomAuteur: gouvernanceRecord.relationEditeurNotesDeContexte.prenom,
-      texte: gouvernanceRecord.notesDeContexte ?? '',
+      nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
+      prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
+      texte: gouvernanceRecord.noteDeContexte ?? '',
     } : undefined
   const notePrivee = gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee ? {
     dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),

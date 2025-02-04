@@ -17,13 +17,13 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
-        relationEditeurNotePrivee: {
+        relationEditeurNoteDeContexte: {
           select: {
             ssoEmail: true,
             ssoId: true,
           },
         },
-        relationEditeurNotesDeContexte: {
+        relationEditeurNotePrivee: {
           select: {
             ssoEmail: true,
             ssoId: true,
@@ -44,15 +44,15 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
       }),
     } : undefined
 
-    const noteDeContexte = Boolean(record.notesDeContexte) &&
-      record.relationEditeurNotesDeContexte &&
+    const noteDeContexte = Boolean(record.noteDeContexte) &&
+      record.relationEditeurNoteDeContexte &&
       record.derniereEditionNoteDeContexte
       ? {
-        contenu: record.notesDeContexte ?? '',
+        contenu: record.noteDeContexte ?? '',
         dateDeModification: new Date(record.derniereEditionNoteDeContexte),
         uidEditeur: new UtilisateurUid({
-          email: record.relationEditeurNotesDeContexte.ssoEmail,
-          value: record.relationEditeurNotesDeContexte.ssoId,
+          email: record.relationEditeurNoteDeContexte.ssoEmail,
+          value: record.relationEditeurNoteDeContexte.ssoId,
         }),
       }
       : undefined
@@ -71,7 +71,9 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
 
   async update(gouvernance: Gouvernance): Promise<void> {
     let notePriveeData
+    let noteDeContexteData
     const notePrivee = gouvernance.state.notePrivee
+    const noteDeContexte = gouvernance.state.noteDeContexte
 
     if (notePrivee) {
       notePriveeData = {
@@ -88,26 +90,28 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
       }
     }
 
+    if (noteDeContexte) {
+      noteDeContexteData = {
+        derniereEditionNoteDeContexte: noteDeContexte.dateDeModification,
+        editeurNoteDeContexteId: noteDeContexte.uidEditeur,
+        noteDeContexte: noteDeContexte.value,
+      }
+    } else {
+      noteDeContexteData = {
+        derniereEditionNoteDeContexte: null,
+        editeurNoteDeContexteId: null,
+        noteDeContexte: null,
+      }
+    }
     await this.#gouvernanceDataResource.update({
       // @ts-expect-error
-      data: notePriveeData,
+      data: {
+        ...notePriveeData,
+        ...noteDeContexteData,
+      },
       where: {
         departementCode: gouvernance.state.uid.value,
       },
     })
-
-    const noteDeContexte = gouvernance.state.noteDeContexte
-    if (noteDeContexte) {
-      await this.#gouvernanceDataResource.update({
-        data: {
-          derniereEditionNoteDeContexte: noteDeContexte.dateDeModification,
-          editeurNotesDeContexteId: noteDeContexte.uidEditeur,
-          notesDeContexte: noteDeContexte.value,
-        },
-        where: {
-          departementCode: gouvernance.state.uid.value,
-        },
-      })
-    }
   }
 }

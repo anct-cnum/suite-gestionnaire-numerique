@@ -85,7 +85,10 @@ export function gouvernanceRecordFactory(
 ): Prisma.GouvernanceRecordUncheckedCreateInput {
   return {
     departementCode: '75',
+    derniereEditionNoteDeContexte: null,
+    editeurNoteDeContexteId: null,
     editeurNotePriveeId: null,
+    noteDeContexte: null,
     // @ts-expect-error
     notePrivee: null,
     ...override,
@@ -108,7 +111,7 @@ export function comiteRecordFactory(
   }
 }
 
-export async function ajouterUneRegion(
+export async function creerUneRegion(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.regionRecord.create({

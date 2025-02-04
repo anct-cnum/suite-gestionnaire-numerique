@@ -18,7 +18,10 @@ describe('gouvernance loader', () => {
     await creerUneGouvernance({ departementCode: '75' })
     await creerUneGouvernance({
       departementCode: '93',
+      derniereEditionNoteDeContexte: epochTime.toISOString(),
+      editeurNoteDeContexteId: 'userFooId',
       editeurNotePriveeId: 'userFooId',
+      noteDeContexte: '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       notePrivee: {
         contenu: 'un contenu quelconque',
         derniereEdition: epochTime.toISOString(),
@@ -64,7 +67,7 @@ describe('gouvernance loader', () => {
         dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
-        texte: '<STRONG class=\"test\">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        texte: '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
       notePrivee: {
         dateDEdition: epochTime,
