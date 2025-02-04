@@ -23,9 +23,8 @@ export default function MembreRempli({ membres }: Props): ReactElement {
         titre="Membres"
       >
         {
-          membres.map((membre, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <tr key={index} >
+          membres.map((membre) => (
+            <tr key={`${membre.nom}_${membre.typologieMembre}`} >
               <td>
                 <span
                   aria-hidden="true"

@@ -1,17 +1,17 @@
 import { formaterLeRoleViewModel } from './shared/role'
-import { MesMembresReadModel, Membre } from '@/use-cases/queries/RecupererMesMembres'
+import { MesMembresReadModel, MembreReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export function mesMembresPresenter(mesMembresReadModel: MesMembresReadModel): MesMembresViewModel {
   return {
     autorisations: mesMembresReadModel.autorisations,
     membres: mesMembresReadModel.membres.map(toMembreViewModel),
     roles: mesMembresReadModel.roles.map(formaterLeRoleViewModel),
-    titre: `Gérer les membres - ${mesMembresReadModel.departement}`,
+    titre: `Gérer les membres · ${mesMembresReadModel.departement}`,
     typologies: mesMembresReadModel.typologies,
   }
 }
 
-function toMembreViewModel(membre: Membre): MembreViewModel {
+function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
   return {
     ...membre,
     contactReferent: `${membre.contactReferent.prenom} ${membre.contactReferent.nom}`,

@@ -57,7 +57,7 @@ export function mesMembresViewModelFactory(
       },
     ],
     roles: ['Co-porteur', 'Co-financeur'],
-    titre: 'Gérer les membres - Rhône',
+    titre: 'Gérer les membres · Rhône',
     typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
     ...override,
   }
