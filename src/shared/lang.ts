@@ -23,6 +23,4 @@ export function isNullishOrEmpty(str: string | undefined | null): boolean {
   return isNullish(str) || isEmpty(str!)
 }
 
-export type UnaryOperator<T> = (element: T) => T
-
 type JsonPrimitive = boolean | number | string

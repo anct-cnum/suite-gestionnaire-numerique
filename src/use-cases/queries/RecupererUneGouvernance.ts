@@ -7,8 +7,8 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     this.#loader = loader
   }
 
-  async handle({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.gouvernance(codeDepartement, 'coporteur')
+  async handle(query: Query): Promise<UneGouvernanceReadModel> {
+    return this.#loader.gouvernance(query.codeDepartement, 'coporteur')
       .then((gouvernance) =>
         ({
           ...gouvernance,
