@@ -43,7 +43,7 @@ export class ModifierUnComite implements CommandHandler<Command> {
       return comiteModifie
     }
 
-    if (!gouvernance.peutEtreGerePar(editeur)) {
+    if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'editeurNePeutPasModifierComite'
     }
 

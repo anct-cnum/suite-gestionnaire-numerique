@@ -35,7 +35,7 @@ export type MesMembresReadModel = Readonly<{
   autorisations: Readonly<{
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
-    accesMembreValide: boolean
+    accesMembreConfirme: boolean
   }>
   departement: string
   typologies: ReadonlyArray<string>

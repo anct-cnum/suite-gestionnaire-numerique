@@ -20,7 +20,7 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
 
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
 
-    if (!gouvernance.peutEtreGerePar(editeur)) {
+    if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'editeurNePeutPasSupprimerNotePrivee'
     }
 

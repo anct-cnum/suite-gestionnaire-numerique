@@ -93,7 +93,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
 
     return {
       autorisations: {
-        accesMembreValide: false,
+        accesMembreConfirme: false,
         ajouterUnMembre: false,
         supprimerUnMembre: false,
       },

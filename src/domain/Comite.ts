@@ -53,7 +53,6 @@ export class Comite extends Entity<State> {
     }
   }
 
-  // eslint-disable-next-line sonarjs/function-return-type
   static create({
     dateDeCreation,
     dateDeModification,
@@ -64,7 +63,7 @@ export class Comite extends Entity<State> {
     uidEditeur,
     commentaire,
     date,
-  }: ComiteFactoryParams): Result<ComiteFailure, Comite> {
+  }: FactoryParams): Result<ComiteFailure, Comite> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const dateDuComiteValidee = date === undefined ? undefined : new ValidDate(date, 'dateDuComiteInvalide')
@@ -102,40 +101,40 @@ export type ComiteFailure =
   | 'frequenceInvalide'
   | 'typeInvalide'
 
-class Frequence extends ValueObject<AttributGouvernanceState> {
+class Frequence extends ValueObject<AttributState> {
   constructor(value: string) {
-    if (!Frequences.includes(value)) {
+    if (!frequences.includes(value)) {
       throw Exception.of<ComiteFailure>('frequenceInvalide')
     }
     super({ value })
   }
 }
 
-class Type extends ValueObject<AttributGouvernanceState> {
+class Type extends ValueObject<AttributState> {
   constructor(value: string) {
-    if (!Types.includes(value)) {
+    if (!types.includes(value)) {
       throw Exception.of<ComiteFailure>('typeInvalide')
     }
     super({ value })
   }
 }
 
-class ComiteUid extends Uid<ComiteUidState> {
+class ComiteUid extends Uid<UidState> {
   constructor(value: string) {
     super({ value })
   }
 }
 
-const Frequences = ['mensuelle', 'trimestrielle', 'semestrielle', 'annuelle']
+const frequences = ['mensuelle', 'trimestrielle', 'semestrielle', 'annuelle']
 
-const Types = ['strategique', 'technique', 'consultatif', 'autre']
+const types = ['strategique', 'technique', 'consultatif', 'autre']
 
-type ComiteFactoryParams = Readonly<{
+type FactoryParams = Readonly<{
   dateDeCreation: Date
   dateDeModification: Date
   frequence: string
   type: string
-  uid: ComiteUidState
+  uid: UidState
   uidGouvernance: GouvernanceUidState
   uidEditeur: UtilisateurUidState
   commentaire?: string
@@ -149,14 +148,14 @@ type State = Readonly<{
   dateDeModification: string
   frequence: string
   type: string
-  uid: ComiteUidState
+  uid: UidState
   uidGouvernance: string
   uidEditeur: string
 }>
 
-type AttributGouvernanceState = Readonly<{ value: string }>
+type AttributState = Readonly<{ value: string }>
 
-type ComiteUidState = Readonly<{ value: string }>
+type UidState = Readonly<{ value: string }>
 
 function validerQueLadateDuComiteDoitEtreDansLeFutur(date: Date, dateDeCreation: Date): void | never {
   const dateDuComiteAComparer = Number(date.toISOString().split('T')[0].replaceAll('-', ''))
