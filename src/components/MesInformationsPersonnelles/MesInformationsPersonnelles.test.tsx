@@ -406,7 +406,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(modifierMesInfosPersosDrawer).not.toBeVisible()
     })
 
-    it('quand je modifie mes informations personnelles alors elles sont modifiées et le drawer est fermé', async () => {
+    it('quand je modifie mes informations personnelles, alors le drawer se ferme, une notification s’affiche et mes informations personnelles sont mises à jour', async () => {
       // GIVEN
       const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' })
@@ -418,15 +418,37 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jeTapeMonPrenom('Martin')
       jeTapeMonEMail('martin.tartempion@example.com')
       jeTapeMonTéléphone('0102030405')
+      const enregistrer = jEnregistreMesInformationsPersonnelles()
+
+      // THEN
+      expect(enregistrer).toHaveAccessibleName('Modification en cours...')
+      expect(enregistrer).toBeDisabled()
+      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({
+        emailDeContact: 'martin.tartempion@example.com',
+        nom: 'Tartempion',
+        path: '/mes-informations-personnelles',
+        prenom: 'Martin',
+        telephone: '0102030405',
+      })
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Informations personnelles modifiées')
+      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
+      expect(enregistrer).toHaveAccessibleName('Enregistrer')
+      expect(enregistrer).toBeEnabled()
+    })
+
+    it('quand je modifie mes informations personnelles mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction })
+
+      // WHEN
+      jOuvreMesInformationsPersonnelles()
       jEnregistreMesInformationsPersonnelles()
 
       // THEN
-      const boutonModificationDesactive = screen.getByRole('button', { name: 'Modification en cours...' })
-      expect(boutonModificationDesactive).toBeDisabled()
-      expect(modifierMesInformationsPersonnellesAction).toHaveBeenCalledWith({ emailDeContact: 'martin.tartempion@example.com', nom: 'Tartempion', path: '/mes-informations-personnelles', prenom: 'Martin', telephone: '0102030405' })
-      const boutonModificationActive = await screen.findByRole('button', { name: 'Modification en cours...' })
-      expect(boutonModificationActive).toBeEnabled()
-      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
     function jOuvreMesInformationsPersonnelles(): void {
@@ -449,8 +471,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       saisirLeTexte(/Téléphone professionnel/, value)
     }
 
-    function jEnregistreMesInformationsPersonnelles(): void {
-      presserLeBouton('Enregistrer')
+    function jEnregistreMesInformationsPersonnelles(): HTMLElement {
+      return presserLeBouton('Enregistrer')
     }
 
     function jAnnuleMesInformationsPersonnelles(): void {

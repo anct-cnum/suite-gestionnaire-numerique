@@ -74,7 +74,7 @@ export default function ModifierUnComite({
       uidGouvernance,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'bien modifié', title: 'Comité ' })
+      Notification('success', { description: 'modifié', title: 'Comité ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
@@ -90,7 +90,7 @@ export default function ModifierUnComite({
       uidGouvernance,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'bien supprimé', title: 'Comité ' })
+      Notification('success', { description: 'supprimé', title: 'Comité ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

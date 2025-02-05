@@ -4,6 +4,7 @@ import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
@@ -132,12 +133,20 @@ export default function ModifierMonCompte({
 
     setIsDisabled(true)
 
-    await modifierMesInformationsPersonnellesAction({ emailDeContact: email, nom, path: pathname, prenom, telephone })
-      .then(() => {
-        setIsDisabled(false)
-      })
-
+    const messages = await modifierMesInformationsPersonnellesAction({
+      emailDeContact: email,
+      nom,
+      path: pathname,
+      prenom,
+      telephone,
+    })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'modifiées', title: 'Informations personnelles ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
     closeDrawer()
+    setIsDisabled(false)
   }
 }
 

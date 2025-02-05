@@ -1,8 +1,9 @@
-import { ReactElement, useContext, useId } from 'react'
+import { ReactElement, useContext, useId, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
 import ModalTitle from '../shared/ModalTitle/ModalTitle'
+import { Notification } from '../shared/Notification/Notification'
 
 export default function SupprimerUnUtilisateur({
   id,
@@ -11,6 +12,7 @@ export default function SupprimerUnUtilisateur({
   closeModal,
 }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
+  const [isDisabled, setIsDisabled] = useState(false)
   const labelModaleId = useId()
 
   return (
@@ -46,10 +48,11 @@ export default function SupprimerUnUtilisateur({
           <button
             aria-controls={id}
             className="fr-btn red-button"
+            disabled={isDisabled}
             onClick={async () => supprimer(utilisateurASupprimer.uid)}
             type="button"
           >
-            Confirmer
+            {isDisabled ? 'Suppression en cours...' : 'Confirmer'}
           </button>
         </div>
       </div>
@@ -57,8 +60,15 @@ export default function SupprimerUnUtilisateur({
   )
 
   async function supprimer(uidUtilisateurASupprimer: string): Promise<void> {
-    await supprimerUnUtilisateurAction({ path: pathname, uidUtilisateurASupprimer })
+    setIsDisabled(true)
+    const messages = await supprimerUnUtilisateurAction({ path: pathname, uidUtilisateurASupprimer })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'supprimé', title: 'Utilisateur ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
     closeModal()
+    setIsDisabled(false)
   }
 }
 

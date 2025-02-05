@@ -57,7 +57,7 @@ export default function ModifierUneNotePrivee({
         uidGouvernance,
       })
       if (messages.includes('OK')) {
-        Notification('success', { description: 'bien supprimée', title: 'Note privée ' })
+        Notification('success', { description: 'supprimée', title: 'Note privée ' })
       } else {
         Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
       }
@@ -68,7 +68,7 @@ export default function ModifierUneNotePrivee({
         uidGouvernance,
       })
       if (messages.includes('OK')) {
-        Notification('success', { description: 'bien modifiée', title: 'Note privée ' })
+        Notification('success', { description: 'modifiée', title: 'Note privée ' })
       } else {
         Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
       }
