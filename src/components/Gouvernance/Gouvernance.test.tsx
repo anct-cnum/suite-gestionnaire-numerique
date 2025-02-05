@@ -204,7 +204,7 @@ describe('gouvernance', () => {
           feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: {},
           nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
+          roles: ['coporteur'],
           telephone: '+33 4 45 00 45 00',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
@@ -222,7 +222,7 @@ describe('gouvernance', () => {
           feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
           links: {},
           nom: 'Département du Rhône',
-          roles: ['Co-porteur', 'Financeur'],
+          roles: ['coporteur', 'cofinanceur'],
           telephone: '+33 4 45 00 45 01',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
@@ -245,7 +245,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '2 membres' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 1 financeur', { selector: 'p' })
+    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 1 co-financeur', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/')
@@ -281,7 +281,7 @@ describe('gouvernance', () => {
     expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
     expect(columns2Body[2].textContent).toBe('Collectivité')
-    expect(columns2Body[3].textContent).toBe('Co-porteur Financeur ')
+    expect(columns2Body[3].textContent).toBe('Co-porteur Co-financeur ')
   })
 
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {
@@ -300,7 +300,7 @@ describe('gouvernance', () => {
           feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
           links: { plusDetails: '/' },
           nom: 'Préfecture du Rhône',
-          roles: ['Co-porteur'],
+          roles: ['coporteur'],
           telephone: '+33 4 45 00 45 00',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
@@ -354,25 +354,25 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 105_000,
           montantSubventionDemande: 120_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
         },
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
           budgetGlobal: 88_030,
           montantSubventionAccorde: 38_030,
           montantSubventionDemande: 50_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route numérique du Rhône',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 1,
         },
       ],
@@ -429,14 +429,14 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' }],
+          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
+          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
           budgetGlobal: 145_000,
           montantSubventionAccorde: 100_000,
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-orteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
         },
       ],
