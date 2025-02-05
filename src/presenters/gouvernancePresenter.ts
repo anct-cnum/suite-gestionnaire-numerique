@@ -1,5 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
+import { formaterLeRoleViewModel, toRoleViewModel } from './shared/role'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -195,13 +196,6 @@ function buildLogoMembre(membre: MembreReadModel): string {
   return membre.type === 'Administration' ? 'bank-line' : 'community-line'
 }
 
-function toRoleViewModel(role: string): RoleViewModel {
-  return {
-    color: roleAndHisColor[role],
-    nom: role,
-  }
-}
-
 function toNoteDeContexteViewModel(noteDeContexte: UneGouvernanceReadModel['noteDeContexte']): GouvernanceViewModel['sectionNoteDeContexte']['noteDeContexte'] {
   if (!noteDeContexte) {
     return undefined
@@ -235,12 +229,11 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
       wording: 'membre',
     }
   }
-
   const detailDuNombreDeChaqueMembre = Object.entries(membres
     .flatMap(({ roles }) => roles)
     .reduce<Record<string, number>>((nombreParRole, role) => {
-      nombreParRole[role] = nombreParRole[role] ? nombreParRole[role] + 1 : 1
-
+      const roleFormater = formaterLeRoleViewModel(role)
+      nombreParRole[roleFormater] = nombreParRole[roleFormater] ? nombreParRole[roleFormater] + 1 : 1
       return nombreParRole
     }, {}))
     .map(([role, nombre]) => `${nombre} ${role.toLowerCase()}${formatPluriel(nombre)}`)
@@ -367,17 +360,6 @@ type RoleViewModel = Readonly<{
   color: string
   nom: string
 }>
-
-// Stryker disable next-line ObjectLiteral
-const roleAndHisColor: Record<string, string> = {
-  Bénéficiaire: 'purple-glycine',
-  'Co-porteur': 'info',
-  Financeur: 'warning',
-  Formation: 'green-tilleul-verveine',
-  Observateur: 'beige-gris-galet',
-  Porteur: 'info',
-  Récipiendaire: 'green-archipel',
-}
 
 const frequences = [
   {

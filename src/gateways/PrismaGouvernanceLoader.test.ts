@@ -244,12 +244,12 @@ describe('gouvernance loader', () => {
 const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
   {
     beneficiairesSubvention: [
-      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
     ],
     beneficiairesSubventionFormation: [
-      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
     ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,
@@ -261,12 +261,12 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
   },
   {
     beneficiairesSubvention: [
-      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
     ],
     beneficiairesSubventionFormation: [
-      { nom: 'Préfecture du Rhône', roles: ['Porteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['Porteur'], type: 'Structure' },
+      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
+      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
     ],
     budgetGlobal: 145_000,
     montantSubventionAccorde: 5_000,

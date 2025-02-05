@@ -48,10 +48,10 @@ export type MesMembresReadModel = Readonly<{
   departement: string
   typologies: ReadonlyArray<string>
   roles: ReadonlyArray<Role>
-  membres: ReadonlyArray<Membre>
+  membres: ReadonlyArray<MembreReadModel>
 }>
 
-type Membre = Readonly<{
+export type MembreReadModel = Readonly<{
   suppressionDuMembreAutorise: boolean
   contactReferent: Readonly<{
     nom: string
