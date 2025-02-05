@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, ReactElement, useState } from 'react'
+import { Fragment, ReactElement, useId, useState } from 'react'
 
 import Membre from './Membre'
 import Badge from '@/components/shared/Badge/Badge'
@@ -13,7 +13,7 @@ export default function MembreRempli({ membres }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [membreDetails, setMembreDetails] = useState<MembreDetailsViewModel>(membres[0])
   const drawerMembreId = 'drawerMembreId'
-  const labelMembreId = 'labelMembreId'
+  const labelMembreId = useId()
 
   return (
     <>

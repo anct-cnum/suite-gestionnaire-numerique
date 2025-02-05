@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useRef, useState } from 'react'
+import { ReactElement, useId, useRef, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import ModifierMonCompte from './ModifierMonCompte'
@@ -11,9 +11,7 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import Role from '../shared/Role/Role'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
-export default function MesInformationsPersonnelles(
-  { mesInformationsPersonnellesViewModel }: Props
-): ReactElement {
+export default function MesInformationsPersonnelles({ mesInformationsPersonnellesViewModel }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isModalOpen, setIsModalOpen] = useState(false)
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
@@ -21,7 +19,7 @@ export default function MesInformationsPersonnelles(
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerModifierMonCompteRef = useRef<HTMLDialogElement>(null)
   const drawerId = 'drawer-modifier-mon-compte'
-  const labelId = 'drawer-modifier-mon-compte-titre'
+  const labelId = useId()
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
