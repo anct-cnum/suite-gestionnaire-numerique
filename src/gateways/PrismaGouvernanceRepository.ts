@@ -44,18 +44,19 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
       }),
     } : undefined
 
-    const noteDeContexte = Boolean(record.noteDeContexte) &&
+    const noteDeContexte =
+      record.noteDeContexte !== null &&
+      record.noteDeContexte !== '' &&
       record.relationEditeurNoteDeContexte &&
       record.derniereEditionNoteDeContexte
-      ? {
-        contenu: record.noteDeContexte ?? '',
-        dateDeModification: new Date(record.derniereEditionNoteDeContexte),
-        uidEditeur: new UtilisateurUid({
-          email: record.relationEditeurNoteDeContexte.ssoEmail,
-          value: record.relationEditeurNoteDeContexte.ssoId,
-        }),
-      }
-      : undefined
+        ? {
+          contenu: record.noteDeContexte,
+          dateDeModification: new Date(record.derniereEditionNoteDeContexte),
+          uidEditeur: new UtilisateurUid({
+            email: record.relationEditeurNoteDeContexte.ssoEmail,
+            value: record.relationEditeurNoteDeContexte.ssoId,
+          }),
+        } : undefined
 
     return Gouvernance.create({
       departement: {

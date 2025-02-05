@@ -131,15 +131,12 @@ describe('gouvernance repository', () => {
         departementCode,
       },
     })
-
-    expect(gouvernanceRecord).toStrictEqual({
+    expect(gouvernanceRecord).toStrictEqual(gouvernanceRecordFactory({
       departementCode: '75',
       derniereEditionNoteDeContexte: epochTime,
       editeurNoteDeContexteId: 'userFooId',
-      editeurNotePriveeId: null,
       noteDeContexte: '<p>lorem ipsum dolor sit amet</p>',
-      notePrivee: null,
-    })
+    }))
   })
 
   it('modifier une gouvernance sans note de contexte', async () => {
@@ -178,7 +175,6 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
-      noteDeContexte: undefined,
       notePrivee: {
         contenu: 'un contenu quelconque',
         dateDeModification: epochTime,
@@ -236,7 +232,6 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
-      noteDeContexte: undefined,
       notePrivee: {
         contenu: 'un autre contenu quelconque',
         dateDeModification: epochTime,
@@ -287,7 +282,6 @@ describe('gouvernance repository', () => {
 
     // WHEN
     await repository.update(gouvernanceFactory({
-      noteDeContexte: undefined,
       notePrivee: undefined,
       uid: departementCode,
     }))

@@ -104,14 +104,17 @@ function transform(
   gouvernanceRecord: GouvernanceWithNoteDeContexte,
   membres: ReadonlyArray<AggregatedMembre>
 ): UneGouvernanceReadModel {
-  const noteDeContexte = Boolean(gouvernanceRecord.noteDeContexte) &&
+  const noteDeContexte =
+    gouvernanceRecord.noteDeContexte !== null &&
+    gouvernanceRecord.noteDeContexte !== '' &&
     gouvernanceRecord.relationEditeurNoteDeContexte &&
-    gouvernanceRecord.derniereEditionNoteDeContexte ? {
-      dateDeModification: gouvernanceRecord.derniereEditionNoteDeContexte,
-      nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
-      prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
-      texte: gouvernanceRecord.noteDeContexte ?? '',
-    } : undefined
+    gouvernanceRecord.derniereEditionNoteDeContexte
+      ? {
+        dateDeModification: new Date(gouvernanceRecord.derniereEditionNoteDeContexte),
+        nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
+        prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
+        texte: gouvernanceRecord.noteDeContexte,
+      } : undefined
   const notePrivee = gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee ? {
     dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),
     nomEditeur: gouvernanceRecord.relationEditeurNotePrivee.nom,
