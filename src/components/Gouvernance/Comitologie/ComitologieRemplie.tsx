@@ -1,4 +1,4 @@
-import { ReactElement, useRef, useState } from 'react'
+import { ReactElement, useId, useRef, useState } from 'react'
 
 import ModifierUnComite from './ModifierUnComite'
 import Drawer from '@/components/shared/Drawer/Drawer'
@@ -11,7 +11,7 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
   const [comite, setComite] = useState(comites[0])
   const drawerRef = useRef<HTMLDialogElement>(null)
   const drawerModifierComiteId = 'drawerModifierComiteId'
-  const labelModifierComiteId = 'labelModifierComiteId'
+  const labelModifierComiteId = useId()
 
   return (
     <>

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useContext, useState } from 'react'
+import { ReactElement, useContext, useId, useState } from 'react'
 
 import styles from './EnTete.module.css'
 import MenuUtilisateur from './MenuUtilisateur/MenuUtilisateur'
@@ -13,7 +13,7 @@ export default function EnTete(): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
   const drawerId = 'drawer-menu-utilisateur'
-  const labelId = 'drawer-menu-utilisateur-titre'
+  const labelId = useId()
 
   return (
     <>

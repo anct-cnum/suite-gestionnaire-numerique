@@ -74,8 +74,7 @@ export default function AjouterNoteDeContexte({
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-    closeDrawer();
-    (event.target as HTMLFormElement).reset()
+    closeDrawer()
     setIsDisabled(false)
   }
 }

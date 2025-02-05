@@ -31,7 +31,6 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
-      expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
       const absenceDeDonnee = within(drawer).queryByText('-')
       expect(absenceDeDonnee).not.toBeInTheDocument()
       const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Préfecture du Rhône' })
@@ -286,7 +285,6 @@ describe('membres', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
-      expect(drawer).toHaveAttribute('aria-labelledby', 'labelMembreId')
       const absenceDeDonnee = within(drawer).queryByText('-')
       expect(absenceDeDonnee).not.toBeInTheDocument()
       const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Département du Rhône' })
