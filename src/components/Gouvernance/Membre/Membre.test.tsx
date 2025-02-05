@@ -70,7 +70,7 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
-        membres: [
+        coporteurs: [
           {
             contactReferent: {
               denomination: 'Contact politique de la collectivité',
@@ -105,7 +105,7 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
       // GIVEN
       afficherGouvernance({
-        membres: [
+        coporteurs: [
           {
             contactReferent: {
               denomination: 'Contact politique de la collectivité',
@@ -161,7 +161,7 @@ describe('membres', () => {
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
-          membres: [
+          coporteurs: [
             {
               contactReferent: {
                 denomination: 'Contact politique de la collectivité',
@@ -231,7 +231,7 @@ describe('membres', () => {
       ['', undefined].forEach((plusDetails) => {
         cleanup()
         afficherGouvernance({
-          membres: [
+          coporteurs: [
             {
               contactReferent: {
                 denomination: 'Contact politique de la collectivité',
@@ -322,7 +322,7 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
-        membres: [
+        coporteurs: [
           {
             contactReferent: {
               denomination: 'Contact référent',
@@ -356,7 +356,7 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
       // GIVEN
       afficherGouvernance({
-        membres: [
+        coporteurs: [
           {
             contactReferent: {
               denomination: 'Contact référent',
@@ -411,7 +411,7 @@ describe('membres', () => {
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
-          membres: [
+          coporteurs: [
             {
               contactReferent: {
                 denomination: 'Contact référent',
@@ -497,7 +497,7 @@ describe('membres', () => {
         // GIVEN
         cleanup()
         afficherGouvernance({
-          membres: [
+          coporteurs: [
             {
               contactReferent: {
                 denomination: 'Contact référent',
@@ -532,7 +532,7 @@ describe('membres', () => {
   })
 })
 
-function afficherGouvernance(gouvernance?: object): void {
+function afficherGouvernance(gouvernance?: Parameters<typeof gouvernanceReadModelFactory>[0]): void {
   const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance), epochTime)
   render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
 }

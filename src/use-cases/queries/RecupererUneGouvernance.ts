@@ -7,13 +7,13 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     this.#loader = loader
   }
 
-  async handle({ codeDepartement, sortRoles, order }: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.gouvernance(codeDepartement, sortRoles, order)
+  async handle({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
+    return this.#loader.gouvernance(codeDepartement, 'coporteur')
       .then((gouvernance) =>
         ({
           ...gouvernance,
-          ...gouvernance.membres && {
-            membres: gouvernance.membres.values()
+          ...gouvernance.coporteurs && {
+            coporteurs: gouvernance.coporteurs.values()
               .map(toMembreDetailAvecTotauxReadModel)
               .map(toMembreDetailIntitulerReadModel)
               .toArray(),
@@ -23,15 +23,14 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 }
 
 export interface UneGouvernanceReadModelLoader {
-  gouvernance(codeDepartement: string, sortRoles: ReadonlyArray<string>, order: ReadonlyArray<string>):
-  Promise<UneGouvernanceReadModel>
+  gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
-  membres?: ReadonlyArray<MembreDetailReadModel>
+  coporteurs?: ReadonlyArray<CoporteurDetailReadModel>
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   uid: string
@@ -82,7 +81,7 @@ type NotePriveeReadModel = Readonly<{
   texte: string
 }>
 
-export type MembreDetailReadModel = Readonly<{
+export type CoporteurDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
@@ -110,11 +109,9 @@ export type MembreDetailReadModel = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
-  sortRoles: ReadonlyArray<string>
-  order: ReadonlyArray<string>
 }>
 
-function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,
@@ -129,7 +126,7 @@ function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): Membr
   }
 }
 
-function toMembreDetailIntitulerReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,

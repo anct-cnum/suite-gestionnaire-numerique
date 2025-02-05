@@ -34,9 +34,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     this.#dataResource = dataResource
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async gouvernance(codeDepartement: string, sortRoles: ReadonlyArray<string>, _order: ReadonlyArray<string>):
-  Promise<UneGouvernanceReadModel> {
+  async gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: {
@@ -62,12 +60,13 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
       throw new Error('Le département n’existe pas')
     }
 
-    const membres = (await prisma.$queryRaw`
+    const membres: ReadonlyArray<Readonly<AggregatedMembre>> = await prisma.$queryRaw`
     SELECT commune as nom, type, 'commune' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_commune
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY commune, type
-    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
+    --HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${roleCoporteur}]) THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
     UNION all
 
     SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role)
@@ -75,14 +74,14 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     FROM membre_gouvernance_epci
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY epci, type
-    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
     UNION all
 
     SELECT structure as nom, type,'structure' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_structure
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY structure, type
-    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
     UNION all
 
     SELECT departement.nom as nom, mgd.type,'departement' as typologie, ARRAY_AGG(mgd.role) AS roles
@@ -91,7 +90,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     ON mgd."departementCode" = departement.code
     WHERE mgd."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY departement.nom, mgd.type
-    HAVING COUNT(CASE WHEN mgd."role" LIKE  ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN mgd.role = ${roleCoporteur} THEN 1 END) > 0
     UNION ALL
 
     SELECT region.nom as nom, mgs.type, 'sgar' as typologie, ARRAY_AGG(mgs.role) AS roles
@@ -100,9 +99,9 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     ON mgs."sgarCode" = region.code
     WHERE mgs."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY region.nom, mgs.type
-    HAVING COUNT(CASE WHEN mgs."role" LIKE  ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN mgs.role = ${roleCoporteur} THEN 1 END) > 0
 
-    ORDER BY nom`) as ReadonlyArray<Readonly<AggregatedMembre>>
+    ORDER BY nom`
 
     return transform(gouvernanceRecord, membres)
   }
@@ -137,7 +136,6 @@ function transform(
       frequence: comite.frequence,
       id: comite.id,
       nomEditeur: comite.relationUtilisateur?.nom ?? '~',
-      periodicite: comite.frequence,
       prenomEditeur: comite.relationUtilisateur?.prenom ?? '~',
       type: comite.type as TypeDeComite,
     }))
@@ -145,6 +143,36 @@ function transform(
 
   return {
     comites,
+    coporteurs: membres.map((membre) => ({
+      contactReferent: {
+        denomination: 'Contact politique de la collectivité',
+        mailContact: 'julien.deschamps@example.com',
+        nom: 'Henrich',
+        poste: 'chargé de mission',
+        prenom: 'Laetitia',
+      },
+      contactTechnique: 'Simon.lagrange@example.com',
+      feuillesDeRoute: [
+        {
+          montantSubventionAccorde: 5_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route inclusion',
+        },
+        {
+          montantSubventionAccorde: 5_000,
+          montantSubventionFormationAccorde: 5_000,
+          nom: 'Feuille de route numérique du Rhône',
+        },
+      ],
+      links: {},
+      nom: membre.nom,
+      roles: membre.roles.toSorted((lRole, rRole) => lRole.localeCompare(rRole)),
+      telephone: '+33 4 45 00 45 00',
+      totalMontantSubventionAccorde: NaN,
+      totalMontantSubventionFormationAccorde: NaN,
+      type: membre.type,
+      typologieMembre: membre.typologie,
+    })),
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
       beneficiairesSubvention: [
@@ -178,36 +206,6 @@ function transform(
       nom: feuilleDeRoute.nom,
       porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
       totalActions: 3,
-    })),
-    membres: membres.map((membre) => ({
-      contactReferent: {
-        denomination: 'Contact politique de la collectivité',
-        mailContact: 'julien.deschamps@example.com',
-        nom: 'Henrich',
-        poste: 'chargé de mission',
-        prenom: 'Laetitia',
-      },
-      contactTechnique: 'Simon.lagrange@example.com',
-      feuillesDeRoute: [
-        {
-          montantSubventionAccorde: 5_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion',
-        },
-        {
-          montantSubventionAccorde: 5_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route numérique du Rhône',
-        },
-      ],
-      links: {},
-      nom: membre.nom,
-      roles: membre.roles.toSorted((lRole, rRole) => lRole.localeCompare(rRole)),
-      telephone: '+33 4 45 00 45 00',
-      totalMontantSubventionAccorde: NaN,
-      totalMontantSubventionFormationAccorde: NaN,
-      type: membre.type,
-      typologieMembre: membre.typologie,
     })),
     noteDeContexte,
     notePrivee,

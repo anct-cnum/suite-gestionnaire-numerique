@@ -2,7 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { formaterLeRoleViewModel, toRoleViewModel } from './shared/role'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
@@ -20,8 +20,8 @@ export function gouvernancePresenter(
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
     },
     sectionMembres: {
-      ...{ membres: gouvernanceReadModel.membres?.map(toMembresDetailsViewModel) },
-      ...buildSousTitreMembres(gouvernanceReadModel.membres),
+      ...{ membres: gouvernanceReadModel.coporteurs?.map(toMembresDetailsViewModel) },
+      ...buildSousTitreMembres(gouvernanceReadModel.coporteurs),
     },
     sectionNoteDeContexte: {
       ...{ noteDeContexte: toNoteDeContexteViewModel(gouvernanceReadModel.noteDeContexte) },
@@ -73,7 +73,7 @@ export type GouvernanceViewModel = Readonly<{
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
   return [
     gouvernanceReadModel.comites,
-    gouvernanceReadModel.membres,
+    gouvernanceReadModel.coporteurs,
     gouvernanceReadModel.feuillesDeRoute,
     gouvernanceReadModel.noteDeContexte,
   ].every(isNullish)
@@ -144,7 +144,7 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
-function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetailsViewModel {
+function toMembresDetailsViewModel(membre: CoporteurDetailReadModel): MembreDetailsViewModel {
   const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
 
   const detailsAffichage: MembreDetailsViewModel['details'] = [
@@ -221,7 +221,7 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
   }
 }
 
-function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): GouvernanceViewModel['sectionMembres'] {
+function buildSousTitreMembres(membres: UneGouvernanceReadModel['coporteurs']): GouvernanceViewModel['sectionMembres'] {
   if (!membres) {
     return {
       detailDuNombreDeChaqueMembre: '0',
