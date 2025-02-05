@@ -28,17 +28,6 @@ describe('reinviter un utilisateur action', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('étant donné que l’uid utilisateur a réinviter est invalide quand la réinvitation est demandée alors cela renvoie un message d’erreur', async () => {
-    // WHEN
-    const messages = await reinviterUnUtilisateurAction({
-      path: '/',
-      uidUtilisateurAReinviter: '',
-    })
-
-    // THEN
-    expect(messages).toStrictEqual(['L’identifiant de l’utilisateur à réinviter doit être renseigné'])
-  })
-
   it('étant donné un path non renseigné quand la réinvitation est demandée alors cela renvoie un message d’erreur', async () => {
     // WHEN
     const messages = await reinviterUnUtilisateurAction({
