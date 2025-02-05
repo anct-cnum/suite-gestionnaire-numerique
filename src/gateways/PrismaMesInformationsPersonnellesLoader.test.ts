@@ -46,7 +46,7 @@ describe('mes informations personnelles loader', () => {
     const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
-    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
+    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.byUid(ssoIdExistant)
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -73,7 +73,7 @@ describe('mes informations personnelles loader', () => {
     const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
-    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.findByUid(ssoIdExistant)
+    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.byUid(ssoIdExistant)
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -105,7 +105,7 @@ describe('mes informations personnelles loader', () => {
 
     // WHEN
     const utilisateurReadModel = async (): Promise<MesInformationsPersonnellesReadModel> => {
-      return mesInformationsPersonnellesGateway.findByUid(ssoIdInexistant)
+      return mesInformationsPersonnellesGateway.byUid(ssoIdInexistant)
     }
 
     // THEN

@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceFailure, GouvernanceUid, NoteDeContexte } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
@@ -20,9 +20,9 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
+  async handle(command: Command): ResultAsync<Failure> {
+    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'utilisateurNePeutPasAjouterNoteDeContexte'
     }
@@ -49,6 +49,6 @@ type Command = Readonly<{
   uidGouvernance: string
 }>
 
-export interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
+export interface GouvernanceRepository extends GetGouvernanceRepository, UpdateGouvernanceRepository {}
 
-type UtilisateurRepository = FindUtilisateurRepository
+type UtilisateurRepository = GetUtilisateurRepository

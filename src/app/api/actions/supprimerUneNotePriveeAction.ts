@@ -20,7 +20,7 @@ export async function supprimerUneNotePriveeAction(actionParams: ActionParams): 
   const result = await new SupprimerUneNotePrivee(
     new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  ).execute({
+  ).handle({
     uidEditeur: await getSessionSub(),
     uidGouvernance: actionParams.uidGouvernance,
   })

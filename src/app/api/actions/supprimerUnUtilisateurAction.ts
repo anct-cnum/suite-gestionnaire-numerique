@@ -19,7 +19,7 @@ export async function supprimerUnUtilisateurAction(
   }
 
   const message = await new SupprimerUnUtilisateur(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
-    .execute({
+    .handle({
       uidUtilisateurASupprimer: actionParams.uidUtilisateurASupprimer,
       uidUtilisateurCourant: await getSessionSub(),
     })

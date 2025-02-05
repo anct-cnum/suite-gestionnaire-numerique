@@ -1,6 +1,6 @@
 import { ReinviterUnUtilisateur } from './ReinviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime, epochTimeMinusOneDay, invalidDate } from '@/shared/testHelper'
@@ -22,7 +22,7 @@ describe('réinviter un utilisateur', () => {
     }
 
     // WHEN
-    const result = await reinviterUnUtilisateur.execute(command)
+    const result = await reinviterUnUtilisateur.handle(command)
 
     // THEN
     expect(result).toBe('OK')
@@ -45,7 +45,7 @@ describe('réinviter un utilisateur', () => {
     }
 
     // WHEN
-    const result = await reinviterUnUtilisateur.execute(command)
+    const result = await reinviterUnUtilisateur.handle(command)
 
     // THEN
     expect(result).toBe('utilisateurNePeutPasGererUtilisateurAReinviter')
@@ -63,7 +63,7 @@ describe('réinviter un utilisateur', () => {
     }
 
     // WHEN
-    const result = await reinviterUnUtilisateur.execute(command)
+    const result = await reinviterUnUtilisateur.handle(command)
 
     // THEN
     expect(result).toBe('utilisateurAReinviterDejaActif')
@@ -85,7 +85,7 @@ describe('réinviter un utilisateur', () => {
     }
 
     // WHEN
-    const asyncResult = reinviterUnUtilisateur.execute(command)
+    const asyncResult = reinviterUnUtilisateur.handle(command)
 
     // THEN
     await expect(asyncResult).rejects.toThrow('dateDInvitationInvalide')
@@ -119,8 +119,8 @@ let spiedUidToFind: string
 let spiedUtilisateurToUpdate: Utilisateur | null
 let spiedDestinataire: string
 
-class RepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class RepositorySpy implements UpdateUtilisateurRepository, GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateursByUid[uid])
   }

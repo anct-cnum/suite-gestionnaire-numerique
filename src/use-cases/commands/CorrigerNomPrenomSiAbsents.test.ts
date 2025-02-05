@@ -1,6 +1,6 @@
 import { CorrigerNomPrenomSiAbsents } from './CorrigerNomPrenomSiAbsents'
 import {
-  FindUtilisateurRepository,
+  GetUtilisateurRepository,
   UpdateUtilisateurRepository,
 } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
@@ -21,7 +21,7 @@ describe('corriger nom prenom si absents', () => {
     const utilisateurRepository = new UtilisateurRepositorySpy()
 
     // WHEN
-    const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).execute({
+    const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).handle({
       actuels: {
         nom,
         prenom,
@@ -70,7 +70,7 @@ describe('corriger nom prenom si absents', () => {
       const utilisateurRepository = new UtilisateurRepositorySpy()
 
       // WHEN
-      const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).execute({
+      const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).handle({
         actuels: {
           nom,
           prenom,
@@ -133,7 +133,7 @@ describe('corriger nom prenom si absents', () => {
       const utilisateurRepository = new UtilisateurRepositorySpy()
 
       // WHEN
-      const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).execute({
+      const result = await new CorrigerNomPrenomSiAbsents(utilisateurRepository).handle({
         actuels: {
           nom,
           prenom,
@@ -159,8 +159,8 @@ describe('corriger nom prenom si absents', () => {
 let spiedUidToFind: string | null
 let spiedUtilisateurToUpdate: Utilisateur | null
 
-class UtilisateurRepositorySpy implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({ nom: 'Tartempion', prenom: 'Michel' }))
   }

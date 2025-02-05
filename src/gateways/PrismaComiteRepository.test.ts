@@ -91,7 +91,7 @@ describe('comité repository', () => {
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = await repository.find('1')
+    const comiteRecord = await repository.get('1')
 
     // THEN
     expect(comiteRecord.state).toStrictEqual(comiteFactory({
@@ -123,7 +123,7 @@ describe('comité repository', () => {
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = repository.find('666')
+    const comiteRecord = repository.get('666')
 
     // THEN
     await expect(comiteRecord).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -148,7 +148,7 @@ describe('comité repository', () => {
     const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = repository.find('2')
+    const comiteRecord = repository.get('2')
 
     // THEN
     await expect(async () => comiteRecord).rejects.toThrow('dateDuComiteDoitEtreDansLeFutur')

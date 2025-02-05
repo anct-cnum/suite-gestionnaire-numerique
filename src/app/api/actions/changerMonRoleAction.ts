@@ -20,7 +20,7 @@ export async function changerMonRoleAction(
   }
 
   const message = await new ChangerMonRole(new PrismaUtilisateurRepository(prisma.utilisateurRecord))
-    .execute({
+    .handle({
       nouveauRole: validationResult.data.nouveauRole,
       uidUtilisateurCourant: await getSessionSub(),
     })

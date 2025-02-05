@@ -12,13 +12,13 @@ describe('supprimer un utilisateur action', () => {
     const uidUtilisateurASupprimer = 'barId'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
-    vi.spyOn(SupprimerUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(SupprimerUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await supprimerUnUtilisateurAction({ path, uidUtilisateurASupprimer })
 
     // THEN
-    expect(SupprimerUnUtilisateur.prototype.execute).toHaveBeenCalledWith({
+    expect(SupprimerUnUtilisateur.prototype.handle).toHaveBeenCalledWith({
       uidUtilisateurASupprimer,
       uidUtilisateurCourant: sub,
     })

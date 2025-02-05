@@ -1,7 +1,7 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddComiteRepository } from './shared/ComiteRepository'
-import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Comite, ComiteFailure } from '@/domain/Comite'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
@@ -23,9 +23,9 @@ export class AjouterUnComite implements CommandHandler<Command> {
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
+  async handle(command: Command): ResultAsync<Failure> {
+    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     const dateDeCreation = this.#date
     const comite = Comite.create({
       commentaire: command.commentaire,
@@ -65,8 +65,8 @@ type Command = Readonly<{
   uidGouvernance: string
 }>
 
-type GouvernanceRepository = FindGouvernanceRepository
+type GouvernanceRepository = GetGouvernanceRepository
 
-type UtilisateurRepository = FindUtilisateurRepository
+type UtilisateurRepository = GetUtilisateurRepository
 
 type ComiteRepository = AddComiteRepository

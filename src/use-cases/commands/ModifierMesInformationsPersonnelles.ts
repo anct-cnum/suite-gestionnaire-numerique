@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
@@ -10,13 +10,13 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<Comma
     this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
+  async handle(command: Command): ResultAsync<Failure> {
     const {
       modification: { nom, prenom, emailDeContact: email, telephone },
       uidUtilisateurCourant,
     } = command
 
-    const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
+    const utilisateurCourant = await this.#utilisateurRepository.get(uidUtilisateurCourant)
 
     const changerPrenomResult = utilisateurCourant.changerPrenom(prenom)
     if (!isOk(changerPrenomResult)) {
@@ -55,4 +55,4 @@ type Command = Readonly<{
 
 type Failure = UtilisateurFailure
 
-interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
-import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { AddUtilisateurRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
@@ -19,8 +19,8 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
+  async handle(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
     const utilisateurCourantState = utilisateurCourant.state
     const utilisateurACreer = new UtilisateurFactory({
       departement: utilisateurCourantState.departement,
@@ -67,4 +67,4 @@ type Command = Readonly<{
 
 type Failure = 'utilisateurNePeutPasGererUtilisateurACreer' | 'emailExistant'
 
-interface UtilisateurRepository extends FindUtilisateurRepository, AddUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, AddUtilisateurRepository {}

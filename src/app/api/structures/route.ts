@@ -16,7 +16,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Structures
     return NextResponse.json(null, { status: 400 })
   }
   const rechercherLesStructures = new RechercherLesStructures(new PrismaStructureLoader(prisma.structureRecord))
-  const structuresReadModel = await rechercherLesStructures.get({
+  const structuresReadModel = await rechercherLesStructures.handle({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     match: search!,
     zone: makeZone(request.nextUrl.searchParams),
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Structures
   return NextResponse.json(structuresReadModel)
 }
 
-function makeZone(searchParams: URLSearchParams): Parameters<typeof RechercherLesStructures.prototype.get>[0]['zone'] {
+function makeZone(searchParams: URLSearchParams): Parameters<typeof RechercherLesStructures.prototype.handle>[0]['zone'] {
   const [departement, region] = [searchParams.get('departement'), searchParams.get('region')]
   let zone: ReturnType<typeof makeZone>
   if (!isNullishOrEmpty(departement)) {

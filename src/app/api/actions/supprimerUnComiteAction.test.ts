@@ -9,7 +9,7 @@ describe('supprimer un comité action', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(SupprimerUnComite.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(SupprimerUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await supprimerUnComiteAction({
@@ -19,7 +19,7 @@ describe('supprimer un comité action', () => {
     })
 
     // THEN
-    expect(SupprimerUnComite.prototype.execute).toHaveBeenCalledWith({
+    expect(SupprimerUnComite.prototype.handle).toHaveBeenCalledWith({
       uid: '1',
       uidEditeur: 'userFooId',
       uidGouvernance: 'gouvernanceFooId',

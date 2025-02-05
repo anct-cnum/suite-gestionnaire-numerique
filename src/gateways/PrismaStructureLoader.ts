@@ -9,11 +9,11 @@ export class PrismaStructureLoader implements StructureLoader {
     this.#dataResource = dataResource
   }
 
-  async findStructures(match: string): Promise<StructuresReadModel> {
+  async structures(match: string): Promise<StructuresReadModel> {
     return this.#structuresRecord(match).then(transform)
   }
 
-  async findStructuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel> {
+  async structuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel> {
     return this.#structuresRecord(match, {
       departementCode: {
         equals: codeDepartement,
@@ -21,7 +21,7 @@ export class PrismaStructureLoader implements StructureLoader {
     }).then(transform)
   }
 
-  async findStructuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel> {
+  async structuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel> {
     return this.#structuresRecord(match, {
       relationDepartement: {
         regionCode: {

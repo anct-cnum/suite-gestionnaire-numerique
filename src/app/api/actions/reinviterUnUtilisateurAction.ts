@@ -23,7 +23,7 @@ export async function reinviterUnUtilisateurAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     emailInvitationGatewayFactory,
     new Date()
-  ).execute({
+  ).handle({
     uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
     uidUtilisateurCourant: await getSessionSub(),
   })

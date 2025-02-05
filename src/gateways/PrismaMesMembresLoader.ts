@@ -10,7 +10,7 @@ export class PrismaMesMembresLoader extends MesMembresLoader {
     this.#dataResource = dataResource
   }
 
-  protected override async find(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
+  protected override async membres(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
     const result: ReadonlyArray<Membres> = await this.#dataResource.$queryRaw`
       SELECT commune AS "nomMembre", ARRAY_AGG(role) AS role FROM membre_gouvernance_commune WHERE "gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY commune
       UNION ALL

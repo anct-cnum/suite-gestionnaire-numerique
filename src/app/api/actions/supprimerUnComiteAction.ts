@@ -24,7 +24,7 @@ export async function supprimerUnComiteAction(
     new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaComiteRepository(prisma.comiteRecord)
-  ).execute({
+  ).handle({
     uid: actionParams.uid,
     uidEditeur: await getSessionSub(),
     uidGouvernance: actionParams.uidGouvernance,

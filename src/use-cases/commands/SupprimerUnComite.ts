@@ -1,7 +1,7 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { DropComiteRepository, FindComiteRepository } from './shared/ComiteRepository'
-import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { DropComiteRepository, GetComiteRepository } from './shared/ComiteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class SupprimerUnComite implements CommandHandler<Command> {
@@ -19,11 +19,11 @@ export class SupprimerUnComite implements CommandHandler<Command> {
     this.#comiteRepository = comiteRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
-    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
+  async handle(command: Command): ResultAsync<Failure> {
+    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
 
-    const comite = await this.#comiteRepository.find(command.uid)
+    const comite = await this.#comiteRepository.get(command.uid)
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'editeurNePeutPasSupprimerComite'
@@ -43,8 +43,8 @@ type Command = Readonly<{
   uidGouvernance: string
 }>
 
-type GouvernanceRepository = FindGouvernanceRepository
+type GouvernanceRepository = GetGouvernanceRepository
 
-type UtilisateurRepository = FindUtilisateurRepository
+type UtilisateurRepository = GetUtilisateurRepository
 
-interface ComiteRepository extends DropComiteRepository, FindComiteRepository {}
+interface ComiteRepository extends DropComiteRepository, GetComiteRepository {}

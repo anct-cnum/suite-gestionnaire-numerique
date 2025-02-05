@@ -192,7 +192,7 @@ describe('prisma utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -278,7 +278,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -317,7 +317,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'martin.tartempion@example.fr', ssoId: 'fakeSsoId' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -356,7 +356,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -397,7 +397,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ nom: 'Durant', role: 'administrateur_dispositif', ssoEmail: 'fakeSsoEmail@example.com', ssoId: 'fakeSsoId' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -424,7 +424,7 @@ describe('prisma utilisateur query', () => {
       const utilisateursParPage = 1
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -446,7 +446,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ isSupprime: true, ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -469,7 +469,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ derniereConnexion: null, nom: 'b', ssoEmail: 'anthony.parquet@example.com', ssoId: '123456' })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -491,7 +491,7 @@ describe('prisma utilisateur query', () => {
       const isActive = true
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -516,7 +516,7 @@ describe('prisma utilisateur query', () => {
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -551,7 +551,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -590,7 +590,7 @@ describe('prisma utilisateur query', () => {
       await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -645,7 +645,7 @@ describe('prisma utilisateur query', () => {
       })
 
       // WHEN
-      const mesUtilisateursReadModel = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const mesUtilisateursReadModel = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -698,7 +698,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'gregory.logeais@example.net'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -720,7 +720,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'structure@example.net'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -742,7 +742,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'Baptiste'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -765,7 +765,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'Nogent'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -788,7 +788,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'nonexistent@example.com'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,
@@ -811,7 +811,7 @@ describe('prisma utilisateur query', () => {
       const prenomOuNomOuEmail = 'NonExistentName'
 
       // WHEN
-      const result = await utilisateurLoader.findMesUtilisateursEtLeTotal(
+      const result = await utilisateurLoader.mesUtilisateursEtLeTotal(
         utilisateurAuthentifie,
         pageCourante,
         utilisateursParPage,

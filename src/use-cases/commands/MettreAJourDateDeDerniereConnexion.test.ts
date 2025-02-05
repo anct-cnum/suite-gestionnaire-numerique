@@ -1,5 +1,5 @@
 import { MettreAJourDateDeDerniereConnexion } from './MettreAJourDateDeDerniereConnexion'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime, invalidDate } from '@/shared/testHelper'
@@ -18,7 +18,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, date)
 
     // WHEN
-    const result = await mettreAJourDateDerniereConnexion.execute({ uidUtilisateurCourant })
+    const result = await mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })
 
     // THEN
     expect(result).toBe('OK')
@@ -39,7 +39,7 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
     const mettreAJourDateDerniereConnexion = new MettreAJourDateDeDerniereConnexion(repository, invalidDate)
 
     // WHEN
-    const asyncResult = mettreAJourDateDerniereConnexion.execute({ uidUtilisateurCourant })
+    const asyncResult = mettreAJourDateDerniereConnexion.handle({ uidUtilisateurCourant })
 
     // THEN
     await expect(asyncResult).rejects.toThrow('dateDeDerniereConnexionInvalide')
@@ -49,8 +49,8 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
 let spiedUidToFind: string | null
 let spiedUtilisateurToUpdate: Utilisateur | null
 
-class UtilisateurRepositorySpy implements UpdateUtilisateurRepository, FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class UtilisateurRepositorySpy implements UpdateUtilisateurRepository, GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({
       uid: { email: 'martin.tartempion@example.net', value: 'fooId' },

@@ -27,7 +27,7 @@ export class PrismaComiteRepository implements ComiteRepository {
     return true
   }
 
-  async find(uid: Comite['uid']['state']['value']): Promise<Comite> {
+  async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     const record = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationUtilisateur: true,
