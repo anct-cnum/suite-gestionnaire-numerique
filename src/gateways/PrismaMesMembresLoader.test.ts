@@ -27,7 +27,7 @@ describe('mes membres loader', () => {
     // THEN
     expect(mesMembresReadModel).toStrictEqual({
       autorisations: {
-        accesMembreValide: false,
+        accesMembreConfirme: false,
         ajouterUnMembre: false,
         supprimerUnMembre: false,
       },

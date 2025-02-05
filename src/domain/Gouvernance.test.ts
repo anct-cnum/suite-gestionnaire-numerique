@@ -43,7 +43,7 @@ describe('gouvernance', () => {
     })
 
     // WHEN
-    const result = gouvernance.peutEtreGerePar(utilisateur)
+    const result = gouvernance.peutEtreGereePar(utilisateur)
 
     // THEN
     expect(result).toBe(true)
@@ -72,7 +72,7 @@ describe('gouvernance', () => {
     })
 
     // WHEN
-    const result = gouvernance.peutEtreGerePar(utilisateur)
+    const result = gouvernance.peutEtreGereePar(utilisateur)
 
     // THEN
     expect(result).toBe(false)
@@ -115,7 +115,7 @@ describe('gouvernance', () => {
     })
 
     // WHEN
-    const result = gouvernance.laNotePriveePeutEtreGerePar(utilisateur)
+    const result = gouvernance.laNotePriveePeutEtreGereePar(utilisateur)
 
     // THEN
     expect(result).toBe(false)

@@ -169,7 +169,7 @@ export function mesMembresReadModelFactory(
 ): MesMembresReadModel {
   return {
     autorisations: {
-      accesMembreValide: true,
+      accesMembreConfirme: true,
       ajouterUnMembre: true,
       supprimerUnMembre: true,
     },

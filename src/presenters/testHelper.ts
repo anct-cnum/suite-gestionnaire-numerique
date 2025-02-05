@@ -29,7 +29,7 @@ export function mesMembresViewModelFactory(
 ): MesMembresViewModel {
   return {
     autorisations: {
-      accesMembreValide: true,
+      accesMembreConfirme: true,
       ajouterUnMembre: true,
       supprimerUnMembre: true,
     },

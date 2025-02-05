@@ -23,7 +23,7 @@ export class ModifierUneNoteDeContexte implements CommandHandler<Command> {
   async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
-    if (!gouvernance.peutEtreGerePar(editeur)) {
+    if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'editeurNePeutPasModifierNoteDeContexte'
     }
     const result = gouvernance.modifierNoteDeContexte(

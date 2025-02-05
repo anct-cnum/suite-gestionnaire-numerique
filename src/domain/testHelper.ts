@@ -2,6 +2,8 @@
 import { Comite } from './Comite'
 import { Departement, DepartementState } from './Departement'
 import { Gouvernance } from './Gouvernance'
+import { Membre } from './Membre'
+import { membreFactory } from './MembreFactory'
 import { TypologieRole } from './Role'
 import { UtilisateurFactory } from './UtilisateurFactory'
 import { Utilisateur } from '@/domain/Utilisateur'
@@ -60,6 +62,35 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
     },
     ...override,
   }) as Comite
+}
+
+export function membrePotentielFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {
+  return membreFactory({
+    nom: 'La Poste',
+    statut: 'candidat',
+    uid: {
+      value: 'membrePotentielFooId',
+    },
+    uidGouvernance: {
+      value: 'gouvernanceFooId',
+    },
+    ...override,
+  }) as Membre
+}
+
+export function membreConfirmeFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {
+  return membreFactory({
+    nom: 'La Poste',
+    roles: ['observateur'],
+    statut: 'confirme',
+    uid: {
+      value: 'membreConfirmeFooId',
+    },
+    uidGouvernance: {
+      value: 'gouvernanceFooId',
+    },
+    ...override,
+  }) as Membre
 }
 
 export function departementFactory(override?: Partial<DepartementState>): Departement {
