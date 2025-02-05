@@ -34,7 +34,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir('93')
+    const gouvernanceReadModel = await gouvernanceLoader.find('93', ['coporteur'], ['nom'])
 
     // THEN
     expect(gouvernanceReadModel).toMatchObject<UneGouvernanceReadModel>({
@@ -88,7 +88,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = gouvernanceLoader.trouverEtEnrichir(codeDepartementInexistant)
+    const gouvernanceReadModel = gouvernanceLoader.find(codeDepartementInexistant, ['coporteur'], ['nom'])
 
     // THEN
     await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
@@ -106,7 +106,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement, ['coporteur'], ['nom'])
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -140,7 +140,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement, ['coporteur'], ['nom'])
 
     // THEN
     expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
@@ -179,7 +179,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement, ['coporteur'], ['nom'])
 
     // THEN
     expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
@@ -218,7 +218,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.find(codeDepartement, ['coporteur'], ['nom'])
 
     // THEN
     expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
@@ -277,12 +277,6 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
 
 const membres: UneGouvernanceReadModel['membres'] = [
   {
-    nom: 'CA Tulle Agglo',
-    roles: ['observateur'],
-    type: 'Collectivité',
-    typologieMembre: 'epci',
-  },
-  {
     nom: 'CC Porte du Jura',
     roles: ['beneficiaire', 'coporteur'],
     type: 'Collectivité',
@@ -301,28 +295,10 @@ const membres: UneGouvernanceReadModel['membres'] = [
     typologieMembre: 'structure',
   },
   {
-    nom: 'Paris',
-    roles: ['N/A'],
-    type: 'Conseil départemental',
-    typologieMembre: 'departement',
-  },
-  {
     nom: 'Seine-Saint-Denis',
     roles: ['coporteur'],
     type: 'Préfecture départementale',
     typologieMembre: 'departement',
-  },
-  {
-    nom: 'Trévérien',
-    roles: ['beneficiaire', 'recipiendaire'],
-    type: 'Collectivité',
-    typologieMembre: 'commune',
-  },
-  {
-    nom: 'Île-de-France',
-    roles: ['N/A'],
-    type: 'Préfecture régionale',
-    typologieMembre: 'sgar',
   },
 ].map((partialMembre) => ({
   contactReferent: {

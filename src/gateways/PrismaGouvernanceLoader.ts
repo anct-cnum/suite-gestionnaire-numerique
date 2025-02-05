@@ -27,15 +27,16 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   }
 }>
 
-export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
+export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
-    super()
     this.#dataResource = dataResource
   }
 
-  protected override async gouvernance(codeDepartement: string): Promise<UneGouvernanceReadModel> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async gouvernance(codeDepartement: string, sortRoles: ReadonlyArray<string>, _order: ReadonlyArray<string>):
+  Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: {
@@ -63,20 +64,25 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
 
     const membres = (await prisma.$queryRaw`
     SELECT commune as nom, type, 'commune' as typologie, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_commune where "gouvernanceDepartementCode" = ${codeDepartement}
+    FROM membre_gouvernance_commune
+    WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY commune, type
+    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
     UNION all
 
-    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role) AS role
+    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role)
+    AS roles
     FROM membre_gouvernance_epci
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY epci, type
+    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
     UNION all
 
     SELECT structure as nom, type,'structure' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_structure
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY structure, type
+    HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
     UNION all
 
     SELECT departement.nom as nom, mgd.type,'departement' as typologie, ARRAY_AGG(mgd.role) AS roles
@@ -85,6 +91,7 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
     ON mgd."departementCode" = departement.code
     WHERE mgd."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY departement.nom, mgd.type
+    HAVING COUNT(CASE WHEN mgd."role" LIKE  ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
     UNION ALL
 
     SELECT region.nom as nom, mgs.type, 'sgar' as typologie, ARRAY_AGG(mgs.role) AS roles
@@ -93,8 +100,9 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
     ON mgs."sgarCode" = region.code
     WHERE mgs."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY region.nom, mgs.type
+    HAVING COUNT(CASE WHEN mgs."role" LIKE  ANY (ARRAY[${sortRoles}]) THEN 1 END) > 0
 
-    ORDER BY nom;`) as ReadonlyArray<Readonly<AggregatedMembre>>
+    ORDER BY nom`) as ReadonlyArray<Readonly<AggregatedMembre>>
 
     return transform(gouvernanceRecord, membres)
   }

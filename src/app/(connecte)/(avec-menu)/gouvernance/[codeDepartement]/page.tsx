@@ -11,8 +11,7 @@ export default async function GouvernanceController({ params }: Props): Promise<
   try {
     const codeDepartement = (await params).codeDepartement
     const gouvernanceReadModel =
-      await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord))
-        .handle({ codeDepartement })
+      await new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).handle({ codeDepartement, order: ['nom'], sortRoles: ['coporteur'] })
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
     return (

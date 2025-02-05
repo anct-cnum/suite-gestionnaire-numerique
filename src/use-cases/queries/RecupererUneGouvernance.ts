@@ -1,5 +1,4 @@
 import { QueryHandler } from '../QueryHandler'
-import { identity, UnaryOperator } from '@/shared/lang'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceReadModelLoader
@@ -8,28 +7,24 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     this.#loader = loader
   }
 
-  async handle({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.trouverEtEnrichir(codeDepartement, (gouvernance) => ({
-      ...gouvernance,
-      ...gouvernance.membres && {
-        membres: gouvernance.membres.values()
-          .map(toMembreDetailAvecTotauxReadModel)
-          .map(toMembreDetailIntitulerReadModel)
-          .toArray(),
-      },
-    }))
+  async handle({ codeDepartement, sortRoles, order }: Query): Promise<UneGouvernanceReadModel> {
+    return this.#loader.gouvernance(codeDepartement, sortRoles, order)
+      .then((gouvernance) =>
+        ({
+          ...gouvernance,
+          ...gouvernance.membres && {
+            membres: gouvernance.membres.values()
+              .map(toMembreDetailAvecTotauxReadModel)
+              .map(toMembreDetailIntitulerReadModel)
+              .toArray(),
+          },
+        }))
   }
 }
 
-export abstract class UneGouvernanceReadModelLoader {
-  async trouverEtEnrichir(
-    codeDepartement: string,
-    enrichir: UnaryOperator<UneGouvernanceReadModel> = identity
-  ): Promise<UneGouvernanceReadModel> {
-    return this.gouvernance(codeDepartement).then(enrichir)
-  }
-
-  protected abstract gouvernance(codeDepartement: string): Promise<UneGouvernanceReadModel>
+export interface UneGouvernanceReadModelLoader {
+  gouvernance(codeDepartement: string, sortRoles: ReadonlyArray<string>, order: ReadonlyArray<string>):
+  Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{
@@ -115,6 +110,8 @@ export type MembreDetailReadModel = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
+  sortRoles: ReadonlyArray<string>
+  order: ReadonlyArray<string>
 }>
 
 function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
