@@ -328,7 +328,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(modifierMesInfosPersosDrawer).toBeVisible()
 
       const titre = within(modifierMesInfosPersosDrawer).getByRole('heading', { level: 1, name: 'Mes informations personnelles' })
-      expect(titre).toHaveAttribute('id', 'drawer-modifier-mon-compte-titre')
+      expect(titre).toBeInTheDocument()
 
       const champsObligatoires = within(modifierMesInfosPersosDrawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
       expect(champsObligatoires).toBeInTheDocument()

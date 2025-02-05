@@ -11,17 +11,17 @@ export default function SupprimerUnUtilisateur({
   closeModal,
 }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
-  const modaleTitreId = useId()
+  const labelModaleId = useId()
 
   return (
     <Modal
       close={closeModal}
       id={id}
       isOpen={isOpen}
-      labelId={modaleTitreId}
+      labelId={labelModaleId}
     >
       <div className="fr-modal__content">
-        <ModalTitle id={modaleTitreId}>
+        <ModalTitle id={labelModaleId}>
           Retirer
           {' '}
           {utilisateurASupprimer.prenomEtNom}

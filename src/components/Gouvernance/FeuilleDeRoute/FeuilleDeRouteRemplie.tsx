@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useState } from 'react'
+import { ReactElement, useId, useState } from 'react'
 
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
@@ -14,7 +14,7 @@ export default function FeuilleDeRouteRemplie({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [feuilleDeRoute, setFeuilleDeRoute] = useState<FeuilleDeRouteViewModel>(feuillesDeRoute[0])
   const drawerFeuilleDeRouteId = 'drawerFeuilleDeRouteId'
-  const labelFeuilleDeRouteId = 'labelFeuilleDeRouteId'
+  const labelFeuilleDeRouteId = useId()
 
   return (
     <>

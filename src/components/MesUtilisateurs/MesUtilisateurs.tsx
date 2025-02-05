@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { ReactElement, useContext, useRef, useState } from 'react'
+import { ReactElement, useContext, useId, useRef, useState } from 'react'
 
 import DetailsUtilisateur from './DetailsUtilisateur'
 import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
@@ -48,13 +48,13 @@ export default function MesUtilisateurs(
     uid: '',
   })
   const drawerFiltreId = 'drawer-filtre-utilisateurs'
-  const labelFiltreId = 'drawer-filtre-utilisateurs-titre'
+  const labelFiltreId = useId()
   const drawerDetailsId = 'drawer-details-utilisateur'
-  const labelDetailsId = 'drawer-details-utilisateur-nom'
+  const labelDetailsId = useId()
   const drawerInvitationId = 'drawer-invitation'
-  const labelInvitationId = 'drawer-invitation-titre'
+  const labelInvitationId = useId()
   const drawerRenvoyerInvitationId = 'drawer-renvoyer-invitation'
-  const labelRenvoyerInvitationId = 'drawer-renvoyer-invitation-titre'
+  const labelRenvoyerInvitationId = useId()
 
   return (
     <>

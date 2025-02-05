@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useRef, useState } from 'react'
+import { ReactElement, useId, useRef, useState } from 'react'
 
 import AjouterUnComite from './Comitologie/AjouterUnComite'
 import ComitologieRemplie from './Comitologie/ComitologieRemplie'
@@ -36,13 +36,13 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawerAjouterComiteId'
-  const labelComiteId = 'labelAjouterComiteId'
+  const labelComiteId = useId()
   const drawerNoteDeContexteId = 'drawerAjouterNoteDeContexteId'
-  const labelNoteDeContexteId = 'labelAjouterNoteDeContexteId'
-  const labelModifierNoteDeContexteId = 'labelModifierNoteDeContexteId'
+  const labelNoteDeContexteId = useId()
+  const labelModifierNoteDeContexteId = useId()
   const drawerModifierNoteDeContexteId = 'drawerModifierNoteDeContexteId'
   const drawerNotePriveeId = 'drawerAjouterNotePriveeId'
-  const labelNotePriveeId = 'labelAjouterNotePriveeId'
+  const labelNotePriveeId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
 
   return (

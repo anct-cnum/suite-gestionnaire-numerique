@@ -13,7 +13,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
   const [emailValidationInfo, setEmailValidationInfo] =
     useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
   const [isDisabled, setIsDisabled] = useState(false)
-  const modaleTitreId = useId()
+  const labelModaleId = useId()
   const champEmailId = useId()
   const messageValidationId = 'supprimer-mon-compte-email-message-validation'
 
@@ -22,7 +22,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
       close={close}
       id={id}
       isOpen={isOpen}
-      labelId={modaleTitreId}
+      labelId={labelModaleId}
     >
       <form
         aria-label="Supprimer"
@@ -30,7 +30,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
         onSubmit={logout}
       >
         <div className="fr-modal__content">
-          <ModalTitle id={modaleTitreId}>
+          <ModalTitle id={labelModaleId}>
             Supprimer mon compte
           </ModalTitle>
           <p>
