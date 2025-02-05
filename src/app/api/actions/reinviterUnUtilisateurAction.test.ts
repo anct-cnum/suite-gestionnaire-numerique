@@ -10,7 +10,7 @@ describe('reinviter un utilisateur action', () => {
     const sub = 'uidUtilisateurCourant'
     const path = '/mes-utilisateurs'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
-    vi.spyOn(ReinviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ReinviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
     // WHEN
@@ -21,7 +21,7 @@ describe('reinviter un utilisateur action', () => {
 
     // THEN
     expect(nextCache.revalidatePath).toHaveBeenCalledWith(path)
-    expect(ReinviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith({
+    expect(ReinviterUnUtilisateur.prototype.handle).toHaveBeenCalledWith({
       uidUtilisateurAReinviter: 'uidUtilisateurAReinviter',
       uidUtilisateurCourant: 'uidUtilisateurCourant',
     })

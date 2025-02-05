@@ -13,7 +13,7 @@ describe('rechercher mes utilisateurs', () => {
     const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(mesUtilisateursLoader)
 
     // WHEN
-    await rechercherMesUtilisateurs.get({ uid })
+    await rechercherMesUtilisateurs.handle({ uid })
 
     // THEN
     expect(mesUtilisateursLoader.spiedFindByUidIdArgs).toStrictEqual([uid])
@@ -33,10 +33,10 @@ const dummyUtilisateur = utilisateurReadModelFactory()
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
   spiedFindMesUtilisateursEtLeTotalArgs:
-    Parameters<typeof MesUtilisateursLoaderSpy.prototype.findMesUtilisateursEtLeTotal> | undefined
+    Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal> | undefined
   spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
 
-  async findMesUtilisateursEtLeTotal(
+  async mesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,

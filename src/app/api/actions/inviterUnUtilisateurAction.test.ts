@@ -86,7 +86,7 @@ describe('inviter un utilisateur action', () => {
       },
     ])('$desc', async ({ actionParams, expectedCommand }) => {
       // GIVEN
-      vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+      vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
       vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
       vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
@@ -94,7 +94,7 @@ describe('inviter un utilisateur action', () => {
       const messages = await inviterUnUtilisateurAction(actionParams)
 
       // THEN
-      expect(InviterUnUtilisateur.prototype.execute).toHaveBeenCalledWith(expectedCommand)
+      expect(InviterUnUtilisateur.prototype.handle).toHaveBeenCalledWith(expectedCommand)
       expect(nextCache.revalidatePath).toHaveBeenCalledWith(actionParams.path)
       expect(messages).toStrictEqual(['OK'])
     })
@@ -104,7 +104,7 @@ describe('inviter un utilisateur action', () => {
     // GIVEN
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
-    vi.spyOn(InviterUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('emailExistant')
+    vi.spyOn(InviterUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('emailExistant')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
 
     const inviterUnUtilisateurParams = {
@@ -225,7 +225,7 @@ describe('inviter un utilisateur action', () => {
           // GIVEN
           vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
           vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('sub')
-          vi.spyOn(PrismaUtilisateurRepository.prototype, 'find').mockResolvedValueOnce(
+          vi.spyOn(PrismaUtilisateurRepository.prototype, 'get').mockResolvedValueOnce(
             utilisateurFactory({ isSuperAdmin })
           )
           vi.spyOn(PrismaUtilisateurRepository.prototype, 'add').mockResolvedValueOnce(true)

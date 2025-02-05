@@ -9,7 +9,7 @@ describe('ajouter une note privée action', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(AjouterUneNotePrivee.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(AjouterUneNotePrivee.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await ajouterUneNotePriveeAction({
@@ -19,7 +19,7 @@ describe('ajouter une note privée action', () => {
     })
 
     // THEN
-    expect(AjouterUneNotePrivee.prototype.execute).toHaveBeenCalledWith({
+    expect(AjouterUneNotePrivee.prototype.handle).toHaveBeenCalledWith({
       contenu: 'un contenu quelconque',
       uidEditeur: 'userFooId',
       uidGouvernance: 'gouvernanceFooId',

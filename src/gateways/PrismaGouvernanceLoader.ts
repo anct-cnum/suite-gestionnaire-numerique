@@ -42,7 +42,7 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
     this.#dataResource = dataResource
   }
 
-  protected override async find(codeDepartement: string): Promise<UneGouvernanceReadModel> {
+  protected override async gouvernance(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: {

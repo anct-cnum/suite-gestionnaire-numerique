@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { EmailGatewayFactory } from './shared/EmailGateway'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<Command> {
@@ -18,10 +18,10 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
+  async handle(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
 
-    const utilisateurAReinviter = await this.#utilisateurRepository.find(command.uidUtilisateurAReinviter)
+    const utilisateurAReinviter = await this.#utilisateurRepository.get(command.uidUtilisateurAReinviter)
     if (utilisateurAReinviter.state.isActive) {
       return 'utilisateurAReinviterDejaActif'
     }
@@ -45,4 +45,4 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

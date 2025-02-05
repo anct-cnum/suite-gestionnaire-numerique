@@ -9,7 +9,7 @@ describe('ajouter un comité action', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(AjouterUnComite.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(AjouterUnComite.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await ajouterUnComiteAction({
@@ -22,7 +22,7 @@ describe('ajouter un comité action', () => {
     })
 
     // THEN
-    expect(AjouterUnComite.prototype.execute).toHaveBeenCalledWith({
+    expect(AjouterUnComite.prototype.handle).toHaveBeenCalledWith({
       commentaire: 'commentaire',
       date: '2024-01-01',
       frequence: 'Mensuelle',

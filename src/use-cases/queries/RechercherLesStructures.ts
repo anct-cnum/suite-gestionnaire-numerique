@@ -7,22 +7,22 @@ export class RechercherLesStructures implements QueryHandler<Query, StructuresRe
     this.#structureLoader = structureLoader
   }
 
-  async get(query: Query): Promise<StructuresReadModel> {
+  async handle(query: Query): Promise<StructuresReadModel> {
     switch (query.zone?.type) {
       case 'departement':
-        return this.#structureLoader.findStructuresByDepartement(query.match, query.zone.code)
+        return this.#structureLoader.structuresByDepartement(query.match, query.zone.code)
       case 'region':
-        return this.#structureLoader.findStructuresByRegion(query.match, query.zone.code)
+        return this.#structureLoader.structuresByRegion(query.match, query.zone.code)
       default:
-        return this.#structureLoader.findStructures(query.match)
+        return this.#structureLoader.structures(query.match)
     }
   }
 }
 
 export interface StructureLoader {
-  findStructures(match: string): Promise<StructuresReadModel>
-  findStructuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel>
-  findStructuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel>
+  structures(match: string): Promise<StructuresReadModel>
+  structuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel>
+  structuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel>
 }
 
 export type StructuresReadModel = ReadonlyArray<UneStructureReadModel>

@@ -12,7 +12,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<
     this.#mesUtilisateursLoader = mesUtilisateursLoader
   }
 
-  async get({
+  async handle({
     uid,
     roles = [],
     pageCourante = 0,
@@ -25,7 +25,7 @@ export class RechercherMesUtilisateurs implements QueryHandler<
   }: Query): Promise<UtilisateursCourantsEtTotalReadModel> {
     const utilisateur = await this.#mesUtilisateursLoader.findByUid(uid)
 
-    return this.#mesUtilisateursLoader.findMesUtilisateursEtLeTotal(
+    return this.#mesUtilisateursLoader.mesUtilisateursEtLeTotal(
       utilisateur,
       pageCourante,
       utilisateursParPage,
@@ -45,7 +45,7 @@ export type UtilisateursCourantsEtTotalReadModel = Readonly<{
 }>
 
 export interface MesUtilisateursLoader extends UnUtilisateurLoader {
-  findMesUtilisateursEtLeTotal(
+  mesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,

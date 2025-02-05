@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import config from '@/use-cases/config.json'
 
 export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failure, Success> {
@@ -11,7 +11,7 @@ export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failu
     this.#valeurNomOuPrenomAbsent = config.absenceNomOuPrenom
   }
 
-  async execute(command: Command): ResultAsync<Failure, Success> {
+  async handle(command: Command): ResultAsync<Failure, Success> {
     const { actuels, corriges, uidUtilisateurCourant } = command
     const isPrenomAbsent = this.#valeurNomOuPrenomAbsent === actuels.prenom
     const isNomAbsent = this.#valeurNomOuPrenomAbsent === actuels.nom
@@ -19,7 +19,7 @@ export class CorrigerNomPrenomSiAbsents implements CommandHandler<Command, Failu
       return 'okSansMiseAJour'
     }
 
-    const utilisateurCourant = await this.#utilisateurRepository.find(uidUtilisateurCourant)
+    const utilisateurCourant = await this.#utilisateurRepository.get(uidUtilisateurCourant)
     if (isPrenomAbsent) {
       if (this.#valeurNomOuPrenomAbsent === corriges.prenom) {
         return 'miseAJourInvalide'
@@ -54,4 +54,4 @@ type Failure = 'miseAJourInvalide'
 
 type Success = 'okAvecMiseAJour' | 'okSansMiseAJour'
 
-interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

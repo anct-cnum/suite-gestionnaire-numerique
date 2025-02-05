@@ -1,7 +1,7 @@
 import { ModifierUnComite } from './ModifierUnComite'
-import { FindComiteRepository, UpdateComiteRepository } from './shared/ComiteRepository'
-import { FindGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetComiteRepository, UpdateComiteRepository } from './shared/ComiteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Comite } from '@/domain/Comite'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
@@ -50,7 +50,7 @@ describe('modifier un comité', () => {
     )
 
     // WHEN
-    const result = await modifierUnComite.execute({
+    const result = await modifierUnComite.handle({
       commentaire,
       date,
       frequence,
@@ -135,7 +135,7 @@ describe('modifier un comité', () => {
     )
 
     // WHEN
-    const result = await modifierUnComite.execute({
+    const result = await modifierUnComite.handle({
       date,
       frequence,
       type,
@@ -161,7 +161,7 @@ describe('modifier un comité', () => {
     )
 
     // WHEN
-    const result = await modifierUnComite.execute({
+    const result = await modifierUnComite.handle({
       commentaire,
       date,
       frequence: frequenceValide,
@@ -192,8 +192,8 @@ let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
 let spiedComiteToModify: Comite | null
 let spiedComiteUidToFind: Comite['uid']['state']['value'] | null
 
-class GouvernanceRepositorySpy implements FindGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance> {
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -209,8 +209,8 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository {
   }
 }
 
-class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class GestionnaireRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({
       codeOrganisation: '75',
@@ -220,15 +220,15 @@ class GestionnaireRepositorySpy implements FindUtilisateurRepository {
   }
 }
 
-class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
 }
 
-class ComiteRepositorySpy implements UpdateComiteRepository, FindComiteRepository {
-  async find(uid: Comite['uid']['state']['value']): Promise<Comite> {
+class ComiteRepositorySpy implements UpdateComiteRepository, GetComiteRepository {
+  async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
       uid: { value: uidComite },

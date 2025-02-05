@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { DropUtilisateurRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
 
 export class SupprimerUnUtilisateur implements CommandHandler<Command> {
   readonly #utilisateurRepository: UtilisateurRepository
@@ -8,9 +8,9 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
     this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
-    const utilisateurASupprimer = await this.#utilisateurRepository.find(command.uidUtilisateurASupprimer)
+  async handle(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
+    const utilisateurASupprimer = await this.#utilisateurRepository.get(command.uidUtilisateurASupprimer)
     if (!utilisateurCourant.peutGerer(utilisateurASupprimer)) {
       return 'suppressionNonAutorisee'
     }
@@ -28,4 +28,4 @@ type Command = Readonly<{
   uidUtilisateurASupprimer: string
 }>
 
-interface UtilisateurRepository extends FindUtilisateurRepository, DropUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, DropUtilisateurRepository {}

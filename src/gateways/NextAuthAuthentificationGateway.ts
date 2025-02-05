@@ -35,7 +35,7 @@ const nextAuthOptions = {
         const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
         if (profile.sub !== undefined) {
           // eslint-disable-next-line no-restricted-syntax
-          await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).execute({
+          await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).handle({
             uidUtilisateurCourant: profile.sub,
           })
         }

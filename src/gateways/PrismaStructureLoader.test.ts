@@ -58,7 +58,7 @@ describe('structures loader', () => {
       const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
-      const structureReadModel = await structureLoader.findStructures(match)
+      const structureReadModel = await structureLoader.structures(match)
 
       // THEN
       expect(structureReadModel).toStrictEqual(expected)
@@ -70,7 +70,7 @@ describe('structures loader', () => {
       const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
-      const structureReadModel = await structureLoader.findStructuresByDepartement('ris', '06')
+      const structureReadModel = await structureLoader.structuresByDepartement('ris', '06')
 
       // THEN
       expect(structureReadModel).toStrictEqual([
@@ -88,7 +88,7 @@ describe('structures loader', () => {
       const structureLoader = new PrismaStructureLoader(prisma.structureRecord)
 
       // WHEN
-      const structureReadModel = await structureLoader.findStructuresByRegion('ris', '93')
+      const structureReadModel = await structureLoader.structuresByRegion('ris', '93')
 
       // THEN
       expect(structureReadModel).toStrictEqual([

@@ -1,5 +1,5 @@
 import { ChangerMonRole } from './ChangerMonRole'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
@@ -14,7 +14,7 @@ describe('changer mon rôle', () => {
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN
-    const result = await changerMonRole.execute({
+    const result = await changerMonRole.handle({
       nouveauRole,
       uidUtilisateurCourant: 'utilisateurSuperAdminUid',
     })
@@ -34,7 +34,7 @@ describe('changer mon rôle', () => {
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN
-    const result = await changerMonRole.execute({
+    const result = await changerMonRole.handle({
       nouveauRole,
       uidUtilisateurCourant: 'utilisateurNonSuperAdminUid',
     })
@@ -60,8 +60,8 @@ const utilisateurByUid: Readonly<Record<string, Utilisateur>> = {
   }),
 }
 
-const utilisateurRepository = new class implements FindUtilisateurRepository, UpdateUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+const utilisateurRepository = new class implements GetUtilisateurRepository, UpdateUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     return Promise.resolve(utilisateurByUid[uid])
   }
 

@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class SupprimerUneNotePrivee implements CommandHandler<Command> {
@@ -15,10 +15,10 @@ export class SupprimerUneNotePrivee implements CommandHandler<Command> {
     this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const editeur = await this.#utilisateurRepository.find(command.uidEditeur)
+  async handle(command: Command): ResultAsync<Failure> {
+    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
 
-    const gouvernance = await this.#gouvernanceRepository.find(new GouvernanceUid(command.uidGouvernance))
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
 
     if (!gouvernance.peutEtreGerePar(editeur)) {
       return 'editeurNePeutPasSupprimerNotePrivee'
@@ -39,6 +39,6 @@ type Command = Readonly<{
   uidGouvernance: string
 }>
 
-interface GouvernanceRepository extends FindGouvernanceRepository, UpdateGouvernanceRepository {}
+interface GouvernanceRepository extends GetGouvernanceRepository, UpdateGouvernanceRepository {}
 
-type UtilisateurRepository = FindUtilisateurRepository
+type UtilisateurRepository = GetUtilisateurRepository

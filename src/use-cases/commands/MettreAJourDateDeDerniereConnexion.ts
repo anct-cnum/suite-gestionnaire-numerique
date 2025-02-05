@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 
 export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Command> {
@@ -11,8 +11,8 @@ export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Comman
     this.#date = date
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
+  async handle(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
     utilisateurCourant.changerDateDeDerniereConnexion(this.#date)
     await this.#utilisateurRepository.update(utilisateurCourant)
     return 'OK'
@@ -25,4 +25,4 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

@@ -12,13 +12,13 @@ describe('changer mon rôle action', () => {
     const nouveauRole = 'Instructeur'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
-    vi.spyOn(ChangerMonRole.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ChangerMonRole.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await changerMonRoleAction({ nouveauRole, path })
 
     // THEN
-    expect(ChangerMonRole.prototype.execute).toHaveBeenCalledWith({
+    expect(ChangerMonRole.prototype.handle).toHaveBeenCalledWith({
       nouveauRole,
       uidUtilisateurCourant: sub,
     })

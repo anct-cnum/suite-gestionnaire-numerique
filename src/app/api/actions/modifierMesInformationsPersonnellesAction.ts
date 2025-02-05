@@ -21,7 +21,7 @@ export async function modifierMesInformationsPersonnellesAction(
 
   const message = await new ModifierMesInformationsPersonnelles(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  ).execute({
+  ).handle({
     modification: {
       emailDeContact: actionParams.emailDeContact,
       nom: actionParams.nom,

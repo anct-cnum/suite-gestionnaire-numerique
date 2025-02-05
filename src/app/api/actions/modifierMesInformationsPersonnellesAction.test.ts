@@ -11,7 +11,7 @@ describe('modifier mes informations personnelles action', () => {
     const sub = 'fooId'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
-    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({
@@ -23,7 +23,7 @@ describe('modifier mes informations personnelles action', () => {
     })
 
     // THEN
-    expect(ModifierMesInformationsPersonnelles.prototype.execute).toHaveBeenCalledWith({
+    expect(ModifierMesInformationsPersonnelles.prototype.handle).toHaveBeenCalledWith({
       modification: {
         emailDeContact: 'martin.tartempion@example.com',
         nom: 'Tartempion',
@@ -78,7 +78,7 @@ describe('modifier mes informations personnelles action', () => {
     const telephoneVide = ''
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
-    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ModifierMesInformationsPersonnelles.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await modifierMesInformationsPersonnellesAction({

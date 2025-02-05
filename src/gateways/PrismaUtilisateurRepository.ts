@@ -49,7 +49,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }
   }
 
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     const record = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,

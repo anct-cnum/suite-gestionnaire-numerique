@@ -12,7 +12,7 @@ describe('recupererUneGouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceInexistanteLoaderStub())
 
     // WHEN
-    const gouvernance = await queryHandler.get({ codeDepartement: '69' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
     expect(gouvernance).toStrictEqual({ departement: 'Rhône', uid: 'gouvernanceFooId' })
@@ -23,7 +23,7 @@ describe('recupererUneGouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceExistanteLoaderStub())
 
     // WHEN
-    const gouvernance = await queryHandler.get({ codeDepartement: '69' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceEnrichie)
@@ -38,7 +38,7 @@ describe('recupererUneGouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceExistanteLoaderStub())
 
     // WHEN
-    const gouvernance = await queryHandler.get({ codeDepartement: '69' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceSansMembre)
@@ -71,7 +71,7 @@ describe('recupererUneGouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceExistanteLoaderStub())
 
     // WHEN
-    const gouvernance = await queryHandler.get({ codeDepartement: '69' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
     expect(gouvernance.membres).toStrictEqual([
@@ -123,7 +123,7 @@ describe('recupererUneGouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(new GouvernanceExistanteLoaderStub())
 
     // WHEN
-    const gouvernance = await queryHandler.get({ codeDepartement: '69' })
+    const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
     expect(gouvernance.membres).toStrictEqual([
@@ -173,13 +173,13 @@ const gouvernanceSansMembre: UneGouvernanceReadModel = {
 }
 
 class GouvernanceInexistanteLoaderStub extends UneGouvernanceReadModelLoader {
-  protected override async find(): Promise<UneGouvernanceReadModel> {
+  protected override async gouvernance(): Promise<UneGouvernanceReadModel> {
     return Promise.resolve({ departement: uneGouvernance.departement, uid: uneGouvernance.uid })
   }
 }
 
 class GouvernanceExistanteLoaderStub extends UneGouvernanceReadModelLoader {
-  protected async find(): Promise<UneGouvernanceReadModel> {
+  protected async gouvernance(): Promise<UneGouvernanceReadModel> {
     return Promise.resolve(uneGouvernance)
   }
 }

@@ -21,7 +21,7 @@ export async function ajouterUneNotePriveeAction(actionParams: ActionParams): Re
     new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
-  ).execute({
+  ).handle({
     contenu: actionParams.contenu,
     uidEditeur: await getSessionSub(),
     uidGouvernance: actionParams.uidGouvernance,

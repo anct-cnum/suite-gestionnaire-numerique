@@ -26,7 +26,7 @@ export async function modifierUneNoteDeContexteAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )
-  const result = await modifierUneNoteDeContexte.execute({
+  const result = await modifierUneNoteDeContexte.handle({
     contenu: sanitize(actionParam.contenu, sanitizeDefaultOptions),
     uidEditeur: await getSessionSub(),
     uidGouvernance: actionParam.uidGouvernance,
@@ -44,4 +44,3 @@ type ActionParams = Readonly<{
 const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })
-

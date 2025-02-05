@@ -1,7 +1,7 @@
 import { Comite } from '@/domain/Comite'
 
-export interface FindComiteRepository {
-  find(uid: Comite['uid']['state']['value']): Promise<Comite>
+export interface GetComiteRepository {
+  get(uid: Comite['uid']['state']['value']): Promise<Comite>
 }
 
 export interface AddComiteRepository {
@@ -17,7 +17,7 @@ export interface DropComiteRepository {
 }
 
 export interface ComiteRepository extends
-  FindComiteRepository,
+  GetComiteRepository,
   DropComiteRepository,
   AddComiteRepository,
   UpdateComiteRepository {}

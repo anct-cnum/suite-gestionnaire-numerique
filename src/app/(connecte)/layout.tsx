@@ -34,7 +34,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
-        .execute({
+        .handle({
           emailAsUid: session.user.email,
           uid: session.user.sub,
         })
@@ -43,7 +43,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   }
 
   const correctionNomPrenom = await new CorrigerNomPrenomSiAbsents(utilisateurRepository)
-    .execute({
+    .handle({
       actuels: {
         nom: utilisateurReadModel.nom,
         prenom: utilisateurReadModel.prenom,

@@ -13,7 +13,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     this.#dataResource = dataResource
   }
 
-  async findMesUtilisateursEtLeTotal(
+  async mesUtilisateursEtLeTotal(
     utilisateurCourant: UnUtilisateurReadModel,
     pageCourante: number,
     utilisateursParPage: number,

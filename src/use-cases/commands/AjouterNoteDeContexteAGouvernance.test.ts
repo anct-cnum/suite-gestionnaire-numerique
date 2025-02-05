@@ -1,6 +1,6 @@
 import { AjouterNoteDeContexteAGouvernance } from './AjouterNoteDeContexteAGouvernance'
-import { FindGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
-import { FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
@@ -22,7 +22,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
+    const result = await ajouterNoteDeContexteAGouvernance.handle({
       contenu,
       uidEditeur,
       uidGouvernance,
@@ -55,7 +55,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
+    const result = await ajouterNoteDeContexteAGouvernance.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
@@ -73,7 +73,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     )
 
     // WHEN
-    const result = await ajouterNoteDeContexteAGouvernance.execute({
+    const result = await ajouterNoteDeContexteAGouvernance.handle({
       contenu,
       uidEditeur,
       uidGouvernance,
@@ -94,8 +94,8 @@ let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: string | null
 
-class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouvernanceRepository {
-  async find(uid: GouvernanceUid): Promise<Gouvernance> {
+class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -117,7 +117,7 @@ class GouvernanceRepositorySpy implements FindGouvernanceRepository, UpdateGouve
 }
 
 class GouvernanceAvecNoteDeContexteRepositorySpy extends GouvernanceRepositorySpy {
-  override async find(uid: GouvernanceUid): Promise<Gouvernance> {
+  override async get(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
@@ -139,15 +139,15 @@ class GouvernanceAvecNoteDeContexteRepositorySpy extends GouvernanceRepositorySp
   }
 }
 
-class GestionnaireRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class GestionnaireRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }))
   }
 }
 
-class GestionnaireAutreRepositorySpy implements FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
     return Promise.resolve(utilisateurFactory({ codeOrganisation: '10', role: 'Gestionnaire département' }))
   }
