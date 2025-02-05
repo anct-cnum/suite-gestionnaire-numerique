@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useState } from 'react'
 
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -11,6 +11,7 @@ export default function ReinviterUnUtilisateur({
   closeDrawer,
 }: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
+  const [isDisabled, setIsDisabled] = useState(false)
 
   return (
     <div>
@@ -30,22 +31,29 @@ export default function ReinviterUnUtilisateur({
           aria-controls={drawerId}
           className="fr-btn fr-btn--secondary"
           data-fr-opened="false"
+          disabled={isDisabled}
           onClick={Reinviter}
           type="button"
         >
-          Renvoyer cette invitation
+          {isDisabled ? 'Envois en cours...' : 'Renvoyer cette invitation'}
         </button>
       </div>
     </div>
   )
 
   async function Reinviter(): Promise<void> {
-    await reinviterUnUtilisateurAction({
+    setIsDisabled(true)
+    const messages = await reinviterUnUtilisateurAction({
       path: pathname,
       uidUtilisateurAReinviter: utilisateur.uid,
     })
+    if (messages.includes('OK')) {
+      Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
     closeDrawer()
-    Notification('success', { description: utilisateur.email, title: 'Invitation envoyée à ' })
+    setIsDisabled(false)
   }
 }
 

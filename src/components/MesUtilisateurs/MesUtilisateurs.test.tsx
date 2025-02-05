@@ -283,7 +283,7 @@ describe('mes utilisateurs', () => {
       expect(drawer).not.toBeVisible()
     })
 
-    it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme et il en est notifié', async () => {
+    it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme, une notification s’affiche et la liste est mise à jour', async () => {
       // GIVEN
       const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
@@ -291,13 +291,31 @@ describe('mes utilisateurs', () => {
       // WHEN
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
       const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 30/12/1969' })
-      jeRenvoieLInvitation()
+      const envoyer = jeRenvoieLInvitation()
 
       // THEN
+      expect(envoyer).toHaveAccessibleName('Envois en cours...')
+      expect(envoyer).toBeDisabled()
       expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
       const notification = await screen.findByRole('alert')
       expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
       expect(drawer).not.toBeVisible()
+      expect(envoyer).toHaveAccessibleName('Renvoyer cette invitation')
+      expect(envoyer).toBeEnabled()
+    })
+
+    it('quand je clique sur le bouton "Renvoyer cette invitation" mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { reinviterUnUtilisateurAction })
+
+      // WHEN
+      jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
+      jeRenvoieLInvitation()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
     it('si l’invitation a été envoyée ajourd’hui alors le titre affiché est "Invitation envoyée aujourd’hui"', () => {
@@ -388,7 +406,7 @@ describe('mes utilisateurs', () => {
       expect(confirmer).toHaveAttribute('type', 'button')
     })
 
-    it('je confirme la suppression', async () => {
+    it('je confirme la suppression, alors le drawer se ferme, une notification s’affiche, la liste est mise à jour', async () => {
       // GIVEN
       const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherMesUtilisateurs(
@@ -398,12 +416,35 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
+      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      const supprimer = jeSupprimeUnUtilisateur()
+
+      // THEN
+      expect(supprimer).toHaveAccessibleName('Suppression en cours...')
+      expect(supprimer).toBeDisabled()
+      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Utilisateur supprimé')
+      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(supprimer).toHaveAccessibleName('Confirmer')
+      expect(supprimer).toBeEnabled()
+    })
+
+    it('je confirme la suppression mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+      // GIVEN
+      const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      afficherMesUtilisateurs(
+        [utilisateurEnAttenteReadModel],
+        { supprimerUnUtilisateurAction }
+      )
+
+      // WHEN
+      jOuvreLaSuppressionDUnUtilisateur()
       jeSupprimeUnUtilisateur()
 
       // THEN
-      const supprimerUnUtilisateurModalApresSuppression = await screen.findByRole('dialog')
-      expect(supprimerUnUtilisateurModalApresSuppression).not.toBeVisible()
-      expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
     it('je ferme la suppression', () => {
@@ -453,8 +494,8 @@ describe('mes utilisateurs', () => {
     presserLeBouton(name)
   }
 
-  function jeRenvoieLInvitation(): void {
-    presserLeBouton('Renvoyer cette invitation')
+  function jeRenvoieLInvitation(): HTMLElement {
+    return presserLeBouton('Renvoyer cette invitation')
   }
 
   function jeFermeLaReinvitation(): void {
@@ -468,8 +509,8 @@ describe('mes utilisateurs', () => {
     fireEvent.click(supprimer)
   }
 
-  function jeSupprimeUnUtilisateur(): void {
-    presserLeBouton('Confirmer')
+  function jeSupprimeUnUtilisateur(): HTMLElement {
+    return presserLeBouton('Confirmer')
   }
 
   function jeFermeLaSuppressionDUnUtilisateur(): void {

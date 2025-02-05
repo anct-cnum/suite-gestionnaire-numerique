@@ -49,7 +49,7 @@ export default function AjouterUnComite({
       uidGouvernance,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'bien ajouté', title: 'Comité ' })
+      Notification('success', { description: 'ajouté', title: 'Comité ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

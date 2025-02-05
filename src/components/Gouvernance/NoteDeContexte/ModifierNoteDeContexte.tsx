@@ -80,7 +80,7 @@ export default function ModifierNoteDeContexte({
     setIsDisabled(true)
     const messages = await modifierUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
     if (messages[0] === 'OK') {
-      Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
+      Notification('success', { description: 'modifiée', title: 'Note de contexte ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

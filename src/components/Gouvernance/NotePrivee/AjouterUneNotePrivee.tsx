@@ -43,7 +43,7 @@ export default function AjouterUneNotePrivee({
       uidGouvernance,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'bien ajoutée', title: 'Note privée ' })
+      Notification('success', { description: 'ajoutée', title: 'Note privée ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
