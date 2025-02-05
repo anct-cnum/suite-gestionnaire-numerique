@@ -25,7 +25,7 @@ export async function ajouterUnComiteAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaComiteRepository(prisma.comiteRecord),
     new Date()
-  ).execute({
+  ).handle({
     commentaire: actionParams.commentaire,
     date: actionParams.date,
     frequence: actionParams.frequence,

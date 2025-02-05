@@ -10,7 +10,7 @@ describe('modifier une note de contexte', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(ModifierUneNoteDeContexte.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ModifierUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await modifierUneNoteDeContexteAction({
@@ -22,7 +22,7 @@ describe('modifier une note de contexte', () => {
     // THEN
     expect(messages).toStrictEqual(['OK'])
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
-    expect(ModifierUneNoteDeContexte.prototype.execute).toHaveBeenCalledWith({
+    expect(ModifierUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>ma note de contexte modifiée</p>',
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',
@@ -45,7 +45,7 @@ describe('modifier une note de contexte', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(ModifierUneNoteDeContexte.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(ModifierUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
     const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
 
@@ -57,7 +57,7 @@ describe('modifier une note de contexte', () => {
     })
 
     // THEN
-    expect(ModifierUneNoteDeContexte.prototype.execute).toHaveBeenCalledWith({
+    expect(ModifierUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>Contenu légitime</p>',
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',

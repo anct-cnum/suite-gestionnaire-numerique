@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
@@ -11,8 +11,8 @@ export class ChangerMonRole implements CommandHandler<Command> {
     this.#utilisateurRepository = utilisateurRepository
   }
 
-  async execute(command: Command): ResultAsync<Failure> {
-    const utilisateurCourant = await this.#utilisateurRepository.find(command.uidUtilisateurCourant)
+  async handle(command: Command): ResultAsync<Failure> {
+    const utilisateurCourant = await this.#utilisateurRepository.get(command.uidUtilisateurCourant)
     const result = utilisateurCourant.changerRole(command.nouveauRole)
     if (isOk(result)) {
       await this.#utilisateurRepository.update(utilisateurCourant)
@@ -29,4 +29,4 @@ type Command = Readonly<{
   uidUtilisateurCourant: string
 }>
 
-interface UtilisateurRepository extends FindUtilisateurRepository, UpdateUtilisateurRepository {}
+interface UtilisateurRepository extends GetUtilisateurRepository, UpdateUtilisateurRepository {}

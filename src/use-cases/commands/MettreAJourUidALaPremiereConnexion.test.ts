@@ -1,5 +1,5 @@
 import { MettreAJourUidALaPremiereConnexion } from './MettreAJourUidALaPremiereConnexion'
-import { FindUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurUidRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
@@ -16,7 +16,7 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
     const mettreAJourUidALaPremiereConnexion = new MettreAJourUidALaPremiereConnexion(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await mettreAJourUidALaPremiereConnexion.execute({ emailAsUid, uid })
+    const result = await mettreAJourUidALaPremiereConnexion.handle({ emailAsUid, uid })
 
     // THEN
     expect(result).toBe('OK')
@@ -34,8 +34,8 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
 let spiedUidToFind: string | null
 let spiedUtilisateurToUpdate: Utilisateur | null
 
-class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository, FindUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository, GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({
       derniereConnexion: undefined,

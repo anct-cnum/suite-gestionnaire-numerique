@@ -11,7 +11,7 @@ describe('ajouter une note de contexte', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await ajouterUneNoteDeContexteAction({
@@ -23,7 +23,7 @@ describe('ajouter une note de contexte', () => {
     // THEN
     expect(messages).toStrictEqual(['OK'])
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
-    expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
+    expect(AjouterNoteDeContexteAGouvernance.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>ma note de contexte</p>',
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',
@@ -46,7 +46,7 @@ describe('ajouter une note de contexte', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(AjouterNoteDeContexteAGouvernance.prototype, 'handle').mockResolvedValueOnce('OK')
 
     const contenuMalveillant = '<p>Contenu légitime</p><script>alert("xss")</script><img src="x" onerror="alert(1)">'
 
@@ -58,11 +58,10 @@ describe('ajouter une note de contexte', () => {
     })
 
     // THEN
-    expect(AjouterNoteDeContexteAGouvernance.prototype.execute).toHaveBeenCalledWith({
+    expect(AjouterNoteDeContexteAGouvernance.prototype.handle).toHaveBeenCalledWith({
       contenu: '<p>Contenu légitime</p>',
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',
     })
   })
 })
-

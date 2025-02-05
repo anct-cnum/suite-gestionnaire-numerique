@@ -24,7 +24,7 @@ export async function inviterUnUtilisateurAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     emailInvitationGatewayFactory,
     new Date()
-  ).execute({
+  ).handle({
     email: validationResult.data.email,
     nom: validationResult.data.nom,
     prenom: validationResult.data.prenom,

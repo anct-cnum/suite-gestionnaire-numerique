@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
   const mesInformationsPersonnellesQuery = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
-  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.findByUid(await getSessionSub())
+  const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.byUid(await getSessionSub())
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)
 

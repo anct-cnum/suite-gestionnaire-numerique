@@ -23,7 +23,7 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
-    const gouvernanceTrouvee = repository.find(new GouvernanceUid('3'))
+    const gouvernanceTrouvee = repository.get(new GouvernanceUid('3'))
 
     // THEN
     await expect(gouvernanceTrouvee).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -42,7 +42,7 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
-    const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
+    const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(
@@ -61,7 +61,7 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
-    const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
+    const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(gouvernanceFactory({ uid: departementCode }).state)
@@ -79,7 +79,7 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
 
     // WHEN
-    const gouvernanceTrouvee = await repository.find(new GouvernanceUid(departementCode))
+    const gouvernanceTrouvee = await repository.get(new GouvernanceUid(departementCode))
 
     // THEN
     expect(gouvernanceTrouvee.state).toStrictEqual(

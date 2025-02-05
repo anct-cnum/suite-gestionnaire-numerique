@@ -1,5 +1,5 @@
 import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
-import { FindUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
+import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 
@@ -32,7 +32,7 @@ describe('modifier mes informations personnelles', () => {
       const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
 
       // WHEN
-      const result = await commandHandler.execute({
+      const result = await commandHandler.handle({
         ...informationsPersonnellesModifiees,
         modification: {
           ...informationsPersonnellesModifiees.modification,
@@ -51,7 +51,7 @@ describe('modifier mes informations personnelles', () => {
     const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
 
     // WHEN
-    const result = await commandHandler.execute(informationsPersonnellesModifiees)
+    const result = await commandHandler.handle(informationsPersonnellesModifiees)
 
     // THEN
     const utilisateurApresMiseAJour = utilisateurFactory({
@@ -75,14 +75,14 @@ const informationsPersonnellesModifiees = {
   uidUtilisateurCourant: 'fooId',
 }
 
-class RepositoryStub implements FindUtilisateurRepository, UpdateUtilisateurRepository {
+class RepositoryStub implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   readonly #utilisateur: Utilisateur
 
   constructor(utilisateur: Utilisateur) {
     this.#utilisateur = utilisateur
   }
 
-  async find(): Promise<Utilisateur> {
+  async get(): Promise<Utilisateur> {
     return Promise.resolve(this.#utilisateur)
   }
 

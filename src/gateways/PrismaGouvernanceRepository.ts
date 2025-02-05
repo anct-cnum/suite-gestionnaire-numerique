@@ -16,7 +16,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     this.#gouvernanceDataResource = gouvernanceDataResource
   }
 
-  async find(uid: GouvernanceUid): Promise<Gouvernance> {
+  async get(uid: GouvernanceUid): Promise<Gouvernance> {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
         noteDeContexte: {

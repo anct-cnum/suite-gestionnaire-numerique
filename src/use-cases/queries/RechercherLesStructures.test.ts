@@ -9,18 +9,18 @@ describe('rechercher les structures', () => {
   it.each([
     {
       expectedArgs: ['la poste'],
-      expectedCall: 'findStructures',
+      expectedCall: 'structures',
       intention: ': le critère de correspondance est transmis',
     },
     {
       expectedArgs: ['la poste', '06'],
-      expectedCall: 'findStructuresByDepartement',
+      expectedCall: 'structuresByDepartement',
       intention: 'et par département : le critère de correspondance ainsi que le code du département sont transmis',
       zone: { code: '06', type: 'departement' } as const,
     },
     {
       expectedArgs: ['la poste', '93'],
-      expectedCall: 'findStructuresByRegion',
+      expectedCall: 'structuresByRegion',
       intention: 'et par région : le critère de correspondance ainsi que le code de la région sont transmis',
       zone: { code: '93', type: 'region' } as const,
     },
@@ -30,7 +30,7 @@ describe('rechercher les structures', () => {
     const rechercherLesStructures = new RechercherLesStructures(new StructuresLoaderSpy())
 
     // WHEN
-    await rechercherLesStructures.get(query)
+    await rechercherLesStructures.handle(query)
 
     // THEN
     expect(spiedCall).toBe(expectedCall)
@@ -39,25 +39,25 @@ describe('rechercher les structures', () => {
 })
 
 let spiedCall: keyof StructuresLoaderSpy | null
-let spiedArgs: Parameters<typeof StructuresLoaderSpy.prototype.findStructures>
-  | Parameters<typeof StructuresLoaderSpy.prototype.findStructuresByDepartement>
-  | Parameters<typeof StructuresLoaderSpy.prototype.findStructuresByRegion> | null
+let spiedArgs: Parameters<typeof StructuresLoaderSpy.prototype.structures>
+  | Parameters<typeof StructuresLoaderSpy.prototype.structuresByDepartement>
+  | Parameters<typeof StructuresLoaderSpy.prototype.structuresByRegion> | null
 
 class StructuresLoaderSpy implements StructureLoader {
-  async findStructures(match: string): Promise<StructuresReadModel> {
-    spiedCall = 'findStructures'
+  async structures(match: string): Promise<StructuresReadModel> {
+    spiedCall = 'structures'
     spiedArgs = [match]
     return Promise.resolve([])
   }
 
-  async findStructuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel> {
-    spiedCall = 'findStructuresByDepartement'
+  async structuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel> {
+    spiedCall = 'structuresByDepartement'
     spiedArgs = [match, codeDepartement]
     return Promise.resolve([])
   }
 
-  async findStructuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel> {
-    spiedCall = 'findStructuresByRegion'
+  async structuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel> {
+    spiedCall = 'structuresByRegion'
     spiedArgs = [match, codeRegion]
     return Promise.resolve([])
   }

@@ -8,7 +8,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     this.#loader = loader
   }
 
-  async get({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
+  async handle({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
     return this.#loader.trouverEtEnrichir(codeDepartement, (gouvernance) => ({
       ...gouvernance,
       ...gouvernance.membres && {
@@ -26,10 +26,10 @@ export abstract class UneGouvernanceReadModelLoader {
     codeDepartement: string,
     enrichir: UnaryOperator<UneGouvernanceReadModel> = identity
   ): Promise<UneGouvernanceReadModel> {
-    return this.find(codeDepartement).then(enrichir)
+    return this.gouvernance(codeDepartement).then(enrichir)
   }
 
-  protected abstract find(codeDepartement: string): Promise<UneGouvernanceReadModel>
+  protected abstract gouvernance(codeDepartement: string): Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{

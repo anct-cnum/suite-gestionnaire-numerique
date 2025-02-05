@@ -8,7 +8,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     this.#mesMembresLoader = mesMembresLoader
   }
 
-  async get(query: Query): Promise<MesMembresReadModel> {
+  async handle(query: Query): Promise<MesMembresReadModel> {
     return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => {
       return {
         ...mesMembres,
@@ -23,10 +23,10 @@ export abstract class MesMembresLoader {
     codeDepartement: string,
     operator: UnaryOperator<MesMembresReadModel>
   ): Promise<MesMembresReadModel> {
-    return this.find(codeDepartement).then(operator)
+    return this.membres(codeDepartement).then(operator)
   }
 
-  protected abstract find(codeDepartement: string): Promise<MesMembresReadModel>
+  protected abstract membres(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
 function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {

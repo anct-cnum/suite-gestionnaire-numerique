@@ -1,6 +1,6 @@
 import { InviterUnUtilisateur } from './InviterUnUtilisateur'
 import { EmailGateway } from './shared/EmailGateway'
-import { AddUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { AddUtilisateurRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { TypologieRole } from '@/domain/Role'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
@@ -124,7 +124,7 @@ describe('inviter un utilisateur', () => {
         )
 
         // WHEN
-        const result = await inviterUnUtilisateur.execute({
+        const result = await inviterUnUtilisateur.handle({
           email: 'martine.dugenoux@example.com',
           nom: 'Dugenoux',
           prenom: 'Martine',
@@ -165,7 +165,7 @@ describe('inviter un utilisateur', () => {
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
 
     // WHEN
-    const result = await inviterUnUtilisateur.execute({
+    const result = await inviterUnUtilisateur.handle({
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
@@ -196,7 +196,7 @@ describe('inviter un utilisateur', () => {
     const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
 
     // WHEN
-    const result = await inviterUnUtilisateur.execute({
+    const result = await inviterUnUtilisateur.handle({
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
       prenom: 'Martin',
@@ -218,14 +218,14 @@ let spiedUtilisateurToAdd: Utilisateur | null
 let spiedDestinataire: string
 let spiedIsSuperAdmin: boolean | null
 
-class RepositorySpy implements AddUtilisateurRepository, FindUtilisateurRepository {
+class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepository {
   readonly #utilisateurCourant: Utilisateur
 
   constructor(utilisateurCourant: Utilisateur) {
     this.#utilisateurCourant = utilisateurCourant
   }
 
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(this.#utilisateurCourant)
   }

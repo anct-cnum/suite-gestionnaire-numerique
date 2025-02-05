@@ -31,7 +31,7 @@ describe('utilisateur repository', () => {
       await creerUnUtilisateur({ ssoId: ssoIdInexistant })
 
       // WHEN
-      const result = repository.find(uidUtilisateurValue)
+      const result = repository.get(uidUtilisateurValue)
 
       // THEN
       await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -43,7 +43,7 @@ describe('utilisateur repository', () => {
       await creerUnUtilisateur({ isSupprime: true })
 
       // WHEN
-      const result = repository.find(uidUtilisateurValue)
+      const result = repository.get(uidUtilisateurValue)
 
       // THEN
       await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -157,7 +157,7 @@ describe('utilisateur repository', () => {
         await creerUnUtilisateur({ ...createRecordWith })
 
         // WHEN
-        const result = await repository.find(uidUtilisateurValue)
+        const result = await repository.get(uidUtilisateurValue)
 
         // THEN
         expect(result.state).toStrictEqual(
@@ -188,7 +188,7 @@ describe('utilisateur repository', () => {
         await creerUnUtilisateur({ derniereConnexion })
 
         // WHEN
-        const result = await repository.find(uidUtilisateurValue)
+        const result = await repository.get(uidUtilisateurValue)
 
         // THEN
         expect(result.state.isActive).toBe(expectedIsActive)

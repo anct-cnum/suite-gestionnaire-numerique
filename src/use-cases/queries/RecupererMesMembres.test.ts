@@ -12,7 +12,7 @@ describe('recuperer mes membres', () => {
       const queryHandler = new RecupererMesMembres(new MesMembresLoaderStub())
 
       // WHEN
-      const mesMembres = await queryHandler.get({ codeDepartement: '69' })
+      const mesMembres = await queryHandler.handle({ codeDepartement: '69' })
 
       // THEN
       expect(mesMembres).toStrictEqual(mesMembresReadModelFactory({
@@ -31,7 +31,7 @@ describe('recuperer mes membres', () => {
 let mesMembresLoader: MesMembresReadModel
 
 class MesMembresLoaderStub extends MesMembresLoader {
-  protected async find(): Promise<MesMembresReadModel> {
+  protected async membres(): Promise<MesMembresReadModel> {
     return Promise.resolve(mesMembresLoader)
   }
 }

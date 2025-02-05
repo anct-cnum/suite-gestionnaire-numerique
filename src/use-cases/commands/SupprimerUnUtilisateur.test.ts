@@ -1,4 +1,4 @@
-import { DropUtilisateurRepository, FindUtilisateurRepository } from './shared/UtilisateurRepository'
+import { DropUtilisateurRepository, GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUnUtilisateur } from './SupprimerUnUtilisateur'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
@@ -14,7 +14,7 @@ describe('supprimer un utilisateur', () => {
     const supprimerUnUtilisateur = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await supprimerUnUtilisateur.execute({
+    const result = await supprimerUnUtilisateur.handle({
       uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
       uidUtilisateurCourant: 'utilisateurCourantExistantUid',
     })
@@ -34,7 +34,7 @@ describe('supprimer un utilisateur', () => {
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateursSuppressionConcurrenteRepositorySpy())
 
     // WHEN
-    const result = await commandHandler.execute({
+    const result = await commandHandler.handle({
       uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
       uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
     })
@@ -55,7 +55,7 @@ describe('supprimer un utilisateur', () => {
     const commandHandler = new SupprimerUnUtilisateur(new UtilisateurRepositorySpy())
 
     // WHEN
-    const result = await commandHandler.execute({
+    const result = await commandHandler.handle({
       uidUtilisateurASupprimer: 'utilisateurASupprimerExistantUid',
       uidUtilisateurCourant: 'utilisateurCourantExistantAutreUid',
     })
@@ -88,8 +88,8 @@ const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
 const spiedUidsToFind: Array<string> = []
 let spiedUtilisateurToDrop: Utilisateur | null
 
-class UtilisateurRepositorySpy implements FindUtilisateurRepository, DropUtilisateurRepository {
-  async find(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+class UtilisateurRepositorySpy implements GetUtilisateurRepository, DropUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidsToFind.push(uid)
     return Promise.resolve(utilisateursByUid[uid])
   }

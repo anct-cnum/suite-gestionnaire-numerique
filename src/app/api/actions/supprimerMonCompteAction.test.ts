@@ -7,13 +7,13 @@ describe('supprimer mon compte action', () => {
     // GIVEN
     const sub = 'fooId'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
-    vi.spyOn(SupprimerUnUtilisateur.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(SupprimerUnUtilisateur.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await supprimerMonCompteAction()
 
     // THEN
-    expect(SupprimerUnUtilisateur.prototype.execute).toHaveBeenCalledWith({
+    expect(SupprimerUnUtilisateur.prototype.handle).toHaveBeenCalledWith({
       uidUtilisateurASupprimer: sub,
       uidUtilisateurCourant: sub,
     })
