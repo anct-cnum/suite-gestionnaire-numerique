@@ -24,7 +24,7 @@ export async function reinviterUnUtilisateurAction(
     emailInvitationGatewayFactory,
     new Date()
   ).execute({
-    uidUtilisateurAReinviter: validationResult.data.uidUtilisateurAReinviter,
+    uidUtilisateurAReinviter: actionParams.uidUtilisateurAReinviter,
     uidUtilisateurCourant: await getSessionSub(),
   })
 
@@ -40,5 +40,4 @@ type ActionParams = Readonly<{
 
 const validator = z.object({
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-  uidUtilisateurAReinviter: z.string().min(1, 'L’identifiant de l’utilisateur à réinviter doit être renseigné'),
 })

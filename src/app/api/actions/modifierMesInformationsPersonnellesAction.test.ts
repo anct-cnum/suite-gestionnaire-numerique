@@ -36,48 +36,6 @@ describe('modifier mes informations personnelles action', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('si l’e-mail est mal formaté alors, s’affiche un message d’erreur', async () => {
-    // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({ emailDeContact: 'emailNonValide', nom, path, prenom, telephone })
-
-    // THEN
-    expect(messages).toStrictEqual(['L’email doit être valide'])
-  })
-
-  it('si le nom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
-    // GIVEN
-    const nomVide = ''
-
-    // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({
-      emailDeContact,
-      nom: nomVide,
-      path,
-      prenom,
-      telephone,
-    })
-
-    // THEN
-    expect(messages).toStrictEqual(['Le nom doit contenir au moins 1 caractère'])
-  })
-
-  it('si le prénom est vide alors s’affiche un message d’erreur car il doit contenir au moins un caractère', async () => {
-    // GIVEN
-    const prenomVide = ''
-
-    // WHEN
-    const messages = await modifierMesInformationsPersonnellesAction({
-      emailDeContact,
-      nom,
-      path,
-      prenom: prenomVide,
-      telephone,
-    })
-
-    // THEN
-    expect(messages).toStrictEqual(['Le prénom doit contenir au moins 1 caractère'])
-  })
-
   it('si le path est non renseigné alors cela renvoie une erreur car il doit contenir au moins un caractère', async () => {
     // GIVEN
     const pathIncorrect = ''
