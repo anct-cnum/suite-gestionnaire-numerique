@@ -129,6 +129,7 @@
     "react/no-multi-comp": ["error", { "ignoreStateless": true }],
     "sonarjs/no-nested-functions": "off",
     "sort-keys-fix/sort-keys-fix": "error",
+    "sonarjs/function-return-type": "off",
     "@stylistic/array-element-newline": ["error", "consistent"],
     "@stylistic/comma-dangle": [
       "error",
