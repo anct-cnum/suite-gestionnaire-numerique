@@ -24,7 +24,7 @@ export type MesMembresViewModel = Readonly<{
   autorisations: Readonly<{
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
-    accesMembreValide: boolean
+    accesMembreConfirme: boolean
   }>
   typologies: ReadonlyArray<string>
   roles: ReadonlyArray<string>

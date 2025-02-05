@@ -17,7 +17,7 @@ describe('recuperer mes membres', () => {
       // THEN
       expect(mesMembres).toStrictEqual(mesMembresReadModelFactory({
         autorisations: {
-          accesMembreValide: true,
+          accesMembreConfirme: true,
           ajouterUnMembre: true,
           supprimerUnMembre: true,
         },

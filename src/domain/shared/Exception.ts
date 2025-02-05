@@ -5,7 +5,6 @@ export class Exception<Failure extends string> extends Error {
     super(failure)
   }
 
-  // eslint-disable-next-line sonarjs/function-return-type
   static toResult<Failure extends string>(run: () => never | void): Result<Failure> {
     try {
       run()

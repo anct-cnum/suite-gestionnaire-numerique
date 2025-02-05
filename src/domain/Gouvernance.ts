@@ -102,13 +102,13 @@ export class Gouvernance extends Entity<State> {
     this.#notePrivee = undefined
   }
 
-  peutEtreGerePar(utilisateur: Utilisateur): boolean {
+  peutEtreGereePar(utilisateur: Utilisateur): boolean {
     return utilisateur.isAdmin
       || this.#departement.state.code === utilisateur.state.departement?.code
       || this.#departement.state.codeRegion === utilisateur.state.region?.code
   }
 
-  laNotePriveePeutEtreGerePar(utilisateur: Utilisateur): boolean {
+  laNotePriveePeutEtreGereePar(utilisateur: Utilisateur): boolean {
     return this.#departement.state.code === utilisateur.state.departement?.code
   }
 }

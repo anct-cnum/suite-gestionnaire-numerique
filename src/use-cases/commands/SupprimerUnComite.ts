@@ -25,7 +25,7 @@ export class SupprimerUnComite implements CommandHandler<Command> {
 
     const comite = await this.#comiteRepository.get(command.uid)
 
-    if (!gouvernance.peutEtreGerePar(editeur)) {
+    if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'editeurNePeutPasSupprimerComite'
     }
 
