@@ -70,7 +70,7 @@ export default function AjouterNoteDeContexte({
     const messages = await ajouterUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
     if (messages[0] === 'OK') {
       viderLeContenu()
-      Notification('success', { description: 'bien ajoutée', title: 'Note de contexte ' })
+      Notification('success', { description: 'ajoutée', title: 'Note de contexte ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

@@ -159,16 +159,8 @@ describe('inviter un utilisateur', () => {
 
     // THEN
     await waitFor(() => {
-      expect(inviterUnUtilisateurAction).toHaveBeenCalledWith({
-        codeOrganisation: '5001',
-        email: 'martin.tartempion@example.com',
-        nom: 'Tartempion',
-        path: '/mes-utilisateurs',
-        prenom: 'Martin',
-        role: 'Gestionnaire structure',
-      })
+      expect(fetch).toHaveBeenCalledWith('/api/structures?search=ABC')
     })
-    expect(fetch).toHaveBeenCalledWith('/api/structures?search=ABC')
   })
 
   it('en tant qu’administrateur, quand je fais une recherche de moins de 3 caractères dans le champ de structure, alors il ne se passe rien', async () => {
@@ -252,11 +244,12 @@ describe('inviter un utilisateur', () => {
     expect(envoyerInvitation).toBeEnabled()
   })
 
-  it('quand je remplis correctement le formulaire et avec une nouvelle adresse électronique, alors un message de validation s’affiche et le drawer est réinitialisé', async () => {
+  it('quand je remplis correctement le formulaire et avec une nouvelle adresse électronique, alors le drawer se ferme, une notification s’affiche et le formulaire est réinitialisé', async () => {
     // GIVEN
     const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
     vi.stubGlobal('dsfr', stubbedConceal())
-    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
+    vi.stubGlobal('fetch', vi.fn(structuresFetch))
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction, pathname: '/mes-utilisateurs' })
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
@@ -265,13 +258,24 @@ describe('inviter un utilisateur', () => {
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
     const email = jeTapeSonAdresseElectronique('martin.tartempion@example.com')
-    jeSelectionneUnAdministrateur()
+    jeSelectionneUnGestionnaireStructure()
+    const structure = jeTapeSaStructure('ABC')
+    await jeSelectionneSaStructure(structure, 'ABC FORMATION')
     const envoyerInvitation = jEnvoieLInvitation()
 
     // THEN
+    expect(envoyerInvitation).toHaveAccessibleName('Envois en cours...')
     expect(envoyerInvitation).toBeDisabled()
+    expect(inviterUnUtilisateurAction).toHaveBeenCalledWith({
+      codeOrganisation: '5001',
+      email: 'martin.tartempion@example.com',
+      nom: 'Tartempion',
+      path: '/mes-utilisateurs',
+      prenom: 'Martin',
+      role: 'Gestionnaire structure',
+    })
     const notification = await screen.findByRole('alert')
-    expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
+    expect(notification.textContent).toBe('Invitation envoyée à martin.tartempion@example.com')
     expect(drawerInvitation).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
@@ -279,6 +283,7 @@ describe('inviter un utilisateur', () => {
     roleRadios.forEach((roleRadio) => {
       expect(roleRadio).not.toBeChecked()
     })
+    expect(envoyerInvitation).toHaveAccessibleName('Envoyer l’invitation')
     expect(envoyerInvitation).toBeEnabled()
   })
 
@@ -326,6 +331,25 @@ describe('inviter un utilisateur', () => {
       const champSelection = within(drawerInvitation).queryByLabelText(`${labelChampSelection} *`)
       expect(champSelection).not.toBeInTheDocument()
     })
+  })
+
+  it('quand je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+    // GIVEN
+    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+    vi.stubGlobal('dsfr', stubbedConceal())
+    afficherMesUtilisateurs({ inviterUnUtilisateurAction })
+
+    // WHEN
+    jOuvreLeFormulairePourInviterUnUtilisateur()
+    jeTapeSonNom('Tartempion')
+    jeTapeSonPrenom('Martin')
+    jeTapeSonAdresseElectronique('martin.tartempion@example.com')
+    jeSelectionneUnAdministrateur()
+    jEnvoieLInvitation()
+
+    // THEN
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
   })
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {

@@ -176,6 +176,8 @@ export default function InviterUnUtilisateur({
       if (messages.includes('OK')) {
         Notification('success', { description: email, title: 'Invitation envoyée à ' })
         setEmailDejaExistant(undefined)
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
       }
       fermerEtReinitialiser(event.target as HTMLFormElement)
     }

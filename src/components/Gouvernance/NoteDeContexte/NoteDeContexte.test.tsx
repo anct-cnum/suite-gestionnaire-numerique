@@ -77,7 +77,7 @@ describe('note de contexte', () => {
     const ajouterUneNoteDeContexteDrawer = await screen.findByRole('dialog', { name: 'Note de contexte' })
     expect(ajouterUneNoteDeContexteDrawer).not.toBeVisible()
     const notification = await screen.findByRole('alert')
-    expect(notification.textContent).toBe('Note de contexte bien ajoutée')
+    expect(notification.textContent).toBe('Note de contexte ajoutée')
     expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
   })
 
@@ -174,7 +174,7 @@ describe('note de contexte', () => {
     expect(boutonEnregistrer).toBeDisabled()
     const notification = await screen.findByRole('alert')
     expect(drawer).not.toBeVisible()
-    expect(notification.textContent).toBe('Note de contexte bien modifiée')
+    expect(notification.textContent).toBe('Note de contexte modifiée')
     expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
   })
 
