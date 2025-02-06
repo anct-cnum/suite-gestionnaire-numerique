@@ -25,8 +25,8 @@ describe('gouvernance', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: undefined,
+      coporteurs: undefined,
       feuillesDeRoute: undefined,
-      membres: undefined,
       noteDeContexte: undefined,
     }), epochTimePlusOneDay)
 
@@ -163,7 +163,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans membre, alors elle s’affiche avec son résumé et sa section lui demandant d’en ajouter un', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', membres: undefined }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ coporteurs: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -191,7 +191,7 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      membres: [
+      coporteurs: [
         {
           contactReferent: {
             denomination: 'Contact politique de la collectivité',
@@ -287,7 +287,7 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      membres: [
+      coporteurs: [
         {
           contactReferent: {
             denomination: 'Contact politique de la collectivité',

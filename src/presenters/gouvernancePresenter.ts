@@ -2,7 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { formaterLeRoleViewModel, toRoleViewModel } from './shared/role'
 import { isNullish } from '@/shared/lang'
-import { ComiteReadModel, FeuilleDeRouteReadModel, MembreDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
@@ -15,13 +15,13 @@ export function gouvernancePresenter(
     departement: gouvernanceReadModel.departement,
     isVide: isGouvernanceVide(gouvernanceReadModel),
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
+    sectionCoporteurs: {
+      ...{ coporteurs: gouvernanceReadModel.coporteurs?.map(toCoporteursDetailsViewModel) },
+      ...buildSousTitreCoporteurs(gouvernanceReadModel.coporteurs),
+    },
     sectionFeuillesDeRoute: {
       ...{ feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel) },
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
-    },
-    sectionMembres: {
-      ...{ membres: gouvernanceReadModel.membres?.map(toMembresDetailsViewModel) },
-      ...buildSousTitreMembres(gouvernanceReadModel.membres),
     },
     sectionNoteDeContexte: {
       ...{ noteDeContexte: toNoteDeContexteViewModel(gouvernanceReadModel.noteDeContexte) },
@@ -52,9 +52,9 @@ export type GouvernanceViewModel = Readonly<{
       url: string
     }>
   }>
-  sectionMembres: Readonly<{
+  sectionCoporteurs: Readonly<{
     detailDuNombreDeChaqueMembre: string
-    membres?: ReadonlyArray<MembreDetailsViewModel>
+    coporteurs?: ReadonlyArray<MembreDetailsViewModel>
     total: string
     wording: string
   }>
@@ -73,7 +73,7 @@ export type GouvernanceViewModel = Readonly<{
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
   return [
     gouvernanceReadModel.comites,
-    gouvernanceReadModel.membres,
+    gouvernanceReadModel.coporteurs,
     gouvernanceReadModel.feuillesDeRoute,
     gouvernanceReadModel.noteDeContexte,
   ].every(isNullish)
@@ -144,50 +144,50 @@ function toMembresViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
-function toMembresDetailsViewModel(membre: MembreDetailReadModel): MembreDetailsViewModel {
-  const contactReferent = `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.poste} ${membre.contactReferent.mailContact}`
+function toCoporteursDetailsViewModel(coporteurs: CoporteurDetailReadModel): MembreDetailsViewModel {
+  const contactReferent = `${coporteurs.contactReferent.prenom} ${coporteurs.contactReferent.nom}, ${coporteurs.contactReferent.poste} ${coporteurs.contactReferent.mailContact}`
 
   const detailsAffichage: MembreDetailsViewModel['details'] = [
-    ...membre.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: membre.contactReferent.denomination }] : [],
-    ...membre.contactTechnique !== undefined && membre.contactTechnique !== '' ?
-      [{ information: membre.contactTechnique, intitule: 'Contact technique' }] : [],
-    ...isNaN(membre.totalMontantSubventionAccorde ?? NaN) ? [] : [
+    ...coporteurs.contactReferent.denomination === 'Contact politique de la collectivité' ? [{ information: contactReferent, intitule: coporteurs.contactReferent.denomination }] : [],
+    ...coporteurs.contactTechnique !== undefined && coporteurs.contactTechnique !== '' ?
+      [{ information: coporteurs.contactTechnique, intitule: 'Contact technique' }] : [],
+    ...isNaN(coporteurs.totalMontantSubventionAccorde ?? NaN) ? [] : [
       {
-        information: `${membre.totalMontantSubventionAccorde} €`,
+        information: `${coporteurs.totalMontantSubventionAccorde} €`,
         intitule: 'Total subventions accordées',
       },
     ],
-    ...isNaN(membre.totalMontantSubventionFormationAccorde ?? NaN) ? [] : [
+    ...isNaN(coporteurs.totalMontantSubventionFormationAccorde ?? NaN) ? [] : [
       {
-        information: `${membre.totalMontantSubventionFormationAccorde} €`,
+        information: `${coporteurs.totalMontantSubventionFormationAccorde} €`,
         intitule: 'Total subventions formations accordées',
       },
     ],
-    ...membre.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
+    ...coporteurs.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
     {
-      information: membre.telephone === '' ? '-' : membre.telephone,
+      information: coporteurs.telephone === '' ? '-' : coporteurs.telephone,
       intitule: 'Téléphone',
     },
   ]
   const details = detailsAffichage.slice()
-  if (membre.feuillesDeRoute.length >= 1) {
+  if (coporteurs.feuillesDeRoute.length >= 1) {
     details.unshift(
       {
-        feuillesDeRoute: membre.feuillesDeRoute.map((feuilleDeRoute) => ({ nom: feuilleDeRoute.nom })),
+        feuillesDeRoute: coporteurs.feuillesDeRoute.map((feuilleDeRoute) => ({ nom: feuilleDeRoute.nom })),
         information: '',
-        intitule: `Feuille${formatPluriel(membre.feuillesDeRoute.length)} de route`,
+        intitule: `Feuille${formatPluriel(coporteurs.feuillesDeRoute.length)} de route`,
       }
     )
   }
 
   return {
     details,
-    logo: buildLogoMembre(membre),
-    nom: membre.nom,
-    plusDetailsHref: membre.links.plusDetails,
-    roles: membre.roles.map(toRoleViewModel),
-    type: membre.type,
-    typologieMembre: membre.typologieMembre,
+    logo: buildLogoMembre(coporteurs),
+    nom: coporteurs.nom,
+    plusDetailsHref: coporteurs.links.plusDetails,
+    roles: coporteurs.roles.map(toRoleViewModel),
+    type: coporteurs.type,
+    typologieMembre: coporteurs.typologieMembre,
   }
 }
 
@@ -221,15 +221,15 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
   }
 }
 
-function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): GouvernanceViewModel['sectionMembres'] {
-  if (!membres) {
+function buildSousTitreCoporteurs(coporteurs: UneGouvernanceReadModel['coporteurs']): GouvernanceViewModel['sectionCoporteurs'] {
+  if (!coporteurs) {
     return {
       detailDuNombreDeChaqueMembre: '0',
       total: '0',
       wording: 'membre',
     }
   }
-  const detailDuNombreDeChaqueMembre = Object.entries(membres
+  const detailDuNombreDeChaqueMembre = Object.entries(coporteurs
     .flatMap(({ roles }) => roles)
     .reduce<Record<string, number>>((nombreParRole, role) => {
       const roleFormater = formaterLeRoleViewModel(role)
@@ -241,8 +241,8 @@ function buildSousTitreMembres(membres: UneGouvernanceReadModel['membres']): Gou
 
   return {
     detailDuNombreDeChaqueMembre,
-    total: String(membres.length),
-    wording: `membre${formatPluriel(membres.length)}`,
+    total: String(coporteurs.length),
+    wording: `membre${formatPluriel(coporteurs.length)}`,
   }
 }
 

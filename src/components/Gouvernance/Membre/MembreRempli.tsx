@@ -84,5 +84,5 @@ export default function MembreRempli({ membres }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  membres: NonNullable<GouvernanceViewModel['sectionMembres']['membres']>
+  membres: NonNullable<GouvernanceViewModel['sectionCoporteurs']['coporteurs']>
 }>

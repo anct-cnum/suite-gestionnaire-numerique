@@ -1,5 +1,4 @@
 import { QueryHandler } from '../QueryHandler'
-import { identity, UnaryOperator } from '@/shared/lang'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceReadModelLoader
@@ -8,35 +7,30 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     this.#loader = loader
   }
 
-  async handle({ codeDepartement }: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.trouverEtEnrichir(codeDepartement, (gouvernance) => ({
-      ...gouvernance,
-      ...gouvernance.membres && {
-        membres: gouvernance.membres.values()
-          .map(toMembreDetailAvecTotauxReadModel)
-          .map(toMembreDetailIntitulerReadModel)
-          .toArray(),
-      },
-    }))
+  async handle(query: Query): Promise<UneGouvernanceReadModel> {
+    return this.#loader.get(query.codeDepartement)
+      .then((gouvernance) =>
+        ({
+          ...gouvernance,
+          ...gouvernance.coporteurs && {
+            coporteurs: gouvernance.coporteurs.values()
+              .map(toMembreDetailAvecTotauxReadModel)
+              .map(toMembreDetailIntitulerReadModel)
+              .toArray(),
+          },
+        }))
   }
 }
 
-export abstract class UneGouvernanceReadModelLoader {
-  async trouverEtEnrichir(
-    codeDepartement: string,
-    enrichir: UnaryOperator<UneGouvernanceReadModel> = identity
-  ): Promise<UneGouvernanceReadModel> {
-    return this.gouvernance(codeDepartement).then(enrichir)
-  }
-
-  protected abstract gouvernance(codeDepartement: string): Promise<UneGouvernanceReadModel>
+export interface UneGouvernanceReadModelLoader {
+  get(codeDepartement: string): Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
-  membres?: ReadonlyArray<MembreDetailReadModel>
+  coporteurs?: ReadonlyArray<CoporteurDetailReadModel>
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   uid: string
@@ -73,21 +67,7 @@ export type MembreReadModel = Readonly<{
 
 export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
 
-type NoteDeContexteReadModel = Readonly<{
-  dateDeModification: Date
-  nomAuteur: string
-  prenomAuteur: string
-  texte: string
-}>
-
-type NotePriveeReadModel = Readonly<{
-  dateDEdition: Date
-  nomEditeur: string
-  prenomEditeur: string
-  texte: string
-}>
-
-export type MembreDetailReadModel = Readonly<{
+export type CoporteurDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
@@ -113,11 +93,25 @@ export type MembreDetailReadModel = Readonly<{
   }>
 }>
 
+type NoteDeContexteReadModel = Readonly<{
+  dateDeModification: Date
+  nomAuteur: string
+  prenomAuteur: string
+  texte: string
+}>
+
+type NotePriveeReadModel = Readonly<{
+  dateDEdition: Date
+  nomEditeur: string
+  prenomEditeur: string
+  texte: string
+}>
+
 type Query = Readonly<{
   codeDepartement: string
 }>
 
-function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,
@@ -132,7 +126,7 @@ function toMembreDetailAvecTotauxReadModel(membre: MembreDetailReadModel): Membr
   }
 }
 
-function toMembreDetailIntitulerReadModel(membre: MembreDetailReadModel): MembreDetailReadModel {
+function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
   return {
     ...membre,

@@ -1,5 +1,5 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
+import { creerUnComite, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -12,6 +12,7 @@ describe('gouvernance loader', () => {
   it('quand une gouvernance est demandée par son code département existant, alors elle est renvoyée', async () => {
     // GIVEN
     await creerUneRegion({ code: '11' })
+    await creerUneRegion({ code: '53', nom: 'Bretagne' })
     await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
     await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
@@ -27,42 +28,45 @@ describe('gouvernance loader', () => {
         derniereEdition: epochTime.toISOString(),
       },
     })
-    await creerComites()
-    await creerFeuillesDeRoute()
-    await creerMembres()
+    await creerComites('93', 0)
+    await creerComites('75', 2)
+    await creerFeuillesDeRoute('93')
+    await creerFeuillesDeRoute('75')
+    await creerMembres('93')
+    await creerMembres('75')
 
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir('93')
+    const gouvernanceReadModel = await gouvernanceLoader.get('93')
 
     // THEN
-    expect(gouvernanceReadModel).toMatchObject<UneGouvernanceReadModel>({
+    expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: [
-        // @ts-expect-error
         {
           commentaire: 'commentaire',
           date: epochTime,
           derniereEdition: epochTime,
           frequence: 'trimestrielle',
+          id: 1,
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
-        // @ts-expect-error
         {
           commentaire: 'commentaire',
           date: epochTimeMinusOneDay,
           derniereEdition: epochTime,
           frequence: 'trimestrielle',
+          id: 2,
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
           type: 'technique',
         },
       ],
+      coporteurs,
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres,
       noteDeContexte: {
         dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
@@ -88,7 +92,7 @@ describe('gouvernance loader', () => {
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = gouvernanceLoader.trouverEtEnrichir(codeDepartementInexistant)
+    const gouvernanceReadModel = gouvernanceLoader.get(codeDepartementInexistant)
 
     // THEN
     await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
@@ -98,22 +102,23 @@ describe('gouvernance loader', () => {
     // GIVEN
     const codeDepartement = '93'
     await creerUneRegion({ code: '11' })
+    await creerUneRegion({ code: '53', nom: 'Bretagne' })
     await creerUnDepartement({ code: codeDepartement, nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
     await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerFeuillesDeRoute()
-    await creerMembres()
+    await creerFeuillesDeRoute('93')
+    await creerMembres('93')
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: undefined,
+      coporteurs,
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
-      membres,
       noteDeContexte: undefined,
       notePrivee: undefined,
       uid: codeDepartement,
@@ -135,23 +140,24 @@ describe('gouvernance loader', () => {
       editeurUtilisateurId: 'userFooId',
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
+      id: 1,
       type: 'stratégique',
     })
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
       [
         {
           commentaire: 'commentaire',
           date: undefined,
           derniereEdition: epochTime,
           frequence: 'trimestrielle',
+          id: 1,
           nomEditeur: 'Deschamps',
-          periodicite: 'trimestrielle',
           prenomEditeur: 'Jean',
           type: 'stratégique',
         },
@@ -174,21 +180,23 @@ describe('gouvernance loader', () => {
       editeurUtilisateurId: 'userFooId',
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
+      id: 1,
       type: 'stratégique',
     })
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
       [
         {
           commentaire: '',
           date: epochTime,
           derniereEdition: epochTime,
           frequence: 'trimestrielle',
+          id: 1,
           nomEditeur: 'Deschamps',
           prenomEditeur: 'Jean',
           type: 'stratégique',
@@ -212,24 +220,25 @@ describe('gouvernance loader', () => {
       editeurUtilisateurId: 'userFooId',
       frequence: 'trimestrielle',
       gouvernanceDepartementCode: codeDepartement,
+      id: 1,
       type: 'stratégique',
     })
 
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.trouverEtEnrichir(codeDepartement)
+    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
 
     // THEN
-    expect(gouvernanceReadModel.comites).toMatchObject<Omit<UneGouvernanceReadModel['comites'], 'id'>>(
+    expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
       [
         {
           commentaire: 'commentaire',
           date: epochTime,
           derniereEdition: epochTime,
           frequence: 'trimestrielle',
+          id: 1,
           nomEditeur: 'Tartempion',
-          periodicite: 'trimestrielle',
           prenomEditeur: 'Martin',
           type: 'stratégique',
         },
@@ -253,7 +262,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route inclusion',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+    porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
     totalActions: 3,
   },
   {
@@ -270,17 +279,17 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route numérique du Rhône',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+    porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
     totalActions: 3,
   },
 ]
 
-const membres: UneGouvernanceReadModel['membres'] = [
+const coporteurs: UneGouvernanceReadModel['coporteurs'] = [
   {
-    nom: 'CA Tulle Agglo',
-    roles: ['observateur'],
-    type: 'Collectivité',
-    typologieMembre: 'epci',
+    nom: 'Bretagne',
+    roles: ['coporteur'],
+    type: 'Préfecture régionale',
+    typologieMembre: 'sgar',
   },
   {
     nom: 'CC Porte du Jura',
@@ -301,28 +310,10 @@ const membres: UneGouvernanceReadModel['membres'] = [
     typologieMembre: 'structure',
   },
   {
-    nom: 'Paris',
-    roles: ['N/A'],
-    type: 'Conseil départemental',
-    typologieMembre: 'departement',
-  },
-  {
     nom: 'Seine-Saint-Denis',
     roles: ['coporteur'],
     type: 'Préfecture départementale',
     typologieMembre: 'departement',
-  },
-  {
-    nom: 'Trévérien',
-    roles: ['beneficiaire', 'recipiendaire'],
-    type: 'Collectivité',
-    typologieMembre: 'commune',
-  },
-  {
-    nom: 'Île-de-France',
-    roles: ['N/A'],
-    type: 'Préfecture régionale',
-    typologieMembre: 'sgar',
   },
 ].map((partialMembre) => ({
   contactReferent: {
@@ -352,7 +343,7 @@ const membres: UneGouvernanceReadModel['membres'] = [
   ...partialMembre,
 }))
 
-async function creerComites(): Promise<void> {
+async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
   await creerUnComite({
     commentaire: 'commentaire',
     creation: epochTime,
@@ -360,7 +351,8 @@ async function creerComites(): Promise<void> {
     derniereEdition: epochTime,
     editeurUtilisateurId: 'userFooId',
     frequence: 'trimestrielle',
-    gouvernanceDepartementCode: '93',
+    gouvernanceDepartementCode,
+    id: 1 + Number(incrementId),
     type: 'stratégique',
   })
   await creerUnComite({
@@ -370,115 +362,91 @@ async function creerComites(): Promise<void> {
     derniereEdition: epochTime,
     editeurUtilisateurId: 'userFooId',
     frequence: 'trimestrielle',
-    gouvernanceDepartementCode: '93',
+    gouvernanceDepartementCode,
+    id: 2 + Number(incrementId),
     type: 'technique',
   })
 }
 
-async function creerFeuillesDeRoute(): Promise<void> {
-  await prisma.feuilleDeRouteRecord.create({
-    data: {
-      creation: epochTime,
-      gouvernanceDepartementCode: '93',
-      nom: 'Feuille de route inclusion',
-    },
-  })
-  await prisma.feuilleDeRouteRecord.create({
-    data: {
-      creation: epochTime,
-      gouvernanceDepartementCode: '93',
-      nom: 'Feuille de route numérique du Rhône',
-    },
+async function creerFeuillesDeRoute(gouvernanceDepartementCode: string): Promise<void> {
+  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode })
+  await creerUneFeuilleDeRoute({
+    gouvernanceDepartementCode,
+    nom: 'Feuille de route numérique du Rhône',
   })
 }
 
-async function creerMembres(): Promise<void> {
-  await prisma.membreGouvernanceCommuneRecord.create({
-    data: {
-      commune: 'Trévérien',
-      gouvernanceDepartementCode: '93',
-      role: 'recipiendaire',
-      type: 'Collectivité',
-    },
+async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
+  await creerUnMembreCommune({
+    commune: 'Trévérien',
+    gouvernanceDepartementCode,
+    role: 'recipiendaire',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceCommuneRecord.create({
-    data: {
-      commune: 'Trévérien',
-      gouvernanceDepartementCode: '93',
-      role: 'beneficiaire',
-      type: 'Collectivité',
-    },
+  await creerUnMembreCommune({
+    commune: 'Trévérien',
+    gouvernanceDepartementCode,
+    role: 'beneficiaire',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceCommuneRecord.create({
-    data: {
-      commune: 'Créteil',
-      gouvernanceDepartementCode: '93',
-      role: 'coporteur',
-      type: 'Collectivité',
-    },
+  await creerUnMembreCommune({
+    commune: 'Créteil',
+    gouvernanceDepartementCode,
+    role: 'coporteur',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceDepartementRecord.create({
-    data: {
-      departementCode: '93',
-      gouvernanceDepartementCode: '93',
-      role: 'coporteur',
-      type: 'Préfecture départementale',
-    },
+  await creerUnMembreDepartement({
+    departementCode: gouvernanceDepartementCode,
+    gouvernanceDepartementCode,
+    role: 'coporteur',
+    type: 'Préfecture départementale',
   })
-  await prisma.membreGouvernanceDepartementRecord.create({
-    data: {
-      departementCode: '75',
-      gouvernanceDepartementCode: '93',
-      role: 'N/A',
-      type: 'Conseil départemental',
-    },
+  await creerUnMembreDepartement({
+    departementCode: gouvernanceDepartementCode,
+    gouvernanceDepartementCode,
+    role: 'N/A',
+    type: 'Conseil départemental',
   })
-  await prisma.membreGouvernanceEpciRecord.create({
-    data: {
-      epci: 'CA Tulle Agglo',
-      gouvernanceDepartementCode: '93',
-      role: 'observateur',
-      type: 'Collectivité',
-    },
+  await creerUnMembreEpci({
+    epci: 'CA Tulle Agglo',
+    gouvernanceDepartementCode,
+    role: 'observateur',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceEpciRecord.create({
-    data: {
-      epci: 'CC Porte du Jura',
-      gouvernanceDepartementCode: '93',
-      role: 'coporteur',
-      type: 'Collectivité',
-    },
+  await creerUnMembreEpci({
+    epci: 'CC Porte du Jura',
+    gouvernanceDepartementCode,
+    role: 'coporteur',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceEpciRecord.create({
-    data: {
-      epci: 'CC Porte du Jura',
-      gouvernanceDepartementCode: '93',
-      role: 'beneficiaire',
-      type: 'Collectivité',
-    },
+  await creerUnMembreEpci({
+    epci: 'CC Porte du Jura',
+    gouvernanceDepartementCode,
+    role: 'beneficiaire',
+    type: 'Collectivité',
   })
-  await prisma.membreGouvernanceSgarRecord.create({
-    data: {
-      gouvernanceDepartementCode: '93',
-      role: 'N/A',
-      sgarCode: '11',
-      type: 'Préfecture régionale',
-    },
+  await creerUnMembreSgar({
+    gouvernanceDepartementCode,
+    role: 'N/A',
+    sgarCode: '11',
+    type: 'Préfecture régionale',
   })
-  await prisma.membreGouvernanceStructureRecord.create({
-    data: {
-      gouvernanceDepartementCode: '93',
-      role: 'recipiendaire',
-      structure: 'Orange',
-      type: 'Entreprise privée',
-    },
+  await creerUnMembreSgar({
+    gouvernanceDepartementCode,
+    role: 'coporteur',
+    sgarCode: '53',
+    type: 'Préfecture régionale',
   })
-  await prisma.membreGouvernanceStructureRecord.create({
-    data: {
-      gouvernanceDepartementCode: '93',
-      role: 'coporteur',
-      structure: 'Orange',
-      type: 'Entreprise privée',
-    },
+  await creerUnMembreStructure({
+    gouvernanceDepartementCode,
+    role: 'recipiendaire',
+    structure: 'Orange',
+    type: 'Entreprise privée',
+  })
+  await creerUnMembreStructure({
+    gouvernanceDepartementCode,
+    role: 'coporteur',
+    structure: 'Orange',
+    type: 'Entreprise privée',
   })
 }

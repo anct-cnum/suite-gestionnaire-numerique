@@ -64,10 +64,10 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           (
             <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
               {
-                gouvernanceViewModel.sectionMembres.membres ?
+                gouvernanceViewModel.sectionCoporteurs.coporteurs ?
                   <ResumeMembre
-                    total={gouvernanceViewModel.sectionMembres.total}
-                    type={gouvernanceViewModel.sectionMembres.wording}
+                    total={gouvernanceViewModel.sectionCoporteurs.total}
+                    type={gouvernanceViewModel.sectionCoporteurs.wording}
                   /> : (
                     <Resume style={styles['resume-membres']}>
                       <ResumeMembreVide />
@@ -227,7 +227,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
       </section>
       <section aria-labelledby="membre">
         {
-          gouvernanceViewModel.sectionMembres.membres ? (
+          gouvernanceViewModel.sectionCoporteurs.coporteurs ? (
             <SectionRemplie
               button={(
                 <Link
@@ -240,13 +240,13 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               id="membre"
               subTitle={
                 <SubSectionTitle>
-                  {gouvernanceViewModel.sectionMembres.detailDuNombreDeChaqueMembre}
+                  {gouvernanceViewModel.sectionCoporteurs.detailDuNombreDeChaqueMembre}
                 </SubSectionTitle>
               }
-              title={`${gouvernanceViewModel.sectionMembres.total} ${gouvernanceViewModel.sectionMembres.wording}`}
+              title={`${gouvernanceViewModel.sectionCoporteurs.total} ${gouvernanceViewModel.sectionCoporteurs.wording}`}
             >
               <MembreRempli
-                membres={gouvernanceViewModel.sectionMembres.membres}
+                membres={gouvernanceViewModel.sectionCoporteurs.coporteurs}
               />
             </SectionRemplie>
           ) : (
@@ -255,7 +255,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               drawerComiteId=""
               id="membre"
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              showDrawer={() => {}}
+              showDrawer={() => { }}
               title="0 membre"
             >
               <MembreVide />
@@ -293,7 +293,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               drawerComiteId=""
               id="feuilleDeRoute"
               // eslint-disable-next-line @typescript-eslint/no-empty-function
-              showDrawer={() => {}}
+              showDrawer={() => { }}
               title="0 feuille de route"
             >
               <FeuilleDeRouteVide />
