@@ -1,5 +1,5 @@
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneNoteDeContexte, creerUneRegion, creerUnUtilisateur } from './testHelper'
+import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -18,17 +18,14 @@ describe('gouvernance loader', () => {
     await creerUneGouvernance({ departementCode: '75' })
     await creerUneGouvernance({
       departementCode: '93',
+      derniereEditionNoteDeContexte: epochTime.toISOString(),
+      editeurNoteDeContexteId: 'userFooId',
       editeurNotePriveeId: 'userFooId',
+      noteDeContexte: '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       notePrivee: {
         contenu: 'un contenu quelconque',
         derniereEdition: epochTime.toISOString(),
       },
-    })
-    await creerUneNoteDeContexte({
-      contenu: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
-      derniereEdition: epochTime,
-      editeurId: 'userFooId',
-      gouvernanceDepartementCode: '93',
     })
     await creerComites()
     await creerFeuillesDeRoute()
@@ -70,7 +67,7 @@ describe('gouvernance loader', () => {
         dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
         prenomAuteur: 'Jean',
-        texte: '<STRONG class="test">Note privée (interne)</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
+        texte: '<STRONG class="test">Note de contexte</STRONG><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p><p>lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. Gravida eget egestas odio sit aliquam ultricies accumsan. Felis feugiat nisl sem amet feugiat.</p>',
       },
       notePrivee: {
         dateDEdition: epochTime,

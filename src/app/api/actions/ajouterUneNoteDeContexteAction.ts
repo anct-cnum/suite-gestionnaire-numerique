@@ -21,7 +21,7 @@ export async function ajouterUneNoteDeContexteAction(
   }
 
   const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   )
