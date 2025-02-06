@@ -299,36 +299,29 @@ describe('gouvernance repository', () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
-    await prisma.regionRecord.create({ data: regionRecordFactory({ code: '11' }) })
-    await prisma.departementRecord.create({ data: departementRecordFactory({ code: departementCode }) })
-    await prisma.utilisateurRecord.create({ data: utilisateurRecordFactory({ id: 1, ssoEmail: 'userFooId@example.com', ssoId: uidEditeur }) })
-    await prisma.gouvernanceRecord.create({
-      data: gouvernanceRecordFactory({
-        departementCode,
-        editeurNotePriveeId: uidEditeur,
-      }),
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUnUtilisateur({ ssoEmail: 'userFooId@example.com', ssoId: uidEditeur })
+    await creerUneGouvernance({
+      departementCode,
+      derniereEditionNoteDeContexte: epochTime,
+      editeurNoteDeContexteId: uidEditeur,
+      noteDeContexte: '<p>un contenu quelconque</p>',
     })
-    await prisma.noteDeContexteRecord.create({
-      data: noteDeContexteRecordFactory({
-        contenu: '<p>un contenu quelconque<p>',
-        derniereEdition: epochTime.toISOString(),
-        editeurId: uidEditeur,
-        gouvernanceDepartementCode: departementCode,
-      }),
-    })
+    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
-    const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord)
-
     await repository.update(gouvernanceFactory({
       noteDeContexte: undefined,
       uid: departementCode,
     }))
 
     // THEN
-    const noteDeContexteRecord = await prisma.noteDeContexteRecord.findUnique({
-      where: { gouvernanceDepartementCode: departementCode },
-    })
-    expect(noteDeContexteRecord).toBeNull()
+    const modifiedRecord = await prisma.gouvernanceRecord.findUnique({ where: { departementCode } })
+    expect(modifiedRecord).toStrictEqual(gouvernanceRecordFactory({
+      departementCode,
+      editeurNoteDeContexteId: null,
+      noteDeContexte: null,
+    }))
   })
 })
