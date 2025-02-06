@@ -105,8 +105,8 @@ function transform(
   membres: ReadonlyArray<AggregatedMembre>
 ): UneGouvernanceReadModel {
   const noteDeContexte =
-    gouvernanceRecord.noteDeContexte !== null &&
-    gouvernanceRecord.noteDeContexte !== '' &&
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    gouvernanceRecord.noteDeContexte &&
     gouvernanceRecord.relationEditeurNoteDeContexte &&
     gouvernanceRecord.derniereEditionNoteDeContexte
       ? {
