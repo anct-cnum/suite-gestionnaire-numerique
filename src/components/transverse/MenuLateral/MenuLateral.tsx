@@ -6,10 +6,11 @@ import { Fragment, ReactElement, useContext } from 'react'
 import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 
 export default function MenuLateral(): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
-
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const menusPilotage = [
     {
       ariaControls: 'fr-sidemenu-gouvernance',
@@ -17,20 +18,20 @@ export default function MenuLateral(): ReactElement {
       icon: 'compass-3-line',
       label: 'Gouvernance',
       sousMenu: [
-        { label: 'Membres', url: `/membres/${sessionUtilisateurViewModel.codeDepartement}` },
-        { label: 'Feuilles de route', url: `/feuilles-de-routes/${sessionUtilisateurViewModel.codeDepartement}` },
+        ...Number(gouvernanceViewModel.sectionMembres.total) > 0 ? [{ label: 'Membres', url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/membres` }] : [],
+        ...Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0 ? [{ label: 'Feuilles de route', url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-routes` }] : [],
       ],
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
     {
       icon: 'pen-nib-line',
       label: 'Financements',
-      url: '/financements',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/financements`,
     },
     {
       icon: 'community-line',
       label: 'Bénéficiaires',
-      url: '/beneficiaires',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/beneficiaires`,
     },
     {
       icon: 'group-line',
