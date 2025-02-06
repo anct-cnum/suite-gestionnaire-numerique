@@ -231,7 +231,8 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
-      jEffaceLaNotePrivee()
+      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
+      jEffaceLaNotePrivee(ajouterUneNotePriveeDrawer)
       jEnregistreLaNotePrivee()
 
       // THEN

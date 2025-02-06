@@ -1,5 +1,4 @@
 import * as nextCache from 'next/cache'
-import { describe, it } from 'vitest'
 
 import { supprimerUneNoteDeContexteAction } from './supprimerUneNoteDeContexteAction'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
@@ -10,7 +9,7 @@ describe('supprimer une note de contexte', () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
-    vi.spyOn(SupprimerUneNoteDeContexte.prototype, 'execute').mockResolvedValueOnce('OK')
+    vi.spyOn(SupprimerUneNoteDeContexte.prototype, 'handle').mockResolvedValueOnce('OK')
 
     // WHEN
     const messages = await supprimerUneNoteDeContexteAction({
@@ -21,7 +20,7 @@ describe('supprimer une note de contexte', () => {
     // THEN
     expect(messages).toStrictEqual(['OK'])
     expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11')
-    expect(SupprimerUneNoteDeContexte.prototype.execute).toHaveBeenCalledWith({
+    expect(SupprimerUneNoteDeContexte.prototype.handle).toHaveBeenCalledWith({
       uidEditeur: 'userFooId',
       uidGouvernance: 'uidGouvernance',
     })

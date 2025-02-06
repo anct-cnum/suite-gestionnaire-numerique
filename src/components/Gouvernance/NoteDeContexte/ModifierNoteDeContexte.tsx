@@ -75,7 +75,10 @@ export default function ModifierNoteDeContexte({
     event.preventDefault()
     setIsDisabled(true)
     if (contenu === '') {
-      const messages = await supprimerUneNoteDeContexteAction({ path: pathname, uidGouvernance })
+      const messages = await supprimerUneNoteDeContexteAction({
+        path: pathname,
+        uidGouvernance,
+      })
       if (messages.includes('OK')) {
         viderLeContenu()
         Notification('success', { description: 'bien supprimée', title: 'Note de contexte ' })
@@ -83,7 +86,11 @@ export default function ModifierNoteDeContexte({
         Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
       }
     } else {
-      const messages = await modifierUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
+      const messages = await modifierUneNoteDeContexteAction({
+        contenu,
+        path: pathname,
+        uidGouvernance,
+      })
       if (messages.includes('OK')) {
         Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
       } else {
