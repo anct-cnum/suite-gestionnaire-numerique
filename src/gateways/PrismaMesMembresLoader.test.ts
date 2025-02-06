@@ -22,7 +22,7 @@ describe('mes membres loader', () => {
 
     // WHEN
     const mesMembresLoader = new PrismaMesMembresLoader(prisma)
-    const mesMembresReadModel = await mesMembresLoader.find('69')
+    const mesMembresReadModel = await mesMembresLoader.membres('69')
 
     // THEN
     expect(mesMembresReadModel).toStrictEqual({

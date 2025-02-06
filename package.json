@@ -16,7 +16,7 @@
     "format:check": "prettier -c . \"!**/*.{js,jsx,mjs,mts,ts,tsx}\"",
     "lint:css": "stylelint 'src/**/*.css'",
     "lint:ts": "eslint src seeds --ext .tsx,.ts --max-warnings=0 --cache --cache-location node_modules/.cache/eslint",
-    "migration:reset": "yarn prisma:reset && yarn migration:all && yarn prisma:migrate && yarn prisma:generate:fne",
+    "migration:reset": "yarn prisma:reset && yarn migration:all",
     "migration:all": "yarn migration:region && yarn migration:departement && yarn migration:groupement && yarn migration:structure && yarn migration:utilisateur && yarn migration:gouvernance",
     "migration:departement": "tsx seeds/departement.ts",
     "migration:gouvernance": "tsx seeds/gouvernance.ts",
