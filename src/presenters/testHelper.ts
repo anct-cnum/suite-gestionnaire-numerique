@@ -1,5 +1,5 @@
 // Stryker disable all
-import { MesMembresViewModel } from './mesMembresPresenter'
+import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 export function sessionUtilisateurViewModelFactory(
@@ -24,9 +24,7 @@ export function sessionUtilisateurViewModelFactory(
   }
 }
 
-export function mesMembresViewModelFactory(
-  override?: Partial<MesMembresViewModel>
-): MesMembresViewModel {
+export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
   return {
     autorisations: {
       accesMembreConfirme: true,
@@ -60,5 +58,23 @@ export function mesMembresViewModelFactory(
     titre: 'Gérer les membres · Rhône',
     typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
     ...override,
-  }
+  } as const
+}
+
+export function sectionMembresFactory(override?: Partial<GouvernanceViewModel['sectionMembres']>): GouvernanceViewModel['sectionMembres'] {
+  return {
+    detailDuNombreDeChaqueMembre: '',
+    membres: [],
+    total: '0',
+    wording: '',
+    ...override,
+  } as const
+}
+
+export function gouvernanceViewModelFactory(override?: Partial<GouvernanceViewModel>): GouvernanceViewModel {
+  return {
+    sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory(),
+    sectionMembres: sectionMembresFactory(),
+    ...override,
+  } as GouvernanceViewModel
 }

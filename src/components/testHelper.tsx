@@ -8,10 +8,12 @@ import departements from '../../ressources/departements.json'
 import groupements from '../../ressources/groupements.json'
 import regions from '../../ressources/regions.json'
 import { clientContext, ClientContextProviderValue } from '@/components/shared/ClientContext'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 // eslint-disable-next-line import/no-restricted-paths
 import { Roles } from '@/domain/Role'
+import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'
-import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
+import { gouvernanceViewModelFactory, sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 export function matchWithoutMarkup(wording: string) {
   return (_: string, element: Element | null): boolean => element?.textContent === wording
@@ -19,7 +21,8 @@ export function matchWithoutMarkup(wording: string) {
 
 export function renderComponent(
   children: ReactElement,
-  clientContextProviderValueOverride?: Partial<ClientContextProviderValue>
+  clientContextProviderValueOverride?: Partial<ClientContextProviderValue>,
+  gouvernanceViewModelOverride?: Partial<GouvernanceViewModel>
 ): RenderResult {
   const clientContextProviderDefaultValue = {
     ajouterUnComiteAction: vi.fn(),
@@ -52,14 +55,24 @@ export function renderComponent(
     utilisateursParPage: 10,
   }
 
+  const gouvernanceViewModelDefaultValue: GouvernanceViewModel = gouvernanceViewModelFactory()
+
   return render(
     <clientContext.Provider value={{
       ...clientContextProviderDefaultValue,
       ...clientContextProviderValueOverride,
     }}
     >
-      <ToastContainer />
-      {children}
+      <gouvernanceContext.Provider value={{
+        gouvernanceViewModel: {
+          ...gouvernanceViewModelDefaultValue,
+          ...gouvernanceViewModelOverride,
+        },
+      }}
+      >
+        <ToastContainer />
+        {children}
+      </gouvernanceContext.Provider>
     </clientContext.Provider>
   )
 }
