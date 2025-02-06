@@ -39,28 +39,21 @@ export default function AjouterNoteDeContexte({
         contenu={contenu}
         onChange={gererLeChangementDeContenu}
       />
-      <ul className="fr-btns-group fr-mt-2w">
-        <li>
-          <SubmitButton
-            ariaControls={id}
-            isDisabled={!contenu.trim() || isDisabled}
-          >
-            {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-          </SubmitButton>
-        </li>
-        {contenu ?
-          <li>
-            <button
-              className="fr-btn red-button"
-              onClick={viderLeContenu}
-              type="button"
-            >
-              Supprimer
-            </button>
-          </li>
-          :
-          null}
-      </ul>
+      <div className="fr-btns-group fr-mt-2w">
+        <SubmitButton
+          ariaControls={id}
+          isDisabled={!contenu.trim()}
+        >
+          {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+        </SubmitButton>
+        <button
+          className="fr-btn red-button"
+          onClick={viderLeContenu}
+          type="button"
+        >
+          Supprimer
+        </button>
+      </div>
     </form>
   )
 
