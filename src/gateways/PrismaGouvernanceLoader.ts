@@ -65,7 +65,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     FROM membre_gouvernance_commune
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY commune, type
-    --HAVING COUNT(CASE WHEN role LIKE ANY (ARRAY[${roleCoporteur}]) THEN 1 END) > 0
     HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
     UNION all
 
@@ -204,7 +203,7 @@ function transform(
       montantSubventionDemande: 40_000,
       montantSubventionFormationAccorde: 5_000,
       nom: feuilleDeRoute.nom,
-      porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+      porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
       totalActions: 3,
     })),
     noteDeContexte,

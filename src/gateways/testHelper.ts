@@ -181,6 +181,19 @@ export async function creerUnComite(
   })
 }
 
+export async function creerUneFeuilleDeRoute(
+  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.feuilleDeRouteRecord.create({
+    data: {
+      creation: epochTime,
+      gouvernanceDepartementCode: '69',
+      nom: 'Feuille de route inclusion',
+      ...override,
+    },
+  })
+}
+
 export async function creerUnMembreStructure(
   override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
 ): Promise<void> {
