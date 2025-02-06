@@ -8,7 +8,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
   }
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.gouvernance(query.codeDepartement, 'coporteur')
+    return this.#loader.get(query.codeDepartement)
       .then((gouvernance) =>
         ({
           ...gouvernance,
@@ -23,7 +23,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 }
 
 export interface UneGouvernanceReadModelLoader {
-  gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel>
+  get(codeDepartement: string): Promise<UneGouvernanceReadModel>
 }
 
 export type UneGouvernanceReadModel = Readonly<{
@@ -67,20 +67,6 @@ export type MembreReadModel = Readonly<{
 
 export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
 
-type NoteDeContexteReadModel = Readonly<{
-  dateDeModification: Date
-  nomAuteur: string
-  prenomAuteur: string
-  texte: string
-}>
-
-type NotePriveeReadModel = Readonly<{
-  dateDEdition: Date
-  nomEditeur: string
-  prenomEditeur: string
-  texte: string
-}>
-
 export type CoporteurDetailReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
@@ -105,6 +91,20 @@ export type CoporteurDetailReadModel = Readonly<{
   links: Readonly<{
     plusDetails?: string
   }>
+}>
+
+type NoteDeContexteReadModel = Readonly<{
+  dateDeModification: Date
+  nomAuteur: string
+  prenomAuteur: string
+  texte: string
+}>
+
+type NotePriveeReadModel = Readonly<{
+  dateDEdition: Date
+  nomEditeur: string
+  prenomEditeur: string
+  texte: string
 }>
 
 type Query = Readonly<{

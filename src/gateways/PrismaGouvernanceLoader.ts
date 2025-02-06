@@ -34,7 +34,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     this.#dataResource = dataResource
   }
 
-  async gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel> {
+  async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findFirst({
       include: {
         comites: {
@@ -65,22 +65,21 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     FROM membre_gouvernance_commune
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY commune, type
-    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
     UNION all
 
-    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role)
-    AS roles
+    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_epci
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY epci, type
-    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
     UNION all
 
     SELECT structure as nom, type,'structure' as typologie, ARRAY_AGG(role) AS roles
     FROM membre_gouvernance_structure
     WHERE "gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY structure, type
-    HAVING COUNT(CASE WHEN role = ${roleCoporteur} THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
     UNION all
 
     SELECT departement.nom as nom, mgd.type,'departement' as typologie, ARRAY_AGG(mgd.role) AS roles
@@ -89,7 +88,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     ON mgd."departementCode" = departement.code
     WHERE mgd."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY departement.nom, mgd.type
-    HAVING COUNT(CASE WHEN mgd.role = ${roleCoporteur} THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN mgd.role = 'coporteur' THEN 1 END) > 0
     UNION ALL
 
     SELECT region.nom as nom, mgs.type, 'sgar' as typologie, ARRAY_AGG(mgs.role) AS roles
@@ -98,7 +97,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
     ON mgs."sgarCode" = region.code
     WHERE mgs."gouvernanceDepartementCode" = ${codeDepartement}
     GROUP BY region.nom, mgs.type
-    HAVING COUNT(CASE WHEN mgs.role = ${roleCoporteur} THEN 1 END) > 0
+    HAVING COUNT(CASE WHEN mgs.role = 'coporteur' THEN 1 END) > 0
 
     ORDER BY nom`
 

@@ -5,7 +5,6 @@ describe('recupererUneGouvernance', () => {
   afterEach(() => {
     uneGouvernance = gouvernanceReadModelFactory()
     spiedCodeDepartement = ''
-    spiedRoleCoporteur = ''
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
@@ -19,7 +18,6 @@ describe('recupererUneGouvernance', () => {
     // THEN
     expect(gouvernance).toStrictEqual({ departement: 'Rhône', uid: 'gouvernanceFooId' })
     expect(spiedCodeDepartement).toBe('69')
-    expect(spiedRoleCoporteur).toBe('coporteur')
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle existe alors on la récupère en calculant les totaux des montants de subvention", async () => {
@@ -32,7 +30,6 @@ describe('recupererUneGouvernance', () => {
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceEnrichie)
     expect(spiedCodeDepartement).toBe('69')
-    expect(spiedRoleCoporteur).toBe('coporteur')
   })
 
   it("quand une gouvernance sans membre est demandée sur un département et qu'elle existe alors on la récupère", async () => {
@@ -49,7 +46,6 @@ describe('recupererUneGouvernance', () => {
     // THEN
     expect(gouvernance).toStrictEqual(gouvernanceSansMembre)
     expect(spiedCodeDepartement).toBe('69')
-    expect(spiedRoleCoporteur).toBe('coporteur')
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre préfecture departementale, alors on la récupère sans les totaux subventions et sans lien mais avec le contact technique", async () => {
@@ -101,7 +97,6 @@ describe('recupererUneGouvernance', () => {
         typologieMembre: 'Préfecture départementale',
       },
     ])
-    expect(spiedRoleCoporteur).toBe('coporteur')
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle existe, contenant 1 membre autre que la préfecture departementale, alors on la récupère avec les totaux subventions et avec le lien mais sans le contact technique", async () => {
@@ -158,13 +153,11 @@ describe('recupererUneGouvernance', () => {
       },
     ])
     expect(spiedCodeDepartement).toBe('69')
-    expect(spiedRoleCoporteur).toBe('coporteur')
   })
 })
 
 let uneGouvernance: UneGouvernanceReadModel = gouvernanceReadModelFactory()
 let spiedCodeDepartement = ''
-let spiedRoleCoporteur = ''
 
 const gouvernanceEnrichie: UneGouvernanceReadModel = {
   ...uneGouvernance,
@@ -186,17 +179,15 @@ const gouvernanceSansMembre: UneGouvernanceReadModel = {
 }
 
 class GouvernanceInexistanteLoaderSpy implements UneGouvernanceReadModelLoader {
-  async gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel> {
+  async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
-    spiedRoleCoporteur = roleCoporteur
     return Promise.resolve({ departement: uneGouvernance.departement, uid: uneGouvernance.uid })
   }
 }
 
 class GouvernanceExistanteLoaderSpy implements UneGouvernanceReadModelLoader {
-  async gouvernance(codeDepartement: string, roleCoporteur: string): Promise<UneGouvernanceReadModel> {
+  async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
-    spiedRoleCoporteur = roleCoporteur
     return Promise.resolve(uneGouvernance)
   }
 }
