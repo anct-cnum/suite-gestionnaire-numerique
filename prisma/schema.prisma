@@ -100,23 +100,26 @@ model UtilisateurRecord {
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
 
-  notesDeContexte NoteDeContexteRecord[]
-  comites         ComiteRecord[]
-  notesPrivees    GouvernanceRecord[]
+  comites        ComiteRecord[]
+  notesPrivees   GouvernanceRecord[] @relation("UtilisateurNotesPrivees")
+  noteDeContexte GouvernanceRecord[] @relation("UtilisateurnoteDeContexte")
 
   @@map("utilisateur")
 }
 
 model GouvernanceRecord {
-  departementCode     String  @id
+  departementCode               String    @id
   /// [NotePrivee]
-  notePrivee          Json?   @map("note_privee")
-  editeurNotePriveeId String? @map("editeur_note_privee_id")
+  notePrivee                    Json?     @map("note_privee")
+  editeurNotePriveeId           String?   @map("editeur_note_privee_id")
+  noteDeContexte                String?   @map("note_de_contexte")
+  editeurNoteDeContexteId       String?   @map("editeur_note_de_contexte_id")
+  derniereEditionNoteDeContexte DateTime? @map("derniere_edition_note_de_contexte")
 
-  relationDepartement       DepartementRecord  @relation(fields: [departementCode], references: [code])
-  relationEditeurNotePrivee UtilisateurRecord? @relation(fields: [editeurNotePriveeId], references: [ssoId])
+  relationDepartement           DepartementRecord  @relation(fields: [departementCode], references: [code])
+  relationEditeurNotePrivee     UtilisateurRecord? @relation("UtilisateurNotesPrivees", fields: [editeurNotePriveeId], references: [ssoId])
+  relationEditeurNoteDeContexte UtilisateurRecord? @relation("UtilisateurnoteDeContexte", fields: [editeurNoteDeContexteId], references: [ssoId])
 
-  noteDeContexte      NoteDeContexteRecord?
   comites             ComiteRecord[]
   membresDepartements MembreGouvernanceDepartementRecord[]
   membresSgars        MembreGouvernanceSgarRecord[]
@@ -126,19 +129,6 @@ model GouvernanceRecord {
   feuillesDeRoute     FeuilleDeRouteRecord[]
 
   @@map("gouvernance")
-}
-
-model NoteDeContexteRecord {
-  gouvernanceDepartementCode String @id
-
-  editeurId       String
-  contenu         String
-  derniereEdition DateTime
-
-  relationUtilisateur UtilisateurRecord @relation(fields: [editeurId], references: [ssoId])
-  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-
-  @@map("note_de_contexte")
 }
 
 model ComiteRecord {

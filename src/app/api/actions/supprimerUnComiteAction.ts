@@ -21,7 +21,7 @@ export async function supprimerUnComiteAction(
   }
 
   const result = await new SupprimerUnComite(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord, prisma.noteDeContexteRecord),
+    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaComiteRepository(prisma.comiteRecord)
   ).handle({

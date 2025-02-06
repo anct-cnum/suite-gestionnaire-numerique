@@ -85,7 +85,10 @@ export function gouvernanceRecordFactory(
 ): Prisma.GouvernanceRecordUncheckedCreateInput {
   return {
     departementCode: '75',
+    derniereEditionNoteDeContexte: null,
+    editeurNoteDeContexteId: null,
     editeurNotePriveeId: null,
+    noteDeContexte: null,
     // @ts-expect-error
     notePrivee: null,
     ...override,
@@ -104,18 +107,6 @@ export function comiteRecordFactory(
     frequence: 'annuelle',
     gouvernanceDepartementCode: '11',
     type: 'strategique',
-    ...override,
-  }
-}
-
-function noteDeContexteRecordFactory(
-  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
-): Prisma.NoteDeContexteRecordUncheckedCreateInput {
-  return {
-    contenu: '<p>contenu HTML</p>',
-    derniereEdition: epochTime,
-    editeurId: 'userFooId',
-    gouvernanceDepartementCode: '11',
     ...override,
   }
 }
@@ -185,16 +176,6 @@ export async function creerUnComite(
 ): Promise<void> {
   await prisma.comiteRecord.create({
     data: comiteRecordFactory({
-      ...override,
-    }),
-  })
-}
-
-export async function creerUneNoteDeContexte(
-  override?: Partial<Prisma.NoteDeContexteRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.noteDeContexteRecord.create({
-    data: noteDeContexteRecordFactory({
       ...override,
     }),
   })

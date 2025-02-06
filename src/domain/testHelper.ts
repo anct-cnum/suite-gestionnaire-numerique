@@ -4,7 +4,7 @@ import { Departement, DepartementState } from './Departement'
 import { Gouvernance } from './Gouvernance'
 import { TypologieRole } from './Role'
 import { UtilisateurFactory } from './UtilisateurFactory'
-import { Utilisateur, UtilisateurUid } from '@/domain/Utilisateur'
+import { Utilisateur } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
 export function utilisateurFactory(
@@ -33,11 +33,7 @@ export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouverna
       codeRegion: '11',
       nom: 'Paris',
     },
-    noteDeContexte: {
-      contenu: '<p>contenu HTML</p>',
-      dateDeModification: epochTime,
-      uidEditeur: new UtilisateurUid(utilisateurFactory().state.uid),
-    },
+    noteDeContexte: undefined,
     notePrivee: undefined,
     uid: 'gouvernanceFooId',
     ...override,

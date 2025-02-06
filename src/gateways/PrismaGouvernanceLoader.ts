@@ -5,14 +5,6 @@ import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } 
 
 type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
-    noteDeContexte: {
-      select: {
-        gouvernanceDepartementCode: true
-        derniereEdition: true
-        relationUtilisateur: true
-        contenu: true
-      }
-    }
     comites: {
       include: {
         relationUtilisateur: true
@@ -25,6 +17,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
       }
     }
     relationEditeurNotePrivee: true
+    relationEditeurNoteDeContexte: true
     feuillesDeRoute: true
     membresCommunes: true
     membresDepartements: true
@@ -56,12 +49,8 @@ export class PrismaGouvernanceLoader extends UneGouvernanceReadModelLoader {
         membresEpcis: true,
         membresSgars: true,
         membresStructures: true,
-        noteDeContexte: {
-          include: {
-            relationUtilisateur: true,
-          },
-        },
         relationDepartement: true,
+        relationEditeurNoteDeContexte: true,
         relationEditeurNotePrivee: true,
       },
       where: {
@@ -115,12 +104,17 @@ function transform(
   gouvernanceRecord: GouvernanceWithNoteDeContexte,
   membres: ReadonlyArray<AggregatedMembre>
 ): UneGouvernanceReadModel {
-  const noteDeContexte = gouvernanceRecord.noteDeContexte?.derniereEdition ? {
-    dateDeModification: gouvernanceRecord.noteDeContexte.derniereEdition,
-    nomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.nom,
-    prenomAuteur: gouvernanceRecord.noteDeContexte.relationUtilisateur.prenom,
-    texte: gouvernanceRecord.noteDeContexte.contenu,
-  } : undefined
+  const noteDeContexte =
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+    gouvernanceRecord.noteDeContexte &&
+    gouvernanceRecord.relationEditeurNoteDeContexte &&
+    gouvernanceRecord.derniereEditionNoteDeContexte
+      ? {
+        dateDeModification: new Date(gouvernanceRecord.derniereEditionNoteDeContexte),
+        nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
+        prenomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.prenom,
+        texte: gouvernanceRecord.noteDeContexte,
+      } : undefined
   const notePrivee = gouvernanceRecord.notePrivee && gouvernanceRecord.relationEditeurNotePrivee ? {
     dateDEdition: new Date(gouvernanceRecord.notePrivee.derniereEdition),
     nomEditeur: gouvernanceRecord.relationEditeurNotePrivee.nom,
