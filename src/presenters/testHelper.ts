@@ -1,5 +1,5 @@
 // Stryker disable all
-import { MesMembresViewModel } from './mesMembresPresenter'
+import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 export function sessionUtilisateurViewModelFactory(
@@ -24,41 +24,31 @@ export function sessionUtilisateurViewModelFactory(
   }
 }
 
-export function mesMembresViewModelFactory(
-  override?: Partial<MesMembresViewModel>
-): MesMembresViewModel {
+export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
   return {
-    autorisations: {
-      accesMembreValide: true,
-      ajouterUnMembre: true,
-      supprimerUnMembre: true,
-    },
-    membres: [
-      {
-        contactReferent: 'Laetitia Henrich',
-        nom: 'Préfecture du Rhône',
-        roles: ['Co-porteur'],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Préfecture départementale',
-      },
-      {
-        contactReferent: 'Durant Didier',
-        nom: 'Département du Rhône',
-        roles: ['Co-porteur', 'Co-financeur'],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Collectivité, EPCI',
-      },
-      {
-        contactReferent: 'Tom Dupont',
-        nom: 'Département du Rhône',
-        roles: [],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Collectivité, EPCI',
-      },
-    ],
-    roles: ['Co-porteur', 'Co-financeur'],
-    titre: 'Gérer les membres · Rhône',
-    typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
+    budgetTotalCumule: '',
+    feuillesDeRoute: [],
+    lien: { label: '', url: '' },
+    total: '0',
+    wording: '',
     ...override,
-  }
+  } as const
+}
+
+export function sectionMembresFactory(override?: Partial<GouvernanceViewModel['sectionMembres']>): GouvernanceViewModel['sectionMembres'] {
+  return {
+    detailDuNombreDeChaqueMembre: '',
+    membres: [],
+    total: '0',
+    wording: '',
+    ...override,
+  } as const
+}
+
+export function gouvernanceViewModelFactory(override?: Partial<GouvernanceViewModel>): GouvernanceViewModel {
+  return {
+    sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory(),
+    sectionMembres: sectionMembresFactory(),
+    ...override,
+  } as GouvernanceViewModel
 }
