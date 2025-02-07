@@ -1,5 +1,4 @@
 import { QueryHandler } from '../QueryHandler'
-import { UnaryOperator } from '@/shared/lang'
 
 export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadModel> {
   readonly #mesMembresLoader: MesMembresLoader
@@ -9,7 +8,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
   }
 
   async handle(query: Query): Promise<MesMembresReadModel> {
-    return this.#mesMembresLoader.findMesMembres(query.codeDepartement, (mesMembres) => {
+    return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
       return {
         ...mesMembres,
         ...roleEtTypologieDistinct(mesMembres.membres),
@@ -18,15 +17,8 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
   }
 }
 
-export abstract class MesMembresLoader {
-  async findMesMembres(
-    codeDepartement: string,
-    operator: UnaryOperator<MesMembresReadModel>
-  ): Promise<MesMembresReadModel> {
-    return this.membres(codeDepartement).then(operator)
-  }
-
-  protected abstract membres(codeDepartement: string): Promise<MesMembresReadModel>
+export interface MesMembresLoader {
+  get(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
 function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {

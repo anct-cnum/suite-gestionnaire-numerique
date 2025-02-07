@@ -74,43 +74,7 @@ export function gouvernanceReadModelFactory(
         type: 'technique',
       },
     ],
-    departement: 'Rhône',
-    feuillesDeRoute: [
-      {
-        beneficiairesSubvention: [
-          {
-            nom: 'Structure 1',
-            roles: ['coporteur'],
-            type: 'Administration',
-          },
-          {
-            nom: 'Département du Rhône',
-            roles: ['coporteur', 'cofinanceur'],
-            type: 'Collectivité',
-          },
-        ],
-        beneficiairesSubventionFormation: [
-          {
-            nom: 'Structure 1',
-            roles: ['coporteur'],
-            type: 'Structure',
-          },
-          {
-            nom: 'Structure 2',
-            roles: ['coporteur'],
-            type: 'Structure',
-          },
-        ],
-        budgetGlobal: 145_000,
-        montantSubventionAccorde: 5_000,
-        montantSubventionDemande: 40_000,
-        montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
-        totalActions: 3,
-      },
-    ],
-    membres: [
+    coporteurs: [
       {
         contactReferent: {
           denomination: 'Contact politique de la collectivité',
@@ -145,6 +109,42 @@ export function gouvernanceReadModelFactory(
         totalMontantSubventionFormationAccorde: 0,
         type: 'Collectivité',
         typologieMembre: 'Collectivité, EPCI',
+      },
+    ],
+    departement: 'Rhône',
+    feuillesDeRoute: [
+      {
+        beneficiairesSubvention: [
+          {
+            nom: 'Structure 1',
+            roles: ['coporteur'],
+            type: 'Administration',
+          },
+          {
+            nom: 'Département du Rhône',
+            roles: ['coporteur', 'cofinanceur'],
+            type: 'Collectivité',
+          },
+        ],
+        beneficiairesSubventionFormation: [
+          {
+            nom: 'Structure 1',
+            roles: ['coporteur'],
+            type: 'Structure',
+          },
+          {
+            nom: 'Structure 2',
+            roles: ['coporteur'],
+            type: 'Structure',
+          },
+        ],
+        budgetGlobal: 145_000,
+        montantSubventionAccorde: 5_000,
+        montantSubventionDemande: 40_000,
+        montantSubventionFormationAccorde: 5_000,
+        nom: 'Feuille de route inclusion',
+        porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+        totalActions: 3,
       },
     ],
     noteDeContexte: {
