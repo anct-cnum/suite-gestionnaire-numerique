@@ -8,7 +8,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
   }
 
   async handle(query: Query): Promise<MesMembresReadModel> {
-    return this.#mesMembresLoader.membres(query.codeDepartement).then((mesMembres) => {
+    return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
       return {
         ...mesMembres,
         ...roleEtTypologieDistinct(mesMembres.membres),
@@ -18,7 +18,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 }
 
 export interface MesMembresLoader {
-  membres(codeDepartement: string): Promise<MesMembresReadModel>
+  get(codeDepartement: string): Promise<MesMembresReadModel>
 }
 
 function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {

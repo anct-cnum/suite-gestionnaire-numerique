@@ -60,6 +60,17 @@ function structureRecordFactory(
   }
 }
 
+function feuilleDeRouteRecordFactory(
+  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
+): Prisma.FeuilleDeRouteRecordUncheckedCreateInput {
+  return {
+    creation: epochTime,
+    gouvernanceDepartementCode: '69',
+    nom: 'Feuille de route inclusion',
+    ...override,
+  }
+}
+
 export function utilisateurRecordFactory(
   override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
 ): Prisma.UtilisateurRecordUncheckedCreateInput {
@@ -185,12 +196,12 @@ export async function creerUneFeuilleDeRoute(
   override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.feuilleDeRouteRecord.create({
-    data: {
+    data: feuilleDeRouteRecordFactory({
       creation: epochTime,
       gouvernanceDepartementCode: '69',
       nom: 'Feuille de route inclusion',
       ...override,
-    },
+    }),
   })
 }
 

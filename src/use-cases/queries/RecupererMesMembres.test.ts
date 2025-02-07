@@ -31,7 +31,7 @@ describe('recuperer mes membres', () => {
 let mesMembresLoader: MesMembresReadModel
 
 class MesMembresLoaderStub implements MesMembresLoader {
-  async membres(): Promise<MesMembresReadModel> {
+  async get(): Promise<MesMembresReadModel> {
     return Promise.resolve(mesMembresLoader)
   }
 }

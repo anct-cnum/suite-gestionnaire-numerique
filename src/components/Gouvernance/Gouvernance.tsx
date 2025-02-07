@@ -246,7 +246,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               title={`${gouvernanceViewModel.sectionCoporteurs.total} ${gouvernanceViewModel.sectionCoporteurs.wording}`}
             >
               <MembreRempli
-                membres={gouvernanceViewModel.sectionCoporteurs.coporteurs}
+                coporteurs={gouvernanceViewModel.sectionCoporteurs.coporteurs}
               />
             </SectionRemplie>
           ) : (
