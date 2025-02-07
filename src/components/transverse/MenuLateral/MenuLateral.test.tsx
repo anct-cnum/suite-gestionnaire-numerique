@@ -2,14 +2,14 @@ import { screen, within } from '@testing-library/react'
 
 import MenuLateral from './MenuLateral'
 import styles from './MenuLateral.module.css'
+import { SousMenuGouvernance } from './SousMenuGouvernance'
 import { renderComponent } from '@/components/testHelper'
-import { gouvernanceViewModelFactory, sectionFeuillesDeRouteFactory, sectionMembresFactory, sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
+import { gouvernanceViewModelFactory, sectionCoporteursFactory, sectionFeuillesDeRouteFactory, sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('menu lateral', () => {
   it('étant n’importe qui, quand j’affiche le menu latéral, alors il s’affiche avec le lien de mon tableau de bord', () => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-    })
+    afficherMenuLateral()
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
@@ -28,17 +28,10 @@ describe('menu lateral', () => {
     { index: 3, name: 'Financements', url: '/gouvernance/93/financements' },
     { index: 4, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
     { index: 5, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
-    { index: 6, name: 'Lieux d’inclusion', url: '/lieux-inclusion' },
+    { index: 6, name: 'Lieux d‘inclusion', url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    }, gouvernanceViewModelFactory({
-      sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '1' }),
-      sectionMembres: sectionMembresFactory({ total: '1' }),
-    }))
+    afficherMenuLateralGestionnaireDepartement(undefined)
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
@@ -58,11 +51,7 @@ describe('menu lateral', () => {
     { index: 1, name: 'Rapports', url: '/rapports' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    })
+    afficherMenuLateralGestionnaireDepartement(undefined)
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
@@ -79,11 +68,7 @@ describe('menu lateral', () => {
 
   it('étant un gestionnaire de département, quand j’affiche le menu Gouvernance, alors je peux le dérouler', () => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    })
+    afficherMenuLateralGestionnaireDepartement(undefined)
 
     // THEN
     const menuGouvernance = screen.getByRole('link', { name: 'Gouvernance' })
@@ -98,15 +83,7 @@ describe('menu lateral', () => {
     { index: 3, name: 'Export de données', pathname: '/export-de-donnees' },
   ])('étant un utilisateur, quand je clique sur un lien du menu, alors je vois qu’il est sélectionné', ({ index, pathname, name }) => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      pathname,
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    }, gouvernanceViewModelFactory({
-      sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '1' }),
-      sectionMembres: sectionMembresFactory({ total: '1' }),
-    }))
+    afficherMenuLateralGestionnaireDepartement(pathname)
 
     // THEN
     const menus = screen.getAllByRole('list')
@@ -130,40 +107,98 @@ describe('menu lateral', () => {
     const tableauDeBord = within(menu).queryByRole('link', { name: 'Gouvernance' })
     expect(tableauDeBord).not.toBeInTheDocument()
   })
-  it('étant n’importe qui, quand j’affiche le menu latéral d‘une gouvernance sans feuilles de route alors le sous menu feuilles de route ne s‘affiche pas', () => {
+  it('étant un utilisateur, quand les totaux sont à 0, alors je vois le menu Gouvernance sans sous menu', () => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    }, gouvernanceViewModelFactory({
-      sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '0' }),
-      sectionMembres: sectionMembresFactory({ total: '1' }),
-    }))
+    renderComponent(
+      <MenuLateral
+        gouvernanceSousMenu={
+          <SousMenuGouvernance
+            codeDepartement="93"
+            gouvernanceViewModel={gouvernanceViewModelFactory({ departement: '93',
+              sectionCoporteurs: sectionCoporteursFactory({ total: '0' }),
+              sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '0' }) })}
+          />
+        }
+      />,
+      {
+        pathname: '/gouvernance/93',
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          displayLiensGouvernance: true,
+        }),
+      }
+    )
 
     // THEN
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[1]).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(6)
-    const feuillesDeRoute = within(menuItems[2]).queryByRole('link', { name: 'Feuilles de route' })
-    expect(feuillesDeRoute).not.toBeInTheDocument()
+    const gouvernanceLink = within(menuItems[0]).getByRole('link', { name: 'Gouvernance' })
+    expect(gouvernanceLink).toBeInTheDocument()
+    expect(gouvernanceLink).toHaveAttribute('aria-controls', 'fr-sidemenu-gouvernance')
+    expect(menus).toHaveLength(3)
   })
-  it('étant n’importe qui, quand j’affiche le menu latéral d‘une gouvernance sans membres alors le sous menu membres ne s‘affiche pas', () => {
+  it.each([
+    {
+      expectedMenus: ['Feuilles de route'],
+      feuillesTotal: '1',
+      membresTotal: '0',
+    },
+    {
+      expectedMenus: ['Membres'],
+      feuillesTotal: '0',
+      membresTotal: '1',
+    },
+  ])('étant un utilisateur, quand seul $expectedMenus est présent, alors je le vois', ({ membresTotal, feuillesTotal, expectedMenus }) => {
     // WHEN
-    renderComponent(<MenuLateral />, {
-      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
-        displayLiensGouvernance: true,
-      }),
-    }, gouvernanceViewModelFactory({
-      sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '1' }),
-      sectionMembres: sectionMembresFactory({ total: '0' }),
-    }))
+    renderComponent(
+      <MenuLateral
+        gouvernanceSousMenu={
+          <SousMenuGouvernance
+            codeDepartement="93"
+            gouvernanceViewModel={gouvernanceViewModelFactory({ departement: '93',
+              sectionCoporteurs: sectionCoporteursFactory({ total: membresTotal }),
+              sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: feuillesTotal }) })}
+          />
+        }
+      />,
+      {
+        pathname: '/gouvernance/93',
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          displayLiensGouvernance: true,
+        }),
+      }
+    )
 
     // THEN
     const menus = screen.getAllByRole('list')
-    const menuItems = within(menus[1]).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(6)
-    const membres = within(menuItems[1]).queryByRole('link', { name: 'Membres' })
-    expect(membres).not.toBeInTheDocument()
+    const sousList = within(menus[2]).getAllByRole('listitem')
+    expect(sousList).toHaveLength(expectedMenus.length)
+    expectedMenus.forEach((menuName, index) => {
+      expect(within(sousList[index]).getByText(menuName)).toBeInTheDocument()
+    })
   })
 })
+
+function afficherMenuLateral(): void {
+  renderComponent(<MenuLateral />)
+}
+
+function afficherMenuLateralGestionnaireDepartement(pathname: string | undefined): void {
+  renderComponent(
+    <MenuLateral
+      gouvernanceSousMenu={
+        <SousMenuGouvernance
+          codeDepartement="93"
+          gouvernanceViewModel={gouvernanceViewModelFactory({ departement: '93',
+            sectionCoporteurs: sectionCoporteursFactory({ total: '1' }),
+            sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory({ total: '1' }) })}
+        />
+      }
+    />,
+    {
+      pathname,
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        displayLiensGouvernance: true,
+      }),
+    }
+  )
+}
