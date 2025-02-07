@@ -1,26 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment, ReactElement, useContext } from 'react'
+import { Fragment, ReactElement, ReactNode, useContext } from 'react'
 
 import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
-import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 
-export default function MenuLateral(): ReactElement {
+export default function MenuLateral({ gouvernanceSousMenu = null }: MenuLateralProps): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+
   const menusPilotage = [
     {
       ariaControls: 'fr-sidemenu-gouvernance',
       ariaExpanded: false,
+      hasSousMenu: true,
       icon: 'compass-3-line',
       label: 'Gouvernance',
-      sousMenu: [
-        ...Number(gouvernanceViewModel.sectionMembres.total) > 0 ? [{ label: 'Membres', url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/membres` }] : [],
-        ...Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0 ? [{ label: 'Feuilles de route', url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-routes` }] : [],
-      ],
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
     {
@@ -40,7 +36,7 @@ export default function MenuLateral(): ReactElement {
     },
     {
       icon: 'map-pin-2-line',
-      label: 'Lieux d’inclusion',
+      label: 'Lieux d‘inclusion',
       url: '/lieux-inclusion',
     },
   ]
@@ -107,32 +103,7 @@ export default function MenuLateral(): ReactElement {
                         {menu.label}
                       </Link>
                     </li>
-                    {menu.sousMenu ?
-                      <div
-                        className="fr-collapse"
-                        id={menu.ariaControls}
-                      >
-                        <ul className="fr-sidemenu__list">
-                          {menu.sousMenu.map((sousMenuElement) => {
-                            const activeClass = pathname === sousMenuElement.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
-
-                            return (
-                              <li
-                                className={`fr-sidemenu__item ${activeClass}`}
-                                key={sousMenuElement.url}
-                              >
-                                <Link
-                                  aria-current={pathname === sousMenuElement.url ? 'page' : false}
-                                  className="fr-sidemenu__link"
-                                  href={sousMenuElement.url}
-                                >
-                                  {sousMenuElement.label}
-                                </Link>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      </div> : null}
+                    {menu.hasSousMenu === true ? gouvernanceSousMenu : null}
                   </Fragment>
                 )
               })}
@@ -166,4 +137,12 @@ export default function MenuLateral(): ReactElement {
       }
     </nav>
   )
+}
+
+interface MenuLateralProps {
+  readonly gouvernanceSousMenu?: ReactNode
+}
+
+MenuLateral.defaultProps = {
+  gouvernanceSousMenu: null,
 }

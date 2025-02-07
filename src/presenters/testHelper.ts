@@ -1,5 +1,6 @@
 // Stryker disable all
 import { GouvernanceViewModel } from './gouvernancePresenter'
+import { MesMembresViewModel } from './mesMembresPresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 export function sessionUtilisateurViewModelFactory(
@@ -24,7 +25,9 @@ export function sessionUtilisateurViewModelFactory(
   }
 }
 
-export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
+export function mesMembresViewModelFactory(
+  override?: Partial<MesMembresViewModel>
+): MesMembresViewModel {
   return {
     autorisations: {
       accesMembreConfirme: true,
@@ -61,10 +64,21 @@ export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceView
   } as const
 }
 
-export function sectionMembresFactory(override?: Partial<GouvernanceViewModel['sectionMembres']>): GouvernanceViewModel['sectionMembres'] {
+export function sectionCoporteursFactory(override?: Partial<GouvernanceViewModel['sectionCoporteurs']>): GouvernanceViewModel['sectionCoporteurs'] {
   return {
+    coporteurs: [],
     detailDuNombreDeChaqueMembre: '',
-    membres: [],
+    total: '0',
+    wording: '',
+    ...override,
+  } as const
+}
+
+export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
+  return {
+    budgetTotalCumule: '',
+    feuillesDeRoute: [],
+    lien: { label: '', url: '' },
     total: '0',
     wording: '',
     ...override,
@@ -73,8 +87,8 @@ export function sectionMembresFactory(override?: Partial<GouvernanceViewModel['s
 
 export function gouvernanceViewModelFactory(override?: Partial<GouvernanceViewModel>): GouvernanceViewModel {
   return {
+    sectionCoporteurs: sectionCoporteursFactory(),
     sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory(),
-    sectionMembres: sectionMembresFactory(),
     ...override,
   } as GouvernanceViewModel
 }
