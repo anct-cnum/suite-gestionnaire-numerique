@@ -2,15 +2,14 @@ import { PrismaClient } from '@prisma/client'
 
 import { MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
-export class PrismaMesMembresLoader extends MesMembresLoader {
+export class PrismaMesMembresLoader implements MesMembresLoader {
   readonly #dataResource: PrismaClient
 
   constructor(dataResource: PrismaClient) {
-    super()
     this.#dataResource = dataResource
   }
 
-  protected override async membres(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
+  async get(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
     const result: ReadonlyArray<Membres> = await this.#dataResource.$queryRaw`
       SELECT commune AS "nomMembre", ARRAY_AGG(role) AS role FROM membre_gouvernance_commune WHERE "gouvernanceDepartementCode" = ${codeDepartementGouvernance} GROUP BY commune
       UNION ALL

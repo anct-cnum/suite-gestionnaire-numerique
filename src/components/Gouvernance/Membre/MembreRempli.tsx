@@ -8,10 +8,10 @@ import Drawer from '@/components/shared/Drawer/Drawer'
 import Table from '@/components/shared/Table/Table'
 import { MembreDetailsViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function MembreRempli({ membres }: Props): ReactElement {
+export default function MembreRempli({ coporteurs }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [membreDetails, setMembreDetails] = useState<MembreDetailsViewModel>(membres[0])
+  const [membreDetails, setMembreDetails] = useState<MembreDetailsViewModel>(coporteurs[0])
   const drawerMembreId = 'drawerMembreId'
   const labelMembreId = useId()
 
@@ -23,7 +23,7 @@ export default function MembreRempli({ membres }: Props): ReactElement {
         titre="Membres"
       >
         {
-          membres.map((membre) => (
+          coporteurs.map((membre) => (
             <tr key={`${membre.nom}_${membre.typologieMembre}`} >
               <td>
                 <span
@@ -84,5 +84,5 @@ export default function MembreRempli({ membres }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  membres: NonNullable<GouvernanceViewModel['sectionMembres']['membres']>
+  coporteurs: NonNullable<GouvernanceViewModel['sectionCoporteurs']['coporteurs']>
 }>
