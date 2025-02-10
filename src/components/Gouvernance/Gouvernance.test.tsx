@@ -208,8 +208,7 @@ describe('gouvernance', () => {
           telephone: '+33 4 45 00 45 00',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
-          type: 'Administration',
-          typologieMembre: 'Préfecture départementale',
+          type: 'Préfecture départementale',
         },
         {
           contactReferent: {
@@ -226,8 +225,7 @@ describe('gouvernance', () => {
           telephone: '+33 4 45 00 45 01',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
-          type: 'Collectivité',
-          typologieMembre: 'Collectivité, EPCI',
+          type: 'Conseil départemental',
         },
       ],
     }), epochTimePlusOneDay)
@@ -272,7 +270,7 @@ describe('gouvernance', () => {
     expect(membrePrefectureDuRhone).toHaveAttribute('type', 'button')
     expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
     expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
-    expect(columns1Body[2].textContent).toBe('Administration')
+    expect(columns1Body[2].textContent).toBe('Préfecture départementale')
     expect(columns1Body[3].textContent).toBe('Co-porteur ')
     const columns2Body = within(rowsBody[1]).getAllByRole('cell')
     expect(columns2Body).toHaveLength(4)
@@ -280,7 +278,7 @@ describe('gouvernance', () => {
     expect(membreDepartementDuRhone).toHaveAttribute('type', 'button')
     expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
-    expect(columns2Body[2].textContent).toBe('Collectivité')
+    expect(columns2Body[2].textContent).toBe('Conseil départemental')
     expect(columns2Body[3].textContent).toBe('Co-porteur Co-financeur ')
   })
 
@@ -304,8 +302,7 @@ describe('gouvernance', () => {
           telephone: '+33 4 45 00 45 00',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
-          type: 'Administration',
-          typologieMembre: 'Préfecture départementale',
+          type: 'Préfecture départementale',
         },
       ],
     }), epochTimePlusOneDay)

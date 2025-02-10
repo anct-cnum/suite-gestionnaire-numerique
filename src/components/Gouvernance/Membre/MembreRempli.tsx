@@ -24,7 +24,7 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
       >
         {
           coporteurs.map((membre) => (
-            <tr key={`${membre.nom}_${membre.typologieMembre}`} >
+            <tr key={`${membre.nom}_${membre.type}`} >
               <td>
                 <span
                   aria-hidden="true"

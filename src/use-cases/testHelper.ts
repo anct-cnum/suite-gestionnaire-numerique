@@ -89,8 +89,7 @@ export function gouvernanceReadModelFactory(
         nom: 'Préfecture du Rhône',
         roles: ['coporteur'],
         telephone: '+33 4 45 00 45 00',
-        type: 'Administration',
-        typologieMembre: 'Préfecture départementale',
+        type: 'Préfecture départementale',
       },
       {
         contactReferent: {
@@ -107,8 +106,7 @@ export function gouvernanceReadModelFactory(
         telephone: '+33 4 45 00 45 01',
         totalMontantSubventionAccorde: 0,
         totalMontantSubventionFormationAccorde: 0,
-        type: 'Collectivité',
-        typologieMembre: 'Collectivité, EPCI',
+        type: 'Conseil départemental',
       },
     ],
     departement: 'Rhône',
@@ -143,7 +141,7 @@ export function gouvernanceReadModelFactory(
         montantSubventionDemande: 40_000,
         montantSubventionFormationAccorde: 5_000,
         nom: 'Feuille de route inclusion',
-        porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+        porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Préfecture départementale' },
         totalActions: 3,
       },
     ],
