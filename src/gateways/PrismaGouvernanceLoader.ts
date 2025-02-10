@@ -19,11 +19,15 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
     relationEditeurNotePrivee: true
     relationEditeurNoteDeContexte: true
     feuillesDeRoute: true
-    membresCommunes: true
-    membresDepartements: true
-    membresEpcis: true
-    membresSgars: true
-    membresStructures: true
+    membres: {
+      include: {
+        membresGouvernanceCommune: true
+        membresGouvernanceDepartement: true
+        membresGouvernanceEpci: true
+        membresGouvernanceSgar: true
+        membresGouvernanceStructure: true
+      }
+    }
   }
 }>
 
@@ -43,11 +47,15 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           },
         },
         feuillesDeRoute: true,
-        membresCommunes: true,
-        membresDepartements: true,
-        membresEpcis: true,
-        membresSgars: true,
-        membresStructures: true,
+        membres: {
+          include: {
+            membresGouvernanceCommune: true,
+            membresGouvernanceDepartement: true,
+            membresGouvernanceEpci: true,
+            membresGouvernanceSgar: true,
+            membresGouvernanceStructure: true,
+          },
+        },
         relationDepartement: true,
         relationEditeurNoteDeContexte: true,
         relationEditeurNotePrivee: true,
@@ -60,46 +68,58 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       throw new Error('Le département n’existe pas')
     }
 
-    const membres: ReadonlyArray<Readonly<AggregatedMembre>> = await prisma.$queryRaw`
-    SELECT commune as nom, type, 'commune' as typologie, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_commune
-    WHERE "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY commune, type
-    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
-    UNION all
+    const membres: ReadonlyArray<AggregatedMembre> = await prisma.$queryRaw`
+    SELECT mgc.commune AS nom, m.type, ARRAY_AGG(mgc.role) AS roles
+    FROM membre_gouvernance_commune mgc
+    INNER JOIN membre m ON m.id = mgc."membreId"
+    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
+    AND mgc."membreGouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY mgc.commune, m.type
+    HAVING COUNT(CASE WHEN mgc.role = 'coporteur' THEN 1 END) > 0
 
-    SELECT epci as nom, type, 'epci' as typologie, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_epci
-    WHERE "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY epci, type
-    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
-    UNION all
-
-    SELECT structure as nom, type,'structure' as typologie, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_structure
-    WHERE "gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY structure, type
-    HAVING COUNT(CASE WHEN role = 'coporteur' THEN 1 END) > 0
-    UNION all
-
-    SELECT departement.nom as nom, mgd.type,'departement' as typologie, ARRAY_AGG(mgd.role) AS roles
-    FROM membre_gouvernance_departement mgd
-    INNER JOIN departement
-    ON mgd."departementCode" = departement.code
-    WHERE mgd."gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY departement.nom, mgd.type
-    HAVING COUNT(CASE WHEN mgd.role = 'coporteur' THEN 1 END) > 0
     UNION ALL
 
-    SELECT region.nom as nom, mgs.type, 'sgar' as typologie, ARRAY_AGG(mgs.role) AS roles
-    FROM membre_gouvernance_sgar mgs
-    INNER JOIN region
-    ON mgs."sgarCode" = region.code
-    WHERE mgs."gouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY region.nom, mgs.type
+    SELECT mge.epci AS nom, m.type, ARRAY_AGG(role) AS roles
+    FROM membre_gouvernance_epci mge
+    INNER JOIN membre m ON m.id = mge."membreId"
+    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
+    AND mge."membreGouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY mge.epci, m.type
+    HAVING COUNT(CASE WHEN mge.role = 'coporteur' THEN 1 END) > 0
+
+    UNION ALL
+
+    SELECT mgs.structure AS nom, m.type, ARRAY_AGG(role) AS roles
+    FROM membre_gouvernance_structure mgs
+    INNER JOIN membre m ON m.id = mgs."membreId"
+    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
+    AND mgs."membreGouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY mgs.structure, m.type
     HAVING COUNT(CASE WHEN mgs.role = 'coporteur' THEN 1 END) > 0
 
-    ORDER BY nom`
+    UNION ALL
+
+    SELECT d.nom AS nom, m.type, ARRAY_AGG(mgd.role) AS roles
+    FROM membre_gouvernance_departement mgd
+    INNER JOIN departement d ON mgd."departementCode" = d.code
+    INNER JOIN membre m ON m.id = mgd."membreId"
+    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
+    AND mgd."membreGouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY d.nom, m.type
+    HAVING COUNT(CASE WHEN mgd.role = 'coporteur' THEN 1 END) > 0
+
+    UNION ALL
+
+    SELECT r.nom AS nom, m.type, ARRAY_AGG(mgr.role) AS roles
+    FROM membre_gouvernance_sgar mgr
+    INNER JOIN region r ON mgr."sgarCode" = r.code
+    INNER JOIN membre m ON m.id = mgr."membreId"
+    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
+    AND mgr."membreGouvernanceDepartementCode" = ${codeDepartement}
+    GROUP BY r.nom, m.type
+    HAVING COUNT(CASE WHEN mgr.role = 'coporteur' THEN 1 END) > 0
+
+    ORDER BY nom;`
 
     return transform(gouvernanceRecord, membres)
   }
@@ -169,7 +189,6 @@ function transform(
       totalMontantSubventionAccorde: NaN,
       totalMontantSubventionFormationAccorde: NaN,
       type: membre.type,
-      typologieMembre: membre.typologie,
     })),
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
@@ -215,5 +234,4 @@ type AggregatedMembre = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
-  typologie: string
 }>

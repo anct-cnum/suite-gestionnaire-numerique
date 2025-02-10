@@ -80,7 +80,6 @@ export type CoporteurDetailReadModel = Readonly<{
     denomination: 'Contact référent' | 'Contact politique de la collectivité'
   }>
   telephone: string
-  typologieMembre: string
   feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
     montantSubventionAccorde: number
@@ -112,7 +111,7 @@ type Query = Readonly<{
 }>
 
 function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
+  const categorieDuMembre = typologieMembre[membre.type] ?? typologieMembre.Autre
   return {
     ...membre,
     ...categorieDuMembre === 'autre' && membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
@@ -127,7 +126,7 @@ function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): Co
 }
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const categorieDuMembre = typologieMembre[membre.typologieMembre] ?? typologieMembre.Autre
+  const categorieDuMembre = typologieMembre[membre.type] ?? typologieMembre.Autre
   return {
     ...membre,
     contactReferent: { ...membre.contactReferent, denomination: categorieDuMembre === 'autre' ? 'Contact référent' : 'Contact politique de la collectivité' },
