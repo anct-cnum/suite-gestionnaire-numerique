@@ -205,14 +205,25 @@ export async function creerUneFeuilleDeRoute(
   })
 }
 
+export async function creerUnMembre(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
+  await prisma.membreRecord.create({
+    data: {
+      gouvernanceDepartementCode: '69',
+      id: 'prefecture-69',
+      type: 'Préfecture départementale',
+      ...override,
+    },
+  })
+}
+
 export async function creerUnMembreStructure(
   override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
 ): Promise<void> {
   await prisma.membreGouvernanceStructureRecord.create({
     data: {
-      gouvernanceDepartementCode: '69',
-      role: 'coporteur',
-      structure: 'Préfecture du Rhône',
+      membreId: 'structure-79201467200028-69',
+      role: 'observateur',
+      structure: 'Pimms Médiation Grand Poitiers',
       ...override,
     },
   })
@@ -224,8 +235,8 @@ export async function creerUnMembreCommune(
   await prisma.membreGouvernanceCommuneRecord.create({
     data: {
       commune: 'Mornant',
-      gouvernanceDepartementCode: '69',
-      role: 'cofinanceur',
+      membreId: 'commune-69141-69',
+      role: 'observateur',
       ...override,
     },
   })
@@ -237,8 +248,8 @@ export async function creerUnMembreEpci(
   await prisma.membreGouvernanceEpciRecord.create({
     data: {
       epci: 'Métropole de Lyon',
-      gouvernanceDepartementCode: '69',
-      role: 'recipiendaire',
+      membreId: 'epci-200046977-69',
+      role: 'observateur',
       ...override,
     },
   })
@@ -250,8 +261,8 @@ export async function creerUnMembreDepartement(
   await prisma.membreGouvernanceDepartementRecord.create({
     data: {
       departementCode: '69',
-      gouvernanceDepartementCode: '69',
-      role: 'cofinanceur',
+      membreId: 'departement-69-69',
+      role: 'observateur',
       ...override,
     },
   })
@@ -262,8 +273,8 @@ export async function creerUnMembreSgar(
 ): Promise<void> {
   await prisma.membreGouvernanceSgarRecord.create({
     data: {
-      gouvernanceDepartementCode: '69',
-      role: 'recipiendaire',
+      membreId: 'region-84-69',
+      role: 'observateur',
       sgarCode: '84',
       ...override,
     },

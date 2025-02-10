@@ -187,7 +187,6 @@ function toCoporteursDetailsViewModel(coporteurs: CoporteurDetailReadModel): Mem
     plusDetailsHref: coporteurs.links.plusDetails,
     roles: coporteurs.roles.map(toRoleViewModel),
     type: coporteurs.type,
-    typologieMembre: coporteurs.typologieMembre,
   }
 }
 
@@ -341,7 +340,6 @@ export type MembreDetailsViewModel = Readonly<{
   logo: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
-  typologieMembre: string
   details: ReadonlyArray<
     Readonly<{
       intitule: string

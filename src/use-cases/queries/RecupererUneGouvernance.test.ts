@@ -66,8 +66,7 @@ describe('recupérer une gouvernance', () => {
           nom: 'Préfecture du Rhône',
           roles: ['coporteur'],
           telephone: '+33 4 45 00 45 00',
-          type: 'Administration',
-          typologieMembre: 'Préfecture départementale',
+          type: 'Préfecture départementale',
         },
       ],
     }
@@ -77,7 +76,7 @@ describe('recupérer une gouvernance', () => {
     const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
-    expect(gouvernance.coporteurs).toStrictEqual([
+    expect(gouvernance.coporteurs).toStrictEqual<UneGouvernanceReadModel['coporteurs']>([
       {
         contactReferent: {
           denomination: 'Contact politique de la collectivité',
@@ -92,8 +91,7 @@ describe('recupérer une gouvernance', () => {
         nom: 'Préfecture du Rhône',
         roles: ['coporteur'],
         telephone: '+33 4 45 00 45 00',
-        type: 'Administration',
-        typologieMembre: 'Préfecture départementale',
+        type: 'Préfecture départementale',
       },
     ])
   })
@@ -118,8 +116,7 @@ describe('recupérer une gouvernance', () => {
           telephone: '+33 4 45 00 45 01',
           totalMontantSubventionAccorde: 0,
           totalMontantSubventionFormationAccorde: 0,
-          type: 'Collectivité',
-          typologieMembre: 'Collectivité, EPCI',
+          type: 'Collectivité, EPCI',
         },
       ],
     }
@@ -129,7 +126,7 @@ describe('recupérer une gouvernance', () => {
     const gouvernance = await queryHandler.handle({ codeDepartement: '69' })
 
     // THEN
-    expect(gouvernance.coporteurs).toStrictEqual([
+    expect(gouvernance.coporteurs).toStrictEqual<UneGouvernanceReadModel['coporteurs']>([
       {
         contactReferent: {
           denomination: 'Contact référent',
@@ -147,8 +144,7 @@ describe('recupérer une gouvernance', () => {
         telephone: '+33 4 45 00 45 01',
         totalMontantSubventionAccorde: 5000,
         totalMontantSubventionFormationAccorde: 5000,
-        type: 'Collectivité',
-        typologieMembre: 'Collectivité, EPCI',
+        type: 'Collectivité, EPCI',
       },
     ])
     expect(spiedCodeDepartement).toBe('69')
