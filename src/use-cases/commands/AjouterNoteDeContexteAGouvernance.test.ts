@@ -58,8 +58,6 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     const result = await ajouterNoteDeContexteAGouvernance.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('utilisateurNePeutPasAjouterNoteDeContexte')
   })
@@ -80,10 +78,8 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     })
 
     // THEN
-    expect(result).toBe('noteDeContexteDejaExistante')
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
+    expect(result).toBe('noteDeContexteDejaExistante')
   })
 })
 

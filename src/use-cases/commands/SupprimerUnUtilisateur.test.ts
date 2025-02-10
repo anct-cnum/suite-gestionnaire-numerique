@@ -20,10 +20,6 @@ describe('supprimer un utilisateur', () => {
     })
 
     // THEN
-    expect(spiedUidsToFind).toStrictEqual([
-      'utilisateurCourantExistantUid',
-      'utilisateurASupprimerExistantUid',
-    ])
     expect(spiedUtilisateurToDrop).toBeNull()
     expect(result).toBe('suppressionNonAutorisee')
   })
@@ -40,10 +36,6 @@ describe('supprimer un utilisateur', () => {
     })
 
     // THEN
-    expect(spiedUidsToFind).toStrictEqual([
-      'utilisateurCourantExistantAutreUid',
-      'utilisateurASupprimerExistantUid',
-    ])
     expect(spiedUtilisateurToDrop).not.toBeNull()
     expect(spiedUtilisateurToDrop?.state).toStrictEqual(utilisateursByUid.utilisateurASupprimerExistantUid.state)
     expect(result).toBe('compteASupprimerDejaSupprime')

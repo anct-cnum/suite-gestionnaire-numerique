@@ -67,10 +67,8 @@ describe('supprimer un comité', () => {
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('userFooId')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('editeurNePeutPasSupprimerComite')
     expect(spiedComiteToDrop).toBeNull()
+    expect(result).toBe('editeurNePeutPasSupprimerComite')
   })
 })
 

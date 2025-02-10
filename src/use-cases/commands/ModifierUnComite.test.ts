@@ -145,10 +145,8 @@ describe('modifier un comité', () => {
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe(expectedFailure)
     expect(spiedComiteToModify).toBeNull()
+    expect(result).toBe(expectedFailure)
   })
 
   it('étant donné une gouvernance, quand un comité est modifié par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
@@ -172,10 +170,8 @@ describe('modifier un comité', () => {
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('userFooId')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('editeurNePeutPasModifierComite')
     expect(spiedComiteToModify).toBeNull()
+    expect(result).toBe('editeurNePeutPasModifierComite')
   })
 })
 

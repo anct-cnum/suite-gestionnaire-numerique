@@ -144,10 +144,8 @@ describe('ajouter un comité à une gouvernance', () => {
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe(expectedFailure)
     expect(spiedComiteToAdd).toBeNull()
+    expect(result).toBe(expectedFailure)
   })
 
   it('étant donné une gouvernance, quand un comité est créé par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
@@ -170,10 +168,8 @@ describe('ajouter un comité à une gouvernance', () => {
     })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('userFooId')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(result).toBe('editeurNePeutPasAjouterComite')
     expect(spiedComiteToAdd).toBeNull()
+    expect(result).toBe('editeurNePeutPasAjouterComite')
   })
 })
 

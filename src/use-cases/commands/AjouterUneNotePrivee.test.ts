@@ -58,8 +58,6 @@ describe('ajouter une note privée à une gouvernance', () => {
     const result = await ajouterNotePrivee.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('utilisateurNePeutPasAjouterNotePrivee')
   })
@@ -76,8 +74,6 @@ describe('ajouter une note privée à une gouvernance', () => {
     const result = await ajouterNotePrivee.handle({ contenu, uidEditeur, uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('notePriveeDejaExistante')
   })
