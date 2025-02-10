@@ -64,7 +64,6 @@ describe('gouvernance loader', () => {
           type: 'technique',
         },
       ],
-      coporteurs,
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
       noteDeContexte: {
@@ -79,6 +78,7 @@ describe('gouvernance loader', () => {
         prenomEditeur: 'Jean',
         texte: 'un contenu quelconque',
       },
+      syntheseMembres,
       uid: '93',
     })
   })
@@ -116,11 +116,11 @@ describe('gouvernance loader', () => {
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: undefined,
-      coporteurs,
       departement: 'Seine-Saint-Denis',
       feuillesDeRoute,
       noteDeContexte: undefined,
       notePrivee: undefined,
+      syntheseMembres,
       uid: codeDepartement,
     })
   })
@@ -284,59 +284,63 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
   },
 ]
 
-const coporteurs: UneGouvernanceReadModel['coporteurs'] = [
-  {
-    nom: 'Bretagne',
-    roles: ['coporteur'],
-    type: 'Préfecture régionale',
-  },
-  {
-    nom: 'CC Porte du Jura',
-    roles: ['beneficiaire', 'coporteur'],
-    type: 'Collectivité, EPCI',
-  },
-  {
-    nom: 'Créteil',
-    roles: ['coporteur'],
-    type: 'Collectivité, commune',
-  },
-  {
-    nom: 'Orange',
-    roles: ['coporteur', 'recipiendaire'],
-    type: 'Entreprise privée',
-  },
-  {
-    nom: 'Seine-Saint-Denis',
-    roles: ['coporteur'],
-    type: 'Préfecture départementale',
-  },
-].map((partialMembre) => ({
-  contactReferent: {
-    denomination: 'Contact politique de la collectivité',
-    mailContact: 'julien.deschamps@example.com',
-    nom: 'Henrich',
-    poste: 'chargé de mission',
-    prenom: 'Laetitia',
-  },
-  contactTechnique: 'Simon.lagrange@example.com',
-  feuillesDeRoute: [
+const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
+  candidats: 0,
+  coporteurs: [
     {
-      montantSubventionAccorde: 5_000,
-      montantSubventionFormationAccorde: 5_000,
-      nom: 'Feuille de route inclusion',
+      nom: 'Bretagne',
+      roles: ['coporteur'],
+      type: 'Préfecture régionale',
     },
     {
-      montantSubventionAccorde: 5_000,
-      montantSubventionFormationAccorde: 5_000,
-      nom: 'Feuille de route numérique du Rhône',
+      nom: 'CC Porte du Jura',
+      roles: ['beneficiaire', 'coporteur'],
+      type: 'Collectivité, EPCI',
     },
-  ],
-  links: {},
-  telephone: '+33 4 45 00 45 00',
-  totalMontantSubventionAccorde: NaN,
-  totalMontantSubventionFormationAccorde: NaN,
-  ...partialMembre,
-}))
+    {
+      nom: 'Créteil',
+      roles: ['coporteur'],
+      type: 'Collectivité, commune',
+    },
+    {
+      nom: 'Orange',
+      roles: ['coporteur', 'recipiendaire'],
+      type: 'Entreprise privée',
+    },
+    {
+      nom: 'Seine-Saint-Denis',
+      roles: ['coporteur'],
+      type: 'Préfecture départementale',
+    },
+  ].map((partialMembre) => ({
+    contactReferent: {
+      denomination: 'Contact politique de la collectivité',
+      mailContact: 'julien.deschamps@example.com',
+      nom: 'Henrich',
+      poste: 'chargé de mission',
+      prenom: 'Laetitia',
+    },
+    contactTechnique: 'Simon.lagrange@example.com',
+    feuillesDeRoute: [
+      {
+        montantSubventionAccorde: 5_000,
+        montantSubventionFormationAccorde: 5_000,
+        nom: 'Feuille de route inclusion',
+      },
+      {
+        montantSubventionAccorde: 5_000,
+        montantSubventionFormationAccorde: 5_000,
+        nom: 'Feuille de route numérique du Rhône',
+      },
+    ],
+    links: {},
+    telephone: '+33 4 45 00 45 00',
+    totalMontantSubventionAccorde: NaN,
+    totalMontantSubventionFormationAccorde: NaN,
+    ...partialMembre,
+  })),
+  total: 9,
+}
 
 async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
   await creerUnComite({
@@ -375,9 +379,11 @@ async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
   await creerUnMembre({ gouvernanceDepartementCode, id: 'epci-241927201', type: 'Collectivité, EPCI' })
   await creerUnMembre({ gouvernanceDepartementCode, id: 'epci-200072056', type: 'Collectivité, EPCI' })
   await creerUnMembre({ gouvernanceDepartementCode, id: 'structure-38012986643097', type: 'Entreprise privée' })
-  await creerUnMembre({ gouvernanceDepartementCode,
+  await creerUnMembre({
+    gouvernanceDepartementCode,
     id: `prefecture-${gouvernanceDepartementCode}`,
-    type: 'Préfecture départementale' })
+    type: 'Préfecture départementale',
+  })
   await creerUnMembre({
     gouvernanceDepartementCode,
     id: `departement-${gouvernanceDepartementCode}`,

@@ -9,16 +9,16 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
     return this.#loader.get(query.codeDepartement)
-      .then((gouvernance) =>
-        ({
-          ...gouvernance,
-          ...gouvernance.coporteurs && {
-            coporteurs: gouvernance.coporteurs.values()
-              .map(toMembreDetailAvecTotauxReadModel)
-              .map(toMembreDetailIntitulerReadModel)
-              .toArray(),
-          },
-        }))
+      .then((gouvernance) => ({
+        ...gouvernance,
+        syntheseMembres: {
+          ...gouvernance.syntheseMembres,
+          coporteurs: gouvernance.syntheseMembres.coporteurs.values()
+            .map(toMembreDetailAvecTotauxReadModel)
+            .map(toMembreDetailIntitulerReadModel)
+            .toArray(),
+        },
+      }))
   }
 }
 
@@ -30,7 +30,7 @@ export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
   feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
-  coporteurs?: ReadonlyArray<CoporteurDetailReadModel>
+  syntheseMembres: SyntheseMembres
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   uid: string
@@ -106,35 +106,45 @@ type NotePriveeReadModel = Readonly<{
   texte: string
 }>
 
+type SyntheseMembres = Readonly<{
+  coporteurs: ReadonlyArray<CoporteurDetailReadModel>
+  total: number
+  candidats: number
+}>
+
 type Query = Readonly<{
   codeDepartement: string
 }>
 
 function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const categorieDuMembre = typologieMembre[membre.type] ?? typologieMembre.Autre
-  return {
-    ...membre,
-    ...categorieDuMembre === 'autre' && membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
+  const totaux = isPrefectureDepartementale(membre)
+    ? {} : membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
       totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
       totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
         feuilleDeRoute.montantSubventionFormationAccorde,
     }), {
       totalMontantSubventionAccorde: 0,
       totalMontantSubventionFormationAccorde: 0,
-    }),
+    })
+  return {
+    ...membre,
+    ...totaux,
   }
 }
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const categorieDuMembre = typologieMembre[membre.type] ?? typologieMembre.Autre
+  const [denomination, links] = isPrefectureDepartementale(membre)
+    ? ['Contact politique de la collectivité' as const, {}]
+    : ['Contact référent' as const, { plusDetails: '/' }]
   return {
     ...membre,
-    contactReferent: { ...membre.contactReferent, denomination: categorieDuMembre === 'autre' ? 'Contact référent' : 'Contact politique de la collectivité' },
-    links: { ...categorieDuMembre === 'autre' && { plusDetails: '/' } },
+    contactReferent: {
+      ...membre.contactReferent,
+      denomination,
+    },
+    links,
   }
 }
-
-const typologieMembre: Record<string, string> = {
-  Autre: 'autre',
-  'Préfecture départementale': 'prefecture',
+function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolean {
+  return coporteur.type === 'Préfecture départementale'
 }

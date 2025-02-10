@@ -83,13 +83,9 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       type: comite.type as TypeDeComite,
     }))
     : undefined
-
+  const membres = toMembres(gouvernanceRecord.membres)
   return {
     comites,
-    coporteurs: toMembres(gouvernanceRecord.membres)
-      .filter(isCoporteur)
-      .toSorted(sortMembres)
-      .map((membre) => ({ ...membre, ...bouchonCoporteur } as CoporteurDetailReadModel)),
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
       beneficiairesSubvention: [
@@ -126,6 +122,14 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
     })),
     noteDeContexte,
     notePrivee,
+    syntheseMembres: {
+      candidats: 0,
+      coporteurs: membres
+        .filter(isCoporteur)
+        .toSorted(sortMembres)
+        .map((membre) => ({ ...membre, ...bouchonCoporteur } as CoporteurDetailReadModel)),
+      total: membres.length,
+    },
     uid: gouvernanceRecord.departementCode,
   }
 }
