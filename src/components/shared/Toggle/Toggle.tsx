@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from 'react'
+import React, { PropsWithChildren, ReactElement, useId } from 'react'
 
 import styles from './Toggle.module.css'
 
@@ -7,9 +7,9 @@ export default function Toggle({
   children,
   // Stryker disable next-line BooleanLiteral
   hasSeparator = false,
-  id,
   name,
 }: Props): ReactElement {
+  const id = useId()
   const className = hasSeparator ? `fr-pb-2w ${styles['fr-toggle--bb']}` : 'fr-mt-2w'
 
   return (
@@ -34,6 +34,5 @@ export default function Toggle({
 type Props = PropsWithChildren<Readonly<{
   defaultChecked?: boolean
   hasSeparator?: boolean
-  id: string
   name: string
 }>>

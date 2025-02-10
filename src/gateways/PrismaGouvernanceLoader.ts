@@ -31,6 +31,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
               },
             },
             membresGouvernanceStructure: true,
+            relationContact: true,
           },
         },
         relationDepartement: true,
@@ -76,7 +77,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       type: comite.type as TypeDeComite,
     }))
     : undefined
-  const membres = toMembres(gouvernanceRecord.membres)
+  const membres = toMembres(gouvernanceRecord.membres, 'confirme')
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
@@ -163,6 +164,7 @@ type GouvernanceRecord = Prisma.GouvernanceRecordGetPayload<{
           }
         }
         membresGouvernanceStructure: true
+        relationContact: true
       }
     }
   }
