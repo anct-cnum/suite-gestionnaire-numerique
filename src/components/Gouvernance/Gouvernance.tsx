@@ -39,8 +39,6 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const labelComiteId = useId()
   const drawerNoteDeContexteId = 'drawerAjouterNoteDeContexteId'
   const labelNoteDeContexteId = useId()
-  const labelModifierNoteDeContexteId = useId()
-  const drawerModifierNoteDeContexteId = 'drawerModifierNoteDeContexteId'
   const drawerNotePriveeId = 'drawerAjouterNotePriveeId'
   const labelNotePriveeId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
@@ -308,7 +306,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               <SectionRemplie
                 button={(
                   <button
-                    aria-controls={drawerModifierNoteDeContexteId}
+                    aria-controls={drawerNoteDeContexteId}
                     className="fr-btn fr-btn--secondary"
                     data-fr-opened="false"
                     onClick={() => {
@@ -336,19 +334,19 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
                 closeDrawer={() => {
                   setIsDrawerOpen(false)
                 }}
-                id={drawerModifierNoteDeContexteId}
+                id={drawerNoteDeContexteId}
                 // Stryker disable next-line BooleanLiteral
                 isFixedWidth={false}
                 isOpen={isDrawerOpen}
-                labelId={labelModifierNoteDeContexteId}
+                labelId={labelNoteDeContexteId}
               >
                 <ModifierNoteDeContexte
                   closeDrawer={() => {
                     setIsDrawerOpen(false)
                   }}
-                  id={drawerModifierNoteDeContexteId}
+                  id={drawerNoteDeContexteId}
                   label="Note de contexte"
-                  labelId={labelModifierNoteDeContexteId}
+                  labelId={labelNoteDeContexteId}
                   sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
                   texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
                   uidGouvernance={gouvernanceViewModel.uid}
