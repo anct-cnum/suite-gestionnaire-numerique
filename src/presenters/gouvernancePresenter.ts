@@ -1,6 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
-import { formaterLeRoleViewModel, toRoleViewModel } from './shared/role'
+import { toRoleViewModel } from './shared/role'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -8,20 +8,26 @@ export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
   now: Date
 ): GouvernanceViewModel {
+  const hasMembres = gouvernanceReadModel.syntheseMembres.total !== 0
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
     comiteARemplir,
     dateAujourdhui: formatForInputDate(now),
     departement: gouvernanceReadModel.departement,
-    isVide: isGouvernanceVide(gouvernanceReadModel),
+    hasMembres,
+    isVide: isGouvernanceVide(gouvernanceReadModel, !hasMembres),
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
-    sectionCoporteurs: {
-      ...{ coporteurs: gouvernanceReadModel.coporteurs?.map(toCoporteursDetailsViewModel) },
-      ...buildSousTitreCoporteurs(gouvernanceReadModel.coporteurs),
-    },
     sectionFeuillesDeRoute: {
       ...{ feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel) },
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
+    },
+    sectionMembres: {
+      ...{ coporteurs: gouvernanceReadModel.syntheseMembres.coporteurs.map(toCoporteursDetailsViewModel) },
+      totalEtWording: [
+        gouvernanceReadModel.syntheseMembres.total,
+        `membre${formatPluriel(gouvernanceReadModel.syntheseMembres.total)}`,
+      ],
+      wordingRecap: wordingMembres(gouvernanceReadModel.syntheseMembres),
     },
     sectionNoteDeContexte: {
       ...{ noteDeContexte: toNoteDeContexteViewModel(gouvernanceReadModel.noteDeContexte) },
@@ -37,6 +43,7 @@ export type GouvernanceViewModel = Readonly<{
   dateAujourdhui: string
   departement: string
   isVide: boolean
+  hasMembres: boolean
   notePrivee?: Readonly<{
     edition: string
     resume: string
@@ -52,11 +59,10 @@ export type GouvernanceViewModel = Readonly<{
       url: string
     }>
   }>
-  sectionCoporteurs: Readonly<{
-    detailDuNombreDeChaqueMembre: string
-    coporteurs?: ReadonlyArray<MembreDetailsViewModel>
-    total: string
-    wording: string
+  sectionMembres: Readonly<{
+    coporteurs: ReadonlyArray<MembreDetailsViewModel>
+    totalEtWording: Readonly<[number, string]>
+    wordingRecap: string
   }>
   sectionNoteDeContexte: Readonly<{
     noteDeContexte?: Readonly<{
@@ -70,13 +76,12 @@ export type GouvernanceViewModel = Readonly<{
   uid: string
 }>
 
-function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel): boolean {
+function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel, pasDeMembre: boolean): boolean {
   return [
     gouvernanceReadModel.comites,
-    gouvernanceReadModel.coporteurs,
     gouvernanceReadModel.feuillesDeRoute,
     gouvernanceReadModel.noteDeContexte,
-  ].every(isNullish)
+  ].every(isNullish) && pasDeMembre
 }
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
@@ -220,29 +225,17 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
   }
 }
 
-function buildSousTitreCoporteurs(coporteurs: UneGouvernanceReadModel['coporteurs']): GouvernanceViewModel['sectionCoporteurs'] {
-  if (!coporteurs) {
-    return {
-      detailDuNombreDeChaqueMembre: '0',
-      total: '0',
-      wording: 'membre',
-    }
+function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembres']): string {
+  if (syntheseMembres.total === 0) {
+    return '0 membre'
   }
-  const detailDuNombreDeChaqueMembre = Object.entries(coporteurs
-    .flatMap(({ roles }) => roles)
-    .reduce<Record<string, number>>((nombreParRole, role) => {
-      const roleFormater = formaterLeRoleViewModel(role)
-      nombreParRole[roleFormater] = nombreParRole[roleFormater] ? nombreParRole[roleFormater] + 1 : 1
-      return nombreParRole
-    }, {}))
-    .map(([role, nombre]) => `${nombre} ${role.toLowerCase()}${formatPluriel(nombre)}`)
+  return [
+    [syntheseMembres.coporteurs.length, 'co-porteur'] as const,
+    [syntheseMembres.total, 'membre'] as const,
+    [syntheseMembres.candidats, 'candidat'] as const,
+  ]
+    .map(([nombre, categorie]) => `${nombre} ${categorie}${formatPluriel(nombre)}`)
     .join(', ')
-
-  return {
-    detailDuNombreDeChaqueMembre,
-    total: String(coporteurs.length),
-    wording: `membre${formatPluriel(coporteurs.length)}`,
-  }
 }
 
 function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute']): GouvernanceViewModel['sectionFeuillesDeRoute'] {
