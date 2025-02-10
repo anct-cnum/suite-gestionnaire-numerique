@@ -1,35 +1,7 @@
 import { Prisma } from '@prisma/client'
 
-import prisma from '../../prisma/prismaClient'
-import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceLoader } from '@/use-cases/queries/RecupererUneGouvernance'
-
-type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
-  include: {
-    comites: {
-      include: {
-        relationUtilisateur: true
-      }
-    }
-    relationDepartement: {
-      select: {
-        code: true
-        nom: true
-      }
-    }
-    relationEditeurNotePrivee: true
-    relationEditeurNoteDeContexte: true
-    feuillesDeRoute: true
-    membres: {
-      include: {
-        membresGouvernanceCommune: true
-        membresGouvernanceDepartement: true
-        membresGouvernanceEpci: true
-        membresGouvernanceSgar: true
-        membresGouvernanceStructure: true
-      }
-    }
-  }
-}>
+import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import { CoporteurDetailReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
@@ -50,9 +22,17 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         membres: {
           include: {
             membresGouvernanceCommune: true,
-            membresGouvernanceDepartement: true,
+            membresGouvernanceDepartement: {
+              include: {
+                relationDepartement: true,
+              },
+            },
             membresGouvernanceEpci: true,
-            membresGouvernanceSgar: true,
+            membresGouvernanceSgar: {
+              include: {
+                relationSgar: true,
+              },
+            },
             membresGouvernanceStructure: true,
           },
         },
@@ -64,71 +44,16 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         departementCode: codeDepartement,
       },
     })
+
     if (gouvernanceRecord === null) {
       throw new Error('Le département n’existe pas')
     }
 
-    const membres: ReadonlyArray<AggregatedMembre> = await prisma.$queryRaw`
-    SELECT mgc.commune AS nom, m.type, ARRAY_AGG(mgc.role) AS roles
-    FROM membre_gouvernance_commune mgc
-    INNER JOIN membre m ON m.id = mgc."membreId"
-    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
-    AND mgc."membreGouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY mgc.commune, m.type
-    HAVING COUNT(CASE WHEN mgc.role = 'coporteur' THEN 1 END) > 0
-
-    UNION ALL
-
-    SELECT mge.epci AS nom, m.type, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_epci mge
-    INNER JOIN membre m ON m.id = mge."membreId"
-    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
-    AND mge."membreGouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY mge.epci, m.type
-    HAVING COUNT(CASE WHEN mge.role = 'coporteur' THEN 1 END) > 0
-
-    UNION ALL
-
-    SELECT mgs.structure AS nom, m.type, ARRAY_AGG(role) AS roles
-    FROM membre_gouvernance_structure mgs
-    INNER JOIN membre m ON m.id = mgs."membreId"
-    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
-    AND mgs."membreGouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY mgs.structure, m.type
-    HAVING COUNT(CASE WHEN mgs.role = 'coporteur' THEN 1 END) > 0
-
-    UNION ALL
-
-    SELECT d.nom AS nom, m.type, ARRAY_AGG(mgd.role) AS roles
-    FROM membre_gouvernance_departement mgd
-    INNER JOIN departement d ON mgd."departementCode" = d.code
-    INNER JOIN membre m ON m.id = mgd."membreId"
-    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
-    AND mgd."membreGouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY d.nom, m.type
-    HAVING COUNT(CASE WHEN mgd.role = 'coporteur' THEN 1 END) > 0
-
-    UNION ALL
-
-    SELECT r.nom AS nom, m.type, ARRAY_AGG(mgr.role) AS roles
-    FROM membre_gouvernance_sgar mgr
-    INNER JOIN region r ON mgr."sgarCode" = r.code
-    INNER JOIN membre m ON m.id = mgr."membreId"
-    WHERE m."gouvernanceDepartementCode" = ${codeDepartement}
-    AND mgr."membreGouvernanceDepartementCode" = ${codeDepartement}
-    GROUP BY r.nom, m.type
-    HAVING COUNT(CASE WHEN mgr.role = 'coporteur' THEN 1 END) > 0
-
-    ORDER BY nom;`
-
-    return transform(gouvernanceRecord, membres)
+    return transform(gouvernanceRecord)
   }
 }
 
-function transform(
-  gouvernanceRecord: GouvernanceWithNoteDeContexte,
-  membres: ReadonlyArray<AggregatedMembre>
-): UneGouvernanceReadModel {
+function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadModel {
   const noteDeContexte =
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     gouvernanceRecord.noteDeContexte &&
@@ -161,35 +86,15 @@ function transform(
 
   return {
     comites,
-    coporteurs: membres.map((membre) => ({
-      contactReferent: {
-        denomination: 'Contact politique de la collectivité',
-        mailContact: 'julien.deschamps@example.com',
-        nom: 'Henrich',
-        poste: 'chargé de mission',
-        prenom: 'Laetitia',
-      },
-      contactTechnique: 'Simon.lagrange@example.com',
-      feuillesDeRoute: [
-        {
-          montantSubventionAccorde: 5_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route inclusion',
-        },
-        {
-          montantSubventionAccorde: 5_000,
-          montantSubventionFormationAccorde: 5_000,
-          nom: 'Feuille de route numérique du Rhône',
-        },
-      ],
-      links: {},
-      nom: membre.nom,
-      roles: membre.roles.toSorted((lRole, rRole) => lRole.localeCompare(rRole)),
-      telephone: '+33 4 45 00 45 00',
-      totalMontantSubventionAccorde: NaN,
-      totalMontantSubventionFormationAccorde: NaN,
-      type: membre.type,
-    })),
+    coporteurs: toMembres(gouvernanceRecord.membres)
+      .filter(isCoporteur)
+      .toSorted(sortMembres)
+      .map((membre) => ({
+        ...membre,
+        ...bouchonCoporteur,
+        totalMontantSubventionAccorde: NaN,
+        totalMontantSubventionFormationAccorde: NaN,
+      } as CoporteurDetailReadModel)),
     departement: gouvernanceRecord.relationDepartement.nom,
     feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute) => ({
       beneficiairesSubvention: [
@@ -230,8 +135,67 @@ function transform(
   }
 }
 
-type AggregatedMembre = Readonly<{
-  nom: string
-  roles: ReadonlyArray<string>
-  type: string
+type GouvernanceRecord = Prisma.GouvernanceRecordGetPayload<{
+  include: {
+    comites: {
+      include: {
+        relationUtilisateur: true
+      }
+    }
+    relationDepartement: {
+      select: {
+        code: true
+        nom: true
+      }
+    }
+    relationEditeurNotePrivee: true
+    relationEditeurNoteDeContexte: true
+    feuillesDeRoute: true
+    membres: {
+      include: {
+        membresGouvernanceCommune: true
+        membresGouvernanceDepartement: {
+          include: {
+            relationDepartement: true
+          }
+        }
+        membresGouvernanceEpci: true
+        membresGouvernanceSgar: {
+          include: {
+            relationSgar: true
+          }
+        }
+        membresGouvernanceStructure: true
+      }
+    }
+  }
 }>
+
+function isCoporteur(membre: Membre): boolean {
+  return membre.roles.includes('coporteur')
+}
+
+const bouchonCoporteur: Partial<CoporteurDetailReadModel> = {
+  contactReferent: {
+    denomination: 'Contact politique de la collectivité',
+    mailContact: 'julien.deschamps@example.com',
+    nom: 'Henrich',
+    poste: 'chargé de mission',
+    prenom: 'Laetitia',
+  },
+  contactTechnique: 'Simon.lagrange@example.com',
+  feuillesDeRoute: [
+    {
+      montantSubventionAccorde: 5_000,
+      montantSubventionFormationAccorde: 5_000,
+      nom: 'Feuille de route inclusion',
+    },
+    {
+      montantSubventionAccorde: 5_000,
+      montantSubventionFormationAccorde: 5_000,
+      nom: 'Feuille de route numérique du Rhône',
+    },
+  ],
+  links: {},
+  telephone: '+33 4 45 00 45 00',
+}
