@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
-import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceReadModelLoader } from '@/use-cases/queries/RecupererUneGouvernance'
+import { TypeDeComite, UneGouvernanceReadModel, UneGouvernanceLoader } from '@/use-cases/queries/RecupererUneGouvernance'
 
 type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   include: {
@@ -27,7 +27,7 @@ type GouvernanceWithNoteDeContexte = Prisma.GouvernanceRecordGetPayload<{
   }
 }>
 
-export class PrismaGouvernanceLoader implements UneGouvernanceReadModelLoader {
+export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   readonly #dataResource: Prisma.GouvernanceRecordDelegate
 
   constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
