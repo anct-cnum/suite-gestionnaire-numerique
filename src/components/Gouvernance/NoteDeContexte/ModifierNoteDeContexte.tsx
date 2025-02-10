@@ -19,11 +19,10 @@ export default function ModifierNoteDeContexte({
   uidGouvernance,
   closeDrawer,
 }: Props): ReactElement {
-  const { modifierUneNoteDeContexteAction, pathname } = useContext(clientContext)
+  const { modifierUneNoteDeContexteAction, supprimerUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
-  const hasContent = Boolean(texte && contenu.trim())
 
   return (
     <>
@@ -50,23 +49,20 @@ export default function ModifierNoteDeContexte({
           <li>
             <SubmitButton
               ariaControls={id}
-              isDisabled={!hasContent || isDisabled}
+              isDisabled={isDisabled}
             >
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
           </li>
-          {hasContent ?
-            <li>
-              <button
-                className="fr-btn red-button"
-                onClick={viderLeContenu}
-                type="button"
-              >
-                Supprimer
-              </button>
-            </li>
-            :
-            null}
+          <li>
+            <button
+              className="fr-btn red-button"
+              onClick={viderLEditeur}
+              type="button"
+            >
+              Effacer
+            </button>
+          </li>
         </ul>
       </form>
       <p className={`fr-text--xs ${styles.center}`}>
@@ -78,15 +74,36 @@ export default function ModifierNoteDeContexte({
   async function modifierUneNoteDeContexte(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
-    const messages = await modifierUneNoteDeContexteAction({ contenu, path: pathname, uidGouvernance })
-    if (messages[0] === 'OK') {
-      Notification('success', { description: 'modifiée', title: 'Note de contexte ' })
+    if (contenu === '') {
+      const messages = await supprimerUneNoteDeContexteAction({
+        path: pathname,
+        uidGouvernance,
+      })
+      if (messages.includes('OK')) {
+        viderLeContenu()
+        Notification('success', { description: 'supprimée', title: 'Note de contexte ' })
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      }
     } else {
-      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      const messages = await modifierUneNoteDeContexteAction({
+        contenu,
+        path: pathname,
+        uidGouvernance,
+      })
+      if (messages.includes('OK')) {
+        Notification('success', { description: 'bien modifiée', title: 'Note de contexte ' })
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      }
     }
-    closeDrawer();
-    (event.target as HTMLFormElement).reset()
+    closeDrawer()
     setIsDisabled(false)
+  }
+
+  function viderLEditeur(event: FormEvent<HTMLButtonElement>): void {
+    event.preventDefault()
+    viderLeContenu()
   }
 }
 

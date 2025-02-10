@@ -18,6 +18,7 @@ import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePr
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
+import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
@@ -52,6 +53,7 @@ export default function ClientContext({
       supprimerMonCompteAction,
       supprimerUnComiteAction,
       supprimerUnUtilisateurAction,
+      supprimerUneNoteDeContexteAction,
       supprimerUneNotePriveeAction,
       utilisateursParPage,
     }),
@@ -79,6 +81,7 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   modifierUnComiteAction: typeof modifierUnComiteAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
+  supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
