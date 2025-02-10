@@ -25,9 +25,13 @@ describe('gouvernance', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: undefined,
-      coporteurs: undefined,
       feuillesDeRoute: undefined,
       noteDeContexte: undefined,
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [],
+        total: 0,
+      },
     }), epochTimePlusOneDay)
 
     // WHEN
@@ -163,7 +167,14 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans membre, alors elle s’affiche avec son résumé et sa section lui demandant d’en ajouter un', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ coporteurs: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
+      departement: 'Rhône',
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [],
+        total: 0,
+      },
+    }), epochTimePlusOneDay)
 
     // WHEN
     render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
@@ -191,43 +202,47 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      coporteurs: [
-        {
-          contactReferent: {
-            denomination: 'Contact politique de la collectivité',
-            mailContact: 'julien.deschamps@rhones.gouv.fr',
-            nom: 'Henrich',
-            poste: 'chargé de mission',
-            prenom: 'Laetitia',
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [
+          {
+            contactReferent: {
+              denomination: 'Contact politique de la collectivité',
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
+            },
+            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+            links: {},
+            nom: 'Préfecture du Rhône',
+            roles: ['coporteur'],
+            telephone: '+33 4 45 00 45 00',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Préfecture départementale',
           },
-          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-          links: {},
-          nom: 'Préfecture du Rhône',
-          roles: ['coporteur'],
-          telephone: '+33 4 45 00 45 00',
-          totalMontantSubventionAccorde: 0,
-          totalMontantSubventionFormationAccorde: 0,
-          type: 'Préfecture départementale',
-        },
-        {
-          contactReferent: {
-            denomination: 'Contact politique de la collectivité',
-            mailContact: 'didier.durand@exemple.com',
-            nom: 'Didier',
-            poste: 'chargé de mission',
-            prenom: 'Durant',
+          {
+            contactReferent: {
+              denomination: 'Contact politique de la collectivité',
+              mailContact: 'didier.durand@exemple.com',
+              nom: 'Didier',
+              poste: 'chargé de mission',
+              prenom: 'Durant',
+            },
+            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
+            links: {},
+            nom: 'Département du Rhône',
+            roles: ['coporteur', 'cofinanceur'],
+            telephone: '+33 4 45 00 45 01',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Conseil départemental',
           },
-          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
-          links: {},
-          nom: 'Département du Rhône',
-          roles: ['coporteur', 'cofinanceur'],
-          telephone: '+33 4 45 00 45 01',
-          totalMontantSubventionAccorde: 0,
-          totalMontantSubventionFormationAccorde: 0,
-          type: 'Conseil départemental',
-        },
-      ],
+        ],
+        total: 2,
+      },
     }), epochTimePlusOneDay)
 
     // WHEN
@@ -243,7 +258,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '2 membres' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 1 co-financeur', { selector: 'p' })
+    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 2 membres, 0 candidat', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/')
@@ -285,26 +300,30 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance avec qu’un membre, alors elle s’affiche avec son résumé au singulier et certains titres au singulier', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      coporteurs: [
-        {
-          contactReferent: {
-            denomination: 'Contact politique de la collectivité',
-            mailContact: 'julien.deschamps@rhones.gouv.fr',
-            nom: 'Henrich',
-            poste: 'chargé de mission',
-            prenom: 'Laetitia',
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [
+          {
+            contactReferent: {
+              denomination: 'Contact politique de la collectivité',
+              mailContact: 'julien.deschamps@rhones.gouv.fr',
+              nom: 'Henrich',
+              poste: 'chargé de mission',
+              prenom: 'Laetitia',
+            },
+            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+            links: { plusDetails: '/' },
+            nom: 'Préfecture du Rhône',
+            roles: ['coporteur'],
+            telephone: '+33 4 45 00 45 00',
+            totalMontantSubventionAccorde: 0,
+            totalMontantSubventionFormationAccorde: 0,
+            type: 'Préfecture départementale',
           },
-          contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-          feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-          links: { plusDetails: '/' },
-          nom: 'Préfecture du Rhône',
-          roles: ['coporteur'],
-          telephone: '+33 4 45 00 45 00',
-          totalMontantSubventionAccorde: 0,
-          totalMontantSubventionFormationAccorde: 0,
-          type: 'Préfecture départementale',
-        },
-      ],
+        ],
+        total: 1,
+      },
     }), epochTimePlusOneDay)
 
     // WHEN
@@ -318,7 +337,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '1 membre' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('1 co-porteur', { selector: 'p' })
+    const sousTitreMembre = within(enTeteMembre).getByText('1 co-porteur, 1 membre, 0 candidat', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
   })
 
