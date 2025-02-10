@@ -14,6 +14,7 @@ import {
   MembreGouvernanceCommuneRecord,
   MembreGouvernanceStructureRecord,
   UtilisateurRecord,
+  MembreRecord,
 } from '@prisma/client'
 
 import { Prisma as PrismaFNE } from './fne/client-fne'
@@ -42,7 +43,7 @@ void (async function migrate(): Promise<void> {
             departementCode: gouvernanceFNE.departementCode,
             derniereEditionNoteDeContexte: gouvernanceFNE.modification,
             editeurNoteDeContexteId: utilisateur.ssoId,
-            noteDeContexte: gouvernanceFNE.noteDeContexte || null,
+            noteDeContexte: gouvernanceFNE.noteDeContexte,
           },
         })
         return [gouvernanceFNE, gouvernance, utilisateur] as const
@@ -52,30 +53,30 @@ void (async function migrate(): Promise<void> {
       console.log(greenColor, `${gouvernancesFNEGouvernancesEtCreateurs.length} gouvernances sont insérées`)
       const groupe = grouperDonneesACreer(gouvernancesFNEGouvernancesEtCreateurs)
       return Promise.all([
-        prisma.comiteRecord.createMany({ data: groupe.comites, skipDuplicates: true }),
-        prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute, skipDuplicates: true }),
-        prisma.membreGouvernanceDepartementRecord.createMany({
-          data: groupe.membresDepartements,
-          skipDuplicates: true,
-        }),
-        prisma.membreGouvernanceSgarRecord.createMany({ data: groupe.membresSgars, skipDuplicates: true }),
-        prisma.membreGouvernanceEpciRecord.createMany({ data: groupe.membresEpcis, skipDuplicates: true }),
-        prisma.membreGouvernanceCommuneRecord.createMany({ data: groupe.membresCommunes, skipDuplicates: true }),
-        prisma.membreGouvernanceStructureRecord.createMany({ data: groupe.membresStructures, skipDuplicates: true }),
+        groupe,
+        prisma.membreRecord.createMany({ data: groupe.membres.slice(), skipDuplicates: true }),
       ])
     })
-    .then(async ([comitesCrees, feuillesDeRouteCreees]) => {
+    .then(async ([groupe, membresCrees]) => Promise.all([
+      membresCrees,
+      prisma.comiteRecord.createMany({ data: groupe.comites }),
+      prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute }),
+      prisma.membreGouvernanceDepartementRecord.createMany({
+        data: groupe.membresDepartements.slice(),
+        skipDuplicates: true,
+      }),
+      prisma.membreGouvernanceCommuneRecord.createMany({ data: groupe.membresCommunes.slice(), skipDuplicates: true }),
+      prisma.membreGouvernanceEpciRecord.createMany({ data: groupe.membresEpcis.slice() }),
+      prisma.membreGouvernanceSgarRecord.createMany({ data: groupe.membresSgars.slice() }),
+      prisma.membreGouvernanceStructureRecord.createMany({
+        data: groupe.membresStructures.slice(),
+        skipDuplicates: true,
+      }),
+    ]))
+    .then(([membresCrees, comitesCrees, feuillesDeRouteCreees]) => {
       console.log(greenColor, `${comitesCrees.count} comites sont insérés`)
       console.log(greenColor, `${feuillesDeRouteCreees.count} feuilles de route sont insérées`)
-      return prisma.$queryRaw`SELECT
-        (SELECT COUNT(distinct commune) FROM membre_gouvernance_commune)
-        + (SELECT COUNT(distinct "sgarCode") FROM  membre_gouvernance_sgar)
-        + (SELECT COUNT(distinct epci) FROM  membre_gouvernance_epci)
-        + (SELECT COUNT(distinct "departementCode" ) FROM  membre_gouvernance_departement)
-        + (SELECT COUNT(distinct "structure") FROM membre_gouvernance_structure)` as Promise<Readonly<[string, bigint]>>
-    })
-    .then((nombreDeMembresUniques) => {
-      console.log(greenColor, `${Object.values(nombreDeMembresUniques[0])[0]} membres uniques présents en base`)
+      console.log(greenColor, `${membresCrees.count} membres uniques par gouvernance sont insérés`)
       console.log(greenColor, 'La migration des gouvernances est finie')
     })
 }())
@@ -129,9 +130,22 @@ function grouperDonneesACreer(
 ): GroupeGouvernance {
   return donneesAFormaterGroupees.reduce<GroupeGouvernance>(
     (groupe, [gouvernanceFNE, gouvernance, { ssoId }]) => {
+      const prefectureMembreId = `prefecture-${gouvernance.departementCode}`
       return {
         ...groupe,
-        ...gouvernanceFNE.membres.reduce(extraireMembresGouvernances(gouvernanceFNE, gouvernance), groupe),
+        ...gouvernanceFNE.membres.reduce(extraireMembresGouvernances(gouvernanceFNE, gouvernance), {
+          ...groupe,
+          membres: groupe.membres.concat({
+            gouvernanceDepartementCode: gouvernance.departementCode,
+            id: prefectureMembreId,
+            type: 'Préfecture départementale',
+          }),
+          membresDepartements: groupe.membresDepartements.concat({
+            departementCode: gouvernance.departementCode,
+            membreId: prefectureMembreId,
+            role: 'coporteur',
+          }),
+        }),
         comites: groupe.comites.concat(
           gouvernanceFNE.comites.map(comiteFromComiteFNE(gouvernance.departementCode, ssoId))
         ),
@@ -139,13 +153,13 @@ function grouperDonneesACreer(
           gouvernanceFNE.feuillesDeRoute.map(feuilleDeRouteFromFeuilleDeRouteFNE(gouvernance.departementCode))
         ),
         gouvernances: groupe.gouvernances.concat(gouvernance),
-
       }
     },
     {
       comites: [],
       feuillesDeRoute: [],
       gouvernances: [],
+      membres: [],
       membresCommunes: [],
       membresDepartements: [],
       membresEpcis: [],
@@ -184,94 +198,98 @@ function grouperDonneesACreer(
       const isBeneficiaire = isDemandeSubventionAcceptee(membreFNE)
       const isRecipiendaire = gouvernanceFNE.relationBeneficiaireDotationFormation
       const ajouterMembres = ajouterMembresGouvernance(membreFNE, gouvernance.departementCode)
-      let membres: GroupeMembres = {
-        membresCommunes: groupeMembres.membresCommunes,
-        membresDepartements: [
-          ...groupeMembres.membresDepartements,
-          {
-            departementCode: gouvernance.departementCode,
-            gouvernanceDepartementCode: gouvernance.departementCode,
-            role: 'coporteur',
-            type: 'Préfecture départementale',
-          },
-        ],
-        membresEpcis: groupeMembres.membresEpcis,
-        membresSgars: groupeMembres.membresSgars,
-        membresStructures: groupeMembres.membresStructures,
-      }
+      let groupe: GroupeMembres = { ...groupeMembres }
       if (!isCoporteur && !isBeneficiaire && !isRecipiendaire) {
-        membres = ajouterMembres(membres, 'N/A')
+        groupe = ajouterMembres(groupe, 'observateur')
       } else {
         if (isCoporteur) {
-          membres = ajouterMembres(membres, 'coporteur')
+          groupe = ajouterMembres(groupe, 'coporteur')
         }
         if (isBeneficiaire) {
-          membres = ajouterMembres(membres, 'beneficiaire')
+          groupe = ajouterMembres(groupe, 'beneficiaire')
         }
         if (isRecipiendaire) {
-          membres = ajouterMembres(membres, 'recipiendaire')
+          groupe = ajouterMembres(groupe, 'recipiendaire')
         }
       }
-      return membres
+      return groupe
     }
   }
 
   function ajouterMembresGouvernance(membreFNE: GouvernanceFNE['membres'][number], departementCode: string) {
     return (groupeMembres: GroupeMembres, role: string): GroupeMembres => {
-      let membres: GroupeMembres = { ...groupeMembres }
-      const common = {
-        gouvernanceDepartementCode: departementCode,
-        role,
-        type: membreFNE.relationInformationSiret?.formeJuridique ?? null,
-      }
+      let groupe: GroupeMembres = { ...groupeMembres }
+      let membreId: string
+      let type: string
+      const gouvernanceDepartementCode = departementCode
       switch (true) {
         case Boolean(membreFNE.departementCode):
-          membres = {
-            ...membres,
-            membresDepartements: membres.membresDepartements.concat({
-              ...common,
+          [membreId, type] = [`departement-${membreFNE.departementCode}-${departementCode}`, 'Conseil départemental']
+          groupe = {
+            ...groupe,
+            membresDepartements: groupe.membresDepartements.concat({
               departementCode: membreFNE.departementCode!,
+              membreId,
+              role,
             }),
           }
           break
         case Boolean(membreFNE.communeCode):
-          membres = {
-            ...membres,
-            membresCommunes: membres.membresCommunes.concat({
-              ...common,
+          [membreId, type] = [`commune-${membreFNE.communeCode}-${departementCode}`, 'Collectivité, commune']
+          groupe = {
+            ...groupe,
+            membresCommunes: groupe.membresCommunes.concat({
               commune: membreFNE.relationCommune!.nom,
+              membreId,
+              role,
             }),
           }
           break
         case Boolean(membreFNE.epciCode):
-          membres = {
-            ...membres,
-            membresEpcis: membres.membresEpcis.concat({
-              ...common,
+          [membreId, type] = [`epci-${membreFNE.epciCode}-${departementCode}`, 'Collectivité, EPCI']
+          groupe = {
+            ...groupe,
+            membresEpcis: groupe.membresEpcis.concat({
               epci: membreFNE.relationEpci!.nom,
+              membreId,
+              role,
             }),
           }
           break
         case Boolean(membreFNE.regionCode):
-          membres = {
-            ...membres,
-            membresSgars: membres.membresSgars.concat({
-              ...common,
+          [membreId, type] = [`sgar-${membreFNE.regionCode}-${departementCode}`, 'Préfecture régionale']
+          groupe = {
+            ...groupe,
+            membresSgars: groupe.membresSgars.concat({
+              membreId,
+              role,
               sgarCode: membreFNE.regionCode!,
             }),
           }
           break
         case Boolean(membreFNE.siret):
-          membres = {
-            ...membres,
-            membresStructures: membres.membresStructures.concat({
-              ...common,
+          membreId = `structure-${membreFNE.siret}-${departementCode}`
+          groupe = {
+            ...groupe,
+            membresStructures: groupe.membresStructures.concat({
+              membreId,
+              role,
               structure: membreFNE.relationInformationSiret!.nom ?? membreFNE.relationInformationSiret!.siret,
             }),
           }
           break
       }
-      return membres
+      groupe = {
+        ...groupe,
+        membres: groupe.membres.concat({
+          gouvernanceDepartementCode,
+          // @ts-expect-error
+          id: membreId,
+          // @ts-expect-error
+          type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
+        }),
+      }
+      return groupe
     }
   }
 
@@ -317,9 +335,10 @@ type GroupeGouvernance = Readonly<{
 }> & GroupeMembres
 
 type GroupeMembres = Readonly<{
-  membresDepartements: Array<MembreGouvernanceDepartementRecord>
-  membresSgars: Array<MembreGouvernanceSgarRecord>
-  membresEpcis: Array<MembreGouvernanceEpciRecord>
-  membresCommunes: Array<MembreGouvernanceCommuneRecord>
-  membresStructures: Array<MembreGouvernanceStructureRecord>
+  membres: ReadonlyArray<MembreRecord>
+  membresDepartements: ReadonlyArray<MembreGouvernanceDepartementRecord>
+  membresSgars: ReadonlyArray<MembreGouvernanceSgarRecord>
+  membresEpcis: ReadonlyArray<MembreGouvernanceEpciRecord>
+  membresCommunes: ReadonlyArray<MembreGouvernanceCommuneRecord>
+  membresStructures: ReadonlyArray<MembreGouvernanceStructureRecord>
 }>

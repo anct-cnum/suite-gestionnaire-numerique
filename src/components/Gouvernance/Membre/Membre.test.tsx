@@ -87,8 +87,7 @@ describe('membres', () => {
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
+            type: 'Préfecture départementale',
           },
         ],
       })
@@ -122,8 +121,7 @@ describe('membres', () => {
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
+            type: 'Préfecture départementale',
           },
         ],
       })
@@ -176,8 +174,7 @@ describe('membres', () => {
               nom: 'Préfecture du Rhône',
               roles: ['Co-porteur'],
               telephone: '',
-              type: 'Administration',
-              typologieMembre: 'Préfecture départementale',
+              type: 'Préfecture départementale',
             },
           ],
         })
@@ -245,8 +242,7 @@ describe('membres', () => {
               nom: 'Préfecture du Rhône',
               roles: ['Co-porteur'],
               telephone: '+33 4 45 00 45 00',
-              type: 'Administration',
-              typologieMembre: 'Préfecture départementale',
+              type: 'Préfecture départementale',
             },
           ],
         })
@@ -296,7 +292,7 @@ describe('membres', () => {
       expect(roleCoPorteur).toBeInTheDocument()
       const roleFinanceur = within(rolesItems[1]).getByText('Co-financeur', { selector: 'p' })
       expect(roleFinanceur).toBeInTheDocument()
-      const typologieMembre = screen.getByText('Collectivité, EPCI')
+      const typologieMembre = screen.getAllByText('Conseil départemental')[0]
       expect(typologieMembre).toBeInTheDocument()
       const feuillesDeRouteList = within(drawer).getAllByRole('list')[1]
       const feuillesDeRouteItems = within(feuillesDeRouteList).getAllByRole('listitem')
@@ -338,8 +334,7 @@ describe('membres', () => {
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
+            type: 'Collectivité, EPCI',
           },
         ],
       })
@@ -372,8 +367,7 @@ describe('membres', () => {
             telephone: '',
             totalMontantSubventionAccorde: 0,
             totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
+            type: 'Collectivité, EPCI',
           },
         ],
       })
@@ -427,8 +421,7 @@ describe('membres', () => {
               telephone: '+33 4 45 00 45 01',
               totalMontantSubventionAccorde: 0,
               totalMontantSubventionFormationAccorde: 0,
-              type: 'Collectivité',
-              typologieMembre: 'Collectivité, EPCI',
+              type: 'Collectivité, EPCI',
             },
           ],
         })
@@ -514,8 +507,7 @@ describe('membres', () => {
               telephone: '+33 4 45 00 45 01',
               totalMontantSubventionAccorde: 0,
               totalMontantSubventionFormationAccorde: 0,
-              type: 'Collectivité',
-              typologieMembre: 'Collectivité, EPCI',
+              type: 'Collectivité, EPCI',
             },
           ],
         })
