@@ -87,8 +87,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(instructeur).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
     const pilotePolitiquePublique = within(roles).getByRole('option', { name: 'Pilote politique publique' })
     expect(pilotePolitiquePublique).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
-    const supportAnimation = within(roles).getByRole('option', { name: 'Support animation' })
-    expect(supportAnimation).toHaveAttribute('selected', '')
+    const supportAnimation = within(roles).getByRole('option', { name: 'Support animation', selected: true })
+    expect(supportAnimation).toBeInTheDocument()
   })
 
   describe('le menu utilisateur étant ouvert', () => {

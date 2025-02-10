@@ -6,6 +6,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
+import { accepterUnMembreAction } from '@/app/api/actions/accepterUnMembreAction'
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
@@ -34,6 +35,7 @@ export default function ClientContext({
 
   const clientContextProviderValue = useMemo(
     () => ({
+      accepterUnMembreAction,
       ajouterUnComiteAction,
       ajouterUneNoteDeContexteAction,
       ajouterUneNotePriveeAction,
@@ -68,6 +70,7 @@ export default function ClientContext({
 export const clientContext = createContext<ClientContextProviderValue>({} as ClientContextProviderValue)
 
 export type ClientContextProviderValue = Readonly<{
+  accepterUnMembreAction: typeof accepterUnMembreAction
   changerMonRoleAction: typeof changerMonRoleAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
