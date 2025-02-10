@@ -1,4 +1,5 @@
 // Stryker disable all
+import { FeuillesDeRouteReadModel } from './queries/RecupererLesFeuillesDeRoute'
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
@@ -208,6 +209,92 @@ export function mesMembresReadModelFactory(
     ],
     roles: [],
     typologies: [],
+    ...override,
+  }
+}
+
+export function feuillesDeRouteReadModelFactory(
+  override?: Partial<FeuillesDeRouteReadModel>
+): FeuillesDeRouteReadModel {
+  return {
+    departement: '93',
+    feuillesDeRoute: [
+      {
+        actions: [
+          {
+            nom: 'Structurer une filière de reconditionnement locale 1',
+            statut: 'subvention_acceptee',
+            totaux: {
+              coFinancement: 30_000,
+              financementAccorde: 40_000,
+            },
+            uid: 'actionFooId1',
+          },
+          {
+            nom: 'Structurer une filière de reconditionnement locale 2',
+            statut: 'subvention_acceptee',
+            totaux: {
+              coFinancement: 50_000,
+              financementAccorde: 20_000,
+            },
+            uid: 'actionFooId2',
+          },
+        ],
+        beneficiaires: 5,
+        coFinanceurs: 3,
+        nom: 'Feuille de route 1',
+        structureCoPorteuse: {
+          nom: 'CC des Monts du Lyonnais',
+          uid: 'structureCoPorteuseFooId',
+        },
+        totaux: {
+          budget: 0,
+          coFinancement: 0,
+          financementAccorde: 0,
+        },
+        uid: 'feuilleDeRouteFooId1',
+      },
+      {
+        actions: [
+          {
+            nom: 'Ressource humaine 1',
+            statut: 'subvention_acceptee',
+            totaux: {
+              coFinancement: 60_000,
+              financementAccorde: 20_000,
+            },
+            uid: 'actionFooId1',
+          },
+          {
+            nom: 'Ressource humaine 2',
+            statut: 'subvention_acceptee',
+            totaux: {
+              coFinancement: 40_000,
+              financementAccorde: 30_000,
+            },
+            uid: 'actionFooId2',
+          },
+        ],
+        beneficiaires: 5,
+        coFinanceurs: 3,
+        nom: 'Feuille de route 2',
+        structureCoPorteuse: {
+          nom: 'CC des Monts du Lyonnais',
+          uid: 'structureCoPorteuseFooId',
+        },
+        totaux: {
+          budget: 0,
+          coFinancement: 0,
+          financementAccorde: 0,
+        },
+        uid: 'feuilleDeRouteFooId2',
+      },
+    ],
+    totaux: {
+      budget: 0,
+      coFinancement: 0,
+      financementAccorde: 0,
+    },
     ...override,
   }
 }
