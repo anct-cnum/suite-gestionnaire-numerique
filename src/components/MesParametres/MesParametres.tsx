@@ -6,8 +6,6 @@ import Toggle from '../shared/Toggle/Toggle'
 
 export default function MesParametres(): ReactElement {
   const communicationEtNotificationsHeadingId = useId()
-  const recevoirNotificationsToggleId = useId()
-  const recevoirRecapHebdoToggleId = useId()
   const affichageHeadingId = useId()
   const modeClairRadioId = useId()
   const modeSombreRadioId = useId()
@@ -35,14 +33,12 @@ export default function MesParametres(): ReactElement {
           </h2>
           <Toggle
             hasSeparator={hasSeparator}
-            id={recevoirNotificationsToggleId}
-            name={recevoirNotificationsToggleId}
+            name="recevoirNotifications"
           >
             Recevoir toutes les notifications sur votre adresse électronique
           </Toggle>
           <Toggle
-            id={recevoirRecapHebdoToggleId}
-            name={recevoirRecapHebdoToggleId}
+            name="recevoirRecapitulatif"
           >
             Recevoir un récapitulatif hebdomadaire sur votre adresse électronique
           </Toggle>

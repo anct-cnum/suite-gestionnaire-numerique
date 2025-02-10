@@ -23,6 +23,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
               },
             },
             membresGouvernanceStructure: true,
+            relationContact: true,
           },
         },
         relationDepartement: true,
@@ -38,25 +39,42 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
         ajouterUnMembre: false,
         supprimerUnMembre: false,
       },
+      candidats: toMembres(gouvernanceRecord.membres, 'candidat')
+        .toSorted(sortMembres)
+        .map(toMesMembresReadModel),
       departement: 'Rhône',
-      membres: toMembres(gouvernanceRecord.membres)
+      membres: toMembres(gouvernanceRecord.membres, 'confirme')
         .toSorted(sortMembres)
         .map(toMesMembresReadModel),
       roles: [],
+      suggeres: toMembres(gouvernanceRecord.membres, 'suggere')
+        .toSorted(sortMembres)
+        .map(toMesMembresReadModel),
       typologies: [],
+      uidGouvernance: codeDepartementGouvernance,
     }
   }
 }
 
 function toMesMembresReadModel(membre: Membre): MembreReadModel {
+  let contactReferent: Membre['contactReferent']
+  if (membre.contactReferent) {
+    contactReferent = {
+      email: membre.contactReferent.email,
+      fonction: membre.contactReferent.fonction,
+      nom: membre.contactReferent.nom,
+      prenom: membre.contactReferent.prenom,
+    }
+  }
+
   return {
-    contactReferent: {
-      nom: 'Dupont',
-      prenom: 'Valérie',
-    },
+    adresse: 'Adresse bouchonnée',
+    contactReferent,
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
+    siret: 'Siret bouchonné',
     suppressionDuMembreAutorise: false,
     typologie: membre.type ?? '',
+    uidMembre: membre.id,
   }
 }
