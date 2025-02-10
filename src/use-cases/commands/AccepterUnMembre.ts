@@ -52,9 +52,9 @@ type Failure =
   | MembreFailure
 
 type Command = Readonly<{
-  uidMembrePotentiel: string
   uidGestionnaire: string
   uidGouvernance: string
+  uidMembrePotentiel: string
 }>
 
 type UtilisateurRepository = GetUtilisateurRepository

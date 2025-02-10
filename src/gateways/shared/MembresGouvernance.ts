@@ -1,9 +1,10 @@
 import { Prisma } from '@prisma/client'
 
-export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<Membre> {
+export function toMembres(membres: ReadonlyArray<MembreRecord>, statut: string): ReadonlyArray<Membre> {
   return Object.values(
     membres
       .values()
+      .filter((membre) => membre.statut === statut)
       .flatMap(associationsMembreEtRoleUnique)
       .reduce(groupMembresById, {})
   )
@@ -14,6 +15,13 @@ export function sortMembres(leftMembre: Membre, rightMembre: Membre): number {
 }
 
 export type Membre = Readonly<{
+  contactReferent?: {
+    email: string
+    prenom: string
+    nom: string
+    fonction: string
+  }
+  id: string
   nom: string
   roles: ReadonlyArray<string>
   type: string | null
@@ -29,7 +37,15 @@ function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<Ass
     membre.membresGouvernanceEpci.map(({ epci, role }) => ({ nom: epci, role })),
     membre.membresGouvernanceSgar.map(({ relationSgar, role }) => ({ nom: relationSgar.nom, role })),
     membre.membresGouvernanceStructure.map(({ structure, role }) => ({ nom: structure, role })),
-  ].flat().map(({ nom, role }) => ({ id: membre.id, nom, role, type: membre.type }))
+  ]
+    .flat()
+    .map(({ nom, role }) => ({
+      contactReferent: membre.relationContact ?? undefined,
+      id: membre.id,
+      nom,
+      role,
+      type: membre.type,
+    }))
 }
 
 function groupMembresById(membresById: MembresById, membreUniqueRole: AssociationMembreEtRoleUnique): MembresById {
@@ -38,6 +54,8 @@ function groupMembresById(membresById: MembresById, membreUniqueRole: Associatio
     ...membresById,
     [membreUniqueRole.id]: {
       ...membre,
+      contactReferent: membreUniqueRole.contactReferent,
+      id: membreUniqueRole.id,
       nom: membreUniqueRole.nom,
       roles: membre.roles
         .concat(membreUniqueRole.role)
@@ -61,10 +79,17 @@ type MembreRecord = Prisma.MembreRecordGetPayload<{
       }
     }
     membresGouvernanceStructure: true
+    relationContact: true
   }
 }>
 
 type AssociationMembreEtRoleUnique = Readonly<{
+  contactReferent?: {
+    email: string
+    prenom: string
+    nom: string
+    fonction: string
+  }
   nom: string
   role: string
   type: string | null

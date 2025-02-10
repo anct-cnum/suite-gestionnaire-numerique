@@ -25,6 +25,7 @@ export function renderComponent(
   gouvernanceViewModelOverride?: Partial<GouvernanceViewModel>
 ): RenderResult {
   const clientContextProviderDefaultValue = {
+    accepterUnMembreAction: vi.fn(),
     ajouterUnComiteAction: vi.fn(),
     ajouterUneNoteDeContexteAction: vi.fn(),
     ajouterUneNotePriveeAction: vi.fn(),

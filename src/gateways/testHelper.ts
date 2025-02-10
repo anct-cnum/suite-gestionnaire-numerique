@@ -166,7 +166,14 @@ export async function creerUnMembreSgar(
 }
 
 export async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
+  await creerUnContact({
+    email: `commune-35345-${gouvernanceDepartementCode}@example.com`,
+    fonction: 'Directeur',
+    nom: 'Tartempion',
+    prenom: 'Michel',
+  })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-35345-${gouvernanceDepartementCode}`,
     type: 'Collectivité, commune',
@@ -209,6 +216,26 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   await creerUnMembre({
     gouvernanceDepartementCode,
     id: `region-11-${gouvernanceDepartementCode}`,
+    type: 'Préfecture régionale',
+  })
+  await creerUnCandidat({
+    gouvernanceDepartementCode,
+    id: `commune-110-${gouvernanceDepartementCode}`,
+    type: 'Préfecture régionale',
+  })
+  await creerUnCandidat({
+    gouvernanceDepartementCode,
+    id: `commune-112-${gouvernanceDepartementCode}`,
+    type: 'Préfecture régionale',
+  })
+  await creerUnSuggere({
+    gouvernanceDepartementCode,
+    id: `commune-111-${gouvernanceDepartementCode}`,
+    type: 'Préfecture régionale',
+  })
+  await creerUnSuggere({
+    gouvernanceDepartementCode,
+    id: `commune-113-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnMembreCommune({
@@ -270,6 +297,26 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     membreId: `structure-38012986643097-${gouvernanceDepartementCode}`,
     role: 'coporteur',
     structure: 'Orange',
+  })
+  await creerUnMembreCommune({
+    commune: 'Pipriac',
+    membreId: `commune-110-${gouvernanceDepartementCode}`,
+    role: 'observateur',
+  })
+  await creerUnMembreCommune({
+    commune: 'Rennes',
+    membreId: `commune-111-${gouvernanceDepartementCode}`,
+    role: 'observateur',
+  })
+  await creerUnMembreCommune({
+    commune: 'Rennes',
+    membreId: `commune-112-${gouvernanceDepartementCode}`,
+    role: 'observateur',
+  })
+  await creerUnMembreCommune({
+    commune: 'Pipriac',
+    membreId: `commune-113-${gouvernanceDepartementCode}`,
+    role: 'observateur',
   })
 }
 
@@ -405,4 +452,42 @@ function membreSgarRecordFactory(
     sgarCode: '84',
     ...override,
   }
+}
+
+function contactRecordFactory(
+  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
+): Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput {
+  return {
+    email: 'email@exemple.com',
+    fonction: 'Directeur',
+    nom: 'Tartempion',
+    prenom: 'Michel',
+    ...override,
+  }
+}
+
+async function creerUnCandidat(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
+  await prisma.membreRecord.create({
+    data: membreRecordFactory({
+      statut: 'candidat',
+      ...override,
+    }),
+  })
+}
+
+async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
+  await prisma.membreRecord.create({
+    data: membreRecordFactory({
+      statut: 'suggere',
+      ...override,
+    }),
+  })
+}
+
+async function creerUnContact(
+  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.contactMembreGouvernanceRecord.create({
+    data: contactRecordFactory(override),
+  })
 }

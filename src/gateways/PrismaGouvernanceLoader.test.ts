@@ -282,26 +282,31 @@ const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
   candidats: 0,
   coporteurs: [
     {
+      id: 'region-53-93',
       nom: 'Bretagne',
       roles: ['coporteur'],
       type: 'Préfecture régionale',
     },
     {
+      id: 'epci-200072056-93',
       nom: 'CC Porte du Jura',
       roles: ['beneficiaire', 'coporteur'],
       type: 'Collectivité, EPCI',
     },
     {
+      id: 'commune-94028-93',
       nom: 'Créteil',
       roles: ['coporteur'],
       type: 'Collectivité, commune',
     },
     {
+      id: 'structure-38012986643097-93',
       nom: 'Orange',
       roles: ['coporteur', 'recipiendaire'],
       type: 'Entreprise privée',
     },
     {
+      id: 'prefecture-93',
       nom: 'Seine-Saint-Denis',
       roles: ['coporteur'],
       type: 'Préfecture départementale',
