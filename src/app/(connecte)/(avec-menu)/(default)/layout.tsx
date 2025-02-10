@@ -1,8 +1,11 @@
-import { PropsWithChildren, ReactElement } from 'react'
+
+'use client'
+
+import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
 
-export default function Layout({ children }: Readonly<PropsWithChildren>): ReactElement {
+export default function Layout({ children }: { readonly children: React.ReactNode }): ReactElement {
   return (
     <div className="fr-grid-row">
       <div className="fr-col-2">

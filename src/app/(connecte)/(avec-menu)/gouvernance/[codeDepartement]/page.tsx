@@ -1,29 +1,11 @@
-import { notFound } from 'next/navigation'
-import { ReactElement } from 'react'
+'use client'
 
-import prisma from '../../../../../../prisma/prismaClient'
+import { ReactElement, useContext } from 'react'
+
 import Gouvernance from '@/components/Gouvernance/Gouvernance'
-import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
-import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
-import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 
-export default async function GouvernanceController({ params }: Props): Promise<ReactElement> {
-  try {
-    const codeDepartement = (await params).codeDepartement
-    const gouvernanceReadModel = await
-    new RecupererUneGouvernance(new PrismaGouvernanceLoader(prisma.gouvernanceRecord)).handle({ codeDepartement })
-
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
-    return (
-      <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
-    )
-  } catch {
-    notFound()
-  }
+export default function GouvernanceController(): ReactElement {
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  return <Gouvernance gouvernanceViewModel={gouvernanceViewModel} />
 }
-
-type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
-}>
