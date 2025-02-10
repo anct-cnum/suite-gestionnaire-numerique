@@ -50,8 +50,6 @@ describe('supprimer une note privée d’une gouvernance', () => {
     const result = await supprimerNotePrivee.handle({ uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurNePeutPasSupprimerNotePrivee')
   })

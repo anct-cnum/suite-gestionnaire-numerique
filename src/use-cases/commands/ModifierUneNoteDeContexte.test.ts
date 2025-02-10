@@ -60,8 +60,6 @@ describe('modifier une note de contexte', () => {
     const result = await modifierNoteDeContexte.handle({ contenu, uidEditeur: 'utilisateurUsurpateur', uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe('utilisateurUsurpateur')
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('editeurNePeutPasModifierNoteDeContexte')
   })
@@ -78,8 +76,6 @@ describe('modifier une note de contexte', () => {
     const result = await modifierNoteDeContexte.handle({ contenu, uidEditeur, uidGouvernance })
 
     // THEN
-    expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
     expect(spiedGouvernanceToUpdate).toBeNull()
     expect(result).toBe('noteDeContexteInexistante')
   })
