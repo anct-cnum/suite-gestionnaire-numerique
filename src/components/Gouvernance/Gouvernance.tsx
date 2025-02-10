@@ -62,10 +62,10 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
           (
             <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
               {
-                gouvernanceViewModel.sectionCoporteurs.coporteurs ?
+                gouvernanceViewModel.hasMembres ?
                   <ResumeMembre
-                    total={gouvernanceViewModel.sectionCoporteurs.total}
-                    type={gouvernanceViewModel.sectionCoporteurs.wording}
+                    denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
+                    total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
                   /> : (
                     <Resume style={styles['resume-membres']}>
                       <ResumeMembreVide />
@@ -225,7 +225,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
       </section>
       <section aria-labelledby="membre">
         {
-          gouvernanceViewModel.sectionCoporteurs.coporteurs ? (
+          gouvernanceViewModel.hasMembres ? (
             <SectionRemplie
               button={(
                 <Link
@@ -238,13 +238,13 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
               id="membre"
               subTitle={
                 <SubSectionTitle>
-                  {gouvernanceViewModel.sectionCoporteurs.detailDuNombreDeChaqueMembre}
+                  {gouvernanceViewModel.sectionMembres.wordingRecap}
                 </SubSectionTitle>
               }
-              title={`${gouvernanceViewModel.sectionCoporteurs.total} ${gouvernanceViewModel.sectionCoporteurs.wording}`}
+              title={`${gouvernanceViewModel.sectionMembres.totalEtWording[0]} ${gouvernanceViewModel.sectionMembres.totalEtWording[1]}`}
             >
               <MembreRempli
-                coporteurs={gouvernanceViewModel.sectionCoporteurs.coporteurs}
+                coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
               />
             </SectionRemplie>
           ) : (
