@@ -1,9 +1,9 @@
 import { QueryHandler } from '../QueryHandler'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
-  readonly #loader: UneGouvernanceReadModelLoader
+  readonly #loader: UneGouvernanceLoader
 
-  constructor(loader: UneGouvernanceReadModelLoader) {
+  constructor(loader: UneGouvernanceLoader) {
     this.#loader = loader
   }
 
@@ -22,7 +22,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
   }
 }
 
-export interface UneGouvernanceReadModelLoader {
+export interface UneGouvernanceLoader {
   get(codeDepartement: string): Promise<UneGouvernanceReadModel>
 }
 

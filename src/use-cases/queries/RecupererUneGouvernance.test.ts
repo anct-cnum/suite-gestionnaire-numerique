@@ -1,15 +1,14 @@
-import { UneGouvernanceReadModelLoader, RecupererUneGouvernance, UneGouvernanceReadModel } from './RecupererUneGouvernance'
+import { UneGouvernanceLoader, RecupererUneGouvernance, UneGouvernanceReadModel } from './RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '../testHelper'
 
-describe('recupererUneGouvernance', () => {
-  afterEach(() => {
+describe('recupérer une gouvernance', () => {
+  beforeEach(() => {
     uneGouvernance = gouvernanceReadModelFactory()
     spiedCodeDepartement = ''
   })
 
   it("quand une gouvernance est demandée sur un département et qu'elle n'existe pas alors on récupère une gouvernance vide", async () => {
     // GIVEN
-
     const queryHandler = new RecupererUneGouvernance(new GouvernanceInexistanteLoaderSpy())
 
     // WHEN
@@ -178,14 +177,14 @@ const gouvernanceSansMembre: UneGouvernanceReadModel = {
   coporteurs: [],
 }
 
-class GouvernanceInexistanteLoaderSpy implements UneGouvernanceReadModelLoader {
+class GouvernanceInexistanteLoaderSpy implements UneGouvernanceLoader {
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
     return Promise.resolve({ departement: uneGouvernance.departement, uid: uneGouvernance.uid })
   }
 }
 
-class GouvernanceExistanteLoaderSpy implements UneGouvernanceReadModelLoader {
+class GouvernanceExistanteLoaderSpy implements UneGouvernanceLoader {
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
     return Promise.resolve(uneGouvernance)
