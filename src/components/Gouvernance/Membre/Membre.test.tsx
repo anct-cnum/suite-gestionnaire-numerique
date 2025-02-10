@@ -70,27 +70,30 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+              feuillesDeRoute: [],
+              links: {},
+              nom: 'Préfecture du Rhône',
+              roles: ['Co-porteur'],
+              telephone: '',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Préfecture départementale',
             },
-            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-            feuillesDeRoute: [],
-            links: {},
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
-          },
-        ],
+          ],
+          total: 1,
+        },
       })
 
       // WHEN
@@ -105,27 +108,30 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
       // GIVEN
       afficherGouvernance({
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact politique de la collectivité',
-              mailContact: 'julien.deschamps@rhones.gouv.fr',
-              nom: 'Henrich',
-              poste: 'chargé de mission',
-              prenom: 'Laetitia',
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
+              },
+              contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+              feuillesDeRoute: [],
+              links: {},
+              nom: 'Préfecture du Rhône',
+              roles: ['Co-porteur'],
+              telephone: '',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Préfecture départementale',
             },
-            contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-            feuillesDeRoute: [],
-            links: {},
-            nom: 'Préfecture du Rhône',
-            roles: ['Co-porteur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Administration',
-            typologieMembre: 'Préfecture départementale',
-          },
-        ],
+          ],
+          total: 1,
+        },
       })
 
       // WHEN
@@ -161,25 +167,28 @@ describe('membres', () => {
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
-          coporteurs: [
-            {
-              contactReferent: {
-                denomination: 'Contact politique de la collectivité',
-                mailContact: 'julien.deschamps@rhones.gouv.fr',
-                nom: 'Henrich',
-                poste: 'chargé de mission',
-                prenom: 'Laetitia',
+          syntheseMembres: {
+            candidats: 0,
+            coporteurs: [
+              {
+                contactReferent: {
+                  denomination: 'Contact politique de la collectivité',
+                  mailContact: 'julien.deschamps@rhones.gouv.fr',
+                  nom: 'Henrich',
+                  poste: 'chargé de mission',
+                  prenom: 'Laetitia',
+                },
+                contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
+                feuillesDeRoute,
+                links: {},
+                nom: 'Préfecture du Rhône',
+                roles: ['Co-porteur'],
+                telephone: '',
+                type: 'Préfecture départementale',
               },
-              contactTechnique: 'Simon.lagrange@rhones.gouv.fr',
-              feuillesDeRoute,
-              links: {},
-              nom: 'Préfecture du Rhône',
-              roles: ['Co-porteur'],
-              telephone: '',
-              type: 'Administration',
-              typologieMembre: 'Préfecture départementale',
-            },
-          ],
+            ],
+            total: 1,
+          },
         })
 
         // WHEN
@@ -231,24 +240,27 @@ describe('membres', () => {
       ['', undefined].forEach((plusDetails) => {
         cleanup()
         afficherGouvernance({
-          coporteurs: [
-            {
-              contactReferent: {
-                denomination: 'Contact politique de la collectivité',
-                mailContact: 'julien.deschamps@rhones.gouv.fr',
-                nom: 'Henrich',
-                poste: 'chargé de mission',
-                prenom: 'Laetitia',
+          syntheseMembres: {
+            candidats: 0,
+            coporteurs: [
+              {
+                contactReferent: {
+                  denomination: 'Contact politique de la collectivité',
+                  mailContact: 'julien.deschamps@rhones.gouv.fr',
+                  nom: 'Henrich',
+                  poste: 'chargé de mission',
+                  prenom: 'Laetitia',
+                },
+                feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+                links: { plusDetails },
+                nom: 'Préfecture du Rhône',
+                roles: ['Co-porteur'],
+                telephone: '+33 4 45 00 45 00',
+                type: 'Préfecture départementale',
               },
-              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-              links: { plusDetails },
-              nom: 'Préfecture du Rhône',
-              roles: ['Co-porteur'],
-              telephone: '+33 4 45 00 45 00',
-              type: 'Administration',
-              typologieMembre: 'Préfecture départementale',
-            },
-          ],
+            ],
+            total: 1,
+          },
         })
 
         // WHEN
@@ -296,7 +308,7 @@ describe('membres', () => {
       expect(roleCoPorteur).toBeInTheDocument()
       const roleFinanceur = within(rolesItems[1]).getByText('Co-financeur', { selector: 'p' })
       expect(roleFinanceur).toBeInTheDocument()
-      const typologieMembre = screen.getByText('Collectivité, EPCI')
+      const typologieMembre = screen.getAllByText('Conseil départemental')[0]
       expect(typologieMembre).toBeInTheDocument()
       const feuillesDeRouteList = within(drawer).getAllByRole('list')[1]
       const feuillesDeRouteItems = within(feuillesDeRouteList).getAllByRole('listitem')
@@ -322,26 +334,29 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre avec les informations non-obligatoires remplacées par un tiret', () => {
       // GIVEN
       afficherGouvernance({
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact référent',
+                mailContact: 'didier.durand@exemple.com',
+                nom: 'Didier',
+                poste: 'chargé de mission',
+                prenom: 'Durant',
+              },
+              feuillesDeRoute: [],
+              links: { plusDetails: '/' },
+              nom: 'Département du Rhône',
+              roles: ['Co-porteur', 'Co-financeur'],
+              telephone: '',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Collectivité, EPCI',
             },
-            feuillesDeRoute: [],
-            links: { plusDetails: '/' },
-            nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Co-financeur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
-          },
-        ],
+          ],
+          total: 1,
+        },
       })
 
       // WHEN
@@ -356,26 +371,29 @@ describe('membres', () => {
     it('=> alors un drawer s’ouvre sans afficher les informations non-obligatoires', () => {
       // GIVEN
       afficherGouvernance({
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact référent',
+                mailContact: 'didier.durand@exemple.com',
+                nom: 'Didier',
+                poste: 'chargé de mission',
+                prenom: 'Durant',
+              },
+              feuillesDeRoute: [],
+              links: { plusDetails: '/' },
+              nom: 'Département du Rhône',
+              roles: ['Co-porteur', 'Co-financeur'],
+              telephone: '',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Collectivité, EPCI',
             },
-            feuillesDeRoute: [],
-            links: { plusDetails: '/' },
-            nom: 'Département du Rhône',
-            roles: ['Co-porteur', 'Co-financeur'],
-            telephone: '',
-            totalMontantSubventionAccorde: 0,
-            totalMontantSubventionFormationAccorde: 0,
-            type: 'Collectivité',
-            typologieMembre: 'Collectivité, EPCI',
-          },
-        ],
+          ],
+          total: 1,
+        },
       })
 
       // WHEN
@@ -411,26 +429,29 @@ describe('membres', () => {
       ({ feuillesDeRoute, result }) => {
         // GIVEN
         afficherGouvernance({
-          coporteurs: [
-            {
-              contactReferent: {
-                denomination: 'Contact référent',
-                mailContact: 'didier.durand@exemple.com',
-                nom: 'Didier',
-                poste: 'chargé de mission',
-                prenom: 'Durant',
+          syntheseMembres: {
+            candidats: 0,
+            coporteurs: [
+              {
+                contactReferent: {
+                  denomination: 'Contact référent',
+                  mailContact: 'didier.durand@exemple.com',
+                  nom: 'Didier',
+                  poste: 'chargé de mission',
+                  prenom: 'Durant',
+                },
+                feuillesDeRoute,
+                links: { plusDetails: '/' },
+                nom: 'Département du Rhône',
+                roles: ['Co-porteur', 'Co-financeur'],
+                telephone: '+33 4 45 00 45 01',
+                totalMontantSubventionAccorde: 0,
+                totalMontantSubventionFormationAccorde: 0,
+                type: 'Collectivité, EPCI',
               },
-              feuillesDeRoute,
-              links: { plusDetails: '/' },
-              nom: 'Département du Rhône',
-              roles: ['Co-porteur', 'Co-financeur'],
-              telephone: '+33 4 45 00 45 01',
-              totalMontantSubventionAccorde: 0,
-              totalMontantSubventionFormationAccorde: 0,
-              type: 'Collectivité',
-              typologieMembre: 'Collectivité, EPCI',
-            },
-          ],
+            ],
+            total: 1,
+          },
         })
 
         // WHEN
@@ -497,27 +518,30 @@ describe('membres', () => {
         // GIVEN
         cleanup()
         afficherGouvernance({
-          coporteurs: [
-            {
-              contactReferent: {
-                denomination: 'Contact référent',
-                mailContact: 'didier.durand@exemple.com',
-                nom: 'Didier',
-                poste: 'chargé de mission',
-                prenom: 'Durant',
+          syntheseMembres: {
+            candidats: 0,
+            coporteurs: [
+              {
+                contactReferent: {
+                  denomination: 'Contact référent',
+                  mailContact: 'didier.durand@exemple.com',
+                  nom: 'Didier',
+                  poste: 'chargé de mission',
+                  prenom: 'Durant',
+                },
+                contactTechnique,
+                feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
+                links: { plusDetails: '/' },
+                nom: 'Département du Rhône',
+                roles: ['Co-porteur', 'Co-financeur'],
+                telephone: '+33 4 45 00 45 01',
+                totalMontantSubventionAccorde: 0,
+                totalMontantSubventionFormationAccorde: 0,
+                type: 'Collectivité, EPCI',
               },
-              contactTechnique,
-              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
-              links: { plusDetails: '/' },
-              nom: 'Département du Rhône',
-              roles: ['Co-porteur', 'Co-financeur'],
-              telephone: '+33 4 45 00 45 01',
-              totalMontantSubventionAccorde: 0,
-              totalMontantSubventionFormationAccorde: 0,
-              type: 'Collectivité',
-              typologieMembre: 'Collectivité, EPCI',
-            },
-          ],
+            ],
+            total: 1,
+          },
         })
 
         // WHEN

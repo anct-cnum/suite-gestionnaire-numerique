@@ -32,7 +32,7 @@ export default function Membre({
             </li>
           ))}
           <li className="color-grey">
-            {membreDetails.typologieMembre}
+            {membreDetails.type}
           </li>
         </ul>
       </div>

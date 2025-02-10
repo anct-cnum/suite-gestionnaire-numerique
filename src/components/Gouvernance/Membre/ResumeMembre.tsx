@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeMembre({ total, type }: Props): ReactElement {
+export default function ResumeMembre({ total, denomination }: Props): ReactElement {
   return (
     <Resume style={styles['resume-membres']}>
       <p>
@@ -13,7 +13,7 @@ export default function ResumeMembre({ total, type }: Props): ReactElement {
         </span>
         {' '}
         <span className="fr-text--lead">
-          {type}
+          {denomination}
           {' '}
           <br />
           de la gouvernance
@@ -30,6 +30,6 @@ export default function ResumeMembre({ total, type }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  total: string
-  type: string
+  total: number
+  denomination: string
 }>

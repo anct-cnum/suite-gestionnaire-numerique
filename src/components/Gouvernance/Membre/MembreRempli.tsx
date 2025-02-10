@@ -24,7 +24,7 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
       >
         {
           coporteurs.map((membre) => (
-            <tr key={`${membre.nom}_${membre.typologieMembre}`} >
+            <tr key={`${membre.nom}_${membre.type}`} >
               <td>
                 <span
                   aria-hidden="true"
@@ -84,5 +84,5 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  coporteurs: NonNullable<GouvernanceViewModel['sectionCoporteurs']['coporteurs']>
+  coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>
 }>
