@@ -38,7 +38,7 @@ describe('mes membres loader', () => {
     await creerUnMembreSgar({ membreId: 'region-84-69', role: 'recipiendaire' })
 
     // WHEN
-    const mesMembresLoader = new PrismaMesMembresLoader(prisma)
+    const mesMembresLoader = new PrismaMesMembresLoader(prisma.gouvernanceRecord)
     const mesMembresReadModel = await mesMembresLoader.get('69')
 
     // THEN
@@ -65,20 +65,20 @@ describe('mes membres loader', () => {
             nom: 'Dupont',
             prenom: 'Valérie',
           },
-          nom: 'Mornant',
-          roles: ['coporteur', 'cofinanceur'],
+          nom: 'Métropole de Lyon',
+          roles: ['recipiendaire'],
           suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité, commune',
+          typologie: 'Collectivité, EPCI',
         },
         {
           contactReferent: {
             nom: 'Dupont',
             prenom: 'Valérie',
           },
-          nom: 'Métropole de Lyon',
-          roles: ['recipiendaire'],
+          nom: 'Mornant',
+          roles: ['cofinanceur', 'coporteur'],
           suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité, EPCI',
+          typologie: 'Collectivité, commune',
         },
         {
           contactReferent: {
@@ -96,19 +96,9 @@ describe('mes membres loader', () => {
             prenom: 'Valérie',
           },
           nom: 'Pôle emploi',
-          roles: ['coporteur', 'cofinanceur'],
+          roles: ['cofinanceur', 'coporteur'],
           suppressionDuMembreAutorise: false,
           typologie: 'Association',
-        },
-        {
-          contactReferent: {
-            nom: 'Dupont',
-            prenom: 'Valérie',
-          },
-          nom: 'Rhône',
-          roles: ['cofinanceur'],
-          suppressionDuMembreAutorise: false,
-          typologie: 'Conseil départemental',
         },
         {
           contactReferent: {
@@ -119,6 +109,16 @@ describe('mes membres loader', () => {
           roles: ['coporteur'],
           suppressionDuMembreAutorise: false,
           typologie: 'Préfecture départementale',
+        },
+        {
+          contactReferent: {
+            nom: 'Dupont',
+            prenom: 'Valérie',
+          },
+          nom: 'Rhône',
+          roles: ['cofinanceur'],
+          suppressionDuMembreAutorise: false,
+          typologie: 'Conseil départemental',
         },
       ],
       roles: [],
