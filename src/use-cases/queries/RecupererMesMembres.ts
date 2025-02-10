@@ -41,17 +41,33 @@ export type MesMembresReadModel = Readonly<{
   typologies: ReadonlyArray<string>
   roles: ReadonlyArray<Role>
   membres: ReadonlyArray<MembreReadModel>
+  candidats: ReadonlyArray<CandidatReadModel>
+  suggeres: ReadonlyArray<SuggereReadModel>
+  uidGouvernance: string
 }>
 
 export type MembreReadModel = Readonly<{
   suppressionDuMembreAutorise: boolean
   contactReferent: Readonly<{
+    email: string
+    fonction: string
     nom: string
     prenom: string
   }>
   nom: string
   roles: ReadonlyArray<Role>
   typologie: string
+  uidMembre: string
+}>
+
+export type CandidatReadModel = MembreReadModel & Readonly<{
+  adresse: string
+  siret: string
+}>
+
+export type SuggereReadModel = MembreReadModel & Readonly<{
+  adresse: string
+  siret: string
 }>
 
 type Query = Readonly<{

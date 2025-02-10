@@ -173,10 +173,29 @@ export function mesMembresReadModelFactory(
       ajouterUnMembre: true,
       supprimerUnMembre: true,
     },
+    candidats: [
+      {
+        adresse: '17 avenue de l’opéra 75000 Paris',
+        contactReferent: {
+          email: 'eric.durant@example.com',
+          fonction: 'Directeur',
+          nom: 'Durant',
+          prenom: 'Eric',
+        },
+        nom: 'La Poste',
+        roles: [],
+        siret: '99229991601034',
+        suppressionDuMembreAutorise: false,
+        typologie: 'EPCI',
+        uidMembre: 'structure-99229991601034',
+      },
+    ],
     departement: 'Rhône',
     membres: [
       {
         contactReferent: {
+          email: 'laetitia.henrich@example.com',
+          fonction: 'Directeur',
           nom: 'Henrich',
           prenom: 'Laetitia',
         },
@@ -184,9 +203,12 @@ export function mesMembresReadModelFactory(
         roles: ['coporteur'],
         suppressionDuMembreAutorise: false,
         typologie: 'Préfecture départementale',
+        uidMembre: 'sgar-69',
       },
       {
         contactReferent: {
+          email: 'didier.durant@example.com',
+          fonction: 'Directeur',
           nom: 'Didier',
           prenom: 'Durant',
         },
@@ -194,9 +216,12 @@ export function mesMembresReadModelFactory(
         roles: ['coporteur', 'cofinanceur'],
         suppressionDuMembreAutorise: false,
         typologie: 'Collectivité, EPCI',
+        uidMembre: 'departement-69',
       },
       {
         contactReferent: {
+          email: 'tom.dupont@example.com',
+          fonction: 'Directeur',
           nom: 'Dupont',
           prenom: 'Tom',
         },
@@ -204,10 +229,29 @@ export function mesMembresReadModelFactory(
         roles: [],
         suppressionDuMembreAutorise: false,
         typologie: 'Collectivité, EPCI',
+        uidMembre: 'departement-69',
       },
     ],
     roles: [],
+    suggeres: [
+      {
+        adresse: '172 B RTE DE LENS 62223 SAINTE-CATHERINE',
+        contactReferent: {
+          email: 'didier.dupont@example.com',
+          fonction: 'Directeur',
+          nom: 'Dupont',
+          prenom: 'Eric',
+        },
+        nom: 'Croix Rouge Française',
+        roles: [],
+        siret: '79227291600034',
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+        uidMembre: 'structure-79227291600034',
+      },
+    ],
     typologies: [],
+    uidGouvernance: 'gouvernanceFooId',
     ...override,
   }
 }
