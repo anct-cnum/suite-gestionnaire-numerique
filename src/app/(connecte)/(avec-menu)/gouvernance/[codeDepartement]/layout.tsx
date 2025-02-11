@@ -1,7 +1,5 @@
-'use server'
-
 import { notFound } from 'next/navigation'
-import { ReactElement } from 'react'
+import { PropsWithChildren, ReactElement } from 'react'
 
 import prisma from '../../../../../../prisma/prismaClient'
 import GouvernanceProvider from '@/components/shared/GouvernanceContext'
@@ -14,29 +12,32 @@ import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvern
 export default async function Layout({
   children,
   params,
-}: {
-  readonly children: React.ReactNode
-  readonly params: { codeDepartement: string }
-}): Promise<ReactElement> {
+}: Props): Promise<ReactElement> {
   try {
-    // eslint-disable-next-line sonarjs/no-invalid-await, @typescript-eslint/await-thenable
     const codeDepartement = (await params).codeDepartement
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
     const gouvernanceReadModel = await new RecupererUneGouvernance(gouvernanceLoader).handle({ codeDepartement })
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
+
+    const afficherSousMenuMembre = Number(gouvernanceViewModel.sectionCoporteurs.total) > 0
+    const afficherSousMenuFeuilleDeRoute = Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0
+    const afficherSouSMenu = afficherSousMenuMembre || afficherSousMenuFeuilleDeRoute
     return (
       <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>
         <div className="fr-grid-row">
           <div className="fr-col-2">
-            <MenuLateral
-              gouvernanceSousMenu={
-                <SousMenuGouvernance
-                  codeDepartement={codeDepartement}
-                  gouvernanceViewModel={gouvernanceViewModel}
-                />
-              }
-            />
+            {
+              afficherSouSMenu ?
+                <MenuLateral>
+                  <SousMenuGouvernance
+                    afficherSousMenuFeuilleDeRoute={afficherSousMenuFeuilleDeRoute}
+                    afficherSousMenuMembre={afficherSousMenuMembre}
+                  />
+                </MenuLateral>
+                :
+                <MenuLateral />
+            }
           </div>
           <div className="fr-col-9 fr-pl-7w menu-border">
             {children}
@@ -48,3 +49,9 @@ export default async function Layout({
     notFound()
   }
 }
+
+type Props = PropsWithChildren<Readonly<{
+  params: Promise<Readonly<{
+    codeDepartement: string
+  }>>
+}>>

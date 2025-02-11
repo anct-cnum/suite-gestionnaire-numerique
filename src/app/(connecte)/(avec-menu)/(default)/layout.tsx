@@ -1,6 +1,3 @@
-
-'use client'
-
 import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'

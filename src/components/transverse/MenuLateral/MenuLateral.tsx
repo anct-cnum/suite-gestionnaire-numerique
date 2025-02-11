@@ -7,7 +7,7 @@ import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 
-export default function MenuLateral({ gouvernanceSousMenu = null }: MenuLateralProps): ReactElement {
+export default function MenuLateral({ children }: MenuLateralProps): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
   const menusPilotage = [
@@ -103,7 +103,7 @@ export default function MenuLateral({ gouvernanceSousMenu = null }: MenuLateralP
                         {menu.label}
                       </Link>
                     </li>
-                    {menu.hasSousMenu === true ? gouvernanceSousMenu : null}
+                    {menu.hasSousMenu === true ? children : null}
                   </Fragment>
                 )
               })}
@@ -140,9 +140,9 @@ export default function MenuLateral({ gouvernanceSousMenu = null }: MenuLateralP
 }
 
 interface MenuLateralProps {
-  readonly gouvernanceSousMenu?: ReactNode
+  readonly children?: ReactNode
 }
 
 MenuLateral.defaultProps = {
-  gouvernanceSousMenu: null,
+  children: null,
 }

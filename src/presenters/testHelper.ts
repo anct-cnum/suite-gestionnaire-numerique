@@ -64,7 +64,7 @@ export function mesMembresViewModelFactory(
   } as const
 }
 
-export function sectionCoporteursFactory(override?: Partial<GouvernanceViewModel['sectionCoporteurs']>): GouvernanceViewModel['sectionCoporteurs'] {
+function sectionCoporteursFactory(override?: Partial<GouvernanceViewModel['sectionCoporteurs']>): GouvernanceViewModel['sectionCoporteurs'] {
   return {
     coporteurs: [],
     detailDuNombreDeChaqueMembre: '',
@@ -74,7 +74,7 @@ export function sectionCoporteursFactory(override?: Partial<GouvernanceViewModel
   } as const
 }
 
-export function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
+function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
   return {
     budgetTotalCumule: '',
     feuillesDeRoute: [],

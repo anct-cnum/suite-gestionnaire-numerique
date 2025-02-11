@@ -1,3 +1,4 @@
+// Stryker disable all
 'use client'
 
 import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'

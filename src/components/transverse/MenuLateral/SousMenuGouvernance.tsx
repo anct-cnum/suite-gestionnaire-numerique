@@ -5,29 +5,27 @@ import { ReactElement, useContext } from 'react'
 
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-interface SousMenuGouvernanceProps {
-  readonly codeDepartement: string
-  readonly gouvernanceViewModel: GouvernanceViewModel
-}
-
-export function SousMenuGouvernance({ codeDepartement, gouvernanceViewModel }: SousMenuGouvernanceProps):
+export function SousMenuGouvernance({
+  afficherSousMenuFeuilleDeRoute, afficherSousMenuMembre,
+}: Props):
 ReactElement | null {
-  const { pathname } = useContext(clientContext)
+  const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
-  const sousMenu = [
-    ...Number(gouvernanceViewModel.sectionCoporteurs.total) > 0
-      ? [{ label: 'Membres', url: `/gouvernance/${codeDepartement}/membres` }]
-      : [],
-    ...Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0
-      ? [{ label: 'Feuilles de route', url: `/gouvernance/${codeDepartement}/feuilles-de-routes` }]
-      : [],
+  const sousMenus = [
+    {
+      label: 'Membres',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/membres`,
+      visible: afficherSousMenuMembre,
+    },
+    {
+      label: 'Feuilles de route',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-routes`,
+      visible: afficherSousMenuFeuilleDeRoute,
+    },
   ]
 
-  if (sousMenu.length === 0) {
-    return null
-  }
+  const sousMenuElements = sousMenus.filter((sousMenu) => sousMenu.visible)
 
   return (
     <div
@@ -35,7 +33,7 @@ ReactElement | null {
       id="fr-sidemenu-gouvernance"
     >
       <ul className="fr-sidemenu__list">
-        {sousMenu.map((sousMenuElement) => {
+        {sousMenuElements.map((sousMenuElement) => {
           const activeClass = pathname === sousMenuElement.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
 
           return (
@@ -56,4 +54,9 @@ ReactElement | null {
       </ul>
     </div>
   )
+}
+
+interface Props {
+  readonly afficherSousMenuFeuilleDeRoute: boolean
+  readonly afficherSousMenuMembre: boolean
 }
