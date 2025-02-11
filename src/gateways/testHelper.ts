@@ -300,6 +300,7 @@ function membreRecordFactory(
   return {
     gouvernanceDepartementCode: '69',
     id: 'prefecture-69',
+    statut: 'confirme',
     type: 'Préfecture départementale',
     ...override,
   }

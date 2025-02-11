@@ -161,6 +161,7 @@ model MembreRecord {
   id                         String  @id
   gouvernanceDepartementCode String
   type                       String?
+  statut                     String
 
   relationGouvernance           GouvernanceRecord                    @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   membresGouvernanceDepartement MembreGouvernanceDepartementRecord[]
