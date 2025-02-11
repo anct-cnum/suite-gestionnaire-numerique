@@ -213,7 +213,7 @@ describe('utilisateur repository', () => {
 
     it('compte existant, non préalablement supprimé : l’entrée est marquée comme supprimée', async () => {
       // GIVEN
-      await creerUnUtilisateur(utilisateurExistant)
+      await creerUnUtilisateur({ ...utilisateurExistant, id: 1 })
       await creerUnUtilisateur(utilisateurSupprime)
 
       // WHEN
@@ -224,12 +224,13 @@ describe('utilisateur repository', () => {
       const utilisateurModifie = await prisma.utilisateurRecord.findUnique({
         where: { ssoId: utilisateurExistant.ssoId },
       })
-      expect(utilisateurModifie).toMatchObject({
+      expect(utilisateurModifie).toStrictEqual({
         dateDeCreation: epochTime,
         departementCode: null,
         derniereConnexion: epochTime,
         emailDeContact: 'martin.tartempion@example.net',
         groupementId: null,
+        id: 1,
         inviteLe: epochTime,
         isSuperAdmin: false,
         isSupprime: true,
