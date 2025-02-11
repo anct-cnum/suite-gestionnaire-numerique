@@ -11,7 +11,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   }
 
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
-    const gouvernanceRecord = await this.#dataResource.findFirst({
+    const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         comites: {
           include: {
@@ -44,10 +44,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         departementCode: codeDepartement,
       },
     })
-
-    if (gouvernanceRecord === null) {
-      throw new Error('Le département n’existe pas')
-    }
 
     return transform(gouvernanceRecord)
   }
