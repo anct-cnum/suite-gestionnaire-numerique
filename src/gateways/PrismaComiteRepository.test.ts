@@ -206,7 +206,7 @@ describe('comité repository', () => {
         id: 1,
       },
     })
-    expect(comiteRecord).toMatchObject(comiteRecordFactory({
+    expect(comiteRecord).toStrictEqual(comiteRecordFactory({
       commentaire: 'deuxième commentaire',
       creation: epochTime,
       date: epochTimePlusOneDay,
@@ -214,6 +214,7 @@ describe('comité repository', () => {
       editeurUtilisateurId: 'userFooId',
       frequence: 'mensuelle',
       gouvernanceDepartementCode: departementCode,
+      id: 1,
       type: 'autre',
     }))
   })
