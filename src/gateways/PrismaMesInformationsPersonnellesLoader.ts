@@ -4,14 +4,14 @@ import { UtilisateurEtSesRelationsRecord, toTypologieRole } from './shared/RoleM
 import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
-  readonly dataResource: Prisma.UtilisateurRecordDelegate
+  readonly #dataResource: Prisma.UtilisateurRecordDelegate
 
   constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
-    this.dataResource = dataResource
+    this.#dataResource = dataResource
   }
 
   async byUid(uid: string): Promise<MesInformationsPersonnellesReadModel> {
-    const utilisateurRecord = await this.dataResource.findUniqueOrThrow({
+    const utilisateurRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
         relationGroupement: true,
