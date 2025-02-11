@@ -138,6 +138,7 @@ function grouperDonneesACreer(
           membres: groupe.membres.concat({
             gouvernanceDepartementCode: gouvernance.departementCode,
             id: prefectureMembreId,
+            statut: 'confirme',
             type: 'Préfecture départementale',
           }),
           membresDepartements: groupe.membresDepartements.concat({
@@ -285,6 +286,8 @@ function grouperDonneesACreer(
           gouvernanceDepartementCode,
           // @ts-expect-error
           id: membreId,
+
+          statut: 'confirme',
           // @ts-expect-error
           type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
         }),
