@@ -1,5 +1,7 @@
+import { Prisma } from '@prisma/client'
+
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { creerUnComite, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure, creerUnUtilisateur } from './testHelper'
+import { creerMembres, creerUnComite, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -83,10 +85,9 @@ describe('gouvernance loader', () => {
     })
   })
 
-  it('quand une gouvernance est demandée par son code département inexistant, alors elle n’est pas renvoyée', async () => {
+  it('quand une gouvernance est demandée par son code département inexistant, alors une erreur est levée', async () => {
     // GIVEN
     await creerUneRegion({ code: '11' })
-    await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
     const codeDepartementInexistant = 'zzz'
     const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
@@ -95,7 +96,8 @@ describe('gouvernance loader', () => {
     const gouvernanceReadModel = gouvernanceLoader.get(codeDepartementInexistant)
 
     // THEN
-    await expect(async () => gouvernanceReadModel).rejects.toThrow('Le département n’existe pas')
+    await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernanceReadModel).rejects.toMatchObject({ code: 'P2025' })
   })
 
   it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité ni note privée, alors elle est renvoyée sans note de contexte ni comité ni note privée', async () => {
@@ -370,112 +372,4 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
 async function creerFeuillesDeRoute(gouvernanceDepartementCode: string): Promise<void> {
   await creerUneFeuilleDeRoute({ gouvernanceDepartementCode })
   await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, nom: 'Feuille de route numérique du Rhône' })
-}
-
-async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `commune-35345-${gouvernanceDepartementCode}`,
-    type: 'Collectivité, commune',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `commune-94028-${gouvernanceDepartementCode}`,
-    type: 'Collectivité, commune',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `epci-241927201-${gouvernanceDepartementCode}`,
-    type: 'Collectivité, EPCI',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `epci-200072056-${gouvernanceDepartementCode}`,
-    type: 'Collectivité, EPCI',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `structure-38012986643097-${gouvernanceDepartementCode}`,
-    type: 'Entreprise privée',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `prefecture-${gouvernanceDepartementCode}`,
-    type: 'Préfecture départementale',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `departement-69-${gouvernanceDepartementCode}`,
-    type: 'Conseil départemental',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `region-53-${gouvernanceDepartementCode}`,
-    type: 'Préfecture régionale',
-  })
-  await creerUnMembre({
-    gouvernanceDepartementCode,
-    id: `region-11-${gouvernanceDepartementCode}`,
-    type: 'Préfecture régionale',
-  })
-  await creerUnMembreCommune({
-    commune: 'Trévérien',
-    membreId: `commune-35345-${gouvernanceDepartementCode}`,
-    role: 'recipiendaire',
-  })
-  await creerUnMembreCommune({
-    commune: 'Trévérien',
-    membreId: `commune-35345-${gouvernanceDepartementCode}`,
-    role: 'beneficiaire',
-  })
-  await creerUnMembreCommune({
-    commune: 'Créteil',
-    membreId: `commune-94028-${gouvernanceDepartementCode}`,
-    role: 'coporteur',
-  })
-  await creerUnMembreDepartement({
-    departementCode: gouvernanceDepartementCode,
-    membreId: `departement-69-${gouvernanceDepartementCode}`,
-    role: 'observateur',
-  })
-  await creerUnMembreDepartement({
-    departementCode: gouvernanceDepartementCode,
-    membreId: `prefecture-${gouvernanceDepartementCode}`,
-    role: 'coporteur',
-  })
-  await creerUnMembreEpci({
-    epci: 'CA Tulle Agglo',
-    membreId: `epci-241927201-${gouvernanceDepartementCode}`,
-    role: 'observateur',
-  })
-  await creerUnMembreEpci({
-    epci: 'CC Porte du Jura',
-    membreId: `epci-200072056-${gouvernanceDepartementCode}`,
-    role: 'coporteur',
-  })
-  await creerUnMembreEpci({
-    epci: 'CC Porte du Jura',
-    membreId: `epci-200072056-${gouvernanceDepartementCode}`,
-    role: 'beneficiaire',
-  })
-  await creerUnMembreSgar({
-    membreId: `region-11-${gouvernanceDepartementCode}`,
-    role: 'observateur',
-    sgarCode: '11',
-  })
-  await creerUnMembreSgar({
-    membreId: `region-53-${gouvernanceDepartementCode}`,
-    role: 'coporteur',
-    sgarCode: '53',
-  })
-  await creerUnMembreStructure({
-    membreId: `structure-38012986643097-${gouvernanceDepartementCode}`,
-    role: 'recipiendaire',
-    structure: 'Orange',
-  })
-  await creerUnMembreStructure({
-    membreId: `structure-38012986643097-${gouvernanceDepartementCode}`,
-    role: 'coporteur',
-    structure: 'Orange',
-  })
 }

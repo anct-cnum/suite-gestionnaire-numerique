@@ -11,7 +11,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
   }
 
   async get(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
-    const gouvernanceRecord = await this.#dataResource.findFirstOrThrow({
+    const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         membres: {
           include: {
