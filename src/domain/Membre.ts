@@ -1,4 +1,4 @@
-import { GouvernanceUid } from './Gouvernance'
+import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Result } from '@/shared/lang'
 
@@ -6,25 +6,29 @@ export abstract class Membre extends Entity<MembreState> {
   protected readonly nom: string
   protected readonly uidGouvernance: GouvernanceUid
   protected readonly statut: Statut
+  protected readonly roles: ReadonlyArray<Role>
 
   constructor(
     uid: MembreUid,
     nom: string,
+    roles: ReadonlyArray<Role>,
     uidGouvernance: GouvernanceUid,
     statut: Statut
   ) {
     super(uid)
     this.uidGouvernance = uidGouvernance
     this.nom = nom
+    this.roles = roles
     this.statut = statut
   }
 
   override get state(): MembreState {
     return {
       nom: this.nom,
+      roles: this.roles.map((role) => role.state.value),
       statut: this.statut.state.value,
       uid: this.uid.state,
-      uidGouvernance: this.uidGouvernance.state.value,
+      uidGouvernance: this.uidGouvernance.state,
     }
   }
 
@@ -55,10 +59,10 @@ export class Statut extends ValueObject<AttributState> {
 
 export type MembreState = Readonly<{
   nom: string
-  roles?: ReadonlyArray<string>
+  roles: ReadonlyArray<string>
   statut: string
   uid: UidState
-  uidGouvernance: string
+  uidGouvernance: GouvernanceUidState
 }>
 
 export type MembreFailure = 'membreDejaConfirme'

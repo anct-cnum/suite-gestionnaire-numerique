@@ -11,13 +11,13 @@ export function membreFactory({
   uid,
   uidGouvernance,
 }: FactoryParams): Result<MembreFailure, Membre> {
-  if (roles) {
+  if (statut === 'confirme') {
     return new MembreConfirme(
       new MembreUid(uid.value),
       nom,
       roles.map((role) => new Role(role)),
-      new Statut(statut),
-      new GouvernanceUid(uidGouvernance.value)
+      new GouvernanceUid(uidGouvernance.value),
+      new Statut(statut)
     )
   }
 
@@ -29,10 +29,12 @@ export function membreFactory({
   )
 }
 
+export type StatutFactory = 'confirme' | 'candidat' | 'suggere'
+
 type FactoryParams = Readonly<{
   nom: string
-  roles?: ReadonlyArray<string>
-  statut: string
+  roles: ReadonlyArray<string>
+  statut: StatutFactory
   uid: MembreState['uid']
   uidGouvernance: GouvernanceUidState
 }>

@@ -119,6 +119,52 @@ export async function creerUneFeuilleDeRoute(
   })
 }
 
+export async function creerUnMembre(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
+  await prisma.membreRecord.create({
+    data: membreRecordFactory(override),
+  })
+}
+
+export async function creerUnMembreDepartement(
+  override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceDepartementRecord.create({
+    data: membreDepartementRecordFactory(override),
+  })
+}
+
+export async function creerUnMembreStructure(
+  override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceStructureRecord.create({
+    data: membreStructureRecordFactory(override),
+  })
+}
+
+export async function creerUnMembreCommune(
+  override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceCommuneRecord.create({
+    data: membreCommuneRecordFactory(override),
+  })
+}
+
+export async function creerUnMembreEpci(
+  override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceEpciRecord.create({
+    data: membreEpciRecordFactory(override),
+  })
+}
+
+export async function creerUnMembreSgar(
+  override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.membreGouvernanceSgarRecord.create({
+    data: membreSgarRecordFactory(override),
+  })
+}
+
 export async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
   await creerUnMembre({
     gouvernanceDepartementCode,
@@ -359,50 +405,4 @@ function membreSgarRecordFactory(
     sgarCode: '84',
     ...override,
   }
-}
-
-async function creerUnMembre(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-  await prisma.membreRecord.create({
-    data: membreRecordFactory(override),
-  })
-}
-
-async function creerUnMembreStructure(
-  override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.membreGouvernanceStructureRecord.create({
-    data: membreStructureRecordFactory(override),
-  })
-}
-
-async function creerUnMembreCommune(
-  override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.membreGouvernanceCommuneRecord.create({
-    data: membreCommuneRecordFactory(override),
-  })
-}
-
-async function creerUnMembreEpci(
-  override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.membreGouvernanceEpciRecord.create({
-    data: membreEpciRecordFactory(override),
-  })
-}
-
-async function creerUnMembreDepartement(
-  override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.membreGouvernanceDepartementRecord.create({
-    data: membreDepartementRecordFactory(override),
-  })
-}
-
-async function creerUnMembreSgar(
-  override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.membreGouvernanceSgarRecord.create({
-    data: membreSgarRecordFactory(override),
-  })
 }
