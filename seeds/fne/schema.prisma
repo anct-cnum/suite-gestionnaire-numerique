@@ -87,13 +87,60 @@ model FeuilleDeRoute {
   perimetreDepartmentCode     String?       @map("perimetre_departement_code")
   pieceJointe                 String?       @map("piece_jointe")
 
-  relationGouvernance Gouvernance @relation(fields: [gouvernanceId], references: [id])
+  relationGouvernance   Gouvernance            @relation(fields: [gouvernanceId], references: [id])
+  membresFeuilleDeRoute MembreFeuilleDeRoute[]
 
   @@map("feuille_de_route")
 }
 
+model MembreFeuilleDeRoute {
+  id               String   @id
+  modification     DateTime
+  creation         DateTime
+  feuilleDeRouteId String   @map("feuille_de_route_id")
+  membreId         String   @map("membre_id")
+  role             String
+
+  relationFeuilleDeRoute    FeuilleDeRoute    @relation(fields: [feuilleDeRouteId], references: [id])
+  relationMembreGouvernance MembreGouvernance @relation(fields: [membreId], references: [id])
+
+  @@map("membre_feuille_de_route")
+}
+
+model FormulaireGouvernance {
+  id                 String  @id
+  contactPolitiqueId String? @map("contact_politique_id")
+  contactStructureId String? @map("contact_structure_id")
+  contactTechniqueId String? @map("contact_technique_id")
+
+  creation         DateTime
+  modification     DateTime
+  regionCode       String?   @map("region_code")
+  departementCode  String?   @map("departement_code")
+  epciCode         String?   @map("epci_code")
+  nomStructure     String?   @map("nom_structure")
+  siret            String?   @map("siret_structure")
+  communeCode      String?   @map("commune_code")
+  confirmeEtEnvoye DateTime? @map("confirme_et_envoye")
+  persona          String    @map("gouvernance_persona")
+
+  relationContactPolitique ContactFormulaireGouvernance? @relation("contactPolitique", fields: [contactPolitiqueId], references: [id])
+  relationContactStructure ContactFormulaireGouvernance? @relation("contactStructure", fields: [contactStructureId], references: [id])
+  relationContactTechnique ContactFormulaireGouvernance? @relation("contactTechnique", fields: [contactTechniqueId], references: [id])
+  relationEpci             Epci?                         @relation(fields: [epciCode], references: [code])
+  relationInformationSiret InformationSiret?             @relation(fields: [siret], references: [siret])
+  relationCommune          Commune?                      @relation(fields: [communeCode], references: [code])
+  relationRegion           Region?                       @relation(fields: [regionCode], references: [code])
+
+  membresGouvernance MembreGouvernance[]
+
+  @@map("formulaire_gouvernance")
+}
+
 model MembreGouvernance {
-  id              String   @id
+  id                      String @id
+  formulaireGouvernanceId String @map("formulaire_gouvernance_id")
+
   gouvernanceId   String   @map("gouvernance_id")
   creation        DateTime
   modification    DateTime
@@ -105,31 +152,76 @@ model MembreGouvernance {
   coporteur       Boolean
   communeCode     String?  @map("commune_code")
 
-  relationGouvernance      Gouvernance       @relation(fields: [gouvernanceId], references: [id])
-  relationEpci             Epci?             @relation(fields: [epciCode], references: [code])
-  relationInformationSiret InformationSiret? @relation(fields: [siret], references: [siret])
-  relationCommune          Commune?          @relation(fields: [communeCode], references: [code])
+  relationGouvernance           Gouvernance           @relation(fields: [gouvernanceId], references: [id])
+  relationEpci                  Epci?                 @relation(fields: [epciCode], references: [code])
+  relationInformationSiret      InformationSiret?     @relation(fields: [siret], references: [siret])
+  relationCommune               Commune?              @relation(fields: [communeCode], references: [code])
+  relationFormulaireGouvernance FormulaireGouvernance @relation(fields: [formulaireGouvernanceId], references: [id])
 
   gouvernanceDotationFormation Gouvernance[]            @relation("beneficiaireDotationFormation")
   beneficiairesSubventions     BeneficiaireSubvention[]
+  membresFeuilleDeRoute        MembreFeuilleDeRoute[]
 
   @@map("membre_gouvernance")
+}
+
+model ContactFormulaireGouvernance {
+  id String @id
+
+  formulaireGouvernanceId String @map("formulaire_gouvernance_id")
+  nom                     String
+  prenom                  String
+  fonction                String
+  email                   String
+
+  formulairesGouvernanceContactPolitique FormulaireGouvernance[] @relation("contactPolitique")
+  formulairesGouvernanceContactTechnique FormulaireGouvernance[] @relation("contactTechnique")
+  formulairesGouvernanceContactStructure FormulaireGouvernance[] @relation("contactStructure")
+
+  @@map("contact_formulaire_gouvernance")
+}
+
+model Region {
+  code String @id
+  nom  String
+
+  departements           Departement[]
+  formulairesGouvernance FormulaireGouvernance[]
+
+  @@map("regions")
+}
+
+model Departement {
+  code       String @id
+  nom        String
+  codeRegion String @map("code_region")
+
+  relationRegion Region @relation(fields: [codeRegion], references: [code])
+
+  @@map("departements")
 }
 
 model Epci {
   code String @id
   nom  String
 
-  membresGouvernance MembreGouvernance[]
+  membresGouvernance     MembreGouvernance[]
+  formulairesGouvernance FormulaireGouvernance[]
+  communes               Commune[]
 
   @@map("epcis")
 }
 
 model Commune {
-  code String @id
-  nom  String
+  code            String @id
+  nom             String
+  codeDepartement String @map("code_departement")
+  codeEpci        String @map("code_epci")
 
-  membresGouvernance MembreGouvernance[]
+  relationEpci Epci @relation(fields: [codeEpci], references: [code])
+
+  membresGouvernance    MembreGouvernance[]
+  formulaireGouvernance FormulaireGouvernance[]
 
   @@map("communes")
 }
@@ -139,7 +231,8 @@ model InformationSiret {
   nom            String?
   formeJuridique String? @map("forme_juridique_libelle")
 
-  membreGouvernance MembreGouvernance[]
+  membreGouvernance     MembreGouvernance[]
+  formulaireGouvernance FormulaireGouvernance[]
 
   @@map("informations_siret")
 }
