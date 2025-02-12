@@ -23,11 +23,11 @@ describe('gouvernance repository', () => {
     const repository = new PrismaGouvernanceRepository(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceTrouvee = repository.get(new GouvernanceUid('3'))
+    const gouvernance = repository.get(new GouvernanceUid('3'))
 
     // THEN
-    await expect(gouvernanceTrouvee).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
-    await expect(gouvernanceTrouvee).rejects.toMatchObject({ code: 'P2025' })
+    await expect(gouvernance).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
+    await expect(gouvernance).rejects.toMatchObject({ code: 'P2025' })
   })
 
   it('rechercher une gouvernance qui existe sans note de contexte', async () => {

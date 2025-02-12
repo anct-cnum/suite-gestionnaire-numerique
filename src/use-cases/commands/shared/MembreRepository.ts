@@ -7,3 +7,5 @@ export interface GetMembreRepository {
 export interface UpdateMembreRepository {
   update(membre: Membre): Promise<void>
 }
+
+export interface MembreRepository extends GetMembreRepository, UpdateMembreRepository {}
