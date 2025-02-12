@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment, ReactElement, ReactNode, useContext } from 'react'
+import { Fragment, PropsWithChildren, ReactElement, useContext } from 'react'
 
 import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 
-export default function MenuLateral({ children }: MenuLateralProps): ReactElement {
+export default function MenuLateral({ children }: Readonly<PropsWithChildren>): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
   const menusPilotage = [
@@ -137,12 +137,4 @@ export default function MenuLateral({ children }: MenuLateralProps): ReactElemen
       }
     </nav>
   )
-}
-
-interface MenuLateralProps {
-  readonly children?: ReactNode
-}
-
-MenuLateral.defaultProps = {
-  children: null,
 }

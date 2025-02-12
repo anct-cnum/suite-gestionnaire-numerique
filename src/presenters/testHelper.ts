@@ -64,31 +64,48 @@ export function mesMembresViewModelFactory(
   } as const
 }
 
-function sectionCoporteursFactory(override?: Partial<GouvernanceViewModel['sectionCoporteurs']>): GouvernanceViewModel['sectionCoporteurs'] {
+export function gouvernanceViewModelFactory(
+  override?: Partial<GouvernanceViewModel>
+): GouvernanceViewModel {
   return {
-    coporteurs: [],
-    detailDuNombreDeChaqueMembre: '',
-    total: '0',
-    wording: '',
+    comiteARemplir: {
+      commentaire: '',
+      date: '',
+      derniereEdition: '',
+      editeur: '',
+      frequences: [],
+      types: [],
+      uid: 1,
+    },
+    dateAujourdhui: '',
+    departement: '',
+    isVide: false,
+    sectionCoporteurs: {
+      coporteurs: [],
+      detailDuNombreDeChaqueMembre: '',
+      total: '0',
+      wording: '',
+    },
+    sectionFeuillesDeRoute: {
+      budgetTotalCumule: '',
+      feuillesDeRoute: [],
+      lien: {
+        label: '',
+        url: '',
+      },
+      total: '0',
+      wording: '',
+    },
+    sectionNoteDeContexte: {
+      noteDeContexte: {
+        dateDeModification: '',
+        nomAuteur: '',
+        prenomAuteur: '',
+        texteAvecHTML: '',
+      },
+      sousTitre: '',
+    },
+    uid: '',
     ...override,
-  } as const
-}
-
-function sectionFeuillesDeRouteFactory(override?: Partial<GouvernanceViewModel['sectionFeuillesDeRoute']>): GouvernanceViewModel['sectionFeuillesDeRoute'] {
-  return {
-    budgetTotalCumule: '',
-    feuillesDeRoute: [],
-    lien: { label: '', url: '' },
-    total: '0',
-    wording: '',
-    ...override,
-  } as const
-}
-
-export function gouvernanceViewModelFactory(override?: Partial<GouvernanceViewModel>): GouvernanceViewModel {
-  return {
-    sectionCoporteurs: sectionCoporteursFactory(),
-    sectionFeuillesDeRoute: sectionFeuillesDeRouteFactory(),
-    ...override,
-  } as GouvernanceViewModel
+  }
 }

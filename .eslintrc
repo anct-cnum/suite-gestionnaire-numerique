@@ -232,9 +232,10 @@
   },
   "overrides": [
     {
-      "files": ["**/*"],
+      "files": ["src/components/**/*"],
       "excludedFiles": ["src/app/**/*", "seeds/**/*"],
       "rules": {
+        "@typescript-eslint/consistent-type-definitions": ["error", "type"],
         "no-restricted-syntax": [
           "error",
           {

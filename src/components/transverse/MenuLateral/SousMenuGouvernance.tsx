@@ -7,21 +7,21 @@ import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 
 export function SousMenuGouvernance({
-  afficherSousMenuFeuilleDeRoute, afficherSousMenuMembre,
+  isAfficherSousMenuFeuilleDeRoute, isAfficherSousMenuMembre,
 }: Props):
-ReactElement | null {
+  ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
   const sousMenus = [
     {
       label: 'Membres',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/membres`,
-      visible: afficherSousMenuMembre,
+      visible: isAfficherSousMenuMembre,
     },
     {
       label: 'Feuilles de route',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-routes`,
-      visible: afficherSousMenuFeuilleDeRoute,
+      visible: isAfficherSousMenuFeuilleDeRoute,
     },
   ]
 
@@ -56,7 +56,7 @@ ReactElement | null {
   )
 }
 
-interface Props {
-  readonly afficherSousMenuFeuilleDeRoute: boolean
-  readonly afficherSousMenuMembre: boolean
-}
+type Props = Readonly<{
+  isAfficherSousMenuFeuilleDeRoute: boolean
+  isAfficherSousMenuMembre: boolean
+}>

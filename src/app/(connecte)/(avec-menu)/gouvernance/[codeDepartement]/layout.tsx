@@ -31,8 +31,8 @@ export default async function Layout({
               afficherSouSMenu ?
                 <MenuLateral>
                   <SousMenuGouvernance
-                    afficherSousMenuFeuilleDeRoute={afficherSousMenuFeuilleDeRoute}
-                    afficherSousMenuMembre={afficherSousMenuMembre}
+                    isAfficherSousMenuFeuilleDeRoute={afficherSousMenuFeuilleDeRoute}
+                    isAfficherSousMenuMembre={afficherSousMenuMembre}
                   />
                 </MenuLateral>
                 :
