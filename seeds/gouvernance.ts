@@ -21,37 +21,136 @@ import { Prisma as PrismaFNE } from './fne/client-fne'
 import prismaFNE from './fne/prismaClientFne'
 import prisma from '../prisma/prismaClient'
 
+const gouvernancesFNEQuery: Parameters<typeof prismaFNE.gouvernance.findMany>[0] = {
+  include: {
+    comites: true,
+    feuillesDeRoute: true,
+    membres: {
+      include: {
+        beneficiairesSubventions: {
+          include: {
+            relationDemandeDeSubvention: true,
+          },
+        },
+        relationCommune: true,
+        relationEpci: true,
+        relationFormulaireGouvernance: {
+          include: {
+            relationContactPolitique: true,
+            relationContactStructure: true,
+            relationContactTechnique: true,
+          },
+        },
+        relationInformationSiret: true,
+      },
+    },
+    relationBeneficiaireDotationFormation: {
+      include: {
+        relationCommune: true,
+        relationEpci: true,
+        relationInformationSiret: true,
+      },
+    },
+    relationUserCreateur: true,
+    relationUserDerniereModification: true,
+  },
+  where: {
+    AND: [
+      {
+        suppression: {
+          equals: null,
+        },
+      },
+      {
+        enregistree: {
+          not: null,
+        },
+      },
+    ],
+  },
+}
+
+const membresCandidatsEtSuggeresFNEQuery: Parameters<typeof prismaFNE.formulaireGouvernance.findMany>[0] = {
+  include: {
+    membresGouvernance: true,
+    relationCommune: true,
+    relationContactPolitique: true,
+    relationContactStructure: true,
+    relationContactTechnique: true,
+    relationEpci: {
+      include: {
+        communes: true,
+      },
+    },
+    relationInformationSiret: true,
+    relationRegion: {
+      include: {
+        departements: true,
+      },
+    },
+  },
+  where: {
+    NOT: {
+      membresGouvernance: {
+        some: {},
+      },
+    },
+  },
+}
+
 void (async function migrate(): Promise<void> {
   const greenColor = '\x1b[32m%s\x1b[0m'
 
   console.log(greenColor, 'La migration des gouvernances commence')
 
-  await prismaFNE.gouvernance.findMany(gouvernancesFNEQuery())
-    .then((gouvernancesFNE) => {
+  await Promise.all([
+    prismaFNE.gouvernance.findMany(gouvernancesFNEQuery),
+    prismaFNE.contactFormulaireGouvernance.findMany(),
+  ] as const)
+    .then(([gouvernancesFNE, membresFNE]) => {
       console.log(greenColor, `${gouvernancesFNE.length} gouvernances FNE sont récupérées`)
-      return gouvernancesFNE as unknown as ReadonlyArray<GouvernanceFNE>
+      return [gouvernancesFNE as unknown as ReadonlyArray<GouvernanceFNE>, membresFNE] as const
     })
-    .then(async (gouvernancesFNE) => Promise.all(
-      gouvernancesFNE.map(async (gouvernanceFNE) => {
-        const utilisateur = await prisma.utilisateurRecord.findUniqueOrThrow({
-          where: {
-            ssoEmail: gouvernanceFNE.relationUserCreateur.email,
-          },
+    .then(async ([gouvernancesFNE, membresFNE]) => {
+      const gouvernancesFNEGouvernancesEtCreateurs = Promise.all(
+        gouvernancesFNE.map(async (gouvernanceFNE) => {
+          const utilisateur = await prisma.utilisateurRecord.findUniqueOrThrow({
+            where: {
+              ssoEmail: gouvernanceFNE.relationUserCreateur.email,
+            },
+          })
+          const gouvernance = await prisma.gouvernanceRecord.create({
+            data: {
+              departementCode: gouvernanceFNE.departementCode,
+              derniereEditionNoteDeContexte: gouvernanceFNE.modification,
+              editeurNoteDeContexteId: utilisateur.ssoId,
+              noteDeContexte: gouvernanceFNE.noteDeContexte,
+            },
+          })
+          return [gouvernanceFNE, gouvernance, utilisateur] as const
         })
-        const gouvernance = await prisma.gouvernanceRecord.create({
-          data: {
-            departementCode: gouvernanceFNE.departementCode,
-            derniereEditionNoteDeContexte: gouvernanceFNE.modification,
-            editeurNoteDeContexteId: utilisateur.ssoId,
-            noteDeContexte: gouvernanceFNE.noteDeContexte,
-          },
-        })
-        return [gouvernanceFNE, gouvernance, utilisateur] as const
-      })
-    ))
-    .then(async (gouvernancesFNEGouvernancesEtCreateurs) => {
+      )
+      return Promise.all([
+        gouvernancesFNEGouvernancesEtCreateurs,
+        prismaFNE.formulaireGouvernance.findMany(membresCandidatsEtSuggeresFNEQuery),
+        prisma.contactMembreGouvernanceRecord.createMany({
+          data: membresFNE.map(({ email, fonction, nom, prenom }) => ({
+            email: email.toLowerCase(),
+            fonction,
+            nom,
+            prenom,
+          })),
+          skipDuplicates: true,
+        }),
+      ])
+    })
+    .then(async ([gouvernancesFNEGouvernancesEtCreateurs, membresFNENonConfirmes]) => {
       console.log(greenColor, `${gouvernancesFNEGouvernancesEtCreateurs.length} gouvernances sont insérées`)
-      const groupe = grouperDonneesACreer(gouvernancesFNEGouvernancesEtCreateurs)
+      const groupe = grouperDonneesACreer(
+        gouvernancesFNEGouvernancesEtCreateurs,
+        // @ts-expect-error
+        associerMembresNonConfirmesAuxGouvernances(membresFNENonConfirmes)
+      )
       return Promise.all([
         groupe,
         prisma.membreRecord.createMany({ data: groupe.membres.slice(), skipDuplicates: true }),
@@ -59,15 +158,15 @@ void (async function migrate(): Promise<void> {
     })
     .then(async ([groupe, membresCrees]) => Promise.all([
       membresCrees,
-      prisma.comiteRecord.createMany({ data: groupe.comites }),
-      prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute }),
+      prisma.comiteRecord.createMany({ data: groupe.comites.slice() }),
+      prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute.slice() }),
       prisma.membreGouvernanceDepartementRecord.createMany({
         data: groupe.membresDepartements.slice(),
         skipDuplicates: true,
       }),
       prisma.membreGouvernanceCommuneRecord.createMany({ data: groupe.membresCommunes.slice(), skipDuplicates: true }),
-      prisma.membreGouvernanceEpciRecord.createMany({ data: groupe.membresEpcis.slice() }),
-      prisma.membreGouvernanceSgarRecord.createMany({ data: groupe.membresSgars.slice() }),
+      prisma.membreGouvernanceEpciRecord.createMany({ data: groupe.membresEpcis.slice(), skipDuplicates: true }),
+      prisma.membreGouvernanceSgarRecord.createMany({ data: groupe.membresSgars.slice(), skipDuplicates: true }),
       prisma.membreGouvernanceStructureRecord.createMany({
         data: groupe.membresStructures.slice(),
         skipDuplicates: true,
@@ -81,72 +180,71 @@ void (async function migrate(): Promise<void> {
     })
 }())
 
-function gouvernancesFNEQuery(): Parameters<typeof prismaFNE.gouvernance.findMany>[0] {
-  return {
-    include: {
-      comites: true,
-      feuillesDeRoute: true,
-      membres: {
-        include: {
-          beneficiairesSubventions: {
-            include: {
-              relationDemandeDeSubvention: true,
-            },
-          },
-          relationCommune: true,
-          relationEpci: true,
-          relationInformationSiret: true,
-        },
-      },
-      relationBeneficiaireDotationFormation: {
-        include: {
-          relationCommune: true,
-          relationEpci: true,
-          relationInformationSiret: true,
-        },
-      },
-      relationUserCreateur: true,
-      relationUserDerniereModification: true,
-    },
-    where: {
-      AND: [
-        {
-          suppression: {
-            equals: null,
-          },
-        },
-        {
-          enregistree: {
-            not: null,
-          },
-        },
-      ],
-    },
-  }
+function associerMembresNonConfirmesAuxGouvernances(
+  membresNonConfirmes: ReadonlyArray<MembreFNENonConfirme>
+): Readonly<Record<string, ReadonlyArray<MembreFNENonConfirme>>> {
+  return membresNonConfirmes.reduce<MembresFNENonConfirmesByCodeDepartement>((membresByDepartement, membre) => {
+    const codesDepartement = new Set<string>()
+    switch (membre.persona) {
+      case 'commune':
+        if (membre.relationCommune) {
+          codesDepartement.add(membre.relationCommune.codeDepartement)
+        }
+        break
+      case 'epci':
+        if (membre.relationEpci) {
+          membre.relationEpci.communes.forEach(({ codeDepartement }) => {
+            codesDepartement.add(codeDepartement)
+          })
+        }
+        break
+      case 'conseil-regional':
+        if (membre.relationRegion) {
+          membre.relationRegion.departements.forEach(({ code }) => {
+            codesDepartement.add(code)
+          })
+        }
+        break
+      default:
+        if (membre.departementCode) {
+          codesDepartement.add(membre.departementCode)
+        }
+        break
+    }
+    return {
+      ...membresByDepartement,
+      ...Array.from(codesDepartement).reduce((membresByCode, code) => ({
+        [code]: (membresByCode[code] ?? []).concat(membre),
+      }), membresByDepartement),
+    }
+  }, {})
 }
 
 function grouperDonneesACreer(
-  donneesAFormaterGroupees: ReadonlyArray<Readonly<[GouvernanceFNE, GouvernanceRecord, UtilisateurRecord]>>
+  donneesAFormaterGroupees: ReadonlyArray<Readonly<[GouvernanceFNE, GouvernanceRecord, UtilisateurRecord]>>,
+  membresNonConfirmes: Readonly<Record<string, ReadonlyArray<MembreFNENonConfirme>>>
 ): GroupeGouvernance {
   return donneesAFormaterGroupees.reduce<GroupeGouvernance>(
     (groupe, [gouvernanceFNE, gouvernance, { ssoId }]) => {
       const prefectureMembreId = `prefecture-${gouvernance.departementCode}`
       return {
         ...groupe,
-        ...gouvernanceFNE.membres.reduce(extraireMembresGouvernances(gouvernanceFNE, gouvernance), {
-          ...groupe,
-          membres: groupe.membres.concat({
-            gouvernanceDepartementCode: gouvernance.departementCode,
-            id: prefectureMembreId,
-            statut: 'confirme',
-            type: 'Préfecture départementale',
+        ...[gouvernanceFNE.membres, membresNonConfirmes[gouvernanceFNE.departementCode] ?? []].flat()
+          .reduce(extraireMembresGouvernances(gouvernanceFNE, gouvernance), {
+            ...groupe,
+            membres: groupe.membres.concat({
+              gouvernanceDepartementCode: gouvernance.departementCode,
+              id: prefectureMembreId,
+              statut: 'confirme',
+              type: 'Préfecture départementale',
+              ...contactsPrefecture(gouvernanceFNE.membres, gouvernance.departementCode),
+            }),
+            membresDepartements: groupe.membresDepartements.concat({
+              departementCode: gouvernance.departementCode,
+              membreId: prefectureMembreId,
+              role: 'coporteur',
+            }),
           }),
-          membresDepartements: groupe.membresDepartements.concat({
-            departementCode: gouvernance.departementCode,
-            membreId: prefectureMembreId,
-            role: 'coporteur',
-          }),
-        }),
         comites: groupe.comites.concat(
           gouvernanceFNE.comites.map(comiteFromComiteFNE(gouvernance.departementCode, ssoId))
         ),
@@ -193,49 +291,69 @@ function grouperDonneesACreer(
     })
   }
 
+  function contactsPrefecture(
+    membres: ReadonlyArray<MembreGouvernanceFNE>,
+    departementCode: string
+  ): Pick<MembreRecord, 'contact' | 'contactTechnique'> {
+    const formulaire = membres
+      .find((membre) => membre.departementCode === departementCode)
+      ?.relationFormulaireGouvernance
+    return {
+      contact: formulaire?.relationContactPolitique?.email.toLowerCase()
+        ?? formulaire?.relationContactStructure?.email.toLowerCase()
+        ?? null,
+      contactTechnique: formulaire?.relationContactTechnique?.email.toLowerCase() ?? null,
+    }
+  }
+
   function extraireMembresGouvernances(gouvernanceFNE: GouvernanceFNE, gouvernance: GouvernanceRecord) {
-    return (groupeMembres: GroupeMembres, membreFNE: GouvernanceFNE['membres'][number]): GroupeMembres => {
-      const isCoporteur = membreFNE.coporteur
-      const isBeneficiaire = isDemandeSubventionAcceptee(membreFNE)
-      const isRecipiendaire = gouvernanceFNE.relationBeneficiaireDotationFormation
-      const ajouterMembres = ajouterMembresGouvernance(membreFNE, gouvernance.departementCode)
+    // eslint-disable-next-line sonarjs/cognitive-complexity
+    return (groupeMembres: GroupeMembres, membreFNE: MembreGouvernanceFNE | MembreFNENonConfirme): GroupeMembres => {
       let groupe: GroupeMembres = { ...groupeMembres }
-      if (!isCoporteur && !isBeneficiaire && !isRecipiendaire) {
-        groupe = ajouterMembres(groupe, 'observateur')
+      const isConfirme = isMembreFNEConfirme(membreFNE)
+      const ajouterMembres = ajouterMembresGouvernance(
+        groupe,
+        membreFNE,
+        isConfirme ? membreFNE.relationFormulaireGouvernance : membreFNE,
+        gouvernance.departementCode
+      )
+      if (isConfirme) {
+        const isCoporteur = membreFNE.coporteur
+        const isBeneficiaire = isDemandeSubventionAcceptee(membreFNE)
+        const isRecipiendaire = gouvernanceFNE.relationBeneficiaireDotationFormation
+        if (!isCoporteur && !isBeneficiaire && !isRecipiendaire) {
+          groupe = ajouterMembres('observateur')
+        } else {
+          if (isCoporteur) {
+            groupe = ajouterMembres('coporteur')
+          }
+          if (isBeneficiaire) {
+            groupe = ajouterMembres('beneficiaire')
+          }
+          if (isRecipiendaire) {
+            groupe = ajouterMembres('recipiendaire')
+          }
+        }
       } else {
-        if (isCoporteur) {
-          groupe = ajouterMembres(groupe, 'coporteur')
-        }
-        if (isBeneficiaire) {
-          groupe = ajouterMembres(groupe, 'beneficiaire')
-        }
-        if (isRecipiendaire) {
-          groupe = ajouterMembres(groupe, 'recipiendaire')
-        }
+        groupe = ajouterMembres('observateur', membreFNE.confirmeEtEnvoye ? 'candidat' : 'suggere')
       }
       return groupe
     }
   }
 
-  function ajouterMembresGouvernance(membreFNE: GouvernanceFNE['membres'][number], departementCode: string) {
-    return (groupeMembres: GroupeMembres, role: string): GroupeMembres => {
+  function ajouterMembresGouvernance(
+    groupeMembres: GroupeMembres,
+    membreFNE: MembreGouvernanceFNE | MembreFNENonConfirme,
+    contacts: Contacts,
+    departementCode: string
+  ) {
+    return (role: string, statut = 'confirme'): GroupeMembres => {
       let groupe: GroupeMembres = { ...groupeMembres }
       let membreId: string
       let type: string
       const gouvernanceDepartementCode = departementCode
       switch (true) {
-        case Boolean(membreFNE.departementCode):
-          [membreId, type] = [`departement-${membreFNE.departementCode}-${departementCode}`, 'Conseil départemental']
-          groupe = {
-            ...groupe,
-            membresDepartements: groupe.membresDepartements.concat({
-              departementCode: membreFNE.departementCode!,
-              membreId,
-              role,
-            }),
-          }
-          break
-        case Boolean(membreFNE.communeCode):
+        case Boolean(membreFNE.relationCommune):
           [membreId, type] = [`commune-${membreFNE.communeCode}-${departementCode}`, 'Collectivité, commune']
           groupe = {
             ...groupe,
@@ -246,7 +364,7 @@ function grouperDonneesACreer(
             }),
           }
           break
-        case Boolean(membreFNE.epciCode):
+        case Boolean(membreFNE.relationEpci):
           [membreId, type] = [`epci-${membreFNE.epciCode}-${departementCode}`, 'Collectivité, EPCI']
           groupe = {
             ...groupe,
@@ -268,7 +386,7 @@ function grouperDonneesACreer(
             }),
           }
           break
-        case Boolean(membreFNE.siret):
+        case Boolean(membreFNE.relationInformationSiret):
           membreId = `structure-${membreFNE.siret}-${departementCode}`
           groupe = {
             ...groupe,
@@ -279,15 +397,29 @@ function grouperDonneesACreer(
             }),
           }
           break
+        case Boolean(membreFNE.departementCode):
+          [membreId, type] = [`departement-${membreFNE.departementCode}-${departementCode}`, 'Conseil départemental']
+          groupe = {
+            ...groupe,
+            membresDepartements: groupe.membresDepartements.concat({
+              departementCode: membreFNE.departementCode!,
+              membreId,
+              role,
+            }),
+          }
+          break
       }
       groupe = {
         ...groupe,
         membres: groupe.membres.concat({
+          // @ts-expect-error
+          contact: contacts.relationContactPolitique?.email.toLowerCase()
+            ?? contacts.relationContactStructure?.email.toLowerCase(),
+          contactTechnique: contacts.relationContactTechnique?.email.toLowerCase(),
           gouvernanceDepartementCode,
           // @ts-expect-error
           id: membreId,
-
-          statut: 'confirme',
+          statut,
           // @ts-expect-error
           type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
         }),
@@ -300,13 +432,24 @@ function grouperDonneesACreer(
     return membre.beneficiairesSubventions.some(({ relationDemandeDeSubvention: { acceptee } }) =>
       Boolean(acceptee))
   }
+
+  function isMembreFNEConfirme(membre: MembreGouvernanceFNE | MembreFNENonConfirme): membre is MembreGouvernanceFNE {
+    return 'coporteur' in membre
+  }
 }
+
+type Contacts = Readonly<{
+  relationContactPolitique: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
+  relationContactStructure: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
+  relationContactTechnique: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
+}>
 
 type MembreGouvernanceFNE = PrismaFNE.$MembreGouvernancePayload['scalars'] &
   Readonly<{
     relationEpci: PrismaFNE.$EpciPayload['scalars'] | null
     relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
     relationCommune: PrismaFNE.$CommunePayload['scalars'] | null
+    relationFormulaireGouvernance: PrismaFNE.$FormulaireGouvernancePayload['scalars'] & Contacts
     beneficiairesSubventions: ReadonlyArray<
       PrismaFNE.$BeneficiaireSubventionPayload['scalars'] &
       Readonly<{
@@ -314,6 +457,18 @@ type MembreGouvernanceFNE = PrismaFNE.$MembreGouvernancePayload['scalars'] &
       }>
     >
   }>
+
+type MembreFNENonConfirme = PrismaFNE.$FormulaireGouvernancePayload['scalars'] &
+  Readonly<{
+    relationEpci: (PrismaFNE.$EpciPayload['scalars']
+      & Readonly<{ communes: ReadonlyArray<PrismaFNE.$CommunePayload['scalars']> }>) | null
+    relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
+    relationCommune: PrismaFNE.$CommunePayload['scalars'] | null
+    relationRegion: (PrismaFNE.$RegionPayload['scalars']
+      & Readonly<{ departements: ReadonlyArray<PrismaFNE.$DepartementPayload['scalars']> }>) | null
+  }> & Contacts
+
+type MembresFNENonConfirmesByCodeDepartement = Readonly<Record<string, ReadonlyArray<MembreFNENonConfirme>>>
 
 type GouvernanceFNE = PrismaFNE.$GouvernancePayload['scalars'] &
   Readonly<{
@@ -332,9 +487,9 @@ type Comite = Omit<ComiteRecord, 'id'>
 type FeuilleDeRoute = Omit<FeuilleDeRouteRecord, 'id'>
 
 type GroupeGouvernance = Readonly<{
-  gouvernances: Array<GouvernanceRecord>
-  comites: Array<Comite>
-  feuillesDeRoute: Array<FeuilleDeRoute>
+  gouvernances: ReadonlyArray<GouvernanceRecord>
+  comites: ReadonlyArray<Comite>
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRoute>
 }> & GroupeMembres
 
 type GroupeMembres = Readonly<{
