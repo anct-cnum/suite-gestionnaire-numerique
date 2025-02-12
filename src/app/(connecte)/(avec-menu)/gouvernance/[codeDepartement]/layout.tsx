@@ -20,7 +20,7 @@ export default async function Layout({
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
-    const afficherSousMenuMembre = Number(gouvernanceViewModel.sectionCoporteurs.total) > 0
+    const afficherSousMenuMembre = gouvernanceViewModel.sectionMembres.coporteurs.length > 0
     const afficherSousMenuFeuilleDeRoute = Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0
     const afficherSouSMenu = afficherSousMenuMembre || afficherSousMenuFeuilleDeRoute
     return (

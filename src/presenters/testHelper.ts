@@ -79,13 +79,8 @@ export function gouvernanceViewModelFactory(
     },
     dateAujourdhui: '',
     departement: '',
+    hasMembres: false,
     isVide: false,
-    sectionCoporteurs: {
-      coporteurs: [],
-      detailDuNombreDeChaqueMembre: '',
-      total: '0',
-      wording: '',
-    },
     sectionFeuillesDeRoute: {
       budgetTotalCumule: '',
       feuillesDeRoute: [],
@@ -95,6 +90,12 @@ export function gouvernanceViewModelFactory(
       },
       total: '0',
       wording: '',
+    },
+    sectionMembres: {
+      coporteurs: [],
+
+      totalEtWording: [0, ''],
+      wordingRecap: '',
     },
     sectionNoteDeContexte: {
       noteDeContexte: {
