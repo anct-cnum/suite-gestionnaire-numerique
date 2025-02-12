@@ -1,88 +1,26 @@
-import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import MesFeuillesDeRoute from '@/components/MesFeuillesDeRoute/MesFeuillesDeRoute'
+import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
+import { mesFeuillesDeRoutePresenter } from '@/presenters/mesFeuillesDeRoutePresenter'
+import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export const metadata: Metadata = {
-  title: 'Feuilles de route',
-}
-
-export default async function FeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
-  if (!(await params).codeDepartement) {
+export default async function MesFeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
+  try {
+    const codeDepartement = (await params).codeDepartement
+    const mesFeuillesDeRouteReadModel = await
+    new RecupererLesFeuillesDeRoute(
+      new PrismaLesFeuillesDeRouteLoader(prisma.feuilleDeRouteRecord)
+    ).handle({ codeDepartement })
+    const mesFeuillesDeRouteViewModel = mesFeuillesDeRoutePresenter(mesFeuillesDeRouteReadModel)
+    return (
+      <MesFeuillesDeRoute mesFeuillesDeRouteViewModel={mesFeuillesDeRouteViewModel} />
+    )
+  } catch {
     notFound()
   }
-
-  return (
-    <MesFeuillesDeRoute gouvernanceViewModel={{
-      comiteARemplir: {
-        commentaire: '',
-        date: '',
-        derniereEdition: '',
-        editeur: '',
-        frequences: [],
-        types: [],
-        uid: 1,
-      },
-      dateAujourdhui: '',
-      departement: '',
-      isVide: false,
-      sectionCoporteurs: {
-        coporteurs: [],
-        detailDuNombreDeChaqueMembre: '',
-        total: '',
-        wording: '',
-      },
-      sectionFeuillesDeRoute: {
-        budgetTotalCumule: '',
-        feuillesDeRoute: [
-          {
-            beneficiairesSubvention: [],
-            beneficiairesSubventionFormation: [],
-            budgetGlobal: '',
-            montantSubventionAccorde: '',
-            montantSubventionDemande: '',
-            montantSubventionFormationAccorde: '',
-            nom: 'Feuille de route 69',
-            porteur: 'CC des Monts du Lyonnais',
-            totalActions: '',
-            wordingBeneficiairesSubvention: '',
-            wordingBeneficiairesSubventionFormation: '',
-          },
-          {
-            beneficiairesSubvention: [],
-            beneficiairesSubventionFormation: [],
-            budgetGlobal: '',
-            montantSubventionAccorde: '',
-            montantSubventionDemande: '',
-            montantSubventionFormationAccorde: '',
-            nom: 'Feuille de route 2',
-            porteur: 'CC des Monts du Lyonnais',
-            totalActions: '',
-            wordingBeneficiairesSubvention: '',
-            wordingBeneficiairesSubventionFormation: '',
-          },
-        ],
-        lien: {
-          label: '',
-          url: '',
-        },
-        total: '1',
-        wording: '',
-      },
-      sectionNoteDeContexte: {
-        noteDeContexte: {
-          dateDeModification: '',
-          nomAuteur: '',
-          prenomAuteur: '',
-          texteAvecHTML: '',
-        },
-        sousTitre: '',
-      },
-      uid: '',
-    }}
-    />
-  )
 }
 
 type Props = Readonly<{
