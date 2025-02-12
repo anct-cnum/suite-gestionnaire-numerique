@@ -130,3 +130,20 @@
   height: 4.4rem;
   overflow: hidden;
 }
+
+.card-resume-montant-subvention {
+  background-color: var(--info-950-100);
+  background-image: none !important;
+  border-radius: 0.5rem;
+  height: 5rem !important;
+  padding: 1rem;
+  text-align: left;
+  width: 32%;
+}
+
+.align-items {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
