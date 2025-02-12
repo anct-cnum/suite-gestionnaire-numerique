@@ -67,6 +67,7 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
 export function membrePotentielFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {
   return membreFactory({
     nom: 'La Poste',
+    roles: ['observateur'],
     statut: 'candidat',
     uid: {
       value: 'membrePotentielFooId',
