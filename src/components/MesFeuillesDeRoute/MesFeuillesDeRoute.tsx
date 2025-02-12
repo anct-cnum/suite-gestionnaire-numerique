@@ -2,9 +2,9 @@ import { ReactElement } from 'react'
 
 import ResumeFeuilleDeRoute from './ResumeFeuilleDeRoute'
 import styles from '../Gouvernance/Gouvernance.module.css'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import { FeuilleDeRouteViewModel, MesFeuillesDeRouteViewModel } from '@/presenters/mesFeuillesDeRoutePresenter'
 
-export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): ReactElement {
+export default function MesFeuillesDeRoute({ mesFeuillesDeRouteViewModel }: Props): ReactElement {
   return (
     <div className='fr-container fr-mt-5w'>
 
@@ -12,7 +12,7 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
         <h1
           className="color-blue-france fr-mb-0 fr-h1"
         >
-          Feuilles de route · Rhône
+          {mesFeuillesDeRouteViewModel.titre}
         </h1>
         <button
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
@@ -30,7 +30,7 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
         >
           <div className={styles['card-resume-montant-subvention']}>
             <p className='fr-mb-0 color-blue-france fr-h6'>
-              55 000 €
+              {mesFeuillesDeRouteViewModel.totaux.budget}
               {' '}
             </p>
             <p className='color-blue-france'>
@@ -40,7 +40,7 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
           </div>
           <div className={styles['card-resume-montant-subvention']}>
             <p className=' fr-mb-0 color-blue-france fr-h6'>
-              90 000 €
+              {mesFeuillesDeRouteViewModel.totaux.coFinancement}
               {' '}
             </p>
             <p className='color-blue-france'>
@@ -50,7 +50,7 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
           </div>
           <div className={styles['card-resume-montant-subvention']}>
             <p className='fr-mb-0 color-blue-france fr-h6'>
-              145 000 €
+              {mesFeuillesDeRouteViewModel.totaux.financementAccorde}
             </p>
             <p className='color-blue-france'>
               Budget total des feuilles de route
@@ -64,7 +64,7 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
         className='fr-p-0'
         style={{ listStyle: 'none' }}
       >
-        {gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute?.map((feuilleDeRoute) => (
+        {mesFeuillesDeRouteViewModel.feuillesDeRoute.map((feuilleDeRoute: FeuilleDeRouteViewModel) => (
           <li key={feuilleDeRoute.nom}>
             <ResumeFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} />
           </li>
@@ -76,5 +76,5 @@ export default function MesFeuillesDeRoute({ gouvernanceViewModel }: Props): Rea
 }
 
 type Props = Readonly<{
-  gouvernanceViewModel: GouvernanceViewModel
+  mesFeuillesDeRouteViewModel: MesFeuillesDeRouteViewModel
 }>
