@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import prisma from '../../../../prisma/prismaClient'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
 import { isNullishOrEmpty, isNullish } from '@/shared/lang'
@@ -15,7 +14,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Structures
   if (isNullishOrEmpty(search)) {
     return NextResponse.json(null, { status: 400 })
   }
-  const rechercherLesStructures = new RechercherLesStructures(new PrismaStructureLoader(prisma.structureRecord))
+  const rechercherLesStructures = new RechercherLesStructures(new PrismaStructureLoader())
   const structuresReadModel = await rechercherLesStructures.handle({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     match: search!,

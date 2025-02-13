@@ -18,7 +18,7 @@ export async function modifierUneNotePriveeAction(actionParams: ActionParams): R
   }
 
   const result = await new ModifierUneNotePrivee(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   ).handle({

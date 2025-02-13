@@ -1,17 +1,14 @@
 import { $Enums, Prisma } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
 import { isNullish } from '@/shared/lang'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
-  readonly #dataResource: Prisma.UtilisateurRecordDelegate
-
-  constructor(dataResource: Prisma.UtilisateurRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.utilisateurRecord
 
   async mesUtilisateursEtLeTotal(
     utilisateurCourant: UnUtilisateurReadModel,

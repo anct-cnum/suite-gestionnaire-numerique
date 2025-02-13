@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
-import prisma from '../../../../../../prisma/prismaClient'
 import GouvernanceProvider from '@/components/shared/GouvernanceContext'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
 import { SousMenuGouvernance } from '@/components/transverse/MenuLateral/SousMenuGouvernance'
@@ -15,7 +14,7 @@ export default async function Layout({
 }: Props): Promise<ReactElement> {
   try {
     const codeDepartement = (await params).codeDepartement
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
+    const gouvernanceLoader = new PrismaGouvernanceLoader()
     const gouvernanceReadModel = await new RecupererUneGouvernance(gouvernanceLoader).handle({ codeDepartement })
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
