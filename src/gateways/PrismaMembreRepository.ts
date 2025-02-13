@@ -1,15 +1,10 @@
-import { Prisma } from '@prisma/client'
-
+import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
 import { MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
-  readonly #membreDataResource: Prisma.MembreRecordDelegate
-
-  constructor(membreDataResource: Prisma.MembreRecordDelegate) {
-    this.#membreDataResource = membreDataResource
-  }
+  readonly #membreDataResource = prisma.membreRecord
 
   async get(uid: MembreState['uid']['value']): Promise<Membre> {
     const record = await this.#membreDataResource.findUniqueOrThrow({

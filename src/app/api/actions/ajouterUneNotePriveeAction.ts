@@ -18,7 +18,7 @@ export async function ajouterUneNotePriveeAction(actionParams: ActionParams): Re
   }
 
   const result = await new AjouterUneNotePrivee(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new Date()
   ).handle({

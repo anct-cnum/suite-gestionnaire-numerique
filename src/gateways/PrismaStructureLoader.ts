@@ -1,13 +1,10 @@
 import { Prisma, StructureRecord } from '@prisma/client'
 
+import prisma from '../../prisma/prismaClient'
 import { StructureLoader, StructuresReadModel } from '../use-cases/queries/RechercherLesStructures'
 
 export class PrismaStructureLoader implements StructureLoader {
-  readonly #dataResource: Prisma.StructureRecordDelegate
-
-  constructor(dataResource: Prisma.StructureRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.structureRecord
 
   async structures(match: string): Promise<StructuresReadModel> {
     return this.#structuresRecord(match).then(transform)

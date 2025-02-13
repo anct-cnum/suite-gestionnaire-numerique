@@ -1,7 +1,6 @@
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../../../prisma/prismaClient'
 import FeuillesDeRoute from '@/components/FeuillesDeRoute/FeuillesDeRoute'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
@@ -12,7 +11,7 @@ export default async function FeuillesDeRouteController({ params }: Props): Prom
     const codeDepartement = (await params).codeDepartement
     const feuillesDeRouteReadModel = await
     new RecupererLesFeuillesDeRoute(
-      new PrismaLesFeuillesDeRouteLoader(prisma.feuilleDeRouteRecord)
+      new PrismaLesFeuillesDeRouteLoader()
     ).handle({ codeDepartement })
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
     return (

@@ -20,8 +20,7 @@ describe('mes membres loader', () => {
     await creerMembres('69')
 
     // WHEN
-    const mesMembresLoader = new PrismaMesMembresLoader(prisma.gouvernanceRecord)
-    const mesMembresReadModel = await mesMembresLoader.get('69')
+    const mesMembresReadModel = await new PrismaMesMembresLoader().get('69')
 
     // THEN
     expect(mesMembresReadModel).toStrictEqual<MesMembresReadModel>({
@@ -141,7 +140,7 @@ describe('mes membres loader', () => {
     await creerUnDepartement({ code: '69', nom: 'Rhône', regionCode: '84' })
 
     // WHEN
-    const mesMembresReadModel = new PrismaMesMembresLoader(prisma.gouvernanceRecord).get(codeDepartementInexistant)
+    const mesMembresReadModel = new PrismaMesMembresLoader().get(codeDepartementInexistant)
 
     // THEN
     await expect(mesMembresReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
