@@ -114,6 +114,7 @@ export function mesFeuillesDeRouteViewModelFactory(
           financementAccorde: '0 €',
         },
         uid: 'feuilleDeRouteFooId1',
+        wordingDetailDuBudget: 'dont 0 € de co-financements et 0 € des financements accordés',
       },
       {
         actions: [
@@ -160,6 +161,7 @@ export function mesFeuillesDeRouteViewModelFactory(
           financementAccorde: '0 €',
         },
         uid: 'feuilleDeRouteFooId2',
+        wordingDetailDuBudget: 'dont 0 € de co-financements et 0 € des financements accordés',
       },
     ],
     titre: 'Feuilles de route · 93',

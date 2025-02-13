@@ -292,6 +292,7 @@ export function feuillesDeRouteReadModelFactory(
         uid: 'feuilleDeRouteFooId2',
       },
     ],
+    nomDuDepartement: 'Seine-Saint-Denis',
     totaux: {
       budget: 0,
       coFinancement: 0,
