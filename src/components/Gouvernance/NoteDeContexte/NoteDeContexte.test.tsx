@@ -53,8 +53,8 @@ describe('note de contexte', () => {
       boutonsEdition.forEach((title) => {
         expect(within(ajouterUneNoteDeContextDrawer()).getByRole('button', { name: title })).toBeInTheDocument()
       })
-      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea')
-      expect(editeurDeTextEnrichi).toHaveAttribute('aria-label', 'Éditeur de note de contexte')
+      const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', { name: 'Éditeur de note de contexte' })
+      expect(editeurDeTextEnrichi).toBeInTheDocument()
       const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toBeDisabled()
       const boutonSupprimer = within(formulaire).queryByRole('button', { name: 'Supprimer' })
@@ -139,9 +139,10 @@ describe('note de contexte', () => {
       // WHEN
       jOuvreLeFormulairePourModifierUneNoteDeContexte()
       const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-      jeFermeLeFormulairePourModifierUneNoteDeContexte()
+      const fermer = jeFermeLeFormulairePourModifierUneNoteDeContexte()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterNoteDeContexteId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -260,8 +261,8 @@ function modifierUneNoteDeContexteDrawer(): HTMLElement {
   return screen.getByRole('dialog', { name: 'Note de contexte' })
 }
 
-function jeFermeLeFormulairePourModifierUneNoteDeContexte(): void {
-  presserLeBouton('Fermer le formulaire de modification d’une note de contexte')
+function jeFermeLeFormulairePourModifierUneNoteDeContexte(): HTMLElement {
+  return presserLeBouton('Fermer le formulaire de modification d’une note de contexte')
 }
 
 function jOuvreLeFormulairePourModifierUneNoteDeContexte(): void {

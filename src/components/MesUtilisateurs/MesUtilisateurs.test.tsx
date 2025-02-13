@@ -240,9 +240,10 @@ describe('mes utilisateurs', () => {
     // WHEN
     jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
     const drawer = screen.getByRole('dialog', { name: 'Martin Tartempion' })
-    jeFermeLesDetailsDunUtilisateur()
+    const fermer = jeFermeLesDetailsDunUtilisateur()
 
     // THEN
+    expect(fermer).toHaveAttribute('aria-controls', 'drawer-details-utilisateur')
     expect(drawer).not.toBeVisible()
   })
 
@@ -277,9 +278,10 @@ describe('mes utilisateurs', () => {
       // WHEN
       jOuvreLaReinvitation('Stephane Raymond')
       const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée hier' })
-      jeFermeLaReinvitation()
+      const fermer = jeFermeLaReinvitation()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawer-renvoyer-invitation')
       expect(drawer).not.toBeVisible()
     })
 
@@ -486,8 +488,8 @@ describe('mes utilisateurs', () => {
     presserLeBouton(name)
   }
 
-  function jeFermeLesDetailsDunUtilisateur(): void {
-    presserLeBouton('Fermer les détails')
+  function jeFermeLesDetailsDunUtilisateur(): HTMLElement {
+    return presserLeBouton('Fermer les détails')
   }
 
   function jOuvreLaReinvitation(name: string): void {
@@ -498,8 +500,8 @@ describe('mes utilisateurs', () => {
     return presserLeBouton('Renvoyer cette invitation')
   }
 
-  function jeFermeLaReinvitation(): void {
-    presserLeBouton('Fermer la réinvitation')
+  function jeFermeLaReinvitation(): HTMLElement {
+    return presserLeBouton('Fermer la réinvitation')
   }
 
   function jOuvreLaSuppressionDUnUtilisateur(): void {

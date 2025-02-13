@@ -97,9 +97,10 @@ describe('gouvernance', () => {
     // WHEN
     jOuvreLeFormulairePourAjouterUnComite()
     const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-    jeFermeLeFormulairePourAjouterUnComite()
+    const fermer = jeFermeLeFormulairePourAjouterUnComite()
 
     // THEN
+    expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterComiteId')
     expect(drawer).not.toBeVisible()
   })
 
@@ -542,9 +543,10 @@ describe('gouvernance', () => {
     // WHEN
     jouvreLeFormulairePourAjouterUneNoteDeContexte()
     const drawer = screen.getByRole('dialog', { name: 'Note de contexte' })
-    jeFermeLeFormulairePourAjouterUneNoteDeContexte()
+    const fermer = jeFermeLeFormulairePourAjouterUneNoteDeContexte()
 
     // THEN
+    expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterNoteDeContexteId')
     expect(drawer).not.toBeVisible()
   })
 
@@ -651,16 +653,16 @@ describe('gouvernance', () => {
     presserLeBouton('Ajouter un comité')
   }
 
-  function jeFermeLeFormulairePourAjouterUnComite(): void {
-    presserLeBouton('Fermer le formulaire de création d’un comité')
+  function jeFermeLeFormulairePourAjouterUnComite(): HTMLElement {
+    return presserLeBouton('Fermer le formulaire de création d’un comité')
   }
 
   function jouvreLeFormulairePourAjouterUneNoteDeContexte(): void {
     presserLeBouton('Ajouter une note de contexte')
   }
 
-  function jeFermeLeFormulairePourAjouterUneNoteDeContexte(): void {
-    presserLeBouton('Fermer le formulaire de création d’une note de contexte')
+  function jeFermeLeFormulairePourAjouterUneNoteDeContexte(): HTMLElement {
+    return presserLeBouton('Fermer le formulaire de création d’une note de contexte')
   }
 
   function jeDeplieLaNoteDeContexte(): HTMLElement {
