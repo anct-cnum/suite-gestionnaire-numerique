@@ -68,9 +68,10 @@ describe('comitologie', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUnComite()
       const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-      jeFermeLeFormulairePourAjouterUnComite()
+      const fermer = jeFermeLeFormulairePourAjouterUnComite()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterComiteId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -224,11 +225,12 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
-      jeFermeLeFormulairePourModifierUnComite()
+      const drawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const fermer = jeFermeLeFormulairePourModifierUnComite()
 
       // THEN
-      expect(modifierUnComiteDrawer).not.toBeVisible()
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
+      expect(drawer).not.toBeVisible()
     })
 
     it('puis que je le modifie et que je l’enregistre, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
@@ -361,8 +363,8 @@ describe('comitologie', () => {
     presserLeBouton('Ajouter')
   }
 
-  function jeFermeLeFormulairePourAjouterUnComite(): void {
-    presserLeBouton('Fermer le formulaire de création d’un comité')
+  function jeFermeLeFormulairePourAjouterUnComite(): HTMLElement {
+    return presserLeBouton('Fermer le formulaire de création d’un comité')
   }
 
   function jeSelectionneUnType(name: string): void {
@@ -389,8 +391,8 @@ describe('comitologie', () => {
     presserLeBouton('Comité technique')
   }
 
-  function jeFermeLeFormulairePourModifierUnComite(): void {
-    presserLeBouton('Fermer la modification du Comité technique')
+  function jeFermeLeFormulairePourModifierUnComite(): HTMLElement {
+    return presserLeBouton('Fermer la modification du Comité technique')
   }
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {

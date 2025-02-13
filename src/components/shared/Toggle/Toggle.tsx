@@ -15,7 +15,6 @@ export default function Toggle({
   return (
     <div className={`fr-toggle ${className}`}>
       <input
-        aria-describedby={`${id}-messages`}
         className="fr-toggle__input"
         defaultChecked={defaultChecked}
         id={id}
@@ -28,11 +27,6 @@ export default function Toggle({
       >
         {children}
       </label>
-      <div
-        aria-live="polite"
-        className="fr-messages-group"
-        id={`${id}-messages`}
-      />
     </div>
   )
 }

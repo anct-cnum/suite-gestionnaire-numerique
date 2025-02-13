@@ -11,7 +11,6 @@ export default function Checkbox({
     <div className="fr-fieldset__element">
       <div className="fr-checkbox-group">
         <input
-          aria-describedby={`${id}-messages`}
           defaultChecked={defaultChecked}
           id={id}
           name={name}
@@ -24,11 +23,6 @@ export default function Checkbox({
         >
           {label}
         </label>
-        <div
-          aria-live="assertive"
-          className="fr-messages-group"
-          id={`${id}-messages`}
-        />
       </div>
     </div>
   )

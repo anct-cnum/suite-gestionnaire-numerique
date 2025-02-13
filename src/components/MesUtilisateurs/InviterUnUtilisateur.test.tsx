@@ -102,11 +102,12 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = drawer()
-    jeFermeLeFormulairePourInviterUnUtilisateur()
+    const drawer = jOuvreLeFormulaireDInvitation()
+    const fermer = jeFermeLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    expect(drawerInvitation).not.toBeVisible()
+    expect(fermer).toHaveAttribute('aria-controls', 'drawer-invitation')
+    expect(drawer).not.toBeVisible()
   })
 
   it('en tant qu’administrateur, quand je clique sur un rôle à inviter, alors le champ d’organisation s’affiche', () => {
@@ -253,7 +254,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = drawer()
+    const drawerInvitation = jOuvreLeFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -303,7 +304,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = drawer()
+    const drawerInvitation = jOuvreLeFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -315,7 +316,7 @@ describe('inviter un utilisateur', () => {
     jEnvoieLInvitation()
 
     // THEN
-    expect(messageDErreur).toBeInTheDocument()
+    expect(messageDErreur).toHaveAttribute('id', 'text-input-error-desc-error')
     const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceMessageDErreur).not.toBeInTheDocument()
     const notification = await screen.findByRole('alert')
@@ -359,7 +360,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = drawer()
+    const drawerInvitation = jOuvreLeFormulaireDInvitation()
     jeTapeSonNom('Tartempion')
     jeTapeSonPrenom('Martin')
     jeTapeSonAdresseElectronique('martin.tartempion@example.com')
@@ -380,7 +381,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = drawer()
+    const drawerInvitation = jOuvreLeFormulaireDInvitation()
     const roleRadios = within(drawerInvitation).getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -406,8 +407,8 @@ describe('inviter un utilisateur', () => {
     presserLeBouton('Inviter une personne')
   }
 
-  function jeFermeLeFormulairePourInviterUnUtilisateur(): void {
-    presserLeBouton('Fermer l’invitation')
+  function jeFermeLeFormulairePourInviterUnUtilisateur(): HTMLElement {
+    return presserLeBouton('Fermer l’invitation')
   }
 
   function jeTapeSonNom(value: string): HTMLElement {
@@ -423,15 +424,15 @@ describe('inviter un utilisateur', () => {
   }
 
   function jeSelectionneUnAdministrateur(): void {
-    fireEvent.click(within(drawer()).getByLabelText('Administrateur dispositif'))
+    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Administrateur dispositif'))
   }
 
   function jeSelectionneUnGestionnaireDepartement(): void {
-    fireEvent.click(within(drawer()).getByLabelText('Gestionnaire département'))
+    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Gestionnaire département'))
   }
 
   function jeSelectionneUnGestionnaireStructure(): void {
-    fireEvent.click(within(drawer()).getByLabelText('Gestionnaire structure'))
+    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Gestionnaire structure'))
   }
 
   function jeTapeSaStructure(value: string): HTMLElement {
@@ -454,7 +455,7 @@ describe('inviter un utilisateur', () => {
     return presserLeBouton('Envoyer l’invitation')
   }
 
-  function drawer(): HTMLElement {
+  function jOuvreLeFormulaireDInvitation(): HTMLElement {
     return screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
   }
 
