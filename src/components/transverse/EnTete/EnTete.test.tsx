@@ -127,9 +127,10 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       // WHEN
       jOuvreLeMenuUtilisateur()
       const drawer = screen.getByRole('dialog')
-      jeFermeLeMenuUtilisateur()
+      const fermer = jeFermeLeMenuUtilisateur()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
       expect(drawer).not.toBeVisible()
     })
   })
@@ -138,8 +139,8 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     presserLeBouton('Martin Tartempion')
   }
 
-  function jeFermeLeMenuUtilisateur(): void {
-    presserLeBouton('Fermer le menu')
+  function jeFermeLeMenuUtilisateur(): HTMLElement {
+    return presserLeBouton('Fermer le menu')
   }
 
   function jeChangeMonRole(): void {

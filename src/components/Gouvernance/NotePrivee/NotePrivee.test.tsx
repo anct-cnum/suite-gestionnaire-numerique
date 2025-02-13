@@ -62,9 +62,10 @@ describe('note privée', () => {
       // WHEN
       jouvreLeFormulairePourAjouterUneNotePrivee()
       const drawer = screen.getByRole('dialog', { name: 'Note privée' })
-      jeFermeLeFormulairePourAjouterUneNotePrivee()
+      const fermer = jeFermeLeFormulairePourAjouterUneNotePrivee()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterNotePriveeId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -112,8 +113,8 @@ describe('note privée', () => {
       presserLeBouton('Rédiger une note')
     }
 
-    function jeFermeLeFormulairePourAjouterUneNotePrivee(): void {
-      presserLeBouton('Fermer le formulaire de création d’une note privée')
+    function jeFermeLeFormulairePourAjouterUneNotePrivee(): HTMLElement {
+      return presserLeBouton('Fermer le formulaire de création d’une note privée')
     }
   })
 
@@ -153,9 +154,10 @@ describe('note privée', () => {
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
       const drawer = screen.getByRole('dialog', { name: 'Note privée' })
-      jeFermeLeFormulairePourModifierUneNotePrivee()
+      const fermer = jeFermeLeFormulairePourModifierUneNotePrivee()
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterNotePriveeId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -244,8 +246,8 @@ describe('note privée', () => {
       presserLeBouton('Modifier la note')
     }
 
-    function jeFermeLeFormulairePourModifierUneNotePrivee(): void {
-      presserLeBouton('Fermer le formulaire de modification d’une note privée')
+    function jeFermeLeFormulairePourModifierUneNotePrivee(): HTMLElement {
+      return presserLeBouton('Fermer le formulaire de modification d’une note privée')
     }
 
     function jEffaceLaNotePrivee(context: HTMLElement): void {

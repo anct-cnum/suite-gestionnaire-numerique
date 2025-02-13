@@ -175,7 +175,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(saisie).toBeRequired()
       expect(saisie).toHaveAttribute('type', 'email')
       expect(saisie).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
-      expect(saisie).toHaveAttribute('aria-describedby', 'supprimer-mon-compte-email-message-validation')
 
       const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })
       expect(annuler).toHaveAttribute('type', 'reset')
@@ -236,7 +235,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         jeSaisieMonEMail('deschamps.julien@example.com')
 
         // THEN
-        const messageEmailKo = screen.getByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
+        const messageEmailKo = screen.getByRole('textbox', { description: 'L’adresse électronique saisie n’est pas reliée au compte utilisateur' })
         expect(messageEmailKo).toBeInTheDocument()
         expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeDisabled()
       })
@@ -271,8 +270,8 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
         // THEN
         expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).not.toBeDisabled()
-        const messageEmailOk = screen.getByText('L’adresse électronique saisie est valide')
-        expect(messageEmailOk).toBeInTheDocument()
+        const messageEmailKo = screen.getByRole('textbox', { description: 'L’adresse électronique saisie est valide' })
+        expect(messageEmailKo).toBeInTheDocument()
       })
 
       it('quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif, il s’inactive et change de contenu, m’informant que la suppression est en cours, puis je suis déconnecté', async () => {

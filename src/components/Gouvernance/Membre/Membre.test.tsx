@@ -1,8 +1,8 @@
 // eslint-disable-next-line testing-library/no-manual-cleanup
-import { fireEvent, within, screen, cleanup } from '@testing-library/react'
+import { cleanup, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
+import { matchWithoutMarkup, presserLeBouton, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -16,9 +16,10 @@ describe('membres', () => {
       // WHEN
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
       const drawer = screen.queryByRole('dialog', { name: 'Préfecture du Rhône' })
-      jeFermeLesDetailsDuMembre('Fermer les détails du membre : Préfecture du Rhône')
+      const fermer = jeFermeLesDetailsDuMembre('Fermer les détails du membre : Préfecture du Rhône')
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerMembreId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -282,9 +283,10 @@ describe('membres', () => {
       // WHEN
       jOuvreLesDetailsDuMembre('Département du Rhône')
       const drawer = screen.queryByRole('dialog', { name: 'Département du Rhône' })
-      jeFermeLesDetailsDuMembre('Fermer les détails du membre : Département du Rhône')
+      const fermer = jeFermeLesDetailsDuMembre('Fermer les détails du membre : Département du Rhône')
 
       // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerMembreId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -562,9 +564,9 @@ function afficherGouvernance(gouvernance?: Parameters<typeof gouvernanceReadMode
 }
 
 function jOuvreLesDetailsDuMembre(nomDuMembre: string): void {
-  fireEvent.click(screen.getByRole('button', { name: nomDuMembre }))
+  presserLeBouton(nomDuMembre)
 }
 
-function jeFermeLesDetailsDuMembre(nomDuMembre: string): void {
-  fireEvent.click(screen.getByRole('button', { name: nomDuMembre }))
+function jeFermeLesDetailsDuMembre(nomDuMembre: string): HTMLElement {
+  return presserLeBouton(nomDuMembre)
 }
