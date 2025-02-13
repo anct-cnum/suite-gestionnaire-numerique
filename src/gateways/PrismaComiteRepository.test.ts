@@ -19,7 +19,6 @@ describe('comité repository', () => {
     await creerUnDepartement()
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
     const comite = comiteFactory({
       uidEditeur: {
         email: 'martin.tartempion@example.net',
@@ -31,7 +30,7 @@ describe('comité repository', () => {
     })
 
     // WHEN
-    const comiteCree = await repository.add(comite)
+    const comiteCree = await new PrismaComiteRepository().add(comite)
 
     // THEN
     expect(comiteCree).toBe(true)
@@ -88,10 +87,9 @@ describe('comité repository', () => {
       editeurUtilisateurId: editeurUtilisateurId.value,
       gouvernanceDepartementCode: departementCode,
     })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = await repository.get('1')
+    const comiteRecord = await new PrismaComiteRepository().get('1')
 
     // THEN
     expect(comiteRecord.state).toStrictEqual(comiteFactory({
@@ -120,10 +118,9 @@ describe('comité repository', () => {
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUnComite({ editeurUtilisateurId: uidEditeur, gouvernanceDepartementCode: departementCode })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = repository.get('666')
+    const comiteRecord = new PrismaComiteRepository().get('666')
 
     // THEN
     await expect(comiteRecord).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -145,10 +142,9 @@ describe('comité repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: 2,
     })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    const comiteRecord = repository.get('2')
+    const comiteRecord = new PrismaComiteRepository().get('2')
 
     // THEN
     await expect(async () => comiteRecord).rejects.toThrow('dateDuComiteDoitEtreDansLeFutur')
@@ -178,10 +174,9 @@ describe('comité repository', () => {
       editeurUtilisateurId: uidEditeur,
       gouvernanceDepartementCode: departementCode,
     })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    await repository.update(comiteFactory({
+    await new PrismaComiteRepository().update(comiteFactory({
       commentaire: 'deuxième commentaire',
       date: epochTimePlusOneDay,
       dateDeCreation: epochTime,
@@ -238,10 +233,9 @@ describe('comité repository', () => {
       id: 1,
       type: 'strategique',
     })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    await repository.update(comiteFactory({
+    await new PrismaComiteRepository().update(comiteFactory({
       date: undefined,
       uid: {
         value: '1',
@@ -282,10 +276,9 @@ describe('comité repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: 2,
     })
-    const repository = new PrismaComiteRepository(prisma.comiteRecord)
 
     // WHEN
-    await repository.drop(comiteFactory({
+    await new PrismaComiteRepository().drop(comiteFactory({
       commentaire: '',
       date: epochTime,
       dateDeCreation: epochTime,

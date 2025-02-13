@@ -26,7 +26,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   }
 
   const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
+  const utilisateurLoader = new PrismaUtilisateurLoader()
   let utilisateurReadModel: UnUtilisateurReadModel | null
 
   try {

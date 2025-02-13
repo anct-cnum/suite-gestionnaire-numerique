@@ -1,14 +1,9 @@
-import { Prisma } from '@prisma/client'
-
 import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import prisma from '../../prisma/prismaClient'
 import { MembreReadModel, MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export class PrismaMesMembresLoader implements MesMembresLoader {
-  readonly #dataResource: Prisma.GouvernanceRecordDelegate
-
-  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.gouvernanceRecord
 
   async get(codeDepartementGouvernance: string): Promise<MesMembresReadModel> {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({

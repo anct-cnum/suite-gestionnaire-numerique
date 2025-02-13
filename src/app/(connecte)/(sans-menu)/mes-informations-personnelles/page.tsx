@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../prisma/prismaClient'
 import MesInformationsPersonnelles from '@/components/MesInformationsPersonnelles/MesInformationsPersonnelles'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaMesInformationsPersonnellesLoader } from '@/gateways/PrismaMesInformationsPersonnellesLoader'
@@ -12,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 export default async function MesInformationsPersonnellesController(): Promise<ReactElement> {
-  const mesInformationsPersonnellesQuery = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
+  const mesInformationsPersonnellesQuery = new PrismaMesInformationsPersonnellesLoader()
   const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesQuery.byUid(await getSessionSub())
   const mesInformationsPersonnellesViewModel =
     mesInformationsPersonnellesPresenter(mesInformationsPersonnellesReadModel)

@@ -19,10 +19,9 @@ describe('récupérer les feuilles de route loader', () => {
     await creerUneFeuilleDeRoute({ creation: epochTimeMinusTwoDays, gouvernanceDepartementCode: '93', id: 1, nom: 'fdr1' })
     await creerUneFeuilleDeRoute({ creation: epochTime, gouvernanceDepartementCode: '93', id: 2, nom: 'fdr2' })
     await creerUneFeuilleDeRoute({ creation: epochTime, gouvernanceDepartementCode: '75', id: 3, nom: 'fdr3' })
-    const feuillesDeRouteLoader = new PrismaLesFeuillesDeRouteLoader(prisma.feuilleDeRouteRecord)
 
     // WHEN
-    const feuillesDeRouteReadModel = await feuillesDeRouteLoader.feuillesDeRoute('93')
+    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader().feuillesDeRoute('93')
 
     // THEN
     expect(feuillesDeRouteReadModel).toStrictEqual<FeuillesDeRouteReadModel>({

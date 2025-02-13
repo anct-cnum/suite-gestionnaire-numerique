@@ -37,10 +37,8 @@ describe('gouvernance loader', () => {
     await creerMembres('93')
     await creerMembres('75')
 
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
-
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.get('93')
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get('93')
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -90,10 +88,9 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '11' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
     const codeDepartementInexistant = 'zzz'
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = gouvernanceLoader.get(codeDepartementInexistant)
+    const gouvernanceReadModel = new PrismaGouvernanceLoader().get(codeDepartementInexistant)
 
     // THEN
     await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -110,10 +107,9 @@ describe('gouvernance loader', () => {
     await creerUneGouvernance({ departementCode: codeDepartement })
     await creerFeuillesDeRoute(codeDepartement)
     await creerMembres('93')
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -145,10 +141,9 @@ describe('gouvernance loader', () => {
       id: 1,
       type: 'stratégique',
     })
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
@@ -185,10 +180,9 @@ describe('gouvernance loader', () => {
       id: 1,
       type: 'stratégique',
     })
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
 
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
@@ -226,10 +220,8 @@ describe('gouvernance loader', () => {
       type: 'stratégique',
     })
 
-    const gouvernanceLoader = new PrismaGouvernanceLoader(prisma.gouvernanceRecord)
-
     // WHEN
-    const gouvernanceReadModel = await gouvernanceLoader.get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
