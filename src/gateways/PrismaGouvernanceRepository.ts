@@ -1,17 +1,10 @@
-import { Prisma } from '@prisma/client'
-
+import prisma from '../../prisma/prismaClient'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { GouvernanceRepository } from '@/use-cases/commands/AjouterNoteDeContexteAGouvernance'
 
 export class PrismaGouvernanceRepository implements GouvernanceRepository {
-  readonly #gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
-
-  constructor(
-    gouvernanceDataResource: Prisma.GouvernanceRecordDelegate
-  ) {
-    this.#gouvernanceDataResource = gouvernanceDataResource
-  }
+  readonly #gouvernanceDataResource = prisma.gouvernanceRecord
 
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({

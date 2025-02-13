@@ -43,10 +43,10 @@ describe('mes informations personnelles loader', () => {
     // GIVEN
     const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     await creerUnUtilisateur({ role, ssoId: ssoIdExistant })
-    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
-    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.byUid(ssoIdExistant)
+    const mesInformationsPersonnellesReadModel =
+      await new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdExistant)
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -70,10 +70,10 @@ describe('mes informations personnelles loader', () => {
       ssoId: ssoIdExistant,
       structureId,
     })
-    const mesInformationsPersonnellesLoader = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
-    const mesInformationsPersonnellesReadModel = await mesInformationsPersonnellesLoader.byUid(ssoIdExistant)
+    const mesInformationsPersonnellesReadModel =
+      await new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdExistant)
 
     // THEN
     expect(mesInformationsPersonnellesReadModel).toStrictEqual<MesInformationsPersonnellesReadModel>({
@@ -101,11 +101,10 @@ describe('mes informations personnelles loader', () => {
     // GIVEN
     const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
     await creerUnUtilisateur({ ssoId: 'userFooId' })
-    const mesInformationsPersonnellesGateway = new PrismaMesInformationsPersonnellesLoader(prisma.utilisateurRecord)
 
     // WHEN
     const utilisateurReadModel = async (): Promise<MesInformationsPersonnellesReadModel> => {
-      return mesInformationsPersonnellesGateway.byUid(ssoIdInexistant)
+      return new PrismaMesInformationsPersonnellesLoader().byUid(ssoIdInexistant)
     }
 
     // THEN

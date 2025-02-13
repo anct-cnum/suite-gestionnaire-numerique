@@ -1,14 +1,9 @@
-import { Prisma } from '@prisma/client'
-
+import prisma from '../../prisma/prismaClient'
 import { Comite } from '@/domain/Comite'
 import { ComiteRepository } from '@/use-cases/commands/shared/ComiteRepository'
 
 export class PrismaComiteRepository implements ComiteRepository {
-  readonly #dataResource: Prisma.ComiteRecordDelegate
-
-  constructor(dataResource: Prisma.ComiteRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.comiteRecord
 
   async add(comite: Comite): Promise<boolean> {
     await this.#dataResource.create({
