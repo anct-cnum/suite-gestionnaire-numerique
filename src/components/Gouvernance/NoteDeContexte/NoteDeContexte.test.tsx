@@ -226,7 +226,7 @@ function afficherUneGouvernance(options?: Partial<Parameters<typeof renderCompon
     gouvernanceReadModelFactory({ noteDeContexte: undefined }),
     epochTime
   )
-  renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+  renderComponent(<Gouvernance />, options, gouvernanceViewModel)
 }
 
 function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
@@ -238,7 +238,7 @@ function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<t
       texte: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
     },
   }), epochTime)
-  renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+  renderComponent(<Gouvernance />, options, gouvernanceViewModel)
 }
 
 function jOuvreLeFormulairePourAjouterUneNoteDeContexte(): void {

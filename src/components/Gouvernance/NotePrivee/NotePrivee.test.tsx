@@ -266,7 +266,7 @@ describe('note privée', () => {
 
   function afficherUneGouvernanceSansNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ notePrivee: undefined }), now)
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+    renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
 
   function afficherUneGouvernanceAvecNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
@@ -278,7 +278,7 @@ describe('note privée', () => {
         texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
       },
     }), now)
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+    renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
 
   const now = epochTime
