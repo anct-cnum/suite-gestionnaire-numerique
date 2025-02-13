@@ -1,23 +1,26 @@
-import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import PageTitle from '@/components/shared/PageTitle/PageTitle'
+import prisma from '../../../../../../prisma/prismaClient'
+import MesFeuillesDeRoute from '@/components/MesFeuillesDeRoute/MesFeuillesDeRoute'
+import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
+import { mesFeuillesDeRoutePresenter } from '@/presenters/mesFeuillesDeRoutePresenter'
+import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export const metadata: Metadata = {
-  title: 'Feuilles de route',
-}
-
-export default async function FeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
-  if (!(await params).codeDepartement) {
+export default async function MesFeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
+  try {
+    const codeDepartement = (await params).codeDepartement
+    const mesFeuillesDeRouteReadModel = await
+    new RecupererLesFeuillesDeRoute(
+      new PrismaLesFeuillesDeRouteLoader(prisma.feuilleDeRouteRecord)
+    ).handle({ codeDepartement })
+    const mesFeuillesDeRouteViewModel = mesFeuillesDeRoutePresenter(mesFeuillesDeRouteReadModel)
+    return (
+      <MesFeuillesDeRoute mesFeuillesDeRouteViewModel={mesFeuillesDeRouteViewModel} />
+    )
+  } catch {
     notFound()
   }
-
-  return (
-    <PageTitle icon="compass-3-line">
-      Feuilles de route
-    </PageTitle>
-  )
 }
 
 type Props = Readonly<{

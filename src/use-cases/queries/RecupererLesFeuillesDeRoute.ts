@@ -19,6 +19,7 @@ export interface FeuillesDeRouteLoader {
 }
 
 export type FeuillesDeRouteReadModel = Readonly<{
+  nomDuDepartement: string
   departement: string
   feuillesDeRoute: ReadonlyArray<{
     actions: ReadonlyArray<{
