@@ -1,14 +1,11 @@
 import { Prisma } from '@prisma/client'
 
 import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import prisma from '../../prisma/prismaClient'
 import { CoporteurDetailReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
-  readonly #dataResource: Prisma.GouvernanceRecordDelegate
-
-  constructor(dataResource: Prisma.GouvernanceRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.gouvernanceRecord
 
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({

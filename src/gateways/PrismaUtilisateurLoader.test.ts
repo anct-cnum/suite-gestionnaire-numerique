@@ -119,10 +119,9 @@ describe('prisma utilisateur query', () => {
         ssoId: ssoIdExistant,
         structureId: 10,
       })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
-      const utilisateurReadModel = await utilisateurLoader.findByUid(ssoIdExistant)
+      const utilisateurReadModel = await new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
 
       // THEN
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
@@ -148,11 +147,10 @@ describe('prisma utilisateur query', () => {
       // GIVEN
       const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await creerUnUtilisateur({ ssoId: '1234567890' })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
       const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdInexistant)
+        async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdInexistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -163,11 +161,10 @@ describe('prisma utilisateur query', () => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await creerUnUtilisateur({ isSupprime: true, ssoId: ssoIdExistant })
-      const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
 
       // WHEN
       const utilisateurReadModel =
-        async (): Promise<UnUtilisateurReadModel> => utilisateurLoader.findByUid(ssoIdExistant)
+        async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
 
       // THEN
       await expect(utilisateurReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -673,7 +670,7 @@ describe('prisma utilisateur query', () => {
       uid: ssoId,
     })
     const roles: ReadonlyArray<string> = []
-    const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
+    const utilisateurLoader = new PrismaUtilisateurLoader()
     const codeDepartement = '0'
     const codeRegion = '0'
   })
@@ -688,7 +685,7 @@ describe('prisma utilisateur query', () => {
       uid: ssoId,
     })
     const roles: ReadonlyArray<string> = []
-    const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
+    const utilisateurLoader = new PrismaUtilisateurLoader()
     const codeDepartement = '0'
     const codeRegion = '0'
 

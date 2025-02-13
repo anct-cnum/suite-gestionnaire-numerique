@@ -17,10 +17,9 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '69' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnMembre({ id: 'prefecture-69' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = repository.get(new MembreUid('prefecture-93').state.value)
+    const membre = new PrismaMembreRepository().get(new MembreUid('prefecture-93').state.value)
 
     // THEN
     await expect(membre).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -35,10 +34,9 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'departement-69-69', statut: 'confirme' })
     await creerUnMembreDepartement({ departementCode: '69', membreId: 'departement-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'departement-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = await repository.get(new MembreUid('departement-69-69').state.value)
+    const membre = await new PrismaMembreRepository().get(new MembreUid('departement-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -62,10 +60,9 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'sgar-69-69', statut: 'confirme' })
     await creerUnMembreSgar({ membreId: 'sgar-69-69', role: 'observateur', sgarCode: '84' })
     await creerUnMembre({ id: 'sgar-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = await repository.get(new MembreUid('sgar-69-69').state.value)
+    const membre = await new PrismaMembreRepository().get(new MembreUid('sgar-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -89,10 +86,9 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'commune-69-69', statut: 'confirme' })
     await creerUnMembreCommune({ commune: 'Paris', membreId: 'commune-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'commune-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = await repository.get(new MembreUid('commune-69-69').state.value)
+    const membre = await new PrismaMembreRepository().get(new MembreUid('commune-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -116,10 +112,9 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'epci-69-69', statut: 'confirme' })
     await creerUnMembreEpci({ epci: 'Bordeaux Métropole', membreId: 'epci-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'epci-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = await repository.get(new MembreUid('epci-69-69').state.value)
+    const membre = await new PrismaMembreRepository().get(new MembreUid('epci-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -143,10 +138,9 @@ describe('membre repository', () => {
     await creerUnMembre({ id: 'structure-69-69', statut: 'candidat' })
     await creerUnMembreStructure({ membreId: 'structure-69-69', role: 'observateur', structure: 'HUBIKOOP' })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    const membre = await repository.get(new MembreUid('structure-69-69').state.value)
+    const membre = await new PrismaMembreRepository().get(new MembreUid('structure-69-69').state.value)
 
     // THEN
     expect(membre.state).toStrictEqual({
@@ -175,10 +169,9 @@ describe('membre repository', () => {
     })
     await creerUnMembreStructure({ membreId: 'structure-69-69', role: 'observateur', structure: 'HUBIKOOP' })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
-    const repository = new PrismaMembreRepository(prisma.membreRecord)
 
     // WHEN
-    await repository.update(membreConfirmeFactory({
+    await new PrismaMembreRepository().update(membreConfirmeFactory({
       nom: 'La Poste',
       roles: ['observateur'],
       statut: 'confirme',

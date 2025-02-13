@@ -1,7 +1,6 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../prisma/prismaClient'
 import departements from '../../../../../ressources/departements.json'
 import groupements from '../../../../../ressources/groupements.json'
 import regions from '../../../../../ressources/regions.json'
@@ -35,7 +34,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   const prenomOuNomOuEmailAwaited = searchParamsAwaited.prenomOuNomOuEmail
   const prenomOuNomOuEmail = isNullishOrEmpty(prenomOuNomOuEmailAwaited) ? '' : prenomOuNomOuEmailAwaited
 
-  const utilisateurLoader = new PrismaUtilisateurLoader(prisma.utilisateurRecord)
+  const utilisateurLoader = new PrismaUtilisateurLoader()
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
   const { utilisateursCourants, total } =
     await rechercherMesUtilisateurs.handle({

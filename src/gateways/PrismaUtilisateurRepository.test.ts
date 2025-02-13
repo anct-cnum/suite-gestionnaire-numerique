@@ -303,15 +303,13 @@ describe('utilisateur repository', () => {
   })
 
   describe('mise à jour d’un utilisateur', () => {
-    const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-
     it('changement du rôle, du nom, du prénom, de la date d’invitation, de la date de dernière connexion et de l’email', async () => {
       // GIVEN
       const date = epochTime
       await creerUnUtilisateur()
 
       // WHEN
-      await repository.update(
+      await new PrismaUtilisateurRepository(prisma.utilisateurRecord).update(
         utilisateurFactory({
           derniereConnexion: date,
           emailDeContact: 'martine.dugenoux@example.org',
@@ -345,10 +343,9 @@ describe('utilisateur repository', () => {
         ssoEmail: 'martine.dugenoux@example.org',
         ssoId: 'martine.dugenoux@example.org',
       })
-      const repository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
 
       // WHEN
-      await repository.updateUid(utilisateurFactory({
+      await new PrismaUtilisateurRepository(prisma.utilisateurRecord).updateUid(utilisateurFactory({
         uid: { email: 'martine.dugenoux@example.org', value: uidUtilisateurValue },
       }))
 
@@ -433,16 +430,13 @@ describe('utilisateur repository', () => {
         },
       } as unknown as Prisma.UtilisateurRecordDelegate
 
-      const repositoryGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub)
-      const repositoryAuthenticationError = new PrismaUtilisateurRepository(
-        prismaClientAuthenticationFailedErrorStub
-      )
-
       const utilisateur = utilisateurFactory()
 
       // WHEN
-      const resultatGenericError = repositoryGenericError.add(utilisateur)
-      const resultatAuthenticationError = repositoryAuthenticationError.add(utilisateur)
+      const resultatGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub).add(utilisateur)
+      const resultatAuthenticationError = new PrismaUtilisateurRepository(
+        prismaClientAuthenticationFailedErrorStub
+      ).add(utilisateur)
 
       // THEN
       await expect(resultatGenericError).rejects.toThrow('generic error')

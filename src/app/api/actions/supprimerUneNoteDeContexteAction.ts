@@ -20,7 +20,7 @@ export async function supprimerUneNoteDeContexteAction(
   }
 
   const supprimerUneNoteDeContexte = new SupprimerUneNoteDeContexte(
-    new PrismaGouvernanceRepository(prisma.gouvernanceRecord),
+    new PrismaGouvernanceRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   )
   const result = await supprimerUneNoteDeContexte.handle({

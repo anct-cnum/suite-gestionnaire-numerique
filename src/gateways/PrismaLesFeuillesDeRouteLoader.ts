@@ -1,13 +1,10 @@
 import { Prisma } from '@prisma/client'
 
+import prisma from '../../prisma/prismaClient'
 import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
 export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
-  readonly #dataResource: Prisma.FeuilleDeRouteRecordDelegate
-
-  constructor(dataResource: Prisma.FeuilleDeRouteRecordDelegate) {
-    this.#dataResource = dataResource
-  }
+  readonly #dataResource = prisma.feuilleDeRouteRecord
 
   async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
     const feuillesDeRouteRecord = await this.#dataResource.findMany({
