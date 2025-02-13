@@ -15,9 +15,8 @@ describe('menu lateral', () => {
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
     const menu = within(navigation).getByRole('list')
     const menuItems = within(menu).getAllByRole('listitem')
-    const tableauDeBord = within(menuItems[0]).getByRole('link', { name: 'Tableau de bord' })
+    const tableauDeBord = within(menuItems[0]).getByRole('link', { current: false, name: 'Tableau de bord' })
     expect(tableauDeBord).toHaveAttribute('href', '/tableau-de-bord')
-    expect(tableauDeBord).toHaveAttribute('aria-current', 'false')
     expect(menuItems[0]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
   })
 
@@ -41,9 +40,8 @@ describe('menu lateral', () => {
     const menuItems = within(menus[1]).getAllByRole('listitem')
     expect(menuItems).toHaveLength(7)
     expect(menuItems[index]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
-    const element = within(menuItems[index]).getByRole('link', { name })
+    const element = within(menuItems[index]).getByRole('link', { current: false, name })
     expect(element).toHaveAttribute('href', url)
-    expect(element).toHaveAttribute('aria-current', 'false')
   })
 
   it.each([
@@ -61,9 +59,8 @@ describe('menu lateral', () => {
     const menuItems = within(menus[3]).getAllByRole('listitem')
     expect(menuItems).toHaveLength(2)
     expect(menuItems[index]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
-    const element = within(menuItems[index]).getByRole('link', { name })
+    const element = within(menuItems[index]).getByRole('link', { current: false, name })
     expect(element).toHaveAttribute('href', url)
-    expect(element).toHaveAttribute('aria-current', 'false')
   })
 
   it('étant un gestionnaire de département, quand j’affiche le menu Gouvernance, alors je peux le dérouler', () => {
@@ -71,9 +68,8 @@ describe('menu lateral', () => {
     afficherMenuLateralGestionnaireDepartement()
 
     // THEN
-    const menuGouvernance = screen.getByRole('link', { name: 'Gouvernance' })
+    const menuGouvernance = screen.getByRole('link', { expanded: false, name: 'Gouvernance' })
     expect(menuGouvernance).toHaveAttribute('aria-controls', 'fr-sidemenu-gouvernance')
-    expect(menuGouvernance).toHaveAttribute('aria-expanded', 'false')
   })
 
   it.each([
@@ -89,8 +85,8 @@ describe('menu lateral', () => {
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[index]).getAllByRole('listitem')
     expect(menuItems[0]).toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
-    const element = within(menuItems[0]).getByRole('link', { name })
-    expect(element).toHaveAttribute('aria-current', 'page')
+    const element = within(menuItems[0]).getByRole('link', { current: 'page', name })
+    expect(element).toBeInTheDocument()
   })
 
   it('étant un utilisateur autre que gestionnaire de département, quand j’affiche le menu latéral, alors il ne s’affiche pas avec le lien de la gouvernance', () => {

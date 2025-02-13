@@ -65,9 +65,10 @@ describe('filtrer mes utilisateurs', () => {
     // WHEN
     jOuvreLeFormulairePourFiltrer()
     const drawer = screen.getByRole('dialog', { name: 'Filtrer' })
-    jeFermeLeFormulairePourFiltrer()
+    const fermer = jeFermeLeFormulairePourFiltrer()
 
     // THEN
+    expect(fermer).toHaveAttribute('aria-controls', 'drawer-filtre-utilisateurs')
     expect(drawer).not.toBeVisible()
   })
 
@@ -392,8 +393,8 @@ describe('filtrer mes utilisateurs', () => {
     presserLeBouton('Filtrer')
   }
 
-  function jeFermeLeFormulairePourFiltrer(): void {
-    presserLeBouton('Fermer les filtres')
+  function jeFermeLeFormulairePourFiltrer(): HTMLElement {
+    return presserLeBouton('Fermer les filtres')
   }
 
   function afficherMesUtilisateurs(
