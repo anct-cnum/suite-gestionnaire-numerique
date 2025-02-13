@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useRef, useState } from 'react'
 // eslint-disable-next-line import/no-unresolved
 import Select from 'react-select/dist/declarations/src/Select'
 
@@ -21,7 +21,6 @@ export default function FiltrerMesUtilisateurs({
 }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
   const ref = useRef<Select>(null)
-  const utilisateursActivesToggleId = useId()
   const areUtilisateursActivesChecked = searchParams.get('utilisateursActives') === 'on'
   const [structuresSearchParams, setStructuresSearchParams] = useState<URLSearchParams>(new URLSearchParams())
   const [structure, setStructure] = useState('')
@@ -40,7 +39,6 @@ export default function FiltrerMesUtilisateurs({
           defaultChecked={areUtilisateursActivesChecked}
           // Stryker disable next-line BooleanLiteral
           hasSeparator={true}
-          id={utilisateursActivesToggleId}
           name="utilisateursActives"
         >
           Uniquement les utilisateurs activés
