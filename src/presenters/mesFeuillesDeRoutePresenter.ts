@@ -5,7 +5,7 @@ export function mesFeuillesDeRoutePresenter(
 ): MesFeuillesDeRouteViewModel {
   return {
     feuillesDeRoute: feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel),
-    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
+    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.nomDuDepartement}`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
       coFinancement: formatMontant(feuillesDeRouteReadModel.totaux.coFinancement),

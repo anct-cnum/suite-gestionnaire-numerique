@@ -12,7 +12,7 @@ describe('récupérer les feuilles de route loader', () => {
   it('quand une liste de feuilles de route est demandée par son code département existant, alors elle est renvoyée rangée par ordre de création décroissante', async () => {
     // GIVEN
     await creerUneRegion()
-    await creerUnDepartement({ code: '93' })
+    await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75' })
     await creerUneGouvernance({ departementCode: '93' })
     await creerUneGouvernance({ departementCode: '75' })
@@ -99,6 +99,7 @@ describe('récupérer les feuilles de route loader', () => {
           uid: '1',
         },
       ],
+      nomDuDepartement: 'Seine-Saint-Denis',
       totaux: {
         budget: 0,
         coFinancement: 0,
