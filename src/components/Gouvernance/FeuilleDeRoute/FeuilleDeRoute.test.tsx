@@ -1,7 +1,7 @@
-import { within, screen, render } from '@testing-library/react'
+import { within, screen } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton } from '@/components/testHelper'
+import { presserLeBouton, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -130,6 +130,6 @@ describe('feuille de route', () => {
 
   function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), epochTime)
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
   }
 })

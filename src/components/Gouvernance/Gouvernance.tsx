@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useId, useRef, useState } from 'react'
+import { ReactElement, useContext, useId, useRef, useState } from 'react'
 
 import AjouterUnComite from './Comitologie/AjouterUnComite'
 import ComitologieRemplie from './Comitologie/ComitologieRemplie'
@@ -29,10 +29,10 @@ import SectionRemplie from './SectionRemplie'
 import SectionVide from './SectionVide'
 import SubSectionTitle from './SubSectionTitle'
 import Drawer from '../shared/Drawer/Drawer'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function Gouvernance({ gouvernanceViewModel }: Props): ReactElement {
+export default function Gouvernance(): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerComiteId = 'drawerAjouterComiteId'
@@ -42,6 +42,7 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
   const drawerNotePriveeId = 'drawerAjouterNotePriveeId'
   const labelNotePriveeId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
     <>
@@ -395,7 +396,3 @@ export default function Gouvernance({ gouvernanceViewModel }: Props): ReactEleme
     </>
   )
 }
-
-type Props = Readonly<{
-  gouvernanceViewModel: GouvernanceViewModel
-}>

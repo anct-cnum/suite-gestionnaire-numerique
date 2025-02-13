@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react'
 
 import type { Editor } from '@tiptap/react'
 
-interface EditorReadyEvent extends CustomEvent {
+type EditorReadyEvent = {
   detail: Editor
-}
+} & CustomEvent
 // istanbul ignore next @preserve
 export function useRichTextEditor(contenuInitial = ''): {
   contenu: string
@@ -23,7 +23,7 @@ export function useRichTextEditor(contenuInitial = ''): {
 
   function gererEditeurPret(evenement: Event): void {
     const evenementPersonnalise = evenement as EditorReadyEvent
-    setEditeur(evenementPersonnalise.detail)
+    setEditeur(evenementPersonnalise.detail as Editor)
   }
 
   function viderLeContenu(): void {

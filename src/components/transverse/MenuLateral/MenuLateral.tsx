@@ -1,36 +1,33 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment, ReactElement, useContext } from 'react'
+import { Fragment, PropsWithChildren, ReactElement, useContext } from 'react'
 
 import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 
-export default function MenuLateral(): ReactElement {
+export default function MenuLateral({ children }: Readonly<PropsWithChildren>): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
   const menusPilotage = [
     {
       ariaControls: 'fr-sidemenu-gouvernance',
       ariaExpanded: false,
+      hasSousMenu: true,
       icon: 'compass-3-line',
       label: 'Gouvernance',
-      sousMenu: [
-        { label: 'Membres', url: `/membres/${sessionUtilisateurViewModel.codeDepartement}` },
-        { label: 'Feuilles de route', url: `/feuilles-de-routes/${sessionUtilisateurViewModel.codeDepartement}` },
-      ],
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
     {
       icon: 'pen-nib-line',
       label: 'Financements',
-      url: '/financements',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/financements`,
     },
     {
       icon: 'community-line',
       label: 'Bénéficiaires',
-      url: '/beneficiaires',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/beneficiaires`,
     },
     {
       icon: 'group-line',
@@ -39,7 +36,7 @@ export default function MenuLateral(): ReactElement {
     },
     {
       icon: 'map-pin-2-line',
-      label: 'Lieux d’inclusion',
+      label: 'Lieux d‘inclusion',
       url: '/lieux-inclusion',
     },
   ]
@@ -106,32 +103,7 @@ export default function MenuLateral(): ReactElement {
                         {menu.label}
                       </Link>
                     </li>
-                    {menu.sousMenu ?
-                      <div
-                        className="fr-collapse"
-                        id={menu.ariaControls}
-                      >
-                        <ul className="fr-sidemenu__list">
-                          {menu.sousMenu.map((sousMenuElement) => {
-                            const activeClass = pathname === sousMenuElement.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
-
-                            return (
-                              <li
-                                className={`fr-sidemenu__item ${activeClass}`}
-                                key={sousMenuElement.url}
-                              >
-                                <Link
-                                  aria-current={pathname === sousMenuElement.url ? 'page' : false}
-                                  className="fr-sidemenu__link"
-                                  href={sousMenuElement.url}
-                                >
-                                  {sousMenuElement.label}
-                                </Link>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                      </div> : null}
+                    {menu.hasSousMenu === true ? children : null}
                   </Fragment>
                 )
               })}

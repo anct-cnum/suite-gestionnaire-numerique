@@ -1,8 +1,8 @@
 // eslint-disable-next-line testing-library/no-manual-cleanup
-import { fireEvent, within, screen, render, cleanup } from '@testing-library/react'
+import { fireEvent, within, screen, cleanup } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -558,7 +558,7 @@ describe('membres', () => {
 
 function afficherGouvernance(gouvernance?: Parameters<typeof gouvernanceReadModelFactory>[0]): void {
   const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(gouvernance), epochTime)
-  render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+  renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 }
 
 function jOuvreLesDetailsDuMembre(nomDuMembre: string): void {
