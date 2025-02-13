@@ -114,9 +114,10 @@ describe('feuille de route', () => {
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
     const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
-    jeFermeLesDetailsDUneFeuilleDeRoute()
+    const fermer = jeFermeLesDetailsDUneFeuilleDeRoute()
 
     // THEN
+    expect(fermer).toHaveAttribute('aria-controls', 'drawerFeuilleDeRouteId')
     expect(drawer).not.toBeVisible()
   })
 
@@ -124,8 +125,8 @@ describe('feuille de route', () => {
     presserLeBouton('Feuille de route inclusion')
   }
 
-  function jeFermeLesDetailsDUneFeuilleDeRoute(): void {
-    presserLeBouton('Fermer les détails de la feuille de route')
+  function jeFermeLesDetailsDUneFeuilleDeRoute(): HTMLElement {
+    return presserLeBouton('Fermer les détails de la feuille de route')
   }
 
   function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
