@@ -28,4 +28,8 @@ export function noop(): void {
   // No-op
 }
 
+export function alphaAsc(left: string, right: string): number {
+  return left.localeCompare(right)
+}
+
 type JsonPrimitive = boolean | number | string

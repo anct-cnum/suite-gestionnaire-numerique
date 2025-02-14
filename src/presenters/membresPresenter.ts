@@ -1,0 +1,107 @@
+import { toRoleViewModel, RoleViewModel } from './shared/role'
+import { isEmpty } from '@/shared/lang'
+import { MesMembresReadModel, MembreReadModel } from '@/use-cases/queries/RecupererMesMembres'
+
+export function mesMembresPresenter(mesMembresReadModel: MesMembresReadModel): MesMembresViewModel {
+  return {
+    autorisations: mesMembresReadModel.autorisations,
+    roles: mesMembresReadModel.roles.map(toRoleViewModel),
+    titre: `Gérer les membres · ${mesMembresReadModel.departement}`,
+    typologies: mesMembresReadModel.typologies.map(handleTypologieIndefinie('simple')),
+    ...membresParStatut(mesMembresReadModel.membres),
+    uidGouvernance: mesMembresReadModel.uidGouvernance,
+  }
+}
+
+export type MesMembresViewModel = Readonly<{
+  titre: string
+  autorisations: Readonly<{
+    ajouterUnMembre: boolean
+    supprimerUnMembre: boolean
+    accesMembreConfirme: boolean
+  }>
+  typologies: ReadonlyArray<TypologieViewModel>
+  roles: ReadonlyArray<RoleViewModel>
+  membres: ReadonlyArray<MembreViewModel>
+  candidats: ReadonlyArray<MembreViewModel>
+  suggeres: ReadonlyArray<MembreViewModel>
+  uidGouvernance: string
+}>
+
+export type MembreViewModel = Readonly<{
+  adresse: string
+  contactReferent: {
+    intitule: string
+    intituleCourt: string
+  }
+  nom: string
+  roles: ReadonlyArray<RoleViewModel>
+  siret: string
+  suppressionDuMembreAutorise: boolean
+  typologie: {
+    simple: TypologieViewModel
+    elaboree: TypologieViewModel
+  }
+  uid: string
+  statut: string
+}>
+
+function membresParStatut(membres: ReadonlyArray<MembreReadModel>): MembresByStatut {
+  return membres.reduce<MembresByStatut>((membresByStatut, membre) => ({
+    ...membresByStatut,
+    [nomListeMembresParStatut[membre.statut]]: membresByStatut[nomListeMembresParStatut[membre.statut]]
+      .concat(toMembreViewModel(membre)),
+  }), {
+    candidats: [],
+    membres: [],
+    suggeres: [],
+  })
+}
+
+function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
+  const contactReferent = membre.contactReferent
+  let intituleCourt: string
+  let intitule: string
+  if (contactReferent) {
+    const nomComplet = `${contactReferent.prenom} ${contactReferent.nom}`
+    intituleCourt = nomComplet
+    intitule = `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`
+  } else {
+    intituleCourt = ''
+    intitule = 'Donnée non fournie'
+  }
+  return {
+    ...membre,
+    contactReferent: { intitule, intituleCourt },
+    roles: membre.roles.map(toRoleViewModel),
+    typologie: {
+      elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),
+      simple: handleTypologieIndefinie('simple')(membre.typologie),
+    },
+  }
+}
+
+function handleTypologieIndefinie(mode: 'simple' | 'elaboree') {
+  return (typologie: string): TypologieViewModel => ({
+    label: isEmpty(typologie) ? labelTypologieIndefinieByMode[mode] : typologie,
+    value: typologie,
+  })
+}
+
+const labelTypologieIndefinieByMode = {
+  elaboree: 'Donnée non fournie',
+  simple: 'Autre',
+} as const
+
+const nomListeMembresParStatut: Readonly<Record<MembreReadModel['statut'], keyof MembresByStatut>> = {
+  candidat: 'candidats',
+  confirme: 'membres',
+  suggere: 'suggeres',
+}
+
+type MembresByStatut = Pick<MesMembresViewModel, 'membres' | 'suggeres' | 'candidats'>
+
+type TypologieViewModel = Readonly<{
+  label: string
+  value: string
+}>
