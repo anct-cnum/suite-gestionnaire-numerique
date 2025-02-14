@@ -19,7 +19,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           alt=""
           className="grey-border border-radius"
           height={80}
-          src={`${sessionUtilisateurViewModel.role.pictogramme}.svg`}
+          src={`${process.env.NEXT_PUBLIC_HOST}/${sessionUtilisateurViewModel.role.pictogramme}.svg`}
           width={80}
         />
         <div className="fr-mb-0 fr-h4">

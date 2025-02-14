@@ -181,7 +181,7 @@ export default function MesUtilisateurs(
                     <Image
                       alt=""
                       height={20}
-                      src={`${unUtilisateurViewModel.picto}.svg`}
+                      src={`${process.env.NEXT_PUBLIC_HOST}/${unUtilisateurViewModel.picto}.svg`}
                       width={20}
                     />
                   </td>
