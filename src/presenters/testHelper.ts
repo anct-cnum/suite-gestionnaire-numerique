@@ -1,4 +1,5 @@
 // Stryker disable all
+import { GouvernanceViewModel } from './gouvernancePresenter'
 import { MesMembresViewModel } from './mesMembresPresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
@@ -59,6 +60,53 @@ export function mesMembresViewModelFactory(
     roles: ['Co-porteur', 'Co-financeur'],
     titre: 'Gérer les membres · Rhône',
     typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
+    ...override,
+  } as const
+}
+
+export function gouvernanceViewModelFactory(
+  override?: Partial<GouvernanceViewModel>
+): GouvernanceViewModel {
+  return {
+    comiteARemplir: {
+      commentaire: '',
+      date: '',
+      derniereEdition: '',
+      editeur: '',
+      frequences: [],
+      types: [],
+      uid: 1,
+    },
+    dateAujourdhui: '',
+    departement: '',
+    hasMembres: false,
+    isVide: false,
+    sectionFeuillesDeRoute: {
+      budgetTotalCumule: '',
+      feuillesDeRoute: [],
+      lien: {
+        label: '',
+        url: '',
+      },
+      total: '0',
+      wording: '',
+    },
+    sectionMembres: {
+      coporteurs: [],
+
+      totalEtWording: [0, ''],
+      wordingRecap: '',
+    },
+    sectionNoteDeContexte: {
+      noteDeContexte: {
+        dateDeModification: '',
+        nomAuteur: '',
+        prenomAuteur: '',
+        texteAvecHTML: '',
+      },
+      sousTitre: '',
+    },
+    uid: '',
     ...override,
   }
 }

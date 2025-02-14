@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 
 import Gouvernance from './Gouvernance'
-import { matchWithoutMarkup, presserLeBouton } from '../testHelper'
+import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -12,7 +12,7 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône' }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Inclusion numérique · Rhône' })
@@ -35,7 +35,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const membre = screen.queryByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
@@ -59,7 +59,7 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const sectionComitologie = screen.getByRole('region', { name: 'Comitologie' })
@@ -79,7 +79,7 @@ describe('gouvernance', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
 
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
     jOuvreLeFormulairePourAjouterUnComite()
@@ -92,7 +92,7 @@ describe('gouvernance', () => {
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
     jOuvreLeFormulairePourAjouterUnComite()
@@ -131,7 +131,7 @@ describe('gouvernance', () => {
     }), epochTime)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const comitologie = screen.getByRole('region', { name: 'Comitologie' })
@@ -177,7 +177,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resumes = screen.getAllByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'div' })
@@ -246,7 +246,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resume = screen.getByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
@@ -327,7 +327,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resume = screen.getByText(matchWithoutMarkup('1 membre de la gouvernance'), { selector: 'p' })
@@ -346,7 +346,7 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: undefined }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resumes = screen.getAllByText(matchWithoutMarkup('0 feuille de route territoriale'), { selector: 'div' })
@@ -395,7 +395,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resume = screen.getByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
@@ -459,7 +459,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const resume = screen.getByText(matchWithoutMarkup('1 feuille de route territoriale'), { selector: 'p' })
@@ -480,7 +480,7 @@ describe('gouvernance', () => {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', noteDeContexte: undefined }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
@@ -508,7 +508,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const sectionNoteDeContexte = screen.getByRole('region', { name: 'Note de contexte' })
@@ -537,7 +537,7 @@ describe('gouvernance', () => {
       gouvernanceReadModelFactory({ noteDeContexte: undefined }),
       epochTimePlusOneDay
     )
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
     jouvreLeFormulairePourAjouterUneNoteDeContexte()
@@ -558,7 +558,7 @@ describe('gouvernance', () => {
         texte: '<strong>titre note de contexte</strong><p>un paragraphe avec du <b>bold</b>.</p>',
       },
     }), epochTimePlusOneDay)
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // WHEN
     const lirePlus = jeDeplieLaNoteDeContexte()
@@ -587,7 +587,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
@@ -613,7 +613,7 @@ describe('gouvernance', () => {
     }), epochTimePlusOneDay)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
@@ -639,7 +639,7 @@ describe('gouvernance', () => {
     }), epochTime)
 
     // WHEN
-    render(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />)
+    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
 
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
