@@ -27,7 +27,7 @@ export type FeuillesDeRouteReadModel = Readonly<{
         nom: string
         uid: string
       }>
-      statut: 'deposee' | 'en_cours' | 'subvention_acceptee' | 'subvention_refusee'
+      statut: 'deposee' | 'enCours' | 'subventionAcceptee' | 'subventionRefusee'
       totaux: Readonly<{
         coFinancement: number
         financementAccorde: number
@@ -71,7 +71,7 @@ function calculateTotauxActions(feuillesDeRoute: FeuillesDeRouteReadModel): Feui
     feuillesDeRoute: feuillesDeRoute.feuillesDeRoute.map((feuilleDeRoute) => {
       const { coFinancement, financementAccorde } = feuilleDeRoute.actions.reduce((budget, action) => ({
         coFinancement: budget.coFinancement + action.totaux.coFinancement,
-        financementAccorde: budget.financementAccorde + (action.statut === 'subvention_acceptee' ? action.totaux.financementAccorde : 0),
+        financementAccorde: budget.financementAccorde + (action.statut === 'subventionAcceptee' ? action.totaux.financementAccorde : 0),
       }), { coFinancement: 0, financementAccorde: 0 })
 
       return {

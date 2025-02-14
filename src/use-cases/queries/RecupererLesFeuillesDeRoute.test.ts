@@ -100,7 +100,7 @@ class FeuillesDeRouteSansSubventionsAccepteesLoaderSpy implements FeuillesDeRout
           actions: [
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0],
-              statut: 'en_cours',
+              statut: 'enCours',
             },
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[1],
@@ -112,11 +112,11 @@ class FeuillesDeRouteSansSubventionsAccepteesLoaderSpy implements FeuillesDeRout
           actions: [
             {
               ...desFeuillesDeRoute.feuillesDeRoute[1].actions[0],
-              statut: 'en_cours',
+              statut: 'enCours',
             },
             {
               ...desFeuillesDeRoute.feuillesDeRoute[1].actions[1],
-              statut: 'en_cours',
+              statut: 'enCours',
             },
           ],
         },
