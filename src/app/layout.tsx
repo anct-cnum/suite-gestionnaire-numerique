@@ -34,7 +34,7 @@ export default function Layout({ children }: Readonly<PropsWithChildren>): React
           name="viewport"
         />
         <link
-          href="./favicon.ico"
+          href={`${process.env.NEXT_PUBLIC_HOST}/favicon.ico`}
           rel="shortcut icon"
           type="image/x-icon"
         />

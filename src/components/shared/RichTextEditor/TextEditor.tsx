@@ -33,6 +33,7 @@ export default function TextEditor({ contenu, onChange }: Props): ReactElement {
         protocols: ['https'],
       }),
     ],
+    immediatelyRender: false,
     onCreate: ({ editor }) => {
       // eslint-disable-next-line no-restricted-syntax
       window.dispatchEvent(new CustomEvent('editorReady', { detail: editor }))
