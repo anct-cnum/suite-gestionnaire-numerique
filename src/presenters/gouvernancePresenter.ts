@@ -1,6 +1,7 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais } from './shared/number'
 import { toRoleViewModel } from './shared/role'
+import { formatPluriel } from './shared/text'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -276,10 +277,6 @@ function buildSousTitreNoteDeContexte(noteDeContexte: UneGouvernanceReadModel['n
   }
 
   return `Modifié le ${formaterEnDateFrancaise(noteDeContexte.dateDeModification)} par ${noteDeContexte.prenomAuteur} ${noteDeContexte.nomAuteur}`
-}
-
-function formatPluriel(count: number): 's' | '' {
-  return count > 1 ? 's' : ''
 }
 
 type ComiteResumeViewModel = Readonly<{

@@ -1,4 +1,4 @@
-import { FeuilleDeRouteRecord, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
@@ -11,6 +11,13 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
 
   async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
     const feuillesDeRouteRecord = await this.#dataResource.findMany({
+      include: {
+        relationGouvernance: {
+          include: {
+            relationDepartement: true,
+          },
+        },
+      },
       orderBy: {
         creation: 'desc',
       },
@@ -23,9 +30,11 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
   }
 }
 
-function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecord>): FeuillesDeRouteReadModel {
+function transform(
+  feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWithDepartment>
+): FeuillesDeRouteReadModel {
   return {
-    departement: '93',
+    departement: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.nom,
     feuillesDeRoute: feuillesDeRouteRecord.map((feuillesDeRouteRecord) => {
       return {
         actions: [
@@ -40,7 +49,7 @@ function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecord>): 
           },
           {
             nom: 'Structurer une filière de reconditionnement locale 2',
-            statut: 'en_cours',
+            statut: 'enCours',
             totaux: {
               coFinancement: 50_000,
               financementAccorde: 20_000,
@@ -70,3 +79,13 @@ function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecord>): 
     },
   }
 }
+
+type FeuilleDeRouteRecordWithDepartment = Prisma.FeuilleDeRouteRecordGetPayload<{
+  include: {
+    relationGouvernance: {
+      include: {
+        relationDepartement: true
+      }
+    }
+  }
+}>
