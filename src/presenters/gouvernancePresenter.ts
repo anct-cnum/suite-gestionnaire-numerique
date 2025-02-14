@@ -1,6 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
-import { toRoleViewModel } from './shared/role'
+import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -352,11 +352,6 @@ export type MembreDetailsViewModel = Readonly<{
     }>
   >
   plusDetailsHref?: string
-}>
-
-type RoleViewModel = Readonly<{
-  color: string
-  nom: string
 }>
 
 const frequences = [

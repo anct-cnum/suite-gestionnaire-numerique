@@ -39,17 +39,11 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
         ajouterUnMembre: false,
         supprimerUnMembre: false,
       },
-      candidats: toMembres(gouvernanceRecord.membres, 'candidat')
-        .toSorted(sortMembres)
-        .map(toMesMembresReadModel),
       departement: gouvernanceRecord.relationDepartement.nom,
-      membres: toMembres(gouvernanceRecord.membres, 'confirme')
+      membres: toMembres(gouvernanceRecord.membres)
         .toSorted(sortMembres)
         .map(toMesMembresReadModel),
       roles: [],
-      suggeres: toMembres(gouvernanceRecord.membres, 'suggere')
-        .toSorted(sortMembres)
-        .map(toMesMembresReadModel),
       typologies: [],
       uidGouvernance: codeDepartementGouvernance,
     }
@@ -73,8 +67,9 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
     siret: 'Siret bouchonné',
+    statut: membre.statut as MembreReadModel['statut'],
     suppressionDuMembreAutorise: false,
     typologie: membre.type ?? '',
-    uidMembre: membre.id,
+    uid: membre.id,
   }
 }

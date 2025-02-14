@@ -1,4 +1,5 @@
 import { QueryHandler } from '../QueryHandler'
+import { alphaAsc } from '@/shared/lang'
 
 export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadModel> {
   readonly #mesMembresLoader: MesMembresLoader
@@ -11,7 +12,7 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
       return {
         ...mesMembres,
-        ...roleEtTypologieDistinct(mesMembres.membres),
+        ...rolesEtTypologies(mesMembres.membres),
       }
     })
   }
@@ -19,16 +20,6 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
 
 export interface MesMembresLoader {
   get(codeDepartement: string): Promise<MesMembresReadModel>
-}
-
-function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {
-  return membres.reduce<Pick<MesMembresReadModel, 'roles' | 'typologies'>>((rolesEtTypologies, membre) => ({
-    roles: [...new Set(rolesEtTypologies.roles.concat(membre.roles))],
-    typologies: [...new Set(rolesEtTypologies.typologies.concat(membre.typologie))],
-  }), {
-    roles: [],
-    typologies: [],
-  })
 }
 
 export type MesMembresReadModel = Readonly<{
@@ -41,8 +32,6 @@ export type MesMembresReadModel = Readonly<{
   typologies: ReadonlyArray<string>
   roles: ReadonlyArray<Role>
   membres: ReadonlyArray<MembreReadModel>
-  candidats: ReadonlyArray<MembreReadModel>
-  suggeres: ReadonlyArray<MembreReadModel>
   uidGouvernance: string
 }>
 
@@ -59,11 +48,30 @@ export type MembreReadModel = Readonly<{
   roles: ReadonlyArray<Role>
   siret: string
   typologie: string
-  uidMembre: string
+  uid: string
+  statut: Statut
 }>
+
+function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypologie {
+  const { roles, typologies } = membres.reduce((rolesEtTypologies, membre) => ({
+    roles: membre.roles.reduce((roles, role) => roles.add(role), rolesEtTypologies.roles),
+    typologies: rolesEtTypologies.typologies.add(membre.typologie),
+  }), {
+    roles: new Set<Role>(),
+    typologies: new Set<string>(),
+  })
+  return {
+    roles: Array.from(roles).toSorted(alphaAsc),
+    typologies: Array.from(typologies).toSorted(alphaAsc),
+  }
+}
 
 type Query = Readonly<{
   codeDepartement: string
 }>
+
+type RoleEtTypologie = Pick<MesMembresReadModel, 'roles' | 'typologies'>
+
+type Statut = 'confirme' | 'candidat' | 'suggere'
 
 type Role = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'

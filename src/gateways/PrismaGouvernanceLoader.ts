@@ -77,7 +77,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       type: comite.type as TypeDeComite,
     }))
     : undefined
-  const membres = toMembres(gouvernanceRecord.membres, 'confirme')
+  const membres = toMembres(gouvernanceRecord.membres)
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
@@ -118,16 +118,20 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
     noteDeContexte,
     notePrivee,
     syntheseMembres: {
-      candidats: 0,
+      candidats: membres.filter(({ statut }) => statut === 'candidat').length,
       coporteurs: membres
         .filter(isCoporteur)
         .toSorted(sortMembres)
-        .map((membre) => ({
-          ...membre,
-          ...bouchonCoporteur,
-          totalMontantSubventionAccorde: NaN,
-          totalMontantSubventionFormationAccorde: NaN,
-        } as CoporteurDetailReadModel)),
+        .map((membre) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { statut, ...membreCoporteur } = membre
+          return {
+            ...membreCoporteur,
+            ...bouchonCoporteur,
+            totalMontantSubventionAccorde: NaN,
+            totalMontantSubventionFormationAccorde: NaN,
+          } as CoporteurDetailReadModel
+        }),
       total: membres.length,
     },
     uid: gouvernanceRecord.departementCode,
