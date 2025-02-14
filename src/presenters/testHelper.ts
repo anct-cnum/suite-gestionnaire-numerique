@@ -1,7 +1,6 @@
 // Stryker disable all
 import { formatMontant, FeuillesDeRouteViewModel } from './feuillesDeRoutePresenter'
 import { GouvernanceViewModel } from './gouvernancePresenter'
-import { MesMembresViewModel } from './mesMembresPresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 export function sessionUtilisateurViewModelFactory(
@@ -24,45 +23,6 @@ export function sessionUtilisateurViewModelFactory(
     uid: 'fooId',
     ...override,
   }
-}
-
-export function mesMembresViewModelFactory(
-  override?: Partial<MesMembresViewModel>
-): MesMembresViewModel {
-  return {
-    autorisations: {
-      accesMembreConfirme: true,
-      ajouterUnMembre: true,
-      supprimerUnMembre: true,
-    },
-    membres: [
-      {
-        contactReferent: 'Laetitia Henrich',
-        nom: 'Préfecture du Rhône',
-        roles: ['Co-porteur'],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Préfecture départementale',
-      },
-      {
-        contactReferent: 'Durant Didier',
-        nom: 'Département du Rhône',
-        roles: ['Co-porteur', 'Co-financeur'],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Collectivité, EPCI',
-      },
-      {
-        contactReferent: 'Tom Dupont',
-        nom: 'Département du Rhône',
-        roles: [],
-        suppressionDuMembreAutorise: false,
-        typologie: 'Collectivité, EPCI',
-      },
-    ],
-    roles: ['Co-porteur', 'Co-financeur'],
-    titre: 'Gérer les membres · Rhône',
-    typologies: ['Préfecture départementale', 'Collectivité, EPCI'],
-    ...override,
-  } as const
 }
 
 export function gouvernanceViewModelFactory(

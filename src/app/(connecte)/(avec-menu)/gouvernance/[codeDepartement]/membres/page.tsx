@@ -2,22 +2,25 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import PageTitle from '@/components/shared/PageTitle/PageTitle'
+import prisma from '../../../../../../../prisma/prismaClient'
+import Membres from '@/components/Gouvernance/Membres/Membres'
+import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
+import { mesMembresPresenter } from '@/presenters/mesMembresPresenter'
+import { RecupererMesMembres } from '@/use-cases/queries/RecupererMesMembres'
 
 export const metadata: Metadata = {
   title: 'Membres',
 }
 
 export default async function MembresController({ params }: Props): Promise<ReactElement> {
-  if (!(await params).codeDepartement) {
+  try {
+    const codeDepartement = (await params).codeDepartement
+    const membresViewModel = await new RecupererMesMembres(new PrismaMesMembresLoader(prisma.gouvernanceRecord))
+      .handle({ codeDepartement })
+    return <Membres membresViewModel={mesMembresPresenter(membresViewModel)} />
+  } catch {
     notFound()
   }
-
-  return (
-    <PageTitle icon="compass-3-line">
-      Membres
-    </PageTitle>
-  )
 }
 
 type Props = Readonly<{
