@@ -1,0 +1,35 @@
+.card-resume-montant-subvention {
+  background-color: var(--info-950-100);
+  border-radius: 0.5rem;
+  min-height: 5rem;
+  padding: 1rem;
+  text-align: left;
+  width: 32%;
+}
+
+.align-items {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.pin-action--deposee {
+  background-color: var(--purple-glycine-950-100);
+  color: var(--blue-ecume-sun-113-625);
+}
+
+.pin-action--en-cours {
+  background-color: var(--green-tilleul-verveine-975-75);
+  color: var(--yellow-tournesol-sun-113-625);
+}
+
+.pin-action--acceptee {
+  background-color: var(--pink-macaron-850-100);
+  color: var(--purple-glycine-950-100);
+}
+
+.pin-action--refusee {
+  background-color: var(--red-marianne-975-75);
+  color: var(--purple-glycine-950-100);
+}

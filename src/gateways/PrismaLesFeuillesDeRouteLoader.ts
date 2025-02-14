@@ -30,9 +30,11 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
   }
 }
 
-function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWithDepartment>): FeuillesDeRouteReadModel {
+function transform(
+  feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWithDepartment>
+): FeuillesDeRouteReadModel {
   return {
-    departement: feuillesDeRouteRecord[0].gouvernanceDepartementCode,
+    departement: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.nom,
     feuillesDeRoute: feuillesDeRouteRecord.map((feuillesDeRouteRecord) => {
       return {
         actions: [
@@ -47,7 +49,7 @@ function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWith
           },
           {
             nom: 'Structurer une filière de reconditionnement locale 2',
-            statut: 'en_cours',
+            statut: 'enCours',
             totaux: {
               coFinancement: 50_000,
               financementAccorde: 20_000,
@@ -70,7 +72,6 @@ function transform(feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWith
         uid: String(feuillesDeRouteRecord.id),
       }
     }),
-    nomDuDepartement: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.nom,
     totaux: {
       budget: 0,
       coFinancement: 0,

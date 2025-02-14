@@ -1,11 +1,13 @@
+
+import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export function mesFeuillesDeRoutePresenter(
+export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
-): MesFeuillesDeRouteViewModel {
+): FeuillesDeRouteViewModel {
   return {
     feuillesDeRoute: feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel),
-    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.nomDuDepartement}`,
+    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
       coFinancement: formatMontant(feuillesDeRouteReadModel.totaux.coFinancement),
@@ -14,7 +16,7 @@ export function mesFeuillesDeRoutePresenter(
   }
 }
 
-function toFeuilleDeRouteViewModel(feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][0]): FeuilleDeRouteViewModel {
+function toFeuilleDeRouteViewModel(feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel {
   return {
     actions: feuilleDeRoute.actions.map(toActionViewModel),
     beneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}`,
@@ -33,11 +35,11 @@ function toFeuilleDeRouteViewModel(feuilleDeRoute: FeuillesDeRouteReadModel['feu
   }
 }
 
-function toActionViewModel(action: FeuillesDeRouteReadModel['feuillesDeRoute'][0]['actions'][0]): ActionViewModel {
+function toActionViewModel(action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel {
   return {
     nom: action.nom,
     porteur: 'CC des Monts du Lyonnais',
-    statut: formatStatutAction(action.statut),
+    statut: actionStatutViewModelByStatut[action.statut],
     totaux: {
       coFinancement: formatMontant(action.totaux.coFinancement),
       financementAccorde: formatMontant(action.totaux.financementAccorde),
@@ -46,61 +48,7 @@ function toActionViewModel(action: FeuillesDeRouteReadModel['feuillesDeRoute'][0
   }
 }
 
-function formatPluriel(count: number): 's' | '' {
-  return count > 1 ? 's' : ''
-}
-
-function formatStatutAction(statut: typeof STATUS[keyof typeof STATUS]): ActionStatut {
-  const statutMap: Record<typeof STATUS[keyof typeof STATUS], ActionStatut> = {
-    [STATUS.deposee]: {
-      icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action-deposee',
-      libelle: 'Demande déposée',
-      variant: 'new',
-    },
-    [STATUS.enCours]: {
-      icon: 'fr-icon-user-add-line',
-      iconStyle: 'pin-action-en-cours',
-      libelle: 'Instruction en cours',
-      variant: 'info',
-    },
-    [STATUS.subventionAcceptee]: {
-      icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action-acceptee',
-      libelle: 'Subvention acceptée',
-      variant: 'new',
-    },
-    [STATUS.subventionRefusee]: {
-      icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action-refusee',
-      libelle: 'Subvention refusée',
-      variant: 'error',
-    },
-  }
-  return statutMap[statut]
-}
-
-const STATUS = {
-  deposee: 'deposee',
-  enCours: 'en_cours',
-  subventionAcceptee: 'subvention_acceptee',
-  subventionRefusee: 'subvention_refusee',
-} as const
-
-type ActionStatut = Readonly<{
-  libelle: string
-  variant: 'success' | 'error' | 'info' | 'warning' | 'new'
-  icon: string
-  iconStyle: 'pin-action-deposee' | 'pin-action-en-cours' | 'pin-action-acceptee' | 'pin-action-refusee'
-}>
-
-type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'
-
-export function formatMontant(montant: number): string {
-  return `${montant.toLocaleString('fr-FR')} €`
-}
-
-export type MesFeuillesDeRouteViewModel = Readonly<{
+export type FeuillesDeRouteViewModel = Readonly<{
   titre: string
   totaux: Readonly<{
     budget: string
@@ -147,3 +95,43 @@ export type ActionViewModel = Readonly<{
     financementAccorde: string
   }>
 }>
+
+export function formatMontant(montant: number): string {
+  return `${montant.toLocaleString('fr-FR')} €`
+}
+
+const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
+  deposee: {
+    icon: 'fr-icon-flashlight-line',
+    iconStyle: 'pin-action--deposee',
+    libelle: 'Demande déposée',
+    variant: 'new',
+  },
+  enCours: {
+    icon: 'fr-icon-user-add-line',
+    iconStyle: 'pin-action--en-cours',
+    libelle: 'Instruction en cours',
+    variant: 'info',
+  },
+  subventionAcceptee: {
+    icon: 'fr-icon-flashlight-line',
+    iconStyle: 'pin-action-acceptee',
+    libelle: 'Subvention acceptée',
+    variant: 'new',
+  },
+  subventionRefusee: {
+    icon: 'fr-icon-flashlight-line',
+    iconStyle: 'pin-action--refusee',
+    libelle: 'Subvention refusée',
+    variant: 'error',
+  },
+}
+
+type ActionStatutViewModel = Readonly<{
+  icon: string
+  libelle: string
+  variant: StatutVariant
+  iconStyle: string
+}>
+
+type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'

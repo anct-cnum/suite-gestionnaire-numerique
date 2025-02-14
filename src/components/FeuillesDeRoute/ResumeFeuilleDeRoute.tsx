@@ -1,9 +1,9 @@
 import { ReactElement } from 'react'
 
+import styles from './FeuillesDeRoute.module.css'
 import ResumeAction from './ResumeAction'
-import styles from '../Gouvernance/Gouvernance.module.css'
 import Tag from '../shared/Tag/Tag'
-import { FeuilleDeRouteViewModel } from '@/presenters/mesFeuillesDeRoutePresenter'
+import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactElement {
   return (

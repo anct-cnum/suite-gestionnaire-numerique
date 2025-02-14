@@ -9,7 +9,7 @@ describe('récupérer les feuilles de route loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('quand une liste de feuilles de route est demandée par son code département existant, alors elle est renvoyée rangée par ordre de création décroissante', async () => {
+  it('quand une liste de feuilles de route est demandée par son code département existant, alors elle est renvoyée triée par ordre de création décroissante', async () => {
     // GIVEN
     await creerUneRegion()
     await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
@@ -26,7 +26,7 @@ describe('récupérer les feuilles de route loader', () => {
 
     // THEN
     expect(feuillesDeRouteReadModel).toStrictEqual<FeuillesDeRouteReadModel>({
-      departement: '93',
+      departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [
         {
           actions: [
@@ -41,7 +41,7 @@ describe('récupérer les feuilles de route loader', () => {
             },
             {
               nom: 'Structurer une filière de reconditionnement locale 2',
-              statut: 'en_cours',
+              statut: 'enCours',
               totaux: {
                 coFinancement: 50_000,
                 financementAccorde: 20_000,
@@ -76,7 +76,7 @@ describe('récupérer les feuilles de route loader', () => {
             },
             {
               nom: 'Structurer une filière de reconditionnement locale 2',
-              statut: 'en_cours',
+              statut: 'enCours',
               totaux: {
                 coFinancement: 50_000,
                 financementAccorde: 20_000,
@@ -99,7 +99,6 @@ describe('récupérer les feuilles de route loader', () => {
           uid: '1',
         },
       ],
-      nomDuDepartement: 'Seine-Saint-Denis',
       totaux: {
         budget: 0,
         coFinancement: 0,

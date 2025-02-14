@@ -1,10 +1,10 @@
 import { ReactElement } from 'react'
 
-import styles from '../Gouvernance/Gouvernance.module.css'
+import styles from './FeuillesDeRoute.module.css'
 import Tag from '../shared/Tag/Tag'
-import { ActionViewModel } from '@/presenters/mesFeuillesDeRoutePresenter'
+import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function ResumeAction({ action }: { readonly action: ActionViewModel }): ReactElement {
+export default function ResumeAction({ action }: Props): ReactElement {
   return (
     <div className='fr-container fr-p-0'>
       <div
@@ -17,7 +17,7 @@ export default function ResumeAction({ action }: { readonly action: ActionViewMo
             className={`${action.statut.icon} ${styles[action.statut.iconStyle]} icon-title fr-mr-3w fr-py-2w`}
           />
         </div>
-        <div className='fr-col-8'>
+        <div className='fr-col-7'>
           <p className='fr-text--bold color-blue-france fr-mb-1w'>
             {action.nom}
           </p>
@@ -27,7 +27,7 @@ export default function ResumeAction({ action }: { readonly action: ActionViewMo
 
         </div>
         <div
-          className='fr-col-3 right'
+          className='fr-col-4 right'
         >
           <p className={`fr-badge fr-badge--${action.statut.variant} fr-badge--md`}>
             {action.statut.libelle}
@@ -39,3 +39,6 @@ export default function ResumeAction({ action }: { readonly action: ActionViewMo
   )
 }
 
+type Props = {
+  readonly action: ActionViewModel
+}

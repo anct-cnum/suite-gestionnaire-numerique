@@ -1,19 +1,19 @@
 import { screen, within } from '@testing-library/react'
 
 import { renderComponent } from '../testHelper'
-import MesFeuillesDeRoute from './MesFeuillesDeRoute'
-import { mesFeuillesDeRoutePresenter } from '@/presenters/mesFeuillesDeRoutePresenter'
-import { mesFeuillesDeRouteViewModelFactory } from '@/presenters/testHelper'
+import FeuillesDeRoute from './FeuillesDeRoute'
+import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
+import { feuillesDeRouteViewModelFactory } from '@/presenters/testHelper'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('aperçu des feuilles de route', () => {
   describe('présentation de la page', () => {
     it('quand j’affiche la page des feuilles de route, alors je vois le titre de la page', () => {
       // GIVEN
-      const mesFeuillesDeRouteViewModel = mesFeuillesDeRoutePresenter(feuillesDeRouteReadModelFactory())
+      const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModelFactory())
       // WHEN
       renderComponent(
-        <MesFeuillesDeRoute mesFeuillesDeRouteViewModel={mesFeuillesDeRouteViewModel} />
+        <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
       )
 
       // THEN
@@ -73,14 +73,14 @@ describe('aperçu des feuilles de route', () => {
 
     it('quand il y a une seule feuille de route, alors le titre est au singulier', () => {
       // GIVEN
-      const mesFeuillesDeRouteViewModel = mesFeuillesDeRouteViewModelFactory({
-        feuillesDeRoute: [mesFeuillesDeRouteViewModelFactory().feuillesDeRoute[0]],
+      const feuillesDeRouteViewModel = feuillesDeRouteViewModelFactory({
+        feuillesDeRoute: [feuillesDeRouteViewModelFactory().feuillesDeRoute[0]],
         titre: 'Feuille de route · 93',
       })
 
       // WHEN
       renderComponent(
-        <MesFeuillesDeRoute mesFeuillesDeRouteViewModel={mesFeuillesDeRouteViewModel} />
+        <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
       )
 
       // THEN
@@ -90,11 +90,11 @@ describe('aperçu des feuilles de route', () => {
 
     it('quand il y a plusieurs feuilles de route, alors le titre est au pluriel', () => {
       // GIVEN
-      const mesFeuillesDeRouteViewModel = mesFeuillesDeRouteViewModelFactory()
+      const feuillesDeRouteViewModel = feuillesDeRouteViewModelFactory()
 
       // WHEN
       renderComponent(
-        <MesFeuillesDeRoute mesFeuillesDeRouteViewModel={mesFeuillesDeRouteViewModel} />
+        <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
       )
 
       // THEN
@@ -102,44 +102,40 @@ describe('aperçu des feuilles de route', () => {
       expect(titre).toBeInTheDocument()
     })
 
-    it('quand il y a une seule feuille de route ou bénéficiaire, alors le libellé est au singulier', () => {
-      // GIVEN
-      const donnees = feuillesDeRouteReadModelFactory({
-        feuillesDeRoute: [
-          {
-            ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
-            beneficiaires: 1,
-            coFinanceurs: 1,
-          },
-        ],
-      })
-
-      // WHEN
-      const resultat = mesFeuillesDeRoutePresenter(donnees)
-
-      // THEN
-      expect(resultat.feuillesDeRoute[0].beneficiaires).toBe('1 bénéficiaire')
-      expect(resultat.feuillesDeRoute[0].coFinanceurs).toBe('1 co-financeur')
-    })
-
-    it('quand il y a plusieurs feuilles de route ou bénéficiaires, alors le libellé est au pluriel', () => {
+    it('quand il y a plusieurs bénéficiaires, alors le texte est au pluriel', () => {
       // GIVEN
       const donnees = feuillesDeRouteReadModelFactory({
         feuillesDeRoute: [
           {
             ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
             beneficiaires: 2,
-            coFinanceurs: 3,
           },
         ],
       })
 
       // WHEN
-      const resultat = mesFeuillesDeRoutePresenter(donnees)
+      const resultat = feuillesDeRoutePresenter(donnees)
 
       // THEN
       expect(resultat.feuillesDeRoute[0].beneficiaires).toBe('2 bénéficiaires')
-      expect(resultat.feuillesDeRoute[0].coFinanceurs).toBe('3 co-financeurs')
+    })
+
+    it('quand il y a un seul bénéficiaire, alors le texte est au singulier', () => {
+      // GIVEN
+      const donnees = feuillesDeRouteReadModelFactory({
+        feuillesDeRoute: [
+          {
+            ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+            beneficiaires: 1,
+          },
+        ],
+      })
+
+      // WHEN
+      const resultat = feuillesDeRoutePresenter(donnees)
+
+      // THEN
+      expect(resultat.feuillesDeRoute[0].beneficiaires).toBe('1 bénéficiaire')
     })
   })
 })

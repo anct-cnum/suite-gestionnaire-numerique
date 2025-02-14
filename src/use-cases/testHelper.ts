@@ -219,13 +219,13 @@ export function feuillesDeRouteReadModelFactory(
   override?: Partial<FeuillesDeRouteReadModel>
 ): FeuillesDeRouteReadModel {
   return {
-    departement: '93',
+    departement: 'Seine-Saint-Denis',
     feuillesDeRoute: [
       {
         actions: [
           {
             nom: 'Structurer une filière de reconditionnement locale 1',
-            statut: 'subvention_acceptee',
+            statut: 'subventionAcceptee',
             totaux: {
               coFinancement: 30_000,
               financementAccorde: 40_000,
@@ -234,7 +234,7 @@ export function feuillesDeRouteReadModelFactory(
           },
           {
             nom: 'Structurer une filière de reconditionnement locale 2',
-            statut: 'subvention_acceptee',
+            statut: 'subventionAcceptee',
             totaux: {
               coFinancement: 50_000,
               financementAccorde: 20_000,
@@ -260,7 +260,7 @@ export function feuillesDeRouteReadModelFactory(
         actions: [
           {
             nom: 'Ressource humaine 1',
-            statut: 'subvention_acceptee',
+            statut: 'subventionAcceptee',
             totaux: {
               coFinancement: 60_000,
               financementAccorde: 20_000,
@@ -269,7 +269,7 @@ export function feuillesDeRouteReadModelFactory(
           },
           {
             nom: 'Ressource humaine 2',
-            statut: 'subvention_acceptee',
+            statut: 'subventionAcceptee',
             totaux: {
               coFinancement: 40_000,
               financementAccorde: 30_000,
@@ -292,7 +292,6 @@ export function feuillesDeRouteReadModelFactory(
         uid: 'feuilleDeRouteFooId2',
       },
     ],
-    nomDuDepartement: 'Seine-Saint-Denis',
     totaux: {
       budget: 0,
       coFinancement: 0,

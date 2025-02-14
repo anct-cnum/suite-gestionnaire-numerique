@@ -1,6 +1,6 @@
 // Stryker disable all
+import { formatMontant, FeuillesDeRouteViewModel } from './feuillesDeRoutePresenter'
 import { GouvernanceViewModel } from './gouvernancePresenter'
-import { formatMontant, MesFeuillesDeRouteViewModel } from './mesFeuillesDeRoutePresenter'
 import { MesMembresViewModel } from './mesMembresPresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
@@ -112,9 +112,9 @@ export function gouvernanceViewModelFactory(
   }
 }
 
-export function mesFeuillesDeRouteViewModelFactory(
-  override?: Partial<MesFeuillesDeRouteViewModel>
-): MesFeuillesDeRouteViewModel {
+export function feuillesDeRouteViewModelFactory(
+  override?: Partial<FeuillesDeRouteViewModel>
+): FeuillesDeRouteViewModel {
   return {
     feuillesDeRoute: [
       {
