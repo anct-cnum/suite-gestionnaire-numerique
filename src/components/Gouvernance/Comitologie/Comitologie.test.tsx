@@ -395,6 +395,6 @@ describe('comitologie', () => {
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(), epochTimePlusOneDay)
-    renderComponent(<Gouvernance gouvernanceViewModel={gouvernanceViewModel} />, options)
+    renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
 })

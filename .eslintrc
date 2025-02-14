@@ -281,6 +281,12 @@
     {
       "files": ["**/*.test.tsx"],
       "extends": ["plugin:testing-library/react"]
+    },
+    {
+      "files": ["src/components/**/*"],
+      "rules": {
+        "@typescript-eslint/consistent-type-definitions": ["error", "type"]
+      }
     }
   ]
 }
