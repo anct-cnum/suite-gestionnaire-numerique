@@ -61,6 +61,7 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     },
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
+    statut: 'confirme',
     suppressionDuMembreAutorise: false,
     typologie: membre.type ?? '',
   }

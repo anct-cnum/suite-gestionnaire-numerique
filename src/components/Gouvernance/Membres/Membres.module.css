@@ -1,0 +1,12 @@
+.selecteur {
+  background-color: var(--blue-france-975-75);
+}
+
+.selecteur select {
+  width: 7rem;
+}
+
+.label-filtres {
+  padding-right: 1rem;
+  padding-top: 0.7rem;
+}

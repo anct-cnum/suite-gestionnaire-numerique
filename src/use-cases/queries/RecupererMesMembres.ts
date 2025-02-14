@@ -24,7 +24,7 @@ export interface MesMembresLoader {
 function roleEtTypologieDistinct(membres: MesMembresReadModel['membres']): Pick<MesMembresReadModel, 'roles' | 'typologies'> {
   return membres.reduce<Pick<MesMembresReadModel, 'roles' | 'typologies'>>((rolesEtTypologies, membre) => ({
     roles: [...new Set(rolesEtTypologies.roles.concat(membre.roles))],
-    typologies: [...new Set(rolesEtTypologies.typologies.concat(membre.typologie))],
+    typologies: [...new Set(rolesEtTypologies.typologies.concat(membre.typologie || []))],
   }), {
     roles: [],
     typologies: [],
@@ -52,7 +52,10 @@ export type MembreReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<Role>
   typologie: string
+  statut: Statut
 }>
+
+type Statut = 'confirme' | 'candidat' | 'suggere'
 
 type Query = Readonly<{
   codeDepartement: string
