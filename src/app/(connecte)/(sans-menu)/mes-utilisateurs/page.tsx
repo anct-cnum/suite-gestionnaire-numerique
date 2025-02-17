@@ -30,9 +30,9 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   const roles = isNullishOrEmpty(rolesAwaited) ? {} : { roles: rolesAwaited?.split(',') }
   const structureAwaited = searchParamsAwaited.structure
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const idStructure = isNullishOrEmpty(structureAwaited) ? {} : { idStructure: Number(structureAwaited!) }
+  const idStructure = isNullishOrEmpty(structureAwaited) ? undefined : { idStructure: Number(structureAwaited!) }
   const prenomOuNomOuEmailAwaited = searchParamsAwaited.prenomOuNomOuEmail
-  const prenomOuNomOuEmail = isNullishOrEmpty(prenomOuNomOuEmailAwaited) ? '' : prenomOuNomOuEmailAwaited
+  const prenomOuNomOuEmail = isNullishOrEmpty(prenomOuNomOuEmailAwaited) ? undefined : prenomOuNomOuEmailAwaited
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)

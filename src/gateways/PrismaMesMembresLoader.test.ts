@@ -148,7 +148,7 @@ describe('mes membres loader', () => {
           ],
           siret: 'Siret bouchonné',
           suppressionDuMembreAutorise: false,
-          typologie: 'Collectivité, commune',
+          typologie: '',
           uidMembre: 'commune-35345-69',
         },
       ],

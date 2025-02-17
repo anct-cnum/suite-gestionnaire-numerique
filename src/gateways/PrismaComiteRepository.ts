@@ -41,8 +41,8 @@ export class PrismaComiteRepository implements ComiteRepository {
       type: record.type,
       uid: { value: String(record.id) },
       uidEditeur: {
-        email: record.relationUtilisateur?.ssoEmail ?? '',
-        value: record.relationUtilisateur?.ssoId ?? '',
+        email: record.relationUtilisateur.ssoEmail,
+        value: record.relationUtilisateur.ssoId,
       },
       uidGouvernance: { value: record.gouvernanceDepartementCode },
     })

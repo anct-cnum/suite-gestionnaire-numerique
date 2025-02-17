@@ -72,8 +72,8 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       derniereEdition: comite.derniereEdition,
       frequence: comite.frequence,
       id: comite.id,
-      nomEditeur: comite.relationUtilisateur?.nom ?? '~',
-      prenomEditeur: comite.relationUtilisateur?.prenom ?? '~',
+      nomEditeur: comite.relationUtilisateur.nom,
+      prenomEditeur: comite.relationUtilisateur.prenom,
       type: comite.type as TypeDeComite,
     }))
     : undefined

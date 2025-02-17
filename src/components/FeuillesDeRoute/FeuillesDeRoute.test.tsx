@@ -34,7 +34,7 @@ describe('aperçu des feuilles de route', () => {
       expect(montantBudgetTotalDesFeuillesDeRoute).toBeInTheDocument()
       const labelBudgetTotalDesFeuillesDeRoute = screen.getByText('Budget total des feuilles de route', { selector: 'p' })
       expect(labelBudgetTotalDesFeuillesDeRoute).toBeInTheDocument()
-      const listeDesFeuillesDeRoute = screen.getByRole('list', { name: 'feuilles-de-route' })
+      const listeDesFeuillesDeRoute = screen.getByRole('list', { name: 'Feuilles de route' })
       expect(listeDesFeuillesDeRoute).toBeInTheDocument()
       const elementsDeLaListeDesFeuillesDeRoute = within(listeDesFeuillesDeRoute).getAllByRole('listitem')
       const premiereFeuilleDeRoute = elementsDeLaListeDesFeuillesDeRoute[0]

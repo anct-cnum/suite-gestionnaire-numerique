@@ -6,7 +6,7 @@ import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/
 
 export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): ReactElement {
   return (
-    <div className='fr-container fr-mt-5w'>
+    <div className={`fr-container fr-mt-5w ${styles['feuilles-de-route']}`}>
       <div className={styles['align-items']}>
         <h1
           className="color-blue-france fr-mb-0 fr-h1"
@@ -21,50 +21,48 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
         </button>
       </div>
       <div
-        aria-label='budget-global'
+        aria-label="budget-global"
         className={styles['align-items']}
-        role='region'
+        role="region"
       >
         <div className={styles['card-resume-montant-subvention']}>
-          <p className='fr-mb-0 color-blue-france fr-h6'>
+          <p className="fr-mb-0 color-blue-france fr-h6">
             {feuillesDeRouteViewModel.totaux.budget}
             {' '}
           </p>
-          <p className='color-blue-france fr-mb-0'>
+          <p className="color-blue-france fr-mb-0">
             Total des subventions de l‘État
             {' '}
           </p>
         </div>
         <div className={styles['card-resume-montant-subvention']}>
-          <p className=' fr-mb-0 color-blue-france fr-h6'>
+          <p className=" fr-mb-0 color-blue-france fr-h6">
             {feuillesDeRouteViewModel.totaux.coFinancement}
             {' '}
           </p>
-          <p className='color-blue-france fr-mb-0'>
+          <p className="color-blue-france fr-mb-0">
             {' '}
             Total des co-financements
           </p>
         </div>
         <div className={styles['card-resume-montant-subvention']}>
-          <p className='fr-mb-0 color-blue-france fr-h6'>
+          <p className="fr-mb-0 color-blue-france fr-h6">
             {feuillesDeRouteViewModel.totaux.financementAccorde}
           </p>
-          <p className='color-blue-france fr-mb-0'>
+          <p className="color-blue-france fr-mb-0">
             Budget total des feuilles de route
           </p>
         </div>
       </div>
       <ul
-        aria-label='feuilles-de-route'
-        className='fr-p-0'
-        style={{ listStyle: 'none' }}
+        aria-label="Feuilles de route"
+        className="fr-p-0"
       >
         {feuillesDeRouteViewModel.feuillesDeRoute.map((feuilleDeRoute: FeuilleDeRouteViewModel) => (
           <li key={feuilleDeRoute.nom}>
             <ResumeFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} />
           </li>
         ))}
-
       </ul>
     </div>
   )
