@@ -123,7 +123,7 @@ describe('gouvernance', () => {
           date: epochTimePlusOneDay,
           derniereEdition: epochTimePlusOneDay,
           frequence: 'trimestrielle',
-          id: 1,
+          id: 2,
           nomEditeur: 'Tartempion',
           prenomEditeur: 'Martin',
           type: 'technique',

@@ -170,7 +170,7 @@ describe('gouvernance loader', () => {
     await creerUneGouvernance({ departementCode: codeDepartement })
     await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUnComite({
-      commentaire: '',
+      commentaire: undefined,
       creation: epochTime,
       date: epochTime,
       derniereEdition: epochTime,

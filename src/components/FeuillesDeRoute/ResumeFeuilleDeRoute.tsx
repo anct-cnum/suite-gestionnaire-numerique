@@ -7,22 +7,21 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactElement {
   return (
-    <div className='grey-border border-radius fr-mb-2w fr-p-4w'>
-
+    <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>
         <span
           aria-hidden="true"
           className="fr-icon-survey-line icon-title fr-mr-3w color-blue-france fr-py-2w"
         />
         <button
-          className='fr-btn fr-btn--secondary'
-          type='button'
+          className="fr-btn fr-btn--secondary"
+          type="button"
         >
           Voir le détail
         </button>
       </div>
-      <div className='fr-mb-3w'>
-        <h3 className='fr-h3 color-blue-france fr-mb-1w'>
+      <div className="fr-mb-3w">
+        <h3 className="fr-h3 color-blue-france fr-mb-1w">
           {feuilleDeRoute.nom}
         </h3>
         <Tag>
@@ -37,25 +36,21 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
           {feuilleDeRoute.coFinanceurs}
         </span>
       </div>
-
-      <div className='fr-p-3w grey-border border-radius'>
-
+      <div className="fr-p-3w grey-border border-radius">
         <div className={styles['align-items']}>
-          <p className='fr-text--bold fr-mb-0'>
+          <p className="fr-text--bold fr-mb-0">
             {feuilleDeRoute.nombreDActionsAttachees}
           </p>
           <button
-            className='fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
-            type='button'
+            className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
+            type="button"
           >
             Ajouter une action
           </button>
         </div>
-        <hr className='fr-mb-1w fr-py-1w' />
-
+        <hr className="fr-mb-1w fr-py-1w" />
         <ul
-          aria-label='actions'
-          style={{ listStyle: 'none' }}
+          aria-label="actions"
         >
           {feuilleDeRoute.actions.map((action) => (
             <li key={action.uid}>
@@ -63,18 +58,18 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
             </li>
           ))}
         </ul>
-        <div className='container'>
-          <div className='fr-grid-row'>
-            <div className='fr-col-4'>
-              <p className='fr-text--bold'>
+        <div className="container">
+          <div className="fr-grid-row">
+            <div className="fr-col-4">
+              <p className="fr-text--bold">
                 Budget total de la feuille de route
               </p>
             </div>
-            <div className='fr-col-8'>
-              <p className='fr-text--bold fr-mb-1w right'>
+            <div className="fr-col-8">
+              <p className="fr-text--bold fr-mb-1w right">
                 {feuilleDeRoute.totaux.budget}
               </p>
-              <p className='fr-mb-0 right'>
+              <p className="fr-mb-0 right">
                 {feuilleDeRoute.wordingDetailDuBudget}
               </p>
             </div>

@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
@@ -5,6 +6,10 @@ import FeuillesDeRoute from '@/components/FeuillesDeRoute/FeuillesDeRoute'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+
+export const metadata: Metadata = {
+  title: 'Feuilles de route',
+}
 
 export default async function FeuillesDeRouteController({ params }: Props): Promise<ReactElement> {
   try {

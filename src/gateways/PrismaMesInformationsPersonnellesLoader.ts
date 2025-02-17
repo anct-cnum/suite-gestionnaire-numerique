@@ -31,7 +31,7 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInfor
     telephone: utilisateurRecord.telephone,
   }
 
-  if (utilisateurRecord.relationStructure && utilisateurRecord.role === 'gestionnaire_structure') {
+  if (utilisateurRecord.relationStructure) {
     const { adresse, codePostal, commune } = utilisateurRecord.relationStructure
     mesInformationsPersonnelles = {
       ...mesInformationsPersonnelles,
