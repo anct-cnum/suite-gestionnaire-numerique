@@ -125,8 +125,3 @@
 .article tbody td:last-child {
   width: 3rem;
 }
-
-.collapse {
-  height: 4.4rem;
-  overflow: hidden;
-}

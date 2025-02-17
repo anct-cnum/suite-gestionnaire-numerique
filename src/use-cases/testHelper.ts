@@ -352,6 +352,7 @@ export function feuillesDeRouteReadModelFactory(
       coFinancement: 0,
       financementAccorde: 0,
     },
+    uidGouvernance: 'gouvernanceFooId',
     ...override,
   }
 }
