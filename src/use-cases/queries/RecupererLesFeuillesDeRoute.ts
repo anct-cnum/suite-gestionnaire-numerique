@@ -59,6 +59,7 @@ export type FeuillesDeRouteReadModel = Readonly<{
     coFinancement: number
     financementAccorde: number
   }>
+  uidGouvernance: string
 }>
 
 type Query = Readonly<{

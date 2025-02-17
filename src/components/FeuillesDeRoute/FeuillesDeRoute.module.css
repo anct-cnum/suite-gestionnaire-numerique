@@ -37,3 +37,11 @@
   background-color: var(--red-marianne-975-75);
   color: var(--purple-glycine-950-100);
 }
+
+.budget li:first-child {
+  font-weight: 900;
+}
+
+.budget li:nth-child(2) {
+  color: var(--text-title-blue-france);
+}

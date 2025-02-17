@@ -17,7 +17,6 @@ import ResumeMembre from './Membre/ResumeMembre'
 import ResumeMembreVide from './Membre/ResumeMembreVide'
 import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import ModifierNoteDeContexte from './NoteDeContexte/ModifierNoteDeContexte'
-import NoteDeContexteRemplie from './NoteDeContexte/NoteDeContexteRemplie'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import SubSectionButton from './NoteDeContexte/SubSectionButton'
 import AjouterUneNotePrivee from './NotePrivee/AjouterUneNotePrivee'
@@ -31,6 +30,7 @@ import SubSectionTitle from './SubSectionTitle'
 import Drawer from '../shared/Drawer/Drawer'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import ReadMore from '../shared/ReadMore/ReadMore'
 import { noop } from '@/shared/lang'
 
 export default function Gouvernance(): ReactElement {
@@ -254,10 +254,7 @@ export default function Gouvernance(): ReactElement {
               buttonLabel="Ajouter un membre"
               drawerComiteId=""
               id="membre"
-              showDrawer={
-                // istanbul ignore next @preserve
-                noop
-              }
+              showDrawer={noop}
               title="0 membre"
             >
               <MembreVide />
@@ -294,10 +291,7 @@ export default function Gouvernance(): ReactElement {
               buttonLabel="Ajouter une feuille de route"
               drawerComiteId=""
               id="feuilleDeRoute"
-              showDrawer={
-                // istanbul ignore next @preserve
-                noop
-              }
+              showDrawer={noop}
               title="0 feuille de route"
             >
               <FeuilleDeRouteVide />
@@ -331,7 +325,7 @@ export default function Gouvernance(): ReactElement {
                 )}
                 title="Note de contexte"
               >
-                <NoteDeContexteRemplie
+                <ReadMore
                   texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
                 />
               </SectionRemplie>
