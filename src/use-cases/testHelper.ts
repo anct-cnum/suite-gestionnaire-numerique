@@ -190,6 +190,16 @@ export function mesMembresReadModelFactory(
       },
       {
         contactReferent: {
+          nom: 'Inidraï',
+          prenom: 'Marthe',
+        },
+        nom: 'La Poste',
+        roles: ['coporteur'],
+        suppressionDuMembreAutorise: false,
+        typologie: '',
+      },
+      {
+        contactReferent: {
           nom: 'Didier',
           prenom: 'Durant',
         },
@@ -297,6 +307,112 @@ export function feuillesDeRouteReadModelFactory(
       coFinancement: 0,
       financementAccorde: 0,
     },
+    ...override,
+  }
+}
+
+export function membresReadModelFactory(override?: Partial<MesMembresReadModel>): MesMembresReadModel {
+  return {
+    autorisations: {
+      accesMembreConfirme: false,
+      ajouterUnMembre: false,
+      supprimerUnMembre: false,
+    },
+    departement: 'Rhône',
+    membres: [
+      {
+        contactReferent: {
+          nom: 'Henrich',
+          prenom: 'Laetitia',
+        },
+        nom: 'Préfecture du Rhône',
+        roles: ['coporteur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Préfecture départementale',
+      },
+      {
+        contactReferent: {
+          nom: 'Chappuis',
+          prenom: 'Pauline',
+        },
+        nom: 'Rhône (69)',
+        roles: ['coporteur', 'cofinanceur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Collectivité, conseil départemental',
+      },
+      {
+        contactReferent: {
+          nom: 'Boudet',
+          prenom: 'Blaise',
+        },
+        nom: 'CC des Monts du Lyonnais',
+        roles: ['coporteur', 'cofinanceur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Collectivité, EPCI',
+      },
+      {
+        contactReferent: {
+          nom: 'Vasseur',
+          prenom: 'Gaby',
+        },
+        nom: "La Voie du Num'",
+        roles: ['beneficiaire', 'recipiendaire'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Beauvilliers',
+          prenom: 'Fabien',
+        },
+        nom: 'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
+        roles: ['observateur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Geffroy',
+          prenom: 'Grégory',
+        },
+        nom: 'Info-Jeunes Auvergne Rhône-Alpes (CRIJ)',
+        roles: ['beneficiaire', 'cofinanceur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Poulin',
+          prenom: 'Ninon',
+        },
+        nom: 'Emmaüs Connect',
+        roles: ['observateur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Dufour',
+          prenom: 'Arianne',
+        },
+        nom: 'Croix Rouge Française',
+        roles: ['cofinanceur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Association',
+      },
+      {
+        contactReferent: {
+          nom: 'Pélissier',
+          prenom: 'Fabien',
+        },
+        nom: 'Orange',
+        roles: ['coporteur'],
+        suppressionDuMembreAutorise: false,
+        typologie: 'Entreprise privée',
+      },
+    ],
+    roles: ['cofinanceur', 'coporteur', 'beneficiaire', 'observateur', 'recipiendaire'],
+    typologies: ['Collectivité, EPCI', 'Préfecture départementale', 'Association'],
     ...override,
   }
 }
