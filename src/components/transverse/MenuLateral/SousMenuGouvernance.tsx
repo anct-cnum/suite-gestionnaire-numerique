@@ -20,7 +20,7 @@ export function SousMenuGouvernance({
     },
     {
       label: 'Feuilles de route',
-      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-routes`,
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/feuilles-de-route`,
       visible: isAfficherSousMenuFeuilleDeRoute,
     },
   ]

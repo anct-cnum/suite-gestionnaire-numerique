@@ -20,7 +20,7 @@ export function gouvernancePresenter(
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     sectionFeuillesDeRoute: {
       ...{ feuillesDeRoute: gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel) },
-      ...buildTitresFeuillesDeRoute(gouvernanceReadModel.feuillesDeRoute),
+      ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
     },
     sectionMembres: {
       ...{ coporteurs: gouvernanceReadModel.syntheseMembres.coporteurs.map(toCoporteursDetailsViewModel) },
@@ -239,8 +239,8 @@ function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembre
     .join(', ')
 }
 
-function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute']): GouvernanceViewModel['sectionFeuillesDeRoute'] {
-  if (!feuillesDeRoute) {
+function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): GouvernanceViewModel['sectionFeuillesDeRoute'] {
+  if (!gouvernance.feuillesDeRoute) {
     return {
       budgetTotalCumule: '0',
       lien: {
@@ -252,16 +252,17 @@ function buildTitresFeuillesDeRoute(feuillesDeRoute: UneGouvernanceReadModel['fe
     }
   }
 
-  const lien = feuillesDeRoute.length === 1 ? {
+  const lien = gouvernance.feuillesDeRoute.length === 1 ? {
     label: 'Voir la feuille de route',
-    url: '/feuille-de-route',
+    url: `/gouvernance/${gouvernance.uid}/feuille-de-route`,
   } : {
     label: 'Voir les feuilles de route',
-    url: '/feuilles-de-route',
+    url: `/gouvernance/${gouvernance.uid}/feuilles-de-route`,
   }
 
-  const nombreDeFeuillesDeRoute = feuillesDeRoute.length
-  const budgetTotalCumule = feuillesDeRoute.reduce((budget, feuilleDeRoute) => budget + feuilleDeRoute.budgetGlobal, 0)
+  const nombreDeFeuillesDeRoute = gouvernance.feuillesDeRoute.length
+  const budgetTotalCumule =
+    gouvernance.feuillesDeRoute.reduce((budget, feuilleDeRoute) => budget + feuilleDeRoute.budgetGlobal, 0)
 
   return {
     budgetTotalCumule: formaterEnNombreFrancais(budgetTotalCumule),

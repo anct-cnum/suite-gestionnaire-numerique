@@ -23,7 +23,7 @@ describe('menu lateral', () => {
   it.each([
     { index: 0, name: 'Gouvernance', url: '/gouvernance/93' },
     { index: 1, name: 'Membres', url: '/gouvernance/93/membres' },
-    { index: 2, name: 'Feuilles de route', url: '/gouvernance/93/feuilles-de-routes' },
+    { index: 2, name: 'Feuilles de route', url: '/gouvernance/93/feuilles-de-route' },
     { index: 3, name: 'Financements', url: '/gouvernance/93/financements' },
     { index: 4, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
     { index: 5, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },

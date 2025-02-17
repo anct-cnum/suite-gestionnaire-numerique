@@ -74,6 +74,7 @@ function transform(
       coFinancement: 0,
       financementAccorde: 0,
     },
+    uidGouvernance: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.code,
   }
 }
 

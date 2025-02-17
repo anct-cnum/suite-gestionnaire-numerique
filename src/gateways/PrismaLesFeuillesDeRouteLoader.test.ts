@@ -103,6 +103,7 @@ describe('récupérer les feuilles de route loader', () => {
         coFinancement: 0,
         financementAccorde: 0,
       },
+      uidGouvernance: '93',
     })
   })
 })

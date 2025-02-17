@@ -6,19 +6,21 @@ export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
 ): FeuillesDeRouteViewModel {
   return {
-    feuillesDeRoute: feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel),
+    feuillesDeRoute:
+      feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
     titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
       coFinancement: formatMontant(feuillesDeRouteReadModel.totaux.coFinancement),
       financementAccorde: formatMontant(feuillesDeRouteReadModel.totaux.financementAccorde),
     },
+    uidGouvernance: feuillesDeRouteReadModel.uidGouvernance,
   }
 }
 
-function toFeuilleDeRouteViewModel(feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel {
-  return {
-    actions: feuilleDeRoute.actions.map(toActionViewModel),
+function toFeuilleDeRouteViewModel(uidGouvernance: string) {
+  return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => ({
+    actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
     beneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}`,
     coFinanceurs: `${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
     nom: feuilleDeRoute.nom,
@@ -32,11 +34,42 @@ function toFeuilleDeRouteViewModel(feuilleDeRoute: FeuillesDeRouteReadModel['feu
     },
     uid: feuilleDeRoute.uid,
     wordingDetailDuBudget: `dont ${formatMontant(feuilleDeRoute.totaux.coFinancement)} de co-financements et ${formatMontant(feuilleDeRoute.totaux.financementAccorde)} des financements accordés`,
-  }
+  })
 }
 
-function toActionViewModel(action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel {
-  return {
+function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
+  return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
+    beneficiaires: [
+      {
+        nom: 'Croix Rouge Française',
+        url: '/',
+      },
+      {
+        nom: 'La Poste',
+        url: '/',
+      },
+    ],
+    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+    budgetPrevisionnel: [
+      {
+        coFinanceur: 'Budget prévisionnel 2024',
+        montant: '20 000 €',
+      },
+      {
+        coFinanceur: 'Subvention de prestation',
+        montant: '10 000 €',
+      },
+      {
+        coFinanceur: 'CC des Monts du Lyonnais',
+        montant: '5 000 €',
+      },
+      {
+        coFinanceur: 'Croix Rouge Française',
+        montant: '5 000 €',
+      },
+    ],
+    description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+    lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
     nom: action.nom,
     porteur: 'CC des Monts du Lyonnais',
     statut: actionStatutViewModelByStatut[action.statut],
@@ -45,7 +78,7 @@ function toActionViewModel(action: FeuillesDeRouteReadModel['feuillesDeRoute'][n
       financementAccorde: formatMontant(action.totaux.financementAccorde),
     },
     uid: action.uid,
-  }
+  })
 }
 
 export type FeuillesDeRouteViewModel = Readonly<{
@@ -56,6 +89,7 @@ export type FeuillesDeRouteViewModel = Readonly<{
     financementAccorde: string
   }>
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
+  uidGouvernance: string
 }>
 
 export type FeuilleDeRouteViewModel = Readonly<{
@@ -81,7 +115,17 @@ export type FeuilleDeRouteViewModel = Readonly<{
 }>
 
 export type ActionViewModel = Readonly<{
-  uid: string
+  beneficiaires: ReadonlyArray<{
+    nom: string
+    url: string
+  }>
+  besoins: ReadonlyArray<string>
+  budgetPrevisionnel: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
+  description: string
+  lienPourModifier: string
   nom: string
   porteur?: string
   statut: Readonly<{
@@ -94,9 +138,10 @@ export type ActionViewModel = Readonly<{
     coFinancement: string
     financementAccorde: string
   }>
+  uid: string
 }>
 
-export function formatMontant(montant: number): string {
+function formatMontant(montant: number): string {
   return `${montant.toLocaleString('fr-FR')} €`
 }
 

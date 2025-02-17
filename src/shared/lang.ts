@@ -23,6 +23,7 @@ export function isNullishOrEmpty(str: string | undefined | null): boolean {
   return isNullish(str) || isEmpty(str!)
 }
 
+// istanbul ignore next @preserve
 export function noop(): void {
   // No-op
 }

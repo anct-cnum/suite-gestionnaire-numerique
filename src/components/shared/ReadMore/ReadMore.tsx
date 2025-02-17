@@ -2,9 +2,9 @@
 
 import { ReactElement, useState } from 'react'
 
-import styles from '../Gouvernance.module.css'
+import styles from './ReadMore.module.css'
 
-export default function NoteDeContexteRemplie({ texte }: Props): ReactElement {
+export default function ReadMore({ texte }: Props): ReactElement {
   const [isCollapsed, setIsCollapsed] = useState(true)
 
   return (

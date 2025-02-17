@@ -21,9 +21,9 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
         </button>
       </div>
       <div className="fr-mb-3w">
-        <h3 className="fr-h3 color-blue-france fr-mb-1w">
+        <h2 className="fr-h3 color-blue-france fr-mb-1w">
           {feuilleDeRoute.nom}
-        </h3>
+        </h2>
         <Tag>
           {feuilleDeRoute.porteur}
         </Tag>
@@ -49,15 +49,7 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
           </button>
         </div>
         <hr className="fr-mb-1w fr-py-1w" />
-        <ul
-          aria-label="actions"
-        >
-          {feuilleDeRoute.actions.map((action) => (
-            <li key={action.uid}>
-              <ResumeAction action={action} />
-            </li>
-          ))}
-        </ul>
+        <ResumeAction actions={feuilleDeRoute.actions} />
         <div className="container">
           <div className="fr-grid-row">
             <div className="fr-col-4">
