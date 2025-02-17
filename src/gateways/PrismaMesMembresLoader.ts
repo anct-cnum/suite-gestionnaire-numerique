@@ -42,7 +42,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
       candidats: toMembres(gouvernanceRecord.membres, 'candidat')
         .toSorted(sortMembres)
         .map(toMesMembresReadModel),
-      departement: 'Rhône',
+      departement: gouvernanceRecord.relationDepartement.nom,
       membres: toMembres(gouvernanceRecord.membres, 'confirme')
         .toSorted(sortMembres)
         .map(toMesMembresReadModel),

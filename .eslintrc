@@ -30,6 +30,7 @@
     "capitalized-comments": "off",
     "func-style": ["error", "declaration"],
     "id-length": ["error", { "exceptions": ["_"] }],
+    "jsx-quotes": ["error"],
     "line-comment-position": "off",
     "max-classes-per-file": "off",
     "max-lines": "off",

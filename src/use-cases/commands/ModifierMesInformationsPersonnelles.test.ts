@@ -1,9 +1,14 @@
 import { ModifierMesInformationsPersonnelles } from './ModifierMesInformationsPersonnelles'
 import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('modifier mes informations personnelles', () => {
+  beforeEach(() => {
+    spiedMesInformationsPersonnellesToModify = null
+    spiedUtilisateurUidToFind = null
+  })
+
   describe('le compte n’est pas modifié si les modifications sont invalides', () => {
     it.each([
       {
@@ -28,8 +33,7 @@ describe('modifier mes informations personnelles', () => {
       },
     ])('$desc', async ({ modification, expectedResult }) => {
       // GIVEN
-      const utilisateur = utilisateurFactory()
-      const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
+      const commandHandler = new ModifierMesInformationsPersonnelles(new RepositorySpy())
 
       // WHEN
       const result = await commandHandler.handle({
@@ -41,27 +45,27 @@ describe('modifier mes informations personnelles', () => {
       })
 
       // THEN
+      expect(spiedMesInformationsPersonnellesToModify).toBeNull()
       expect(result).toBe(expectedResult)
     })
   })
 
   it('le compte est modifié si les modifications sont valides', async () => {
     // GIVEN
-    const utilisateur = utilisateurFactory()
-    const commandHandler = new ModifierMesInformationsPersonnelles(new RepositoryStub(utilisateur))
+    const commandHandler = new ModifierMesInformationsPersonnelles(new RepositorySpy())
 
     // WHEN
     const result = await commandHandler.handle(informationsPersonnellesModifiees)
 
     // THEN
-    const utilisateurApresMiseAJour = utilisateurFactory({
+    expect(spiedUtilisateurUidToFind).toBe('fooId')
+    expect(spiedMesInformationsPersonnellesToModify?.state).toStrictEqual(utilisateurFactory({
       emailDeContact: 'martine.dugenoux@example.com',
       nom: 'Dugenoux',
       prenom: 'Martine',
       telephone: '0102030406',
-    })
+    }).state)
     expect(result).toBe('OK')
-    expect(utilisateurApresMiseAJour.state).toStrictEqual(utilisateur.state)
   })
 })
 
@@ -74,19 +78,17 @@ const informationsPersonnellesModifiees = {
   },
   uidUtilisateurCourant: 'fooId',
 }
+let spiedMesInformationsPersonnellesToModify: Utilisateur | null
+let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
 
-class RepositoryStub implements GetUtilisateurRepository, UpdateUtilisateurRepository {
-  readonly #utilisateur: Utilisateur
-
-  constructor(utilisateur: Utilisateur) {
-    this.#utilisateur = utilisateur
+class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUtilisateurUidToFind = uid
+    return Promise.resolve(utilisateurFactory())
   }
 
-  async get(): Promise<Utilisateur> {
-    return Promise.resolve(this.#utilisateur)
-  }
-
-  async update(): Promise<void> {
+  async update(utilisateur: Utilisateur): Promise<void> {
+    spiedMesInformationsPersonnellesToModify = utilisateur
     return Promise.resolve()
   }
 }

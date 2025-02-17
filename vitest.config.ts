@@ -33,6 +33,7 @@ export default defineConfig({
         '**/mentions-legales/**',
         '**/NextAuthAuthentificationGateway.ts',
         '**/ClientContext.tsx',
+        '**/GouvernanceContext.tsx',
         'src/instrumentation.ts',
         'src/**/*.test.tsx',
         'src/**/*.test.ts',

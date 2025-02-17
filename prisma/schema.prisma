@@ -139,8 +139,8 @@ model ComiteRecord {
   date                       DateTime?
   editeurUtilisateurId       String    @map("editeur_utilisateur_id")
 
-  relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
-  relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationUtilisateur UtilisateurRecord @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
 }

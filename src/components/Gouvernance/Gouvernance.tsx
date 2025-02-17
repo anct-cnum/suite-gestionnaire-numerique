@@ -31,6 +31,7 @@ import SubSectionTitle from './SubSectionTitle'
 import Drawer from '../shared/Drawer/Drawer'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import { noop } from '@/shared/lang'
 
 export default function Gouvernance(): ReactElement {
   // Stryker disable next-line BooleanLiteral
@@ -253,8 +254,10 @@ export default function Gouvernance(): ReactElement {
               buttonLabel="Ajouter un membre"
               drawerComiteId=""
               id="membre"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              showDrawer={() => { }}
+              showDrawer={
+                // istanbul ignore next @preserve
+                noop
+              }
               title="0 membre"
             >
               <MembreVide />
@@ -291,8 +294,10 @@ export default function Gouvernance(): ReactElement {
               buttonLabel="Ajouter une feuille de route"
               drawerComiteId=""
               id="feuilleDeRoute"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              showDrawer={() => { }}
+              showDrawer={
+                // istanbul ignore next @preserve
+                noop
+              }
               title="0 feuille de route"
             >
               <FeuilleDeRouteVide />

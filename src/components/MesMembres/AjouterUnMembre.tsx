@@ -91,8 +91,8 @@ export default function AjouterUnMembre({
                   encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien :
                   {' '}
                   <ExternalLink
-                    href='https://inclusion-numerique.anct.gouv.fr/gouvernance'
-                    title='Invitez les collectivités et structures'
+                    href="https://inclusion-numerique.anct.gouv.fr/gouvernance"
+                    title="Invitez les collectivités et structures"
                   >
                     https://inclusion-numerique.anct.gouv.fr/gouvernance
                   </ExternalLink>

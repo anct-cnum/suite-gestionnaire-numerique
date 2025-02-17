@@ -176,7 +176,7 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-35345-${gouvernanceDepartementCode}`,
-    type: 'Collectivité, commune',
+    type: undefined,
   })
   await creerUnMembre({
     gouvernanceDepartementCode,

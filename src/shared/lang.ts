@@ -23,4 +23,8 @@ export function isNullishOrEmpty(str: string | undefined | null): boolean {
   return isNullish(str) || isEmpty(str!)
 }
 
+export function noop(): void {
+  // No-op
+}
+
 type JsonPrimitive = boolean | number | string

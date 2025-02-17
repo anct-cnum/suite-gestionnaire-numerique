@@ -10,18 +10,8 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
         relationDepartement: true,
-        relationEditeurNoteDeContexte: {
-          select: {
-            ssoEmail: true,
-            ssoId: true,
-          },
-        },
-        relationEditeurNotePrivee: {
-          select: {
-            ssoEmail: true,
-            ssoId: true,
-          },
-        },
+        relationEditeurNoteDeContexte: true,
+        relationEditeurNotePrivee: true,
       },
       where: {
         departementCode: uid.state.value,
