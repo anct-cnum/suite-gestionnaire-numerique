@@ -58,7 +58,7 @@ describe('comitologie', () => {
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterComiteId')
-      expect(enregistrer).not.toBeDisabled()
+      expect(enregistrer).toBeEnabled()
     })
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -209,11 +209,11 @@ describe('comitologie', () => {
       const supprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
       expect(supprimer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
       expect(supprimer).toHaveAttribute('type', 'button')
-      expect(supprimer).not.toBeDisabled()
+      expect(supprimer).toBeEnabled()
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toHaveAttribute('aria-controls', 'drawerModifierComiteId')
       expect(enregistrer).toHaveAttribute('type', 'submit')
-      expect(enregistrer).not.toBeDisabled()
+      expect(enregistrer).toBeEnabled()
 
       const modifierPar = screen.getByText('Modifié le 31/12/1969 par Martin Tartempion')
       expect(modifierPar).toBeInTheDocument()

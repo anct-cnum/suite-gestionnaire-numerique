@@ -7,7 +7,8 @@ export default function Radio({ children, id, nomGroupe, onChange }: Props): Rea
         <input
           id={id}
           name={nomGroupe}
-          onChange={onChange}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...onChange ? { onChange } : {}}
           required={true}
           type="radio"
           value={id}
@@ -26,5 +27,5 @@ export default function Radio({ children, id, nomGroupe, onChange }: Props): Rea
 type Props = PropsWithChildren<Readonly<{
   id: string
   nomGroupe: string
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange?: ChangeEventHandler<HTMLInputElement>
 }>>

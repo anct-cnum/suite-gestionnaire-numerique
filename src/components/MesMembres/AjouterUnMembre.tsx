@@ -6,6 +6,7 @@ import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import { Notification } from '../shared/Notification/Notification'
+import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { MesMembresViewModel } from '@/presenters/mesMembresPresenter'
 
@@ -38,33 +39,16 @@ export default function AjouterUnMembre({
           <legend className="fr-sr-only">
             Sélectionner un membre
           </legend>
-          <label
-            className="fr-label"
-            htmlFor="membres"
-          >
-            Membre candidat ou suggéré
-          </label>
-          <select
-            className="fr-select fr-mb-2w"
+          <Select
             defaultValue=""
             id="membres"
             name="membre"
             onChange={selectionnerUnMembre}
+            options={[{ label: 'Sélectionner un membre', uid: '' }].concat(candidatsOuSuggeres)}
+            required={true}
           >
-            <option value="">
-              Sélectionner un membre
-            </option>
-            {
-              candidatsOuSuggeres.map((candidatOuSuggere): ReactElement => (
-                <option
-                  key={candidatOuSuggere.uidMembre}
-                  value={candidatOuSuggere.uidMembre}
-                >
-                  {candidatOuSuggere.nom}
-                </option>
-              ))
-            }
-          </select>
+            Membre candidat ou suggéré
+          </Select>
           {
             informationsMembre === null ? (
               <div className={`fr-grid-row ${styles.informations}`}>
@@ -119,7 +103,7 @@ export default function AjouterUnMembre({
                 <div>
                   <ExternalLink
                     href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${informationsMembre.siret}`}
-                    title={`Fiche ${informationsMembre.nom}`}
+                    title={`Fiche ${informationsMembre.label}`}
                   >
                     {informationsMembre.siret}
                   </ExternalLink>
@@ -188,15 +172,15 @@ export default function AjouterUnMembre({
       setIsDisabled(false)
       setInformationsMembre(
         candidatsOuSuggeres
-          .filter((candidatOuSuggere) => candidatOuSuggere.uidMembre === event.currentTarget.value)
+          .filter((candidatOuSuggere) => candidatOuSuggere.uid === event.currentTarget.value)
           .map((membreSelectionne) => ({
             adresse: membreSelectionne.adresse,
             contactReferent: membreSelectionne.contactReferent,
-            nom: membreSelectionne.nom,
+            label: membreSelectionne.label,
             siret: membreSelectionne.siret,
             statut: membreSelectionne.statut,
             typologie: membreSelectionne.typologie,
-            uidMembre: membreSelectionne.uidMembre,
+            uid: membreSelectionne.uid,
           }))[0]
       )
     }

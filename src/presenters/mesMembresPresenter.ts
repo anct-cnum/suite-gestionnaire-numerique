@@ -25,7 +25,7 @@ function toCandidatsOuSuggeresViewModel(candidats: ReadonlyArray<MembreReadModel
   return [
     ...candidats.map((candidat) => buildCandidatsOuSuggeres(candidat, 'Candidat')),
     ...suggeres.map((suggere) => buildCandidatsOuSuggeres(suggere, 'Suggéré')),
-  ].toSorted((lMembre, rMembre) => lMembre.nom.localeCompare(rMembre.nom))
+  ].toSorted((lMembre, rMembre) => lMembre.label.localeCompare(rMembre.label))
 }
 
 function buildCandidatsOuSuggeres(membre: MembreReadModel, statut: string): CandidatOuSuggereViewModel {
@@ -33,11 +33,11 @@ function buildCandidatsOuSuggeres(membre: MembreReadModel, statut: string): Cand
     adresse: membre.adresse,
     contactReferent:
       membre.contactReferent ? `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.fonction} ${membre.contactReferent.email}` : 'Donnée non fournie',
-    nom: membre.nom,
+    label: membre.nom,
     siret: membre.siret,
     statut,
     typologie: membre.typologie ? membre.typologie : 'Donnée non fournie',
-    uidMembre: membre.uidMembre,
+    uid: membre.uidMembre,
   }
 }
 
@@ -69,9 +69,9 @@ type MembreViewModel = Readonly<{
 type CandidatOuSuggereViewModel = Readonly<{
   adresse: string
   contactReferent?: string
-  nom: string
+  label: string
   siret: string
   statut: string
   typologie?: string
-  uidMembre: string
+  uid: string
 }>
