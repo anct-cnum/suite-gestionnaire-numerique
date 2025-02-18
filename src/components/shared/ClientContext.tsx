@@ -8,6 +8,7 @@ import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { accepterUnMembreAction } from '@/app/api/actions/accepterUnMembreAction'
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
+import { ajouterUneFeuilleDeRouteAction } from '@/app/api/actions/ajouterUneFeuilleDeRouteAction'
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
@@ -38,6 +39,7 @@ export default function ClientContext({
     () => ({
       accepterUnMembreAction,
       ajouterUnComiteAction,
+      ajouterUneFeuilleDeRouteAction,
       ajouterUneNoteDeContexteAction,
       ajouterUneNotePriveeAction,
       changerMonRoleAction,
@@ -79,6 +81,7 @@ export type ClientContextProviderValue = Readonly<{
   pathname: string
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   ajouterUnComiteAction: typeof ajouterUnComiteAction
+  ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction

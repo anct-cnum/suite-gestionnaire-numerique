@@ -269,7 +269,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
         jeSaisieMonEMail('  julien.deschamps@example.com  ')
 
         // THEN
-        expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).not.toBeDisabled()
+        expect(screen.getByRole('button', { name: 'Confirmer la suppression' })).toBeEnabled()
         const messageEmailKo = screen.getByRole('textbox', { description: 'L’adresse électronique saisie est valide' })
         expect(messageEmailKo).toBeInTheDocument()
       })
