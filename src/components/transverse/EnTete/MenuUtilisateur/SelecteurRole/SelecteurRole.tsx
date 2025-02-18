@@ -3,36 +3,23 @@
 import { FormEvent, ReactElement, useContext } from 'react'
 
 import { clientContext } from '@/components/shared/ClientContext'
+import Select from '@/components/shared/Select/Select'
 
 export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
   const { changerMonRoleAction, pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
     <div className="fr-select-group">
-      <label
-        className="fr-label"
-        htmlFor="role"
-      >
-        Rôle
-      </label>
-      <select
-        className="fr-select"
+      <Select
+        ariaControlsId={ariaControlsId}
         defaultValue={sessionUtilisateurViewModel.role.nom}
         id="role"
+        name="role"
         onChange={changerDeRole}
+        options={roles.map((role) => ({ label: role, uid: role }))}
       >
-        {
-          roles.map((nom): ReactElement => (
-            <option
-              aria-controls={ariaControlsId}
-              key={nom}
-              value={nom}
-            >
-              {nom}
-            </option>
-          ))
-        }
-      </select>
+        Rôle
+      </Select>
     </div>
   )
 
