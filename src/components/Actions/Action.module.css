@@ -1,0 +1,23 @@
+.form-container {
+  background-color: var(--red-marianne-975-75);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+
+.horizontal-text-input {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.half-width {
+  width: 40%;
+}
+
+.align-items {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}

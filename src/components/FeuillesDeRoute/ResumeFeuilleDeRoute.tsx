@@ -41,12 +41,12 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
           <p className="fr-text--bold fr-mb-0">
             {feuilleDeRoute.nombreDActionsAttachees}
           </p>
-          <button
+          <Link
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-            type="button"
+            href={`/gouvernance/feuille-de-route/${feuilleDeRoute.uid}/action/ajouter`}
           >
             Ajouter une action
-          </button>
+          </Link>
         </div>
         <hr className="fr-mb-1w fr-py-1w" />
         <ResumeAction actions={feuilleDeRoute.actions} />

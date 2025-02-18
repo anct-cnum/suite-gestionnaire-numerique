@@ -15,7 +15,7 @@ export default function TextEditor({ contenu, onChange }: Props): ReactElement {
         'aria-label': 'Éditeur de note de contexte',
         class: 'fr-input',
         role: 'textarea',
-        style: 'min-height: 380px; resize: vertical;',
+        style: `min-height: ${height}px; resize: vertical;`,
       },
     },
     extensions: [
