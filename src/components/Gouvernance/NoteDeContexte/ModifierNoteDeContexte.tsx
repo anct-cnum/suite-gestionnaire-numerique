@@ -42,6 +42,7 @@ export default function ModifierNoteDeContexte({
         </div>
         <EditeurDeTexte
           contenu={texte}
+          height={380}
           onChange={gererLeChangementDeContenu}
         />
         <ul className="fr-btns-group fr-mt-2w">
