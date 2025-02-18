@@ -6,8 +6,42 @@ export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
 ): FeuillesDeRouteViewModel {
   return {
+    contratPreexistant: [
+      {
+        id: 'oui',
+        label: 'Oui',
+      },
+      {
+        id: 'non',
+        label: 'Non',
+      },
+    ],
     feuillesDeRoute:
       feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
+    membres: [
+      {
+        label: 'Croix Rouge Française',
+        uid: 'membre1FooId',
+      },
+      {
+        label: 'La Poste',
+        uid: 'membre2FooId',
+      },
+    ],
+    perimetres: [
+      {
+        id: 'regional',
+        label: 'Régional',
+      },
+      {
+        id: 'departemental',
+        label: 'Départemental',
+      },
+      {
+        id: 'epci_groupement',
+        label: 'EPCI ou groupement de communes',
+      },
+    ],
     titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
@@ -82,13 +116,25 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
 }
 
 export type FeuillesDeRouteViewModel = Readonly<{
+  contratPreexistant: ReadonlyArray<{
+    id: 'oui' | 'non'
+    label: string
+  }>
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
+  membres: ReadonlyArray<{
+    label: string
+    uid: string
+  }>
+  perimetres: ReadonlyArray<{
+    id: 'regional' | 'departemental' | 'epci_groupement'
+    label: string
+  }>
   titre: string
   totaux: Readonly<{
     budget: string
     coFinancement: string
     financementAccorde: string
   }>
-  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
   uidGouvernance: string
 }>
 
