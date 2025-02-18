@@ -37,7 +37,10 @@ export default function InviterUnUtilisateur({
       <DrawerTitle id={labelId}>
         Invitez un utilisateur à rejoindre l’espace de gestion
       </DrawerTitle>
-      <p id="champsObligatoires">
+      <p
+        className="fr-text--sm color-grey"
+        id="champsObligatoires"
+      >
         Les champs avec
         {' '}
         <span className="color-red">

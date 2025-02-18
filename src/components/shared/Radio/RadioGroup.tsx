@@ -10,7 +10,8 @@ export default function RadioGroup({ nomGroupe, options, onChange }: Props): Rea
           id={id}
           key={id}
           nomGroupe={nomGroupe}
-          onChange={onChange}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...onChange ? { onChange } : {}}
         >
           {label}
         </Radio>
@@ -19,13 +20,11 @@ export default function RadioGroup({ nomGroupe, options, onChange }: Props): Rea
   )
 }
 
-type RadioOption = Readonly<{
-  id: string
-  label: string
-}>
-
 type Props = Readonly<{
   nomGroupe: string
-  options: ReadonlyArray<RadioOption>
-  onChange: ChangeEventHandler<HTMLInputElement>
+  options: ReadonlyArray<{
+    id: string
+    label: string
+  }>
+  onChange?: ChangeEventHandler<HTMLInputElement>
 }>

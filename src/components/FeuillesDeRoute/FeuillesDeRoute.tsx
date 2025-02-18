@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import AjouterUneFeuilleDeRoute from './AjouterUneFeuilleDeRoute'
 import styles from './FeuillesDeRoute.module.css'
 import ResumeFeuilleDeRoute from './ResumeFeuilleDeRoute'
 import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
@@ -13,12 +14,12 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
         >
           {feuillesDeRouteViewModel.titre}
         </h1>
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
-          type="button"
-        >
-          Ajouter une feuille de route
-        </button>
+        <AjouterUneFeuilleDeRoute
+          contratPreexistant={feuillesDeRouteViewModel.contratPreexistant}
+          membres={feuillesDeRouteViewModel.membres}
+          perimetres={feuillesDeRouteViewModel.perimetres}
+          uidGouvernance={feuillesDeRouteViewModel.uidGouvernance}
+        />
       </div>
       <div
         aria-label="budget-global"
