@@ -1,23 +1,21 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import { ReactElement, useId, useState } from 'react'
+import { FormEvent, ReactElement, useId, useState } from 'react'
 
 import styles from './Action.module.css'
-import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
-import EditeurDeTexte from '../shared/RichTextEditor/TextEditor'
-import Tag from '../shared/Tag/Tag'
-import TextInput from '../shared/TextInput/TextInput'
+import { useRichTextEditor } from '../../shared/RichTextEditor/hooks/useRichTextEditor'
+import EditeurDeTexte from '../../shared/RichTextEditor/TextEditor'
+import Tag from '../../shared/Tag/Tag'
+import TextInput from '../../shared/TextInput/TextInput'
 
-export function FormulaireAction({ date }: Props): ReactElement {
+export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props): ReactElement {
   const nomDeLActionId = useId()
   const contexteId = useId()
   const descriptionId = useId()
-  const anneDeDebutId = useId()
-  const anneeDeFinId = useId()
-  const [frequence, setFrequence] = useState('annuelle')
+  const [temporalite, setTemporalite] = useState('annuelle')
   const currentYear = date.getFullYear().toString()
-
+  const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
     gererLeChangementDeContenu: gererChangementContexte,
@@ -32,6 +30,14 @@ export function FormulaireAction({ date }: Props): ReactElement {
     <div className="fr-container fr-mt-5w">
       <form
         aria-label="Ajouter une action à la feuille de route"
+        onSubmit={async (event) => {
+          event.preventDefault()
+          await validerFormulaire(
+            event,
+            contexteContenu,
+            descriptionContenu
+          )
+        }}
       >
         <a
           className="fr-tag fr-mb-2w"
@@ -184,11 +190,11 @@ export function FormulaireAction({ date }: Props): ReactElement {
             >
               <div style={{ width: '49%' }}>
                 <input
-                  checked={frequence === 'annuelle'}
+                  checked={temporalite === 'annuelle'}
                   id="radio-annuelle"
                   name="radio-inline"
                   onChange={() => {
-                    setFrequence('annuelle')
+                    setTemporalite('annuelle')
                   }}
                   type="radio"
                   value="annuelle"
@@ -199,22 +205,45 @@ export function FormulaireAction({ date }: Props): ReactElement {
                 >
                   Annuelle
                 </label>
-                <TextInput
-                  defaultValue={currentYear}
-                  id={anneDeDebutId}
-                  name="anneeDeDebut"
-                  required={true}
-                >
-                  Année de début de l‘action
-                </TextInput>
+                <div className="fr-select-group">
+                  <label
+                    className="fr-label"
+                    htmlFor="anneeDeDebut"
+                  >
+                    Année de début de l‘action
+                  </label>
+                  <select
+                    className="fr-select"
+                    defaultValue={currentYear}
+                    id="anneeDeDebut"
+                    name="anneeDeDebut"
+                  >
+                    <option
+                      disabled
+                      hidden
+                      selected
+                      value=""
+                    >
+                      {currentYear}
+                    </option>
+                    {years.map((year) => (
+                      <option
+                        key={year}
+                        value={year}
+                      >
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div style={{ width: '49%' }}>
                 <input
-                  checked={frequence === 'pluriannuelle'}
+                  checked={temporalite === 'pluriannuelle'}
                   id="radio-pluriannuelle"
                   name="radio-inline"
                   onChange={() => {
-                    setFrequence('pluriannuelle')
+                    setTemporalite('pluriannuelle')
                   }}
                   type="radio"
                   value="pluriannuelle"
@@ -225,14 +254,37 @@ export function FormulaireAction({ date }: Props): ReactElement {
                 >
                   Pluriannuelle
                 </label>
-                <TextInput
-                  defaultValue="-"
-                  id={anneeDeFinId}
-                  name="anneeDeFin"
-                  required={true}
-                >
-                  Année de fin de l‘action
-                </TextInput>
+                <div className="fr-select-group">
+                  <label
+                    className="fr-label"
+                    htmlFor="anneeDeFin"
+                  >
+                    Année de fin de l‘action
+                  </label>
+                  <select
+                    className="fr-select"
+                    disabled={temporalite !== 'pluriannuelle'}
+                    id="anneeDeFin"
+                    name="anneeDeFin"
+                  >
+                    <option
+                      disabled
+                      hidden
+                      selected
+                      value=""
+                    >
+                      -
+                    </option>
+                    {years.map((year) => (
+                      <option
+                        key={year}
+                        value={year}
+                      >
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -271,6 +323,7 @@ export function FormulaireAction({ date }: Props): ReactElement {
                 <input
                   className="fr-input"
                   id="budgetGlobal"
+                  min={0}
                   name="budgetGlobal"
                   required={true}
                   type="number"
@@ -341,6 +394,7 @@ export function FormulaireAction({ date }: Props): ReactElement {
         <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
           <button
             className="fr-btn fr-btn--primary fr-col-11 fr-mb-5w"
+            disabled={isDisabled}
             style={{ display: 'block' }}
             type="submit"
           >
@@ -354,4 +408,6 @@ export function FormulaireAction({ date }: Props): ReactElement {
 
 type Props = Readonly<{
   date: Date
+  isDisabled: boolean
+  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
 }>
