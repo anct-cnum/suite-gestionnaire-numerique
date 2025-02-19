@@ -1,0 +1,48 @@
+.tache {
+  align-items: center;
+  background-color: var(--grey-1000-50);
+  border-radius: 0.25rem;
+}
+
+.separator {
+  border-right: 0.1rem solid var(--border-default-grey);
+}
+
+.dot {
+  border-radius: 50%;
+  display: inline-block;
+  height: 0.8rem;
+  width: 0.8rem;
+}
+
+.dot-black {
+  background-color: var(--grey-0-1000);
+}
+
+.dot-purple-glycine-main-494 {
+  background-color: var(--purple-glycine-main-494);
+}
+
+.dot-purple-glycine-850-200 {
+  background-color: var(--purple-glycine-850-200);
+}
+
+.dot-purple-glycine-925-125 {
+  background-color: var(--purple-glycine-925-125);
+}
+
+.dot-green-tilleul-verveine-850 {
+  background-color: var(--green-tilleul-verveine-850-200);
+}
+
+.dot-green-tilleul-verveine-925 {
+  background-color: var(--green-tilleul-verveine-925-125);
+}
+
+.dot-green-tilleul-verveine-950 {
+  background-color: var(--green-tilleul-verveine-950-100);
+}
+
+.dot-purple-glycine-sun-319-moon-630 {
+  background-color: var(--purple-glycine-sun-319-moon-630);
+}

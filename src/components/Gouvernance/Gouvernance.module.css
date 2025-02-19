@@ -1,7 +1,3 @@
-.center {
-  text-align: center;
-}
-
 .article > div {
   margin: 0;
   padding: 0;
@@ -18,7 +14,7 @@
 .resume-membres {
   background-color: var(--info-950-100);
   background-image: none !important;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   height: 20rem !important;
   overflow: scroll;
 }
@@ -44,7 +40,7 @@
 .resume-feuilles-de-route {
   background-color: var(--purple-glycine-950-100);
   background-image: none !important;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   height: 20rem !important;
   overflow: scroll;
 }
@@ -67,7 +63,7 @@
 
 .resume-note-privee button {
   background-color: var(--green-tilleul-verveine-975-75);
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   height: 20rem !important;
   overflow: scroll;
   padding: 2rem;
@@ -92,7 +88,7 @@
 .resume-note-privee-vide {
   background-color: var(--green-tilleul-verveine-975-75);
   background-image: none !important;
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   height: 20rem !important;
   overflow: scroll;
   padding: 2rem;

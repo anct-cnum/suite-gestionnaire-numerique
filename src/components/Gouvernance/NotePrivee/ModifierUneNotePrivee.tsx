@@ -1,7 +1,6 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import FormulaireNotePrivee from './FormulaireNotePrivee'
-import styles from '../Gouvernance.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
@@ -38,7 +37,7 @@ export default function ModifierUneNotePrivee({
           Effacer
         </button>
       </div>
-      <p className={`fr-text--xs ${styles.center}`}>
+      <p className="fr-text--xs center">
         {edition}
       </p>
     </FormulaireNotePrivee>

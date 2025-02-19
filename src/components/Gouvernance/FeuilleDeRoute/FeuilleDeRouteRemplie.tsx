@@ -50,7 +50,7 @@ export default function FeuilleDeRouteRemplie({
                 {feuilleDeRoute.totalActions}
               </td>
               <td className="font-weight-700">
-                {`${feuilleDeRoute.budgetGlobal} €`}
+                {feuilleDeRoute.budgetGlobal}
               </td>
             </tr>
           ))

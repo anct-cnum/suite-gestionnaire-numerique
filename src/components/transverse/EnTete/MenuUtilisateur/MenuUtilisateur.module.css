@@ -17,7 +17,3 @@
 .nom {
   display: block;
 }
-
-.zone-infos {
-  border-bottom: 0.1rem solid var(--border-default-grey);
-}

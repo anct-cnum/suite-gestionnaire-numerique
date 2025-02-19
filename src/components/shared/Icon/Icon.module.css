@@ -1,0 +1,35 @@
+.icon {
+  border-radius: 0.5rem;
+  line-height: 4rem;
+  padding: 0 1.5rem;
+}
+
+.blue {
+  background-color: var(--blue-france-975-75);
+  color: var(--text-title-blue-france);
+}
+
+.white {
+  background-color: var(--grey-1000-75);
+  color: var(--text-title-blue-france);
+}
+
+.purple {
+  background-color: var(--purple-glycine-950-100);
+  color: var(--blue-ecume-sun-113-625);
+}
+
+.green {
+  background-color: var(--green-tilleul-verveine-975-75);
+  color: var(--yellow-tournesol-sun-113-625);
+}
+
+.pink {
+  background-color: var(--pink-macaron-850-100);
+  color: var(--purple-glycine-950-100);
+}
+
+.red {
+  background-color: var(--red-marianne-975-75);
+  color: var(--purple-glycine-950-100);
+}
