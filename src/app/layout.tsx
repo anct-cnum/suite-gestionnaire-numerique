@@ -9,6 +9,7 @@ import '@gouvfr/dsfr/dist/utility/icons/icons-communication/icons-communication.
 import '@gouvfr/dsfr/dist/utility/icons/icons-design/icons-design.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-device/icons-device.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-document/icons-document.min.css'
+import '@gouvfr/dsfr/dist/utility/icons/icons-finance/icons-finance.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-map/icons-map.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-media/icons-media.min.css'
 import '@gouvfr/dsfr/dist/utility/icons/icons-system/icons-system.min.css'

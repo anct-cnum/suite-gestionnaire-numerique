@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 import styles from './FeuillesDeRoute.module.css'
 import Badge from '../shared/Badge/Badge'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import Icon from '../shared/Icon/Icon'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import Tag from '../shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
@@ -12,9 +13,9 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
   return (
     <>
       <DrawerTitle id={labelId}>
-        <span
-          aria-hidden="true"
-          className={`${action.statut.icon} ${styles[action.statut.iconStyle]} icon-title`}
+        <Icon
+          background={action.statut.background}
+          icon={action.statut.icon}
         />
         <br />
         {action.nom}

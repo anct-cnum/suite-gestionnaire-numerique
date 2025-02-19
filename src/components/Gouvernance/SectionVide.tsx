@@ -1,7 +1,5 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-import styles from './Gouvernance.module.css'
-
 export default function SectionVide({
   buttonLabel,
   children,
@@ -20,7 +18,7 @@ export default function SectionVide({
           {title}
         </h2>
       </header>
-      <article className={`icon-title fr-p-6w fr-mb-4w ${styles.center}`}>
+      <article className="background-blue-france fr-p-6w fr-mb-4w center">
         {children}
         <button
           aria-controls={drawerComiteId}
