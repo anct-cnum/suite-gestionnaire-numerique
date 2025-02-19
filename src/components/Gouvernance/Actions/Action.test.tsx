@@ -1,8 +1,11 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { FormEvent } from 'react'
+import { Mock } from 'vitest'
 
-import { matchWithoutMarkup, renderComponent } from '../testHelper'
+import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
 import MenuLateral from './MenuLateral'
+import { matchWithoutMarkup, renderComponent } from '../../testHelper'
 import { epochTime } from '@/shared/testHelper'
 
 const mockRichTextEditor = {
@@ -135,12 +138,13 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(annuelle).toHaveAttribute('value', 'annuelle')
       const pluriannuelle = within(formulaire).getByRole('radio', { name: 'Pluriannuelle' })
       expect(pluriannuelle).toHaveAttribute('value', 'pluriannuelle')
-      const anneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
-      expect(anneeDeDebut).toHaveAttribute('name', 'anneeDeDebut')
-      expect(anneeDeDebut).toHaveAttribute('type', 'text')
-      const anneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
-      expect(anneeDeFin).toHaveAttribute('name', 'anneeDeFin')
-      expect(anneeDeFin).toHaveAttribute('type', 'text')
+      const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
+      expect(selecteurAnneeDeDebut).toHaveAttribute('name', 'anneeDeDebut')
+      expect(selecteurAnneeDeDebut.tagName).toBe('SELECT')
+      const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
+      expect(selecteurAnneeDeFin).toHaveAttribute('name', 'anneeDeFin')
+      expect(selecteurAnneeDeFin.tagName).toBe('SELECT')
+      expect(selecteurAnneeDeFin).toBeDisabled()
       const titreSectionInformationBudget = within(formulaire).getByText('Information sur le budget et le financement', { selector: 'p' })
       expect(titreSectionInformationBudget).toBeInTheDocument()
       const instructionsInformationBudget = within(formulaire).getByText('Détaillez le budget prévisionnel de l‘action incluant les subventions et les co-financements éventuels des membres ou ...', { selector: 'p' })
@@ -165,7 +169,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds. Dans le cas où vous renseignez plusieurs destinataires des fonds pour cette action, un encart s’ouvrira vous demandant d’indiquer le montant de la subvention par destinataire.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
       const boutonDeValidation = within(formulaire).getByRole('button', { name: 'Valider et envoyer' })
-      expect(boutonDeValidation).toBeInTheDocument()
+      expect(boutonDeValidation).toBeEnabled()
     })
 
     it('étant un utilisateur,lorsque je veux ajouter une action, l‘option annuelle est sélectionnée par défaut', () => {
@@ -207,13 +211,80 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(optionAnnuelle).toBeChecked()
       expect(optionPluriannuelle).not.toBeChecked()
     })
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux le valider', async () => {
+      // GIVEN
+      const ajouterUneActionAction = vi.fn()
+      afficherFormulaireDeCreationValidation(ajouterUneActionAction)
+
+      // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
+      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeSelectionneLAnneeDeDebut('2026')
+      const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
+      fireEvent.click(boutonDeValidation)
+
+      // THEN
+      await waitFor(() => {
+        expect(ajouterUneActionAction).toHaveBeenCalledWith({
+          anneeDeDebut: '2026',
+          anneeDeFin: null,
+          budgetGlobal: 1000,
+          contexte: '',
+          description: '',
+          nom: 'Structurer une filière de reconditionnement locale 1',
+          temporalite: 'annuelle',
+        })
+      })
+    })
   })
 })
 
-function afficherFormulaireDeCreationAction(): void {
-  renderComponent(<FormulaireAction date={epochTime} />)
+function afficherFormulaireDeCreationAction(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+  renderComponent(
+    <AjouterUneAction
+      date={epochTime}
+    />,
+    options
+  )
+}
+
+function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = vi.fn()): void {
+  const validerFormulaire = async (
+    event: FormEvent<HTMLFormElement>,
+    contexte: string,
+    description: string
+  ): Promise<void> => {
+    event.preventDefault()
+    const formData = new FormData(event.target as HTMLFormElement)
+    await ajouterUneActionAction({
+      anneeDeDebut: formData.get('anneeDeDebut') as string,
+      anneeDeFin: null,
+      budgetGlobal: Number(formData.get('budgetGlobal')),
+      contexte,
+      description,
+      nom: formData.get('nom') as string,
+      temporalite: 'annuelle',
+    })
+  }
+
+  renderComponent(
+    <FormulaireAction
+      date={epochTime}
+      isDisabled={false}
+      validerFormulaire={validerFormulaire}
+    />,
+    { ajouterUneActionAction }
+  )
 }
 
 function afficherMenuLateral(): void {
   renderComponent(<MenuLateral />)
+}
+
+function jeSelectionneLAnneeDeDebut(annee: string): void {
+  const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
+  fireEvent.change(selectAnneeDebut, { target: { value: annee } })
 }

@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import { FormulaireAction } from '@/components/Actions/FormulaireAction'
-import MenuLateral from '@/components/Actions/MenuLateral'
+import AjouterUneAction from '@/components/Gouvernance/Actions/AjouterUneAction'
+import MenuLateral from '@/components/Gouvernance/Actions/MenuLateral'
 
 export default function AjouterActionController(): ReactElement {
   const date = new Date()
@@ -13,7 +13,7 @@ export default function AjouterActionController(): ReactElement {
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w menu-border">
-          <FormulaireAction date={date} />
+          <AjouterUneAction date={date} />
         </div>
       </div>
     )
