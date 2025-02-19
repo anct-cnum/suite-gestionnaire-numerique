@@ -27,7 +27,7 @@ export default function SectionRemplie({
           {subButton}
         </div>
       </header>
-      <article className={`icon-title fr-p-2w fr-mb-4w ${styles.article}`}>
+      <article className={`background-blue-france fr-p-2w fr-mb-4w ${styles.article}`}>
         {children}
       </article>
     </>

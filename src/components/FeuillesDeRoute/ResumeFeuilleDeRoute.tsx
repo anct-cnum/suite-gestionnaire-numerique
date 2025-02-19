@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
 import ResumeAction from './ResumeAction'
+import Icon from '../shared/Icon/Icon'
 import Tag from '../shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
@@ -9,10 +10,7 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
   return (
     <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>
-        <span
-          aria-hidden="true"
-          className="fr-icon-survey-line icon-title fr-mr-3w color-blue-france fr-py-2w"
-        />
+        <Icon icon="survey-line" />
         <button
           className="fr-btn fr-btn--secondary"
           type="button"

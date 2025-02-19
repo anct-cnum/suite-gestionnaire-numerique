@@ -1,16 +1,17 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
-import PageTitle from '@/components/shared/PageTitle/PageTitle'
+import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
+import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
 }
 
 export default function TableauDeBordController(): ReactElement {
+  const tableauDeBordViewModel = tableauDeBordPresenter()
+
   return (
-    <PageTitle icon="dashboard-3-line">
-      Tableau de bord
-    </PageTitle>
+    <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
   )
 }

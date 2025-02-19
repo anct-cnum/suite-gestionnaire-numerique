@@ -1,10 +1,10 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import styles from './Membres.module.css'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
+import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import { Notification } from '../shared/Notification/Notification'
 import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
@@ -51,19 +51,9 @@ export default function AjouterUnMembre({
           </Select>
           {
             informationsMembre === null ? (
-              <div className={`fr-grid-row ${styles.informations}`}>
+              <div className="fr-grid-row background-info fr-p-4w">
                 <div className="fr-col-md-1">
-                  <svg
-                    height="20"
-                    viewBox="0 0 20 20"
-                    width="20"
-                  >
-                    <path
-                      d="M17.5 0.5H2.5C1.39543 0.5 0.5 1.39543 0.5 2.5V17.5C0.5 18.6046 1.39543 19.5 2.5 19.5H17.5C18.6046 19.5 19.5 18.6046 19.5 17.5V2.5C19.5 1.39543 18.6046 0.5 17.5 0.5ZM11 5H9V7H11V5ZM11 9H9V15H11V9Z"
-                      fill="#0063CB"
-                      fillRule="evenodd"
-                    />
-                  </svg>
+                  <InformationLogo />
                 </div>
                 <p className="fr-col-md-11 fr-mb-0">
                   <span className="font-weight-700">
@@ -75,6 +65,7 @@ export default function AjouterUnMembre({
                   encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien :
                   {' '}
                   <ExternalLink
+                    className="color-blue-france"
                     href="https://inclusion-numerique.anct.gouv.fr/gouvernance"
                     title="Invitez les collectivités et structures"
                   >

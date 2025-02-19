@@ -14,7 +14,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
 
   return (
     <>
-      <div className={`fr-mb-8v ${styles['zone-infos']}`}>
+      <div className="fr-mb-8v separator">
         <Image
           alt=""
           className="grey-border border-radius"
@@ -36,7 +36,7 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
       </div>
       <ul
         aria-label="liens-menu"
-        className={`fr-mb-6v fr-pb-6v fr-links-group ${styles['fr-links-group']} ${styles['zone-infos']}`}
+        className={`fr-mb-6v fr-pb-6v fr-links-group ${styles['fr-links-group']} separator`}
       >
         <li>
           <Link

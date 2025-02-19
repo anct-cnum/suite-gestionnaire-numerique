@@ -1,4 +1,5 @@
 
+import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
@@ -87,19 +88,19 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
     budgetPrevisionnel: [
       {
         coFinanceur: 'Budget prévisionnel 2024',
-        montant: '20 000 €',
+        montant: formatMontant(20_000),
       },
       {
         coFinanceur: 'Subvention de prestation',
-        montant: '10 000 €',
+        montant: formatMontant(10_000),
       },
       {
         coFinanceur: 'CC des Monts du Lyonnais',
-        montant: '5 000 €',
+        montant: formatMontant(5_000),
       },
       {
         coFinanceur: 'Croix Rouge Française',
-        montant: '5 000 €',
+        montant: formatMontant(5_000),
       },
     ],
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
@@ -175,6 +176,7 @@ export type ActionViewModel = Readonly<{
   nom: string
   porteur?: string
   statut: Readonly<{
+    background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
     icon: string
     libelle: string
     variant: StatutVariant
@@ -187,31 +189,31 @@ export type ActionViewModel = Readonly<{
   uid: string
 }>
 
-function formatMontant(montant: number): string {
-  return `${montant.toLocaleString('fr-FR')} €`
-}
-
 const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
   deposee: {
-    icon: 'fr-icon-flashlight-line',
+    background: 'purple',
+    icon: 'flashlight-line',
     iconStyle: 'pin-action--deposee',
     libelle: 'Demande déposée',
     variant: 'new',
   },
   enCours: {
-    icon: 'fr-icon-user-add-line',
+    background: 'green',
+    icon: 'user-add-line',
     iconStyle: 'pin-action--en-cours',
     libelle: 'Instruction en cours',
     variant: 'info',
   },
   subventionAcceptee: {
-    icon: 'fr-icon-flashlight-line',
+    background: 'pink',
+    icon: 'flashlight-line',
     iconStyle: 'pin-action-acceptee',
     libelle: 'Subvention acceptée',
     variant: 'new',
   },
   subventionRefusee: {
-    icon: 'fr-icon-flashlight-line',
+    background: 'red',
+    icon: 'flashlight-line',
     iconStyle: 'pin-action--refusee',
     libelle: 'Subvention refusée',
     variant: 'error',
@@ -219,6 +221,7 @@ const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDe
 }
 
 type ActionStatutViewModel = Readonly<{
+  background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
   icon: string
   libelle: string
   variant: StatutVariant

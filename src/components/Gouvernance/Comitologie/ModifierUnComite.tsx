@@ -1,7 +1,6 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import FormulaireComite from './FormulaireComite'
-import styles from '../Gouvernance.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
@@ -46,7 +45,7 @@ export default function ModifierUnComite({
           </button>
         </>
       </FormulaireComite>
-      <p className={`fr-text--xs ${styles.center}`}>
+      <p className="fr-text--xs center">
         Modifié le
         {' '}
         {comite.derniereEdition}

@@ -2,7 +2,6 @@
 
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import styles from '../Gouvernance.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { Notification } from '@/components/shared/Notification/Notification'
@@ -65,7 +64,7 @@ export default function ModifierNoteDeContexte({
           </li>
         </ul>
       </form>
-      <p className={`fr-text--xs ${styles.center}`}>
+      <p className="fr-text--xs center">
         {sousTitre}
       </p>
     </>

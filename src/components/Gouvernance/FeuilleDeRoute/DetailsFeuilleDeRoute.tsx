@@ -27,7 +27,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Budget total des actions
         </div>
         <div className="font-weight-700">
-          {`${feuilleDeRoute.budgetGlobal} €`}
+          {feuilleDeRoute.budgetGlobal}
         </div>
       </div>
       <div className="fr-mb-2w">
@@ -35,7 +35,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Montant de la subvention demandée
         </div>
         <div className="font-weight-700">
-          {`${feuilleDeRoute.montantSubventionDemande} €`}
+          {feuilleDeRoute.montantSubventionDemande}
         </div>
       </div>
       <div className="fr-mb-2w">
@@ -43,7 +43,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Montant de la subvention accordée
         </div>
         <div className="font-weight-700">
-          {`${feuilleDeRoute.montantSubventionAccorde} €`}
+          {feuilleDeRoute.montantSubventionAccorde}
         </div>
       </div>
       <div className="fr-mb-2w">

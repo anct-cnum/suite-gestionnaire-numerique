@@ -1,5 +1,5 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
-import { formaterEnNombreFrancais } from './shared/number'
+import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 import { toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullish } from '@/shared/lang'
@@ -129,9 +129,9 @@ function toFeuillesDeRouteViewModel(feuilleDeRoute: FeuilleDeRouteReadModel): Fe
   return {
     beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
     beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
-    budgetGlobal: formaterEnNombreFrancais(feuilleDeRoute.budgetGlobal),
-    montantSubventionAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionAccorde),
-    montantSubventionDemande: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionDemande),
+    budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
+    montantSubventionAccorde: formatMontant(feuilleDeRoute.montantSubventionAccorde),
+    montantSubventionDemande: formatMontant(feuilleDeRoute.montantSubventionDemande),
     montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
     nom: feuilleDeRoute.nom,
     porteur: feuilleDeRoute.porteur.nom,

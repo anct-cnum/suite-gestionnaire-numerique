@@ -3,9 +3,9 @@
 import { ReactElement, useId, useState } from 'react'
 
 import DetailAction from './DetailAction'
-import styles from './FeuillesDeRoute.module.css'
 import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
+import Icon from '../shared/Icon/Icon'
 import Tag from '../shared/Tag/Tag'
 import { ActionViewModel, FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
@@ -21,18 +21,13 @@ export default function ResumeAction({ actions }: Props): ReactElement {
       <ul aria-label="actions">
         {actions.map((action) => (
           <li key={action.uid}>
-            <div className="fr-container fr-p-0">
-              <div
-                className="fr-grid-row"
-                style={{ alignItems: 'center' }}
-              >
-                <div className="fr-col-1">
-                  <span
-                    aria-hidden="true"
-                    className={`${action.statut.icon} ${styles[action.statut.iconStyle]} icon-title fr-mr-3w fr-py-2w`}
-                  />
-                </div>
-                <div className="fr-col-7">
+            <div className="fr-grid-row fr-grid-row--middle space-between">
+              <div className="fr-grid-row">
+                <Icon
+                  background={action.statut.background}
+                  icon={action.statut.icon}
+                />
+                <div>
                   <button
                     aria-controls={drawerActionId}
                     className="fr-text--bold color-blue-france fr-mb-1w"
@@ -50,16 +45,14 @@ export default function ResumeAction({ actions }: Props): ReactElement {
                     {action.porteur}
                   </Tag>
                 </div>
-                <div
-                  className="fr-col-4 right"
-                >
-                  <Badge color={action.statut.variant}>
-                    {action.statut.libelle}
-                  </Badge>
-                </div>
               </div>
-              <hr className="fr-mt-3w" />
+              <div className="fr-col-4 right">
+                <Badge color={action.statut.variant}>
+                  {action.statut.libelle}
+                </Badge>
+              </div>
             </div>
+            <hr className="fr-mt-3w" />
           </li>
         ))}
       </ul>

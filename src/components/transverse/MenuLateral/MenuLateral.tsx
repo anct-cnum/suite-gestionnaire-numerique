@@ -82,7 +82,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       {
         sessionUtilisateurViewModel.displayLiensGouvernance ? (
           <>
-            <p className={`fr-text--sm color-grey ${styles['menu-categorie']} fr-mt-2w`}>
+            <p className="fr-text--sm color-grey separator fr-mt-2w">
               PILOTAGE
             </p>
             <ul className="fr-sidemenu__list">
@@ -93,7 +93,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                   <Fragment key={menu.url}>
                     <li className={`fr-sidemenu__item ${activeClass}`}>
                       <Link
-                        aria-controls={menu.ariaControls ?? ''}
+                        aria-controls={menu.ariaControls}
                         aria-current={pathname === menu.url ? 'page' : false}
                         aria-expanded={menu.ariaExpanded}
                         className="fr-sidemenu__link"
@@ -108,7 +108,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                 )
               })}
             </ul>
-            <p className={`fr-text--sm color-grey ${styles['menu-categorie']} fr-mt-2w`}>
+            <p className="fr-text--sm color-grey separator fr-mt-2w">
               DONNÉES ET STATISTIQUES
             </p>
             <ul className="fr-sidemenu__list">
