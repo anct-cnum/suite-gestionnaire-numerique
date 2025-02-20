@@ -31,6 +31,6 @@
     "excludedMutations": ["StringLiteral"]
   },
   "packageManager": "yarn",
-  "reporters": ["html"],
+  "reporters": ["html", "progress"],
   "testRunner": "vitest"
 }
