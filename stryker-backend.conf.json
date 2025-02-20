@@ -18,6 +18,6 @@
   "logLevel": "info",
   "mutate": ["src/**/*.ts", "!src/**/*.test.ts"],
   "packageManager": "yarn",
-  "reporters": ["html"],
+  "reporters": ["html", "progress"],
   "testRunner": "vitest"
 }
