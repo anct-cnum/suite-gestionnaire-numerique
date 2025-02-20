@@ -8,10 +8,13 @@ export async function modifierUneActionAction(
 
 type ActionParams = Readonly<{
   anneeDeDebut: string
-  anneeDeFin: string | null
+  anneeDeFin?: string
+  porteur: string
   budgetGlobal: number
   contexte: string
   description: string
   temporalite: string
   nom: string
+  destinataires: ReadonlyArray<string>
+  uid: string
 }>

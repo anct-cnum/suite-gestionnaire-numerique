@@ -1,14 +1,15 @@
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import MenuLateral from '@/components/Gouvernance/Actions/MenuLateral'
-import ModifierUneAction from '@/components/Gouvernance/Actions/ModifierUneAction'
+import MenuLateral from '@/components/Action/MenuLateral'
+import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
+    // le queryhandler existant est utilisé et le [0] fait office de bouchon pour récupérer une action
     const codeDepartement = (await params).codeDepartement
     const feuillesDeRouteReadModel = await
     new RecupererLesFeuillesDeRoute(

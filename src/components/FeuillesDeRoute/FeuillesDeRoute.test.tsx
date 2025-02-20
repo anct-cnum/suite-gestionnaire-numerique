@@ -45,6 +45,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const nombreDactions = within(premiereFeuilleDeRoute).getByText('2 actions attachées à cette feuille de route', { selector: 'p' })
     expect(nombreDactions).toBeInTheDocument()
     const boutonAjouterUneAction = within(premiereFeuilleDeRoute).getByRole('link', { name: 'Ajouter une action' })
+    expect(boutonAjouterUneAction).toHaveAttribute('href', '/gouvernance/11/feuille-de-route/feuilleDeRouteFooId1/action/ajouter')
     expect(boutonAjouterUneAction).toBeInTheDocument()
     const listeDesActions = within(premiereFeuilleDeRoute).getByRole('list', { name: 'actions' })
     expect(listeDesActions).toBeInTheDocument()

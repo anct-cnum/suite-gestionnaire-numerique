@@ -8,16 +8,6 @@ export function feuillesDeRoutePresenter(
 ): FeuillesDeRouteViewModel {
   return {
     actionARemplir,
-    contratPreexistant: [
-      {
-        id: 'oui',
-        label: 'Oui',
-      },
-      {
-        id: 'non',
-        label: 'Non',
-      },
-    ],
     feuillesDeRoute:
       feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
     formulaire: {
@@ -289,6 +279,7 @@ const actionARemplir: ActionViewModel = {
   nom: '',
   porteur: '',
   statut: {
+    background: 'blue',
     icon: '',
     iconStyle: '',
     libelle: '',

@@ -6,8 +6,9 @@ import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
 import MenuLateral from './MenuLateral'
 import ModifierUneAction from './ModifierUneAction'
-import { matchWithoutMarkup, presserLeBoutonRadio, renderComponent } from '../../testHelper'
-import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
+import { matchWithoutMarkup, presserLeBoutonDans, presserLeBoutonRadio, renderComponent } from '../testHelper'
+import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
 let editorContents: Array<string> = []
@@ -88,14 +89,12 @@ describe('formulaire d‘ajout d‘une action', () => {
   })
   describe('formulaire', () => {
     beforeEach(() => {
-      vi.resetAllMocks()
-      vi.resetModules()
       editorContents = []
       currentIndex = -1
     })
 
     it('étant un utilisateur,lorsque je veux ajouter une action, alors je vois le formulaire d‘ajout d‘une action', () => {
-    // WHEN
+      // WHEN
       const contexte = ''
       const description = ''
       afficherFormulaireDeCreationAction()
@@ -170,6 +169,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(budgetGlobalDeLAction).toBeRequired()
       expect(budgetGlobalDeLAction).toHaveAttribute('name', 'budgetGlobal')
       expect(budgetGlobalDeLAction).toHaveAttribute('type', 'number')
+      expect(budgetGlobalDeLAction).toHaveAttribute('min', '0')
       expect(budgetGlobalDeLAction).toHaveValue(0)
       const demandeDeSubvention = within(formulaire).getByText('Subvention demandée à l‘état')
       expect(demandeDeSubvention).toBeInTheDocument()
@@ -203,18 +203,19 @@ describe('formulaire d‘ajout d‘une action', () => {
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
-      const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
-      fireEvent.click(boutonDeValidation)
+      jeValideLeFormulaireDAjout()
 
       // THEN
       await waitFor(() => {
         expect(ajouterUneActionAction).toHaveBeenCalledWith({
           anneeDeDebut: '2026',
-          anneeDeFin: null,
+          anneeDeFin: undefined,
           budgetGlobal: 1000,
           contexte,
           description,
+          destinataires: [],
           nom: 'Structurer une filière de reconditionnement locale 1',
+          porteur: '',
           temporalite: 'annuelle',
         })
       })
@@ -241,7 +242,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
       expect(selecteurAnneeDeDebut).toHaveValue('2025')
       const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
-      expect(selecteurAnneeDeFin).toHaveValue('')
+      expect(selecteurAnneeDeFin).toHaveValue('2026')
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
       expect(budgetGlobalDeLAction).toHaveValue(50000)
       const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Croix Rouge Française' })
@@ -262,9 +263,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       const contexte = '<p>Contexte de l‘action</p>'
       const description = '<p><strong>Description de l‘action.</strong></p>'
       presserLeBoutonRadio('Pluriannuelle')
-      presserLeBoutonRadio('Annuelle')
-      expect(screen.getByRole('radio', { name: 'Annuelle' })).toBeChecked()
-      presserLeBoutonRadio('Pluriannuelle')
       jeSelectionneLAnneeDeDebut('2026')
       jeSelectionneLAnneeDeFin('2028')
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
@@ -280,10 +278,108 @@ describe('formulaire d‘ajout d‘une action', () => {
           budgetGlobal: 1000,
           contexte,
           description,
+          destinataires: [],
           nom: 'Structurer une filière de reconditionnement locale 2',
+          porteur: '',
           temporalite: 'pluriannuelle',
+          uid: '',
         })
       })
+    })
+
+    it('étant un utilisateur, lorsque je clique sur le bouton radio annuelle, alors il est coché', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction()
+
+      // WHEN
+      presserLeBoutonRadio('Annuelle')
+
+      // THEN
+      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
+      expect(optionAnnuelle).toBeChecked()
+    })
+
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux voir les différents états du bouton', () => {
+      // GIVEN
+      const ajouterUneActionAction = vi.fn().mockResolvedValue(['OK'])
+      renderComponent(
+        <AjouterUneAction
+          action={actionViewModelFactory()}
+          date={epochTime}
+        />,
+        { ajouterUneActionAction }
+      )
+
+      // WHEN
+      const boutonDeValidation = jeValideLeFormulaireDAjout()
+
+      // THEN
+      expect(boutonDeValidation).toHaveTextContent('Ajout en cours...')
+      expect(boutonDeValidation).toBeDisabled()
+    })
+
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
+      // GIVEN
+      const ajouterUneActionAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      renderComponent(
+        <AjouterUneAction
+          action={actionVideViewModelFactory()}
+          date={epochTime}
+        />,
+        { ajouterUneActionAction }
+      )
+
+      // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
+      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeSelectionneLAnneeDeDebut('2026')
+      jeValideLeFormulaireDAjout()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+    })
+
+    it('étant un utilisateur, lorsque je modifie correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
+      // GIVEN
+      const modifierUneActionAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      renderComponent(
+        <ModifierUneAction
+          action={actionVideViewModelFactory()}
+        />,
+        { modifierUneActionAction }
+      )
+
+      // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
+      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeSelectionneLAnneeDeDebut('2026')
+      jeValideLeFormulaireDeModification()
+
+      // THEN
+      const notification = await screen.findByRole('alert')
+      expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
+    })
+
+    it('étant un utilisateur, quand je change la temporalite à annuelle, la temporalite est mise à jour', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction()
+      presserLeBoutonRadio('Pluriannuelle')
+
+      // WHEN
+      presserLeBoutonRadio('Annuelle')
+
+      // THEN
+      const radioAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
+      expect(radioAnnuelle).toBeChecked()
+      expect(screen.getByRole('radio', { name: 'Pluriannuelle' })).not.toBeChecked()
+      expect(screen.getByLabelText('Année de fin de l‘action')).toBeDisabled()
     })
   })
 })
@@ -317,11 +413,13 @@ function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = v
     const formData = new FormData(event.target as HTMLFormElement)
     await ajouterUneActionAction({
       anneeDeDebut: formData.get('anneeDeDebut') as string,
-      anneeDeFin: null,
+      anneeDeFin: undefined,
       budgetGlobal: Number(formData.get('budgetGlobal')),
       contexte,
       description,
+      destinataires: [],
       nom: formData.get('nom') as string,
+      porteur: '',
       temporalite: 'annuelle',
     })
   }
@@ -330,10 +428,15 @@ function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = v
     <FormulaireAction
       action={actionViewModelFactory()}
       date={epochTime}
-      isDisabled={false}
       label="Ajouter une action à la feuille de route"
       validerFormulaire={validerFormulaire}
-    />,
+    >
+      <SubmitButton
+        isDisabled={false}
+      >
+        Valider et envoyer
+      </SubmitButton>
+    </FormulaireAction>,
     { ajouterUneActionAction }
   )
 }
@@ -352,84 +455,12 @@ function jeSelectionneLAnneeDeFin(annee: string): void {
   fireEvent.change(selectAnneeDeFin, { target: { value: annee } })
 }
 
-function actionViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
-  return {
-    anneeDeDebut: '2025',
-    beneficiaires: [
-      {
-        nom: 'Croix Rouge Française',
-        url: '/',
-      },
-      {
-        nom: 'La Poste',
-        url: '/',
-      },
-    ],
-    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
-    budgetGlobal: 50000,
-    budgetPrevisionnel: [
-      {
-        coFinanceur: 'Budget prévisionnel 2024',
-        montant: '20 000 €',
-      },
-      {
-        coFinanceur: 'Subvention de prestation',
-        montant: '10 000 €',
-      },
-      {
-        coFinanceur: 'CC des Monts du Lyonnais',
-        montant: '5 000 €',
-      },
-      {
-        coFinanceur: 'Croix Rouge Française',
-        montant: '5 000 €',
-      },
-    ],
-    contexte: '<p>Contexte de l‘action</p>',
-    description: '<p><strong>Description de l‘action.</strong></p>',
-    lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
-    nom: 'Structurer une filière de reconditionnement locale 1',
-    porteur: 'CC des Monts du Lyonnais',
-    statut: {
-      icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action--deposee',
-      libelle: 'Demande déposée',
-      variant: 'new',
-    },
-    temporalite: 'annuelle',
-    totaux: {
-      coFinancement: '30 000 €',
-      financementAccorde: '40 000 €',
-    },
-    uid: 'actionFooId1',
-    ...overrides,
-  }
+function jeValideLeFormulaireDAjout(): HTMLElement {
+  const form = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+  return presserLeBoutonDans(form, 'Valider et envoyer')
 }
 
-function actionVideViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
-  return {
-    anneeDeDebut: '2025',
-    beneficiaires: [],
-    besoins: ['Établir un diagnostic territorial'],
-    budgetGlobal: 0,
-    budgetPrevisionnel: [],
-    contexte: '',
-    description: '',
-    lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
-    nom: '',
-    porteur: 'CC des Monts du Lyonnais',
-    statut: {
-      icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action--deposee',
-      libelle: 'Demande déposée',
-      variant: 'new',
-    },
-    temporalite: 'annuelle',
-    totaux: {
-      coFinancement: '0 €',
-      financementAccorde: '0 €',
-    },
-    uid: 'actionFooId1',
-    ...overrides,
-  }
+function jeValideLeFormulaireDeModification(): HTMLElement {
+  const form = screen.getByRole('form', { name: 'Modifier une action' })
+  return presserLeBoutonDans(form, 'Valider et envoyer')
 }

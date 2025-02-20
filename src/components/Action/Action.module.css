@@ -15,9 +15,22 @@
   width: 40%;
 }
 
+.select-width {
+  width: 49%;
+}
+
 .align-items {
   align-items: center;
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+.white-background-section {
+  background-color: white;
+  border: 0.1rem solid var(--grey-900-175);
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+  padding: 2rem;
 }
