@@ -76,6 +76,7 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
   })
 }
 
+// budgetGlobal déplacer dans le queryhandler (readmodel) au débouchonnement de l'objet action
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
     anneeDeDebut: '2025',
@@ -249,9 +250,10 @@ type ActionStatutViewModel = Readonly<{
 type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'
 
 const actionARemplir: ActionViewModel = {
-  anneeDeDebut: '',
+  anneeDeDebut: '2025',
+  anneeDeFin: '',
   beneficiaires: [],
-  besoins: [],
+  besoins: ['Établir un diagnostic territorial'],
   budgetGlobal: 0,
   budgetPrevisionnel: [],
   contexte: '',
@@ -259,12 +261,7 @@ const actionARemplir: ActionViewModel = {
   lienPourModifier: '',
   nom: '',
   porteur: '',
-  statut: {
-    icon: '',
-    iconStyle: '',
-    libelle: '',
-    variant: 'new',
-  },
+  statut: actionStatutViewModelByStatut.deposee,
   temporalite: 'annuelle',
   totaux: {
     coFinancement: '',

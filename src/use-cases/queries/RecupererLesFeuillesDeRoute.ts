@@ -22,9 +22,6 @@ export type FeuillesDeRouteReadModel = Readonly<{
   departement: string
   feuillesDeRoute: ReadonlyArray<{
     actions: ReadonlyArray<{
-      temporalite: 'pluriannuelle' | 'annuelle'
-      anneeDeFin: string | undefined
-      anneeDeDebut: string
       nom: string
       porteur?: Readonly<{
         nom: string

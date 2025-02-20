@@ -2,33 +2,6 @@
 
 import { ReactElement, useState } from 'react'
 
-const menuItems = [
-  {
-    id: 'besoinsAction',
-    titre: 'Besoins liés à l‘action',
-  },
-  {
-    id: 'informationsAction',
-    titre: 'Informations sur l‘action',
-  },
-  {
-    id: 'porteurAction',
-    titre: 'Porteur de l‘action',
-  },
-  {
-    id: 'temporaliteAction',
-    titre: 'Temporalité de l‘action',
-  },
-  {
-    id: 'budgetAction',
-    titre: 'Information sur le budget et le financement',
-  },
-  {
-    id: 'destinatairesFonds',
-    titre: 'Destinataire(s) des fonds',
-  },
-] as const
-
 export default function MenuLateral(): ReactElement {
   const [selectedSection, setSelectedSection] = useState('besoinsAction')
 
@@ -65,3 +38,30 @@ export default function MenuLateral(): ReactElement {
     </nav>
   )
 }
+
+const menuItems = [
+  {
+    id: 'besoinsAction',
+    titre: 'Besoins liés à l‘action',
+  },
+  {
+    id: 'informationsAction',
+    titre: 'Informations sur l‘action',
+  },
+  {
+    id: 'porteurAction',
+    titre: 'Porteur de l‘action',
+  },
+  {
+    id: 'temporaliteAction',
+    titre: 'Temporalité de l‘action',
+  },
+  {
+    id: 'budgetAction',
+    titre: 'Information sur le budget et le financement',
+  },
+  {
+    id: 'destinatairesFonds',
+    titre: 'Destinataire(s) des fonds',
+  },
+] as const

@@ -3,45 +3,53 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import { FormulaireAction } from './FormulaireAction'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function ModifierUneAction({ action }: Props): ReactElement {
-  const { modifierUneActionAction } = useContext(clientContext)
+export default function AjouterUneAction({ action, date }: Props): ReactElement {
+  const { ajouterUneActionAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
   return (
     <FormulaireAction
       action={action}
-      isDisabled={isDisabled}
-      label=" Modifier une action"
-      validerFormulaire={modifierAction}
-    />
+      date={date}
+      label="Ajouter une action à la feuille de route"
+      validerFormulaire={creerUneAction}
+    >
+      <SubmitButton
+        className="fr-col-11 fr-mb-5w d-block"
+        isDisabled={isDisabled}
+      >
+        {isDisabled ? 'Ajout en cours...' : 'Valider et envoyer'}
+      </SubmitButton>
+    </FormulaireAction>
   )
 
-  // istanbul ignore next @preserve
-  async function modifierAction(
+  async function creerUneAction(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string
   ): Promise<void> {
     event.preventDefault()
-    setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, anneeDeDebut, temporalite, anneeDeFin, budgetGlobal] = form.values() as FormDataIterator<string>
-
-    const messages = await modifierUneActionAction({
+    const [nom, temporalite, anneeDeDebut, budgetGlobal] = form.values() as FormDataIterator<string>
+    setIsDisabled(true)
+    const messages = await ajouterUneActionAction({
       anneeDeDebut,
-      anneeDeFin,
+      anneeDeFin: form.get('anneeDeFin') as string | undefined,
       budgetGlobal: Number(budgetGlobal),
       contexte: contexteContenu,
       description: descriptionContenu,
+      destinataires: [],
       nom,
+      porteur: '',
       temporalite,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'modifiée', title: 'Action ' })
+      Notification('success', { description: 'ajouté', title: 'Action ' })
     } else {
       Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
     }
@@ -51,5 +59,6 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  date: Date
   action: ActionViewModel
 }>

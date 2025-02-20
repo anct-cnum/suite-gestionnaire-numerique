@@ -3,26 +3,31 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import { FormulaireAction } from './FormulaireAction'
+import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function AjouterUneAction({ action, date }: Props): ReactElement {
-  const { ajouterUneActionAction } = useContext(clientContext)
+export default function ModifierUneAction({ action }: Props): ReactElement {
+  const { modifierUneActionAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
 
   return (
     <FormulaireAction
       action={action}
-      date={date}
-      isDisabled={isDisabled}
-      label="Ajouter une action à la feuille de route"
-      validerFormulaire={creerUneAction}
-    />
+      label=" Modifier une action"
+      validerFormulaire={modifierAction}
+    >
+      <SubmitButton
+        className="fr-col-11 fr-mb-5w d-block"
+        isDisabled={isDisabled}
+      >
+        {isDisabled ? 'Modification en cours...' : 'Valider et envoyer'}
+      </SubmitButton>
+    </FormulaireAction>
   )
 
-  // istanbul ignore next @preserve
-  async function creerUneAction(
+  async function modifierAction(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string
@@ -30,18 +35,22 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
     event.preventDefault()
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, temporalite, anneeDeDebut, budgetGlobal] = form.values() as FormDataIterator<string>
-    const messages = await ajouterUneActionAction({
+    const [nom, anneeDeDebut, temporalite, anneeDeFin, budgetGlobal] = form.values() as FormDataIterator<string>
+
+    const messages = await modifierUneActionAction({
       anneeDeDebut,
-      anneeDeFin: temporalite === 'pluriannuelle' ? form.get('anneeDeFin') as string : null,
+      anneeDeFin,
       budgetGlobal: Number(budgetGlobal),
       contexte: contexteContenu,
       description: descriptionContenu,
+      destinataires: [],
       nom,
+      porteur: '',
       temporalite,
+      uid: '',
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'ajouté', title: 'Action ' })
+      Notification('success', { description: 'modifiée', title: 'Action ' })
     } else {
       Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
     }
@@ -50,7 +59,6 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
   }
 }
 
-type Props = {
-  readonly date: Date
-  readonly action: ActionViewModel
-}
+type Props = Readonly<{
+  action: ActionViewModel
+}>

@@ -9,7 +9,7 @@ import { ReactElement } from 'react'
 import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
 // istanbul ignore next @preserve
-export default function EditeurDeTexte({ contenu, onChange, height }: Props): ReactElement {
+export default function TextEditor({ contenu, onChange, height }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
     editorProps: {

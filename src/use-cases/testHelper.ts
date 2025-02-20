@@ -279,11 +279,8 @@ export function feuillesDeRouteReadModelFactory(
       {
         actions: [
           {
-            anneeDeDebut: '2025',
-            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 1',
             statut: 'subventionAcceptee',
-            temporalite: 'annuelle',
             totaux: {
               coFinancement: 30000,
               financementAccorde: 40000,
@@ -291,11 +288,8 @@ export function feuillesDeRouteReadModelFactory(
             uid: 'actionFooId1',
           },
           {
-            anneeDeDebut: '2025',
-            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 2',
             statut: 'subventionAcceptee',
-            temporalite: 'annuelle',
             totaux: {
               coFinancement: 50000,
               financementAccorde: 20000,
@@ -320,11 +314,8 @@ export function feuillesDeRouteReadModelFactory(
       {
         actions: [
           {
-            anneeDeDebut: '',
-            anneeDeFin: undefined,
             nom: 'Ressource humaine 1',
             statut: 'subventionAcceptee',
-            temporalite: 'pluriannuelle',
             totaux: {
               coFinancement: 60000,
               financementAccorde: 20000,
@@ -332,11 +323,8 @@ export function feuillesDeRouteReadModelFactory(
             uid: 'actionFooId1',
           },
           {
-            anneeDeDebut: '',
-            anneeDeFin: undefined,
             nom: 'Ressource humaine 2',
             statut: 'subventionAcceptee',
-            temporalite: 'pluriannuelle',
             totaux: {
               coFinancement: 40000,
               financementAccorde: 30000,

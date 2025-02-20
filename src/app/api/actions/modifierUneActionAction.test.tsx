@@ -12,12 +12,14 @@ describe('modifier une action action', () => {
     // WHEN
     const messages = await modifierUneActionAction({
       anneeDeDebut: '2026',
-      anneeDeFin: null,
       budgetGlobal: 1000,
       contexte: '',
       description: '',
+      destinataires: ['userFooId'],
       nom: 'Structurer une filière de reconditionnement locale 1',
+      porteur: 'userFooId',
       temporalite: 'annuelle',
+      uid: 'uidFoo',
     })
 
     // THEN

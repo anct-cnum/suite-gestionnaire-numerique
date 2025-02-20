@@ -6,7 +6,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { useRichTextEditor } from '@/components/shared/RichTextEditor/hooks/useRichTextEditor'
-import EditeurDeTexte from '@/components/shared/RichTextEditor/TextEditor'
+import TextEditor from '@/components/shared/RichTextEditor/TextEditor'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function AjouterNoteDeContexte({
@@ -35,7 +35,7 @@ export default function AjouterNoteDeContexte({
           ou tout autre élément que vous souhaitez porter à notre connaissance
         </div>
       </div>
-      <EditeurDeTexte
+      <TextEditor
         contenu={contenu}
         height={380}
         onChange={gererLeChangementDeContenu}
