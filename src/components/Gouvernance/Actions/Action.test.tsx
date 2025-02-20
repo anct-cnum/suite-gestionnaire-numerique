@@ -5,19 +5,29 @@ import { Mock } from 'vitest'
 import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
 import MenuLateral from './MenuLateral'
-import { matchWithoutMarkup, renderComponent } from '../../testHelper'
+import ModifierUneAction from './ModifierUneAction'
+import { matchWithoutMarkup, presserLeBoutonRadio, renderComponent } from '../../testHelper'
+import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
 import { epochTime } from '@/shared/testHelper'
+
+let editorContents: Array<string> = []
+let currentIndex = -1
 
 const mockRichTextEditor = {
   contenu: '',
-  gererLeChangementDeContenu: vi.fn().mockImplementation((content: string): void => {
-    mockRichTextEditor.contenu = content
-  }),
+  gererLeChangementDeContenu: vi.fn(),
   viderLeContenu: vi.fn(),
 }
 
 vi.mock('@/components/shared/RichTextEditor/hooks/useRichTextEditor', () => ({
-  useRichTextEditor: (): typeof mockRichTextEditor => mockRichTextEditor,
+  useRichTextEditor: (initialContent = ''): typeof mockRichTextEditor => {
+    currentIndex += 1
+    editorContents[currentIndex] = initialContent
+    return {
+      ...mockRichTextEditor,
+      contenu: editorContents[currentIndex],
+    }
+  },
 }))
 
 describe('formulaire d‘ajout d‘une action', () => {
@@ -80,11 +90,14 @@ describe('formulaire d‘ajout d‘une action', () => {
     beforeEach(() => {
       vi.resetAllMocks()
       vi.resetModules()
-      mockRichTextEditor.contenu = ''
+      editorContents = []
+      currentIndex = -1
     })
+
     it('étant un utilisateur,lorsque je veux ajouter une action, alors je vois le formulaire d‘ajout d‘une action', () => {
     // WHEN
-      mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
+      const contexte = ''
+      const description = ''
       afficherFormulaireDeCreationAction()
 
       // THEN
@@ -118,10 +131,12 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(labelDescriptionAction).toBeInTheDocument()
       const editeurDeTexteContexte = within(formulaire).getAllByRole('textarea')[0]
       expect(editeurDeTexteContexte).toBeInTheDocument()
+      expect(editorContents[0]).toBe(contexte)
       const descriptionDeLAction = within(formulaire).getByText(matchWithoutMarkup('Description de l‘action *'))
       expect(descriptionDeLAction).toBeInTheDocument()
       const editeurDeTexteDescription = within(formulaire).getAllByRole('textarea')[1]
       expect(editeurDeTexteDescription).toBeInTheDocument()
+      expect(editorContents[1]).toBe(description)
       const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
       const labelSectionPorteurDeLAaction = within(formulaire).getByText('Sélectionnez le porteur de l‘action', { selector: 'p' })
@@ -136,8 +151,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(labelSectionTemporaliteDeLAaction).toBeInTheDocument()
       const annuelle = within(formulaire).getByRole('radio', { name: 'Annuelle' })
       expect(annuelle).toHaveAttribute('value', 'annuelle')
+      expect(annuelle).toBeChecked()
       const pluriannuelle = within(formulaire).getByRole('radio', { name: 'Pluriannuelle' })
       expect(pluriannuelle).toHaveAttribute('value', 'pluriannuelle')
+      expect(pluriannuelle).not.toBeChecked()
       const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
       expect(selecteurAnneeDeDebut).toHaveAttribute('name', 'anneeDeDebut')
       expect(selecteurAnneeDeDebut.tagName).toBe('SELECT')
@@ -153,7 +170,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(budgetGlobalDeLAction).toBeRequired()
       expect(budgetGlobalDeLAction).toHaveAttribute('name', 'budgetGlobal')
       expect(budgetGlobalDeLAction).toHaveAttribute('type', 'number')
-      expect(budgetGlobalDeLAction).toHaveValue(null)
+      expect(budgetGlobalDeLAction).toHaveValue(0)
       const demandeDeSubvention = within(formulaire).getByText('Subvention demandée à l‘état')
       expect(demandeDeSubvention).toBeInTheDocument()
       const boutonDemanderUneSubvention = within(formulaire).getByRole('button', { name: 'Demander une subvention' })
@@ -172,54 +189,17 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonDeValidation).toBeEnabled()
     })
 
-    it('étant un utilisateur,lorsque je veux ajouter une action, l‘option annuelle est sélectionnée par défaut', () => {
-      // WHEN
-      afficherFormulaireDeCreationAction()
-
-      // THEN
-      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
-      expect(optionAnnuelle).toBeChecked()
-      const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
-      expect(optionPluriannuelle).not.toBeChecked()
-    })
-
-    it('étant un utilisateur, lorsque je sélectionne l‘option pluriannuelle, alors cette option est sélectionnée', () => {
-      // GIVEN
-      afficherFormulaireDeCreationAction()
-
-      // WHEN
-      const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
-      fireEvent.click(optionPluriannuelle)
-
-      // THEN
-      expect(optionPluriannuelle).toBeChecked()
-      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
-      expect(optionAnnuelle).not.toBeChecked()
-    })
-
-    it('étant un utilisateur, lorsque je selectionne l‘option annuelle, alors cette option est sélectionnée', () => {
-      // GIVEN
-      afficherFormulaireDeCreationAction()
-
-      // WHEN
-      const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
-      fireEvent.click(optionPluriannuelle)
-      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
-      fireEvent.click(optionAnnuelle)
-
-      // THEN
-      expect(optionAnnuelle).toBeChecked()
-      expect(optionPluriannuelle).not.toBeChecked()
-    })
     it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux le valider', async () => {
       // GIVEN
-      const ajouterUneActionAction = vi.fn()
+      const ajouterUneActionAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherFormulaireDeCreationValidation(ajouterUneActionAction)
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
+      const contexte = '<p>Contexte de l‘action</p>'
+      const description = '<p><strong>Description de l‘action.</strong></p>'
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
@@ -232,10 +212,76 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: null,
           budgetGlobal: 1000,
-          contexte: '',
-          description: '',
+          contexte,
+          description,
           nom: 'Structurer une filière de reconditionnement locale 1',
           temporalite: 'annuelle',
+        })
+      })
+    })
+
+    it('étant un utilisateur, lorsque j‘ouvre le formulaire de modification d‘une action, alors je vois le contenu de l‘action', () => {
+      // WHEN
+      afficherFormulaireDeModificationAction()
+      const contexte = '<p>Contexte de l‘action</p>'
+      const description = '<p><strong>Description de l‘action.</strong></p>'
+
+      // THEN
+      const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      expect(nomDeLAction).toHaveValue('Structurer une filière de reconditionnement locale 1')
+      expect(editorContents[0]).toBe(contexte)
+      expect(editorContents[1]).toBe(description)
+      const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
+      expect(porteurAction).toBeInTheDocument()
+      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
+      expect(optionAnnuelle).toBeChecked()
+      const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
+      expect(optionPluriannuelle).not.toBeChecked()
+      const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
+      expect(selecteurAnneeDeDebut).toHaveValue('2025')
+      const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
+      expect(selecteurAnneeDeFin).toHaveValue('')
+      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      expect(budgetGlobalDeLAction).toHaveValue(50000)
+      const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Croix Rouge Française' })
+      expect(premierBeneficiaire).toBeInTheDocument()
+      const deuxiemeBeneficiaire = within(formulaire).getByRole('link', { name: 'La Poste' })
+      expect(deuxiemeBeneficiaire).toBeInTheDocument()
+    })
+
+    it('étant un utilisateur, lorsque je modifie une action, alors je peux la valider', async () => {
+      // GIVEN
+      const modifierUneActionAction = vi.fn(async () => Promise.resolve(['OK']))
+      afficherFormulaireDeModificationAction(modifierUneActionAction)
+
+      // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 2' } })
+      const contexte = '<p>Contexte de l‘action</p>'
+      const description = '<p><strong>Description de l‘action.</strong></p>'
+      presserLeBoutonRadio('Pluriannuelle')
+      presserLeBoutonRadio('Annuelle')
+      expect(screen.getByRole('radio', { name: 'Annuelle' })).toBeChecked()
+      presserLeBoutonRadio('Pluriannuelle')
+      jeSelectionneLAnneeDeDebut('2026')
+      jeSelectionneLAnneeDeFin('2028')
+      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
+      fireEvent.click(boutonDeValidation)
+
+      // THEN
+      await waitFor(() => {
+        expect(modifierUneActionAction).toHaveBeenCalledWith({
+          anneeDeDebut: '2026',
+          anneeDeFin: '2028',
+          budgetGlobal: 1000,
+          contexte,
+          description,
+          nom: 'Structurer une filière de reconditionnement locale 2',
+          temporalite: 'pluriannuelle',
         })
       })
     })
@@ -245,9 +291,19 @@ describe('formulaire d‘ajout d‘une action', () => {
 function afficherFormulaireDeCreationAction(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
   renderComponent(
     <AjouterUneAction
+      action={actionVideViewModelFactory()}
       date={epochTime}
     />,
     options
+  )
+}
+
+function afficherFormulaireDeModificationAction(modifierUneActionAction: Mock = vi.fn()): void {
+  renderComponent(
+    <ModifierUneAction
+      action={actionViewModelFactory()}
+    />,
+    { modifierUneActionAction }
   )
 }
 
@@ -272,8 +328,10 @@ function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = v
 
   renderComponent(
     <FormulaireAction
+      action={actionViewModelFactory()}
       date={epochTime}
       isDisabled={false}
+      label="Ajouter une action à la feuille de route"
       validerFormulaire={validerFormulaire}
     />,
     { ajouterUneActionAction }
@@ -287,4 +345,91 @@ function afficherMenuLateral(): void {
 function jeSelectionneLAnneeDeDebut(annee: string): void {
   const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
   fireEvent.change(selectAnneeDebut, { target: { value: annee } })
+}
+
+function jeSelectionneLAnneeDeFin(annee: string): void {
+  const selectAnneeDeFin = screen.getByLabelText('Année de fin de l‘action')
+  fireEvent.change(selectAnneeDeFin, { target: { value: annee } })
+}
+
+function actionViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
+  return {
+    anneeDeDebut: '2025',
+    beneficiaires: [
+      {
+        nom: 'Croix Rouge Française',
+        url: '/',
+      },
+      {
+        nom: 'La Poste',
+        url: '/',
+      },
+    ],
+    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+    budgetGlobal: 50000,
+    budgetPrevisionnel: [
+      {
+        coFinanceur: 'Budget prévisionnel 2024',
+        montant: '20 000 €',
+      },
+      {
+        coFinanceur: 'Subvention de prestation',
+        montant: '10 000 €',
+      },
+      {
+        coFinanceur: 'CC des Monts du Lyonnais',
+        montant: '5 000 €',
+      },
+      {
+        coFinanceur: 'Croix Rouge Française',
+        montant: '5 000 €',
+      },
+    ],
+    contexte: '<p>Contexte de l‘action</p>',
+    description: '<p><strong>Description de l‘action.</strong></p>',
+    lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
+    nom: 'Structurer une filière de reconditionnement locale 1',
+    porteur: 'CC des Monts du Lyonnais',
+    statut: {
+      icon: 'fr-icon-flashlight-line',
+      iconStyle: 'pin-action--deposee',
+      libelle: 'Demande déposée',
+      variant: 'new',
+    },
+    temporalite: 'annuelle',
+    totaux: {
+      coFinancement: '30 000 €',
+      financementAccorde: '40 000 €',
+    },
+    uid: 'actionFooId1',
+    ...overrides,
+  }
+}
+
+function actionVideViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
+  return {
+    anneeDeDebut: '2025',
+    beneficiaires: [],
+    besoins: ['Établir un diagnostic territorial'],
+    budgetGlobal: 0,
+    budgetPrevisionnel: [],
+    contexte: '',
+    description: '',
+    lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
+    nom: '',
+    porteur: 'CC des Monts du Lyonnais',
+    statut: {
+      icon: 'fr-icon-flashlight-line',
+      iconStyle: 'pin-action--deposee',
+      libelle: 'Demande déposée',
+      variant: 'new',
+    },
+    temporalite: 'annuelle',
+    totaux: {
+      coFinancement: '0 €',
+      financementAccorde: '0 €',
+    },
+    uid: 'actionFooId1',
+    ...overrides,
+  }
 }

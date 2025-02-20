@@ -36,8 +36,11 @@ function transform(
       return {
         actions: [
           {
+            anneeDeDebut: '2025',
+            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 1',
             statut: 'deposee',
+            temporalite: 'annuelle',
             totaux: {
               coFinancement: 30_000,
               financementAccorde: 40_000,
@@ -45,8 +48,11 @@ function transform(
             uid: 'actionFooId1',
           },
           {
+            anneeDeDebut: '2025',
+            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 2',
             statut: 'enCours',
+            temporalite: 'annuelle',
             totaux: {
               coFinancement: 50_000,
               financementAccorde: 20_000,

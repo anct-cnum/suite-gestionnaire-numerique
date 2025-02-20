@@ -43,7 +43,7 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
           </p>
           <Link
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-            href={`/gouvernance/feuille-de-route/${feuilleDeRoute.uid}/action/ajouter`}
+            href={`/gouvernance/11/feuille-de-route/${feuilleDeRoute.uid}/action/ajouter`}
           >
             Ajouter une action
           </Link>

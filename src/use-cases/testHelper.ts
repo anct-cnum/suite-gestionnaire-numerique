@@ -280,20 +280,26 @@ export function feuillesDeRouteReadModelFactory(
       {
         actions: [
           {
+            anneeDeDebut: '2025',
+            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 1',
             statut: 'subventionAcceptee',
+            temporalite: 'annuelle',
             totaux: {
-              coFinancement: 30_000,
-              financementAccorde: 40_000,
+              coFinancement: 30000,
+              financementAccorde: 40000,
             },
             uid: 'actionFooId1',
           },
           {
+            anneeDeDebut: '2025',
+            anneeDeFin: undefined,
             nom: 'Structurer une filière de reconditionnement locale 2',
             statut: 'subventionAcceptee',
+            temporalite: 'annuelle',
             totaux: {
-              coFinancement: 50_000,
-              financementAccorde: 20_000,
+              coFinancement: 50000,
+              financementAccorde: 20000,
             },
             uid: 'actionFooId2',
           },
@@ -315,20 +321,26 @@ export function feuillesDeRouteReadModelFactory(
       {
         actions: [
           {
+            anneeDeDebut: '',
+            anneeDeFin: undefined,
             nom: 'Ressource humaine 1',
             statut: 'subventionAcceptee',
+            temporalite: 'pluriannuelle',
             totaux: {
-              coFinancement: 60_000,
-              financementAccorde: 20_000,
+              coFinancement: 60000,
+              financementAccorde: 20000,
             },
             uid: 'actionFooId1',
           },
           {
+            anneeDeDebut: '',
+            anneeDeFin: undefined,
             nom: 'Ressource humaine 2',
             statut: 'subventionAcceptee',
+            temporalite: 'pluriannuelle',
             totaux: {
-              coFinancement: 40_000,
-              financementAccorde: 30_000,
+              coFinancement: 40000,
+              financementAccorde: 30000,
             },
             uid: 'actionFooId2',
           },

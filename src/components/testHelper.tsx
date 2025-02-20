@@ -35,6 +35,7 @@ export function renderComponent(
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
     modifierUnComiteAction: vi.fn(),
+    modifierUneActionAction: vi.fn(),
     modifierUneFeuilleDeRouteAction: vi.fn(),
     modifierUneNoteDeContexteAction: vi.fn(),
     modifierUneNotePriveeAction: vi.fn(),

@@ -16,6 +16,7 @@ import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
+import { modifierUneActionAction } from '@/app/api/actions/modifierUneActionAction'
 import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFeuilleDeRouteAction'
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
@@ -49,6 +50,7 @@ export default function ClientContext({
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
+      modifierUneActionAction,
       modifierUneFeuilleDeRouteAction,
       modifierUneNoteDeContexteAction,
       modifierUneNotePriveeAction,
@@ -87,6 +89,7 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUnComiteAction: typeof ajouterUnComiteAction
   ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
   ajouterUneActionAction: typeof ajouterUneActionAction
+  modifierUneActionAction: typeof modifierUneActionAction
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
