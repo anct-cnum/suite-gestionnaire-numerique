@@ -1,4 +1,5 @@
-export async function ajouterUneActionAction(
+
+export async function modifierUneActionAction(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _actionParams: ActionParams
 ): Promise<ReadonlyArray<string>> {

@@ -8,28 +8,29 @@ import { useRichTextEditor } from '../../shared/RichTextEditor/hooks/useRichText
 import EditeurDeTexte from '../../shared/RichTextEditor/TextEditor'
 import Tag from '../../shared/Tag/Tag'
 import TextInput from '../../shared/TextInput/TextInput'
+import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props): ReactElement {
+export function FormulaireAction({ date, action, label, validerFormulaire, isDisabled }: Props): ReactElement {
   const nomDeLActionId = useId()
   const contexteId = useId()
   const descriptionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
-  const currentYear = date.getFullYear().toString()
+  const currentYear = date?.getFullYear().toString()
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
     gererLeChangementDeContenu: gererChangementContexte,
-  } = useRichTextEditor()
+  } = useRichTextEditor(action.contexte)
 
   const {
     contenu: descriptionContenu,
     gererLeChangementDeContenu: gererChangementDescription,
-  } = useRichTextEditor()
+  } = useRichTextEditor(action.description)
 
   return (
     <div className="fr-container fr-mt-5w">
       <form
-        aria-label="Ajouter une action à la feuille de route"
+        aria-label={label}
         onSubmit={async (event) => {
           event.preventDefault()
           await validerFormulaire(
@@ -48,7 +49,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
         <h1
           className="color-blue-france fr-mb-2w fr-h1"
         >
-          Ajouter une action à la feuille de route
+          {label}
         </h1>
         <p className="fr-badge fr-badge--md fr-mb-4w">
           En construction
@@ -85,9 +86,14 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
               vous pouvez tout à fait sélectionner une autre catégorie de besoin.
             </p>
             <hr />
-            <p className="fr-tag">
-              Établir un diagnostic territorial
-            </p>
+            {action.besoins.map((besoin) => (
+              <p
+                className="fr-tag fr-mr-1w"
+                key={besoin}
+              >
+                {besoin}
+              </p>
+            ))}
           </div>
           <div
             className="grey-border border-radius fr-mb-2w fr-p-4w"
@@ -98,6 +104,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
             </p>
             <hr />
             <TextInput
+              defaultValue={action.nom}
               id={nomDeLActionId}
               name="nom"
               required={true}
@@ -169,7 +176,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
             </p>
             <hr />
             <Tag>
-              CC des Monts du Lyonnais
+              {action.porteur}
             </Tag>
           </div>
           <div
@@ -214,7 +221,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
                   </label>
                   <select
                     className="fr-select"
-                    defaultValue={currentYear}
+                    defaultValue={action.anneeDeDebut}
                     id="anneeDeDebut"
                     name="anneeDeDebut"
                   >
@@ -241,7 +248,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
                 <input
                   checked={temporalite === 'pluriannuelle'}
                   id="radio-pluriannuelle"
-                  name="radio-inline"
+                  name="radio-pluriannuelle"
                   onChange={() => {
                     setTemporalite('pluriannuelle')
                   }}
@@ -263,6 +270,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
                   </label>
                   <select
                     className="fr-select"
+                    defaultValue={action.anneeDeFin}
                     disabled={temporalite !== 'pluriannuelle'}
                     id="anneeDeFin"
                     name="anneeDeFin"
@@ -322,6 +330,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
               <div className={styles['half-width']}>
                 <input
                   className="fr-input"
+                  defaultValue={action.budgetGlobal}
                   id="budgetGlobal"
                   min={0}
                   name="budgetGlobal"
@@ -381,7 +390,7 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
                 className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
                 type="button"
               >
-                Ajouter
+                {action.beneficiaires.length === 0 ? 'Ajouter' : 'Modifier'}
               </button>
             </div>
             <p className="color-grey">
@@ -389,6 +398,17 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
               Dans le cas où vous renseignez plusieurs destinataires des fonds pour cette action,
               un encart s’ouvrira vous demandant d’indiquer le montant de la subvention par destinataire.
             </p>
+            <div>
+              {action.beneficiaires.map((beneficiaire) => (
+                <a
+                  className="fr-tag fr-mr-1w"
+                  href={beneficiaire.url}
+                  key={beneficiaire.nom}
+                >
+                  {beneficiaire.nom}
+                </a>
+              ))}
+            </div>
           </div>
         </div>
         <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
@@ -407,7 +427,9 @@ export function FormulaireAction({ date, validerFormulaire, isDisabled }: Props)
 }
 
 type Props = Readonly<{
-  date: Date
+  date?: Date
+  action: ActionViewModel
   isDisabled: boolean
+  label: string
   validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
 }>
