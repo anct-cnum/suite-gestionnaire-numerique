@@ -85,8 +85,8 @@ describe('gouvernance', () => {
     jOuvreLeFormulairePourAjouterUnComite()
 
     // THEN
-    const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-    expect(ajouterUnComiteDrawer).toBeVisible()
+    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+    expect(drawer).toBeVisible()
   })
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -284,7 +284,7 @@ describe('gouvernance', () => {
     expect(columns1Body).toHaveLength(4)
     const membrePrefectureDuRhone = within(columns1Body[1]).getByRole('button', { name: 'Préfecture du Rhône' })
     expect(membrePrefectureDuRhone).toHaveAttribute('type', 'button')
-    expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
+    expect(membrePrefectureDuRhone).toHaveAttribute('aria-controls', 'drawerId')
     expect(columns1Body[1].textContent).toBe('Préfecture du Rhône')
     expect(columns1Body[2].textContent).toBe('Préfecture départementale')
     expect(columns1Body[3].textContent).toBe('Co-porteur ')
@@ -292,7 +292,7 @@ describe('gouvernance', () => {
     expect(columns2Body).toHaveLength(4)
     const membreDepartementDuRhone = within(columns2Body[1]).getByRole('button', { name: 'Département du Rhône' })
     expect(membreDepartementDuRhone).toHaveAttribute('type', 'button')
-    expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerMembreId')
+    expect(membreDepartementDuRhone).toHaveAttribute('aria-controls', 'drawerId')
     expect(columns2Body[1].textContent).toBe('Département du Rhône')
     expect(columns2Body[2].textContent).toBe('Conseil départemental')
     expect(columns2Body[3].textContent).toBe('Co-porteur Co-financeur ')
