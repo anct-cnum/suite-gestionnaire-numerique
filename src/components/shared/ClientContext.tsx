@@ -15,6 +15,7 @@ import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
+import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFeuilleDeRouteAction'
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
@@ -46,6 +47,7 @@ export default function ClientContext({
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
+      modifierUneFeuilleDeRouteAction,
       modifierUneNoteDeContexteAction,
       modifierUneNotePriveeAction,
       pathname,
@@ -86,6 +88,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   modifierUnComiteAction: typeof modifierUnComiteAction
+  modifierUneFeuilleDeRouteAction: typeof modifierUneFeuilleDeRouteAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
   roles: ReadonlyArray<string>

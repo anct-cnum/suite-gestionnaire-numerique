@@ -35,7 +35,7 @@ export default function FeuilleDeRouteRemplie({
               <td className="font-weight-700">
                 <button
                   aria-controls={drawerId}
-                  className="primary font-weight-700 fr-px-0 no-hover d-block"
+                  className="primary font-weight-700 fr-px-0 no-hover"
                   data-fr-opened="false"
                   onClick={() => {
                     setIsDrawerOpen(true)

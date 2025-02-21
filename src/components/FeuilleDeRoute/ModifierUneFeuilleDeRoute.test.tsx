@@ -1,40 +1,40 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, presserLeBouton, presserLeBoutonRadio, renderComponent, stubbedConceal } from '../testHelper'
-import FeuillesDeRoute from './FeuillesDeRoute'
-import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
-import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
+import FeuilleDeRoute from './FeuilleDeRoute'
+import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
 
-describe('ajouter une feuille de route', () => {
-  describe('quand je clique sur ajouter une feuille de route', () => {
-    it('alors s’affiche le formulaire d’ajout', () => {
+describe('modifier une feuille de route', () => {
+  describe('quand je clique sur modifier une feuille de route', () => {
+    it('alors s’affiche le formulaire de modification déjà rempli', () => {
       // GIVEN
-      afficherLesFeuillesDeRoute()
+      afficherUneFeuilleDeRoute()
 
       // WHEN
-      jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
+      jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
-      expect(drawer).toHaveAttribute('id', 'drawerAjouterFeuilleDeRouteId')
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Ajouter une feuille de route' })
+      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
+      expect(drawer).toHaveAttribute('id', 'drawerId')
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Modifier une feuille de route' })
       expect(titre).toBeInTheDocument()
       const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
       expect(champsObligatoires).toBeInTheDocument()
 
-      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter une feuille de route' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Modifier une feuille de route' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
       const nom = within(formulaire).getByRole('textbox', { name: 'Quel est le nom de la feuille de route ? *' })
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
+      expect(nom).toHaveValue('Feuille de route FNE')
       expect(nom).toHaveAttribute('type', 'text')
       const porteur = within(formulaire).getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' })
       expect(porteur).toBeRequired()
-      const choisir = within(porteur).getByRole('option', { name: 'Choisir', selected: true })
+      const choisir = within(porteur).getByRole('option', { name: 'Choisir' })
       expect(choisir).toBeInTheDocument()
       const membre1 = within(porteur).getByRole('option', { name: 'Croix Rouge Française' })
       expect(membre1).toBeInTheDocument()
-      const membre2 = within(porteur).getByRole('option', { name: 'La Poste' })
+      const membre2 = within(porteur).getByRole('option', { name: 'La Poste', selected: true })
       expect(membre2).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
@@ -43,7 +43,7 @@ describe('ajouter une feuille de route', () => {
       const regional = within(formulaire).getByRole('radio', { name: 'Régional' })
       expect(regional).toBeRequired()
       expect(regional).toHaveAttribute('value', 'regional')
-      const departemental = within(formulaire).getByRole('radio', { name: 'Départemental' })
+      const departemental = within(formulaire).getByRole('radio', { checked: true, name: 'Départemental' })
       expect(departemental).toBeRequired()
       expect(departemental).toHaveAttribute('value', 'departemental')
       const epciGroupement = within(formulaire).getByRole('radio', { name: 'EPCI ou groupement de communes' })
@@ -54,7 +54,7 @@ describe('ajouter une feuille de route', () => {
       const oui = within(formulaire).getByRole('radio', { name: 'Oui' })
       expect(oui).toBeRequired()
       expect(oui).toHaveAttribute('value', 'oui')
-      const non = within(formulaire).getByRole('radio', { name: 'Non' })
+      const non = within(formulaire).getByRole('radio', { checked: true, name: 'Non' })
       expect(non).toBeRequired()
       expect(non).toHaveAttribute('value', 'non')
 
@@ -64,64 +64,60 @@ describe('ajouter une feuille de route', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLesFeuillesDeRoute()
+      afficherUneFeuilleDeRoute()
 
       // WHEN
-      jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
+      jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
+      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
       const fermer = jeFermeLeFormulaire()
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterFeuilleDeRouteId')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerId')
       expect(drawer).not.toBeVisible()
     })
 
-    it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la liste des feuilles de route est mise à jour et le formulaire est réinitialisé', async () => {
+    it('puis que je modifie le formulaire, alors le drawer se ferme, une notification s’affiche, la feuille de route est mise à jour', async () => {
       // GIVEN
-      const ajouterUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['OK']))
       vi.stubGlobal('dsfr', stubbedConceal())
-      afficherLesFeuillesDeRoute({ ajouterUneFeuilleDeRouteAction, pathname: '/gouvernance/11/feuilles-de-route' })
+      afficherUneFeuilleDeRoute({ modifierUneFeuilleDeRouteAction, pathname: '/gouvernance/11/feuilles-de-route' })
 
       // WHEN
-      jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
-      const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre2FooId')
+      jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
+      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
+      jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
+      jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
       jeSelectionneUnContrat('Oui')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
 
       // THEN
-      expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
+      expect(enregistrer).toHaveAccessibleName('Modification en cours...')
       expect(enregistrer).toBeDisabled()
-      const perimetre = await screen.findByRole('radio', { checked: false, hidden: true, name: 'Régional' })
-      expect(perimetre).toBeInTheDocument()
-      const contratPreexistant = screen.getByRole('radio', { checked: false, hidden: true, name: 'Oui' })
-      expect(contratPreexistant).toBeInTheDocument()
-      expect(nom).toHaveValue('')
-      expect(drawer).not.toBeVisible()
-      expect(ajouterUneFeuilleDeRouteAction).toHaveBeenCalledWith({
+      expect(modifierUneFeuilleDeRouteAction).toHaveBeenCalledWith({
         contratPreexistant: 'oui',
         nom: 'Feuille de route du Rhône',
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
+        uidFeuilleDeRoute: 'feuilleDeRouteFooId',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'membre2FooId',
+        uidMembre: 'membre1FooId',
       })
       const notification = await screen.findByRole('alert')
-      expect(notification.textContent).toBe('Feuille de route ajoutée')
+      expect(notification.textContent).toBe('Feuille de route modifiée')
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
 
     it('puis que je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const ajouterUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
       vi.stubGlobal('dsfr', stubbedConceal())
-      afficherLesFeuillesDeRoute({ ajouterUneFeuilleDeRouteAction })
+      afficherUneFeuilleDeRoute({ modifierUneFeuilleDeRouteAction })
 
       // WHEN
-      jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
+      jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
@@ -157,18 +153,17 @@ describe('ajouter une feuille de route', () => {
   }
 
   function jeFermeLeFormulaire(): HTMLElement {
-    return presserLeBouton('Fermer le formulaire d’ajout d’une feuille de route')
+    return presserLeBouton('Fermer le formulaire de modification d’une feuille de route')
   }
 
-  function jOuvreLeFormulairePourAjouterUneFeuilleDeRoute(): void {
-    presserLeBouton('Ajouter une feuille de route')
+  function jOuvreLeFormulairePourModifierUneFeuilleDeRoute(): void {
+    presserLeBouton('Modifier')
   }
 
-  function afficherLesFeuillesDeRoute(
-    options?: Partial<Parameters<typeof renderComponent>[1]>,
-    mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
+  function afficherUneFeuilleDeRoute(
+    options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
-    renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)
+    const feuilleDeRouteViewModel = feuilleDeRoutePresenter()
+    renderComponent(<FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRouteViewModel} />, options)
   }
 })

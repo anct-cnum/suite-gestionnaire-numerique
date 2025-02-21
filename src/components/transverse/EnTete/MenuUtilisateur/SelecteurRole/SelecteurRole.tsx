@@ -12,11 +12,14 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
     <div className="fr-select-group">
       <Select
         ariaControlsId={ariaControlsId}
-        defaultValue={sessionUtilisateurViewModel.role.nom}
         id="role"
         name="role"
         onChange={changerDeRole}
-        options={roles.map((role) => ({ label: role, uid: role }))}
+        options={roles.map((role) => ({
+          isSelected: role === sessionUtilisateurViewModel.role.nom,
+          label: role,
+          uid: role,
+        }))}
       >
         Rôle
       </Select>

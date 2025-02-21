@@ -569,9 +569,9 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           />
           <Image
             alt=""
-            height={56}
+            height={50}
             src={`${process.env.NEXT_PUBLIC_HOST}/carto-nationale.svg`}
-            width={56}
+            width={50}
           />
         </div>
         <p className="fr-grid-row fr-mb-2w">

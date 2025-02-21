@@ -38,6 +38,7 @@ export function mesMembresViewModelFactory(
       {
         adresse: '172 B RTE DE LENS 62223 SAINTE-CATHERINE',
         contactReferent: 'Eric Dupont, Directeur didier.dupont@example.com',
+        isSelected: false,
         label: 'Croix Rouge Française',
         siret: '79227291600034',
         statut: 'Suggéré',
@@ -47,6 +48,7 @@ export function mesMembresViewModelFactory(
       {
         adresse: '17 avenue de l’opéra 75000 Paris',
         contactReferent: 'Eric Durant, Directeur eric.durant@example.com',
+        isSelected: false,
         label: 'La Poste',
         siret: '99229991601034',
         statut: 'Candidat',
@@ -56,6 +58,7 @@ export function mesMembresViewModelFactory(
       {
         adresse: '18 avenue de l’opéra 75000 Paris',
         contactReferent: 'Donnée non fournie',
+        isSelected: false,
         label: 'La Poste 2',
         siret: '99339991601034',
         statut: 'Candidat',
@@ -132,7 +135,7 @@ export function gouvernanceViewModelFactory(
     },
     sectionMembres: {
       coporteurs: [],
-
+      lien: '',
       totalEtWording: [0, ''],
       wordingRecap: '',
     },

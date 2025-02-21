@@ -1,5 +1,4 @@
-// eslint-disable-next-line testing-library/no-manual-cleanup
-import { cleanup, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { matchWithoutMarkup, presserLeBouton, renderComponent } from '@/components/testHelper'
@@ -237,41 +236,38 @@ describe('membres', () => {
       expect(intitule).not.toBeInTheDocument()
     })
 
-    it('=> alors un drawer s’ouvre sans le bouton plus de détails', () => {
-      ['', undefined].forEach((plusDetails) => {
-        cleanup()
-        afficherGouvernance({
-          syntheseMembres: {
-            candidats: 0,
-            coporteurs: [
-              {
-                contactReferent: {
-                  denomination: 'Contact politique de la collectivité',
-                  mailContact: 'julien.deschamps@rhones.gouv.fr',
-                  nom: 'Henrich',
-                  poste: 'chargé de mission',
-                  prenom: 'Laetitia',
-                },
-                feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
-                links: { plusDetails },
-                nom: 'Préfecture du Rhône',
-                roles: ['coporteur'],
-                telephone: '+33 4 45 00 45 00',
-                type: 'Préfecture départementale',
+    it.each(['', undefined])('=> alors un drawer s’ouvre sans le bouton plus de détails', (plusDetails) => {
+      afficherGouvernance({
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact politique de la collectivité',
+                mailContact: 'julien.deschamps@rhones.gouv.fr',
+                nom: 'Henrich',
+                poste: 'chargé de mission',
+                prenom: 'Laetitia',
               },
-            ],
-            total: 1,
-          },
-        })
-
-        // WHEN
-        jOuvreLesDetailsDuMembre('Préfecture du Rhône')
-
-        // THEN
-        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
-        const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
-        expect(plusDeDetails).not.toBeInTheDocument()
+              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }, { montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route numérique du Rhône' }],
+              links: { plusDetails },
+              nom: 'Préfecture du Rhône',
+              roles: ['coporteur'],
+              telephone: '+33 4 45 00 45 00',
+              type: 'Préfecture départementale',
+            },
+          ],
+          total: 1,
+        },
       })
+
+      // WHEN
+      jOuvreLesDetailsDuMembre('Préfecture du Rhône')
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
+      const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
+      expect(plusDeDetails).not.toBeInTheDocument()
     })
   })
 
@@ -515,45 +511,42 @@ describe('membres', () => {
       expect(plusDeDetails).toBeInTheDocument()
     })
 
-    it('=> alors un drawer s’ouvre sans le contact technique', () => {
-      ['', undefined].forEach((contactTechnique) => {
-        // GIVEN
-        cleanup()
-        afficherGouvernance({
-          syntheseMembres: {
-            candidats: 0,
-            coporteurs: [
-              {
-                contactReferent: {
-                  denomination: 'Contact référent',
-                  mailContact: 'didier.durand@exemple.com',
-                  nom: 'Didier',
-                  poste: 'chargé de mission',
-                  prenom: 'Durant',
-                },
-                contactTechnique,
-                feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
-                links: { plusDetails: '/' },
-                nom: 'Département du Rhône',
-                roles: ['coporteur', 'cofinanceur'],
-                telephone: '+33 4 45 00 45 01',
-                totalMontantSubventionAccorde: 0,
-                totalMontantSubventionFormationAccorde: 0,
-                type: 'Collectivité, EPCI',
+    it.each(['', undefined])('=> alors un drawer s’ouvre sans le contact technique', (contactTechnique) => {
+      // GIVEN
+      afficherGouvernance({
+        syntheseMembres: {
+          candidats: 0,
+          coporteurs: [
+            {
+              contactReferent: {
+                denomination: 'Contact référent',
+                mailContact: 'didier.durand@exemple.com',
+                nom: 'Didier',
+                poste: 'chargé de mission',
+                prenom: 'Durant',
               },
-            ],
-            total: 1,
-          },
-        })
-
-        // WHEN
-        jOuvreLesDetailsDuMembre('Département du Rhône')
-
-        // THEN
-        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
-        const contactTechniqueIntitule = within(drawer).queryByText('Contact technique')
-        expect(contactTechniqueIntitule).not.toBeInTheDocument()
+              contactTechnique,
+              feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
+              links: { plusDetails: '/' },
+              nom: 'Département du Rhône',
+              roles: ['coporteur', 'cofinanceur'],
+              telephone: '+33 4 45 00 45 01',
+              totalMontantSubventionAccorde: 0,
+              totalMontantSubventionFormationAccorde: 0,
+              type: 'Collectivité, EPCI',
+            },
+          ],
+          total: 1,
+        },
       })
+
+      // WHEN
+      jOuvreLesDetailsDuMembre('Département du Rhône')
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
+      const contactTechniqueIntitule = within(drawer).queryByText('Contact technique')
+      expect(contactTechniqueIntitule).not.toBeInTheDocument()
     })
   })
 })
