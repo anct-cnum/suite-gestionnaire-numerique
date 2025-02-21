@@ -1,25 +1,27 @@
-'use client'
-
 import { ReactElement } from 'react'
 
+import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
 import Tag from '../shared/Tag/Tag'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 
 export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): ReactElement {
   return (
     <>
+      <title>
+        {feuilleDeRouteViewModel.nom}
+      </title>
       <div className="fr-grid-row space-between fr-grid-row--middle">
         <h1 className="color-blue-france fr-mt-5w">
-          Feuille de route
-          {' '}
-          {feuilleDeRouteViewModel.codeDepartement}
+          {feuilleDeRouteViewModel.nom}
         </h1>
-        <button
-          className="fr-btn fr-btn--secondary"
-          type="button"
-        >
-          Modifier
-        </button>
+        <ModifierUneFeuilleDeRoute
+          contratPreexistant={feuilleDeRouteViewModel.formulaire.contratPreexistant}
+          membres={feuilleDeRouteViewModel.formulaire.membres}
+          nom={feuilleDeRouteViewModel.nom}
+          perimetres={feuilleDeRouteViewModel.formulaire.perimetres}
+          uidFeuilleDeRoute={feuilleDeRouteViewModel.uidFeuilleDeRoute}
+          uidGouvernance={feuilleDeRouteViewModel.uidGouvernance}
+        />
       </div>
       <div className="fr-mb-3w">
         <Tag>

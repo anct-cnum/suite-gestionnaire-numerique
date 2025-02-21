@@ -2,24 +2,26 @@
 
 import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 'react'
 
-import FormulaireFeuilleDeRoute from './FormulaireFeuilleDeRoute'
+import FormulaireFeuilleDeRoute from '../FeuillesDeRoute/FormulaireFeuilleDeRoute'
 import { clientContext } from '../shared/ClientContext'
 import Drawer from '../shared/Drawer/Drawer'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 
-export default function AjouterUneFeuilleDeRoute({
+export default function ModifierUneFeuilleDeRoute({
   contratPreexistant,
   membres,
+  nom,
   perimetres,
+  uidFeuilleDeRoute,
   uidGouvernance,
 }: Props): ReactElement {
-  const { ajouterUneFeuilleDeRouteAction, pathname } = useContext(clientContext)
+  const { modifierUneFeuilleDeRouteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerId = 'drawerAjouterFeuilleDeRouteId'
+  const drawerId = 'drawerId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
 
@@ -27,17 +29,17 @@ export default function AjouterUneFeuilleDeRoute({
     <>
       <button
         aria-controls={drawerId}
-        className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-add-line"
+        className="fr-btn fr-btn--secondary"
         data-fr-opened="false"
         onClick={() => {
           setIsDrawerOpen(true)
         }}
         type="button"
       >
-        Ajouter une feuille de route
+        Modifier
       </button>
       <Drawer
-        boutonFermeture="Fermer le formulaire d’ajout d’une feuille de route"
+        boutonFermeture="Fermer le formulaire de modification d’une feuille de route"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
@@ -50,42 +52,42 @@ export default function AjouterUneFeuilleDeRoute({
       >
         <FormulaireFeuilleDeRoute
           contratPreexistant={contratPreexistant}
-          label="Ajouter une feuille de route"
+          label="Modifier une feuille de route"
           labelId={labelId}
           membres={membres}
-          nom=""
+          nom={nom}
           perimetres={perimetres}
-          validerFormulaire={ajouterUneFeuilleDeRoute}
+          validerFormulaire={modifierUneFeuilleDeRoute}
         >
           <SubmitButton isDisabled={isDisabled}>
-            {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+            {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
           </SubmitButton>
         </FormulaireFeuilleDeRoute>
       </Drawer>
     </>
   )
 
-  async function ajouterUneFeuilleDeRoute(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierUneFeuilleDeRoute(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
 
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
     const [nom, membre, perimetre, contratPreexistant] = form.values() as FormDataIterator<string>
-    const messages = await ajouterUneFeuilleDeRouteAction({
+    const messages = await modifierUneFeuilleDeRouteAction({
       contratPreexistant,
       nom,
       path: pathname,
       perimetre,
+      uidFeuilleDeRoute,
       uidGouvernance,
       uidMembre: membre,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'ajoutée', title: 'Feuille de route ' })
+      Notification('success', { description: 'modifiée', title: 'Feuille de route ' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-    setIsDrawerOpen(false);
-    (event.target as HTMLFormElement).reset()
+    setIsDrawerOpen(false)
     // eslint-disable-next-line no-restricted-syntax
     window.dsfr(drawerRef.current).modal.conceal()
     setIsDisabled(false)
@@ -93,8 +95,10 @@ export default function AjouterUneFeuilleDeRoute({
 }
 
 type Props = Readonly<{
-  contratPreexistant: FeuillesDeRouteViewModel['formulaire']['contratPreexistant']
-  membres: FeuillesDeRouteViewModel['formulaire']['membres']
-  perimetres: FeuillesDeRouteViewModel['formulaire']['perimetres']
+  contratPreexistant: FeuilleDeRouteViewModel['formulaire']['contratPreexistant']
+  membres: FeuilleDeRouteViewModel['formulaire']['membres']
+  nom: string
+  perimetres: FeuilleDeRouteViewModel['formulaire']['perimetres']
+  uidFeuilleDeRoute: string
   uidGouvernance: string
 }>
