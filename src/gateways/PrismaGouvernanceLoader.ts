@@ -113,6 +113,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       nom: feuilleDeRoute.nom,
       porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
       totalActions: 3,
+      uid: String(feuilleDeRoute.id),
     })),
     noteDeContexte,
     notePrivee,

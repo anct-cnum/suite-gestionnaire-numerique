@@ -7,42 +7,56 @@ export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
 ): FeuillesDeRouteViewModel {
   return {
-    contratPreexistant: [
-      {
-        id: 'oui',
-        label: 'Oui',
-      },
-      {
-        id: 'non',
-        label: 'Non',
-      },
-    ],
     feuillesDeRoute:
       feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
-    membres: [
-      {
-        label: 'Croix Rouge Française',
-        uid: 'membre1FooId',
-      },
-      {
-        label: 'La Poste',
-        uid: 'membre2FooId',
-      },
-    ],
-    perimetres: [
-      {
-        id: 'regional',
-        label: 'Régional',
-      },
-      {
-        id: 'departemental',
-        label: 'Départemental',
-      },
-      {
-        id: 'epci_groupement',
-        label: 'EPCI ou groupement de communes',
-      },
-    ],
+    formulaire: {
+      contratPreexistant: [
+        {
+          id: 'oui',
+          isChecked: false,
+          label: 'Oui',
+        },
+        {
+          id: 'non',
+          isChecked: false,
+          label: 'Non',
+        },
+      ],
+      membres: [
+        {
+          isSelected: true,
+          label: 'Choisir',
+          uid: '',
+        },
+        {
+          isSelected: false,
+          label: 'Croix Rouge Française',
+          uid: 'membre1FooId',
+        },
+        {
+          isSelected: false,
+          label: 'La Poste',
+          uid: 'membre2FooId',
+        },
+      ],
+      perimetres: [
+        {
+          id: 'regional',
+          isChecked: false,
+          label: 'Régional',
+        },
+        {
+          id: 'departemental',
+          isChecked: false,
+          label: 'Départemental',
+        },
+        {
+          id: 'epci_groupement',
+          isChecked: false,
+          label: 'EPCI ou groupement de communes',
+        },
+      ],
+    },
     titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
@@ -120,18 +134,23 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
 }
 
 export type FeuillesDeRouteViewModel = Readonly<{
-  contratPreexistant: ReadonlyArray<{
-    id: 'oui' | 'non'
-    label: string
-  }>
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
-  membres: ReadonlyArray<{
-    label: string
-    uid: string
-  }>
-  perimetres: ReadonlyArray<{
-    id: 'regional' | 'departemental' | 'epci_groupement'
-    label: string
+  formulaire: Readonly<{
+    contratPreexistant: ReadonlyArray<{
+      id: 'oui' | 'non'
+      isChecked: boolean
+      label: string
+    }>
+    membres: ReadonlyArray<{
+      isSelected: boolean
+      label: string
+      uid: string
+    }>
+    perimetres: ReadonlyArray<{
+      id: 'regional' | 'departemental' | 'epci_groupement'
+      isChecked: boolean
+      label: string
+    }>
   }>
   titre: string
   totaux: Readonly<{

@@ -98,7 +98,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         <li>
           <Link
             className="fr-btn fr-btn--secondary"
-            href="/"
+            href={feuilleDeRoute.lien}
           >
             Plus de détails
           </Link>

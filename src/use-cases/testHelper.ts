@@ -109,6 +109,7 @@ export function gouvernanceReadModelFactory(
         nom: 'Feuille de route inclusion',
         porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Préfecture départementale' },
         totalActions: 3,
+        uid: 'feuilleDeRouteFooId',
       },
     ],
     noteDeContexte: {
