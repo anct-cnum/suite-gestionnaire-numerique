@@ -61,8 +61,8 @@ function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypol
     typologies: new Set<string>(),
   })
   return {
-    roles: Array.from(roles).toSorted(alphaAsc),
-    typologies: Array.from(typologies).toSorted(alphaAsc),
+    roles: Array.from(roles).toSorted(alphaAsc()),
+    typologies: Array.from(typologies).toSorted(alphaAsc()),
   }
 }
 

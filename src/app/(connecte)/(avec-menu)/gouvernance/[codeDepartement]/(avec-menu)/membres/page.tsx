@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 
 import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
 import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
-import { mesMembresPresenter } from '@/presenters/membresPresenter'
+import { membresPresenter } from '@/presenters/membresPresenter'
 import { RecupererMesMembres } from '@/use-cases/queries/RecupererMesMembres'
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default async function MembresController({ params }: Props): Promise<Reac
     .handle({ codeDepartement })
 
   return (
-    <GestionMembres membresViewModel={mesMembresPresenter(membresReadModel)} />
+    <GestionMembres membresViewModel={membresPresenter(membresReadModel)} />
   )
 }
 

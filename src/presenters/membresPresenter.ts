@@ -2,19 +2,19 @@ import { toRoleViewModel, RoleViewModel } from './shared/role'
 import { isEmpty } from '@/shared/lang'
 import { MesMembresReadModel, MembreReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
-export function mesMembresPresenter(mesMembresReadModel: MesMembresReadModel): MesMembresViewModel {
+export function membresPresenter(mesMembresReadModel: MesMembresReadModel): MembresViewModel {
   return {
     autorisations: mesMembresReadModel.autorisations,
+    departement: mesMembresReadModel.departement,
     roles: mesMembresReadModel.roles.map(toRoleViewModel),
-    titre: `Gérer les membres · ${mesMembresReadModel.departement}`,
     typologies: mesMembresReadModel.typologies.map(handleTypologieIndefinie('simple')),
     ...membresParStatut(mesMembresReadModel.membres),
     uidGouvernance: mesMembresReadModel.uidGouvernance,
   }
 }
 
-export type MesMembresViewModel = Readonly<{
-  titre: string
+export type MembresViewModel = Readonly<{
+  departement: string
   autorisations: Readonly<{
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
@@ -99,7 +99,7 @@ const nomListeMembresParStatut: Readonly<Record<MembreReadModel['statut'], keyof
   suggere: 'suggeres',
 }
 
-type MembresByStatut = Pick<MesMembresViewModel, 'membres' | 'suggeres' | 'candidats'>
+type MembresByStatut = Pick<MembresViewModel, 'membres' | 'suggeres' | 'candidats'>
 
 type TypologieViewModel = Readonly<{
   label: string

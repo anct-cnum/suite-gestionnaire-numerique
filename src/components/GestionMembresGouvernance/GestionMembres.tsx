@@ -5,16 +5,16 @@ import { Fragment, ReactElement, useId, useState } from 'react'
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
 import Drawer from '../shared/Drawer/Drawer'
-import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
-import { MembreViewModel, MesMembresViewModel } from '@/presenters/membresPresenter'
+import { MembreViewModel, MembresViewModel } from '@/presenters/membresPresenter'
+import { alphaAsc } from '@/shared/lang'
 
 export default function GestionMembres({ membresViewModel }: Props): ReactElement {
   const selectRoleId = useId()
   const selectTypologieId = useId()
   const labelId = useId()
-  const drawerId = 'drawerAjouterUnMembre'
+  const drawerId = 'drawerId'
 
   const [membresView, setMembresView] = useState<MembresView>({
     membres: membresViewModel.membres,
@@ -27,7 +27,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
 
   const candidatsEtSuggeres = membresViewModel.candidats
     .concat(membresViewModel.suggeres)
-    .toSorted((lMembre, rMembre) => lMembre.nom.localeCompare(rMembre.nom))
+    .toSorted(alphaAsc('nom'))
 
   const membresByStatut: Readonly<Record<StatutSelectionnable, ReadonlyArray<MembreViewModel>>> = {
     candidat: membresViewModel.candidats,
@@ -37,13 +37,15 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
 
   return (
     <>
-      <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
-        <PageTitle icon="compass-3-line">
-          {membresViewModel.titre}
-        </PageTitle>
+      <div className="fr-grid-row space-between fr-grid-row--middle">
+        <h1 className="color-blue-france fr-mt-5w">
+          Gérer les membres ·
+          {' '}
+          {membresViewModel.departement}
+        </h1>
         <button
           aria-controls={drawerId}
-          className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line"
+          className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
           data-fr-opened="false"
           onClick={() => {
             setIsDrawerOpen(true)
@@ -163,7 +165,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         {membresView.membres.map((membre, index) => (
           <tr
             data-row-key={index}
-            id={`table-sm-row-key-${index}`}
             key={membre.uid}
           >
             <td>
@@ -265,7 +266,7 @@ const toutRole = 'toutRole'
 const touteTypologie = 'touteTypologie'
 
 type Props = Readonly<{
-  membresViewModel: MesMembresViewModel
+  membresViewModel: MembresViewModel
 }>
 
 type StatutSelectionnable = 'confirme' | 'candidat' | 'suggere'

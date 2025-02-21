@@ -4,6 +4,7 @@ import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
+import Icon from '../shared/Icon/Icon'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import { Notification } from '../shared/Notification/Notification'
 import Select from '../shared/Select/Select'
@@ -29,6 +30,8 @@ export default function AjouterUnMembre({
   return (
     <>
       <DrawerTitle id={labelId}>
+        <Icon icon="community-line" />
+        <br />
         Ajouter un membre à la gouvernance
       </DrawerTitle>
       <p className="fr-text--sm color-grey">
@@ -47,8 +50,8 @@ export default function AjouterUnMembre({
             id="membres"
             name="membre"
             onChange={selectionnerUnMembre}
-            options={[{ label: 'Sélectionner un membre', uid: '' }]
-              .concat(candidatsEtSuggeres.map(({ nom, uid }) => ({ label: nom, uid })))}
+            options={[{ isSelected: true, label: 'Sélectionner un membre', uid: '' }]
+              .concat(candidatsEtSuggeres.map(({ nom, uid }) => ({ isSelected: false, label: nom, uid })))}
             required={true}
           >
             Membre candidat ou suggéré

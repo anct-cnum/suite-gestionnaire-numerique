@@ -253,7 +253,7 @@ describe('gouvernance', () => {
     const resume = screen.getByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir les membres' })
-    expect(lienResume).toHaveAttribute('href', '/gouvernance/11/membres')
+    expect(lienResume).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membres')
 
     const sectionMembre = screen.getByRole('region', { name: '2 membres' })
     const enTeteMembre = within(sectionMembre).getByRole('banner')

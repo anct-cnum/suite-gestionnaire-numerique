@@ -1,5 +1,6 @@
-import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import { Membre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { alphaAsc } from '@/shared/lang'
 import { MembreReadModel, MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export class PrismaMesMembresLoader implements MesMembresLoader {
@@ -41,7 +42,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
       },
       departement: gouvernanceRecord.relationDepartement.nom,
       membres: toMembres(gouvernanceRecord.membres)
-        .toSorted(sortMembres)
+        .toSorted(alphaAsc('nom'))
         .map(toMesMembresReadModel),
       roles: [],
       typologies: [],

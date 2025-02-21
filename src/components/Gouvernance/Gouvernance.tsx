@@ -67,7 +67,7 @@ export default function Gouvernance(): ReactElement {
                 gouvernanceViewModel.hasMembres ?
                   <ResumeMembre
                     denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
-                    lien={gouvernanceViewModel.sectionMembres.lien}
+                    membresLink={gouvernanceViewModel.links.membres}
                     total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
                   /> : (
                     <Resume style={styles['resume-membres']}>

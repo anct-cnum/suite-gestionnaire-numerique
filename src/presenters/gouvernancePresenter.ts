@@ -17,6 +17,9 @@ export function gouvernancePresenter(
     departement: gouvernanceReadModel.departement,
     hasMembres,
     isVide: isGouvernanceVide(gouvernanceReadModel, !hasMembres),
+    links: {
+      membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
+    },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     sectionFeuillesDeRoute: {
       ...{
@@ -80,6 +83,9 @@ export type GouvernanceViewModel = Readonly<{
     sousTitre: string
   }>
   uid: string
+  links: {
+    membres: string
+  }
 }>
 
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel, pasDeMembre: boolean): boolean {

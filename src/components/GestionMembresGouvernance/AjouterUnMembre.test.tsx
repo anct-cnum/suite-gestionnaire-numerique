@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
 import GestionMembres from './GestionMembres'
-import { mesMembresPresenter } from '@/presenters/membresPresenter'
+import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres gouvernance', () => {
@@ -40,7 +40,7 @@ describe('membres gouvernance', () => {
       expect(selectionnerUnMembre).toBeInTheDocument()
       const croixRouge = within(candidatOuSuggere).getByRole('option', { name: 'Croix Rouge Française' })
       expect(croixRouge).toBeInTheDocument()
-      const laPoste = within(candidatOuSuggere).getByRole('option', { name: 'La Voie du Num\'' })
+      const laPoste = within(candidatOuSuggere).getByRole('option', { name: "La Voie du Num'" })
       expect(laPoste).toBeInTheDocument()
 
       const information = within(fieldset).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
@@ -210,7 +210,7 @@ function afficherMembres(
   options: Partial<Parameters<typeof renderComponent>[1]> = {},
   membresReadModel = membresReadModelFactory()
 ): void {
-  const membresViewModel = mesMembresPresenter(membresReadModel)
+  const membresViewModel = membresPresenter(membresReadModel)
   renderComponent(
     <GestionMembres membresViewModel={membresViewModel} />,
     options

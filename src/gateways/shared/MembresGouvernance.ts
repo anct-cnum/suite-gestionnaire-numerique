@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client'
 
+import { alphaAsc } from '@/shared/lang'
+
 export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<Membre> {
   return Object.values(
     membres
@@ -7,10 +9,6 @@ export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<M
       .flatMap(associationsMembreEtRoleUnique)
       .reduce(groupMembresById, {})
   )
-}
-
-export function sortMembres(leftMembre: Membre, rightMembre: Membre): number {
-  return leftMembre.nom.localeCompare(rightMembre.nom)
 }
 
 export type Membre = Readonly<{ roles: ReadonlyArray<string> }> & MembreSansRole
@@ -49,7 +47,7 @@ function groupMembresById(membresById: MembresById, membreUniqueRole: Associatio
       nom: membreUniqueRole.nom,
       roles: membre.roles
         .concat(membreUniqueRole.role)
-        .toSorted((lRole, rRole) => lRole.localeCompare(rRole)),
+        .toSorted(alphaAsc()),
       statut: membreUniqueRole.statut,
       type: membreUniqueRole.type,
     },

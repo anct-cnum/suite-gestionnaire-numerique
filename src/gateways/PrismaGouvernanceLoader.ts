@@ -1,7 +1,8 @@
 import { Prisma } from '@prisma/client'
 
-import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import { Membre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { alphaAsc } from '@/shared/lang'
 import { CoporteurDetailReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
@@ -121,7 +122,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       candidats: membres.filter(({ statut }) => statut === 'candidat').length,
       coporteurs: membres
         .filter(isCoporteur)
-        .toSorted(sortMembres)
+        .toSorted(alphaAsc('nom'))
         .map((membre) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { statut, ...membreCoporteur } = membre

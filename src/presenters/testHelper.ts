@@ -42,6 +42,9 @@ export function gouvernanceViewModelFactory(
     departement: '',
     hasMembres: false,
     isVide: false,
+    links: {
+      membres: '/',
+    },
     sectionFeuillesDeRoute: {
       budgetTotalCumule: '',
       feuillesDeRoute: [],
