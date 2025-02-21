@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
@@ -11,12 +12,13 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
     <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>
         <Icon icon="survey-line" />
-        <button
+        <Link
           className="fr-btn fr-btn--secondary"
+          href={feuilleDeRoute.links.detail}
           type="button"
         >
           Voir le détail
-        </button>
+        </Link>
       </div>
       <div className="fr-mb-3w">
         <h2 className="fr-h3 color-blue-france fr-mb-1w">
