@@ -58,6 +58,9 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
     actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
     beneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}`,
     coFinanceurs: `${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
+    links: {
+      detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
+    },
     nom: feuilleDeRoute.nom,
     nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
     pieceJointe: undefined,
@@ -158,6 +161,9 @@ export type FeuilleDeRouteViewModel = Readonly<{
     budget: string
     coFinancement: string
     financementAccorde: string
+  }>
+  links: Readonly<{
+    detail: string
   }>
 }>
 

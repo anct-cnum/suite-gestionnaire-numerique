@@ -34,8 +34,8 @@ describe('les feuilles de route d’une gouvernance', () => {
     const premiereFeuilleDeRoute = elementsDeLaListeDesFeuillesDeRoute[0]
     const titreDeLaPremiereFeuilleDeRoute = within(premiereFeuilleDeRoute).getByRole('heading', { level: 2, name: 'Feuille de route 1' })
     expect(titreDeLaPremiereFeuilleDeRoute).toBeInTheDocument()
-    const boutonVoirDetails = within(premiereFeuilleDeRoute).getByRole('button', { name: 'Voir le détail' })
-    expect(boutonVoirDetails).toBeInTheDocument()
+    const lientVoirDetails = within(premiereFeuilleDeRoute).getByRole('link', { name: 'Voir le détail' })
+    expect(lientVoirDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1')
     const LienPorteurDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getAllByRole('link', { name: 'CC des Monts du Lyonnais' })[0]
     expect(LienPorteurDeLaFeuilleDeRoute).toBeInTheDocument()
     const nombreDeBeneficiaires = within(premiereFeuilleDeRoute).getByText('5 bénéficiaires', { selector: 'span' })
