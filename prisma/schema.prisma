@@ -27,7 +27,7 @@ model GroupementRecord {
 
 model DepartementRecord {
   code       String @id
-  regionCode String
+  regionCode String @map("region_code")
   nom        String
 
   structures   StructureRecord[]
@@ -55,15 +55,15 @@ model StructureRecord {
   id Int @id @default(autoincrement())
 
   adresse                  String
-  codePostal               String
+  codePostal               String @map("code_postal")
   commune                  String
   /// [Contact]
   contact                  Json
-  departementCode          String
+  departementCode          String @map("departement_code")
   // SIRET ou RIDET
-  identifiantEtablissement String
+  identifiantEtablissement String @map("identifiant_etablissement")
   // TODO: à supprimer après la migration finale
-  idMongo                  String
+  idMongo                  String @map("id_mongo")
   nom                      String @db.Citext
   statut                   String
   type                     String
@@ -78,21 +78,21 @@ model StructureRecord {
 model UtilisateurRecord {
   id Int @id @default(autoincrement())
 
-  dateDeCreation    DateTime
-  departementCode   String?
-  derniereConnexion DateTime?
-  emailDeContact    String
-  groupementId      Int?
-  inviteLe          DateTime
-  isSuperAdmin      Boolean   @default(false)
-  isSupprime        Boolean   @default(false)
+  dateDeCreation    DateTime  @map("date_de_creation")
+  departementCode   String?   @map("departement_code")
+  derniereConnexion DateTime? @map("derniere_connexion")
+  emailDeContact    String    @map("email_de_contact")
+  groupementId      Int?      @map("goupement_id")
+  inviteLe          DateTime  @map("invite_le")
+  isSuperAdmin      Boolean   @default(false) @map("is_super_admin")
+  isSupprime        Boolean   @default(false) @map("is_supprime")
   nom               String    @db.Citext
   prenom            String
-  regionCode        String?
+  regionCode        String?   @map("region_code")
   role              Role
-  structureId       Int?
-  ssoId             String    @unique @default("")
-  ssoEmail          String    @unique
+  structureId       Int?      @map("structure_id")
+  ssoId             String    @unique @default("") @map("sso_id")
+  ssoEmail          String    @unique @map("sso_email")
   telephone         String    @db.VarChar(13)
 
   relationStructure   StructureRecord?   @relation(fields: [structureId], references: [id])
@@ -130,9 +130,9 @@ model GouvernanceRecord {
 model ComiteRecord {
   id Int @id @default(autoincrement())
 
-  gouvernanceDepartementCode String
+  gouvernanceDepartementCode String    @map("gouvernance_departement_code")
   creation                   DateTime
-  derniereEdition            DateTime
+  derniereEdition            DateTime  @map("derniere_edition")
   type                       String
   frequence                  String
   commentaire                String?
@@ -148,7 +148,7 @@ model ComiteRecord {
 model FeuilleDeRouteRecord {
   id Int @id @default(autoincrement())
 
-  gouvernanceDepartementCode String
+  gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
 
@@ -173,9 +173,9 @@ model ContactMembreGouvernanceRecord {
 model MembreRecord {
   id String @id
 
-  gouvernanceDepartementCode String
+  gouvernanceDepartementCode String  @map("gouvernance_departement_code")
   contact                    String?
-  contactTechnique           String?
+  contactTechnique           String? @map("contact_technique")
   type                       String?
   statut                     String
 
@@ -193,9 +193,9 @@ model MembreRecord {
 }
 
 model MembreGouvernanceDepartementRecord {
-  departementCode String
+  departementCode String @map("departement_code")
   role            String
-  membreId        String
+  membreId        String @map("membre_id")
 
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
   relationMembre      MembreRecord      @relation(fields: [membreId], references: [id])
@@ -205,9 +205,9 @@ model MembreGouvernanceDepartementRecord {
 }
 
 model MembreGouvernanceSgarRecord {
-  sgarCode String
+  sgarCode String @map("sgar_code")
   role     String
-  membreId String
+  membreId String @map("membre_id")
 
   relationSgar   RegionRecord @relation(fields: [sgarCode], references: [code])
   relationMembre MembreRecord @relation(fields: [membreId], references: [id])
@@ -219,7 +219,7 @@ model MembreGouvernanceSgarRecord {
 model MembreGouvernanceEpciRecord {
   epci     String
   role     String
-  membreId String
+  membreId String @map("membre_id")
 
   relationMembre MembreRecord @relation(fields: [membreId], references: [id])
 
@@ -230,7 +230,7 @@ model MembreGouvernanceEpciRecord {
 model MembreGouvernanceCommuneRecord {
   commune  String
   role     String
-  membreId String
+  membreId String @map("membre_id")
 
   relationMembre MembreRecord @relation(fields: [membreId], references: [id])
 
@@ -241,7 +241,7 @@ model MembreGouvernanceCommuneRecord {
 model MembreGouvernanceStructureRecord {
   structure String
   role      String
-  membreId  String
+  membreId  String @map("membre_id")
 
   relationMembre MembreRecord @relation(fields: [membreId], references: [id])
 
