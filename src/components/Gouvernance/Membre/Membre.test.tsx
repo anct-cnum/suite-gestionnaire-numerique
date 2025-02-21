@@ -19,7 +19,7 @@ describe('membres', () => {
       const fermer = jeFermeLesDetailsDuMembre('Fermer les détails du membre : Préfecture du Rhône')
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerMembreId')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -286,7 +286,7 @@ describe('membres', () => {
       const fermer = jeFermeLesDetailsDuMembre('Fermer les détails du membre : Département du Rhône')
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerMembreId')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerId')
       expect(drawer).not.toBeVisible()
     })
 

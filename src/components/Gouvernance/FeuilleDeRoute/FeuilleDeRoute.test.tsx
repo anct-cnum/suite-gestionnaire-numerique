@@ -117,7 +117,7 @@ describe('feuille de route', () => {
     const fermer = jeFermeLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    expect(fermer).toHaveAttribute('aria-controls', 'drawerFeuilleDeRouteId')
+    expect(fermer).toHaveAttribute('aria-controls', 'drawerId')
     expect(drawer).not.toBeVisible()
   })
 
