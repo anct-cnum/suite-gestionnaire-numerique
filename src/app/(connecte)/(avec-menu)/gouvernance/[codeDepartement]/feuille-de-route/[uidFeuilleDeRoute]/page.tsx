@@ -3,12 +3,6 @@ import { ReactElement } from 'react'
 import FeuilleDeRoute from '@/components/FeuilleDeRoute/FeuilleDeRoute'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
 
-export default async function FeuilleDeRouteController({ params }: Props): Promise<ReactElement> {
-  return <FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRoutePresenter((await params).codeDepartement)} />
+export default function FeuilleDeRouteController(): ReactElement {
+  return <FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRoutePresenter()} />
 }
-
-type Props = Readonly<{
-  params: Promise<Readonly<{
-    codeDepartement: string
-  }>>
-}>

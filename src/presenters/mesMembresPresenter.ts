@@ -33,6 +33,7 @@ function buildCandidatsOuSuggeres(membre: MembreReadModel, statut: string): Cand
     adresse: membre.adresse,
     contactReferent:
       membre.contactReferent ? `${membre.contactReferent.prenom} ${membre.contactReferent.nom}, ${membre.contactReferent.fonction} ${membre.contactReferent.email}` : 'Donnée non fournie',
+    isSelected: false,
     label: membre.nom,
     siret: membre.siret,
     statut,
@@ -69,6 +70,7 @@ type MembreViewModel = Readonly<{
 type CandidatOuSuggereViewModel = Readonly<{
   adresse: string
   contactReferent?: string
+  isSelected: boolean
   label: string
   siret: string
   statut: string

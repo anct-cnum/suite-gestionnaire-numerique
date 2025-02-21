@@ -34,7 +34,7 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
               <td>
                 <button
                   aria-controls={drawerId}
-                  className="primary font-weight-700 fr-px-0 no-hover d-block"
+                  className="primary font-weight-700 fr-px-0 no-hover"
                   data-fr-opened="false"
                   onClick={() => {
                     setMembreDetails(membre)

@@ -253,7 +253,7 @@ describe('gouvernance', () => {
     const resume = screen.getByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir les membres' })
-    expect(lienResume).toHaveAttribute('href', '/')
+    expect(lienResume).toHaveAttribute('href', '/gouvernance/11/membres')
 
     const sectionMembre = screen.getByRole('region', { name: '2 membres' })
     const enTeteMembre = within(sectionMembre).getByRole('banner')
@@ -262,7 +262,7 @@ describe('gouvernance', () => {
     const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 2 membres, 0 candidat', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
-    expect(gerer).toHaveAttribute('href', '/')
+    expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membres')
     const membres = screen.getByRole('table', { name: 'Membres' })
     const rowsGroup = within(membres).getAllByRole('rowgroup')
     const head = rowsGroup[0]
@@ -380,6 +380,7 @@ describe('gouvernance', () => {
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
+          uid: 'feuilleDeRouteFooId1',
         },
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }],
@@ -391,6 +392,7 @@ describe('gouvernance', () => {
           nom: 'Feuille de route numérique du Rhône',
           porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 1,
+          uid: 'feuilleDeRouteFooId2',
         },
       ],
     }), epochTimePlusOneDay)
@@ -411,7 +413,7 @@ describe('gouvernance', () => {
     const sousTitreFeuilleDeRoute = within(enTeteFeuilleDeRoute).getByText('2 feuilles de route, 233 030 €', { selector: 'p' })
     expect(sousTitreFeuilleDeRoute).toBeInTheDocument()
     const gerer = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer' })
-    expect(gerer).toHaveAttribute('href', '/')
+    expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuilles-de-route')
     const FeuillesDeRoute = screen.getByRole('table', { name: 'Feuilles de route' })
     const rowsGroup = within(FeuillesDeRoute).getAllByRole('rowgroup')
     const head = rowsGroup[0]
@@ -455,6 +457,7 @@ describe('gouvernance', () => {
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
+          uid: 'feuilleDeRouteFooId',
         },
       ],
     }), epochTimePlusOneDay)
@@ -466,7 +469,7 @@ describe('gouvernance', () => {
     const resume = screen.getByText(matchWithoutMarkup('1 feuille de route territoriale'), { selector: 'p' })
     expect(resume).toBeInTheDocument()
     const lienResume = screen.getByRole('link', { name: 'Voir la feuille de route' })
-    expect(lienResume).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route')
+    expect(lienResume).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId')
 
     const sectionFeuilleDeRoute = screen.getByRole('region', { name: '1 feuille de route' })
     const enTeteFeuilleDeRoute = within(sectionFeuilleDeRoute).getByRole('banner')
