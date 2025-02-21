@@ -40,11 +40,10 @@ export default function AjouterUnMembre({
             Sélectionner un membre
           </legend>
           <Select
-            defaultValue=""
             id="membres"
             name="membre"
             onChange={selectionnerUnMembre}
-            options={[{ label: 'Sélectionner un membre', uid: '' }].concat(candidatsOuSuggeres)}
+            options={[{ isSelected: true, label: 'Sélectionner un membre', uid: '' }].concat(candidatsOuSuggeres)}
             required={true}
           >
             Membre candidat ou suggéré
@@ -167,6 +166,7 @@ export default function AjouterUnMembre({
           .map((membreSelectionne) => ({
             adresse: membreSelectionne.adresse,
             contactReferent: membreSelectionne.contactReferent,
+            isSelected: false,
             label: membreSelectionne.label,
             siret: membreSelectionne.siret,
             statut: membreSelectionne.statut,

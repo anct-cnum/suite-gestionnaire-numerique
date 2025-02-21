@@ -15,9 +15,9 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
           {feuillesDeRouteViewModel.titre}
         </h1>
         <AjouterUneFeuilleDeRoute
-          contratPreexistant={feuillesDeRouteViewModel.contratPreexistant}
-          membres={feuillesDeRouteViewModel.membres}
-          perimetres={feuillesDeRouteViewModel.perimetres}
+          contratPreexistant={feuillesDeRouteViewModel.formulaire.contratPreexistant}
+          membres={feuillesDeRouteViewModel.formulaire.membres}
+          perimetres={feuillesDeRouteViewModel.formulaire.perimetres}
           uidGouvernance={feuillesDeRouteViewModel.uidGouvernance}
         />
       </div>

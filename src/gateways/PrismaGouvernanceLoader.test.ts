@@ -32,8 +32,8 @@ describe('gouvernance loader', () => {
     })
     await creerComites('93', 0)
     await creerComites('75', 2)
-    await creerFeuillesDeRoute('93')
-    await creerFeuillesDeRoute('75')
+    await creerFeuillesDeRoute('93', 0)
+    await creerFeuillesDeRoute('75', 2)
     await creerMembres('93')
     await creerMembres('75')
 
@@ -105,7 +105,7 @@ describe('gouvernance loader', () => {
     await creerUnDepartement({ code: codeDepartement, nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
     await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerFeuillesDeRoute(codeDepartement)
+    await creerFeuillesDeRoute(codeDepartement, 0)
     await creerMembres('93')
 
     // WHEN
@@ -258,6 +258,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     nom: 'Feuille de route inclusion',
     porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
     totalActions: 3,
+    uid: '1',
   },
   {
     beneficiairesSubvention: [
@@ -275,6 +276,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     nom: 'Feuille de route numérique du Rhône',
     porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
     totalActions: 3,
+    uid: '2',
   },
 ]
 
@@ -350,7 +352,7 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
     editeurUtilisateurId: 'userFooId',
     frequence: 'trimestrielle',
     gouvernanceDepartementCode,
-    id: 1 + Number(incrementId),
+    id: 1 + incrementId,
     type: 'stratégique',
   })
   await creerUnComite({
@@ -361,12 +363,12 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
     editeurUtilisateurId: 'userFooId',
     frequence: 'trimestrielle',
     gouvernanceDepartementCode,
-    id: 2 + Number(incrementId),
+    id: 2 + incrementId,
     type: 'technique',
   })
 }
 
-async function creerFeuillesDeRoute(gouvernanceDepartementCode: string): Promise<void> {
-  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode })
-  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, nom: 'Feuille de route numérique du Rhône' })
+async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
+  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 1 + incrementId })
+  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 2 + incrementId, nom: 'Feuille de route numérique du Rhône' })
 }

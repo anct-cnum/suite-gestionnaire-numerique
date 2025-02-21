@@ -67,6 +67,7 @@ export default function Gouvernance(): ReactElement {
                 gouvernanceViewModel.hasMembres ?
                   <ResumeMembre
                     denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
+                    lien={gouvernanceViewModel.sectionMembres.lien}
                     total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
                   /> : (
                     <Resume style={styles['resume-membres']}>
@@ -232,7 +233,7 @@ export default function Gouvernance(): ReactElement {
               button={(
                 <Link
                   className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
-                  href="/"
+                  href={`/gouvernance/${gouvernanceViewModel.uid}/membres`}
                 >
                   Gérer
                 </Link>
@@ -269,7 +270,7 @@ export default function Gouvernance(): ReactElement {
               button={(
                 <Link
                   className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
-                  href="/"
+                  href={`/gouvernance/${gouvernanceViewModel.uid}/feuilles-de-route`}
                 >
                   Gérer
                 </Link>

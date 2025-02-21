@@ -21,6 +21,7 @@ describe('feuille de route', () => {
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 3,
+          uid: 'feuilleDeRouteFooId',
         },
       ],
     })
@@ -71,7 +72,7 @@ describe('feuille de route', () => {
     const buttonsList = within(drawer).getAllByRole('list')[2]
     const buttonsListItems = within(buttonsList).getAllByRole('listitem')
     const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
-    expect(boutonPlusDeDetails).toHaveAttribute('href', '/')
+    expect(boutonPlusDeDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId')
     const boutonTelechargerPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
     expect(boutonTelechargerPdf).toBeInTheDocument()
   })
@@ -90,6 +91,7 @@ describe('feuille de route', () => {
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
           totalActions: 1,
+          uid: 'feuilleDeRouteFooId',
         },
       ],
     })

@@ -1,14 +1,20 @@
 import { ChangeEventHandler, PropsWithChildren, ReactElement } from 'react'
 
-export default function Radio({ children, id, nomGroupe, onChange }: Props): ReactElement {
+import { noop } from '@/shared/lang'
+
+export default function Radio({ children, id, isChecked, nomGroupe, onChange }: Props): ReactElement {
   return (
     <div className="fr-fieldset__element">
       <div className="fr-radio-group">
         <input
+          defaultChecked={isChecked}
           id={id}
           name={nomGroupe}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...onChange ? { onChange } : {}}
+          onChange={
+            onChange ??
+            // istanbul ignore next @preserve
+            noop
+          }
           required={true}
           type="radio"
           value={id}
@@ -26,6 +32,7 @@ export default function Radio({ children, id, nomGroupe, onChange }: Props): Rea
 
 type Props = PropsWithChildren<Readonly<{
   id: string
+  isChecked: boolean
   nomGroupe: string
   onChange?: ChangeEventHandler<HTMLInputElement>
 }>>

@@ -57,6 +57,7 @@ export type FeuilleDeRouteReadModel = Readonly<{
   montantSubventionFormationAccorde: number
   beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
+  uid: string
 }>
 
 export type MembreReadModel = Readonly<{

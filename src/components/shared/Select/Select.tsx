@@ -5,7 +5,6 @@ import { noop } from '@/shared/lang'
 export default function Select({
   ariaControlsId,
   children,
-  defaultValue,
   id,
   name,
   onChange,
@@ -22,7 +21,7 @@ export default function Select({
       </label>
       <select
         className="fr-select fr-mb-2w"
-        defaultValue={defaultValue}
+        defaultValue={(options.find((option) => option.isSelected) as { uid: string }).uid}
         id={id}
         name={name}
         onChange={onChange ?? noop}
@@ -46,11 +45,11 @@ export default function Select({
 
 type Props = PropsWithChildren<Readonly<{
   ariaControlsId?: string
-  defaultValue: string
   id: string
   name: string
   onChange?: ChangeEventHandler<HTMLSelectElement>
   options: ReadonlyArray<{
+    isSelected: boolean
     label: string
     uid: string
   }>

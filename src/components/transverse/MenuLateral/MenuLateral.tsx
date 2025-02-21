@@ -102,8 +102,8 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                         <Icon icon={menu.icon} />
                         {menu.label}
                       </Link>
+                      {menu.hasSousMenu === true ? children : null}
                     </li>
-                    {menu.hasSousMenu === true ? children : null}
                   </Fragment>
                 )
               })}
