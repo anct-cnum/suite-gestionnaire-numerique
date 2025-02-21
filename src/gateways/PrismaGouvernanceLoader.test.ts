@@ -279,7 +279,7 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
 ]
 
 const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
-  candidats: 0,
+  candidats: 2,
   coporteurs: [
     {
       id: 'region-53-93',
@@ -338,7 +338,7 @@ const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
     totalMontantSubventionFormationAccorde: NaN,
     ...partialMembre,
   })),
-  total: 9,
+  total: 13,
 }
 
 async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {

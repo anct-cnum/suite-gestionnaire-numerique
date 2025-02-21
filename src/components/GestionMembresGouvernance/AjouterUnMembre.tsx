@@ -8,19 +8,23 @@ import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import { Notification } from '../shared/Notification/Notification'
 import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { MesMembresViewModel } from '@/presenters/mesMembresPresenter'
+import { MembreViewModel } from '@/presenters/membresPresenter'
+import { isEmpty } from '@/shared/lang'
 
 export default function AjouterUnMembre({
   closeDrawer,
   id,
   labelId,
-  candidatsOuSuggeres,
+  candidatsEtSuggeres,
   uidGouvernance,
 }: Props): ReactElement {
   const { accepterUnMembreAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(true)
-  const [informationsMembre, setInformationsMembre] = useState<MesMembresViewModel['candidatsOuSuggeres'][0] | null>(null)
+  const [informationsMembre, setInformationsMembre] = useState<MembreViewModel | null>(null)
   const [isAdded, setIsAdded] = useState(false)
+  const membresByUid = candidatsEtSuggeres.reduce<Readonly<Record<string, MembreViewModel>>>(
+    (byUid, membre) => Object.assign(byUid, { [membre.uid]: membre }), {}
+  )
 
   return (
     <>
@@ -44,7 +48,8 @@ export default function AjouterUnMembre({
             id="membres"
             name="membre"
             onChange={selectionnerUnMembre}
-            options={[{ label: 'Sélectionner un membre', uid: '' }].concat(candidatsOuSuggeres)}
+            options={[{ label: 'Sélectionner un membre', uid: '' }]
+              .concat(candidatsEtSuggeres.map(({ nom, uid }) => ({ label: nom, uid })))}
             required={true}
           >
             Membre candidat ou suggéré
@@ -94,7 +99,7 @@ export default function AjouterUnMembre({
                 <div>
                   <ExternalLink
                     href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${informationsMembre.siret}`}
-                    title={`Fiche ${informationsMembre.label}`}
+                    title={`Fiche ${informationsMembre.nom}`}
                   >
                     {informationsMembre.siret}
                   </ExternalLink>
@@ -103,7 +108,7 @@ export default function AjouterUnMembre({
                   Typologie
                 </div>
                 <div>
-                  {informationsMembre.typologie}
+                  {informationsMembre.typologie.elaboree.label}
                 </div>
                 <div className="color-grey fr-mt-1w">
                   Adresse
@@ -115,7 +120,7 @@ export default function AjouterUnMembre({
                   Contact référent
                 </div>
                 <div>
-                  {informationsMembre.contactReferent}
+                  {informationsMembre.contactReferent.intitule}
                 </div>
               </address>
             )
@@ -156,24 +161,13 @@ export default function AjouterUnMembre({
   }
 
   function selectionnerUnMembre(event: FormEvent<HTMLSelectElement>): void {
-    if (event.currentTarget.value === '') {
+    const uidMembre = event.currentTarget.value
+    if (isEmpty(uidMembre)) {
       setIsDisabled(true)
       setInformationsMembre(null)
     } else {
       setIsDisabled(false)
-      setInformationsMembre(
-        candidatsOuSuggeres
-          .filter((candidatOuSuggere) => candidatOuSuggere.uid === event.currentTarget.value)
-          .map((membreSelectionne) => ({
-            adresse: membreSelectionne.adresse,
-            contactReferent: membreSelectionne.contactReferent,
-            label: membreSelectionne.label,
-            siret: membreSelectionne.siret,
-            statut: membreSelectionne.statut,
-            typologie: membreSelectionne.typologie,
-            uid: membreSelectionne.uid,
-          }))[0]
-      )
+      setInformationsMembre(membresByUid[uidMembre])
     }
   }
 }
@@ -181,7 +175,7 @@ export default function AjouterUnMembre({
 type Props = Readonly<{
   id: string
   labelId: string
-  candidatsOuSuggeres: MesMembresViewModel['candidatsOuSuggeres']
+  candidatsEtSuggeres: ReadonlyArray<MembreViewModel>
   uidGouvernance: string
   closeDrawer(): void
 }>

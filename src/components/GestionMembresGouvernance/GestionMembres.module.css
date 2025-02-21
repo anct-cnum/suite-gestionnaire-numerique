@@ -1,0 +1,23 @@
+.informations {
+  background-color: var(--info-950-100);
+  border-radius: 0.25rem;
+  margin: 0;
+  padding: 1rem;
+}
+
+.informations a {
+  color: var(--text-action-high-blue-france);
+}
+
+.selecteur {
+  background-color: var(--blue-france-975-75);
+}
+
+.selecteur select {
+  width: 7rem;
+}
+
+.label-filtres {
+  padding-right: 1rem;
+  padding-top: 0.7rem;
+}

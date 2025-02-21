@@ -1,10 +1,9 @@
 import { Prisma } from '@prisma/client'
 
-export function toMembres(membres: ReadonlyArray<MembreRecord>, statut: string): ReadonlyArray<Membre> {
+export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<Membre> {
   return Object.values(
     membres
       .values()
-      .filter((membre) => membre.statut === statut)
       .flatMap(associationsMembreEtRoleUnique)
       .reduce(groupMembresById, {})
   )
@@ -14,18 +13,7 @@ export function sortMembres(leftMembre: Membre, rightMembre: Membre): number {
   return leftMembre.nom.localeCompare(rightMembre.nom)
 }
 
-export type Membre = Readonly<{
-  contactReferent?: {
-    email: string
-    prenom: string
-    nom: string
-    fonction: string
-  }
-  id: string
-  nom: string
-  roles: ReadonlyArray<string>
-  type: string | null
-}>
+export type Membre = Readonly<{ roles: ReadonlyArray<string> }> & MembreSansRole
 
 function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<AssociationMembreEtRoleUnique> {
   return [
@@ -41,9 +29,11 @@ function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<Ass
     .flat()
     .map(({ nom, role }) => ({
       contactReferent: membre.relationContact ?? undefined,
+      contactTechnique: membre.contactTechnique,
       id: membre.id,
       nom,
       role,
+      statut: membre.statut,
       type: membre.type,
     }))
 }
@@ -60,6 +50,7 @@ function groupMembresById(membresById: MembresById, membreUniqueRole: Associatio
       roles: membre.roles
         .concat(membreUniqueRole.role)
         .toSorted((lRole, rRole) => lRole.localeCompare(rRole)),
+      statut: membreUniqueRole.statut,
       type: membreUniqueRole.type,
     },
   }
@@ -83,17 +74,20 @@ type MembreRecord = Prisma.MembreRecordGetPayload<{
   }
 }>
 
-type AssociationMembreEtRoleUnique = Readonly<{
+type AssociationMembreEtRoleUnique = Readonly<{ role: string }> & MembreSansRole
+
+type MembreSansRole = Readonly<{
   contactReferent?: {
     email: string
     prenom: string
     nom: string
     fonction: string
   }
+  contactTechnique: string | null
   nom: string
-  role: string
   type: string | null
   id: string
+  statut: string
 }>
 
 type MembresById = Readonly<Record<string, Membre>>
