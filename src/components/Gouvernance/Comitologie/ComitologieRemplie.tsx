@@ -10,8 +10,8 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [comite, setComite] = useState(comites[0])
   const drawerRef = useRef<HTMLDialogElement>(null)
-  const drawerModifierComiteId = 'drawerModifierComiteId'
-  const labelModifierComiteId = useId()
+  const drawerId = 'drawerModifierComiteId'
+  const labelId = useId()
 
   return (
     <>
@@ -31,7 +31,7 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
               </td>
               <td className="font-weight-700">
                 <button
-                  aria-controls={drawerModifierComiteId}
+                  aria-controls={drawerId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={() => {
@@ -58,11 +58,11 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        id={drawerModifierComiteId}
+        id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelModifierComiteId}
+        labelId={labelId}
         ref={drawerRef}
       >
         <ModifierUnComite
@@ -71,9 +71,9 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
           }}
           comite={comite}
           dateAujourdhui={dateAujourdhui}
-          id={drawerModifierComiteId}
+          id={drawerId}
           label={`Détail du ${comite.intitule}`}
-          labelId={labelModifierComiteId}
+          labelId={labelId}
           uidGouvernance={uidGouvernance}
         />
       </Drawer>

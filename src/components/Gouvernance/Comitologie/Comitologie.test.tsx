@@ -16,9 +16,9 @@ describe('comitologie', () => {
       jOuvreLeFormulairePourAjouterUnComite()
 
       // THEN
-      const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-      expect(ajouterUnComiteDrawer).toHaveAttribute('id', 'drawerAjouterComiteId')
-      const formulaire = within(ajouterUnComiteDrawer).getByRole('form', { name: 'Ajouter un comité' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
+      expect(drawer).toHaveAttribute('id', 'drawerAjouterComiteId')
+      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un comité' })
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Ajouter un comité' })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent', { selector: 'p' })
@@ -67,7 +67,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnComite()
-      const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
       const fermer = jeFermeLeFormulairePourAjouterUnComite()
 
       // THEN
@@ -82,11 +82,11 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnComite()
-      const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
       jeSelectionneUnType('Technique')
       jeSelectionneUneFrequence('Annuelle')
-      const date = jeChoisisUneDate(ajouterUnComiteDrawer, '1970-01-02')
-      const commentaire = jeTapeUnCommentaire(ajouterUnComiteDrawer, 'commentaire')
+      const date = jeChoisisUneDate(drawer, '1970-01-02')
+      const commentaire = jeTapeUnCommentaire(drawer, 'commentaire')
       const enregistrer = jEnregistreLeComite()
 
       // THEN
@@ -98,7 +98,7 @@ describe('comitologie', () => {
       expect(mensuelle).toBeInTheDocument()
       expect(date).toHaveValue('')
       expect(commentaire).toHaveValue('')
-      expect(ajouterUnComiteDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(ajouterUnComiteAction).toHaveBeenCalledWith({
         commentaire: 'commentaire',
         date: '1970-01-02',
@@ -165,9 +165,9 @@ describe('comitologie', () => {
       jOuvreLeFormulairePourModifierUnComite()
 
       // THEN
-      const detailsDUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
-      expect(detailsDUnComiteDrawer).toHaveAttribute('id', 'drawerModifierComiteId')
-      const formulaire = within(detailsDUnComiteDrawer).getByRole('form', { name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      expect(drawer).toHaveAttribute('id', 'drawerModifierComiteId')
+      const formulaire = within(drawer).getByRole('form', { name: 'Détail du Comité technique' })
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Détail du Comité technique' })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent', { selector: 'p' })
@@ -225,7 +225,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
       const fermer = jeFermeLeFormulairePourModifierUnComite()
 
       // THEN
@@ -240,11 +240,11 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
       jeSelectionneUnType('Technique')
       jeSelectionneUneFrequence('Trimestrielle')
-      jeChoisisUneDate(modifierUnComiteDrawer, '2990-04-15')
-      jeTapeUnCommentaire(modifierUnComiteDrawer, 'un nouveau commentaire')
+      jeChoisisUneDate(drawer, '2990-04-15')
+      jeTapeUnCommentaire(drawer, 'un nouveau commentaire')
       const enregistrer = jEnregistreLeComite()
 
       // THEN
@@ -261,7 +261,7 @@ describe('comitologie', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Comité modifié')
-      expect(modifierUnComiteDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
@@ -273,9 +273,9 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
-      jeChoisisUneDate(modifierUnComiteDrawer, '')
-      jeTapeUnCommentaire(modifierUnComiteDrawer, '')
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      jeChoisisUneDate(drawer, '')
+      jeTapeUnCommentaire(drawer, '')
       jEnregistreLeComite()
 
       // THEN
@@ -299,8 +299,8 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
-      jeChoisisUneDate(modifierUnComiteDrawer, epochTimePlusOneDay.toISOString())
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      jeChoisisUneDate(drawer, epochTimePlusOneDay.toISOString())
       jEnregistreLeComite()
 
       // THEN
@@ -315,7 +315,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const modifierUnComiteDrawer = screen.getByRole('dialog', { name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
       const supprimer = jeSupprimeLeComite()
 
       // THEN
@@ -328,7 +328,7 @@ describe('comitologie', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Comité supprimé')
-      expect(modifierUnComiteDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(supprimer).toHaveAccessibleName('Supprimer')
       expect(supprimer).toBeEnabled()
     })

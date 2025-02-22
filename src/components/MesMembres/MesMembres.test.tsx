@@ -24,15 +24,15 @@ describe('membres gouvernance', () => {
       jOuvreLeFormulairePourAjouterUnMembre()
 
       // THEN
-      const ajouterUnMembreDrawer = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
-      expect(ajouterUnMembreDrawer).toBeVisible()
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
+      expect(drawer).toBeVisible()
 
-      const titre = within(ajouterUnMembreDrawer).getByRole('heading', { level: 1, name: 'Ajouter un membre à la gouvernance' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Ajouter un membre à la gouvernance' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = within(ajouterUnMembreDrawer).getByText('Sélectionnez une collectivité ou une structure parmi la liste des volontaires.', { selector: 'p' })
+      const sousTitre = within(drawer).getByText('Sélectionnez une collectivité ou une structure parmi la liste des volontaires.', { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()
 
-      const formulaire = within(ajouterUnMembreDrawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
       const fieldset = within(formulaire).getByRole('group', { name: 'Sélectionner un membre' })
       const candidatOuSuggere = within(fieldset).getByRole('combobox', { name: 'Membre candidat ou suggéré' })
@@ -60,11 +60,11 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       jeFermeLeFormulairePourAjouterUnMembre()
 
       // THEN
-      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
     })
 
     it('puis que je sélectionne un membre alors ses informations s’affichent en entier', () => {
@@ -73,11 +73,11 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      const ajouterUnMembreDrawer = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       jeSelectionneUnCandidat('structure-99229991601034')
 
       // THEN
-      const formulaire = within(ajouterUnMembreDrawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       const information = within(formulaire).queryByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
       expect(information).not.toBeInTheDocument()
 
@@ -116,11 +116,11 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      const ajouterUnMembreDrawer = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       jeSelectionneUnCandidat('structure-99339991601034')
 
       // THEN
-      const formulaire = within(ajouterUnMembreDrawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       const informationsMembre = within(formulaire).getAllByRole('group')[1]
       const donneesNonFournies = within(informationsMembre).getAllByText('Donnée non fournie')
       expect(donneesNonFournies).toHaveLength(2)
@@ -132,12 +132,12 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      const ajouterUnMembreDrawer = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       jeSelectionneUnCandidat('structure-99229991601034')
       jeSelectionneUnCandidat('')
 
       // THEN
-      const formulaire = within(ajouterUnMembreDrawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       const information = within(formulaire).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
       expect(information).toBeInTheDocument()
       const bouton = within(formulaire).getByRole('button', { name: 'Ajouter' })
@@ -151,7 +151,7 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      const ajouterUnMembreDrawer = screen.getByRole('dialog', { name: 'Ajouter un membre à la gouvernance' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       const selectionnerUnMembre = screen.getByRole<HTMLOptionElement>('option', { name: 'Sélectionner un membre' })
       jeSelectionneUnCandidat('structure-99229991601034')
       const ajouter = jAjouteUnMembre()
@@ -166,7 +166,7 @@ describe('membres gouvernance', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Membre ajouté')
-      expect(ajouterUnMembreDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(selectionnerUnMembre.selected).toBe(true)
       expect(ajouter).toHaveAccessibleName('Ajouter')
       expect(ajouter).toBeDisabled()

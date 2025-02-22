@@ -15,8 +15,8 @@ describe('ajouter une feuille de route', () => {
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Ajouter une feuille de route' })
-      expect(drawer).toHaveAttribute('id', 'drawerId')
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
+      expect(drawer).toHaveAttribute('id', 'drawerAjouterFeuilleDeRouteId')
       const titre = within(drawer).getByRole('heading', { level: 1, name: 'Ajouter une feuille de route' })
       expect(titre).toBeInTheDocument()
       const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
@@ -68,11 +68,11 @@ describe('ajouter une feuille de route', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { name: 'Ajouter une feuille de route' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const fermer = jeFermeLeFormulaire()
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerId')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterFeuilleDeRouteId')
       expect(drawer).not.toBeVisible()
     })
 
@@ -84,7 +84,7 @@ describe('ajouter une feuille de route', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { name: 'Ajouter une feuille de route' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('membre2FooId')
       jeSelectionneUnPerimetre('Régional')

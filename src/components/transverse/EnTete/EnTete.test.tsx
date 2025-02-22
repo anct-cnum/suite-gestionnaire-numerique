@@ -28,7 +28,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(notifications).toHaveAttribute('href', '/notifications')
 
     const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
-    expect(monCompte).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(monCompte).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     expect(monCompte).toHaveAttribute('type', 'button')
   })
 
@@ -40,53 +40,53 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     jOuvreLeMenuUtilisateur()
 
     // THEN
-    const menuUtilisateur = screen.getByRole('dialog')
+    const drawer = screen.getByRole('dialog', { hidden: false })
 
-    const deconnexion = within(menuUtilisateur).getByRole('button', { name: 'Se déconnecter' })
+    const deconnexion = within(drawer).getByRole('button', { name: 'Se déconnecter' })
     expect(deconnexion).toHaveAttribute('name', 'deconnexion')
     expect(deconnexion).toHaveAttribute('type', 'button')
 
-    expect(within(menuUtilisateur).getByRole('presentation')).toHaveAttribute('alt', '')
+    expect(within(drawer).getByRole('presentation')).toHaveAttribute('alt', '')
 
-    const prenom = within(menuUtilisateur).getByText('Martin')
+    const prenom = within(drawer).getByText('Martin')
     expect(prenom).toBeInTheDocument()
 
-    const nom = within(menuUtilisateur).getByText('Tartempion')
+    const nom = within(drawer).getByText('Tartempion')
     expect(nom).toBeInTheDocument()
 
-    const email = within(menuUtilisateur).getByText('martin.tartempion@example.net')
+    const email = within(drawer).getByText('martin.tartempion@example.net')
     expect(email).toBeInTheDocument()
 
-    const liens = within(within(menuUtilisateur).getByRole('list', { name: 'liens-menu' })).getAllByRole('listitem')
+    const liens = within(within(drawer).getByRole('list', { name: 'liens-menu' })).getAllByRole('listitem')
     expect(liens).toHaveLength(3)
 
     const mesInformations = within(liens[0]).getByRole('link', { name: 'Mes informations' })
     expect(mesInformations).toHaveAttribute('href', '/mes-informations-personnelles')
-    expect(mesInformations).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(mesInformations).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
     const mesParametres = within(liens[1]).getByRole('link', { name: 'Mes paramètres' })
     expect(mesParametres).toHaveAttribute('href', '/mes-parametres')
-    expect(mesParametres).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(mesParametres).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
     const mesUtilisateurs = within(liens[2]).getByRole('link', { name: 'Mes utilisateurs' })
     expect(mesUtilisateurs).toHaveAttribute('href', '/mes-utilisateurs')
-    expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(mesUtilisateurs).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
 
-    const roles = within(menuUtilisateur).getByRole('combobox', { name: 'Rôle' })
+    const roles = within(drawer).getByRole('combobox', { name: 'Rôle' })
     const admin = within(roles).getByRole('option', { name: 'Administrateur dispositif' })
-    expect(admin).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(admin).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const gestionnaireDepartement = within(roles).getByRole('option', { name: 'Gestionnaire département' })
-    expect(gestionnaireDepartement).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(gestionnaireDepartement).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const gestionnaireGroupement = within(roles).getByRole('option', { name: 'Gestionnaire groupement' })
-    expect(gestionnaireGroupement).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(gestionnaireGroupement).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const gestionnaireRegion = within(roles).getByRole('option', { name: 'Gestionnaire région' })
-    expect(gestionnaireRegion).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(gestionnaireRegion).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const gestionnaireStructure = within(roles).getByRole('option', { name: 'Gestionnaire structure' })
-    expect(gestionnaireStructure).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(gestionnaireStructure).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const instructeur = within(roles).getByRole('option', { name: 'Instructeur' })
-    expect(instructeur).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(instructeur).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const pilotePolitiquePublique = within(roles).getByRole('option', { name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+    expect(pilotePolitiquePublique).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const supportAnimation = within(roles).getByRole('option', { name: 'Support animation', selected: true })
     expect(supportAnimation).toBeInTheDocument()
   })
@@ -126,11 +126,11 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // WHEN
       jOuvreLeMenuUtilisateur()
-      const drawer = screen.getByRole('dialog')
+      const drawer = screen.getByRole('dialog', { hidden: false })
       const fermer = jeFermeLeMenuUtilisateur()
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawer-menu-utilisateur')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
       expect(drawer).not.toBeVisible()
     })
   })

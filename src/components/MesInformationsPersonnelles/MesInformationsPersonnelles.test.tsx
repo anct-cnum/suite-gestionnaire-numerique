@@ -160,7 +160,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreLeFormulairePourSupprimerMonCompte()
 
       // THEN
-      const modal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+      const modal = screen.getByRole('dialog', { hidden: false, name: 'Supprimer mon compte' })
       expect(modal).toBeVisible()
 
       const titre = within(modal).getByRole('heading', { level: 1, name: 'Supprimer mon compte' })
@@ -191,11 +191,11 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreLeFormulairePourSupprimerMonCompte()
-      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+      const modal = screen.getByRole('dialog', { hidden: false, name: 'Supprimer mon compte' })
       jAnnuleLaSuppressionDeMonCompte()
 
       // THEN
-      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(modal).not.toBeVisible()
     })
 
     it('et que je clique sur fermer alors la modale se ferme', () => {
@@ -204,11 +204,11 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreLeFormulairePourSupprimerMonCompte()
-      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Supprimer mon compte' })
+      const modal = screen.getByRole('dialog', { hidden: false, name: 'Supprimer mon compte' })
       jeFermeLaSuppressionDeMonCompte()
 
       // THEN
-      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(modal).not.toBeVisible()
     })
 
     describe('je ne peux supprimer mon compte, le bouton étant désactivé si', () => {
@@ -323,16 +323,16 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreMesInformationsPersonnelles()
 
       // THEN
-      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
-      expect(modifierMesInfosPersosDrawer).toBeVisible()
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Mes informations personnelles' })
+      expect(drawer).toBeVisible()
 
-      const titre = within(modifierMesInfosPersosDrawer).getByRole('heading', { level: 1, name: 'Mes informations personnelles' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Mes informations personnelles' })
       expect(titre).toBeInTheDocument()
 
-      const champsObligatoires = within(modifierMesInfosPersosDrawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
+      const champsObligatoires = within(drawer).getByText(matchWithoutMarkup('Les champs avec * sont obligatoires.'), { selector: 'p' })
       expect(champsObligatoires).toBeInTheDocument()
 
-      const formulaire = within(modifierMesInfosPersosDrawer).getByRole('form', { name: 'Modifier' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Modifier' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
       const nom = within(formulaire).getByLabelText('Nom *')
       expect(nom).toBeRequired()
@@ -359,12 +359,12 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       const annuler = within(formulaire).getByRole('button', { name: 'Annuler' })
       expect(annuler).toHaveAttribute('type', 'reset')
-      expect(annuler).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+      expect(annuler).toHaveAttribute('aria-controls', 'drawerMesInformationsPersonnellesId')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
       expect(enregistrer).toHaveAttribute('type', 'submit')
-      expect(enregistrer).toHaveAttribute('aria-controls', 'drawer-modifier-mon-compte')
+      expect(enregistrer).toHaveAttribute('aria-controls', 'drawerMesInformationsPersonnellesId')
     })
 
     it('alors le téléphone n’est pas rempli s’il est non renseigné', () => {
@@ -385,11 +385,11 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
-      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Mes informations personnelles' })
       jAnnuleMesInformationsPersonnelles()
 
       // THEN
-      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
     })
 
     it('et que je clique sur fermer alors la modale se ferme', () => {
@@ -398,11 +398,11 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
-      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Mes informations personnelles' })
       jeFermeMesInformationsPersonnelles()
 
       // THEN
-      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
     })
 
     it('quand je modifie mes informations personnelles, alors le drawer se ferme, une notification s’affiche et mes informations personnelles sont mises à jour', async () => {
@@ -412,7 +412,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       // WHEN
       jOuvreMesInformationsPersonnelles()
-      const modifierMesInfosPersosDrawer = screen.getByRole('dialog', { name: 'Mes informations personnelles' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Mes informations personnelles' })
       jeTapeMonNom('Tartempion')
       jeTapeMonPrenom('Martin')
       jeTapeMonEMail('martin.tartempion@example.com')
@@ -431,7 +431,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Informations personnelles modifiées')
-      expect(modifierMesInfosPersosDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })

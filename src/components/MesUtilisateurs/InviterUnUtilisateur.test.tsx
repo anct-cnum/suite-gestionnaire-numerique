@@ -15,11 +15,11 @@ describe('inviter un utilisateur', () => {
     jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    const drawerInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(drawerInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const titre = await within(drawer).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
     expect(titre).toBeInTheDocument()
 
-    const champsObligatoires = within(drawerInvitation).getByText(
+    const champsObligatoires = within(drawer).getByText(
       matchWithoutMarkup('Les champs avec * sont obligatoires.'),
       { selector: 'p' }
     )
@@ -201,46 +201,46 @@ describe('inviter un utilisateur', () => {
     jOuvreLeFormulairePourInviterUnUtilisateur()
 
     // THEN
-    const formulaireInvitation = screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
-    const titre = await within(formulaireInvitation).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    const titre = await within(drawer).findByRole('heading', { level: 1, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
     expect(titre).toBeInTheDocument()
 
-    const champsObligatoires = within(formulaireInvitation).getByText(
+    const champsObligatoires = within(drawer).getByText(
       matchWithoutMarkup('Les champs avec * sont obligatoires.'),
       { selector: 'p' }
     )
     expect(champsObligatoires).toBeInTheDocument()
 
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
+    const nom = within(drawer).getByLabelText('Nom *')
     expect(nom).toBeRequired()
     expect(nom).toHaveAttribute('name', 'nom')
     expect(nom).toHaveAttribute('type', 'text')
 
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+    const prenom = within(drawer).getByLabelText('Prénom *')
     expect(prenom).toBeRequired()
     expect(prenom).toHaveAttribute('name', 'prenom')
     expect(prenom).toHaveAttribute('type', 'text')
 
-    const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
+    const email = within(drawer).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
     expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
     expect(email).toHaveAttribute('type', 'email')
     expect(email).toHaveAttribute('aria-describedby', 'text-input-error-desc-error')
 
-    const roleQuestion = within(formulaireInvitation).getByText(
+    const roleQuestion = within(drawer).getByText(
       matchWithoutMarkup('Rôle attribué à cet utilisateur :'),
       { selector: 'p' }
     )
     expect(roleQuestion).toBeInTheDocument()
 
-    const role = within(formulaireInvitation).getByText(
+    const role = within(drawer).getByText(
       matchWithoutMarkup('Gestionnaire département'),
       { selector: 'p' }
     )
     expect(role).toBeInTheDocument()
 
-    const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
+    const envoyerInvitation = within(drawer).getByRole('button', { name: 'Envoyer l’invitation' })
     expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     expect(envoyerInvitation).toBeEnabled()
   })
@@ -254,7 +254,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = jOuvreLeFormulaireDInvitation()
+    const drawer = jOuvreLeFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -277,7 +277,7 @@ describe('inviter un utilisateur', () => {
     })
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Invitation envoyée à martin.tartempion@example.com')
-    expect(drawerInvitation).not.toBeVisible()
+    expect(drawer).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -304,7 +304,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = jOuvreLeFormulaireDInvitation()
+    const drawer = jOuvreLeFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -321,7 +321,7 @@ describe('inviter un utilisateur', () => {
     expect(absenceMessageDErreur).not.toBeInTheDocument()
     const notification = await screen.findByRole('alert')
     expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
-    expect(drawerInvitation).not.toBeVisible()
+    expect(drawer).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
     expect(email).toHaveValue('')
@@ -329,7 +329,7 @@ describe('inviter un utilisateur', () => {
       expect(roleRadio).not.toBeChecked()
     })
     Object.values(roleGestionnaireLabelSelectionMapping).forEach((labelChampSelection) => {
-      const champSelection = within(drawerInvitation).queryByLabelText(`${labelChampSelection} *`)
+      const champSelection = within(drawer).queryByLabelText(`${labelChampSelection} *`)
       expect(champSelection).not.toBeInTheDocument()
     })
   })
@@ -360,7 +360,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = jOuvreLeFormulaireDInvitation()
+    const drawer = jOuvreLeFormulaireDInvitation()
     jeTapeSonNom('Tartempion')
     jeTapeSonPrenom('Martin')
     jeTapeSonAdresseElectronique('martin.tartempion@example.com')
@@ -368,9 +368,9 @@ describe('inviter un utilisateur', () => {
     jEnvoieLInvitation()
 
     // THEN
-    const erreurEmailDejaExistant = await within(drawerInvitation).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const erreurEmailDejaExistant = await within(drawer).findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(erreurEmailDejaExistant).toBeInTheDocument()
-    expect(drawerInvitation).toBeVisible()
+    expect(drawer).toBeVisible()
   })
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
@@ -381,8 +381,8 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawerInvitation = jOuvreLeFormulaireDInvitation()
-    const roleRadios = within(drawerInvitation).getAllByRole('radio')
+    const drawer = jOuvreLeFormulaireDInvitation()
+    const roleRadios = within(drawer).getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
     const email = jeTapeSonAdresseElectronique('martin.tartempion@example.com')
@@ -390,10 +390,10 @@ describe('inviter un utilisateur', () => {
     jEnvoieLInvitation()
 
     // THEN
-    const absenceDeMessageDErreur = within(drawerInvitation).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
+    const absenceDeMessageDErreur = within(drawer).queryByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceDeMessageDErreur).not.toBeInTheDocument()
     await waitFor(() => {
-      expect(drawerInvitation).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
     })
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
@@ -456,7 +456,7 @@ describe('inviter un utilisateur', () => {
   }
 
   function jOuvreLeFormulaireDInvitation(): HTMLElement {
-    return screen.getByRole('dialog', { name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
+    return screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
   }
 
   function afficherMesUtilisateurs(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
