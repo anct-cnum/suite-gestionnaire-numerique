@@ -12,7 +12,7 @@ export default function EnTete(): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isOpen, setIsOpen] = useState(false)
-  const drawerId = 'drawer-menu-utilisateur'
+  const drawerId = 'drawerMenuUtilisateurId'
   const labelId = useId()
 
   return (

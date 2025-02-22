@@ -12,8 +12,8 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [membreDetails, setMembreDetails] = useState<MembreDetailsViewModel>(coporteurs[0])
-  const drawerMembreId = 'drawerMembreId'
-  const labelMembreId = useId()
+  const drawerId = 'drawerMembreId'
+  const labelId = useId()
 
   return (
     <>
@@ -33,7 +33,7 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
               </td>
               <td>
                 <button
-                  aria-controls={drawerMembreId}
+                  aria-controls={drawerId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={() => {
@@ -67,15 +67,15 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        id={drawerMembreId}
+        id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelMembreId}
+        labelId={labelId}
       >
         <Membre
           details={membreDetails.details}
-          labelId={labelMembreId}
+          labelId={labelId}
           membreDetails={membreDetails}
         />
       </Drawer>

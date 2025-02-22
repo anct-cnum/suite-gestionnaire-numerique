@@ -17,8 +17,8 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerModifierMonCompteRef = useRef<HTMLDialogElement>(null)
-  const drawerId = 'drawer-modifier-mon-compte'
+  const drawerRef = useRef<HTMLDialogElement>(null)
+  const drawerId = 'drawerMesInformationsPersonnellesId'
   const labelId = useId()
 
   return (
@@ -212,7 +212,7 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelId}
-        ref={drawerModifierMonCompteRef}
+        ref={drawerRef}
       >
         <ModifierMonCompte
           closeDrawer={() => {

@@ -85,8 +85,8 @@ describe('gouvernance', () => {
     jOuvreLeFormulairePourAjouterUnComite()
 
     // THEN
-    const ajouterUnComiteDrawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
-    expect(ajouterUnComiteDrawer).toBeVisible()
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
+    expect(drawer).toBeVisible()
   })
 
   it('quand j’affiche une gouvernance sans comité et que je clique sur ajouter un comité puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -96,7 +96,7 @@ describe('gouvernance', () => {
 
     // WHEN
     jOuvreLeFormulairePourAjouterUnComite()
-    const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
     const fermer = jeFermeLeFormulairePourAjouterUnComite()
 
     // THEN
@@ -542,7 +542,7 @@ describe('gouvernance', () => {
 
     // WHEN
     jouvreLeFormulairePourAjouterUneNoteDeContexte()
-    const drawer = screen.getByRole('dialog', { name: 'Note de contexte' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note de contexte' })
     const fermer = jeFermeLeFormulairePourAjouterUneNoteDeContexte()
 
     // THEN

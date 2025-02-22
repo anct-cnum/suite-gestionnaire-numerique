@@ -138,7 +138,7 @@ describe('note de contexte', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUneNoteDeContexte()
-      const drawer = screen.getByRole('dialog', { name: 'Ajouter un comité' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
       const fermer = jeFermeLeFormulairePourModifierUneNoteDeContexte()
 
       // THEN
@@ -254,11 +254,11 @@ function jEnregistreLaNoteDeContexte(): HTMLElement {
 }
 
 function ajouterUneNoteDeContextDrawer(): HTMLElement {
-  return screen.getByRole('dialog', { name: 'Note de contexte' })
+  return screen.getByRole('dialog', { hidden: false, name: 'Note de contexte' })
 }
 
 function modifierUneNoteDeContexteDrawer(): HTMLElement {
-  return screen.getByRole('dialog', { name: 'Note de contexte' })
+  return screen.getByRole('dialog', { hidden: false, name: 'Note de contexte' })
 }
 
 function jeFermeLeFormulairePourModifierUneNoteDeContexte(): HTMLElement {

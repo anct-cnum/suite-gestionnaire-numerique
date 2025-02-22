@@ -204,32 +204,32 @@ describe('mes utilisateurs', () => {
     jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
 
     // THEN
-    const drawerDetailsUtilisateur = screen.getByRole('dialog', { name: 'Martin Tartempion' })
-    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Martin Tartempion' })
+    const prenomEtNom = within(drawer).getByRole('heading', { level: 1, name: 'Martin Tartempion' })
     expect(prenomEtNom).toBeInTheDocument()
-    const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
+    const roleAttribueLabel = within(drawer).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
-    const roleAttribue = within(drawerDetailsUtilisateur).getByText('Administrateur dispositif')
+    const roleAttribue = within(drawer).getByText('Administrateur dispositif')
     expect(roleAttribue).toBeInTheDocument()
 
-    const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse électronique')
+    const emailLabel = within(drawer).getByText('Adresse électronique')
     expect(emailLabel).toBeInTheDocument()
-    const email = within(drawerDetailsUtilisateur).getByText('martin.tartempion@example.net')
+    const email = within(drawer).getByText('martin.tartempion@example.net')
     expect(email).toBeInTheDocument()
 
-    const telephoneLabel = within(drawerDetailsUtilisateur).getByText('Téléphone professionnel')
+    const telephoneLabel = within(drawer).getByText('Téléphone professionnel')
     expect(telephoneLabel).toBeInTheDocument()
-    const telephone = within(drawerDetailsUtilisateur).getByText('0102030405')
+    const telephone = within(drawer).getByText('0102030405')
     expect(telephone).toBeInTheDocument()
 
-    const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
+    const derniereConnexionLabel = within(drawer).getByText('Dernière connexion')
     expect(derniereConnexionLabel).toBeInTheDocument()
-    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('02/01/1970')
+    const derniereConnexion = within(drawer).getByText('02/01/1970')
     expect(derniereConnexion).toBeInTheDocument()
 
-    const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
+    const structureLabel = within(drawer).getByText('Structure ou collectivité')
     expect(structureLabel).toBeInTheDocument()
-    const structure = within(drawerDetailsUtilisateur).getByText('Préfecture du Rhône')
+    const structure = within(drawer).getByText('Préfecture du Rhône')
     expect(structure).toBeInTheDocument()
   })
 
@@ -239,7 +239,7 @@ describe('mes utilisateurs', () => {
 
     // WHEN
     jOuvreLesDetailsDunUtilisateur('Martin Tartempion')
-    const drawer = screen.getByRole('dialog', { name: 'Martin Tartempion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Martin Tartempion' })
     const fermer = jeFermeLesDetailsDunUtilisateur()
 
     // THEN
@@ -256,13 +256,13 @@ describe('mes utilisateurs', () => {
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
 
       // THEN
-      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée le 30/12/1969' })
-      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée le 30/12/1969' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée le 30/12/1969' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée le 30/12/1969' })
       expect(titre).toBeInTheDocument()
 
-      const emailLabel = within(drawerRenvoyerInvitation).getByText('Adresse électronique')
+      const emailLabel = within(drawer).getByText('Adresse électronique')
       expect(emailLabel).toBeInTheDocument()
-      const email = within(drawerRenvoyerInvitation).getByText('julien.deschamps@example.com')
+      const email = within(drawer).getByText('julien.deschamps@example.com')
       expect(email).toBeInTheDocument()
 
       const renvoyerCetteInvitation = screen.getByRole('button', { name: 'Renvoyer cette invitation' })
@@ -277,7 +277,7 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaReinvitation('Stephane Raymond')
-      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée hier' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée hier' })
       const fermer = jeFermeLaReinvitation()
 
       // THEN
@@ -292,7 +292,7 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLesDetailsDunUtilisateur('Julien Deschamps')
-      const drawer = screen.getByRole('dialog', { name: 'Invitation envoyée le 30/12/1969' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée le 30/12/1969' })
       const envoyer = jeRenvoieLInvitation()
 
       // THEN
@@ -328,8 +328,8 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Sebastien Palat')
 
       // THEN
-      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée aujourd’hui' })
-      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée aujourd’hui' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée aujourd’hui' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée aujourd’hui' })
       expect(titre).toBeInTheDocument()
     })
 
@@ -341,8 +341,8 @@ describe('mes utilisateurs', () => {
       jOuvreLaReinvitation('Stephane Raymond')
 
       // THEN
-      const drawerRenvoyerInvitation = screen.getByRole('dialog', { name: 'Invitation envoyée hier' })
-      const titre = within(drawerRenvoyerInvitation).getByRole('heading', { level: 1, name: 'Invitation envoyée hier' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Invitation envoyée hier' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Invitation envoyée hier' })
       expect(titre).toBeInTheDocument()
     })
   })
@@ -355,32 +355,32 @@ describe('mes utilisateurs', () => {
     jOuvreLesDetailsDunUtilisateur('Paul Provost')
 
     // THEN
-    const drawerDetailsUtilisateur = screen.getByRole('dialog', { name: 'Paul Provost' })
-    const prenomEtNom = within(drawerDetailsUtilisateur).getByRole('heading', { level: 1, name: 'Paul Provost' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Paul Provost' })
+    const prenomEtNom = within(drawer).getByRole('heading', { level: 1, name: 'Paul Provost' })
     expect(prenomEtNom).toBeInTheDocument()
-    const roleAttribueLabel = within(drawerDetailsUtilisateur).getByText('Rôle attribué')
+    const roleAttribueLabel = within(drawer).getByText('Rôle attribué')
     expect(roleAttribueLabel).toBeInTheDocument()
-    const roleAttribue = within(drawerDetailsUtilisateur).getByText('Administrateur dispositif')
+    const roleAttribue = within(drawer).getByText('Administrateur dispositif')
     expect(roleAttribue).toBeInTheDocument()
 
-    const emailLabel = within(drawerDetailsUtilisateur).getByText('Adresse électronique')
+    const emailLabel = within(drawer).getByText('Adresse électronique')
     expect(emailLabel).toBeInTheDocument()
-    const email = within(drawerDetailsUtilisateur).getByText('paul.provost@example.net')
+    const email = within(drawer).getByText('paul.provost@example.net')
     expect(email).toBeInTheDocument()
 
-    const telephoneLabel = within(drawerDetailsUtilisateur).getByText('Téléphone professionnel')
+    const telephoneLabel = within(drawer).getByText('Téléphone professionnel')
     expect(telephoneLabel).toBeInTheDocument()
-    const telephone = within(drawerDetailsUtilisateur).getByText('Non renseigné')
+    const telephone = within(drawer).getByText('Non renseigné')
     expect(telephone).toBeInTheDocument()
 
-    const derniereConnexionLabel = within(drawerDetailsUtilisateur).getByText('Dernière connexion')
+    const derniereConnexionLabel = within(drawer).getByText('Dernière connexion')
     expect(derniereConnexionLabel).toBeInTheDocument()
-    const derniereConnexion = within(drawerDetailsUtilisateur).getByText('31/12/1969')
+    const derniereConnexion = within(drawer).getByText('31/12/1969')
     expect(derniereConnexion).toBeInTheDocument()
 
-    const structureLabel = within(drawerDetailsUtilisateur).getByText('Structure ou collectivité')
+    const structureLabel = within(drawer).getByText('Structure ou collectivité')
     expect(structureLabel).toBeInTheDocument()
-    const structureOuCollectivite = within(drawerDetailsUtilisateur).getByText('Préfecture du Rhône')
+    const structureOuCollectivite = within(drawer).getByText('Préfecture du Rhône')
     expect(structureOuCollectivite).toBeInTheDocument()
   })
 
@@ -393,18 +393,18 @@ describe('mes utilisateurs', () => {
       jOuvreLaSuppressionDUnUtilisateur()
 
       // THEN
-      const supprimerUnUtilisateurModal = screen.getByRole('dialog')
-      expect(supprimerUnUtilisateurModal).toBeVisible()
+      const modal = screen.getByRole('dialog', { hidden: false })
+      expect(modal).toBeVisible()
 
-      const titre = within(supprimerUnUtilisateurModal)
+      const titre = within(modal)
         .getByRole('heading', { level: 1, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       expect(titre).toBeInTheDocument()
 
-      const annuler = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Annuler' })
+      const annuler = within(modal).getByRole('button', { name: 'Annuler' })
       expect(annuler).toHaveAttribute('type', 'button')
       expect(annuler).toHaveAttribute('aria-controls', 'supprimer-un-utilisateur')
 
-      const confirmer = within(supprimerUnUtilisateurModal).getByRole('button', { name: 'Confirmer' })
+      const confirmer = within(modal).getByRole('button', { name: 'Confirmer' })
       expect(confirmer).toHaveAttribute('type', 'button')
     })
 
@@ -418,7 +418,7 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
-      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      const modal = screen.getByRole('dialog', { hidden: false, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       const supprimer = jeSupprimeUnUtilisateur()
 
       // THEN
@@ -427,7 +427,7 @@ describe('mes utilisateurs', () => {
       expect(supprimerUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurASupprimer: '123456' })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Utilisateur supprimé')
-      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(modal).not.toBeVisible()
       expect(supprimer).toHaveAccessibleName('Confirmer')
       expect(supprimer).toBeEnabled()
     })
@@ -455,11 +455,11 @@ describe('mes utilisateurs', () => {
 
       // WHEN
       jOuvreLaSuppressionDUnUtilisateur()
-      const supprimerMonCompteModal = screen.getByRole('dialog', { name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
+      const modal = screen.getByRole('dialog', { hidden: false, name: 'Retirer Julien Deschamps de mon équipe d’utilisateurs ?' })
       jeFermeLaSuppressionDUnUtilisateur()
 
       // THEN
-      expect(supprimerMonCompteModal).not.toBeVisible()
+      expect(modal).not.toBeVisible()
     })
   })
 
