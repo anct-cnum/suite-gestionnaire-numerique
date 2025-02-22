@@ -13,8 +13,8 @@ export default function ResumeAction({ actions }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [action, setAction] = useState<FeuilleDeRouteViewModel['actions'][number]>(actions[0])
-  const drawerActionId = 'drawerActionId'
-  const labelModifierComiteId = useId()
+  const drawerId = 'drawerActionId'
+  const labelId = useId()
 
   return (
     <>
@@ -29,7 +29,7 @@ export default function ResumeAction({ actions }: Props): ReactElement {
                 />
                 <div>
                   <button
-                    aria-controls={drawerActionId}
+                    aria-controls={drawerId}
                     className="fr-text--bold color-blue-france fr-mb-1w"
                     data-fr-opened="false"
                     onClick={() => {
@@ -61,15 +61,15 @@ export default function ResumeAction({ actions }: Props): ReactElement {
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        id={drawerActionId}
+        id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelModifierComiteId}
+        labelId={labelId}
       >
         <DetailAction
           action={action}
-          labelId={labelModifierComiteId}
+          labelId={labelId}
         />
       </Drawer>
     </>

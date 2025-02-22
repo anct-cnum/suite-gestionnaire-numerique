@@ -31,7 +31,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
       const absenceDeDonnee = within(drawer).queryByText('-')
       expect(absenceDeDonnee).not.toBeInTheDocument()
       const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Préfecture du Rhône' })
@@ -101,7 +101,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
       const absenceDeDonnee = within(drawer).getAllByText('-')
       expect(absenceDeDonnee).toHaveLength(1)
     })
@@ -139,7 +139,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
       const sectionFeuilleDeRoute = within(drawer).queryByText('Feuille de route')
       expect(sectionFeuilleDeRoute).not.toBeInTheDocument()
     })
@@ -196,7 +196,7 @@ describe('membres', () => {
         jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
         // THEN
-        const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
         const feuilleDeRouteSingulierOuPluriel = within(drawer).getByText(result)
         expect(feuilleDeRouteSingulierOuPluriel).toBeInTheDocument()
       }
@@ -215,7 +215,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
       const intitule = within(drawer).queryByText(intituleAttendu)
       expect(intitule).toBeInTheDocument()
     })
@@ -232,7 +232,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
       const intitule = within(drawer).queryByText(intituleAttendu)
       expect(intitule).not.toBeInTheDocument()
     })
@@ -268,7 +268,7 @@ describe('membres', () => {
         jOuvreLesDetailsDuMembre('Préfecture du Rhône')
 
         // THEN
-        const drawer = screen.getByRole('dialog', { name: 'Préfecture du Rhône' })
+        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Préfecture du Rhône' })
         const plusDeDetails = within(drawer).queryByText(matchWithoutMarkup('Plus de détails'))
         expect(plusDeDetails).not.toBeInTheDocument()
       })
@@ -298,7 +298,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const absenceDeDonnee = within(drawer).queryByText('-')
       expect(absenceDeDonnee).not.toBeInTheDocument()
       const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Département du Rhône' })
@@ -365,7 +365,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const absenceDeDonnee = within(drawer).getAllByText('-')
       expect(absenceDeDonnee).toHaveLength(1)
     })
@@ -402,7 +402,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const sectionFeuilleDeRoute = within(drawer).queryByText('Feuille de route')
       expect(sectionFeuilleDeRoute).not.toBeInTheDocument()
     })
@@ -460,7 +460,7 @@ describe('membres', () => {
         jOuvreLesDetailsDuMembre('Département du Rhône')
 
         // THEN
-        const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
         const feuilleDeRouteSingulierOuPluriel = within(drawer).getByText(result)
         expect(feuilleDeRouteSingulierOuPluriel).toBeInTheDocument()
       }
@@ -480,7 +480,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const intitule = within(drawer).queryByText(intituleAttendu)
       expect(intitule).toBeInTheDocument()
     })
@@ -496,7 +496,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const intitule = within(drawer).queryByText(intituleAttendu)
       expect(intitule).not.toBeInTheDocument()
     })
@@ -509,7 +509,7 @@ describe('membres', () => {
       jOuvreLesDetailsDuMembre('Département du Rhône')
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
       const plusDeDetails = within(drawer).getByRole('link', { name: matchWithoutMarkup('Plus de détails') })
       expect(plusDeDetails).toHaveAttribute('href', '/')
       expect(plusDeDetails).toBeInTheDocument()
@@ -550,7 +550,7 @@ describe('membres', () => {
         jOuvreLesDetailsDuMembre('Département du Rhône')
 
         // THEN
-        const drawer = screen.getByRole('dialog', { name: 'Département du Rhône' })
+        const drawer = screen.getByRole('dialog', { hidden: false, name: 'Département du Rhône' })
         const contactTechniqueIntitule = within(drawer).queryByText('Contact technique')
         expect(contactTechniqueIntitule).not.toBeInTheDocument()
       })

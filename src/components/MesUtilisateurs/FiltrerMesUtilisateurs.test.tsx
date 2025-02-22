@@ -15,21 +15,21 @@ describe('filtrer mes utilisateurs', () => {
     jOuvreLeFormulairePourFiltrer()
 
     // THEN
-    const drawerFiltrer = screen.getByRole('dialog', { name: 'Filtrer' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Filtrer' })
 
-    const titre = within(drawerFiltrer).getByRole('heading', { level: 1, name: 'Filtrer' })
+    const titre = within(drawer).getByRole('heading', { level: 1, name: 'Filtrer' })
     expect(titre).toBeInTheDocument()
 
-    const formulaire = within(drawerFiltrer).getByRole('form', { name: 'Filtrer' })
+    const formulaire = within(drawer).getByRole('form', { name: 'Filtrer' })
     expect(formulaire).toHaveAttribute('method', 'dialog')
 
-    const utilisateursActives = within(drawerFiltrer).getByRole('checkbox', { checked: false, name: 'Uniquement les utilisateurs activés' })
+    const utilisateursActives = within(drawer).getByRole('checkbox', { checked: false, name: 'Uniquement les utilisateurs activés' })
     expect(utilisateursActives).toHaveAttribute('name', 'utilisateursActives')
 
-    const zonesGeographiques = within(drawerFiltrer).getByRole('combobox', { name: 'Par zone géographique' })
+    const zonesGeographiques = within(drawer).getByRole('combobox', { name: 'Par zone géographique' })
     expect(zonesGeographiques).toBeInTheDocument()
 
-    const structure = within(drawerFiltrer).getByRole('combobox', { name: 'Par structure' })
+    const structure = within(drawer).getByRole('combobox', { name: 'Par structure' })
     expect(structure).toBeInTheDocument()
 
     const administrateurDispositif = within(formulaire).getByRole('checkbox', { checked: true, name: 'Administrateur dispositif' })
@@ -64,7 +64,7 @@ describe('filtrer mes utilisateurs', () => {
 
     // WHEN
     jOuvreLeFormulairePourFiltrer()
-    const drawer = screen.getByRole('dialog', { name: 'Filtrer' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Filtrer' })
     const fermer = jeFermeLeFormulairePourFiltrer()
 
     // THEN
@@ -141,7 +141,7 @@ describe('filtrer mes utilisateurs', () => {
 
       // WHEN
       jOuvreLeFormulairePourFiltrer()
-      const drawer = screen.getByRole('dialog', { name: 'Filtrer' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Filtrer' })
       jeSelectionneUniquementLesUtilisateursActives()
       jeFiltreLesUtilisateurs()
 

@@ -13,8 +13,8 @@ export default function FeuilleDeRouteRemplie({
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [feuilleDeRoute, setFeuilleDeRoute] = useState<FeuilleDeRouteViewModel>(feuillesDeRoute[0])
-  const drawerFeuilleDeRouteId = 'drawerFeuilleDeRouteId'
-  const labelFeuilleDeRouteId = useId()
+  const drawerId = 'drawerFeuilleDeRouteId'
+  const labelId = useId()
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function FeuilleDeRouteRemplie({
               </td>
               <td className="font-weight-700">
                 <button
-                  aria-controls={drawerFeuilleDeRouteId}
+                  aria-controls={drawerId}
                   className="primary font-weight-700 fr-px-0 no-hover d-block"
                   data-fr-opened="false"
                   onClick={() => {
@@ -61,15 +61,15 @@ export default function FeuilleDeRouteRemplie({
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
-        id={drawerFeuilleDeRouteId}
+        id={drawerId}
         // Stryker disable next-line BooleanLiteral
         isFixedWidth={false}
         isOpen={isDrawerOpen}
-        labelId={labelFeuilleDeRouteId}
+        labelId={labelId}
       >
         <DetailsFeuilleDeRoute
           feuilleDeRoute={feuilleDeRoute}
-          labelId={labelFeuilleDeRouteId}
+          labelId={labelId}
         />
       </Drawer>
     </>

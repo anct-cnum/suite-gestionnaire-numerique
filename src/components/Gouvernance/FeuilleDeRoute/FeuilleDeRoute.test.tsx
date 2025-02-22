@@ -29,7 +29,7 @@ describe('feuille de route', () => {
     jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
     const titreDrawer = within(drawer).getByRole('heading', { level: 1, name: 'Feuille de route inclusion' })
     expect(titreDrawer).toBeInTheDocument()
     const responsableLabel = within(drawer).getByText('Responsable de la feuille de route')
@@ -98,7 +98,7 @@ describe('feuille de route', () => {
     jOuvreLesDetailsDUneFeuilleDeRoute()
 
     // THEN
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
     const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
     const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation')
@@ -113,7 +113,7 @@ describe('feuille de route', () => {
 
     // WHEN
     jOuvreLesDetailsDUneFeuilleDeRoute()
-    const drawer = screen.getByRole('dialog', { name: 'Feuille de route inclusion' })
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
     const fermer = jeFermeLesDetailsDUneFeuilleDeRoute()
 
     // THEN

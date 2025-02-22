@@ -41,9 +41,9 @@ describe('note privée', () => {
       jouvreLeFormulairePourAjouterUneNotePrivee()
 
       // THEN
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
-      expect(ajouterUneNotePriveeDrawer).toHaveAttribute('id', 'drawerAjouterNotePriveeId')
-      const formulaire = within(ajouterUneNotePriveeDrawer).getByRole('form', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
+      expect(drawer).toHaveAttribute('id', 'drawerAjouterNotePriveeId')
+      const formulaire = within(drawer).getByRole('form', { name: 'Note privée' })
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Note privée' })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', { selector: 'p' })
@@ -61,7 +61,7 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourAjouterUneNotePrivee()
-      const drawer = screen.getByRole('dialog', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
       const fermer = jeFermeLeFormulairePourAjouterUneNotePrivee()
 
       // THEN
@@ -76,7 +76,7 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourAjouterUneNotePrivee()
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
       jeTapeUneNotePrivee('un exemple de contenu de note privée')
       const enregistrer = jEnregistreLaNotePrivee()
 
@@ -90,7 +90,7 @@ describe('note privée', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note privée ajoutée')
-      expect(ajouterUneNotePriveeDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
@@ -127,9 +127,9 @@ describe('note privée', () => {
       jouvreLeFormulairePourModifierUneNotePrivee()
 
       // THEN
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
-      expect(ajouterUneNotePriveeDrawer).toHaveAttribute('id', 'drawerAjouterNotePriveeId')
-      const formulaire = within(ajouterUneNotePriveeDrawer).getByRole('form', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
+      expect(drawer).toHaveAttribute('id', 'drawerAjouterNotePriveeId')
+      const formulaire = within(drawer).getByRole('form', { name: 'Note privée' })
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Note privée' })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText('Uniquement accessibles par vous et votre équipe interne.', { selector: 'p' })
@@ -153,7 +153,7 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
-      const drawer = screen.getByRole('dialog', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
       const fermer = jeFermeLeFormulairePourModifierUneNotePrivee()
 
       // THEN
@@ -168,7 +168,7 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
       jeTapeUneNotePrivee('modification de la note privée')
       const enregistrer = jEnregistreLaNotePrivee()
 
@@ -182,7 +182,7 @@ describe('note privée', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note privée modifiée')
-      expect(ajouterUneNotePriveeDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
@@ -208,8 +208,8 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
-      jEffaceLaNotePrivee(ajouterUneNotePriveeDrawer)
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
+      jEffaceLaNotePrivee(drawer)
       const enregistrer = jEnregistreLaNotePrivee()
 
       // THEN
@@ -221,7 +221,7 @@ describe('note privée', () => {
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note privée supprimée')
-      expect(ajouterUneNotePriveeDrawer).not.toBeVisible()
+      expect(drawer).not.toBeVisible()
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
@@ -233,8 +233,8 @@ describe('note privée', () => {
 
       // WHEN
       jouvreLeFormulairePourModifierUneNotePrivee()
-      const ajouterUneNotePriveeDrawer = screen.getByRole('dialog', { name: 'Note privée' })
-      jEffaceLaNotePrivee(ajouterUneNotePriveeDrawer)
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Note privée' })
+      jEffaceLaNotePrivee(drawer)
       jEnregistreLaNotePrivee()
 
       // THEN

@@ -10,7 +10,7 @@ import { MesMembresViewModel } from '@/presenters/mesMembresPresenter'
 export default function MesMembres({ mesMembresViewModel }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerId = 'drawerAjouterUnMembre'
+  const drawerId = 'drawerAjouterMembreId'
   const labelId = useId()
 
   return (
