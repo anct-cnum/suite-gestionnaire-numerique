@@ -1,4 +1,3 @@
-// Stryker disable all
 'use client'
 
 import { Link } from '@tiptap/extension-link'
@@ -8,12 +7,6 @@ import { ReactElement } from 'react'
 
 import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
-type Props = Readonly<{
-  contenu: string
-  onChange(content: string): void
-}>
-
-// istanbul ignore next @preserve
 export default function TextEditor({ contenu, onChange }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
@@ -35,10 +28,8 @@ export default function TextEditor({ contenu, onChange }: Props): ReactElement {
     ],
     immediatelyRender: false,
     onCreate: ({ editor }) => {
-      // eslint-disable-next-line no-restricted-syntax
       window.dispatchEvent(new CustomEvent('editorReady', { detail: editor }))
     },
-
     onUpdate: ({ editor }) => {
       const content = editor.getHTML()
       const isEmptyContent = content === '<p></p>'
@@ -53,3 +44,8 @@ export default function TextEditor({ contenu, onChange }: Props): ReactElement {
     </>
   )
 }
+
+type Props = Readonly<{
+  contenu: string
+  onChange(content: string): void
+}>
