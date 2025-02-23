@@ -1,18 +1,12 @@
 // Stryker disable all
-'use client'
-
 import { Editor } from '@tiptap/react'
 import { ReactElement } from 'react'
 
 import { MenuButton } from './MenuButton'
 import styles from './RichTextEditor.module.css'
 
-type BarreDeMenuProps = Readonly<{
-  editor: Editor | null
-}>
-
 // istanbul ignore next @preserve
-export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactElement | null {
+export function BarreDeMenuEditeurDeTexte({ editor }: Props): ReactElement | null {
   if (!editor) {
     return null
   }
@@ -26,7 +20,7 @@ export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactEl
       return
     }
 
-    // eslint-disable-next-line no-alert, no-restricted-syntax
+    // eslint-disable-next-line no-alert
     const url = window.prompt('URL du lien :')
 
     if (url === null || url === '') {
@@ -106,3 +100,7 @@ export function BarreDeMenuEditeurDeTexte({ editor }: BarreDeMenuProps): ReactEl
     </div>
   )
 }
+
+type Props = Readonly<{
+  editor: Editor | null
+}>

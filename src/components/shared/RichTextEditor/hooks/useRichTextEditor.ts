@@ -4,10 +4,6 @@ import { useState, useEffect } from 'react'
 
 import type { Editor } from '@tiptap/react'
 
-type EditorReadyEvent = {
-  detail: Editor
-} & CustomEvent
-// istanbul ignore next @preserve
 export function useRichTextEditor(contenuInitial = ''): {
   contenu: string
   editeur: Editor | null
@@ -22,23 +18,20 @@ export function useRichTextEditor(contenuInitial = ''): {
   }
 
   function gererEditeurPret(evenement: Event): void {
-    const evenementPersonnalise = evenement as EditorReadyEvent
-    setEditeur(evenementPersonnalise.detail as Editor)
+    setEditeur((evenement as EditorReadyEvent).detail as Editor)
   }
 
   function viderLeContenu(): void {
     setContenu('')
     if (editeur) {
-      editeur.commands.setContent('')
+      editeur.commands.clearContent(true)
     }
   }
 
   useEffect((): () => void => {
-    // eslint-disable-next-line no-restricted-syntax
     window.addEventListener('editorReady', gererEditeurPret)
 
     return (): void => {
-      // eslint-disable-next-line no-restricted-syntax
       window.removeEventListener('editorReady', gererEditeurPret)
     }
   }, [])
@@ -50,3 +43,7 @@ export function useRichTextEditor(contenuInitial = ''): {
     viderLeContenu,
   }
 }
+
+type EditorReadyEvent = {
+  detail: Editor
+} & CustomEvent
