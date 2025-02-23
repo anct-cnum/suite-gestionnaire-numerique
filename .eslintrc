@@ -259,6 +259,10 @@
           {
             "message": "Utiliser waitFor() ou findByXXX()",
             "selector": "Identifier[name='act']"
+          },
+          {
+            "message": "Tu es trop couplé à cette lib, mieux vaut l'injecter",
+            "selector": "CallExpression[callee.object.name='vi'][callee.property.name='mock']"
           }
         ],
         "no-undef": "off",

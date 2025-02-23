@@ -3,19 +3,13 @@ import { MouseEventHandler, ReactElement } from 'react'
 
 import styles from './RichTextEditor.module.css'
 
-type MenuButtonProps = Readonly<{
-  title: string
-  icon: string
-  onClick: MouseEventHandler<HTMLButtonElement>
-  isActive: boolean
-}>
-// istanbul ignore next @preserve
 export function MenuButton({
   title,
   icon,
   onClick,
   isActive,
-}: MenuButtonProps): ReactElement {
+}: Props): ReactElement {
+  // istanbul ignore next @preserve
   function handleClick(event: React.MouseEvent<HTMLButtonElement>): void {
     event.preventDefault()
     event.stopPropagation()
@@ -34,3 +28,10 @@ export function MenuButton({
     />
   )
 }
+
+type Props = Readonly<{
+  title: string
+  icon: string
+  onClick: MouseEventHandler<HTMLButtonElement>
+  isActive: boolean
+}>

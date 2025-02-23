@@ -1,4 +1,4 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { presserLeBouton, presserLeBoutonDans, renderComponent } from '@/components/testHelper'
@@ -6,24 +6,7 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
-const mockRichTextEditor = {
-  contenu: '',
-  gererLeChangementDeContenu: vi.fn().mockImplementation((content: string): void => {
-    mockRichTextEditor.contenu = content
-  }),
-  viderLeContenu: vi.fn(),
-}
-
-vi.mock('@/components/shared/RichTextEditor/hooks/useRichTextEditor', () => ({
-  useRichTextEditor: (): typeof mockRichTextEditor => mockRichTextEditor,
-}))
-
 describe('note de contexte', () => {
-  beforeEach(() => {
-    vi.resetAllMocks()
-    vi.resetModules()
-    mockRichTextEditor.contenu = ''
-  })
   describe('quand je clique sur ajouter une note de contexte', () => {
     it('quand j‘affiche une gouvernance sans note de contexte, lorsque je clique sur le bouton pour ajouter une note de contexte, alors le drawer pour ajouter une note de contexte s‘ouvre', () => {
       // GIVEN
@@ -33,12 +16,13 @@ describe('note de contexte', () => {
       jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
       // THEN
-      expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('id', 'drawerAjouterNoteDeContexteId')
-      expect(ajouterUneNoteDeContextDrawer()).toHaveAttribute('open')
-      const formulaire = within(ajouterUneNoteDeContextDrawer()).getByRole('form', { name: 'Note de contexte' })
+      const drawer = ajouterUneNoteDeContextDrawer()
+      expect(drawer).toHaveAttribute('id', 'drawerAjouterNoteDeContexteId')
+      expect(drawer).toHaveAttribute('open')
+      const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Note de contexte' })
       expect(titre).toBeInTheDocument()
-      const texteDInstructions = within(ajouterUneNoteDeContextDrawer()).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
+      const texteDInstructions = within(drawer).getByText('Précisez, au sein d‘une note qualitative, les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez, ou tout autre élément que vous souhaitez porter à notre connaissance')
       expect(texteDInstructions).toBeInTheDocument()
       const boutonsEdition = [
         'Titre 1',
@@ -51,7 +35,7 @@ describe('note de contexte', () => {
         'Ajouter un lien',
       ]
       boutonsEdition.forEach((title) => {
-        expect(within(ajouterUneNoteDeContextDrawer()).getByRole('button', { name: title })).toBeInTheDocument()
+        expect(within(drawer).getByRole('button', { name: title })).toBeInTheDocument()
       })
       const editeurDeTextEnrichi = within(formulaire).getByRole('textarea', { name: 'Éditeur de note de contexte' })
       expect(editeurDeTextEnrichi).toBeInTheDocument()
@@ -61,18 +45,19 @@ describe('note de contexte', () => {
       expect(boutonSupprimer).not.toBeInTheDocument()
     })
 
-    it('puis que je tape du texte dans l‘éditeur de texte enrichi, alors le bouton enregistrer et le bouton supprimer deviennent actifs', () => {
+    it('puis que je tape du texte dans l‘éditeur de texte enrichi, alors le bouton enregistrer et le bouton supprimer deviennent actifs', async () => {
       // GIVEN
       afficherUneGouvernance()
-      mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
 
       // WHEN
       jOuvreLeFormulairePourAjouterUneNoteDeContexte()
+      const drawer = ajouterUneNoteDeContextDrawer()
+      jeTapeUneNoteDeContexte()
 
       // THEN
-      const boutonEnregistrer = within(ajouterUneNoteDeContextDrawer()).getByRole('button', { name: 'Enregistrer' })
+      const boutonEnregistrer = await within(drawer).findByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toBeEnabled()
-      const boutonSupprimer = within(ajouterUneNoteDeContextDrawer()).getByRole('button', { name: 'Supprimer' })
+      const boutonSupprimer = within(drawer).getByRole('button', { name: 'Supprimer' })
       expect(boutonSupprimer).toBeEnabled()
     })
 
@@ -111,6 +96,7 @@ describe('note de contexte', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
   })
+
   describe('quand je clique sur modifier', () => {
     it('le drawer s‘ouvre avec le contenu de la note de contexte', () => {
       // GIVEN
@@ -138,7 +124,7 @@ describe('note de contexte', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUneNoteDeContexte()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un comité' })
+      const drawer = ajouterUneNoteDeContextDrawer()
       const fermer = jeFermeLeFormulairePourModifierUneNoteDeContexte()
 
       // THEN
@@ -150,28 +136,31 @@ describe('note de contexte', () => {
       // GIVEN
       const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
       afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
-      mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
 
       // WHEN
       jOuvreLeFormulairePourModifierUneNoteDeContexte()
       const drawer = modifierUneNoteDeContexteDrawer()
-      const formulaire = within(drawer).getByRole('form', { name: 'Note de contexte' })
-      const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
-      fireEvent.submit(formulaire)
+      jeTapeUneNoteDeContexte()
+      const enregistrer = jEnregistreLaNoteDeContexte()
 
       // THEN
-      expect(boutonEnregistrer).toHaveAccessibleName('Modification en cours...')
-      expect(boutonEnregistrer).toBeDisabled()
+      expect(enregistrer).toHaveAccessibleName('Modification en cours...')
+      expect(enregistrer).toBeDisabled()
+      expect(modifierUneNoteDeContexteAction).toHaveBeenCalledWith({
+        contenu: '<p><strong>titre note de contexte</strong></p><p>un paragraphe avec du bold <b>bold</b></p>',
+        path: '/gouvernance/11',
+        uidGouvernance: 'gouvernanceFooId',
+      })
       const notification = await screen.findByRole('alert')
-      expect(drawer).not.toBeVisible()
       expect(notification.textContent).toBe('Note de contexte bien modifiée')
-      expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
+      expect(drawer).not.toBeVisible()
+      expect(enregistrer).toHaveAccessibleName('Enregistrer')
+      expect(enregistrer).toBeEnabled()
     })
 
     it('puis que je la modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
       const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
-      mockRichTextEditor.contenu = '<p>Ma note de contexte</p>'
       afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -183,6 +172,7 @@ describe('note de contexte', () => {
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
   })
+
   it('puis que je veux supprimer la note de contexte, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
     // GIVEN
     const supprimerUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
@@ -191,20 +181,24 @@ describe('note de contexte', () => {
     // WHEN
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
     const drawer = modifierUneNoteDeContexteDrawer()
-    jEffaceLaNoteDeContexte(drawer)
+    const noteDeContexte = screen.getByRole('textarea', { name: 'Éditeur de note de contexte' })
+    await waitFor(() => {
+      jEffaceLaNoteDeContexte(drawer)
+    })
     const enregistrer = jEnregistreLaNoteDeContexte()
 
     // THEN
-    expect(mockRichTextEditor.viderLeContenu).toHaveBeenNthCalledWith(1)
     expect(enregistrer).toHaveAccessibleName('Modification en cours...')
     expect(enregistrer).toBeDisabled()
     expect(supprimerUneNoteDeContexteAction).toHaveBeenCalledWith({ path: '/gouvernance/11', uidGouvernance: 'gouvernanceFooId' })
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Note de contexte supprimée')
+    expect(noteDeContexte).toHaveTextContent('')
     expect(drawer).not.toBeVisible()
     expect(enregistrer).toHaveAccessibleName('Enregistrer')
     expect(enregistrer).toBeEnabled()
   })
+
   it('puis que je veux supprimer la note de contexte mais qu’une erreur intervient, alors une notification s’affiche', async () => {
     // GIVEN
     const supprimerUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
@@ -244,6 +238,12 @@ function afficherUneGouvernanceAvecNoteDeContexte(options?: Partial<Parameters<t
 
 function jOuvreLeFormulairePourAjouterUneNoteDeContexte(): void {
   presserLeBouton('Ajouter une note de contexte')
+}
+
+function jeTapeUneNoteDeContexte(): HTMLElement {
+  const noteDeContexte = screen.getByRole('textarea', { name: 'Éditeur de note de contexte' })
+  fireEvent.input(noteDeContexte, { target: { innerHTML: '<p>Ma note de contexte</p>' } })
+  return noteDeContexte
 }
 
 function jEnregistreLaNoteDeContexte(): HTMLElement {

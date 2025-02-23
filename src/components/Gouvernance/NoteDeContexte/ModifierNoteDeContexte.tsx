@@ -6,7 +6,7 @@ import { clientContext } from '@/components/shared/ClientContext'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { useRichTextEditor } from '@/components/shared/RichTextEditor/hooks/useRichTextEditor'
-import EditeurDeTexte from '@/components/shared/RichTextEditor/TextEditor'
+import TextEditor from '@/components/shared/RichTextEditor/TextEditor'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function ModifierNoteDeContexte({
@@ -21,7 +21,7 @@ export default function ModifierNoteDeContexte({
   const { modifierUneNoteDeContexteAction, supprimerUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor()
+  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor(texte)
 
   return (
     <>
@@ -40,8 +40,8 @@ export default function ModifierNoteDeContexte({
             ou tout autre élément que vous souhaitez porter à notre connaissance
           </div>
         </div>
-        <EditeurDeTexte
-          contenu={texte}
+        <TextEditor
+          contenu={contenu}
           onChange={gererLeChangementDeContenu}
         />
         <ul className="fr-btns-group fr-mt-2w">
