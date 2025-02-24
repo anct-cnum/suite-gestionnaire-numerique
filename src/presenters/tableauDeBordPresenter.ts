@@ -15,6 +15,9 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
           total: 20,
         },
       ],
+      graphique: {
+        backgroundColor: ['#E2CF58', '#FCEEAC'],
+      },
       total: 85,
     },
     beneficiaire: {
@@ -36,11 +39,14 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
           total: 15,
         },
         {
-          color: 'dot-black',
+          color: 'dot-orange-terre-battue-850-200',
           label: 'Ingénierie France Numérique Ensemble - 2024 - État',
           total: 15,
         },
       ],
+      graphique: {
+        backgroundColor: ['#A558A0', '#FBB8F6', '#FBE769', '#fcc0b0'],
+      },
       total: 66,
     },
     conventionnement: {
@@ -69,7 +75,7 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
           total: formatMontant(30_000),
         },
         {
-          color: 'dot-black',
+          color: 'dot-orange-terre-battue-850-200',
           label: 'Ingénierie France Numérique Ensemble - 2024 - État',
           total: formatMontant(20_000),
         },
@@ -78,6 +84,11 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
     departement: 'Rhône',
     etatDesLieux: {
       accompagnementRealise: formaterEnNombreFrancais(48_476),
+      graphique: {
+        backgroundColor: ['#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#6A6AF4'],
+        data: [10, 20, 30, 10, 15, 35],
+        labels: ['04/24', '05/24', '06/24', '07/24', '08/24', '09/24'],
+      },
       inclusionNumerique: formaterEnNombreFrancais(479),
       mediateursEtAidants: formaterEnNombreFrancais(148),
     },
@@ -108,7 +119,7 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
           total: 1,
         },
         {
-          color: 'dot-black',
+          color: 'dot-purple-glycine-950-100',
           label: 'Conseillers numériques',
           total: 41,
         },
@@ -123,6 +134,9 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
           total: 5,
         },
       ],
+      graphique: {
+        backgroundColor: ['#6E445A', '#A558A0', '#fee7fc', '#FBB8F6', '#FDDBFA'],
+      },
       total: 63,
     },
     taches: [
@@ -152,6 +166,9 @@ export type TableauDeBordViewModel = Readonly<{
       label: string
       total: number
     }>
+    graphique: Readonly<{
+      backgroundColor: ReadonlyArray<string>
+    }>
     total: number
   }>
   beneficiaire: Readonly<{
@@ -160,6 +177,9 @@ export type TableauDeBordViewModel = Readonly<{
       color: string
       label: string
       total: number
+    }>
+    graphique: Readonly<{
+      backgroundColor: ReadonlyArray<string>
     }>
     total: number
   }>
@@ -181,6 +201,11 @@ export type TableauDeBordViewModel = Readonly<{
   departement: string
   etatDesLieux: Readonly<{
     accompagnementRealise: string
+    graphique: Readonly<{
+      backgroundColor: ReadonlyArray<string>
+      data: ReadonlyArray<number>
+      labels: Array<string>
+    }>
     inclusionNumerique: string
     mediateursEtAidants: string
   }>
@@ -203,6 +228,9 @@ export type TableauDeBordViewModel = Readonly<{
       color: string
       label: string
       total: number
+    }>
+    graphique: Readonly<{
+      backgroundColor: ReadonlyArray<string>
     }>
     total: number
   }>
