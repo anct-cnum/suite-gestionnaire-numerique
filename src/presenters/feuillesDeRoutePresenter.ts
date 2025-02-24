@@ -1,4 +1,5 @@
 
+import { actionStatutViewModelByStatut, ActionViewModel } from './actionPresenter'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -91,6 +92,8 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
+    anneeDeDebut: '2025',
+    anneeDeFin: undefined,
     beneficiaires: [
       {
         nom: 'Croix Rouge Française',
@@ -102,6 +105,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       },
     ],
     besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+    budgetGlobal: action.totaux.financementAccorde + action.totaux.coFinancement,
     budgetPrevisionnel: [
       {
         coFinanceur: 'Budget prévisionnel 2024',
@@ -120,11 +124,13 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         montant: formatMontant(5_000),
       },
     ],
+    contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
     nom: action.nom,
     porteur: 'CC des Monts du Lyonnais',
     statut: actionStatutViewModelByStatut[action.statut],
+    temporalite: 'annuelle',
     totaux: {
       coFinancement: formatMontant(action.totaux.coFinancement),
       financementAccorde: formatMontant(action.totaux.financementAccorde),
@@ -186,71 +192,3 @@ export type FeuilleDeRouteViewModel = Readonly<{
   }>
 }>
 
-export type ActionViewModel = Readonly<{
-  beneficiaires: ReadonlyArray<{
-    nom: string
-    url: string
-  }>
-  besoins: ReadonlyArray<string>
-  budgetPrevisionnel: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
-  }>
-  description: string
-  lienPourModifier: string
-  nom: string
-  porteur?: string
-  statut: Readonly<{
-    background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-    icon: string
-    libelle: string
-    variant: StatutVariant
-    iconStyle: string
-  }>
-  totaux: Readonly<{
-    coFinancement: string
-    financementAccorde: string
-  }>
-  uid: string
-}>
-
-const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
-  deposee: {
-    background: 'purple',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--deposee',
-    libelle: 'Demande déposée',
-    variant: 'new',
-  },
-  enCours: {
-    background: 'green',
-    icon: 'user-add-line',
-    iconStyle: 'pin-action--en-cours',
-    libelle: 'Instruction en cours',
-    variant: 'info',
-  },
-  subventionAcceptee: {
-    background: 'pink',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action-acceptee',
-    libelle: 'Subvention acceptée',
-    variant: 'new',
-  },
-  subventionRefusee: {
-    background: 'red',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--refusee',
-    libelle: 'Subvention refusée',
-    variant: 'error',
-  },
-}
-
-type ActionStatutViewModel = Readonly<{
-  background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-  icon: string
-  libelle: string
-  variant: StatutVariant
-  iconStyle: string
-}>
-
-type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'

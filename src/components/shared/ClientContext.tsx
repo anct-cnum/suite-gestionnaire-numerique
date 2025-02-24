@@ -8,6 +8,7 @@ import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
 
 import { accepterUnMembreAction } from '@/app/api/actions/accepterUnMembreAction'
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
+import { ajouterUneActionAction } from '@/app/api/actions/ajouterUneActionAction'
 import { ajouterUneFeuilleDeRouteAction } from '@/app/api/actions/ajouterUneFeuilleDeRouteAction'
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
@@ -15,6 +16,7 @@ import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
+import { modifierUneActionAction } from '@/app/api/actions/modifierUneActionAction'
 import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFeuilleDeRouteAction'
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
@@ -40,6 +42,7 @@ export default function ClientContext({
     () => ({
       accepterUnMembreAction,
       ajouterUnComiteAction,
+      ajouterUneActionAction,
       ajouterUneFeuilleDeRouteAction,
       ajouterUneNoteDeContexteAction,
       ajouterUneNotePriveeAction,
@@ -47,6 +50,7 @@ export default function ClientContext({
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
+      modifierUneActionAction,
       modifierUneFeuilleDeRouteAction,
       modifierUneNoteDeContexteAction,
       modifierUneNotePriveeAction,
@@ -84,6 +88,8 @@ export type ClientContextProviderValue = Readonly<{
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   ajouterUnComiteAction: typeof ajouterUnComiteAction
   ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
+  ajouterUneActionAction: typeof ajouterUneActionAction
+  modifierUneActionAction: typeof modifierUneActionAction
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
