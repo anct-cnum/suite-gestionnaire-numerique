@@ -46,3 +46,19 @@
 .dot-purple-glycine-sun-319-moon-630 {
   background-color: var(--purple-glycine-sun-319-moon-630);
 }
+
+.dot-orange-terre-battue-850-200 {
+  background-color: var(--orange-terre-battue-850-200);
+}
+
+.dot-purple-glycine-950-100 {
+  background-color: var(--purple-glycine-950-100);
+}
+
+.remonter-donnee {
+  margin-top: -10vw;
+}
+
+.remonter-graphique {
+  margin-top: -5vw;
+}

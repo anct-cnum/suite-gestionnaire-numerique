@@ -1,12 +1,15 @@
 'use client'
 
+import { ArcElement, Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
 import carto from './carto.png'
 import styles from './TableauDeBord.module.css'
+import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
+import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import Icon from '../shared/Icon/Icon'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
@@ -14,6 +17,14 @@ import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
 export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
+
+  ChartJS.register(
+    ArcElement,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Tooltip
+  )
 
   return (
     <>
@@ -159,6 +170,11 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               <div className="fr-text--xs color-blue-france fr-mb-0">
                 Total cumulé des dispositifs
               </div>
+              <Bar
+                backgroundColor={tableauDeBordViewModel.etatDesLieux.graphique.backgroundColor}
+                data={tableauDeBordViewModel.etatDesLieux.graphique.data}
+                labels={tableauDeBordViewModel.etatDesLieux.graphique.labels}
+              />
             </div>
           </div>
         </div>
@@ -379,8 +395,15 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </Link>
         </div>
         <div className="fr-grid-row fr-mb-4w">
-          <div className={`fr-col-4 fr-mr-4w ${styles.separator} center`}>
-            <div className="fr-display--lg fr-m-0">
+          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
+            <div className={styles['remonter-graphique']}>
+              <Doughnut
+                backgroundColor={tableauDeBordViewModel.beneficiaire.graphique.backgroundColor}
+                data={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.total)}
+                labels={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.label)}
+              />
+            </div>
+            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
               {tableauDeBordViewModel.beneficiaire.total}
             </div>
             <div className="fr-text--lg font-weight-700 fr-m-0">
@@ -454,8 +477,15 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </Link>
         </div>
         <div className="fr-grid-row fr-mb-3w fr-pb-3w separator">
-          <div className={`fr-col-4 fr-mr-4w ${styles.separator} center`}>
-            <div className="fr-display--lg fr-m-0">
+          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
+            <div className={styles['remonter-graphique']}>
+              <Doughnut
+                backgroundColor={tableauDeBordViewModel.mediateur.graphique.backgroundColor}
+                data={tableauDeBordViewModel.mediateur.details.map((detail) => detail.total)}
+                labels={tableauDeBordViewModel.mediateur.details.map((detail) => detail.label)}
+              />
+            </div>
+            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
               {tableauDeBordViewModel.mediateur.total}
             </div>
             <div className="fr-text--lg font-weight-700 fr-m-0">
@@ -491,8 +521,15 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
         </div>
         <div className="fr-grid-row">
-          <div className={`fr-col-4 fr-mr-4w ${styles.separator} center`}>
-            <div className="fr-display--lg fr-m-0">
+          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
+            <div className={styles['remonter-graphique']}>
+              <Doughnut
+                backgroundColor={tableauDeBordViewModel.aidant.graphique.backgroundColor}
+                data={tableauDeBordViewModel.aidant.details.map((detail) => detail.total)}
+                labels={tableauDeBordViewModel.aidant.details.map((detail) => detail.label)}
+              />
+            </div>
+            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
               {tableauDeBordViewModel.aidant.total}
             </div>
             <div className="fr-text--lg font-weight-700 fr-m-0">
