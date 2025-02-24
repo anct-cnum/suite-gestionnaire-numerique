@@ -34,8 +34,7 @@ describe('utilisateur repository', () => {
       const result = repository.get(uidUtilisateurValue)
 
       // THEN
-      await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
-      await expect(result).rejects.toMatchObject({ code: 'P2025' })
+      await expect(result).rejects.toThrow('Utilisateur non trouvé')
     })
 
     it('l’utilisateur est supprimé : erreur', async () => {
@@ -46,8 +45,7 @@ describe('utilisateur repository', () => {
       const result = repository.get(uidUtilisateurValue)
 
       // THEN
-      await expect(result).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
-      await expect(result).rejects.toMatchObject({ code: 'P2025' })
+      await expect(result).rejects.toThrow('Utilisateur non trouvé')
     })
 
     describe('l’utilisateur existe : les données utilisateur sont reçues', () => {
