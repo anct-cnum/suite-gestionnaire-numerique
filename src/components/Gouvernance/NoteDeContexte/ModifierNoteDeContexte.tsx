@@ -41,7 +41,9 @@ export default function ModifierNoteDeContexte({
           </div>
         </div>
         <TextEditor
+          ariaLabel="Éditeur de note de contexte"
           contenu={contenu}
+          height={380}
           onChange={gererLeChangementDeContenu}
         />
         <ul className="fr-btns-group fr-mt-2w">

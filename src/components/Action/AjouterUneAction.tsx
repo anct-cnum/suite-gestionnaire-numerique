@@ -6,7 +6,7 @@ import { FormulaireAction } from './FormulaireAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
-import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { ActionViewModel } from '@/presenters/actionPresenter'
 
 export default function AjouterUneAction({ action, date }: Props): ReactElement {
   const { ajouterUneActionAction } = useContext(clientContext)
@@ -49,7 +49,7 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
       temporalite,
     })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'ajouté', title: 'Action ' })
+      Notification('success', { description: 'ajoutée', title: 'Action ' })
     } else {
       Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
     }

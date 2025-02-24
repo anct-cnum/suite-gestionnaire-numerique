@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
+import Link from 'next/link'
 import { FormEvent, PropsWithChildren, ReactElement, useId, useState } from 'react'
 
 import styles from './Action.module.css'
@@ -8,12 +9,10 @@ import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEdi
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
-import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { ActionViewModel } from '@/presenters/actionPresenter'
 
 export function FormulaireAction({ action, label, validerFormulaire, children }: Props): ReactElement {
   const nomDeLActionId = useId()
-  const contexteId = useId()
-  const descriptionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
@@ -39,12 +38,12 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
         )
       }}
     >
-      <a
+      <Link
         className="fr-tag fr-mb-2w"
         href="/feuilles-de-route/69"
       >
         Feuille de route 69
-      </a>
+      </Link>
       <h1
         className="color-blue-france fr-mb-2w"
       >
@@ -114,7 +113,6 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
           </TextInput>
           <label
             className="fr-label"
-            htmlFor={contexteId}
           >
             Contexte de l‘action
             {' '}
@@ -126,13 +124,13 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
           </p>
           <TextEditor
+            ariaLabel="Éditeur de contexte de l‘action"
             contenu={contexteContenu}
             height={150}
             onChange={gererChangementContexte}
           />
           <label
             className="fr-label fr-mt-3w"
-            htmlFor={descriptionId}
           >
             Description de l‘action
             {' '}
@@ -144,6 +142,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
           </p>
           <TextEditor
+            ariaLabel="Éditeur de description de l‘action"
             contenu={descriptionContenu}
             height={350}
             onChange={gererChangementDescription}
@@ -222,7 +221,6 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
                   <option
                     disabled
                     hidden
-                    selected
                     value=""
                   >
                     {action.anneeDeDebut}
@@ -272,7 +270,6 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
                   <option
                     disabled
                     hidden
-                    selected
                     value=""
                   >
                     -

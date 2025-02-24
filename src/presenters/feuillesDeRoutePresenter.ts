@@ -1,4 +1,5 @@
 
+import { actionStatutViewModelByStatut, ActionViewModel } from './actionPresenter'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -7,7 +8,6 @@ export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
 ): FeuillesDeRouteViewModel {
   return {
-    actionARemplir,
     feuillesDeRoute:
       feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
     formulaire: {
@@ -164,7 +164,6 @@ export type FeuillesDeRouteViewModel = Readonly<{
     coFinancement: string
     financementAccorde: string
   }>
-  actionARemplir: ActionViewModel
   uidGouvernance: string
 }>
 
@@ -193,102 +192,3 @@ export type FeuilleDeRouteViewModel = Readonly<{
   }>
 }>
 
-export type ActionViewModel = Readonly<{
-  beneficiaires: ReadonlyArray<{
-    nom: string
-    url: string
-  }>
-  besoins: ReadonlyArray<string>
-  budgetPrevisionnel: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
-  }>
-  budgetGlobal: number
-  description: string
-  contexte: string
-  lienPourModifier: string
-  nom: string
-  porteur?: string
-  statut: Readonly<{
-    background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-    icon: string
-    libelle: string
-    variant: StatutVariant
-    iconStyle: string
-  }>
-  totaux: Readonly<{
-    coFinancement: string
-    financementAccorde: string
-  }>
-  uid: string
-  temporalite: 'pluriannuelle' | 'annuelle'
-  anneeDeDebut: string
-  anneeDeFin?: string
-}>
-
-const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
-  deposee: {
-    background: 'purple',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--deposee',
-    libelle: 'Demande déposée',
-    variant: 'new',
-  },
-  enCours: {
-    background: 'green',
-    icon: 'user-add-line',
-    iconStyle: 'pin-action--en-cours',
-    libelle: 'Instruction en cours',
-    variant: 'info',
-  },
-  subventionAcceptee: {
-    background: 'pink',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action-acceptee',
-    libelle: 'Subvention acceptée',
-    variant: 'new',
-  },
-  subventionRefusee: {
-    background: 'red',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--refusee',
-    libelle: 'Subvention refusée',
-    variant: 'error',
-  },
-}
-
-type ActionStatutViewModel = Readonly<{
-  background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-  icon: string
-  libelle: string
-  variant: StatutVariant
-  iconStyle: string
-}>
-
-type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'
-
-const actionARemplir: ActionViewModel = {
-  anneeDeDebut: '',
-  beneficiaires: [],
-  besoins: [],
-  budgetGlobal: 0,
-  budgetPrevisionnel: [],
-  contexte: '',
-  description: '',
-  lienPourModifier: '',
-  nom: '',
-  porteur: '',
-  statut: {
-    background: 'blue',
-    icon: '',
-    iconStyle: '',
-    libelle: '',
-    variant: 'new',
-  },
-  temporalite: 'annuelle',
-  totaux: {
-    coFinancement: '',
-    financementAccorde: '',
-  },
-  uid: '',
-}

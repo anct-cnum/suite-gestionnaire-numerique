@@ -7,12 +7,12 @@ import { ReactElement } from 'react'
 
 import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
-export default function TextEditor({ contenu, onChange }: Props): ReactElement {
+export default function TextEditor({ contenu, onChange, height, ariaLabel }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
     editorProps: {
       attributes: {
-        'aria-label': 'Éditeur de note de contexte',
+        'aria-label': ariaLabel,
         class: 'fr-input',
         role: 'textarea',
         style: `min-height: ${height}px; resize: vertical;`,
@@ -46,6 +46,8 @@ export default function TextEditor({ contenu, onChange }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  ariaLabel: string
+  height: number
   contenu: string
   onChange(content: string): void
 }>

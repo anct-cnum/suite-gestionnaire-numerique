@@ -11,26 +11,6 @@ import { matchWithoutMarkup, presserLeBoutonDans, presserLeBoutonRadio, renderCo
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
-let editorContents: Array<string> = []
-let currentIndex = -1
-
-const mockRichTextEditor = {
-  contenu: '',
-  gererLeChangementDeContenu: vi.fn(),
-  viderLeContenu: vi.fn(),
-}
-
-vi.mock('@/components/shared/RichTextEditor/hooks/useRichTextEditor', () => ({
-  useRichTextEditor: (initialContent = ''): typeof mockRichTextEditor => {
-    currentIndex += 1
-    editorContents[currentIndex] = initialContent
-    return {
-      ...mockRichTextEditor,
-      contenu: editorContents[currentIndex],
-    }
-  },
-}))
-
 describe('formulaire d‘ajout d‘une action', () => {
   describe('menu latéral', () => {
     it.each([
@@ -88,15 +68,8 @@ describe('formulaire d‘ajout d‘une action', () => {
     })
   })
   describe('formulaire', () => {
-    beforeEach(() => {
-      editorContents = []
-      currentIndex = -1
-    })
-
     it('étant un utilisateur,lorsque je veux ajouter une action, alors je vois le formulaire d‘ajout d‘une action', () => {
       // WHEN
-      const contexte = ''
-      const description = ''
       afficherFormulaireDeCreationAction()
 
       // THEN
@@ -130,12 +103,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(labelDescriptionAction).toBeInTheDocument()
       const editeurDeTexteContexte = within(formulaire).getAllByRole('textarea')[0]
       expect(editeurDeTexteContexte).toBeInTheDocument()
-      expect(editorContents[0]).toBe(contexte)
       const descriptionDeLAction = within(formulaire).getByText(matchWithoutMarkup('Description de l‘action *'))
       expect(descriptionDeLAction).toBeInTheDocument()
       const editeurDeTexteDescription = within(formulaire).getAllByRole('textarea')[1]
       expect(editeurDeTexteDescription).toBeInTheDocument()
-      expect(editorContents[1]).toBe(description)
       const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
       const labelSectionPorteurDeLAaction = within(formulaire).getByText('Sélectionnez le porteur de l‘action', { selector: 'p' })
@@ -198,8 +169,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      const contexte = '<p>Contexte de l‘action</p>'
-      const description = '<p><strong>Description de l‘action.</strong></p>'
+      jeTapeLeContexteDeLaction()
+      jeTapeLaDescriptionDeLaction()
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
@@ -211,8 +182,8 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: undefined,
           budgetGlobal: 1000,
-          contexte,
-          description,
+          contexte: '<p>Contexte de l‘action</p>',
+          description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteur: '',
@@ -224,15 +195,11 @@ describe('formulaire d‘ajout d‘une action', () => {
     it('étant un utilisateur, lorsque j‘ouvre le formulaire de modification d‘une action, alors je vois le contenu de l‘action', () => {
       // WHEN
       afficherFormulaireDeModificationAction()
-      const contexte = '<p>Contexte de l‘action</p>'
-      const description = '<p><strong>Description de l‘action.</strong></p>'
 
       // THEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
       const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
       expect(nomDeLAction).toHaveValue('Structurer une filière de reconditionnement locale 1')
-      expect(editorContents[0]).toBe(contexte)
-      expect(editorContents[1]).toBe(description)
       const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
       expect(porteurAction).toBeInTheDocument()
       const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
@@ -260,8 +227,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
       const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 2' } })
-      const contexte = '<p>Contexte de l‘action</p>'
-      const description = '<p><strong>Description de l‘action.</strong></p>'
+      jeTapeLeContexteDeLaction()
+      jeTapeLaDescriptionDeLaction()
       presserLeBoutonRadio('Pluriannuelle')
       jeSelectionneLAnneeDeDebut('2026')
       jeSelectionneLAnneeDeFin('2028')
@@ -276,8 +243,8 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: '2028',
           budgetGlobal: 1000,
-          contexte,
-          description,
+          contexte: '<p>Contexte de l‘action</p>',
+          description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
           nom: 'Structurer une filière de reconditionnement locale 2',
           porteur: '',
@@ -463,4 +430,16 @@ function jeValideLeFormulaireDAjout(): HTMLElement {
 function jeValideLeFormulaireDeModification(): HTMLElement {
   const form = screen.getByRole('form', { name: 'Modifier une action' })
   return presserLeBoutonDans(form, 'Valider et envoyer')
+}
+
+function jeTapeLeContexteDeLaction(): HTMLElement {
+  const noteDeContexte = screen.getByRole('textarea', { name: 'Éditeur de contexte de l‘action' })
+  fireEvent.input(noteDeContexte, { target: { innerHTML: '<p>Ma note de contexte de l‘action</p>' } })
+  return noteDeContexte
+}
+
+function jeTapeLaDescriptionDeLaction(): HTMLElement {
+  const description = screen.getByRole('textarea', { name: 'Éditeur de description de l‘action' })
+  fireEvent.input(description, { target: { innerHTML: '<p>Mes notes de description de l‘action</p>' } })
+  return description
 }

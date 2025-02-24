@@ -36,6 +36,7 @@ export default function AjouterNoteDeContexte({
         </div>
       </div>
       <TextEditor
+        ariaLabel="Éditeur de note de contexte"
         contenu={contenu}
         height={380}
         onChange={gererLeChangementDeContenu}

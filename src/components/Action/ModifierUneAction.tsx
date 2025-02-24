@@ -6,7 +6,7 @@ import { FormulaireAction } from './FormulaireAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
-import { ActionViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { ActionViewModel } from '@/presenters/actionPresenter'
 
 export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)

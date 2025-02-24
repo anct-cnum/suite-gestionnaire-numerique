@@ -1,5 +1,5 @@
 // Stryker disable all
-import { ActionViewModel } from './feuillesDeRoutePresenter'
+import { ActionViewModel } from './actionPresenter'
 import { GouvernanceViewModel } from './gouvernancePresenter'
 import { MesMembresViewModel } from './mesMembresPresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
