@@ -27,6 +27,7 @@ export function renderComponent(
   const clientContextProviderDefaultValue = {
     accepterUnMembreAction: vi.fn(),
     ajouterUnComiteAction: vi.fn(),
+    ajouterUneActionAction: vi.fn(),
     ajouterUneFeuilleDeRouteAction: vi.fn(),
     ajouterUneNoteDeContexteAction: vi.fn(),
     ajouterUneNotePriveeAction: vi.fn(),
@@ -34,6 +35,7 @@ export function renderComponent(
     inviterUnUtilisateurAction: vi.fn(),
     modifierMesInformationsPersonnellesAction: vi.fn(),
     modifierUnComiteAction: vi.fn(),
+    modifierUneActionAction: vi.fn(),
     modifierUneFeuilleDeRouteAction: vi.fn(),
     modifierUneNoteDeContexteAction: vi.fn(),
     modifierUneNotePriveeAction: vi.fn(),
