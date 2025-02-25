@@ -1,3 +1,4 @@
+import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
@@ -17,7 +18,71 @@ export function actionPresenter(
         url: '/',
       },
     ],
-    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+    besoins: {
+      financements: [
+        {
+          isChecked: false,
+          label: 'Structurer un fond local pour l’inclusion numérique',
+          value: 'structurer_fond_local',
+        },
+        {
+          isChecked: false,
+          label: 'Monter des dossiers de subvention complexes',
+          value: 'monter_dossier_subvention',
+        },
+        {
+          isChecked: true,
+          label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
+          value: 'animer_et_mettre_en_oeuvre_gouvernance',
+        },
+      ],
+      formations: [
+        {
+          isChecked: true,
+          label: 'Établir un diagnostic territorial',
+          value: 'etablir_diagnostic_territorial',
+        },
+        {
+          isChecked: false,
+          label: 'Co-construire la feuille de route avec les membres',
+          value: 'coconstruire_feuille_avec_membres',
+        },
+        {
+          isChecked: false,
+          label: 'Rédiger la feuille de route',
+          value: 'rediger_feuille',
+        },
+        {
+          isChecked: false,
+          label: 'Appui juridique dédié à la gouvernance',
+          value: 'appui_juridique_dedie_gouvernance',
+        },
+      ],
+      formationsProfessionnels: [
+        {
+          isChecked: false,
+          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+          value: 'appuyer_certification_qualiopi',
+        },
+      ],
+      outillages: [
+        {
+          isChecked: false,
+          label: 'Structurer une filière de reconditionnement locale',
+          value: 'structurer_filiere_reconditionnement_locale',
+        },
+        {
+          isChecked: false,
+          label: 'Collecter des données territoriales pour alimenter un hub national',
+          value: 'collecter_donnees_territoriales',
+        },
+        {
+          isChecked: false,
+          label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
+          value: 'sensibiliser_acteurs',
+        },
+      ],
+    },
     budgetGlobal: 40_000,
     budgetPrevisionnel: [
       {
@@ -57,7 +122,12 @@ export type ActionViewModel = Readonly<{
     nom: string
     url: string
   }>
-  besoins: ReadonlyArray<string>
+  besoins: Readonly<{
+    financements: Besoins
+    formations: Besoins
+    formationsProfessionnels: Besoins
+    outillages: Besoins
+  }>
   budgetPrevisionnel: ReadonlyArray<{
     coFinanceur: string
     montant: string
@@ -68,13 +138,7 @@ export type ActionViewModel = Readonly<{
   lienPourModifier: string
   nom: string
   porteur?: string
-  statut: Readonly<{
-    background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-    icon: string
-    libelle: string
-    variant: StatutVariant
-    iconStyle: string
-  }>
+  statut: ActionStatutViewModel
   totaux: Readonly<{
     coFinancement: string
     financementAccorde: string
@@ -85,52 +149,75 @@ export type ActionViewModel = Readonly<{
   anneeDeFin?: string
 }>
 
-type StatutVariant = 'success' | 'error' | 'info' | 'warning' | 'new'
-
-export const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
-  deposee: {
-    background: 'purple',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--deposee',
-    libelle: 'Demande déposée',
-    variant: 'new',
-  },
-  enCours: {
-    background: 'green',
-    icon: 'user-add-line',
-    iconStyle: 'pin-action--en-cours',
-    libelle: 'Instruction en cours',
-    variant: 'info',
-  },
-  subventionAcceptee: {
-    background: 'pink',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action-acceptee',
-    libelle: 'Subvention acceptée',
-    variant: 'new',
-  },
-  subventionRefusee: {
-    background: 'red',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action--refusee',
-    libelle: 'Subvention refusée',
-    variant: 'error',
-  },
-}
-
-type ActionStatutViewModel = Readonly<{
-  background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
-  icon: string
-  libelle: string
-  variant: StatutVariant
-  iconStyle: string
-}>
-
 export const actionARemplir: ActionViewModel = {
   anneeDeDebut: '',
   anneeDeFin: '',
   beneficiaires: [],
-  besoins: [],
+  besoins: {
+    financements: [
+      {
+        isChecked: false,
+        label: 'Structurer un fond local pour l’inclusion numérique',
+        value: 'structurer_fond_local',
+      },
+      {
+        isChecked: false,
+        label: 'Monter des dossiers de subvention complexes',
+        value: 'monter_dossier_subvention',
+      },
+      {
+        isChecked: false,
+        label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
+        value: 'animer_et_mettre_en_oeuvre_gouvernance',
+      },
+    ],
+    formations: [
+      {
+        isChecked: false,
+        label: 'Établir un diagnostic territorial',
+        value: 'etablir_diagnostic_territorial',
+      },
+      {
+        isChecked: false,
+        label: 'Co-construire la feuille de route avec les membres',
+        value: 'coconstruire_feuille_avec_membres',
+      },
+      {
+        isChecked: false,
+        label: 'Rédiger la feuille de route',
+        value: 'rediger_feuille',
+      },
+      {
+        isChecked: false,
+        label: 'Appui juridique dédié à la gouvernance',
+        value: 'appui_juridique_dedie_gouvernance',
+      },
+    ],
+    formationsProfessionnels: [
+      {
+        isChecked: false,
+        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+        value: 'appuyer_certification_qualiopi',
+      },
+    ],
+    outillages: [
+      {
+        isChecked: false,
+        label: 'Structurer une filière de reconditionnement locale',
+        value: 'structurer_filiere_reconditionnement_locale',
+      },
+      {
+        isChecked: false,
+        label: 'Collecter des données territoriales pour alimenter un hub national',
+        value: 'collecter_donnees_territoriales',
+      },
+      {
+        isChecked: false,
+        label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
+        value: 'sensibiliser_acteurs',
+      },
+    ],
+  },
   budgetGlobal: 0,
   budgetPrevisionnel: [],
   contexte: '',
@@ -152,3 +239,9 @@ export const actionARemplir: ActionViewModel = {
   },
   uid: '',
 }
+
+export type Besoins = ReadonlyArray<{
+  isChecked: boolean
+  label: string
+  value: string
+}>

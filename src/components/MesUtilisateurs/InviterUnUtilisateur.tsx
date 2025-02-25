@@ -37,10 +37,7 @@ export default function InviterUnUtilisateur({
       <DrawerTitle id={labelId}>
         Invitez un utilisateur à rejoindre l’espace de gestion
       </DrawerTitle>
-      <p
-        className="fr-text--sm color-grey"
-        id="champsObligatoires"
-      >
+      <p className="fr-text--sm color-grey">
         Les champs avec
         {' '}
         <span className="color-red">
@@ -96,14 +93,8 @@ export default function InviterUnUtilisateur({
         </TextInput>
         {
           rolesGerables.length > 1 ?
-            <fieldset
-              className="fr-fieldset"
-              id="attributionRole"
-            >
-              <legend
-                aria-describedby="champsObligatoires"
-                className="fr-mb-2w"
-              >
+            <fieldset className="fr-fieldset">
+              <legend className="fr-mb-2w">
                 Quel rôle souhaitez-vous lui attribuer ?
                 {' '}
                 <span className="color-red">

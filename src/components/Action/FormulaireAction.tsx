@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { FormEvent, PropsWithChildren, ReactElement, useId, useState } from 'react'
 
 import styles from './Action.module.css'
+import AjouterDesBesoins from './AjouterDesBesoins'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Tag from '../shared/Tag/Tag'
@@ -24,6 +25,13 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
     contenu: descriptionContenu,
     gererLeChangementDeContenu: gererChangementDescription,
   } = useRichTextEditor(action.description)
+
+  const besoins = [
+    ...action.besoins.financements,
+    ...action.besoins.formations,
+    ...action.besoins.formationsProfessionnels,
+    ...action.besoins.outillages,
+  ]
 
   return (
     <form
@@ -70,12 +78,12 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
                 *
               </span>
             </p>
-            <button
-              className="fr-btn fr-btn--secondary"
-              type="button"
-            >
-              Modifier
-            </button>
+            <AjouterDesBesoins
+              financements={action.besoins.financements}
+              formations={action.besoins.formations}
+              formationsProfesionnels={action.besoins.formationsProfessionnels}
+              outillages={action.besoins.outillages}
+            />
           </div>
           <p className="color-grey">
             Indiquez à quel besoins se rapporte l’action pour laquelle vous demandez une subvention.
@@ -83,14 +91,16 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             vous pouvez tout à fait sélectionner une autre catégorie de besoin.
           </p>
           <hr />
-          {action.besoins.map((besoin) => (
-            <p
-              className="fr-tag fr-mr-1w"
-              key={besoin}
-            >
-              {besoin}
-            </p>
-          ))}
+          {besoins
+            .filter((besoin) => besoin.isChecked)
+            .map((besoin) => (
+              <p
+                className="fr-tag fr-mr-1w"
+                key={besoin.value}
+              >
+                {besoin.label}
+              </p>
+            ))}
         </div>
         <div
           className={styles['white-background-section']}

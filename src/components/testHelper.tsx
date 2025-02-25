@@ -125,8 +125,8 @@ export function stubbedConceal() {
   })
 }
 
-export function presserLeBouton(name: string): HTMLElement {
-  const button = screen.getByRole('button', { name })
+export function presserLeBouton(name: string, description?: string): HTMLElement {
+  const button = screen.getByRole('button', { description, name })
   fireEvent.click(button)
   return button
 }

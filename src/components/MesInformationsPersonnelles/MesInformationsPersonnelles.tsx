@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useId, useRef, useState } from 'react'
+import { ReactElement, useId, useState } from 'react'
 
 import InformationPersonnelle from './InformationPersonnelle'
 import ModifierMonCompte from './ModifierMonCompte'
@@ -17,7 +17,6 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
   const supprimerMonCompteModalId = 'supprimer-mon-compte'
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerRef = useRef<HTMLDialogElement>(null)
   const drawerId = 'drawerMesInformationsPersonnellesId'
   const labelId = useId()
 
@@ -212,7 +211,6 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelId}
-        ref={drawerRef}
       >
         <ModifierMonCompte
           closeDrawer={() => {
