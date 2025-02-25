@@ -100,9 +100,11 @@ model UtilisateurRecord {
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
 
-  comites        ComiteRecord[]
-  notesPrivees   GouvernanceRecord[] @relation("UtilisateurNotesPrivees")
-  noteDeContexte GouvernanceRecord[] @relation("UtilisateurnoteDeContexte")
+  comites                   ComiteRecord[]
+  notesPrivees              GouvernanceRecord[]         @relation("UtilisateurNotesPrivees")
+  noteDeContexte            GouvernanceRecord[]         @relation("UtilisateurnoteDeContexte")
+  ActionRecord              ActionRecord[]
+  DemandeDeSubventionRecord DemandeDeSubventionRecord[]
 
   @@map("utilisateur")
 }
@@ -250,6 +252,52 @@ model MembreGouvernanceStructureRecord {
 
   @@unique([structure, membreId, role])
   @@map("membre_gouvernance_structure")
+}
+
+model ActionRecord {
+  id                      Int      @id @default(autoincrement())
+  besions                 String[]
+  createdBy               Int      @map("createur_id")
+  nom                     String   @db.Citext
+  contexte                String   @db.Citext
+  description             String   @db.Citext
+  budget_global           Float
+  piece_jointe_budget_key String
+
+  feuille_de_route_id Int
+  date_de_debut       DateTime
+  date_de_fin         DateTime
+
+  relationUtilisateur       UtilisateurRecord           @relation(fields: [createdBy], references: [id])
+  DemandeDeSubventionRecord DemandeDeSubventionRecord[]
+
+  @@map("action")
+}
+
+model DemandeDeSubventionRecord {
+  id                    Int      @id @default(autoincrement())
+  createdAt             DateTime @default(now()) @map("created_at")
+  createdBy             Int      @map("createur_id")
+  statusId              Int      @map("status_id")
+  subvention_demandee   Float
+  subvention_etp        Float
+  subvention_prestation Float
+  date_modification     DateTime
+  id_action             Int      @map("fk_action_id")
+
+  relationUtilisateur UtilisateurRecord             @relation(fields: [createdBy], references: [id])
+  relationAction      ActionRecord                  @relation(fields: [id_action], references: [id])
+  relationStatus      StatusDemandeSubventionRecord @relation(fields: [statusId], references: [id])
+
+  @@map("demande_de_subvention")
+}
+
+model StatusDemandeSubventionRecord {
+  id                        Int                         @id @default(autoincrement())
+  status                    String                      @unique @map("status") @db.Citext
+  DemandeDeSubventionRecord DemandeDeSubventionRecord[]
+
+  @@map("status_demande_subvention")
 }
 
 enum Role {
