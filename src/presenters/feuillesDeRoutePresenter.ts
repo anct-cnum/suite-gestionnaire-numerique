@@ -1,5 +1,4 @@
-
-import { actionStatutViewModelByStatut, ActionViewModel } from './actionPresenter'
+import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -92,8 +91,6 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
-    anneeDeDebut: '2025',
-    anneeDeFin: undefined,
     beneficiaires: [
       {
         nom: 'Croix Rouge Française',
@@ -105,7 +102,6 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       },
     ],
     besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
-    budgetGlobal: action.totaux.financementAccorde + action.totaux.coFinancement,
     budgetPrevisionnel: [
       {
         coFinanceur: 'Budget prévisionnel 2024',
@@ -124,17 +120,11 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         montant: formatMontant(5_000),
       },
     ],
-    contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
     nom: action.nom,
     porteur: 'CC des Monts du Lyonnais',
     statut: actionStatutViewModelByStatut[action.statut],
-    temporalite: 'annuelle',
-    totaux: {
-      coFinancement: formatMontant(action.totaux.coFinancement),
-      financementAccorde: formatMontant(action.totaux.financementAccorde),
-    },
     uid: action.uid,
   })
 }
@@ -192,3 +182,20 @@ export type FeuilleDeRouteViewModel = Readonly<{
   }>
 }>
 
+type ActionViewModel = Readonly<{
+  beneficiaires: ReadonlyArray<{
+    nom: string
+    url: string
+  }>
+  besoins: ReadonlyArray<string>
+  budgetPrevisionnel: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
+  description: string
+  lienPourModifier: string
+  nom: string
+  porteur?: string
+  statut: ActionStatutViewModel
+  uid: string
+}>

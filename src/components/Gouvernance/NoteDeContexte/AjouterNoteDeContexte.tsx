@@ -29,7 +29,7 @@ export default function AjouterNoteDeContexte({
         Note de contexte
       </DrawerTitle>
       <div className="fr-mb-4w">
-        <div className="color-grey fr-text--sm">
+        <div className="fr-text--sm color-grey">
           Précisez, au sein d‘une note qualitative,
           les spécificités de votre démarche, les éventuelles difficultés que vous rencontrez,
           ou tout autre élément que vous souhaitez porter à notre connaissance

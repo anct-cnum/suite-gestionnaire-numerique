@@ -1,3 +1,4 @@
+/* eslint-disable import/no-restricted-paths */
 import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 

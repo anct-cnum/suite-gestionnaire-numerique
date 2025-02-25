@@ -34,19 +34,18 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
     descriptionContenu: string
   ): Promise<void> {
     event.preventDefault()
-    const form = new FormData(event.currentTarget)
-    const [nom, temporalite, anneeDeDebut, budgetGlobal] = form.values() as FormDataIterator<string>
     setIsDisabled(true)
+    const form = new FormData(event.currentTarget)
     const messages = await ajouterUneActionAction({
-      anneeDeDebut,
-      anneeDeFin: form.get('anneeDeFin') as string | undefined,
-      budgetGlobal: Number(budgetGlobal),
+      anneeDeDebut: form.get('anneeDeDebut') as string,
+      anneeDeFin: form.get('anneeDeFin') as string,
+      budgetGlobal: Number(form.get('budgetGlobal')),
       contexte: contexteContenu,
       description: descriptionContenu,
       destinataires: [],
-      nom,
+      nom: form.get('nom') as string,
       porteur: '',
-      temporalite,
+      temporalite: form.get('radio-pluriannuelle') as string,
     })
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })

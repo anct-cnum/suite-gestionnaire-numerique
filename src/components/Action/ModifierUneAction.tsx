@@ -35,18 +35,16 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
     event.preventDefault()
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, anneeDeDebut, temporalite, anneeDeFin, budgetGlobal] = form.values() as FormDataIterator<string>
-
     const messages = await modifierUneActionAction({
-      anneeDeDebut,
-      anneeDeFin,
-      budgetGlobal: Number(budgetGlobal),
+      anneeDeDebut: form.get('anneeDeDebut') as string,
+      anneeDeFin: form.get('anneeDeFin') as string,
+      budgetGlobal: Number(form.get('budgetGlobal')),
       contexte: contexteContenu,
       description: descriptionContenu,
       destinataires: [],
-      nom,
+      nom: form.get('nom') as string,
       porteur: '',
-      temporalite,
+      temporalite: form.get('radio-pluriannuelle') as string,
       uid: '',
     })
     if (messages.includes('OK')) {
