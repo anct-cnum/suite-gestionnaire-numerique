@@ -1,3 +1,4 @@
+/* eslint-disable import/no-restricted-paths */
 // Stryker disable all
 import { ActionViewModel } from './actionPresenter'
 import { GouvernanceViewModel } from './gouvernancePresenter'
@@ -89,7 +90,71 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
         url: '/',
       },
     ],
-    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+    besoins: {
+      financements: [
+        {
+          isChecked: false,
+          label: 'Structurer un fond local pour l’inclusion numérique',
+          value: 'structurer_fond_local',
+        },
+        {
+          isChecked: true,
+          label: 'Monter des dossiers de subvention complexes',
+          value: 'monter_dossier_subvention',
+        },
+        {
+          isChecked: false,
+          label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
+          value: 'animer_et_mettre_en_oeuvre_gouvernance',
+        },
+      ],
+      formations: [
+        {
+          isChecked: false,
+          label: 'Établir un diagnostic territorial',
+          value: 'etablir_diagnostic_territorial',
+        },
+        {
+          isChecked: true,
+          label: 'Co-construire la feuille de route avec les membres',
+          value: 'coconstruire_feuille_avec_membres',
+        },
+        {
+          isChecked: false,
+          label: 'Rédiger la feuille de route',
+          value: 'rediger_feuille',
+        },
+        {
+          isChecked: false,
+          label: 'Appui juridique dédié à la gouvernance',
+          value: 'appui_juridique_dedie_gouvernance',
+        },
+      ],
+      formationsProfessionnels: [
+        {
+          isChecked: false,
+          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+          value: 'appuyer_certification_qualiopi',
+        },
+      ],
+      outillages: [
+        {
+          isChecked: false,
+          label: 'Structurer une filière de reconditionnement locale',
+          value: 'structurer_filiere_reconditionnement_locale',
+        },
+        {
+          isChecked: false,
+          label: 'Collecter des données territoriales pour alimenter un hub national',
+          value: 'collecter_donnees_territoriales',
+        },
+        {
+          isChecked: false,
+          label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
+          value: 'sensibiliser_acteurs',
+        },
+      ],
+    },
     budgetGlobal: 50000,
     budgetPrevisionnel: [
       {
@@ -135,7 +200,18 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
   return {
     anneeDeDebut: '2025',
     beneficiaires: [],
-    besoins: ['Établir un diagnostic territorial'],
+    besoins: {
+      financements: [],
+      formations: [
+        {
+          isChecked: true,
+          label: 'Établir un diagnostic territorial',
+          value: 'etablir_diagnostic_territorial',
+        },
+      ],
+      formationsProfessionnels: [],
+      outillages: [],
+    },
     budgetGlobal: 0,
     budgetPrevisionnel: [],
     contexte: '',

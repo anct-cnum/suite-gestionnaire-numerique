@@ -34,3 +34,7 @@
   margin-bottom: 1rem;
   padding: 2rem;
 }
+
+.no-border {
+  border: 0;
+}

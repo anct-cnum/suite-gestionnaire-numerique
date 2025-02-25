@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useContext, useId, useRef, useState } from 'react'
+import { ReactElement, useContext, useId, useState } from 'react'
 
 import AjouterUnComite from './Comitologie/AjouterUnComite'
 import ComitologieRemplie from './Comitologie/ComitologieRemplie'
@@ -42,7 +42,6 @@ export default function Gouvernance(): ReactElement {
   const labelNoteDeContexteId = useId()
   const drawerNotePriveeId = 'drawerAjouterNotePriveeId'
   const labelNotePriveeId = useId()
-  const drawerRef = useRef<HTMLDialogElement>(null)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
@@ -101,7 +100,6 @@ export default function Gouvernance(): ReactElement {
                       isFixedWidth={false}
                       isOpen={isDrawerOpen}
                       labelId={labelNotePriveeId}
-                      ref={drawerRef}
                     >
                       <ModifierUneNotePrivee
                         closeDrawer={() => {
@@ -137,7 +135,6 @@ export default function Gouvernance(): ReactElement {
                       isFixedWidth={false}
                       isOpen={isDrawerOpen}
                       labelId={labelNotePriveeId}
-                      ref={drawerRef}
                     >
                       <AjouterUneNotePrivee
                         closeDrawer={() => {
@@ -173,7 +170,6 @@ export default function Gouvernance(): ReactElement {
           isFixedWidth={false}
           isOpen={isDrawerOpen}
           labelId={labelComiteId}
-          ref={drawerRef}
         >
           <AjouterUnComite
             closeDrawer={() => {
@@ -378,7 +374,6 @@ export default function Gouvernance(): ReactElement {
                 isFixedWidth={false}
                 isOpen={isDrawerOpen}
                 labelId={labelNoteDeContexteId}
-                ref={drawerRef}
               >
                 <AjouterNoteDeContexte
                   closeDrawer={() => {

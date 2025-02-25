@@ -30,7 +30,7 @@ export default function ModifierMonCompte({
       <DrawerTitle id={labelId}>
         Mes informations personnelles
       </DrawerTitle>
-      <p>
+      <p className="fr-text--sm color-grey">
         Les champs avec
         {' '}
         <span className="color-red">

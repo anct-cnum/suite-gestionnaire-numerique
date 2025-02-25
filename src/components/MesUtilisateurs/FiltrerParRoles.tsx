@@ -45,15 +45,8 @@ export default function FiltrerParRoles(): ReactElement {
   ]
 
   return (
-    <fieldset
-      aria-labelledby="checkboxes-legend checkboxes-messages"
-      className="fr-fieldset"
-      id="checkboxes"
-    >
-      <legend
-        className="fr-fieldset__legend--regular fr-fieldset__legend"
-        id="checkboxes-legend"
-      >
+    <fieldset className="fr-fieldset">
+      <legend className="fr-fieldset__legend--regular fr-fieldset__legend">
         Par rôles
       </legend>
       {

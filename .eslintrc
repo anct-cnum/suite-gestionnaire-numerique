@@ -91,7 +91,7 @@
           {
             "target": ["src/presenters"],
             "from": ["src", "node_modules"],
-            "except": ["use-cases", "presenters", "shared"],
+            "except": ["use-cases", "presenters/shared", "shared"],
             "message": "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways."
           },
           {

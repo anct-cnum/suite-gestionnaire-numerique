@@ -7,7 +7,6 @@ import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
 import Icon from '../shared/Icon/Icon'
 import Tag from '../shared/Tag/Tag'
-import { ActionViewModel } from '@/presenters/actionPresenter'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeAction({ actions }: Props): ReactElement {
@@ -78,5 +77,5 @@ export default function ResumeAction({ actions }: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  actions: ReadonlyArray<ActionViewModel>
+  actions: FeuilleDeRouteViewModel['actions']
 }>
