@@ -1,9 +1,9 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
-import MesMembres from './MesMembres'
-import { mesMembresPresenter } from '@/presenters/mesMembresPresenter'
-import { mesMembresReadModelFactory } from '@/use-cases/testHelper'
+import GestionMembres from './GestionMembres'
+import { membresPresenter } from '@/presenters/membresPresenter'
+import { membresReadModelFactory } from '@/use-cases/testHelper'
 
 describe('membres gouvernance', () => {
   it('quand j’affiche les membres de la gouvernance, alors s’affiche le bouton pour ajouter un membre', () => {
@@ -40,7 +40,7 @@ describe('membres gouvernance', () => {
       expect(selectionnerUnMembre).toBeInTheDocument()
       const croixRouge = within(candidatOuSuggere).getByRole('option', { name: 'Croix Rouge Française' })
       expect(croixRouge).toBeInTheDocument()
-      const laPoste = within(candidatOuSuggere).getByRole('option', { name: 'La Poste' })
+      const laPoste = within(candidatOuSuggere).getByRole('option', { name: "La Voie du Num'" })
       expect(laPoste).toBeInTheDocument()
 
       const information = within(fieldset).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
@@ -74,7 +74,7 @@ describe('membres gouvernance', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
-      jeSelectionneUnCandidat('structure-99229991601034')
+      jeSelectionneUnCandidat('structure-79227291600034-69')
 
       // THEN
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
@@ -82,7 +82,7 @@ describe('membres gouvernance', () => {
       expect(information).not.toBeInTheDocument()
 
       const informationsMembre = within(formulaire).getAllByRole('group')[1]
-      const statut = within(informationsMembre).getByText('Candidat', { selector: 'p' })
+      const statut = within(informationsMembre).getByText('candidat', { selector: 'p' })
       expect(statut).toBeInTheDocument()
       const siretLabel = within(informationsMembre).getByText(matchWithoutMarkup('Numéro SIRET/RIDET'))
       expect(siretLabel).toBeInTheDocument()
@@ -90,20 +90,20 @@ describe('membres gouvernance', () => {
       expect(abreviationSiret).toHaveAttribute('title', 'Système d’Identification du Répertoire des ÉTablissements')
       const abreviationRidet = within(siretLabel).getByText('RIDET', { selector: 'abbr' })
       expect(abreviationRidet).toHaveAttribute('title', 'Répertoire d’Identification des Entreprises et des ÉTablissements')
-      const siretValue = within(informationsMembre).getByRole('link', { name: '99229991601034' })
-      expect(siretValue).toHaveAttribute('href', 'https://annuaire-entreprises.data.gouv.fr/etablissement/99229991601034')
-      expect(siretValue).toOpenInNewTab('Fiche La Poste')
+      const siretValue = within(informationsMembre).getByRole('link', { name: '79227291600034' })
+      expect(siretValue).toHaveAttribute('href', 'https://annuaire-entreprises.data.gouv.fr/etablissement/79227291600034')
+      expect(siretValue).toOpenInNewTab('Fiche Emmaüs Connect')
       const typologieLabel = within(informationsMembre).getByText('Typologie')
       expect(typologieLabel).toBeInTheDocument()
-      const typologieValue = within(informationsMembre).getByText('EPCI')
+      const typologieValue = within(informationsMembre).getByText('Association')
       expect(typologieValue).toBeInTheDocument()
       const adresseLabel = within(informationsMembre).getByText('Adresse')
       expect(adresseLabel).toBeInTheDocument()
-      const adresseValue = within(informationsMembre).getByText('17 avenue de l’opéra 75000 Paris')
+      const adresseValue = within(informationsMembre).getByText('71 rue Archereau, 75019 PARIS')
       expect(adresseValue).toBeInTheDocument()
       const contactLabel = within(informationsMembre).getByText('Contact référent')
       expect(contactLabel).toBeInTheDocument()
-      const contactValue = within(informationsMembre).getByText('Eric Durant, Directeur eric.durant@example.com')
+      const contactValue = within(informationsMembre).getByText('Ninon Poulin, Médiatrice ninon.poulin@example.net')
       expect(contactValue).toBeInTheDocument()
 
       const bouton = within(formulaire).getByRole('button', { name: 'Ajouter' })
@@ -117,7 +117,7 @@ describe('membres gouvernance', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
-      jeSelectionneUnCandidat('structure-99339991601034')
+      jeSelectionneUnCandidat('structure-77978721700057-69')
 
       // THEN
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
@@ -153,7 +153,8 @@ describe('membres gouvernance', () => {
       jOuvreLeFormulairePourAjouterUnMembre()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un membre à la gouvernance' })
       const selectionnerUnMembre = screen.getByRole<HTMLOptionElement>('option', { name: 'Sélectionner un membre' })
-      jeSelectionneUnCandidat('structure-99229991601034')
+
+      jeSelectionneUnCandidat('structure-79227291600034-69')
       const ajouter = jAjouteUnMembre()
 
       // THEN
@@ -161,8 +162,8 @@ describe('membres gouvernance', () => {
       expect(ajouter).toBeDisabled()
       expect(accepterUnMembreAction).toHaveBeenCalledWith({
         path: '/membres/11',
-        uidGouvernance: 'gouvernanceFooId',
-        uidMembrePotentiel: 'structure-99229991601034',
+        uidGouvernance: '69',
+        uidMembrePotentiel: 'structure-79227291600034-69',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Membre ajouté')
@@ -179,7 +180,7 @@ describe('membres gouvernance', () => {
 
       // WHEN
       jOuvreLeFormulairePourAjouterUnMembre()
-      jeSelectionneUnCandidat('structure-99229991601034')
+      jeSelectionneUnCandidat('structure-79227291600034-69')
       jAjouteUnMembre()
 
       // THEN
@@ -207,11 +208,11 @@ describe('membres gouvernance', () => {
 
 function afficherMembres(
   options: Partial<Parameters<typeof renderComponent>[1]> = {},
-  membresReadModel = mesMembresReadModelFactory()
+  membresReadModel = membresReadModelFactory()
 ): void {
-  const membresViewModel = mesMembresPresenter(membresReadModel)
+  const membresViewModel = membresPresenter(membresReadModel)
   renderComponent(
-    <MesMembres mesMembresViewModel={membresViewModel} />,
+    <GestionMembres membresViewModel={membresViewModel} />,
     options
   )
 }

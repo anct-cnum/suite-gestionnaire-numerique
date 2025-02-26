@@ -1,5 +1,6 @@
-import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import { Membre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { alphaAsc } from '@/shared/lang'
 import { MembreReadModel, MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export class PrismaMesMembresLoader implements MesMembresLoader {
@@ -39,17 +40,11 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
         ajouterUnMembre: false,
         supprimerUnMembre: false,
       },
-      candidats: toMembres(gouvernanceRecord.membres, 'candidat')
-        .toSorted(sortMembres)
-        .map(toMesMembresReadModel),
       departement: gouvernanceRecord.relationDepartement.nom,
-      membres: toMembres(gouvernanceRecord.membres, 'confirme')
-        .toSorted(sortMembres)
+      membres: toMembres(gouvernanceRecord.membres)
+        .toSorted(alphaAsc('nom'))
         .map(toMesMembresReadModel),
       roles: [],
-      suggeres: toMembres(gouvernanceRecord.membres, 'suggere')
-        .toSorted(sortMembres)
-        .map(toMesMembresReadModel),
       typologies: [],
       uidGouvernance: codeDepartementGouvernance,
     }
@@ -73,8 +68,9 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
     siret: 'Siret bouchonné',
+    statut: membre.statut as MembreReadModel['statut'],
     suppressionDuMembreAutorise: false,
     typologie: membre.type ?? '',
-    uidMembre: membre.id,
+    uid: membre.id,
   }
 }

@@ -1,15 +1,11 @@
 export function toRoleViewModel(role: string): RoleViewModel {
   return {
     color: roleAndHisColor[role],
-    nom: formaterLeRoleViewModel(role),
+    nom: formaterLeRole[role],
   }
 }
 
-export function formaterLeRoleViewModel(role: string): string {
-  return formaterLeRole[role]
-}
-
-type RoleViewModel = Readonly<{
+export type RoleViewModel = Readonly<{
   color: string
   nom: string
 }>

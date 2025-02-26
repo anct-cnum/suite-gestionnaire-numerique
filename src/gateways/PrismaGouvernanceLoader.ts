@@ -1,7 +1,8 @@
 import { Prisma } from '@prisma/client'
 
-import { Membre, sortMembres, toMembres } from './shared/MembresGouvernance'
+import { Membre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { alphaAsc } from '@/shared/lang'
 import { CoporteurDetailReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
@@ -77,7 +78,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       type: comite.type as TypeDeComite,
     }))
     : undefined
-  const membres = toMembres(gouvernanceRecord.membres, 'confirme')
+  const membres = toMembres(gouvernanceRecord.membres)
   return {
     comites,
     departement: gouvernanceRecord.relationDepartement.nom,
@@ -118,16 +119,20 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
     noteDeContexte,
     notePrivee,
     syntheseMembres: {
-      candidats: 0,
+      candidats: membres.filter(({ statut }) => statut === 'candidat').length,
       coporteurs: membres
         .filter(isCoporteur)
-        .toSorted(sortMembres)
-        .map((membre) => ({
-          ...membre,
-          ...bouchonCoporteur,
-          totalMontantSubventionAccorde: NaN,
-          totalMontantSubventionFormationAccorde: NaN,
-        } as CoporteurDetailReadModel)),
+        .toSorted(alphaAsc('nom'))
+        .map((membre) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { statut, ...membreCoporteur } = membre
+          return {
+            ...membreCoporteur,
+            ...bouchonCoporteur,
+            totalMontantSubventionAccorde: NaN,
+            totalMontantSubventionFormationAccorde: NaN,
+          } as CoporteurDetailReadModel
+        }),
       total: membres.length,
     },
     uid: gouvernanceRecord.departementCode,

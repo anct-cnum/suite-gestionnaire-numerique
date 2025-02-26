@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeMembre({ denomination, lien, total }: Props): ReactElement {
+export default function ResumeMembre({ total, denomination, membresLink }: Props): ReactElement {
   return (
     <Resume style={styles['resume-membres']}>
       <p>
@@ -21,7 +21,7 @@ export default function ResumeMembre({ denomination, lien, total }: Props): Reac
       </p>
       <Link
         className={`fr-link fr-icon-arrow-right-line fr-link--icon-right ${styles['resume-a']}`}
-        href={lien}
+        href={membresLink}
       >
         Voir les membres
       </Link>
@@ -31,6 +31,6 @@ export default function ResumeMembre({ denomination, lien, total }: Props): Reac
 
 type Props = Readonly<{
   denomination: string
-  lien: string
   total: number
+  membresLink: string
 }>

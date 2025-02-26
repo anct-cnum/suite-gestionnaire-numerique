@@ -28,4 +28,15 @@ export function noop(): void {
   // No-op
 }
 
+export function alphaAsc(): (left: string, right: string) => number
+export function alphaAsc<K extends string, V extends Record<K, string>>(key: K): (left: V, right: V) => number
+export function alphaAsc<K extends string, V extends Record<K, string>>(key?: K):
+(left: string | V, right: string | V) => number {
+  if (isNullish(key)) {
+    return (left, right) => (left as string).localeCompare(right as string)
+  }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return (left, right) => (left as V)[key!].localeCompare((right as V)[key!])
+}
+
 type JsonPrimitive = boolean | number | string

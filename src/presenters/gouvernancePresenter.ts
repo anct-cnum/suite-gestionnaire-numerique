@@ -1,6 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
-import { toRoleViewModel } from './shared/role'
+import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -17,6 +17,9 @@ export function gouvernancePresenter(
     departement: gouvernanceReadModel.departement,
     hasMembres,
     isVide: isGouvernanceVide(gouvernanceReadModel, !hasMembres),
+    links: {
+      membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
+    },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     sectionFeuillesDeRoute: {
       ...{
@@ -80,6 +83,9 @@ export type GouvernanceViewModel = Readonly<{
     sousTitre: string
   }>
   uid: string
+  links: {
+    membres: string
+  }
 }>
 
 function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel, pasDeMembre: boolean): boolean {
@@ -352,11 +358,6 @@ export type MembreDetailsViewModel = Readonly<{
     }>
   >
   plusDetailsHref?: string
-}>
-
-type RoleViewModel = Readonly<{
-  color: string
-  nom: string
 }>
 
 const frequences = [
