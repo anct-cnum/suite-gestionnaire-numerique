@@ -26,7 +26,7 @@ function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<Ass
   ]
     .flat()
     .map(({ nom, role }) => ({
-      contactReferent: membre.relationContact ?? undefined,
+      contactReferent: membre.relationContact,
       contactTechnique: membre.contactTechnique,
       id: membre.id,
       nom,
@@ -75,7 +75,7 @@ type MembreRecord = Prisma.MembreRecordGetPayload<{
 type AssociationMembreEtRoleUnique = Readonly<{ role: string }> & MembreSansRole
 
 type MembreSansRole = Readonly<{
-  contactReferent?: {
+  contactReferent: {
     email: string
     prenom: string
     nom: string

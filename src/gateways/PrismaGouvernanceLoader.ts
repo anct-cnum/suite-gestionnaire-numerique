@@ -123,16 +123,23 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
       coporteurs: membres
         .filter(isCoporteur)
         .toSorted(alphaAsc('nom'))
-        .map((membre) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { statut, ...membreCoporteur } = membre
-          return {
-            ...membreCoporteur,
-            ...bouchonCoporteur,
-            totalMontantSubventionAccorde: NaN,
-            totalMontantSubventionFormationAccorde: NaN,
-          } as CoporteurDetailReadModel
-        }),
+        .map((membre) => ({
+          contactReferent: {
+            denomination: 'Contact référent',
+            mailContact: membre.contactReferent.email,
+            nom: membre.contactReferent.nom,
+            poste: membre.contactReferent.fonction,
+            prenom: membre.contactReferent.prenom,
+          },
+          contactTechnique: membre.contactTechnique ?? undefined,
+          links: {},
+          nom: membre.nom,
+          roles: membre.roles,
+          totalMontantSubventionAccorde: NaN,
+          totalMontantSubventionFormationAccorde: NaN,
+          type: membre.type ?? '',
+          ...bouchonCoporteur,
+        })),
       total: membres.length,
     },
     uid: gouvernanceRecord.departementCode,
@@ -180,15 +187,7 @@ function isCoporteur(membre: Membre): boolean {
   return membre.roles.includes('coporteur')
 }
 
-const bouchonCoporteur: Partial<CoporteurDetailReadModel> = {
-  contactReferent: {
-    denomination: 'Contact politique de la collectivité',
-    mailContact: 'julien.deschamps@example.com',
-    nom: 'Henrich',
-    poste: 'chargé de mission',
-    prenom: 'Laetitia',
-  },
-  contactTechnique: 'Simon.lagrange@example.com',
+const bouchonCoporteur: Pick<CoporteurDetailReadModel, 'feuillesDeRoute' | 'telephone'> = {
   feuillesDeRoute: [
     {
       montantSubventionAccorde: 5_000,
@@ -201,6 +200,5 @@ const bouchonCoporteur: Partial<CoporteurDetailReadModel> = {
       nom: 'Feuille de route numérique du Rhône',
     },
   ],
-  links: {},
   telephone: '+33 4 45 00 45 00',
 }
