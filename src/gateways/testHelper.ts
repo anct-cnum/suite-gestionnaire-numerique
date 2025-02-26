@@ -165,6 +165,14 @@ export async function creerUnMembreSgar(
   })
 }
 
+export async function creerUnContact(
+  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.contactMembreGouvernanceRecord.create({
+    data: contactRecordFactory(override),
+  })
+}
+
 export async function creerMembres(gouvernanceDepartementCode: string): Promise<void> {
   await creerUnContact({
     email: `commune-35345-${gouvernanceDepartementCode}@example.com`,
@@ -179,61 +187,73 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     type: undefined,
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-94028-${gouvernanceDepartementCode}`,
     type: 'Collectivité, commune',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `epci-241927201-${gouvernanceDepartementCode}`,
     type: 'Collectivité, EPCI',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `epci-200072056-${gouvernanceDepartementCode}`,
     type: 'Collectivité, EPCI',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `structure-38012986643097-${gouvernanceDepartementCode}`,
     type: 'Entreprise privée',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `prefecture-${gouvernanceDepartementCode}`,
     type: 'Préfecture départementale',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `departement-69-${gouvernanceDepartementCode}`,
     type: 'Conseil départemental',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `region-53-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnMembre({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `region-11-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnCandidat({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-110-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnCandidat({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-112-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnSuggere({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-111-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
   await creerUnSuggere({
+    contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-113-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
@@ -391,6 +411,7 @@ function membreRecordFactory(
   override?: Partial<Prisma.MembreRecordUncheckedCreateInput>
 ): Prisma.MembreRecordUncheckedCreateInput {
   return {
+    contact: 'email@example.com',
     gouvernanceDepartementCode: '69',
     id: 'prefecture-69',
     statut: 'confirme',
@@ -458,7 +479,7 @@ function contactRecordFactory(
   override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
 ): Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput {
   return {
-    email: 'email@exemple.com',
+    email: 'email@example.com',
     fonction: 'Directeur',
     nom: 'Tartempion',
     prenom: 'Michel',
@@ -481,13 +502,5 @@ async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCre
       statut: 'suggere',
       ...override,
     }),
-  })
-}
-
-async function creerUnContact(
-  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.contactMembreGouvernanceRecord.create({
-    data: contactRecordFactory(override),
   })
 }
