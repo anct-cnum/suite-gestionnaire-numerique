@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/switch-exhaustiveness-check */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+/* eslint-disable no-case-declarations*/
 
 import {
   ComiteRecord,
@@ -160,15 +162,24 @@ void (async function migrate(): Promise<void> {
       membresCrees,
       prisma.comiteRecord.createMany({ data: groupe.comites.slice() }),
       prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute.slice() }),
-      prisma.membreGouvernanceDepartementRecord.createMany({
-        data: groupe.membresDepartements.slice(),
+      prisma.membreGouvernanceCommuneRecord.createMany({
+        data: Object.values(groupe.membresCommunes).flatMap(associerMembresAuxRoles),
         skipDuplicates: true,
       }),
-      prisma.membreGouvernanceCommuneRecord.createMany({ data: groupe.membresCommunes.slice(), skipDuplicates: true }),
-      prisma.membreGouvernanceEpciRecord.createMany({ data: groupe.membresEpcis.slice(), skipDuplicates: true }),
-      prisma.membreGouvernanceSgarRecord.createMany({ data: groupe.membresSgars.slice(), skipDuplicates: true }),
+      prisma.membreGouvernanceDepartementRecord.createMany({
+        data: Object.values(groupe.membresDepartements).flatMap(associerMembresAuxRoles), // .slice(),
+        skipDuplicates: true,
+      }),
+      prisma.membreGouvernanceEpciRecord.createMany({
+        data: Object.values(groupe.membresEpcis).flatMap(associerMembresAuxRoles),
+        skipDuplicates: true,
+      }),
+      prisma.membreGouvernanceSgarRecord.createMany({
+        data: Object.values(groupe.membresSgars).flatMap(associerMembresAuxRoles),
+        skipDuplicates: true,
+      }),
       prisma.membreGouvernanceStructureRecord.createMany({
-        data: groupe.membresStructures.slice(),
+        data: Object.values(groupe.membresStructures).flatMap(associerMembresAuxRoles),
         skipDuplicates: true,
       }),
     ]))
@@ -244,11 +255,11 @@ function grouperDonneesACreer(
       feuillesDeRoute: [],
       gouvernances: [],
       membres: [],
-      membresCommunes: [],
-      membresDepartements: [],
-      membresEpcis: [],
-      membresSgars: [],
-      membresStructures: [],
+      membresCommunes: {},
+      membresDepartements: {},
+      membresEpcis: {},
+      membresSgars: {},
+      membresStructures: {},
     }
   )
 
@@ -326,49 +337,72 @@ function grouperDonneesACreer(
           [membreId, type] = [`commune-${membreFNE.communeCode}-${departementCode}`, 'Collectivité, commune']
           groupe = {
             ...groupe,
-            membresCommunes: groupe.membresCommunes.concat({
-              commune: membreFNE.relationCommune!.nom,
-              membreId,
-              role,
-            }),
+            membresCommunes: {
+              ...groupe.membresCommunes,
+              [membreId]: {
+                membre: {
+                  commune: membreFNE.relationCommune!.nom,
+                  membreId,
+                },
+                roles: new Set([...groupe.membresCommunes[membreId]?.roles ?? []].concat(role)),
+              },
+            },
           }
           break
         case Boolean(membreFNE.relationEpci):
           [membreId, type] = [`epci-${membreFNE.epciCode}-${departementCode}`, 'Collectivité, EPCI']
           groupe = {
             ...groupe,
-            membresEpcis: groupe.membresEpcis.concat({
-              epci: membreFNE.relationEpci!.nom,
-              membreId,
-              role,
-            }),
+            membresEpcis: {
+              ...groupe.membresEpcis,
+              [membreId]: {
+                membre: {
+                  epci: membreFNE.relationEpci!.nom,
+                  membreId,
+                },
+                roles: new Set([...groupe.membresEpcis[membreId]?.roles ?? []].concat(role)),
+              },
+            },
           }
           break
         case Boolean(membreFNE.regionCode):
           [membreId, type] = [`sgar-${membreFNE.regionCode}-${departementCode}`, 'Préfecture régionale']
           groupe = {
             ...groupe,
-            membresSgars: groupe.membresSgars.concat({
-              membreId,
-              role,
-              sgarCode: membreFNE.regionCode!,
-            }),
+            membresSgars: {
+              ...groupe.membresSgars,
+              [membreId]: {
+                membre: {
+                  membreId,
+                  sgarCode: membreFNE.regionCode!,
+                },
+                roles: new Set([...groupe.membresSgars[membreId]?.roles ?? []].concat(role)),
+              },
+            },
           }
           break
-        case Boolean(membreFNE.relationInformationSiret):
+        case Boolean(membreFNE.relationInformationSiret ?? membreFNE.siret):
           membreId = `structure-${membreFNE.siret}-${departementCode}`
           groupe = {
             ...groupe,
-            membresStructures: groupe.membresStructures.concat({
-              membreId,
-              role,
-              structure: membreFNE.relationInformationSiret!.nom ?? membreFNE.relationInformationSiret!.siret,
-            }),
+            // @ts-expect-error
+            membresStructures: {
+              ...groupe.membresStructures,
+              [membreId]: {
+                membre: {
+                  membreId,
+                  structure: membreFNE.relationInformationSiret?.nom
+                    ?? membreFNE.nomStructure
+                    ?? membreFNE.relationInformationSiret?.siret
+                    ?? membreFNE.siret,
+                },
+                roles: new Set([...groupe.membresStructures[membreId]?.roles ?? []].concat(role)),
+              },
+            },
           }
           break
         case Boolean(membreFNE.departementCode):
           [membreId, type] = [`departement-${membreFNE.departementCode}-${departementCode}`, 'Conseil départemental']
-          // eslint-disable-next-line no-case-declarations
           const prefectureMembreId = `prefecture-${gouvernanceDepartementCode}`
           groupe = {
             ...groupe,
@@ -379,18 +413,23 @@ function grouperDonneesACreer(
               statut: 'confirme',
               type: 'Préfecture départementale',
             }),
-            membresDepartements: groupe.membresDepartements.concat([
-              {
-                departementCode: membreFNE.departementCode!,
-                membreId,
-                role,
+            membresDepartements: {
+              ...groupe.membresDepartements,
+              [membreId]: {
+                membre: {
+                  departementCode: membreFNE.departementCode!,
+                  membreId,
+                },
+                roles: new Set([...groupe.membresDepartements[membreId]?.roles ?? []].concat(role)),
               },
-              {
-                departementCode: gouvernanceDepartementCode,
-                membreId: prefectureMembreId,
-                role: 'coporteur',
+              [prefectureMembreId]: {
+                membre: {
+                  departementCode: gouvernanceDepartementCode,
+                  membreId: prefectureMembreId,
+                },
+                roles: new Set(['coporteur']),
               },
-            ]),
+            },
           }
           break
       }
@@ -420,7 +459,6 @@ function grouperDonneesACreer(
   }
 
   function makeContacts(membreFNE: MembreGouvernanceFNE): Readonly<Pick<MembreRecord, 'contact' | 'contactTechnique'>> {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const contacts = (membreFNE as MembreGouvernanceFNEConfirme).relationFormulaireGouvernance ?? membreFNE
     return {
       // @ts-expect-error
@@ -429,6 +467,15 @@ function grouperDonneesACreer(
       contactTechnique: contacts.relationContactTechnique?.email.toLowerCase() ?? null,
     }
   }
+}
+
+function associerMembresAuxRoles<MembreSansRole extends MembreGouvernanceSansRole>(
+  membreEtRoles: MembreEtRoles<MembreSansRole>
+): ReadonlyArray<MembreSansRole & Readonly<{ role: string }>> {
+  const roles = Array.from(membreEtRoles.roles)
+  return membreEtRoles.roles.size === 1
+    ? [{ ...membreEtRoles.membre, role: roles[0] }]
+    : roles.filter((role) => role !== 'observateur').map((role) => ({ ...membreEtRoles.membre, role }))
 }
 
 type Contacts = Readonly<{
@@ -489,9 +536,29 @@ type GroupeGouvernance = Readonly<{
 
 type GroupeMembres = Readonly<{
   membres: ReadonlyArray<MembreRecord>
-  membresDepartements: ReadonlyArray<MembreGouvernanceDepartementRecord>
-  membresSgars: ReadonlyArray<MembreGouvernanceSgarRecord>
-  membresEpcis: ReadonlyArray<MembreGouvernanceEpciRecord>
-  membresCommunes: ReadonlyArray<MembreGouvernanceCommuneRecord>
-  membresStructures: ReadonlyArray<MembreGouvernanceStructureRecord>
+  membresDepartements: MembreEtRolesById<MembreGouvernanceDepartementSansRole>
+  membresSgars: MembreEtRolesById<MembreGouvernanceSgarSansRole>
+  membresEpcis: MembreEtRolesById<MembreGouvernanceEpciSansRole>
+  membresCommunes: MembreEtRolesById<MembreGouvernanceCommuneSansRole>
+  membresStructures: MembreEtRolesById<MembreGouvernanceStructureSansRole>
 }>
+
+type MembreEtRolesById<Membre extends MembreGouvernanceSansRole> = Readonly<Record<string, MembreEtRoles<Membre>>>
+
+type MembreEtRoles<Membre extends MembreGouvernanceSansRole> = Readonly<{
+  membre: Membre
+  roles: ReadonlySet<string>
+}>
+
+type MembreGouvernanceCommuneSansRole = Omit<MembreGouvernanceCommuneRecord, 'role'>
+type MembreGouvernanceDepartementSansRole = Omit<MembreGouvernanceDepartementRecord, 'role'>
+type MembreGouvernanceEpciSansRole = Omit<MembreGouvernanceEpciRecord, 'role'>
+type MembreGouvernanceSgarSansRole = Omit<MembreGouvernanceSgarRecord, 'role'>
+type MembreGouvernanceStructureSansRole = Omit<MembreGouvernanceStructureRecord, 'role'>
+
+type MembreGouvernanceSansRole =
+  | MembreGouvernanceCommuneSansRole
+  | MembreGouvernanceDepartementSansRole
+  | MembreGouvernanceEpciSansRole
+  | MembreGouvernanceSgarSansRole
+  | MembreGouvernanceStructureSansRole
