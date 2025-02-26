@@ -153,10 +153,10 @@ model FeuilleDeRouteRecord {
   gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
-  porteurId                  String?  @map("porteur_id")
+  pieceJointe                String?  @map("piece_jointe")
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
+  ActionRecord        ActionRecord[]
 
   @@map("feuille_de_route")
 }
@@ -192,7 +192,6 @@ model MembreRecord {
   membresGouvernanceEpci        MembreGouvernanceEpciRecord[]
   membresGouvernanceCommune     MembreGouvernanceCommuneRecord[]
   membresGouvernanceStructure   MembreGouvernanceStructureRecord[]
-  feuillesDeRoute               FeuilleDeRouteRecord[]
   BeneficiaireSubvention        BeneficiaireSubvention[]
   PorteurAction                 PorteurAction[]
   CoFinancement                 CoFinancement[]
@@ -259,19 +258,20 @@ model MembreGouvernanceStructureRecord {
 
 model ActionRecord {
   id                      Int      @id @default(autoincrement())
-  besions                 String[]
+  besions                 String[] @map("besoins")
   createdBy               Int      @map("createur_id")
   nom                     String   @db.Citext
   contexte                String   @db.Citext
-  description             String   @db.Citext
+  description             String?  @db.Citext
   budget_global           Float
   piece_jointe_budget_key String
 
-  feuille_de_route_id Int
+  feuille_de_route_id Int?
   date_de_debut       DateTime?
   date_de_fin         DateTime?
 
   relationUtilisateur    UtilisateurRecord           @relation(fields: [createdBy], references: [id])
+  relationFeuilleDeRoute FeuilleDeRouteRecord?       @relation(fields: [feuille_de_route_id], references: [id])
   demandesDeSubvention   DemandeDeSubventionRecord[]
   BeneficiaireSubvention BeneficiaireSubvention[]
   PorteurAction          PorteurAction[]
@@ -289,10 +289,10 @@ model StatusDemandeSubventionRecord {
 }
 
 model DemandeDeSubventionRecord {
-  id                    Int      @id @default(autoincrement())
-  createdAt             DateTime @default(now()) @map("created_at")
-  createdBy             Int      @map("createur_id")
-  statusId              Int      @map("status_id")
+  id                    Int       @id @default(autoincrement())
+  createdAt             DateTime  @default(now()) @map("created_at")
+  createdBy             Int       @map("createur_id")
+  statusId              Int       @map("status_id")
   subvention_demandee   Float
   subvention_etp        Float?
   subvention_prestation Float?
