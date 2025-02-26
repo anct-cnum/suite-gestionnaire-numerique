@@ -50,7 +50,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   }
 
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    const record = await this.#dataResource.findUniqueOrThrow({
+    const record = await this.#dataResource.findUnique({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -62,6 +62,9 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         ssoId: uid,
       },
     })
+    if (!record) {
+      throw new Error('Utilisateur non trouvé')
+    }
     return new UtilisateurFactory({
       departement: mapDepartement(record.relationDepartement),
       derniereConnexion: record.derniereConnexion ?? undefined,

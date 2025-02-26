@@ -4,9 +4,13 @@ import { JWT } from 'next-auth/jwt'
 import { OAuthConfig } from 'next-auth/providers'
 import { ClientSafeProvider } from 'next-auth/react'
 
+import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from './PrismaUtilisateurRepository'
 import prisma from '../../prisma/prismaClient'
+import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPrenomSiAbsents'
 import { MettreAJourDateDeDerniereConnexion } from '@/use-cases/commands/MettreAJourDateDeDerniereConnexion'
+import { MettreAJourUidALaPremiereConnexion } from '@/use-cases/commands/MettreAJourUidALaPremiereConnexion'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 const providerId = 'pro-connect'
 const providerName = 'Pro Connect'
@@ -31,19 +35,34 @@ const nextAuthOptions = {
       }
     },
     async signIn({ profile }): Promise<boolean> {
-      if (profile) {
+      if (profile?.sub !== undefined && profile.email !== undefined) {
         const utilisateurRepository = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-        if (profile.sub !== undefined) {
-          // eslint-disable-next-line no-restricted-syntax
-          await new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).handle({
-            uidUtilisateurCourant: profile.sub,
-          })
+        const utilisateurLoader = new PrismaUtilisateurLoader()
+        const utilisateurReadModel = await recupereretMettreAJourUtilisateur(
+          profile as Profile,
+          utilisateurLoader,
+          utilisateurRepository
+        )
+        if (!utilisateurReadModel) {
+          return false
         }
+        await corrigerNomPrenomUtilisateur(
+          utilisateurReadModel,
+          profile as Profile,
+          utilisateurRepository
+        )
+        await mettreAJourDateConnexion(
+          profile.sub,
+          utilisateurRepository
+        )
       }
       return true
     },
   },
   debug: process.env.NODE_ENV !== 'production',
+  pages: {
+    error: '/auth-error',
+  },
   providers: [
     {
       authorization: {
@@ -111,3 +130,57 @@ export type Profile = Readonly<{
   iat: number
   iss: string
 }>
+
+async function recupereretMettreAJourUtilisateur(
+  profile: Profile,
+  utilisateurLoader: PrismaUtilisateurLoader,
+  utilisateurRepository: PrismaUtilisateurRepository
+): Promise<UnUtilisateurReadModel | null> {
+  let utilisateurReadModel = null
+  try {
+    utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'Utilisateur non trouvé') {
+      try {
+        await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
+          .handle({
+            emailAsUid: profile.email,
+            uid: profile.sub,
+          })
+      } catch {
+        return null
+      }
+    }
+    utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)
+  }
+  return utilisateurReadModel
+}
+
+async function corrigerNomPrenomUtilisateur(
+  utilisateurReadModel: UnUtilisateurReadModel,
+  profile: Profile,
+  utilisateurRepository: PrismaUtilisateurRepository
+): Promise<string> {
+  return new CorrigerNomPrenomSiAbsents(utilisateurRepository)
+    .handle({
+      actuels: {
+        nom: utilisateurReadModel.nom,
+        prenom: utilisateurReadModel.prenom,
+      },
+      corriges: {
+        nom: profile.usual_name,
+        prenom: profile.given_name,
+      },
+      uidUtilisateurCourant: profile.sub,
+    })
+}
+
+async function mettreAJourDateConnexion(
+  uid: string,
+  utilisateurRepository: PrismaUtilisateurRepository
+): Promise<string> {
+  // eslint-disable-next-line no-restricted-syntax
+  return new MettreAJourDateDeDerniereConnexion(utilisateurRepository, new Date()).handle({
+    uidUtilisateurCourant: uid,
+  })
+}
