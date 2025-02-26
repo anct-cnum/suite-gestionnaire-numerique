@@ -123,7 +123,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   }
 
   async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    const utilisateurRecord = await this.#dataResource.findUniqueOrThrow({
+    const utilisateurRecord = await this.#dataResource.findUnique({
       include: {
         relationDepartement: true,
         relationGroupement: true,
@@ -135,7 +135,9 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         ssoId: uid,
       },
     })
-
+    if (!utilisateurRecord) {
+      throw new Error('Utilisateur non trouvé')
+    }
     return transform(utilisateurRecord)
   }
 }
