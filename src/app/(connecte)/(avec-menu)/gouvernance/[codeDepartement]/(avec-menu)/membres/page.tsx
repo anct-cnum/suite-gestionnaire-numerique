@@ -2,9 +2,9 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import MesMembres from '@/components/MesMembres/MesMembres'
+import GestionMembres from '@/components/GestionMembresGouvernance/GestionMembres'
 import { PrismaMesMembresLoader } from '@/gateways/PrismaMesMembresLoader'
-import { mesMembresPresenter } from '@/presenters/mesMembresPresenter'
+import { membresPresenter } from '@/presenters/membresPresenter'
 import { RecupererMesMembres } from '@/use-cases/queries/RecupererMesMembres'
 
 export const metadata: Metadata = {
@@ -18,12 +18,11 @@ export default async function MembresController({ params }: Props): Promise<Reac
     notFound()
   }
 
-  const mesMembresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader())
+  const membresReadModel = await new RecupererMesMembres(new PrismaMesMembresLoader())
     .handle({ codeDepartement })
-  const mesMembresViewModel = mesMembresPresenter(mesMembresReadModel)
 
   return (
-    <MesMembres mesMembresViewModel={mesMembresViewModel} />
+    <GestionMembres membresViewModel={membresPresenter(membresReadModel)} />
   )
 }
 
