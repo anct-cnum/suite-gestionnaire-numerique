@@ -284,44 +284,44 @@ const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
   candidats: 2,
   coporteurs: [
     {
-      id: 'region-53-93',
       nom: 'Bretagne',
       roles: ['coporteur'],
       type: 'Préfecture régionale',
     },
     {
-      id: 'epci-200072056-93',
       nom: 'CC Porte du Jura',
       roles: ['beneficiaire', 'coporteur'],
       type: 'Collectivité, EPCI',
     },
     {
-      id: 'commune-94028-93',
       nom: 'Créteil',
       roles: ['coporteur'],
       type: 'Collectivité, commune',
     },
     {
-      id: 'structure-38012986643097-93',
       nom: 'Orange',
       roles: ['coporteur', 'recipiendaire'],
       type: 'Entreprise privée',
     },
     {
-      id: 'prefecture-93',
       nom: 'Seine-Saint-Denis',
       roles: ['coporteur'],
       type: 'Préfecture départementale',
     },
+    {
+      nom: 'Trévérien',
+      roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
+      type: '',
+    },
   ].map((partialMembre) => ({
     contactReferent: {
-      denomination: 'Contact politique de la collectivité',
-      mailContact: 'julien.deschamps@example.com',
-      nom: 'Henrich',
-      poste: 'chargé de mission',
-      prenom: 'Laetitia',
+      denomination: 'Contact référent',
+      mailContact: 'commune-35345-93@example.com',
+      nom: 'Tartempion',
+      poste: 'Directeur',
+      prenom: 'Michel',
     },
-    contactTechnique: 'Simon.lagrange@example.com',
+    contactTechnique: undefined,
     feuillesDeRoute: [
       {
         montantSubventionAccorde: 5_000,

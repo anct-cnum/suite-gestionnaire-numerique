@@ -52,19 +52,14 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
 }
 
 function toMesMembresReadModel(membre: Membre): MembreReadModel {
-  let contactReferent: Membre['contactReferent']
-  if (membre.contactReferent) {
-    contactReferent = {
+  return {
+    adresse: 'Adresse bouchonnée',
+    contactReferent: {
       email: membre.contactReferent.email,
       fonction: membre.contactReferent.fonction,
       nom: membre.contactReferent.nom,
       prenom: membre.contactReferent.prenom,
-    }
-  }
-
-  return {
-    adresse: 'Adresse bouchonnée',
-    contactReferent,
+    },
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
     siret: 'Siret bouchonné',

@@ -110,7 +110,7 @@ describe('membres gouvernance', () => {
       expect(bouton).toBeEnabled()
     })
 
-    it('puis que je sélectionne un membre alors ses informations s’affichent sans la typologie et le contact référent qui sont optionnels', () => {
+    it('puis que je sélectionne un membre alors ses informations s’affichent sans la typologie qui est optionnelle', () => {
       // GIVEN
       afficherMembres()
 
@@ -123,7 +123,7 @@ describe('membres gouvernance', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       const informationsMembre = within(formulaire).getAllByRole('group')[1]
       const donneesNonFournies = within(informationsMembre).getAllByText('Donnée non fournie')
-      expect(donneesNonFournies).toHaveLength(2)
+      expect(donneesNonFournies).toHaveLength(1)
     })
 
     it('que je sélectionne un membre puis que je le désélectionne alors les informations de base s’affichent', () => {

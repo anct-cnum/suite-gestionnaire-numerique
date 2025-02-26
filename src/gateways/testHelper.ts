@@ -269,6 +269,11 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     role: 'beneficiaire',
   })
   await creerUnMembreCommune({
+    commune: 'Trévérien',
+    membreId: `commune-35345-${gouvernanceDepartementCode}`,
+    role: 'coporteur',
+  })
+  await creerUnMembreCommune({
     commune: 'Créteil',
     membreId: `commune-94028-${gouvernanceDepartementCode}`,
     role: 'coporteur',
