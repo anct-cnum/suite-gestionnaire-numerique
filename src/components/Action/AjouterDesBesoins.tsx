@@ -1,4 +1,4 @@
-import { ReactElement, useId, useRef, useState } from 'react'
+import { ReactElement, RefObject, useId, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Checkbox from '../shared/Checkbox/Checkbox'
@@ -12,6 +12,7 @@ export default function AjouterDesBesoins({
   formations,
   formationsProfesionnels,
   outillages,
+  toutEffacer,
 }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -91,7 +92,7 @@ export default function AjouterDesBesoins({
             </button>
             <button
               className="fr-btn fr-btn--secondary"
-              onClick={toutEffacer}
+              onClick={toutEffacer(fieldset)}
               type="button"
             >
               Tout effacer
@@ -101,12 +102,6 @@ export default function AjouterDesBesoins({
       </Drawer>
     </>
   )
-
-  function toutEffacer(): void {
-    fieldset.current?.querySelectorAll('input').forEach((input: HTMLInputElement) => {
-      input.checked = false
-    })
-  }
 }
 
 function Fieldset(
@@ -139,4 +134,5 @@ type Props = Readonly<{
   formations: ActionViewModel['besoins']['formations']
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']
   outillages: ActionViewModel['besoins']['outillages']
+  toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
 }>

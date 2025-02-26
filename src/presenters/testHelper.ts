@@ -82,12 +82,18 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     anneeDeFin: '2026',
     beneficiaires: [
       {
-        nom: 'Croix Rouge Française',
-        url: '/',
+        color: 'info',
+        isChecked: true,
+        label: 'Rhône (69)',
+        statut: 'Co-porteur',
+        value: 'membreFooId3',
       },
       {
-        nom: 'La Poste',
-        url: '/',
+        color: 'info',
+        isChecked: false,
+        label: 'CC des Monts du Lyonnais',
+        statut: 'Co-porteur',
+        value: 'membreFooId4',
       },
     ],
     besoins: {
@@ -178,7 +184,22 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     description: '<p><strong>Description de l‘action.</strong></p>',
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: 'Structurer une filière de reconditionnement locale 1',
-    porteur: 'CC des Monts du Lyonnais',
+    porteurs: [
+      {
+        color: 'info',
+        isChecked: false,
+        label: 'Rhône (69)',
+        statut: 'Co-porteur',
+        value: 'membreFooId1',
+      },
+      {
+        color: 'info',
+        isChecked: true,
+        label: 'CC des Monts du Lyonnais',
+        statut: 'Co-porteur',
+        value: 'membreFooId2',
+      },
+    ],
     statut: {
       background: 'pink',
       icon: 'fr-icon-flashlight-line',
@@ -192,6 +213,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       financementAccorde: '40 000 €',
     },
     uid: 'actionFooId1',
+    urlGouvernance: '/gouvernance/11',
     ...overrides,
   }
 }
@@ -218,7 +240,22 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     description: '',
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: '',
-    porteur: 'CC des Monts du Lyonnais',
+    porteurs: [
+      {
+        color: 'info',
+        isChecked: false,
+        label: 'Rhône (69)',
+        statut: 'Co-porteur',
+        value: 'membreFooId1',
+      },
+      {
+        color: 'info',
+        isChecked: true,
+        label: 'CC des Monts du Lyonnais',
+        statut: 'Co-porteur',
+        value: 'membreFooId2',
+      },
+    ],
     statut: {
       background: 'pink',
       icon: 'fr-icon-flashlight-line',
@@ -232,6 +269,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       financementAccorde: '0 €',
     },
     uid: 'actionFooId1',
+    urlGouvernance: '/gouvernance/11',
     ...overrides,
   }
 }

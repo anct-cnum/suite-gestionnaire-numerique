@@ -1,3 +1,4 @@
+/* eslint-disable import/no-restricted-paths */
 // Stryker disable all
 import { FeuillesDeRouteReadModel } from './queries/RecupererLesFeuillesDeRoute'
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
