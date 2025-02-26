@@ -33,7 +33,12 @@ describe('mes membres loader', () => {
       membres: [
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Bretagne',
           roles: ['coporteur'],
           siret: 'Siret bouchonné',
@@ -44,7 +49,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'CA Tulle Agglo',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -55,7 +65,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'CC Porte du Jura',
           roles: ['beneficiaire', 'coporteur'],
           siret: 'Siret bouchonné',
@@ -66,7 +81,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Créteil',
           roles: ['coporteur'],
           siret: 'Siret bouchonné',
@@ -77,7 +97,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Île-de-France',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -88,7 +113,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Orange',
           roles: ['coporteur', 'recipiendaire'],
           siret: 'Siret bouchonné',
@@ -99,7 +129,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Pipriac',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -110,7 +145,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Pipriac',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -119,10 +159,14 @@ describe('mes membres loader', () => {
           typologie: 'Préfecture régionale',
           uid: 'commune-113-69',
         },
-
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Rennes',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -133,7 +177,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Rennes',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
@@ -144,7 +193,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
 
           nom: 'Rhône',
           roles: ['coporteur'],
@@ -156,7 +210,12 @@ describe('mes membres loader', () => {
         },
         {
           adresse: 'Adresse bouchonnée',
-          contactReferent: undefined,
+          contactReferent: {
+            email: 'commune-35345-69@example.com',
+            fonction: 'Directeur',
+            nom: 'Tartempion',
+            prenom: 'Michel',
+          },
           nom: 'Rhône',
           roles: ['observateur'],
           siret: 'Siret bouchonné',
