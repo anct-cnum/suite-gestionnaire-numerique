@@ -74,6 +74,15 @@ CREATE TABLE "co_financement" (
     CONSTRAINT "co_financement_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "feuille_de_route_membre" (
+    "id" SERIAL NOT NULL,
+    "feuille_de_route_id" INTEGER NOT NULL,
+    "membre_id" TEXT NOT NULL,
+
+    CONSTRAINT "feuille_de_route_membre_pkey" PRIMARY KEY ("id")
+);
+
 -- AddForeignKey
 ALTER TABLE "action" ADD CONSTRAINT "action_createur_id_fkey" FOREIGN KEY ("createur_id") REFERENCES "utilisateur"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -106,3 +115,9 @@ ALTER TABLE "co_financement" ADD CONSTRAINT "co_financement_id_action_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "co_financement" ADD CONSTRAINT "co_financement_id_membre_fkey" FOREIGN KEY ("id_membre") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "feuille_de_route_membre" ADD CONSTRAINT "feuille_de_route_membre_feuille_de_route_id_fkey" FOREIGN KEY ("feuille_de_route_id") REFERENCES "feuille_de_route"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "feuille_de_route_membre" ADD CONSTRAINT "feuille_de_route_membre_membre_id_fkey" FOREIGN KEY ("membre_id") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
