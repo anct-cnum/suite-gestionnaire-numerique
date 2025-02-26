@@ -13,7 +13,16 @@ import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 
-export function FormulaireAction({ action, label, validerFormulaire, children }: Props): ReactElement {
+export function FormulaireAction({
+  action,
+  cofinancements,
+  label,
+  validerFormulaire,
+  children,
+  setIsDrawerOpen,
+  supprimerUnCofinancement,
+  drawerId,
+}: Props): ReactElement {
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
@@ -376,14 +385,72 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
                 Co-financement
               </p>
             </div>
-            <button
-              className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['half-width']}`}
-              disabled
-              type="button"
-            >
-              Ajouter un financement
-            </button>
+            {
+              cofinancements.length === 0 && (
+                <button
+                  aria-controls={drawerId}
+                  className="fr-btn fr-btn--icon-left fr-fi-add-line"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                  type="button"
+                >
+                  Ajouter un financement
+                </button>
+              )
+            }
           </div>
+          {
+            cofinancements.length > 0 ?
+              <>
+                <ul className={`background-blue-france color-blue-france fr-text--bold fr-mt-1w fr-pt-1w ${styles['no-style-list']}`}>
+                  {cofinancements.map((cofinancement) => (
+                    <li
+                      key={cofinancement.coFinanceur}
+                    >
+                      <div className="fr-grid-row">
+                        <p className="fr-col-9 fr-my-1w">
+                          {cofinancement.coFinanceur}
+                        </p>
+                        {' '}
+                        <p className="fr-col-2 fr-my-1w">
+                          {cofinancement.montant}
+                        </p>
+                        <button
+                          className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line fr-col-1 color-red fr-my-1w"
+                          onClick={() => {
+                            supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
+                          }}
+                          title="Label bouton"
+                          type="button"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div
+                  className="fr-mt-3w fr-mb-5w"
+                  style={{ display: 'flex', justifyContent: 'flex-end' }}
+                >
+                  <hr />
+                  <button
+                    aria-controls={drawerId}
+                    className="fr-btn fr-btn--icon-left fr-fi-add-line"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setIsDrawerOpen(true)
+                    }}
+                    type="button"
+                  >
+                    Ajouter un financement
+                  </button>
+                </div>
+              </>
+              : null
+          }
           <hr />
         </div>
         <div
@@ -449,6 +516,13 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
 type Props = PropsWithChildren<Readonly<{
   date?: Date
   action: ActionViewModel
+  cofinancements: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
   label: string
+  drawerId: string
+  setIsDrawerOpen(isDrawerOpen: boolean): void
+  supprimerUnCofinancement(index: number): void
   validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
 }>>

@@ -56,3 +56,7 @@
 .separator input {
   margin-top: 1rem;
 }
+
+.no-style-list {
+  list-style-type: none;
+}

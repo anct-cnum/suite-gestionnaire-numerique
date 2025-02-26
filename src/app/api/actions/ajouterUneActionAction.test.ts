@@ -14,6 +14,7 @@ describe('ajouter une action action', () => {
       anneeDeDebut: '2026',
       anneeDeFin: '2027',
       budgetGlobal: 1000,
+      budgetPrevisionnel: [],
       contexte: '',
       description: '',
       destinataires: ['userFooId'],

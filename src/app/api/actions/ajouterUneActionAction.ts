@@ -15,4 +15,8 @@ type ActionParams = Readonly<{
   temporalite: string
   nom: string
   destinataires: ReadonlyArray<string>
+  budgetPrevisionnel: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
 }>
