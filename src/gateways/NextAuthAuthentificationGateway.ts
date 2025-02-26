@@ -61,7 +61,7 @@ const nextAuthOptions = {
   },
   debug: process.env.NODE_ENV !== 'production',
   pages: {
-    error: '/auth/error',
+    error: '/auth-error',
   },
   providers: [
     {
