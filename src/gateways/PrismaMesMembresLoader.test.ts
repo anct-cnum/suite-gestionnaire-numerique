@@ -235,6 +235,7 @@ describe('mes membres loader', () => {
           nom: 'Trévérien',
           roles: [
             'beneficiaire',
+            'coporteur',
             'recipiendaire',
           ],
           siret: 'Siret bouchonné',

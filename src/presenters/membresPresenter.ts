@@ -60,19 +60,13 @@ function membresParStatut(membres: ReadonlyArray<MembreReadModel>): MembresBySta
 
 function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
   const contactReferent = membre.contactReferent
-  let intituleCourt: string
-  let intitule: string
-  if (contactReferent) {
-    const nomComplet = `${contactReferent.prenom} ${contactReferent.nom}`
-    intituleCourt = nomComplet
-    intitule = `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`
-  } else {
-    intituleCourt = ''
-    intitule = 'Donnée non fournie'
-  }
+  const nomComplet = `${contactReferent.prenom} ${contactReferent.nom}`
   return {
     ...membre,
-    contactReferent: { intitule, intituleCourt },
+    contactReferent: {
+      intitule: `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`,
+      intituleCourt: nomComplet,
+    },
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),

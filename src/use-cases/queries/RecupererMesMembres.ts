@@ -38,7 +38,7 @@ export type MesMembresReadModel = Readonly<{
 export type MembreReadModel = Readonly<{
   adresse: string
   suppressionDuMembreAutorise: boolean
-  contactReferent?: Readonly<{
+  contactReferent: Readonly<{
     email: string
     fonction: string
     nom: string

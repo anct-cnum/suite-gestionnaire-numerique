@@ -180,7 +180,7 @@ model MembreRecord {
   statut                     String
 
   relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationContact          ContactMembreGouvernanceRecord @relation("contact", fields: [contact], references: [email])
+  relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
 
   membresGouvernanceDepartement MembreGouvernanceDepartementRecord[]

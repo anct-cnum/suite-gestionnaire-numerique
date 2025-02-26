@@ -89,6 +89,12 @@ describe('recuperer mes membres', () => {
           },
           {
             adresse: '17 rue Jean Bourgey 69100 Villeurbanne',
+            contactReferent: {
+              email: 'gaby.vasseur@example.net',
+              fonction: 'Coordinateur',
+              nom: 'Vasseur',
+              prenom: 'Gaby',
+            },
             nom: 'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
             roles: ['observateur'],
             siret: '77978721700057',
