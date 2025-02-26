@@ -21,3 +21,6 @@ function toOpenInNewTab(element: HTMLElement, content: string): { pass: boolean;
 expect.extend({
   toOpenInNewTab,
 })
+
+// Cela permet d'éviter la notification "Not implemented: HTMLCanvasElement.prototype.getContext"
+vi.mock('react-chartjs-2', () => ({ Bar: (): null => null, Doughnut: (): null => null }))

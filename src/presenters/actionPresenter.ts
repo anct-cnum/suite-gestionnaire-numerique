@@ -10,12 +10,18 @@ export function actionPresenter(
     anneeDeFin: undefined,
     beneficiaires: [
       {
-        nom: 'Croix Rouge Française',
-        url: '/',
+        color: 'info',
+        isChecked: true,
+        label: 'Rhône (69)',
+        statut: 'Co-porteur',
+        value: 'membreFooId3',
       },
       {
-        nom: 'La Poste',
-        url: '/',
+        color: 'info',
+        isChecked: false,
+        label: 'CC des Monts du Lyonnais',
+        statut: 'Co-porteur',
+        value: 'membreFooId4',
       },
     ],
     besoins: {
@@ -106,7 +112,22 @@ export function actionPresenter(
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     lienPourModifier: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
     nom: 'Action test',
-    porteur: 'CC des Monts du Lyonnais',
+    porteurs: [
+      {
+        color: 'info',
+        isChecked: false,
+        label: 'Rhône (69)',
+        statut: 'Co-porteur',
+        value: 'membreFooId1',
+      },
+      {
+        color: 'info',
+        isChecked: true,
+        label: 'CC des Monts du Lyonnais',
+        statut: 'Co-porteur',
+        value: 'membreFooId2',
+      },
+    ],
     statut: actionStatutViewModelByStatut.deposee,
     temporalite: 'annuelle',
     totaux: {
@@ -114,14 +135,12 @@ export function actionPresenter(
       financementAccorde: formatMontant(20_000),
     },
     uid: 'uid-action',
+    urlGouvernance: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}`,
   }
 }
 
 export type ActionViewModel = Readonly<{
-  beneficiaires: ReadonlyArray<{
-    nom: string
-    url: string
-  }>
+  beneficiaires: Beneficiaires
   besoins: Readonly<{
     financements: Besoins
     formations: Besoins
@@ -137,13 +156,14 @@ export type ActionViewModel = Readonly<{
   contexte: string
   lienPourModifier: string
   nom: string
-  porteur?: string
+  porteurs: Porteurs
   statut: ActionStatutViewModel
   totaux: Readonly<{
     coFinancement: string
     financementAccorde: string
   }>
   uid: string
+  urlGouvernance: string
   temporalite: 'pluriannuelle' | 'annuelle'
   anneeDeDebut: string
   anneeDeFin?: string
@@ -152,7 +172,22 @@ export type ActionViewModel = Readonly<{
 export const actionARemplir: ActionViewModel = {
   anneeDeDebut: '',
   anneeDeFin: '',
-  beneficiaires: [],
+  beneficiaires: [
+    {
+      color: 'info',
+      isChecked: false,
+      label: 'Rhône (69)',
+      statut: 'Co-porteur',
+      value: 'membreFooId3',
+    },
+    {
+      color: 'info',
+      isChecked: false,
+      label: 'CC des Monts du Lyonnais',
+      statut: 'Co-porteur',
+      value: 'membreFooId4',
+    },
+  ],
   besoins: {
     financements: [
       {
@@ -224,7 +259,22 @@ export const actionARemplir: ActionViewModel = {
   description: '',
   lienPourModifier: '',
   nom: '',
-  porteur: '',
+  porteurs: [
+    {
+      color: 'info',
+      isChecked: false,
+      label: 'Rhône (69)',
+      statut: 'Co-porteur',
+      value: 'membreFooId1',
+    },
+    {
+      color: 'info',
+      isChecked: false,
+      label: 'CC des Monts du Lyonnais',
+      statut: 'Co-porteur',
+      value: 'membreFooId2',
+    },
+  ],
   statut: {
     background: 'blue',
     icon: '',
@@ -238,10 +288,27 @@ export const actionARemplir: ActionViewModel = {
     financementAccorde: '',
   },
   uid: '',
+  urlGouvernance: '/gouvernance/11',
 }
 
 export type Besoins = ReadonlyArray<{
   isChecked: boolean
   label: string
+  value: string
+}>
+
+export type Porteurs = ReadonlyArray<{
+  color: 'success' | 'error' | 'info' | 'warning' | 'new'
+  isChecked: boolean
+  label: string
+  statut: string
+  value: string
+}>
+
+export type Beneficiaires = ReadonlyArray<{
+  color: 'success' | 'error' | 'info' | 'warning' | 'new'
+  isChecked: boolean
+  label: string
+  statut: string
   value: string
 }>

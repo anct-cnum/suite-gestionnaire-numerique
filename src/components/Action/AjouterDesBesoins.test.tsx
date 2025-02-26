@@ -5,7 +5,7 @@ import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 
 describe('ajouter des besoins', () => {
-  describe('quand je clique sur modifier, ', () => {
+  describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des besoins s’affiche', () => {
       // GIVEN
       afficherLeFormulaireAction()

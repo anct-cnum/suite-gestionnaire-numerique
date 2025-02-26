@@ -14,7 +14,7 @@ describe('modifier une feuille de route', () => {
       jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Modifier une feuille de route' })
       expect(drawer).toHaveAttribute('id', 'drawerId')
       const titre = within(drawer).getByRole('heading', { level: 1, name: 'Modifier une feuille de route' })
       expect(titre).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe('modifier une feuille de route', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Modifier une feuille de route' })
       const fermer = jeFermeLeFormulaire()
 
       // THEN
@@ -84,7 +84,7 @@ describe('modifier une feuille de route', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUneFeuilleDeRoute()
-      const drawer = screen.getByRole('dialog', { name: 'Modifier une feuille de route' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Modifier une feuille de route' })
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
