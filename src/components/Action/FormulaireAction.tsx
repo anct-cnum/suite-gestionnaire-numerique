@@ -2,10 +2,11 @@
 'use client'
 
 import Link from 'next/link'
-import { FormEvent, PropsWithChildren, ReactElement, useId, useState } from 'react'
+import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId, useState } from 'react'
 
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
+import AjouterDesMembres from './AjouterDesMembres'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Tag from '../shared/Tag/Tag'
@@ -83,6 +84,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
               outillages={action.besoins.outillages}
+              toutEffacer={toutEffacer}
             />
           </div>
           <p className="color-grey">
@@ -169,20 +171,31 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-0">
               Porteur de l‘action
             </p>
-            <button
-              className="fr-btn fr-btn--secondary"
-              type="button"
-            >
-              Modifier
-            </button>
+            <AjouterDesMembres
+              checkboxName="porteurs"
+              drawerId="drawerAjouterDesPorteursId"
+              labelPluriel="porteurs"
+              membres={action.porteurs}
+              titre="Ajouter le(s) porteur(s)"
+              toutEffacer={toutEffacer}
+              urlGouvernance={action.urlGouvernance}
+            />
           </div>
           <p>
             Sélectionnez le porteur de l‘action
           </p>
           <hr />
-          <Tag>
-            CC des Monts du Lyonnais
-          </Tag>
+          {
+            action.porteurs
+              .filter((porteur) => porteur.isChecked)
+              .map((porteur) => (
+                <Fragment key={porteur.value}>
+                  <Tag>
+                    {porteur.label}
+                  </Tag>
+                </Fragment>
+              ))
+          }
         </div>
         <div
           className={styles['white-background-section']}
@@ -385,12 +398,15 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
                 *
               </span>
             </p>
-            <button
-              className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-              type="button"
-            >
-              {action.beneficiaires.length === 0 ? 'Ajouter' : 'Modifier'}
-            </button>
+            <AjouterDesMembres
+              checkboxName="beneficiaires"
+              drawerId="drawerAjouterDesBeneficiairesId"
+              labelPluriel="bénéficiaires"
+              membres={action.beneficiaires}
+              titre="Ajouter le(s) bénéficiaire(s)"
+              toutEffacer={toutEffacer}
+              urlGouvernance={action.urlGouvernance}
+            />
           </div>
           <p className="color-grey">
             Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.
@@ -398,15 +414,17 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             un encart s’ouvrira vous demandant d’indiquer le montant de la subvention par destinataire.
           </p>
           <div>
-            {action.beneficiaires.map((beneficiaire) => (
-              <a
-                className="fr-tag fr-mr-1w"
-                href={beneficiaire.url}
-                key={beneficiaire.nom}
-              >
-                {beneficiaire.nom}
-              </a>
-            ))}
+            {
+              action.beneficiaires
+                .filter((beneficiaire) => beneficiaire.isChecked)
+                .map((beneficiaire) => (
+                  <Fragment key={beneficiaire.value}>
+                    <Tag>
+                      {beneficiaire.label}
+                    </Tag>
+                  </Fragment>
+                ))
+            }
           </div>
         </div>
       </div>
@@ -415,6 +433,17 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
       </div>
     </form>
   )
+
+  function toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (fieldset.current) {
+        fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+          input.checked = false
+        })
+      }
+    }
+  }
 }
 
 type Props = PropsWithChildren<Readonly<{

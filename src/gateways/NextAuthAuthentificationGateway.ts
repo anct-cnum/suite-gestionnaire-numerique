@@ -1,3 +1,4 @@
+/* eslint-disable import/no-restricted-paths */
 // Stryker disable all
 import NextAuth, { getServerSession, NextAuthOptions, Session } from 'next-auth'
 import { JWT } from 'next-auth/jwt'

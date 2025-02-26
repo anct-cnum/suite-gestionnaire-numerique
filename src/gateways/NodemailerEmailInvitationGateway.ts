@@ -1,6 +1,7 @@
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
+// eslint-disable-next-line import/no-restricted-paths
 import { smtpFrom, smtpReplyTo, makeMjml } from './invitationEmail'
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 

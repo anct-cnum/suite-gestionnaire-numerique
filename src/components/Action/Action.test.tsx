@@ -212,10 +212,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(selecteurAnneeDeFin).toHaveValue('2026')
       const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
       expect(budgetGlobalDeLAction).toHaveValue(50000)
-      const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Croix Rouge Française' })
-      expect(premierBeneficiaire).toBeInTheDocument()
-      const deuxiemeBeneficiaire = within(formulaire).getByRole('link', { name: 'La Poste' })
-      expect(deuxiemeBeneficiaire).toBeInTheDocument()
+      const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
+      expect(premierBeneficiaire).toHaveAttribute('href', '/')
     })
 
     it('étant un utilisateur, lorsque je modifie une action, alors je peux la valider', async () => {

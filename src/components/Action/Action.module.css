@@ -38,3 +38,21 @@
 .no-border {
   border: 0;
 }
+
+.no-border label {
+  align-items: inherit !important;
+  flex-flow: column !important;
+}
+
+.separator div:first-child {
+  border-bottom: 0.1rem solid var(--border-default-grey);
+  padding-bottom: 0.5rem;
+}
+
+.separator input[type='checkbox']:checked + label {
+  font-weight: 700;
+}
+
+.separator input {
+  margin-top: 1rem;
+}

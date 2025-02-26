@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, ReactNode } from 'react'
 
 export default function Checkbox({
   defaultChecked,
@@ -31,7 +31,7 @@ export default function Checkbox({
 type Props = Readonly<{
   defaultChecked: boolean
   id: string
-  label: string
+  label: ReactNode
   name: string
   value: string
 }>
