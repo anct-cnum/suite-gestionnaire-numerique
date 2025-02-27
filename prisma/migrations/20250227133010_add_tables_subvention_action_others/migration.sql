@@ -1,5 +1,12 @@
+/*
+  Warnings:
+
+  - Added the required column `membre_id` to the `feuille_de_route` table without a default value. This is not possible if the table is not empty.
+
+*/
 -- AlterTable
-ALTER TABLE "feuille_de_route" ADD COLUMN     "piece_jointe" TEXT;
+ALTER TABLE "feuille_de_route" ADD COLUMN     "membre_id" TEXT NOT NULL,
+ADD COLUMN     "piece_jointe" TEXT;
 
 -- CreateTable
 CREATE TABLE "action" (
@@ -28,7 +35,6 @@ CREATE TABLE "demande_de_subvention" (
     "subvention_prestation" DOUBLE PRECISION,
     "date_de_modification" TIMESTAMP(3),
     "action_id" INTEGER NOT NULL,
-    "membreRecordId" TEXT,
 
     CONSTRAINT "demande_de_subvention_pkey" PRIMARY KEY ("id")
 );
@@ -74,14 +80,8 @@ CREATE TABLE "co_financement" (
     CONSTRAINT "co_financement_pkey" PRIMARY KEY ("id")
 );
 
--- CreateTable
-CREATE TABLE "feuille_de_route_membre" (
-    "id" SERIAL NOT NULL,
-    "feuille_de_route_id" INTEGER NOT NULL,
-    "membre_id" TEXT NOT NULL,
-
-    CONSTRAINT "feuille_de_route_membre_pkey" PRIMARY KEY ("id")
-);
+-- AddForeignKey
+ALTER TABLE "feuille_de_route" ADD CONSTRAINT "feuille_de_route_membre_id_fkey" FOREIGN KEY ("membre_id") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "action" ADD CONSTRAINT "action_createur_id_fkey" FOREIGN KEY ("createur_id") REFERENCES "utilisateur"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -94,9 +94,6 @@ ALTER TABLE "demande_de_subvention" ADD CONSTRAINT "demande_de_subvention_create
 
 -- AddForeignKey
 ALTER TABLE "demande_de_subvention" ADD CONSTRAINT "demande_de_subvention_action_id_fkey" FOREIGN KEY ("action_id") REFERENCES "action"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "demande_de_subvention" ADD CONSTRAINT "demande_de_subvention_membreRecordId_fkey" FOREIGN KEY ("membreRecordId") REFERENCES "membre"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "beneficiaire_subvention" ADD CONSTRAINT "beneficiaire_subvention_action_id_fkey" FOREIGN KEY ("action_id") REFERENCES "action"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -115,9 +112,3 @@ ALTER TABLE "co_financement" ADD CONSTRAINT "co_financement_id_action_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "co_financement" ADD CONSTRAINT "co_financement_id_membre_fkey" FOREIGN KEY ("id_membre") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "feuille_de_route_membre" ADD CONSTRAINT "feuille_de_route_membre_feuille_de_route_id_fkey" FOREIGN KEY ("feuille_de_route_id") REFERENCES "feuille_de_route"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "feuille_de_route_membre" ADD CONSTRAINT "feuille_de_route_membre_membre_id_fkey" FOREIGN KEY ("membre_id") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
