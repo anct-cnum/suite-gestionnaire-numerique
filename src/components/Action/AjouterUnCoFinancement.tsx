@@ -14,7 +14,7 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
       onSubmit={handleSubmit}
     >
       <DrawerTitle id={labelId}>
-        <Icon icon="calendar-event-line" />
+        <Icon icon="money-euro-circle-line" />
         <br />
         {label}
       </DrawerTitle>
@@ -54,7 +54,7 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
           ))}
         </select>
       </div>
-      <div >
+      <div>
         <label
           className="fr-label fr-mb-1w"
           htmlFor="montantDuFinancement"
@@ -66,21 +66,19 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
           </span>
         </label>
       </div>
-      <div>
-        <input
-          className="fr-input"
-          id="montantDuFinancement"
-          min={0}
-          name="montantDuFinancement"
-          onChange={(event) => {
-            setMontant(event.target.value)
-          }}
-          placeholder="5 000"
-          required={true}
-          type="number"
-          value={montant}
-        />
-      </div>
+      <input
+        className="fr-input"
+        id="montantDuFinancement"
+        min={0}
+        name="montantDuFinancement"
+        onChange={(event) => {
+          setMontant(event.target.value)
+        }}
+        placeholder="5 000"
+        required={true}
+        type="number"
+        value={montant}
+      />
       <div className="fr-btns-group fr-mt-2w">
         <SubmitButton
           ariaControls="ajouter-un-cofinancement"
@@ -94,11 +92,9 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    if (coFinanceur && montant) {
-      onSubmit(coFinanceur, montant)
-      setCoFinanceur('')
-      setMontant('')
-    }
+    onSubmit(coFinanceur, montant)
+    setCoFinanceur('')
+    setMontant('')
   }
 }
 

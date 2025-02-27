@@ -85,7 +85,11 @@ describe('ajout des porteurs', () => {
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory(overrides)}
+        cofinancements={[]}
+        drawerId=""
         label="Ajouter une action"
+        setIsDrawerOpen={vi.fn()}
+        supprimerUnCofinancement={vi.fn()}
         validerFormulaire={vi.fn()}
       >
         vide
