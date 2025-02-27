@@ -27,17 +27,17 @@ describe('inviter un utilisateur', () => {
 
     const formulaireInvitation = screen.getByRole('form', { name: 'Inviter un utilisateur' })
     expect(formulaireInvitation).toHaveAttribute('method', 'dialog')
-    const nom = within(formulaireInvitation).getByLabelText('Nom *')
+    const nom = within(formulaireInvitation).getByRole('textbox', { name: 'Nom *' })
     expect(nom).toBeRequired()
     expect(nom).toHaveAttribute('name', 'nom')
     expect(nom).toHaveAttribute('type', 'text')
 
-    const prenom = within(formulaireInvitation).getByLabelText('Prénom *')
+    const prenom = within(formulaireInvitation).getByRole('textbox', { name: 'Prénom *' })
     expect(prenom).toBeRequired()
     expect(prenom).toHaveAttribute('name', 'prenom')
     expect(prenom).toHaveAttribute('type', 'text')
 
-    const email = within(formulaireInvitation).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
+    const email = within(formulaireInvitation).getByRole('textbox', { name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail' })
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
     expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
@@ -51,42 +51,42 @@ describe('inviter un utilisateur', () => {
     )
     expect(roleQuestion).toBeInTheDocument()
 
-    const administrateurDispositif = within(fieldset).getByLabelText('Administrateur dispositif')
+    const administrateurDispositif = within(fieldset).getByRole('radio', { checked: false, name: 'Administrateur dispositif' })
     expect(administrateurDispositif).toBeRequired()
     expect(administrateurDispositif).toHaveAttribute('name', 'attributionRole')
     expect(administrateurDispositif).toHaveAttribute('id', 'Administrateur dispositif')
 
-    const gestionnaireRegion = within(fieldset).getByLabelText('Gestionnaire région')
+    const gestionnaireRegion = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire région' })
     expect(gestionnaireRegion).toBeRequired()
     expect(gestionnaireRegion).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireRegion).toHaveAttribute('id', 'Gestionnaire région')
 
-    const gestionnaireDepartement = within(fieldset).getByLabelText('Gestionnaire département')
+    const gestionnaireDepartement = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire département' })
     expect(gestionnaireDepartement).toBeRequired()
     expect(gestionnaireDepartement).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireDepartement).toHaveAttribute('id', 'Gestionnaire département')
 
-    const gestionnaireGroupement = within(fieldset).getByLabelText('Gestionnaire groupement')
+    const gestionnaireGroupement = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire groupement' })
     expect(gestionnaireGroupement).toBeRequired()
     expect(gestionnaireGroupement).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireGroupement).toHaveAttribute('id', 'Gestionnaire groupement')
 
-    const gestionnaireStructure = within(fieldset).getByLabelText('Gestionnaire structure')
+    const gestionnaireStructure = within(fieldset).getByRole('radio', { checked: false, name: 'Gestionnaire structure' })
     expect(gestionnaireStructure).toBeRequired()
     expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
-    const instructeur = within(fieldset).getByLabelText('Instructeur')
+    const instructeur = within(fieldset).getByRole('radio', { checked: false, name: 'Instructeur' })
     expect(instructeur).toBeRequired()
     expect(instructeur).toHaveAttribute('name', 'attributionRole')
     expect(instructeur).toHaveAttribute('id', 'Instructeur')
 
-    const pilotePolitiquePublique = within(fieldset).getByLabelText('Pilote politique publique')
+    const pilotePolitiquePublique = within(fieldset).getByRole('radio', { checked: false, name: 'Pilote politique publique' })
     expect(pilotePolitiquePublique).toBeRequired()
     expect(pilotePolitiquePublique).toHaveAttribute('name', 'attributionRole')
     expect(pilotePolitiquePublique).toHaveAttribute('id', 'Pilote politique publique')
 
-    const supportAnimation = within(fieldset).getByLabelText('Support animation')
+    const supportAnimation = within(fieldset).getByRole('radio', { checked: false, name: 'Support animation' })
     expect(supportAnimation).toBeRequired()
     expect(supportAnimation).toHaveAttribute('name', 'attributionRole')
     expect(supportAnimation).toHaveAttribute('id', 'Support animation')
@@ -102,7 +102,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawer = jOuvreLeFormulaireDInvitation()
+    const drawer = drawerDuFormulaireDInvitation()
     const fermer = jeFermeLeFormulairePourInviterUnUtilisateur()
 
     // THEN
@@ -211,17 +211,17 @@ describe('inviter un utilisateur', () => {
     )
     expect(champsObligatoires).toBeInTheDocument()
 
-    const nom = within(drawer).getByLabelText('Nom *')
+    const nom = within(drawer).getByRole('textbox', { name: 'Nom *' })
     expect(nom).toBeRequired()
     expect(nom).toHaveAttribute('name', 'nom')
     expect(nom).toHaveAttribute('type', 'text')
 
-    const prenom = within(drawer).getByLabelText('Prénom *')
+    const prenom = within(drawer).getByRole('textbox', { name: 'Prénom *' })
     expect(prenom).toBeRequired()
     expect(prenom).toHaveAttribute('name', 'prenom')
     expect(prenom).toHaveAttribute('type', 'text')
 
-    const email = within(drawer).getByLabelText('Adresse électronique *Une invitation lui sera envoyée par e-mail')
+    const email = within(drawer).getByRole('textbox', { name: 'Adresse électronique * Une invitation lui sera envoyée par e-mail' })
     expect(email).toBeRequired()
     expect(email).toHaveAttribute('name', 'email')
     expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
@@ -254,7 +254,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawer = jOuvreLeFormulaireDInvitation()
+    const drawer = drawerDuFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -304,7 +304,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawer = jOuvreLeFormulaireDInvitation()
+    const drawer = drawerDuFormulaireDInvitation()
     const roleRadios = screen.getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -360,7 +360,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawer = jOuvreLeFormulaireDInvitation()
+    const drawer = drawerDuFormulaireDInvitation()
     jeTapeSonNom('Tartempion')
     jeTapeSonPrenom('Martin')
     jeTapeSonAdresseElectronique('martin.tartempion@example.com')
@@ -381,7 +381,7 @@ describe('inviter un utilisateur', () => {
 
     // WHEN
     jOuvreLeFormulairePourInviterUnUtilisateur()
-    const drawer = jOuvreLeFormulaireDInvitation()
+    const drawer = drawerDuFormulaireDInvitation()
     const roleRadios = within(drawer).getAllByRole('radio')
     const nom = jeTapeSonNom('Tartempion')
     const prenom = jeTapeSonPrenom('Martin')
@@ -424,15 +424,15 @@ describe('inviter un utilisateur', () => {
   }
 
   function jeSelectionneUnAdministrateur(): void {
-    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Administrateur dispositif'))
+    fireEvent.click(within(drawerDuFormulaireDInvitation()).getByRole('radio', { name: 'Administrateur dispositif' }))
   }
 
   function jeSelectionneUnGestionnaireDepartement(): void {
-    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Gestionnaire département'))
+    fireEvent.click(within(drawerDuFormulaireDInvitation()).getByRole('radio', { name: 'Gestionnaire département' }))
   }
 
   function jeSelectionneUnGestionnaireStructure(): void {
-    fireEvent.click(within(jOuvreLeFormulaireDInvitation()).getByLabelText('Gestionnaire structure'))
+    fireEvent.click(within(drawerDuFormulaireDInvitation()).getByRole('radio', { name: 'Gestionnaire structure' }))
   }
 
   function jeTapeSaStructure(value: string): HTMLElement {
@@ -455,7 +455,7 @@ describe('inviter un utilisateur', () => {
     return presserLeBouton('Envoyer l’invitation')
   }
 
-  function jOuvreLeFormulaireDInvitation(): HTMLElement {
+  function drawerDuFormulaireDInvitation(): HTMLElement {
     return screen.getByRole('dialog', { hidden: false, name: 'Invitez un utilisateur à rejoindre l’espace de gestion' })
   }
 
