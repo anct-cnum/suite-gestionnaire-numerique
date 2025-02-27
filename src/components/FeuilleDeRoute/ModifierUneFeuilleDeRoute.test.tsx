@@ -157,13 +157,13 @@ describe('modifier une feuille de route', () => {
   }
 
   function jOuvreLeFormulairePourModifierUneFeuilleDeRoute(): void {
-    presserLeBouton('Modifier')
+    presserLeBouton('Modifier', 'Modifier la feuille de route')
   }
 
   function afficherUneFeuilleDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const feuilleDeRouteViewModel = feuilleDeRoutePresenter()
+    const feuilleDeRouteViewModel = feuilleDeRoutePresenter('11', '113')
     renderComponent(<FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRouteViewModel} />, options)
   }
 })

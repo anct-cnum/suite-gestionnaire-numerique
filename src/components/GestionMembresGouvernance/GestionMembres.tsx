@@ -85,7 +85,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           ))}
         </ul>
       </div>
-      <div className="fr-grid-row fr-btns-group--between fr-mt-4w">
+      <div className="fr-grid-row space-between fr-mt-4w">
         <div className="fr-tags-group">
           <div className={styles['label-filtres']}>
             Filtres :

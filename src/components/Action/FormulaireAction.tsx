@@ -52,21 +52,14 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
       >
         Feuille de route 69
       </Link>
-      <h1
-        className="color-blue-france fr-mb-2w"
-      >
+      <h1 className="color-blue-france fr-mb-2w">
         {label}
       </h1>
       <p className="fr-badge fr-badge--md fr-mb-4w">
         En construction
       </p>
-      <div
-        className={styles['form-container']}
-      >
-        <div
-          className={styles['white-background-section']}
-        >
-
+      <div className="glycine-background fr-p-4w">
+        <div className="white-background fr-p-4w fr-mb-2w">
           <div
             className={styles['align-items']}
             id="besoinsAction"
@@ -103,7 +96,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
             ))}
         </div>
         <div
-          className={styles['white-background-section']}
+          className="white-background fr-p-4w fr-mb-2w"
         >
           <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
             Informations sur l‘action
@@ -160,7 +153,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
 
         </div>
         <div
-          className={styles['white-background-section']}
+          className="white-background fr-p-4w fr-mb-2w"
         >
           <div
             className={styles['align-items']}
@@ -185,7 +178,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
           </Tag>
         </div>
         <div
-          className={styles['white-background-section']}
+          className="white-background fr-p-4w fr-mb-2w"
           id="temporaliteAction"
         >
           <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
@@ -298,7 +291,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
           </div>
         </div>
         <div
-          className={styles['white-background-section']}
+          className="white-background fr-p-4w fr-mb-2w"
           id="budgetAction"
         >
           <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
@@ -374,7 +367,7 @@ export function FormulaireAction({ action, label, validerFormulaire, children }:
           <hr />
         </div>
         <div
-          className={styles['white-background-section']}
+          className="white-background fr-p-4w"
           id="destinatairesFonds"
         >
           <div className={styles['align-items']}>

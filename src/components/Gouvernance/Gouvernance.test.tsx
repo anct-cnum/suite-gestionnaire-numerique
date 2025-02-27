@@ -142,10 +142,8 @@ describe('gouvernance', () => {
     const ajouter = within(comitologie).getByRole('button', { name: 'Ajouter' })
     expect(ajouter).toHaveAttribute('type', 'button')
     const comites = screen.getByRole('table', { name: 'Comités' })
-    const rowsGroup = within(comites).getAllByRole('rowgroup')
-    const head = rowsGroup[0]
+    const [head, body] = within(comites).getAllByRole('rowgroup')
     expect(head).toHaveClass('fr-sr-only')
-    const body = rowsGroup[1]
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
     expect(columnsHead).toHaveLength(3)
@@ -264,10 +262,8 @@ describe('gouvernance', () => {
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membres')
     const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const head = rowsGroup[0]
+    const [head, body] = within(membres).getAllByRole('rowgroup')
     expect(head).toHaveClass('fr-sr-only')
-    const body = rowsGroup[1]
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
     expect(columnsHead).toHaveLength(4)
@@ -415,10 +411,8 @@ describe('gouvernance', () => {
     const gerer = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuilles-de-route')
     const FeuillesDeRoute = screen.getByRole('table', { name: 'Feuilles de route' })
-    const rowsGroup = within(FeuillesDeRoute).getAllByRole('rowgroup')
-    const head = rowsGroup[0]
+    const [head, body] = within(FeuillesDeRoute).getAllByRole('rowgroup')
     expect(head).toHaveClass('fr-sr-only')
-    const body = rowsGroup[1]
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
     expect(columnsHead).toHaveLength(4)

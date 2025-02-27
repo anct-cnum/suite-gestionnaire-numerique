@@ -263,6 +263,10 @@
           {
             "message": "Tu es trop couplé à cette lib, mieux vaut l'injecter",
             "selector": "CallExpression[callee.object.name='vi'][callee.property.name='mock']"
+          },
+          {
+            "message": "toHaveTextContent n'est pas assez strict, privilégier expect(xxx.textContent).toBe('...')",
+            "selector": "[callee.property.name='toHaveTextContent']"
           }
         ],
         "no-undef": "off",

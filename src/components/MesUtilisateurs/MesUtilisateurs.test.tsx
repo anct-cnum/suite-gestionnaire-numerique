@@ -300,7 +300,7 @@ describe('mes utilisateurs', () => {
       expect(envoyer).toBeDisabled()
       expect(reinviterUnUtilisateurAction).toHaveBeenCalledWith({ path: '/mes-utilisateurs', uidUtilisateurAReinviter: '123456' })
       const notification = await screen.findByRole('alert')
-      expect(notification).toHaveTextContent('Invitation envoyée à julien.deschamps@example.com')
+      expect(notification.textContent).toBe('Invitation envoyée à julien.deschamps@example.com')
       expect(drawer).not.toBeVisible()
       expect(envoyer).toHaveAccessibleName('Renvoyer cette invitation')
       expect(envoyer).toBeEnabled()
@@ -542,13 +542,11 @@ function afficherMesUtilisateurs(
 
 function getByTable(): { columnsHead: ReadonlyArray<HTMLElement>; rowsBody: ReadonlyArray<HTMLElement> } {
   const mesUtilisateurs = screen.getByRole('table', { name: 'Mes utilisateurs' })
-  const rowsGroup = within(mesUtilisateurs).getAllByRole('rowgroup')
+  const [head, body] = within(mesUtilisateurs).getAllByRole('rowgroup')
 
-  const head = rowsGroup[0]
   const rowHead = within(head).getByRole('row')
   const columnsHead = within(rowHead).getAllByRole('columnheader')
 
-  const body = rowsGroup[1]
   const rowsBody = within(body).getAllByRole('row')
 
   return { columnsHead, rowsBody }
