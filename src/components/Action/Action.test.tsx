@@ -333,7 +333,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const boutonDeValidation = jeValideLeFormulaireDAjout()
 
       // THEN
-      expect(boutonDeValidation).toHaveTextContent('Ajout en cours...')
+      expect(boutonDeValidation.textContent).toBe('Ajout en cours...')
       expect(boutonDeValidation).toBeDisabled()
     })
 

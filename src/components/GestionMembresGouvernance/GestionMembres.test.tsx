@@ -59,11 +59,9 @@ describe('membres', () => {
     expect(filtresTypologie[6]).toHaveAccessibleName('Association')
 
     const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const head = rowsGroup[0]
+    const [head, body] = within(membres).getAllByRole('rowgroup')
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
-    const body = rowsGroup[1]
     const rowsBody = within(body).getAllByRole('row')
     const [columnsBody, suppressionColumnsBody] = membresRow(rowsBody, 0)
     expect(columnsHead).toHaveLength(4)

@@ -320,7 +320,7 @@ describe('inviter un utilisateur', () => {
     const absenceMessageDErreur = await screen.findByText('Cet utilisateur dispose déjà d’un compte', { selector: 'p' })
     expect(absenceMessageDErreur).not.toBeInTheDocument()
     const notification = await screen.findByRole('alert')
-    expect(notification).toHaveTextContent('Invitation envoyée à martin.tartempion@example.com')
+    expect(notification.textContent).toBe('Invitation envoyée à martin.tartempion@example.com')
     expect(drawer).not.toBeVisible()
     expect(nom).toHaveValue('')
     expect(prenom).toHaveValue('')
