@@ -57,7 +57,7 @@ export default function MesUtilisateurs(
 
   return (
     <>
-      <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
+      <div className="fr-grid-row space-between fr-grid-row--middle">
         <PageTitle icon="team-line">
           {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
         </PageTitle>
@@ -119,7 +119,7 @@ export default function MesUtilisateurs(
                 }}
               />
             </Drawer>
-            <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
+            <div className="fr-grid-row space-between fr-grid-row--middle">
               <Search
                 labelBouton="Rechercher"
                 placeholder="Rechercher par nom ou adresse électronique"

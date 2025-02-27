@@ -193,7 +193,7 @@ describe('note de contexte', () => {
     expect(supprimerUneNoteDeContexteAction).toHaveBeenCalledWith({ path: '/gouvernance/11', uidGouvernance: 'gouvernanceFooId' })
     const notification = await screen.findByRole('alert')
     expect(notification.textContent).toBe('Note de contexte supprimée')
-    expect(noteDeContexte).toHaveTextContent('')
+    expect(noteDeContexte.textContent).toBe('')
     expect(drawer).not.toBeVisible()
     expect(enregistrer).toHaveAccessibleName('Enregistrer')
     expect(enregistrer).toBeEnabled()

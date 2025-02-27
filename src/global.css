@@ -52,6 +52,10 @@
   border: 0.1rem solid var(--grey-900-175);
 }
 
+.grey-dashed-border {
+  border: 0.1rem dashed var(--grey-900-175);
+}
+
 .border-radius {
   border-radius: 0.5rem;
 }
@@ -151,4 +155,18 @@ address {
 
 .separator {
   border-bottom: 0.1rem solid var(--border-default-grey);
+}
+
+.glycine-background {
+  background-color: var(--purple-glycine-950-100);
+  border-radius: 0.5rem;
+}
+
+.white-background {
+  background-color: var(--grey-1000-100);
+  border-radius: 0.5rem;
+}
+
+.blue-background {
+  background-color: var(--blue-france-975-75);
 }

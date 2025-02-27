@@ -33,7 +33,7 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
           aria-labelledby="mesInformationsPersonnelles"
           className="grey-border fr-p-4w fr-mb-4w"
         >
-          <div className="fr-grid-row fr-btns-group--between fr-grid-row--middle">
+          <div className="fr-grid-row space-between fr-grid-row--middle">
             <h2
               className="fr-h6"
               id="mesInformationsPersonnelles"

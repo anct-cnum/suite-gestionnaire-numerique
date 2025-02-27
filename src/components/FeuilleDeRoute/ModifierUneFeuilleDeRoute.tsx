@@ -34,6 +34,7 @@ export default function ModifierUneFeuilleDeRoute({
         onClick={() => {
           setIsDrawerOpen(true)
         }}
+        title="Modifier la feuille de route"
         type="button"
       >
         Modifier
