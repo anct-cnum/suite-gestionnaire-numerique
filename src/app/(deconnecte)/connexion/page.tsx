@@ -13,6 +13,6 @@ export default async function ConnexionController(): Promise<ReactElement> {
   const providers = await getProviders() as unknown as ProConnectProvider
 
   return (
-    <Connexion idProvider={providers['pro-connect'].id} />
+    <Connexion idProvider={providers['pro-connect']?.id} />
   )
 }

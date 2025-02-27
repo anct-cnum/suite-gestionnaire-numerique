@@ -11,6 +11,7 @@ import { CorrigerNomPrenomSiAbsents } from '@/use-cases/commands/CorrigerNomPren
 import { MettreAJourDateDeDerniereConnexion } from '@/use-cases/commands/MettreAJourDateDeDerniereConnexion'
 import { MettreAJourUidALaPremiereConnexion } from '@/use-cases/commands/MettreAJourUidALaPremiereConnexion'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
+import Credentials from 'next-auth/providers/credentials'
 
 const providerId = 'pro-connect'
 const providerName = 'Pro Connect'
@@ -63,42 +64,57 @@ const nextAuthOptions = {
   pages: {
     error: '/auth-error',
   },
-  providers: [
-    {
-      authorization: {
-        params: { scope: providerScope },
-      },
-      clientId: process.env.PRO_CONNECT_CLIENT_ID,
-      clientSecret: process.env.PRO_CONNECT_CLIENT_SECRET,
-      id: providerId,
-      idToken: true,
-      name: providerName,
-      profile(profile: Omit<Profile, 'id'>): Profile {
-        return {
-          id: profile.sub,
-          ...profile,
-        }
-      },
-      type: 'oauth',
-      // userinfo: `${process.env.PRO_CONNECT_URL}/userinfo`,
-      userinfo: {
-        async request(context): Promise<Profile> {
-          function decodeJwt(token: string): Profile {
-            return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Profile
-          }
-
-          const response = await fetch(`${process.env.PRO_CONNECT_URL}/userinfo`, {
-            headers: {
-              Authorization: `Bearer ${context.tokens.access_token}`,
-            },
-          })
-
-          return decodeJwt(await response.text())
+  providers: process.env.NODE_ENV === 'development'
+    ? [
+      Credentials({
+        name: 'Credentials',
+        credentials: {},
+        async authorize() {
+          // Return a default user profile
+          return {
+            id: '0',
+            name: 'CompteDe Test',
+            email: 'compte.de.test@example.com',
+          };
         },
-      },
-      wellKnown: `${process.env.PRO_CONNECT_URL}/.well-known/openid-configuration`,
-    } satisfies OAuthConfig<Profile>,
-  ],
+      }),
+    ]
+    : [
+      {
+        authorization: {
+          params: { scope: providerScope },
+        },
+        clientId: process.env.PRO_CONNECT_CLIENT_ID,
+        clientSecret: process.env.PRO_CONNECT_CLIENT_SECRET,
+        id: providerId,
+        idToken: true,
+        name: providerName,
+        profile(profile: Omit<Profile, 'id'>): Profile {
+          return {
+            id: profile.sub,
+            ...profile,
+          }
+        },
+        type: 'oauth',
+        // userinfo: `${process.env.PRO_CONNECT_URL}/userinfo`,
+        userinfo: {
+          async request(context): Promise<Profile> {
+            function decodeJwt(token: string): Profile {
+              return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Profile
+            }
+
+            const response = await fetch(`${process.env.PRO_CONNECT_URL}/userinfo`, {
+              headers: {
+                Authorization: `Bearer ${context.tokens.access_token}`,
+              },
+            })
+
+            return decodeJwt(await response.text())
+          },
+        },
+        wellKnown: `${process.env.PRO_CONNECT_URL}/.well-known/openid-configuration`,
+      } satisfies OAuthConfig<Profile>,
+    ],
   secret: process.env.NEXTAUTH_SECRET,
 } satisfies NextAuthOptions
 
@@ -106,7 +122,24 @@ const nextAuthOptions = {
 export const handler = NextAuth(nextAuthOptions)
 
 export async function getSession(): Promise<{ user: Profile } | null> {
-  return getServerSession(nextAuthOptions)
+  return process.env.NODE_ENV === 'development'
+    ? Promise.resolve({
+      user: {
+        id: "",
+        sub: "7396c91e-b9f2-4f9d-8547-5e9b3332725b",
+        email: "compte.de.test@example.com",
+        given_name: "CompteDe",
+        usual_name: "Test",
+        siret: "",
+        phone_number: "",
+        idp_id: "",
+        aud: "",
+        exp: 0,
+        iat: 0,
+        iss: "",
+      }
+    })
+  : getServerSession(nextAuthOptions)
 }
 
 export async function getSessionSub(): Promise<string> {
