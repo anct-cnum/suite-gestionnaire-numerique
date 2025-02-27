@@ -90,7 +90,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(tagBesoinParDefaut).toBeInTheDocument()
       const titreSectionInformationSurLAction = within(formulaire).getByText('Informations sur l‘action', { selector: 'p' })
       expect(titreSectionInformationSurLAction).toBeInTheDocument()
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       expect(nomDeLAction).toBeRequired()
       expect(nomDeLAction).toHaveAttribute('name', 'nom')
       expect(nomDeLAction).toHaveAttribute('type', 'text')
@@ -134,7 +134,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(titreSectionInformationBudget).toBeInTheDocument()
       const instructionsInformationBudget = within(formulaire).getByText('Détaillez le budget prévisionnel de l‘action incluant les subventions et les co-financements éventuels des membres ou ...', { selector: 'p' })
       expect(instructionsInformationBudget).toBeInTheDocument()
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       expect(budgetGlobalDeLAction).toBeRequired()
       expect(budgetGlobalDeLAction).toHaveAttribute('name', 'budgetGlobal')
       expect(budgetGlobalDeLAction).toHaveAttribute('type', 'number')
@@ -165,11 +165,11 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
       jeTapeLeContexteDeLaction()
       jeTapeLaDescriptionDeLaction()
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
@@ -196,7 +196,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // THEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       expect(nomDeLAction).toHaveValue('Structurer une filière de reconditionnement locale 1')
       const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
       expect(porteurAction).toBeInTheDocument()
@@ -208,7 +208,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(selecteurAnneeDeDebut).toHaveValue('2025')
       const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
       expect(selecteurAnneeDeFin).toHaveValue('2026')
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       expect(budgetGlobalDeLAction).toHaveValue(50000)
       const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
       expect(premierBeneficiaire).toHaveAttribute('href', '/')
@@ -276,14 +276,14 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 2' } })
       jeTapeLeContexteDeLaction()
       jeTapeLaDescriptionDeLaction()
       presserLeBoutonRadio('Pluriannuelle')
       jeSelectionneLAnneeDeDebut('2026')
       jeSelectionneLAnneeDeFin('2028')
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
       fireEvent.click(boutonDeValidation)
@@ -351,9 +351,9 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
@@ -376,9 +376,9 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const nomDeLAction = within(formulaire).getByLabelText('Nom de l‘action *')
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      const budgetGlobalDeLAction = within(formulaire).getByLabelText('Budget global de l‘action *')
+      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
       fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDeModification()

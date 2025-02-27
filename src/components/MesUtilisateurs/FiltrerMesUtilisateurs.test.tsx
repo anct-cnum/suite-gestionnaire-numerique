@@ -317,7 +317,7 @@ describe('filtrer mes utilisateurs', () => {
         await jeSelectionneUneZoneGeographique('(06) Alpes-Maritimes')
         const structure = jeTapeUneStructure('tet')
         await jeSelectionneUneStructure(structure, 'TETRIS — GRASSE')
-        await clearFirst(screen.getByLabelText('Par zone géographique'))
+        await clearFirst(screen.getByRole('combobox', { name: 'Par zone géographique' }))
         jeFiltreLesUtilisateurs()
 
         // THEN
@@ -362,7 +362,7 @@ describe('filtrer mes utilisateurs', () => {
   }
 
   async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
-    await selectionnerLElement(screen.getByLabelText('Par zone géographique'), zoneGeographique)
+    await selectionnerLElement(screen.getByRole('combobox', { name: 'Par zone géographique' }), zoneGeographique)
   }
 
   function jeTapeUneStructure(value: string): HTMLElement {
