@@ -171,7 +171,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       const formulaire = within(modal).getByRole('form', { name: 'Supprimer' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
-      const saisie = within(formulaire).getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+      const saisie = within(formulaire).getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' })
       expect(saisie).toBeRequired()
       expect(saisie).toHaveAttribute('type', 'email')
       expect(saisie).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
@@ -252,7 +252,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreLeFormulairePourSupprimerMonCompte()
 
       // THEN
-      const email = screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous')
+      const email = screen.getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' })
       expect(email).toHaveValue('')
       const messageEmailKo = screen.queryByText('L’adresse électronique saisie n’est pas reliée au compte utilisateur', { selector: 'p' })
       expect(messageEmailKo).not.toBeInTheDocument()
@@ -298,7 +298,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     }
 
     function jeSaisieMonEMail(value: string): void {
-      fireEvent.input(screen.getByLabelText('Saisissez « julien.deschamps@example.com » dans le champ ci-dessous'), { target: { value } })
+      fireEvent.input(screen.getByRole('textbox', { name: 'Saisissez « julien.deschamps@example.com » dans le champ ci-dessous' }), { target: { value } })
     }
 
     function jeSupprimeMonCompte(): void {
@@ -334,23 +334,23 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       const formulaire = within(drawer).getByRole('form', { name: 'Modifier' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
-      const nom = within(formulaire).getByLabelText('Nom *')
+      const nom = within(formulaire).getByRole('textbox', { name: 'Nom *' })
       expect(nom).toBeRequired()
       expect(nom).toHaveAttribute('name', 'nom')
       expect(nom).toHaveAttribute('type', 'text')
       expect(nom).toHaveValue('Deschamps')
-      const prenom = within(formulaire).getByLabelText('Prénom *')
+      const prenom = within(formulaire).getByRole('textbox', { name: 'Prénom *' })
       expect(prenom).toBeRequired()
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
       expect(prenom).toHaveValue('Julien')
-      const email = within(formulaire).getByLabelText('Adresse électronique * Seuls les gestionnaires verront votre adresse électronique.')
+      const email = within(formulaire).getByRole('textbox', { name: 'Adresse électronique * Seuls les gestionnaires verront votre adresse électronique.' })
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
       expect(email).toHaveAttribute('type', 'email')
       expect(email).toHaveValue('julien.deschamps@example.com')
-      const telephone = within(formulaire).getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
+      const telephone = within(formulaire).getByRole('textbox', { name: 'Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
       expect(telephone).toHaveAttribute('name', 'telephone')
       expect(telephone).toHaveAttribute('pattern', '^(\\+\\d{11,12}|\\d{10})$')
       expect(telephone).toHaveAttribute('type', 'tel')
@@ -375,7 +375,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreMesInformationsPersonnelles()
 
       // THEN
-      const telephone = screen.getByLabelText('Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455')
+      const telephone = screen.getByRole('textbox', { name: 'Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
       expect(telephone).toHaveValue('')
     })
 
