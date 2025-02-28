@@ -25,7 +25,7 @@ export default async function Layout({
     return (
       <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>
         <div className="fr-grid-row">
-          <div className="fr-col-2">
+          <div className="fr-col-3 fr-col-lg-2">
             {
               afficherSouSMenu ?
                 <MenuLateral>
@@ -38,7 +38,7 @@ export default async function Layout({
                 <MenuLateral />
             }
           </div>
-          <div className="fr-col-9 fr-pl-7w menu-border">
+          <div className="fr-col-9 fr-col-lg-10 fr-pl-7w menu-border">
             {children}
           </div>
         </div>

@@ -19,6 +19,9 @@ export default function ModifierUneAction({ action, coporteurs }: Props): ReactE
 
   return (
     <>
+      <title>
+        {`Modifier l’action ${action.nom}`}
+      </title>
       <FormulaireAction
         action={action}
         cofinancements={cofinancements}

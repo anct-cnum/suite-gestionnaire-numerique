@@ -19,6 +19,9 @@ export default function AjouterUneAction({ action, date, coporteurs }: Props): R
 
   return (
     <>
+      <title>
+        Ajouter une action à la feuille de route
+      </title>
       <FormulaireAction
         action={action}
         cofinancements={cofinancements}

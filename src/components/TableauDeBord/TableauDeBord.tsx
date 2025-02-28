@@ -107,7 +107,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </Link>
         </div>
         <div className="fr-grid-row">
-          <div className="fr-col-8 fr-mr-1w background-blue-france">
+          <div className="fr-col-8 background-blue-france">
             <div className="fr-grid-row space-between fr-p-4w">
               <div className="font-weight-700 color-blue-france">
                 Indice de Fragilité numérique
@@ -125,8 +125,8 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               />
             </div>
           </div>
-          <div className="fr-col">
-            <div className="background-blue-france fr-p-4w fr-mb-1w">
+          <div className="fr-col-4">
+            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
                 <Icon
                   background="white"
@@ -141,7 +141,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Toutes les typologies de lieux publics ou privés
               </div>
             </div>
-            <div className="background-blue-france fr-p-4w fr-mb-1w">
+            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
                 <Icon
                   background="white"
@@ -156,7 +156,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Conseillers numériques, coordinateurs, Aidants, …
               </div>
             </div>
-            <div className="background-blue-france fr-p-4w">
+            <div className="background-blue-france fr-p-4w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
                 <Icon
                   background="white"
@@ -348,7 +348,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           {
             tableauDeBordViewModel.conventionnement.details.map((detail) => (
               <li
-                className="fr-grid-row fr-btns-group--space-between"
+                className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                 key={detail.label}
               >
                 <div>
@@ -425,7 +425,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               {
                 tableauDeBordViewModel.beneficiaire.details.map((detail) => (
                   <li
-                    className="fr-grid-row fr-btns-group--space-between"
+                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                     key={detail.label}
                   >
                     <div>
@@ -500,7 +500,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               {
                 tableauDeBordViewModel.mediateur.details.map((detail) => (
                   <li
-                    className="fr-grid-row fr-btns-group--space-between"
+                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                     key={detail.label}
                   >
                     <div>
@@ -544,7 +544,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               {
                 tableauDeBordViewModel.aidant.details.map((detail) => (
                   <li
-                    className="fr-grid-row fr-btns-group--space-between"
+                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                     key={detail.label}
                   >
                     <div>
