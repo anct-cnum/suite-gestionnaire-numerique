@@ -17,7 +17,7 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
     <>
       <Table
         enTetes={['Logo', 'Nom et date du prochain comité', 'Périodicité']}
-        hideHead="fr-sr-only"
+        isHeadHidden={true}
         titre="Comités"
       >
         {

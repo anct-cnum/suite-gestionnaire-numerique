@@ -287,7 +287,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           </header>
           <Table
             enTetes={['Date', 'Activité', 'Éditeur']}
-            hideHead="fr-sr-only"
+            isHeadHidden={true}
             titre="Activité et historique"
           >
             {feuilleDeRouteViewModel.historiques.map((historique, index) => (
