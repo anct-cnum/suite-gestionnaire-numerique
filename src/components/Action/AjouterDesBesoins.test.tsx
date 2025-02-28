@@ -109,7 +109,11 @@ describe('ajouter des besoins', () => {
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory()}
-        label="Ajouter une action"
+        cofinancements={[]}
+        drawerId="drawerId"
+        label="label"
+        setIsDrawerOpen={vi.fn()}
+        supprimerUnCofinancement={vi.fn()}
         validerFormulaire={vi.fn()}
       >
         vide
