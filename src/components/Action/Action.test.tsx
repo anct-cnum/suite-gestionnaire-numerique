@@ -145,7 +145,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const demandeDeSubvention = within(formulaire).getByText('Subvention demandée à l‘état')
       expect(demandeDeSubvention).toBeInTheDocument()
       const boutonDemanderUneSubvention = within(formulaire).getByRole('button', { name: 'Demander une subvention' })
-      expect(boutonDemanderUneSubvention).toBeDisabled()
+      expect(boutonDemanderUneSubvention).toHaveAttribute('type', 'button')
       const coFinancement = within(formulaire).getByText('Co-financement')
       expect(coFinancement).toBeInTheDocument()
       const boutonAjouterUnFinancement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })

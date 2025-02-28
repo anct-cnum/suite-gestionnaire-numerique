@@ -4,6 +4,29 @@ import { ActionViewModel } from './actionPresenter'
 import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
+const enveloppes: ActionViewModel['enveloppes'] = [
+  {
+    id: '1',
+    label: 'Conseiller Numérique - 2024',
+    value: 50_000,
+  },
+  {
+    id: '2',
+    label: 'Conseiller Numérique - Plan France Relance',
+    value: 100_000,
+  },
+  {
+    id: '3',
+    label: 'Formation Aidant Numérique/Aidants Connect - 2024',
+    value: 30_000,
+  },
+  {
+    id: '4',
+    label: 'Ingénierie France Numérique Ensemble - 2024',
+    value: 10_000,
+  },
+]
+
 export function sessionUtilisateurViewModelFactory(
   override?: Partial<SessionUtilisateurViewModel>
 ): SessionUtilisateurViewModel {
@@ -181,6 +204,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     ],
     contexte: '<p>Contexte de l‘action</p>',
     description: '<p><strong>Description de l‘action.</strong></p>',
+    enveloppes,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: 'Structurer une filière de reconditionnement locale 1',
     nomFeuilleDeRoute: 'Feuille de route 69',
@@ -239,6 +263,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     budgetPrevisionnel: [],
     contexte: '',
     description: '',
+    enveloppes,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: '',
     nomFeuilleDeRoute: 'Feuille de route 69',
