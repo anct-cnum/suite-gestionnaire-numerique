@@ -9,6 +9,7 @@ export function createSessionUtilisateurPresenter(
     displayLiensGouvernance: utilisateurReadModel.isGestionnaireDepartement,
     email: utilisateurReadModel.email,
     nom: utilisateurReadModel.nom,
+    peutChangerDeRole: utilisateurReadModel.isSuperAdmin,
     prenom: utilisateurReadModel.prenom,
     role: {
       doesItBelongToGroupeAdmin: role.doesItBelongToGroupeAdmin,
@@ -25,6 +26,7 @@ export function createSessionUtilisateurPresenter(
 export type SessionUtilisateurViewModel = Readonly<{
   codeDepartement: string | null
   displayLiensGouvernance: boolean
+  peutChangerDeRole: boolean
   email: string
   nom: string
   prenom: string

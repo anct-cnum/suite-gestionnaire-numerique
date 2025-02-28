@@ -3,6 +3,7 @@ import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
 import { presserLeBouton, renderComponent } from '@/components/testHelper'
+import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
   it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
@@ -34,7 +35,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
   it('quand je clique sur le bouton affichant mes nom et prénom alors le menu utilisateur s’ouvre', () => {
     // GIVEN
-    afficherLEnTete()
+    afficherLEnTetePeutChangerDeRole()
 
     // WHEN
     jOuvreLeMenuUtilisateur()
@@ -108,7 +109,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
       const changerMonRoleAction = vi.fn(async () => Promise.resolve(['OK']))
-      afficherLEnTete(changerMonRoleAction)
+      afficherLEnTetePeutChangerDeRole(changerMonRoleAction)
 
       // WHEN
       jOuvreLeMenuUtilisateur()
@@ -133,6 +134,17 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       expect(fermer).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
       expect(drawer).not.toBeVisible()
     })
+
+    it('si je ne suis pas autorisé à changer de rôle, alors le sélecteur de rôle n’est pas affiché', () => {
+      // GIVEN
+      afficherLEnTete()
+
+      // WHEN
+      jOuvreLeMenuUtilisateur()
+
+      // THEN
+      expect(screen.queryByRole('combobox', { name: 'Rôle' })).not.toBeInTheDocument()
+    })
   })
 
   function jOuvreLeMenuUtilisateur(): void {
@@ -152,7 +164,22 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   }
 
   function afficherLEnTete(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): void {
-    renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction })
+    renderComponent(<EnTete />, { changerMonRoleAction: spiedChangerMonRoleAction,
+      sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+        peutChangerDeRole: false,
+      }) })
+  }
+
+  function afficherLEnTetePeutChangerDeRole(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): void {
+    renderComponent(
+      <EnTete />,
+      {
+        changerMonRoleAction: spiedChangerMonRoleAction,
+        sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory({
+          peutChangerDeRole: true,
+        }),
+      }
+    )
   }
 })
 
