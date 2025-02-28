@@ -20,7 +20,7 @@ export default function FeuilleDeRouteRemplie({
     <>
       <Table
         enTetes={['Logo', 'Nom', 'Action', 'Budget total']}
-        hideHead="fr-sr-only"
+        isHeadHidden={true}
         titre="Feuilles de route"
       >
         {
