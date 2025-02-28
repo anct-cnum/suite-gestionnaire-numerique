@@ -1,6 +1,29 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
 
+const enveloppes: ReadonlyArray<Enveloppe> = [
+  {
+    id: '1',
+    label: 'Conseiller Numérique - 2024',
+    value: 50_000,
+  },
+  {
+    id: '2',
+    label: 'Conseiller Numérique - Plan France Relance',
+    value: 100_000,
+  },
+  {
+    id: '3',
+    label: 'Formation Aidant Numérique/Aidants Connect - 2024',
+    value: 30_000,
+  },
+  {
+    id: '4',
+    label: 'Ingénierie France Numérique Ensemble - 2024',
+    value: 10_000,
+  },
+]
+
 export function actionPresenter(codeDepartement: string): ActionViewModel {
   return {
     anneeDeDebut: '2025',
@@ -107,6 +130,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     ],
     contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+    enveloppes,
     lienPourModifier: `/gouvernance/${codeDepartement}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
     nom: 'Action test',
     nomFeuilleDeRoute: 'Feuille de route 69',
@@ -152,6 +176,7 @@ export type ActionViewModel = Readonly<{
     montant: string
   }>
   budgetGlobal: number
+  enveloppes: ReadonlyArray<Enveloppe>
   description: string
   contexte: string
   lienPourModifier: string
@@ -258,6 +283,7 @@ export const actionARemplir: ActionViewModel = {
   budgetPrevisionnel: [],
   contexte: '',
   description: '',
+  enveloppes,
   lienPourModifier: '',
   nom: '',
   nomFeuilleDeRoute: 'Feuille de route 69',
@@ -314,4 +340,10 @@ export type Beneficiaires = ReadonlyArray<{
   label: string
   statut: string
   value: string
+}>
+
+type Enveloppe = Readonly<{
+  label: string
+  value: number
+  id: string
 }>
