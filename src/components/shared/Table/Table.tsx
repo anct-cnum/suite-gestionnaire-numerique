@@ -5,7 +5,7 @@ import styles from './Table.module.css'
 export default function Table({
   children,
   enTetes,
-  hideHead = '',
+  isHeadHidden = false,
   titre,
 }: Props): ReactElement {
   return (
@@ -20,7 +20,7 @@ export default function Table({
               <caption className="fr-sr-only">
                 {titre}
               </caption>
-              <thead className={hideHead}>
+              <thead className={isHeadHidden ? 'fr-sr-only' : ''}>
                 <tr>
                   {enTetes.map((enTete) => (
                     <th
@@ -51,6 +51,6 @@ export default function Table({
 
 type Props = PropsWithChildren<Readonly<{
   enTetes: ReadonlyArray<string>
-  hideHead?: string
+  isHeadHidden?: boolean
   titre: string
 }>>

@@ -19,7 +19,7 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
     <>
       <Table
         enTetes={['Logo', 'Nom', 'Type', 'Rôle']}
-        hideHead="fr-sr-only"
+        isHeadHidden={true}
         titre="Membres"
       >
         {
