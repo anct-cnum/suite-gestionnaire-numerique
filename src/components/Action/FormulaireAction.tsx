@@ -461,7 +461,7 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
-              labelPluriel="bénéficiaires"
+              labelPluriel="bénéficiaires des fonds"
               membres={action.beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}

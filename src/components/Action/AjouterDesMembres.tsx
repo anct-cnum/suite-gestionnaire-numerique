@@ -90,7 +90,6 @@ export default function AjouterDesMembres({
                     <span>
                       {membre.label}
                     </span>
-                    <br />
                     <Statut
                       color={membre.color}
                       libelle={membre.statut}
