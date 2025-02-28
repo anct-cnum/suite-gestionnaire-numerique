@@ -6,6 +6,7 @@ import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId,
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
+import DemanderUneSubvention from './DemanderUneSubvention'
 import Badge from '../shared/Badge/Badge'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
@@ -61,7 +62,7 @@ export function FormulaireAction({
       <Tag href={action.urlFeuilleDeRoute}>
         {action.nomFeuilleDeRoute}
       </Tag>
-      <PageTitle margin="fr-mb-2w">
+      <PageTitle>
         {label}
       </PageTitle>
       <Badge color="grey-main">
@@ -356,13 +357,10 @@ export function FormulaireAction({
                 Subvention demandée à l‘état
               </p>
             </div>
-            <button
-              className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-              disabled={budgetGlobal === 0}
-              type="button"
-            >
-              Demander une subvention
-            </button>
+            <DemanderUneSubvention
+              enveloppes={action.enveloppes}
+              montantMaxAction={budgetGlobal}
+            />
           </div>
           <hr />
           <div className={styles['horizontal-text-input']}>
