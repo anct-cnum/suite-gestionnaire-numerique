@@ -65,6 +65,7 @@ export default function FormulaireComite({
       <TextArea
         defaultValue={comite.commentaire}
         maxLength={500}
+        rows={9}
       >
         Laissez ici un commentaire général sur le comité
       </TextArea>

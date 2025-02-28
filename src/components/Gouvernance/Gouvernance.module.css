@@ -15,8 +15,7 @@
   background-color: var(--info-950-100);
   background-image: none !important;
   border-radius: 0.5rem;
-  height: 20rem !important;
-  overflow: scroll;
+  min-height: 20rem !important;
 }
 
 .resume-membres div div:nth-child(1) {
@@ -41,8 +40,7 @@
   background-color: var(--purple-glycine-950-100);
   background-image: none !important;
   border-radius: 0.5rem;
-  height: 20rem !important;
-  overflow: scroll;
+  min-height: 20rem !important;
 }
 
 .resume-feuilles-de-route div div:nth-child(1) {
@@ -64,8 +62,8 @@
 .resume-note-privee button {
   background-color: var(--green-tilleul-verveine-975-75);
   border-radius: 0.5rem;
-  height: 20rem !important;
-  overflow: scroll;
+  height: 100%;
+  min-height: 20rem !important;
   padding: 2rem;
   text-align: left;
 }
@@ -89,8 +87,7 @@
   background-color: var(--green-tilleul-verveine-975-75);
   background-image: none !important;
   border-radius: 0.5rem;
-  height: 20rem !important;
-  overflow: scroll;
+  min-height: 20rem !important;
   padding: 2rem;
   text-align: left;
 }

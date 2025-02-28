@@ -22,19 +22,19 @@ describe('ajout des bénéficiaires', () => {
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires')
+      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
 
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
       expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
       const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) bénéficiaire(s)' })
       expect(titre).toBeInTheDocument()
-      const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
+      const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires des fonds pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()
       const lien = screen.getByRole('link', { name: 'cliquant ici' })
       expect(lien).toHaveAttribute('href', '/gouvernance/11')
 
-      const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires' })
+      const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
 
       const membre1 = within(fieldset).getByRole('checkbox', { checked: true, name: 'Rhône (69) Co-porteur' })
       expect(membre1).not.toBeRequired()
@@ -55,9 +55,9 @@ describe('ajout des bénéficiaires', () => {
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires')
+      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
-      const fermer = presserLeBouton('Fermer l’ajout des bénéficiaires')
+      const fermer = presserLeBouton('Fermer l’ajout des bénéficiaires des fonds')
 
       // THEN
       expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterDesBeneficiairesId')
@@ -69,11 +69,11 @@ describe('ajout des bénéficiaires', () => {
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires')
+      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
       presserLeBouton('Tout effacer')
 
       // THEN
-      const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires' })
+      const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
       const checkboxes = within(fieldset).getAllByRole('checkbox')
       checkboxes.forEach((checkbox) => {
         expect(checkbox).not.toBeChecked()
