@@ -82,7 +82,7 @@ model UtilisateurRecord {
   departementCode   String?   @map("departement_code")
   derniereConnexion DateTime? @map("derniere_connexion")
   emailDeContact    String    @map("email_de_contact")
-  groupementId      Int?      @map("goupement_id")
+  groupementId      Int?      @map("groupement_id")
   inviteLe          DateTime  @map("invite_le")
   isSuperAdmin      Boolean   @default(false) @map("is_super_admin")
   isSupprime        Boolean   @default(false) @map("is_supprime")
@@ -108,7 +108,7 @@ model UtilisateurRecord {
 }
 
 model GouvernanceRecord {
-  departementCode               String    @id
+  departementCode               String    @id @map("departement_code")
   /// [NotePrivee]
   notePrivee                    Json?     @map("note_privee")
   editeurNotePriveeId           String?   @map("editeur_note_privee_id")
