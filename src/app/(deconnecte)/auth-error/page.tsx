@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import PageTitle from '@/components/shared/PageTitle/PageTitle'
+
 export default function ErrorPageController(): ReactElement {
   return (
     <main
@@ -9,9 +11,9 @@ export default function ErrorPageController(): ReactElement {
       <div className="fr-container">
         <div className="fr-my-7w fr-mt-md-12w fr-mb-md-10w fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
           <div className="fr-py-0 fr-col-12 fr-col-md-6">
-            <h1>
+            <PageTitle>
               Utilisateur non autorisé
-            </h1>
+            </PageTitle>
             <p className="fr-text--sm fr-mb-3w">
               Erreur 403
             </p>

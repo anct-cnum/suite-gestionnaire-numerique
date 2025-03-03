@@ -15,6 +15,7 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Search from '../shared/Search/Search'
 import Table from '../shared/Table/Table'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
@@ -58,7 +59,8 @@ export default function MesUtilisateurs(
   return (
     <>
       <div className="fr-grid-row space-between fr-grid-row--middle">
-        <PageTitle icon="team-line">
+        <PageTitle>
+          <TitleIcon icon="team-line" />
           {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
         </PageTitle>
         <button

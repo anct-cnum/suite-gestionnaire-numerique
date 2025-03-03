@@ -31,6 +31,7 @@ import Drawer from '../shared/Drawer/Drawer'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { noop } from '@/shared/lang'
 
 export default function Gouvernance(): ReactElement {
@@ -49,7 +50,8 @@ export default function Gouvernance(): ReactElement {
       <title>
         {`Gouvernance ${gouvernanceViewModel.departement}`}
       </title>
-      <PageTitle icon="compass-3-line">
+      <PageTitle>
+        <TitleIcon icon="compass-3-line" />
         Inclusion numérique ·
         {' '}
         {gouvernanceViewModel.departement}
