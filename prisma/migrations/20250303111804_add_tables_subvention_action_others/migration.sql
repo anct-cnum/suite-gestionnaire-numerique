@@ -1,11 +1,11 @@
 /*
   Warnings:
 
-  - Added the required column `membre_id` to the `feuille_de_route` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `old_uuid` to the `feuille_de_route` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
-ALTER TABLE "feuille_de_route" ADD COLUMN     "membre_id" TEXT NOT NULL,
+ALTER TABLE "feuille_de_route" ADD COLUMN     "old_uuid" UUID NOT NULL,
 ADD COLUMN     "piece_jointe" TEXT;
 
 -- CreateTable
@@ -79,9 +79,6 @@ CREATE TABLE "co_financement" (
 
     CONSTRAINT "co_financement_pkey" PRIMARY KEY ("id")
 );
-
--- AddForeignKey
-ALTER TABLE "feuille_de_route" ADD CONSTRAINT "feuille_de_route_membre_id_fkey" FOREIGN KEY ("membre_id") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "action" ADD CONSTRAINT "action_createur_id_fkey" FOREIGN KEY ("createur_id") REFERENCES "utilisateur"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

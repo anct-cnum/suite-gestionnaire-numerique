@@ -153,10 +153,14 @@ model FeuilleDeRouteRecord {
   gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
+  membreId                   String   @map("membre_id")
   pieceJointe                String?  @map("piece_jointe")
 
+  oldUUID String @map("old_uuid") @db.Uuid
+
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  ActionRecord        ActionRecord[]
+  action              ActionRecord[]
+  membre              MembreRecord      @relation(fields: [membreId], references: [id])
 
   @@map("feuille_de_route")
 }
@@ -195,7 +199,7 @@ model MembreRecord {
   beneficiaireSubvention        BeneficiaireSubventionRecord[]
   porteurAction                 PorteurActionRecord[]
   coFinancement                 CoFinancementRecord[]
-  DemandeDeSubventionRecord     DemandeDeSubventionRecord[]
+  feuilleDeRouteRecord          FeuilleDeRouteRecord[]
 
   @@map("membre")
 }
@@ -270,8 +274,8 @@ model ActionRecord {
   dateDeDebut      DateTime @map("date_de_debut")
   dateDeFin        DateTime @map("date_de_fin")
 
-  relationUtilisateur    UtilisateurRecord              @relation(fields: [createurId], references: [id])
-  relationFeuilleDeRoute FeuilleDeRouteRecord?          @relation(fields: [feuilleDeRouteId], references: [id])
+  utilisateur            UtilisateurRecord              @relation(fields: [createurId], references: [id])
+  feuilleDeRoute         FeuilleDeRouteRecord           @relation(fields: [feuilleDeRouteId], references: [id])
   demandesDeSubvention   DemandeDeSubventionRecord[]
   beneficiaireSubvention BeneficiaireSubventionRecord[]
   porteurAction          PorteurActionRecord[]
@@ -291,10 +295,8 @@ model DemandeDeSubventionRecord {
   dateDeModification   DateTime? @map("date_de_modification")
   actionId             Int       @map("action_id")
 
-  relationUtilisateur UtilisateurRecord @relation(fields: [createurId], references: [id])
-  relationAction      ActionRecord      @relation(fields: [actionId], references: [id])
-  MembreRecord        MembreRecord?     @relation(fields: [membreRecordId], references: [id])
-  membreRecordId      String?
+  utilisateur UtilisateurRecord @relation(fields: [createurId], references: [id])
+  action      ActionRecord      @relation(fields: [actionId], references: [id])
 
   @@map("demande_de_subvention")
 }
@@ -305,8 +307,8 @@ model BeneficiaireSubventionRecord {
   membreId          String @map("membre_id")
   montantSubvention Float  @map("montant_subvention")
 
-  relationAction ActionRecord @relation(fields: [actionId], references: [id])
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
+  action ActionRecord @relation(fields: [actionId], references: [id])
+  membre MembreRecord @relation(fields: [membreId], references: [id])
 
   @@map("beneficiaire_subvention")
 }
@@ -316,8 +318,8 @@ model PorteurActionRecord {
   actionId Int    @map("action_id")
   membreId String @map("membre_id")
 
-  relationAction ActionRecord @relation(fields: [actionId], references: [id])
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
+  action ActionRecord @relation(fields: [actionId], references: [id])
+  membre MembreRecord @relation(fields: [membreId], references: [id])
 
   @@map("porteur_action")
 }
@@ -339,8 +341,8 @@ model CoFinancementRecord {
   memberId String @map("id_membre")
   montant  Float
 
-  relationAction ActionRecord @relation(fields: [actionId], references: [id])
-  relationMembre MembreRecord @relation(fields: [memberId], references: [id])
+  action ActionRecord @relation(fields: [actionId], references: [id])
+  membre MembreRecord @relation(fields: [memberId], references: [id])
 
   @@map("co_financement")
 }
