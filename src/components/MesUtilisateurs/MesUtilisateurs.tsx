@@ -9,6 +9,7 @@ import InviterUnUtilisateur from './InviterUnUtilisateur'
 import ReinviterUnUtilisateur from './ReinviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
 import Drawer from '../shared/Drawer/Drawer'
+import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Role from '../shared/Role/Role'
@@ -214,7 +215,7 @@ export default function MesUtilisateurs(
                   <td className="fr-cell--center">
                     <button
                       aria-controls={modalId}
-                      className="fr-btn fr-btn--tertiary"
+                      className={`fr-btn fr-btn--tertiary ${unUtilisateurViewModel.deleteButton.color}`}
                       data-fr-opened="false"
                       disabled={!unUtilisateurViewModel.deleteButton.isDisabled}
                       onClick={() => {
@@ -224,10 +225,7 @@ export default function MesUtilisateurs(
                       title="Supprimer"
                       type="button"
                     >
-                      <span
-                        aria-hidden="true"
-                        className={`fr-icon-delete-line ${unUtilisateurViewModel.deleteButton.color}`}
-                      />
+                      <Icon icon="delete-line" />
                     </button>
 
                   </td>

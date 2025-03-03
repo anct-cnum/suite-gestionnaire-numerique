@@ -2,6 +2,7 @@ import { ReactElement, useId, useRef, useState } from 'react'
 
 import ModifierUnComite from './ModifierUnComite'
 import Drawer from '@/components/shared/Drawer/Drawer'
+import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -23,11 +24,8 @@ export default function ComitologieRemplie({ comites, dateAujourdhui, uidGouvern
         {
           comites.map((comite) => (
             <tr key={comite.uid}>
-              <td>
-                <span
-                  aria-hidden="true"
-                  className="fr-icon-calendar-event-line color-blue-france"
-                />
+              <td className="color-blue-france">
+                <Icon icon="calendar-event-line" />
               </td>
               <td className="font-weight-700">
                 <button

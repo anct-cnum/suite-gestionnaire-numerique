@@ -1,8 +1,8 @@
 import { FormEvent, ReactElement, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Icon from '../shared/Icon/Icon'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onSubmit }: Props): ReactElement {
@@ -14,7 +14,7 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
       onSubmit={handleSubmit}
     >
       <DrawerTitle id={labelId}>
-        <Icon icon="money-euro-circle-line" />
+        <TitleIcon icon="money-euro-circle-line" />
         <br />
         {label}
       </DrawerTitle>

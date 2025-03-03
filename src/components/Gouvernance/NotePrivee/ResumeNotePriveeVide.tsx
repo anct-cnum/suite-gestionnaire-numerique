@@ -1,12 +1,12 @@
 import { ReactElement } from 'react'
 
-import Icon from '@/components/shared/Icon/Icon'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function ResumeNotePriveeVide({ id, showDrawer }: Props): ReactElement {
   return (
     <>
       <div>
-        <Icon icon="ball-pen-line" />
+        <TitleIcon icon="ball-pen-line" />
       </div>
       <p className="fr-h6 color-blue-france">
         Créez une note privée

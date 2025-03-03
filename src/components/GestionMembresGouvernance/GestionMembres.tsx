@@ -5,6 +5,7 @@ import { Fragment, ReactElement, useId, useState } from 'react'
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
 import Drawer from '../shared/Drawer/Drawer'
+import Icon from '../shared/Icon/Icon'
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
 import { MembreViewModel, MembresViewModel } from '@/presenters/membresPresenter'
@@ -188,14 +189,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </td>
             <td className="fr-cell--center">
               <button
-                className="fr-btn fr-btn--tertiary"
+                className="fr-btn fr-btn--tertiary color-red"
                 title="Supprimer"
                 type="button"
               >
-                <span
-                  aria-hidden="true"
-                  className="fr-icon-delete-line color-red"
-                />
+                <Icon icon="delete-line" />
               </button>
             </td>
           </tr>

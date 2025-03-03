@@ -5,8 +5,8 @@ import { ReactElement, useId, useState } from 'react'
 import DetailAction from './DetailAction'
 import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
-import Icon from '../shared/Icon/Icon'
 import Tag from '../shared/Tag/Tag'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeAction({ actions }: Props): ReactElement {
@@ -23,7 +23,7 @@ export default function ResumeAction({ actions }: Props): ReactElement {
           <li key={action.uid}>
             <div className="fr-grid-row fr-grid-row--middle space-between">
               <div className="fr-grid-row">
-                <Icon
+                <TitleIcon
                   background={action.statut.background}
                   icon={action.statut.icon}
                 />

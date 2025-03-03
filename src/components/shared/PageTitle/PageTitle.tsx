@@ -1,11 +1,11 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-import Icon from '../Icon/Icon'
+import TitleIcon from '../TitleIcon/TitleIcon'
 
 export default function PageTitle({ children, icon }: Props): ReactElement {
   return (
     <h1 className="color-blue-france fr-mt-5w">
-      <Icon icon={icon} />
+      <TitleIcon icon={icon} />
       {children}
     </h1>
   )
