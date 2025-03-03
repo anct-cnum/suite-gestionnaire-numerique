@@ -3,15 +3,15 @@ import { ReactElement } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
 import ResumeAction from './ResumeAction'
-import Icon from '../shared/Icon/Icon'
 import Tag from '../shared/Tag/Tag'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactElement {
   return (
     <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>
-        <Icon icon="survey-line" />
+        <TitleIcon icon="survey-line" />
         <Link
           className="fr-btn fr-btn--secondary"
           href={feuilleDeRoute.links.detail}

@@ -1,17 +1,15 @@
 import { ReactElement } from 'react'
 
-import styles from './Icon.module.css'
-
-export default function Icon({ background = 'blue', icon }: Props): ReactElement {
+export default function Icon({ classname = '', icon }: Props): ReactElement {
   return (
     <span
       aria-hidden="true"
-      className={`fr-icon-${icon} ${styles[background]} ${styles.icon} fr-mr-3w`}
+      className={`fr-icon-${icon} ${classname}`}
     />
   )
 }
 
 type Props = Readonly<{
-  background?: 'blue' | 'white' | 'green' | 'pink' | 'purple' | 'red'
+  classname?: string
   icon: string
 }>

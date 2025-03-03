@@ -8,6 +8,7 @@ import Icon from '../shared/Icon/Icon'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import Table from '../shared/Table/Table'
 import Tag from '../shared/Tag/Tag'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 
 export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): ReactElement {
@@ -184,7 +185,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
               >
                 <header>
                   <div className="fr-grid-row space-between fr-mb-2w">
-                    <Icon
+                    <TitleIcon
                       background={action.statut.background}
                       icon={action.statut.icon}
                     />
@@ -197,14 +198,11 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
                         Modifier
                       </Link>
                       <button
-                        className="fr-btn fr-btn--tertiary"
+                        className="fr-btn fr-btn--tertiary color-red"
                         title={`Supprimer ${action.nom}`}
                         type="button"
                       >
-                        <span
-                          aria-hidden="true"
-                          className="fr-icon-delete-line color-red"
-                        />
+                        <Icon icon="delete-line" />
                       </button>
                     </div>
                   </div>

@@ -7,6 +7,7 @@ import styles from './EnTete.module.css'
 import MenuUtilisateur from './MenuUtilisateur/MenuUtilisateur'
 import { clientContext } from '@/components/shared/ClientContext'
 import Drawer from '@/components/shared/Drawer/Drawer'
+import Icon from '@/components/shared/Icon/Icon'
 
 export default function EnTete(): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
@@ -103,10 +104,7 @@ export default function EnTete(): ReactElement {
                     >
                       Notifications
                       {/**/}
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-arrow-down-s-line"
-                      />
+                      <Icon icon="arrow-down-s-line" />
                     </Link>
                   </li>
                   <li>
@@ -120,10 +118,7 @@ export default function EnTete(): ReactElement {
                       type="button"
                     >
                       {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
-                      <span
-                        aria-hidden="true"
-                        className="fr-icon-arrow-down-s-line"
-                      />
+                      <Icon icon="arrow-down-s-line" />
                     </button>
                   </li>
                 </ul>

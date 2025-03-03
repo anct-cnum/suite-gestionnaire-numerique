@@ -3,9 +3,9 @@
 import Link from 'next/link'
 import { Fragment, PropsWithChildren, ReactElement, useContext } from 'react'
 
-import Icon from './Icon'
 import styles from './MenuLateral.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
+import Icon from '@/components/shared/Icon/Icon'
 
 export default function MenuLateral({ children }: Readonly<PropsWithChildren>): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
@@ -74,7 +74,10 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
             className="fr-sidemenu__link"
             href="/tableau-de-bord"
           >
-            <Icon icon="dashboard-3-line" />
+            <Icon
+              classname="fr-mr-1w"
+              icon="dashboard-3-line"
+            />
             Tableau de bord
           </Link>
         </li>
@@ -99,7 +102,10 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                         className="fr-sidemenu__link"
                         href={menu.url}
                       >
-                        <Icon icon={menu.icon} />
+                        <Icon
+                          classname="fr-mr-1w"
+                          icon={menu.icon}
+                        />
                         {menu.label}
                       </Link>
                       {menu.hasSousMenu === true ? children : null}
@@ -125,7 +131,10 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                       className="fr-sidemenu__link"
                       href={menu.url}
                     >
-                      <Icon icon={menu.icon} />
+                      <Icon
+                        classname="fr-mr-1w"
+                        icon={menu.icon}
+                      />
                       {menu.label}
                     </Link>
                   </li>

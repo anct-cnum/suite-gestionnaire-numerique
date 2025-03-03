@@ -11,8 +11,8 @@ import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
-import Icon from '../shared/Icon/Icon'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
 export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactElement {
@@ -86,7 +86,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <Icon icon="france-line" />
+            <TitleIcon icon="france-line" />
             <div>
               <h2
                 className="fr-h4 color-blue-france fr-m-0"
@@ -128,7 +128,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           <div className="fr-col-4">
             <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
-                <Icon
+                <TitleIcon
                   background="white"
                   icon="map-pin-2-line"
                 />
@@ -143,7 +143,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
             </div>
             <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
-                <Icon
+                <TitleIcon
                   background="white"
                   icon="map-pin-user-line"
                 />
@@ -158,7 +158,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
             </div>
             <div className="background-blue-france fr-p-4w fr-ml-1w">
               <div className="fr-h1 fr-m-0">
-                <Icon
+                <TitleIcon
                   background="white"
                   icon="compass-3-line"
                 />
@@ -185,7 +185,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <Icon icon="compass-3-line" />
+            <TitleIcon icon="compass-3-line" />
             <div>
               <h2
                 className="fr-h4 color-blue-france fr-m-0"
@@ -208,7 +208,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         <div className="fr-grid-row">
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
             <div className="fr-h1 fr-m-0">
-              <Icon
+              <TitleIcon
                 background="white"
                 icon="bank-line"
               />
@@ -229,7 +229,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
             <div className="fr-h1 fr-m-0">
-              <Icon
+              <TitleIcon
                 background="white"
                 icon="community-line"
               />
@@ -250,7 +250,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <div className="fr-col background-blue-france fr-p-4w">
             <div className="fr-h1 fr-m-0">
-              <Icon
+              <TitleIcon
                 background="white"
                 icon="file-download-line"
               />
@@ -277,7 +277,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <Icon icon="pen-nib-line" />
+            <TitleIcon icon="pen-nib-line" />
             <div>
               <h2
                 className="fr-h4 color-blue-france fr-m-0"
@@ -300,7 +300,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         <div className="fr-grid-row fr-mb-4w">
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
             <div className="fr-h1 fr-m-0">
-              <Icon
+              <TitleIcon
                 background="white"
                 icon="money-euro-circle-line"
               />
@@ -321,7 +321,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <div className="fr-col background-blue-france fr-p-4w">
             <div className="fr-h1 fr-m-0">
-              <Icon
+              <TitleIcon
                 background="white"
                 icon="download-line"
               />
@@ -353,7 +353,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               >
                 <div>
                   <span
-                    aria-hidden={true}
+                    aria-hidden="true"
                     className={`${styles.dot} ${styles[detail.color]}`}
                   />
                   {' '}
@@ -373,7 +373,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       >
         <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
           <div className="fr-grid-row fr-grid-row--middle">
-            <Icon icon="community-line" />
+            <TitleIcon icon="community-line" />
             <div>
 
               <h2
@@ -430,7 +430,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                   >
                     <div>
                       <span
-                        aria-hidden={true}
+                        aria-hidden="true"
                         className={`${styles.dot} ${styles[detail.color]}`}
                       />
                       {' '}
@@ -456,7 +456,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
           <div className="fr-grid-row fr-grid-row--middle">
-            <Icon icon="group-line" />
+            <TitleIcon icon="group-line" />
             <div>
               <h2
                 className="fr-h4 color-blue-france fr-m-0"
@@ -505,7 +505,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                   >
                     <div>
                       <span
-                        aria-hidden={true}
+                        aria-hidden="true"
                         className={`${styles.dot} ${styles[detail.color]}`}
                       />
                       {' '}
@@ -549,7 +549,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                   >
                     <div>
                       <span
-                        aria-hidden={true}
+                        aria-hidden="true"
                         className={`${styles.dot} ${styles[detail.color]}`}
                       />
                       {' '}

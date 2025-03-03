@@ -4,7 +4,7 @@ import styles from './Action.module.css'
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Icon from '../shared/Icon/Icon'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ActionViewModel, Besoins } from '@/presenters/actionPresenter'
 
 export default function AjouterDesBesoins({
@@ -46,7 +46,7 @@ export default function AjouterDesBesoins({
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <Icon
+          <TitleIcon
             background="purple"
             icon="flashlight-line"
           />

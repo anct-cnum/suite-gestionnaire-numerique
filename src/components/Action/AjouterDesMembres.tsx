@@ -5,8 +5,8 @@ import styles from './Action.module.css'
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Icon from '../shared/Icon/Icon'
 import Statut from '../shared/Statut/Statut'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { Beneficiaires, Porteurs } from '@/presenters/actionPresenter'
 
 export default function AjouterDesMembres({
@@ -50,7 +50,7 @@ export default function AjouterDesMembres({
         labelId={labelId}
       >
         <DrawerTitle id={labelId}>
-          <Icon icon="building-line" />
+          <TitleIcon icon="building-line" />
           <br />
           {titre}
         </DrawerTitle>

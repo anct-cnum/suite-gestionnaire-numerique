@@ -4,6 +4,7 @@ import { ReactElement, useId, useState } from 'react'
 
 import DetailsFeuilleDeRoute from './DetailsFeuilleDeRoute'
 import Drawer from '@/components/shared/Drawer/Drawer'
+import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { FeuilleDeRouteViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -26,11 +27,8 @@ export default function FeuilleDeRouteRemplie({
         {
           feuillesDeRoute.map((feuilleDeRoute) => (
             <tr key={feuilleDeRoute.nom}>
-              <td>
-                <span
-                  aria-hidden="true"
-                  className="fr-icon-survey-line color-blue-france"
-                />
+              <td className="color-blue-france">
+                <Icon icon="survey-line" />
               </td>
               <td className="font-weight-700">
                 <button

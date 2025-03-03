@@ -2,15 +2,15 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
-import Icon from '@/components/shared/Icon/Icon'
 import Tag from '@/components/shared/Tag/Tag'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props): ReactElement {
   return (
     <>
       <DrawerTitle id={labelId}>
-        <Icon icon="survey-line" />
+        <TitleIcon icon="survey-line" />
         <br />
         {feuilleDeRoute.nom}
       </DrawerTitle>

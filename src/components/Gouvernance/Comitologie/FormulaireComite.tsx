@@ -2,9 +2,9 @@ import { FormEvent, PropsWithChildren, ReactElement } from 'react'
 
 import Datepicker from '@/components/shared/Datepicker/Datepicker'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
-import Icon from '@/components/shared/Icon/Icon'
 import SegmentedControl from '@/components/shared/SegmentedControl/SegmentedControl'
 import TextArea from '@/components/shared/TextArea/TextArea'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function FormulaireComite({
@@ -22,7 +22,7 @@ export default function FormulaireComite({
       onSubmit={validerFormulaire}
     >
       <DrawerTitle id={labelId}>
-        <Icon icon="calendar-event-line" />
+        <TitleIcon icon="calendar-event-line" />
         <br />
         {label}
       </DrawerTitle>
