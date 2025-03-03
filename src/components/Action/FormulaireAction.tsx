@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import Link from 'next/link'
 import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId, useState } from 'react'
 
 import styles from './Action.module.css'
@@ -56,13 +55,10 @@ export function FormulaireAction({
         )
       }}
     >
-      <Link
-        className="fr-tag fr-mb-2w"
-        href="/feuilles-de-route/69"
-      >
+      <Tag href="/feuilles-de-route/69">
         Feuille de route 69
-      </Link>
-      <h1 className="color-blue-france fr-mb-2w">
+      </Tag>
+      <h1 className="color-blue-france fr-mb-2w fr-mt-2w">
         {label}
       </h1>
       <p className="fr-badge fr-badge--md fr-mb-4w">
