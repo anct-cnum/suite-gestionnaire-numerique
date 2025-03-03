@@ -1,11 +1,13 @@
 import { ReactElement } from 'react'
 
+import PageTitle from '../shared/PageTitle/PageTitle'
+
 export default function MentionsLegales(): ReactElement {
   return (
     <>
-      <h1>
+      <PageTitle>
         Mentions légales
-      </h1>
+      </PageTitle>
       <h2>
         Éditeur de la plateforme
       </h2>

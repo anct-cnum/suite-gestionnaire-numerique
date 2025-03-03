@@ -9,6 +9,7 @@ import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles({ mesInformationsPersonnellesViewModel }: Props): ReactElement {
@@ -23,7 +24,8 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
-        <PageTitle icon="account-circle-line">
+        <PageTitle>
+          <TitleIcon icon="account-circle-line" />
           Mes informations
         </PageTitle>
         <p className="fr-text--sm color-grey">

@@ -7,6 +7,7 @@ import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
 import Badge from '../shared/Badge/Badge'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Tag from '../shared/Tag/Tag'
@@ -59,9 +60,9 @@ export function FormulaireAction({
       <Tag href="/feuilles-de-route/69">
         Feuille de route 69
       </Tag>
-      <h1 className="color-blue-france fr-mb-2w fr-mt-2w">
+      <PageTitle margin="fr-mb-2w">
         {label}
-      </h1>
+      </PageTitle>
       <Badge color="grey-main">
         En construction
       </Badge>

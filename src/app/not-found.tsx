@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
+import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
   title: 'Page non trouvée',
@@ -13,9 +14,9 @@ export default function NotFound(): ReactElement {
     <div className="fr-container">
       <div className="fr-my-7w fr-mt-md-12w fr-mb-md-10w fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">
         <div className="fr-py-0 fr-col-12 fr-col-md-6">
-          <h1>
+          <PageTitle>
             Page non trouvée
-          </h1>
+          </PageTitle>
           <p className="fr-text--sm fr-mb-3w">
             Erreur 404
           </p>
@@ -62,24 +63,24 @@ export default function NotFound(): ReactElement {
           >
             <use
               className="fr-artwork-motif"
-              href="pictos/ovoid.svg#artwork-motif"
+              href={`${process.env.NEXT_PUBLIC_HOST}/pictos/ovoid.svg#artwork-motif`}
             />
             <use
               className="fr-artwork-background"
-              href="pictos/ovoid.svg#artwork-background"
+              href={`${process.env.NEXT_PUBLIC_HOST}/pictos/ovoid.svg#artwork-background`}
             />
             <g transform="translate(40, 60)">
               <use
                 className="fr-artwork-decorative"
-                href="pictos/technical-error.svg#artwork-decorative"
+                href={`${process.env.NEXT_PUBLIC_HOST}/pictos/technical-error.svg#artwork-decorative`}
               />
               <use
                 className="fr-artwork-minor"
-                href="pictos/technical-error.svg#artwork-minor"
+                href={`${process.env.NEXT_PUBLIC_HOST}/pictos/technical-error.svg#artwork-minor`}
               />
               <use
                 className="fr-artwork-major"
-                href="pictos/technical-error.svg#artwork-major"
+                href={`${process.env.NEXT_PUBLIC_HOST}/pictos/technical-error.svg#artwork-major`}
               />
             </g>
           </svg>

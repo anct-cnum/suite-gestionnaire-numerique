@@ -3,17 +3,16 @@ import { ReactElement } from 'react'
 import AjouterUneFeuilleDeRoute from './AjouterUneFeuilleDeRoute'
 import styles from './FeuillesDeRoute.module.css'
 import ResumeFeuilleDeRoute from './ResumeFeuilleDeRoute'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): ReactElement {
   return (
     <div className={`fr-container fr-mt-5w ${styles['feuilles-de-route']}`}>
       <div className={styles['align-items']}>
-        <h1
-          className="color-blue-france fr-mb-0 fr-h1"
-        >
+        <PageTitle margin="fr-mb-0">
           {feuillesDeRouteViewModel.titre}
-        </h1>
+        </PageTitle>
         <AjouterUneFeuilleDeRoute
           contratPreexistant={feuillesDeRouteViewModel.formulaire.contratPreexistant}
           membres={feuillesDeRouteViewModel.formulaire.membres}

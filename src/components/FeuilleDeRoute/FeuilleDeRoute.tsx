@@ -5,6 +5,7 @@ import styles from './FeuilleDeRoute.module.css'
 import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
 import Badge from '../shared/Badge/Badge'
 import Icon from '../shared/Icon/Icon'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import Table from '../shared/Table/Table'
 import Tag from '../shared/Tag/Tag'
@@ -19,9 +20,9 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           {feuilleDeRouteViewModel.nom}
         </title>
         <div className="fr-grid-row space-between fr-grid-row--middle">
-          <h1 className="color-blue-france fr-mt-5w">
+          <PageTitle>
             {feuilleDeRouteViewModel.nom}
-          </h1>
+          </PageTitle>
           <ModifierUneFeuilleDeRoute
             contratPreexistant={feuilleDeRouteViewModel.formulaire.contratPreexistant}
             membres={feuilleDeRouteViewModel.formulaire.membres}
