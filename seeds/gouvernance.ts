@@ -332,6 +332,7 @@ function grouperDonneesACreer(
       let type: string
       const gouvernanceDepartementCode = departementCode
       const contacts = makeContacts(membreFNE)
+      const prefectureMembreId = `prefecture-${gouvernanceDepartementCode}`
       switch (true) {
         case Boolean(membreFNE.relationCommune):
           [membreId, type] = [`commune-${membreFNE.communeCode}-${departementCode}`, 'Collectivité, commune']
@@ -403,16 +404,8 @@ function grouperDonneesACreer(
           break
         case Boolean(membreFNE.departementCode):
           [membreId, type] = [`departement-${membreFNE.departementCode}-${departementCode}`, 'Conseil départemental']
-          const prefectureMembreId = `prefecture-${gouvernanceDepartementCode}`
           groupe = {
             ...groupe,
-            membres: groupe.membres.concat({
-              ...contacts,
-              gouvernanceDepartementCode,
-              id: prefectureMembreId,
-              statut: 'confirme',
-              type: 'Préfecture départementale',
-            }),
             membresDepartements: {
               ...groupe.membresDepartements,
               [membreId]: {
@@ -422,28 +415,40 @@ function grouperDonneesACreer(
                 },
                 roles: new Set([...groupe.membresDepartements[membreId]?.roles ?? []].concat(role)),
               },
-              [prefectureMembreId]: {
-                membre: {
-                  departementCode: gouvernanceDepartementCode,
-                  membreId: prefectureMembreId,
-                },
-                roles: new Set(['coporteur']),
-              },
             },
           }
           break
       }
       groupe = {
         ...groupe,
-        membres: groupe.membres.concat({
-          ...contacts,
-          gouvernanceDepartementCode,
-          // @ts-expect-error
-          id: membreId,
-          statut,
-          // @ts-expect-error
-          type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
-        }),
+        membres: groupe.membres.concat(
+          {
+            ...contacts,
+            gouvernanceDepartementCode,
+            // @ts-expect-error
+            id: membreId,
+            statut,
+            // @ts-expect-error
+            type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
+          },
+          {
+            ...contacts,
+            gouvernanceDepartementCode,
+            id: prefectureMembreId,
+            statut: 'confirme',
+            type: 'Préfecture départementale',
+          }
+        ),
+        membresDepartements: {
+          ...groupe.membresDepartements,
+          [prefectureMembreId]: {
+            membre: {
+              departementCode: gouvernanceDepartementCode,
+              membreId: prefectureMembreId,
+            },
+            roles: new Set(['coporteur']),
+          },
+        }
       }
       return groupe
     }
