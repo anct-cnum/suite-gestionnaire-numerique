@@ -26,7 +26,11 @@ import prisma from '../prisma/prismaClient'
 const gouvernancesFNEQuery: Parameters<typeof prismaFNE.gouvernance.findMany>[0] = {
   include: {
     comites: true,
-    feuillesDeRoute: true,
+    feuillesDeRoute: {
+      include: {
+        membresFeuilleDeRoute: true,
+      },
+    },
     membres: {
       include: {
         beneficiairesSubventions: {
@@ -155,34 +159,40 @@ void (async function migrate(): Promise<void> {
       )
       return Promise.all([
         groupe,
-        prisma.membreRecord.createMany({ data: groupe.membres.slice(), skipDuplicates: true }),
+        prisma.membreRecord.createMany({ data: groupe.membres.map(membreWithIdFNEToMembre), skipDuplicates: true }),
       ])
     })
-    .then(async ([groupe, membresCrees]) => Promise.all([
-      membresCrees,
-      prisma.comiteRecord.createMany({ data: groupe.comites.slice() }),
-      prisma.feuilleDeRouteRecord.createMany({ data: groupe.feuillesDeRoute.slice() }),
-      prisma.membreGouvernanceCommuneRecord.createMany({
-        data: Object.values(groupe.membresCommunes).flatMap(associerMembresAuxRoles),
-        skipDuplicates: true,
-      }),
-      prisma.membreGouvernanceDepartementRecord.createMany({
-        data: Object.values(groupe.membresDepartements).flatMap(associerMembresAuxRoles), // .slice(),
-        skipDuplicates: true,
-      }),
-      prisma.membreGouvernanceEpciRecord.createMany({
-        data: Object.values(groupe.membresEpcis).flatMap(associerMembresAuxRoles),
-        skipDuplicates: true,
-      }),
-      prisma.membreGouvernanceSgarRecord.createMany({
-        data: Object.values(groupe.membresSgars).flatMap(associerMembresAuxRoles),
-        skipDuplicates: true,
-      }),
-      prisma.membreGouvernanceStructureRecord.createMany({
-        data: Object.values(groupe.membresStructures).flatMap(associerMembresAuxRoles),
-        skipDuplicates: true,
-      }),
-    ]))
+    .then(async ([groupe, membresCrees]) => {
+      const membresByIdFNE = Object.groupBy(groupe.membres, ({ idFNE }) => idFNE)
+      return Promise.all([
+        membresCrees,
+        prisma.comiteRecord.createMany({ data: groupe.comites.slice() }),
+        prisma.feuilleDeRouteRecord.createMany({
+          // @ts-expect-error
+          data: groupe.feuillesDeRoute.map(feuilleDeRouteWithIdFNEPorteurToFeuilleDeRoute(membresByIdFNE)),
+        }),
+        prisma.membreGouvernanceCommuneRecord.createMany({
+          data: Object.values(groupe.membresCommunes).flatMap(associerMembresAuxRoles),
+          skipDuplicates: true,
+        }),
+        prisma.membreGouvernanceDepartementRecord.createMany({
+          data: Object.values(groupe.membresDepartements).flatMap(associerMembresAuxRoles),
+          skipDuplicates: true,
+        }),
+        prisma.membreGouvernanceEpciRecord.createMany({
+          data: Object.values(groupe.membresEpcis).flatMap(associerMembresAuxRoles),
+          skipDuplicates: true,
+        }),
+        prisma.membreGouvernanceSgarRecord.createMany({
+          data: Object.values(groupe.membresSgars).flatMap(associerMembresAuxRoles),
+          skipDuplicates: true,
+        }),
+        prisma.membreGouvernanceStructureRecord.createMany({
+          data: Object.values(groupe.membresStructures).flatMap(associerMembresAuxRoles),
+          skipDuplicates: true,
+        }),
+      ])
+    })
     .then(([membresCrees, comitesCrees, feuillesDeRouteCreees]) => {
       console.log(greenColor, `${comitesCrees.count} comites sont insérés`)
       console.log(greenColor, `${feuillesDeRouteCreees.count} feuilles de route sont insérées`)
@@ -280,10 +290,11 @@ function grouperDonneesACreer(
   }
 
   function feuilleDeRouteFromFeuilleDeRouteFNE(gouvernanceDepartementCode: string) {
-    return (feuilleDeRoute: GouvernanceFNE['feuillesDeRoute'][number]): FeuilleDeRoute => ({
-      creation: feuilleDeRoute.creation,
+    return (feuilleDeRouteFNE: GouvernanceFNE['feuillesDeRoute'][number]): FeuilleDeRouteWithIdFNEPorteur => ({
+      creation: feuilleDeRouteFNE.creation,
       gouvernanceDepartementCode,
-      nom: feuilleDeRoute.nom,
+      nom: feuilleDeRouteFNE.nom,
+      porteurFNEId: feuilleDeRouteFNE.membresFeuilleDeRoute[0]?.membreId,
     })
   }
 
@@ -427,6 +438,8 @@ function grouperDonneesACreer(
             gouvernanceDepartementCode,
             // @ts-expect-error
             id: membreId,
+            idFNE: membreFNE.id,
+
             statut,
             // @ts-expect-error
             type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
@@ -435,6 +448,7 @@ function grouperDonneesACreer(
             ...contacts,
             gouvernanceDepartementCode,
             id: prefectureMembreId,
+            idFNE: prefectureMembreId,
             statut: 'confirme',
             type: 'Préfecture départementale',
           }
@@ -448,7 +462,7 @@ function grouperDonneesACreer(
             },
             roles: new Set(['coporteur']),
           },
-        }
+        },
       }
       return groupe
     }
@@ -470,6 +484,24 @@ function grouperDonneesACreer(
       contact: contacts.relationContactPolitique?.email.toLowerCase()
         ?? contacts.relationContactStructure?.email.toLowerCase(),
       contactTechnique: contacts.relationContactTechnique?.email.toLowerCase() ?? null,
+    }
+  }
+}
+
+function membreWithIdFNEToMembre(membreWithIdFNE: MembreWithIdFNE): MembreRecord {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { idFNE, ...membre } = membreWithIdFNE
+  return membre
+}
+
+function feuilleDeRouteWithIdFNEPorteurToFeuilleDeRoute(
+  membresByIdFNE: Readonly<Record<string, ReadonlyArray<MembreWithIdFNE>>>
+) {
+  return (feuilleDeRouteWithIdFNEPorteur: FeuilleDeRouteWithIdFNEPorteur): FeuilleDeRoute => {
+    const { porteurFNEId, ...feuilleDeRoute } = feuilleDeRouteWithIdFNEPorteur
+    return {
+      ...feuilleDeRoute,
+      porteurId: membresByIdFNE[porteurFNEId]?.[0].id,
     }
   }
 }
@@ -525,7 +557,9 @@ type GouvernanceFNE = PrismaFNE.$GouvernancePayload['scalars'] &
     relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
     relationBeneficiaireDotationFormation: MembreGouvernanceFNEConfirme | null
     comites: ReadonlyArray<PrismaFNE.$ComitePayload['scalars']>
-    feuillesDeRoute: ReadonlyArray<PrismaFNE.$FeuilleDeRoutePayload['scalars']>
+    feuillesDeRoute: ReadonlyArray<
+      PrismaFNE.$FeuilleDeRoutePayload['scalars']
+      & Readonly<{ membresFeuilleDeRoute: ReadonlyArray<PrismaFNE.$MembreFeuilleDeRoutePayload['scalars']> }>>
     membres: ReadonlyArray<MembreGouvernanceFNEConfirme>
   }>
 
@@ -533,14 +567,18 @@ type Comite = Omit<ComiteRecord, 'id'>
 
 type FeuilleDeRoute = Omit<FeuilleDeRouteRecord, 'id'>
 
+type FeuilleDeRouteWithIdFNEPorteur = Omit<FeuilleDeRoute, 'porteurId'> & Readonly<{ porteurFNEId: string }>
+
 type GroupeGouvernance = Readonly<{
   gouvernances: ReadonlyArray<GouvernanceRecord>
   comites: ReadonlyArray<Comite>
-  feuillesDeRoute: ReadonlyArray<FeuilleDeRoute>
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteWithIdFNEPorteur>
 }> & GroupeMembres
 
+type MembreWithIdFNE = MembreRecord & Readonly<{ idFNE: string }>
+
 type GroupeMembres = Readonly<{
-  membres: ReadonlyArray<MembreRecord>
+  membres: ReadonlyArray<MembreWithIdFNE>
   membresDepartements: MembreEtRolesById<MembreGouvernanceDepartementSansRole>
   membresSgars: MembreEtRolesById<MembreGouvernanceSgarSansRole>
   membresEpcis: MembreEtRolesById<MembreGouvernanceEpciSansRole>
