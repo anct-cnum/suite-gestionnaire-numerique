@@ -267,7 +267,7 @@ function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
     regionCode: '52',
     role: 'administrateur_dispositif',
     ssoEmail: 'compte.de.test@example.com',
-    ssoId: '7396c91e-b9f2-4f9d-8547-5e9b3332725b',
+    ssoId: 'e7a41249-942d-46b7-b362-5f00d3166ea1',
     structureId: 292,
     telephone: '0102030405',
   }
