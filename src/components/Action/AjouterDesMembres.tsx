@@ -2,10 +2,10 @@ import Link from 'next/link'
 import { ReactElement, RefObject, useId, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
+import Badge from '../shared/Badge/Badge'
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Statut from '../shared/Statut/Statut'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { Beneficiaires, Porteurs } from '@/presenters/actionPresenter'
 
@@ -90,10 +90,9 @@ export default function AjouterDesMembres({
                     <span>
                       {membre.label}
                     </span>
-                    <Statut
-                      color={membre.color}
-                      libelle={membre.statut}
-                    />
+                    <Badge color={membre.color}>
+                      {membre.statut}
+                    </Badge>
                   </>
                 }
                 name={checkboxName}

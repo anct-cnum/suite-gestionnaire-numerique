@@ -7,6 +7,7 @@ import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId,
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
+import Badge from '../shared/Badge/Badge'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Tag from '../shared/Tag/Tag'
@@ -65,10 +66,10 @@ export function FormulaireAction({
       <h1 className="color-blue-france fr-mb-2w">
         {label}
       </h1>
-      <p className="fr-badge fr-badge--md fr-mb-4w">
+      <Badge color="grey-main">
         En construction
-      </p>
-      <div className="glycine-background fr-p-4w">
+      </Badge>
+      <div className="glycine-background fr-p-4w fr-mt-4w">
         <div className="white-background fr-p-4w fr-mb-2w">
           <div
             className={styles['align-items']}

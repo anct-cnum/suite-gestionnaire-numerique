@@ -8,13 +8,12 @@ import FiltrerMesUtilisateurs from './FiltrerMesUtilisateurs'
 import InviterUnUtilisateur from './InviterUnUtilisateur'
 import ReinviterUnUtilisateur from './ReinviterUnUtilisateur'
 import SupprimerUnUtilisateur from './SupprimerUnUtilisateur'
+import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
 import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
-import Role from '../shared/Role/Role'
 import Search from '../shared/Search/Search'
-import Statut from '../shared/Statut/Statut'
 import Table from '../shared/Table/Table'
 import { clientContext } from '@/components/shared/ClientContext'
 import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
@@ -201,16 +200,17 @@ export default function MesUtilisateurs(
                     {unUtilisateurViewModel.emailDeContact}
                   </td>
                   <td>
-                    <Role role={unUtilisateurViewModel.role} />
+                    <Badge color="blue-ecume">
+                      {unUtilisateurViewModel.role}
+                    </Badge>
                   </td>
                   <td>
                     {unUtilisateurViewModel.derniereConnexion}
                   </td>
                   <td>
-                    <Statut
-                      color={unUtilisateurViewModel.statut.couleur}
-                      libelle={unUtilisateurViewModel.statut.libelle}
-                    />
+                    <Badge color={unUtilisateurViewModel.statut.couleur}>
+                      {unUtilisateurViewModel.statut.libelle}
+                    </Badge>
                   </td>
                   <td className="fr-cell--center">
                     <button
