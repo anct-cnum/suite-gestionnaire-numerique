@@ -94,12 +94,12 @@ model FeuilleDeRoute {
 }
 
 model MembreFeuilleDeRoute {
-  id               String   @id
+  id               String                   @id
   modification     DateTime
   creation         DateTime
-  feuilleDeRouteId String   @map("feuille_de_route_id")
-  membreId         String   @map("membre_id")
-  role             String
+  feuilleDeRouteId String                   @map("feuille_de_route_id")
+  membreId         String                   @map("membre_id")
+  role             RoleMembreFeuilleDeRoute
 
   relationFeuilleDeRoute    FeuilleDeRoute    @relation(fields: [feuilleDeRouteId], references: [id])
   relationMembreGouvernance MembreGouvernance @relation(fields: [membreId], references: [id])
@@ -296,4 +296,10 @@ enum type_contrat {
   sdin
   sdun
   autre
+}
+
+enum RoleMembreFeuilleDeRoute {
+  porteur
+
+  @@map("role_membre_feuille_de_route")
 }
