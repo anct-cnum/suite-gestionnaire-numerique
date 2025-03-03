@@ -12,6 +12,7 @@ export function sessionUtilisateurViewModelFactory(
     displayLiensGouvernance: false,
     email: 'martin.tartempion@example.net',
     nom: 'Tartempion',
+    peutChangerDeRole: true,
     prenom: 'Martin',
     role: {
       doesItBelongToGroupeAdmin: true,

@@ -26,6 +26,7 @@ describe('session utilisateur presenter', () => {
       displayLiensGouvernance: false,
       email: 'martin.tartempion@example.net',
       nom: 'Tartempion',
+      peutChangerDeRole: false,
       prenom: 'Martin',
       role: {
         doesItBelongToGroupeAdmin: true,
