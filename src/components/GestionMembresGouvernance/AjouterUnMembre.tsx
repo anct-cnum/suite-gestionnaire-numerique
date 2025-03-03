@@ -4,11 +4,11 @@ import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
-import Icon from '../shared/Icon/Icon'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import { Notification } from '../shared/Notification/Notification'
 import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { MembreViewModel } from '@/presenters/membresPresenter'
 import { isEmpty } from '@/shared/lang'
 
@@ -30,7 +30,7 @@ export default function AjouterUnMembre({
   return (
     <>
       <DrawerTitle id={labelId}>
-        <Icon icon="community-line" />
+        <TitleIcon icon="community-line" />
         <br />
         Ajouter un membre à la gouvernance
       </DrawerTitle>

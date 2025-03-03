@@ -318,11 +318,6 @@ export function FormulaireAction({
         >
           <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
             Information sur le budget et le financement
-            {' '}
-            <span
-              aria-hidden="true"
-              className="fr-icon-information-line"
-            />
           </p>
           <p className="color-grey">
             Détaillez le budget prévisionnel de l‘action incluant les subventions

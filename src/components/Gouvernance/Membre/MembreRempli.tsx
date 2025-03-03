@@ -5,6 +5,7 @@ import { Fragment, ReactElement, useId, useState } from 'react'
 import Membre from './Membre'
 import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
+import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
 import { MembreDetailsViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
@@ -25,11 +26,8 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
         {
           coporteurs.map((membre) => (
             <tr key={`${membre.nom}_${membre.type}`} >
-              <td>
-                <span
-                  aria-hidden="true"
-                  className={`fr-icon-${membre.logo} color-blue-france`}
-                />
+              <td className="color-blue-france">
+                <Icon icon={membre.logo} />
               </td>
               <td>
                 <button

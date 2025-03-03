@@ -3,10 +3,10 @@
 import { FormEvent, PropsWithChildren, ReactElement, useId } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Icon from '../shared/Icon/Icon'
 import RadioGroup from '../shared/Radio/RadioGroup'
 import Select from '../shared/Select/Select'
 import TextInput from '../shared/TextInput/TextInput'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function FormulaireFeuilleDeRoute({
@@ -24,7 +24,7 @@ export default function FormulaireFeuilleDeRoute({
   return (
     <>
       <DrawerTitle id={labelId}>
-        <Icon icon="survey-line" />
+        <TitleIcon icon="survey-line" />
         <br />
         {label}
       </DrawerTitle>

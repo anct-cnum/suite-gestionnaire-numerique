@@ -3,8 +3,8 @@ import { ReactElement } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
-import Icon from '@/components/shared/Icon/Icon'
 import Tag from '@/components/shared/Tag/Tag'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { MembreDetailsViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function Membre({
@@ -15,7 +15,7 @@ export default function Membre({
   return (
     <>
       <DrawerTitle id={labelId}>
-        <Icon icon={membreDetails.logo} />
+        <TitleIcon icon={membreDetails.logo} />
         <br />
         {membreDetails.nom}
       </DrawerTitle>

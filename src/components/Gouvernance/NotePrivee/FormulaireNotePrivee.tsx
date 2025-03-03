@@ -1,8 +1,8 @@
 import { FormEvent, PropsWithChildren, ReactElement } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
-import Icon from '@/components/shared/Icon/Icon'
 import TextArea from '@/components/shared/TextArea/TextArea'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function FormulaireNotePrivee({
   children,
@@ -17,7 +17,7 @@ export default function FormulaireNotePrivee({
       onSubmit={validerFormulaire}
     >
       <DrawerTitle id={labelId}>
-        <Icon icon="message-2-line" />
+        <TitleIcon icon="message-2-line" />
         <br />
         Note privée
       </DrawerTitle>
