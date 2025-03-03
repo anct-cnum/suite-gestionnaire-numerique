@@ -151,8 +151,10 @@ model FeuilleDeRouteRecord {
   gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
+  porteurId                  String?  @map("porteur_id")
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
 
   @@map("feuille_de_route")
 }
@@ -188,6 +190,7 @@ model MembreRecord {
   membresGouvernanceEpci        MembreGouvernanceEpciRecord[]
   membresGouvernanceCommune     MembreGouvernanceCommuneRecord[]
   membresGouvernanceStructure   MembreGouvernanceStructureRecord[]
+  feuillesDeRoute               FeuilleDeRouteRecord[]
 
   @@map("membre")
 }
