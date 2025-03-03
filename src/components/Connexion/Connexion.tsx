@@ -3,7 +3,6 @@
 import { signIn } from 'next-auth/react'
 import { ReactElement } from 'react'
 
-import ProConnect from './ProConnect'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 
 export default function Connexion({ idProvider }: Props): ReactElement {
@@ -20,16 +19,21 @@ export default function Connexion({ idProvider }: Props): ReactElement {
             </h2>
             <div className="fr-connect-group">
               <button
-                className="btn btn--plain btn--primary"
+                className="fr-connect"
                 onClick={async () => signIn(idProvider, { callbackUrl: '/' })}
                 title="S’identifier avec ProConnect"
                 type="button"
               >
-                <ProConnect />
+                <span className="fr-connect__login">
+                  S’identifier avec
+                </span>
+                <span className="fr-connect__brand">
+                  ProConnect
+                </span>
               </button>
               <p>
                 <ExternalLink
-                  href="/"
+                  href="https://www.proconnect.gouv.fr/"
                   title="Qu’est-ce que ProConnect ? (nouvelle fenêtre)"
                 >
                   Qu’est ce que ProConnect ?
