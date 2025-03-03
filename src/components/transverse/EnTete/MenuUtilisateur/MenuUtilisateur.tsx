@@ -66,7 +66,11 @@ export default function MenuUtilisateur({ ariaControlsId }: Props): ReactElement
           </Link>
         </li>
       </ul>
-      <SelecteurRole ariaControlsId={ariaControlsId} />
+      {
+        sessionUtilisateurViewModel.peutChangerDeRole ?
+          <SelecteurRole ariaControlsId={ariaControlsId} />
+          : null
+      }
       <div className="fr-btns-group--center">
         <button
           className={`fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-logout-box-r-line ${styles.deconnexion} fr-col-12`}
