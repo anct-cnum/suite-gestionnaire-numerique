@@ -5,10 +5,10 @@ import { ReactElement, useId, useState } from 'react'
 import InformationPersonnelle from './InformationPersonnelle'
 import ModifierMonCompte from './ModifierMonCompte'
 import SupprimerMonCompte from './SupprimerMonCompte'
+import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
-import Role from '../shared/Role/Role'
 import { MesInformationsPersonnellesViewModel } from '@/presenters/mesInformationsPersonnellesPresenter'
 
 export default function MesInformationsPersonnelles({ mesInformationsPersonnellesViewModel }: Props): ReactElement {
@@ -164,7 +164,9 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
             {' '}
             pour le modifier.
           </p>
-          <Role role={mesInformationsPersonnellesViewModel.role} />
+          <Badge color="blue-ecume">
+            {mesInformationsPersonnellesViewModel.role}
+          </Badge>
         </section>
         <section
           aria-labelledby="supprimerMonCompte"
