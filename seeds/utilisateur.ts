@@ -205,7 +205,7 @@ function transformUtilisateursFNEToUtilisateurs(
   return utilisateursFNERecord.map((utilisateurFNERecord): Prisma.UtilisateurRecordUncheckedCreateInput => {
     const isGestionnaireRegion = utilisateurFNERecord.role === 'PrefectureRegion'
     const isGestionnaireDepartement = utilisateurFNERecord.role === 'PrefectureDepartement'
-    const isSuperAdmin = utilisateurFNERecord.role === 'Administrator'
+    const isAdmin = utilisateurFNERecord.role === 'Administrator'
     let role: Role
     let departementCode = null
     let regionCode = null
@@ -218,7 +218,7 @@ function transformUtilisateursFNEToUtilisateurs(
       role = 'gestionnaire_departement'
 
       departementCode = utilisateurFNERecord.roleScope
-    } else if (isSuperAdmin) {
+    } else if (isAdmin) {
       role = 'administrateur_dispositif'
     } else {
       role = 'gestionnaire_region'
@@ -235,7 +235,7 @@ function transformUtilisateursFNEToUtilisateurs(
       emailDeContact: utilisateurFNERecord.email,
       groupementId: null,
       inviteLe: utilisateurFNERecord.created,
-      isSuperAdmin,
+      isSuperAdmin: false,
       // isSupprime: cette notion n'existe pas
       nom: utilisateurFNERecord.lastName ?? '~',
 
