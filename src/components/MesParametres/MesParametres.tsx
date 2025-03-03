@@ -2,6 +2,7 @@ import { ReactElement, useId } from 'react'
 
 import styles from './MesParametres.module.css'
 import PageTitle from '../shared/PageTitle/PageTitle'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import Toggle from '../shared/Toggle/Toggle'
 
 export default function MesParametres(): ReactElement {
@@ -15,7 +16,8 @@ export default function MesParametres(): ReactElement {
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
-        <PageTitle icon="settings-5-line">
+        <PageTitle>
+          <TitleIcon icon="settings-5-line" />
           Mes paramètres de compte
         </PageTitle>
         <p className="fr-text--sm color-grey">

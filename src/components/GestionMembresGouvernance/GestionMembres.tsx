@@ -6,6 +6,7 @@ import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
 import Drawer from '../shared/Drawer/Drawer'
 import Icon from '../shared/Icon/Icon'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
 import { MembreViewModel, MembresViewModel } from '@/presenters/membresPresenter'
@@ -39,11 +40,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   return (
     <>
       <div className="fr-grid-row space-between fr-grid-row--middle">
-        <h1 className="color-blue-france fr-mt-5w">
+        <PageTitle>
           Gérer les membres ·
           {' '}
           {membresViewModel.departement}
-        </h1>
+        </PageTitle>
         <button
           aria-controls={drawerId}
           className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"

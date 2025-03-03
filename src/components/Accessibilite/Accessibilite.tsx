@@ -1,13 +1,14 @@
 import { ReactElement } from 'react'
 
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
+import PageTitle from '../shared/PageTitle/PageTitle'
 
 export default function Accessibilite(): ReactElement {
   return (
     <>
-      <h1>
+      <PageTitle>
         Déclaration d’accessibilité
-      </h1>
+      </PageTitle>
       <h2>
         À propos
       </h2>

@@ -12,6 +12,7 @@ import { clientContext } from '../shared/ClientContext'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
+import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
@@ -28,7 +29,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
 
   return (
     <>
-      <h1 className="color-blue-france fr-mt-5w">
+      <PageTitle>
         <span>
           👋 Bonjour
           {' '}
@@ -40,7 +41,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           {' '}
           {tableauDeBordViewModel.departement}
         </span>
-      </h1>
+      </PageTitle>
       <section
         aria-labelledby="taches"
         className="fr-mb-4w"
