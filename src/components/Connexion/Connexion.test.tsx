@@ -10,7 +10,7 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     render(<Connexion idProvider="pro-connect" />)
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Connexion à la suite gestionnaire numérique' })
+    const titre = screen.getByRole('heading', { level: 1, name: 'Connexion à mon inclusion numérique' })
     expect(titre).toBeInTheDocument()
     const sousTitre = screen.getByRole('heading', { level: 2, name: 'Se connecter avec ProConnect' })
     expect(sousTitre).toBeInTheDocument()
