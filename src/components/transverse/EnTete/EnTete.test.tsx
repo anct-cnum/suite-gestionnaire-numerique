@@ -6,7 +6,7 @@ import { presserLeBouton, renderComponent } from '@/components/testHelper'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
-  it('quand j’affiche l’en-tête alors j’affiche les liens du menu', () => {
+  it('quand j’affiche l’en-tête alors j’affiche le bouton d’accueil et le menu utilisateur', () => {
     // WHEN
     afficherLEnTete()
 
@@ -15,20 +15,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(accueil).toHaveAttribute('href', '/tableau-de-bord')
     expect(accueil).toHaveAttribute('title', 'Accueil')
 
-    const menu = screen.getByRole('list', { name: 'menu' })
-    const menuItems = within(menu).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(4)
-
-    const rechercher = within(menuItems[0]).getByRole('link', { name: 'Rechercher' })
-    expect(rechercher).toHaveAttribute('href', '/rechercher')
-
-    const aide = within(menuItems[1]).getByRole('link', { name: 'Aide' })
-    expect(aide).toHaveAttribute('href', '/aide')
-
-    const notifications = within(menuItems[2]).getByRole('link', { name: 'Notifications' })
-    expect(notifications).toHaveAttribute('href', '/notifications')
-
-    const monCompte = within(menuItems[3]).getByRole('button', { name: 'Martin Tartempion' })
+    const monCompte = screen.getByRole('button', { name: 'Martin Tartempion' })
     expect(monCompte).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     expect(monCompte).toHaveAttribute('type', 'button')
   })
