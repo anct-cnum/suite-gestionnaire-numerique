@@ -24,10 +24,6 @@ describe('menu lateral', () => {
     { index: 0, name: 'Gouvernance', url: '/gouvernance/93' },
     { index: 1, name: 'Membres', url: '/gouvernance/93/membres' },
     { index: 2, name: 'Feuilles de route', url: '/gouvernance/93/feuilles-de-route' },
-    { index: 3, name: 'Financements', url: '/gouvernance/93/financements' },
-    { index: 4, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
-    { index: 5, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
-    { index: 6, name: 'Lieux d‘inclusion', url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement()
@@ -38,26 +34,28 @@ describe('menu lateral', () => {
     expect(pilotage).toBeInTheDocument()
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[1]).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(7)
+    expect(menuItems).toHaveLength(3)
     expect(menuItems[index]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
     const element = within(menuItems[index]).getByRole('link', { current: false, name })
     expect(element).toHaveAttribute('href', url)
   })
 
   it.each([
-    { index: 0, name: 'Export de données', url: '/export-de-donnees' },
-    { index: 1, name: 'Rapports', url: '/rapports' },
+    { index: 0, name: 'Financements', url: '/gouvernance/93/financements' },
+    { index: 1, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
+    { index: 2, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
+    { index: 3, name: 'Lieux d‘inclusion', url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement()
 
     // THEN
     const navigation = screen.getByRole('navigation', { name: 'Menu inclusion numérique' })
-    const donneesEtStatistiques = within(navigation).getByText('DONNÉES ET STATISTIQUES', { selector: 'p' })
+    const donneesEtStatistiques = within(navigation).getByText('à venir', { selector: 'p' })
     expect(donneesEtStatistiques).toBeInTheDocument()
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[3]).getAllByRole('listitem')
-    expect(menuItems).toHaveLength(2)
+    expect(menuItems).toHaveLength(4)
     expect(menuItems[index]).not.toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
     const element = within(menuItems[index]).getByRole('link', { current: false, name })
     expect(element).toHaveAttribute('href', url)
@@ -76,7 +74,7 @@ describe('menu lateral', () => {
     { index: 0, name: 'Tableau de bord', pathname: '/tableau-de-bord' },
     { index: 1, name: 'Gouvernance', pathname: '/gouvernance/93' },
     { index: 2, name: 'Membres', pathname: '/gouvernance/93/membres' },
-    { index: 3, name: 'Export de données', pathname: '/export-de-donnees' },
+    { index: 3, name: 'Financements', pathname: '/gouvernance/93/financements' },
   ])('étant un utilisateur, quand je clique sur un lien du menu, alors je vois qu’il est sélectionné', ({ index, pathname, name }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement(pathname)

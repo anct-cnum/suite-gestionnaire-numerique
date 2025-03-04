@@ -82,7 +82,7 @@ export default function AjouterUnMembre({
               </div>
             ) : (
               <address>
-                <Badge color="beige-gris-galet">
+                <Badge color="new">
                   {informationsMembre.statut}
                 </Badge>
                 <div className="color-grey fr-mt-1w">

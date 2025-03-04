@@ -202,7 +202,7 @@ export default function MesUtilisateurs(
                     {unUtilisateurViewModel.emailDeContact}
                   </td>
                   <td>
-                    <Badge color="blue-ecume">
+                    <Badge color="info">
                       {unUtilisateurViewModel.role}
                     </Badge>
                   </td>
