@@ -12,7 +12,7 @@ export default function Connexion({ idProvider }: Props): ReactElement {
       <div className="fr-grid-row fr-grid-row-gutters fr-grid-row--center">
         <div className="fr-col-12 fr-col-md-8 fr-col-lg-6">
           <PageTitle>
-            Connexion à la suite gestionnaire numérique
+            Connexion à mon inclusion numérique
           </PageTitle>
           <div className="fr-mb-6v">
             <h2>

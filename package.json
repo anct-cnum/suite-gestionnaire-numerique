@@ -1,10 +1,10 @@
 {
   "type": "module",
-  "name": "suite-gestionnaire-numerique",
+  "name": "mon-inclusion-numerique",
   "version": "0.1.0",
   "license": "AGPL-3.0",
   "scripts": {
-    "bash:production": "scalingo -a suite-gestionnaire-numerique run --size XL bash",
+    "bash:production": "scalingo -a mon-inclusion-numerique run --size XL bash",
     "build": "yarn prisma:migrate && yarn prisma:generate:fne && next build",
     "check": "yarn dedupe --check && yarn deadcode && yarn typecheck && yarn prisma format --check && yarn prisma format --check --schema seeds/fne/schema.prisma && yarn format:check && yarn lint:css && yarn lint:ts && yarn test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
@@ -29,7 +29,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:reset": "prisma migrate reset -f && yarn prisma:generate:fne",
     "psql:local": "docker compose up -d postgres-dev && docker exec -it sgn_db_dev psql -U sgn sgn",
-    "psql:production": "scalingo -a suite-gestionnaire-numerique pgsql-console",
+    "psql:production": "scalingo -a mon-inclusion-numerique pgsql-console",
     "psql:test": "docker compose up -d postgres-test && docker exec -it sgn_db_test psql -U sgn sgn",
     "start": "next start",
     "test": "yarn dotenv:test -- yarn prisma:migrate && yarn dotenv:test -- vitest run",
