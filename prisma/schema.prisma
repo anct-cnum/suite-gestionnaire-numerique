@@ -274,12 +274,11 @@ model ActionRecord {
   dateDeDebut      DateTime @map("date_de_debut")
   dateDeFin        DateTime @map("date_de_fin")
 
-  utilisateur            UtilisateurRecord              @relation(fields: [createurId], references: [id])
-  feuilleDeRoute         FeuilleDeRouteRecord           @relation(fields: [feuilleDeRouteId], references: [id])
-  demandesDeSubvention   DemandeDeSubventionRecord[]
-  beneficiaireSubvention BeneficiaireSubventionRecord[]
-  porteurAction          PorteurActionRecord[]
-  coFinancement          CoFinancementRecord[]
+  utilisateur          UtilisateurRecord           @relation(fields: [createurId], references: [id])
+  feuilleDeRoute       FeuilleDeRouteRecord        @relation(fields: [feuilleDeRouteId], references: [id])
+  demandesDeSubvention DemandeDeSubventionRecord[]
+  porteurAction        PorteurActionRecord[]
+  coFinancement        CoFinancementRecord[]
 
   @@map("action")
 }
@@ -292,24 +291,25 @@ model DemandeDeSubventionRecord {
   subventionEtp          Float?    @map("subvention_etp")
   subventionPrestation   Float?    @map("subvention_prestation")
   dateDeModification     DateTime? @map("date_de_modification")
-  actionId               Int       @map("action_id")
+  actionId               Int       @unique @map("action_id")
   enveloppeFinancementId Int       @map("enveloppe_financement_id")
 
-  utilisateur UtilisateurRecord          @relation(fields: [createurId], references: [id])
-  action      ActionRecord               @relation(fields: [actionId], references: [id])
-  enveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeFinancementId], references: [id])
+  utilisateur  UtilisateurRecord              @relation(fields: [createurId], references: [id])
+  action       ActionRecord                   @relation(fields: [actionId], references: [id])
+  enveloppe    EnveloppeFinancementRecord     @relation(fields: [enveloppeFinancementId], references: [id])
+  beneficiaire BeneficiaireSubventionRecord[]
 
   @@map("demande_de_subvention")
 }
 
 model BeneficiaireSubventionRecord {
-  id                Int    @id @default(autoincrement())
-  actionId          Int    @map("action_id")
-  membreId          String @map("membre_id")
-  montantSubvention Float  @map("montant_subvention")
+  id                    Int    @id @default(autoincrement())
+  demandeDeSubventionId Int    @map("demande_de_subvention_id")
+  membreId              String @map("membre_id")
+  montantSubvention     Float  @map("montant_subvention")
 
-  action ActionRecord @relation(fields: [actionId], references: [id])
-  membre MembreRecord @relation(fields: [membreId], references: [id])
+  demandeDeSubvention DemandeDeSubventionRecord @relation(fields: [demandeDeSubventionId], references: [id])
+  membre              MembreRecord              @relation(fields: [membreId], references: [id])
 
   @@map("beneficiaire_subvention")
 }

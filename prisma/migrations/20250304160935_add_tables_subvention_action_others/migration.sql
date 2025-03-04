@@ -42,7 +42,7 @@ CREATE TABLE "demande_de_subvention" (
 -- CreateTable
 CREATE TABLE "beneficiaire_subvention" (
     "id" SERIAL NOT NULL,
-    "action_id" INTEGER NOT NULL,
+    "demande_de_subvention_id" INTEGER NOT NULL,
     "membre_id" TEXT NOT NULL,
     "montant_subvention" DOUBLE PRECISION NOT NULL,
 
@@ -80,6 +80,9 @@ CREATE TABLE "co_financement" (
     CONSTRAINT "co_financement_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateIndex
+CREATE UNIQUE INDEX "demande_de_subvention_action_id_key" ON "demande_de_subvention"("action_id");
+
 -- AddForeignKey
 ALTER TABLE "action" ADD CONSTRAINT "action_createur_id_fkey" FOREIGN KEY ("createur_id") REFERENCES "utilisateur"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -96,7 +99,7 @@ ALTER TABLE "demande_de_subvention" ADD CONSTRAINT "demande_de_subvention_action
 ALTER TABLE "demande_de_subvention" ADD CONSTRAINT "demande_de_subvention_enveloppe_financement_id_fkey" FOREIGN KEY ("enveloppe_financement_id") REFERENCES "enveloppe_financement"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "beneficiaire_subvention" ADD CONSTRAINT "beneficiaire_subvention_action_id_fkey" FOREIGN KEY ("action_id") REFERENCES "action"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "beneficiaire_subvention" ADD CONSTRAINT "beneficiaire_subvention_demande_de_subvention_id_fkey" FOREIGN KEY ("demande_de_subvention_id") REFERENCES "demande_de_subvention"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "beneficiaire_subvention" ADD CONSTRAINT "beneficiaire_subvention_membre_id_fkey" FOREIGN KEY ("membre_id") REFERENCES "membre"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
