@@ -11,7 +11,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     afficherLEnTete()
 
     // THEN
-    const accueil = screen.getByRole('link', { name: 'FNE / Mednum' })
+    const accueil = screen.getByRole('link', { name: 'MIN / Mednum' })
     expect(accueil).toHaveAttribute('href', '/tableau-de-bord')
     expect(accueil).toHaveAttribute('title', 'Accueil')
 
