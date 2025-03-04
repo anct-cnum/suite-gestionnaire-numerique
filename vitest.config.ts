@@ -32,6 +32,7 @@ export default defineConfig({
         '**/MentionsLegales/**',
         '**/mentions-legales/**',
         '**/DonneesPersonnelles/**',
+        '**/Notice/**',
         '**/NextAuthAuthentificationGateway.ts',
         '**/ClientContext.tsx',
         '**/Notice/**',
