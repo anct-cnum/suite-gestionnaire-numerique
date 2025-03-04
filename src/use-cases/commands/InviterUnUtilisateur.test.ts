@@ -19,7 +19,7 @@ describe('inviter un utilisateur', () => {
       {
         desc:
           'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est' +
-          ' enregistré avec un compte super admin et un rôle admin choisi par l’utilisateur courant',
+          ' enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
         utilisateurAInviter: {
           role: 'Instructeur' as const,
         },
@@ -32,7 +32,7 @@ describe('inviter un utilisateur', () => {
       {
         desc:
           'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci' +
-          ' est enregistré avec un compte super admin, un rôle gestionnaire et une organisation choisis par l’' +
+          ' est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisie par l’' +
           ' utilisateur courant',
         utilisateurAInviter: {
           codeOrganisation: '15',
@@ -47,7 +47,7 @@ describe('inviter un utilisateur', () => {
       {
         desc:
           'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors' +
-          ' celui-ci est enregistré avec un compte super admin, un rôle et une organisation identiques à ceux de' +
+          ' celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
           ' l’utilisateur courant',
         utilisateurAInviter: {
           codeOrganisation: '53',
@@ -141,7 +141,7 @@ describe('inviter un utilisateur', () => {
           derniereConnexion: undefined,
           emailDeContact: 'martine.dugenoux@example.com',
           inviteLe: date,
-          isSuperAdmin: utilisateurCourant.isSuperAdmin,
+          isSuperAdmin: false,
           nom: 'Dugenoux',
           prenom: 'Martine',
           role: utilisateurAInviter.role,
