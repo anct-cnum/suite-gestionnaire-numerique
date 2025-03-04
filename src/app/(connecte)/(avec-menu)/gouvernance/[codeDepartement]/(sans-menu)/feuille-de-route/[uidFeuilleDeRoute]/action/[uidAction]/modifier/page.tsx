@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
+import Notice from '@/components/shared/Notice/Notice'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
@@ -28,6 +29,7 @@ export default async function ActionModifierController({ params }: Props): Promi
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w menu-border">
+          <Notice />
           <ModifierUneAction
             action={actionViewModel}
             coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
