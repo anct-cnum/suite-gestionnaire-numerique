@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Fragment, PropsWithChildren, ReactElement, useContext } from 'react'
 
 import styles from './MenuLateral.module.css'
+import Badge from '@/components/shared/Badge/Badge'
 import { clientContext } from '@/components/shared/ClientContext'
 import Icon from '@/components/shared/Icon/Icon'
 
@@ -19,6 +20,9 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Gouvernance',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
+  ]
+
+  const menusAVenir = [
     {
       icon: 'pen-nib-line',
       label: 'Financements',
@@ -38,19 +42,6 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'map-pin-2-line',
       label: 'Lieux d‘inclusion',
       url: '/lieux-inclusion',
-    },
-  ]
-
-  const menusDonneesEtStatistiques = [
-    {
-      icon: 'download-line',
-      label: 'Export de données',
-      url: '/export-de-donnees',
-    },
-    {
-      icon: 'line-chart-line',
-      label: 'Rapports',
-      url: '/rapports',
     },
   ]
 
@@ -108,17 +99,22 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                         />
                         {menu.label}
                       </Link>
-                      {menu.hasSousMenu === true ? children : null}
+                      {menu.hasSousMenu ? children : null}
                     </li>
                   </Fragment>
                 )
               })}
             </ul>
-            <p className="fr-text--sm color-grey separator fr-mt-2w">
-              DONNÉES ET STATISTIQUES
-            </p>
+            <div className="fr-text--sm color-grey separator fr-mt-2w">
+              <Badge
+                color="new"
+                icon={true}
+              >
+                à venir
+              </Badge>
+            </div>
             <ul className="fr-sidemenu__list">
-              {menusDonneesEtStatistiques.map((menu) => {
+              {menusAVenir.map((menu) => {
                 const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
 
                 return (
@@ -131,11 +127,13 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                       className="fr-sidemenu__link"
                       href={menu.url}
                     >
-                      <Icon
-                        classname="fr-mr-1w"
-                        icon={menu.icon}
-                      />
-                      {menu.label}
+                      <span className="color-grey">
+                        <Icon
+                          classname="fr-mr-1w"
+                          icon={menu.icon}
+                        />
+                        {menu.label}
+                      </span>
                     </Link>
                   </li>
                 )

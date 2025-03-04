@@ -166,7 +166,7 @@ export default function MesInformationsPersonnelles({ mesInformationsPersonnelle
             {' '}
             pour le modifier.
           </p>
-          <Badge color="blue-ecume">
+          <Badge color="info">
             {mesInformationsPersonnellesViewModel.role}
           </Badge>
         </section>
