@@ -75,6 +75,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       // THEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const lienVersLaFeuilleDeRoute = within(formulaire).getByRole('link', { name: 'Feuille de route 69' })
+      expect(lienVersLaFeuilleDeRoute).toHaveAttribute('href', '/gouvernance/11/feuille-de-route/116')
       expect(lienVersLaFeuilleDeRoute).toBeInTheDocument()
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Ajouter une action à la feuille de route' })
       expect(titre).toBeInTheDocument()
@@ -109,7 +110,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(editeurDeTexteDescription).toBeInTheDocument()
       const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
-      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Sélectionnez le porteur de l‘action', { selector: 'p' })
+      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Indiquez quelle est la structure porteuse de cette action', { selector: 'p' })
       expect(labelSectionPorteurDeLAaction).toBeInTheDocument()
       const boutonModifierLePorteurDeLAaction = within(formulaire).getAllByRole('button', { name: 'Modifier' })[1]
       expect(boutonModifierLePorteurDeLAaction).toBeInTheDocument()
@@ -147,7 +148,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const coFinancement = within(formulaire).getByText('Co-financement')
       expect(coFinancement).toBeInTheDocument()
       const boutonAjouterUnFinancement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
-      expect(boutonAjouterUnFinancement).toBeEnabled()
+      expect(boutonAjouterUnFinancement).toBeDisabled()
       const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) des fonds *'), { selector: 'p' })
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
       const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { name: 'Ajouter' })
@@ -165,12 +166,10 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
-      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      jeTapeLeContexteDeLaction()
-      jeTapeLaDescriptionDeLaction()
-      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeTapeLeNomDeLAction(formulaire)
+      jeTapeLeContexteDeLaction(formulaire)
+      jeTapeLaDescriptionDeLaction(formulaire)
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
 
@@ -239,12 +238,13 @@ describe('formulaire d‘ajout d‘une action', () => {
       afficherFormulaireDeCreationAction()
 
       // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
       jOuvreLeFormulairePourAjouterUnCoFinancement()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
       jeCreeUnCofinancementDansLeDrawer(drawer)
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
-      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const listeCofinancements = await within(formulaire).findAllByRole('listitem')
       const boutonSupprimerCofinancement = within(listeCofinancements[0]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(boutonSupprimerCofinancement)
@@ -278,13 +278,12 @@ describe('formulaire d‘ajout d‘une action', () => {
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 2' } })
-      jeTapeLeContexteDeLaction()
-      jeTapeLaDescriptionDeLaction()
+      jeTapeLeContexteDeLaction(formulaire)
+      jeTapeLaDescriptionDeLaction(formulaire)
       presserLeBoutonRadio('Pluriannuelle')
       jeSelectionneLAnneeDeDebut('2026')
       jeSelectionneLAnneeDeFin('2028')
-      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
       const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
       fireEvent.click(boutonDeValidation)
 
@@ -353,8 +352,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
 
@@ -378,8 +376,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      const budgetGlobalDeLAction = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-      fireEvent.change(budgetGlobalDeLAction, { target: { value: 1000 } })
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDeModification()
 
@@ -401,6 +398,21 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(radioAnnuelle).toBeChecked()
       expect(screen.getByRole('radio', { name: 'Pluriannuelle' })).not.toBeChecked()
       expect(screen.getByLabelText('Année de fin de l‘action')).toBeDisabled()
+    })
+
+    it('étant un utilisateur, quand je renseigne le budget global, les boutons de demande de subvention et de co-financement sont activés', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction()
+
+      // WHEN
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      jeTapeLeBudgetGlobalDeLAction(formulaire)
+
+      // THEN
+      const boutonDemanderUneSubvention = screen.getByRole('button', { name: 'Demander une subvention' })
+      expect(boutonDemanderUneSubvention).toBeEnabled()
+      const boutonAjouterUnFinancement = screen.getByRole('button', { name: 'Ajouter un financement' })
+      expect(boutonAjouterUnFinancement).toBeEnabled()
     })
   })
 })
@@ -536,16 +548,24 @@ function jeValideLeFormulaireDeModification(): HTMLElement {
   return presserLeBoutonDans(form, 'Valider et envoyer')
 }
 
-function jeTapeLeContexteDeLaction(): HTMLElement {
-  const noteDeContexte = screen.getByRole('textarea', { name: 'Éditeur de contexte de l‘action' })
+function jeTapeLeContexteDeLaction(formulaire: HTMLElement): void {
+  const noteDeContexte = within(formulaire).getByRole('textarea', { name: 'Éditeur de contexte de l‘action' })
   fireEvent.input(noteDeContexte, { target: { innerHTML: '<p>Ma note de contexte de l‘action</p>' } })
-  return noteDeContexte
 }
 
-function jeTapeLaDescriptionDeLaction(): HTMLElement {
-  const description = screen.getByRole('textarea', { name: 'Éditeur de description de l‘action' })
+export function jeTapeLeBudgetGlobalDeLAction(formulaire: HTMLElement): void {
+  const budgetGlobal = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
+  fireEvent.change(budgetGlobal, { target: { value: 1000 } })
+}
+
+function jeTapeLeNomDeLAction(formulaire: HTMLElement): void {
+  const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
+  fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
+}
+
+function jeTapeLaDescriptionDeLaction(formulaire: HTMLElement): void {
+  const description = within(formulaire).getByRole('textarea', { name: 'Éditeur de description de l‘action' })
   fireEvent.input(description, { target: { innerHTML: '<p>Mes notes de description de l‘action</p>' } })
-  return description
 }
 
 export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {

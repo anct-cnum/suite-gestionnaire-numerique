@@ -26,6 +26,7 @@ export function FormulaireAction({
 }: Props): ReactElement {
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
+  const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
@@ -57,8 +58,8 @@ export function FormulaireAction({
         )
       }}
     >
-      <Tag href="/feuilles-de-route/69">
-        Feuille de route 69
+      <Tag href={action.urlFeuilleDeRoute}>
+        {action.nomFeuilleDeRoute}
       </Tag>
       <PageTitle margin="fr-mb-2w">
         {label}
@@ -182,7 +183,7 @@ export function FormulaireAction({
             />
           </div>
           <p>
-            Sélectionnez le porteur de l‘action
+            Indiquez quelle est la structure porteuse de cette action
           </p>
           <hr />
           {
@@ -335,13 +336,16 @@ export function FormulaireAction({
                 </span>
               </label>
             </div>
-            <div className={styles['half-width']}>
+            <div className={styles['third-width']}>
               <input
                 className="fr-input"
                 defaultValue={action.budgetGlobal}
                 id="budgetGlobal"
                 min={0}
                 name="budgetGlobal"
+                onChange={(event) => {
+                  setBudgetGlobal(Number(event.target.value))
+                }}
                 required={true}
                 type="number"
               />
@@ -355,8 +359,8 @@ export function FormulaireAction({
               </p>
             </div>
             <button
-              className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['half-width']}`}
-              disabled
+              className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
+              disabled={budgetGlobal === 0}
               type="button"
             >
               Demander une subvention
@@ -375,8 +379,9 @@ export function FormulaireAction({
               cofinancements.length === 0 && (
                 <button
                   aria-controls={drawerId}
-                  className="fr-btn fr-btn--icon-left fr-fi-add-line"
+                  className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
                   data-fr-opened="false"
+                  disabled={budgetGlobal === 0}
                   onClick={() => {
                     setIsDrawerOpen(true)
                   }}
@@ -390,21 +395,21 @@ export function FormulaireAction({
           {
             cofinancements.length > 0 ?
               <>
-                <ul className={`background-blue-france color-blue-france fr-text--bold fr-mt-1w fr-pt-1w ${styles['no-style-list']}`}>
+                <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
                   {cofinancements.map((cofinancement) => (
                     <li
                       key={cofinancement.coFinanceur}
                     >
-                      <div className="fr-grid-row">
-                        <p className="fr-col-9 fr-my-1w">
+                      <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
+                        <p className="fr-col-9 fr-mb-0">
                           {cofinancement.coFinanceur}
                         </p>
                         {' '}
-                        <p className="fr-col-2 fr-my-1w">
+                        <p className="fr-col-2 fr-mb-0">
                           {cofinancement.montant}
                         </p>
                         <button
-                          className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line fr-col-1 color-red fr-my-1w"
+                          className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line fr-col-1 color-red"
                           onClick={() => {
                             supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
                           }}
@@ -424,7 +429,7 @@ export function FormulaireAction({
                   <hr />
                   <button
                     aria-controls={drawerId}
-                    className="fr-btn fr-btn--icon-left fr-fi-add-line"
+                    className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
                     data-fr-opened="false"
                     onClick={() => {
                       setIsDrawerOpen(true)
