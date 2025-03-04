@@ -1,7 +1,9 @@
 import { ReactElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 
+import styles from './Action.module.css'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 import { formatMontant } from '@/presenters/shared/number'
 
@@ -37,6 +39,7 @@ export default function DemanderUneSubvention({
     <>
       <button
         aria-controls={drawerId}
+        className="fr-btn fr-btn--icon-left fr-fi-add-line"
         data-fr-opened="false"
         disabled={!isBudgetAction}
         onClick={() => {
@@ -60,44 +63,56 @@ export default function DemanderUneSubvention({
         ref={drawer}
       >
         <DrawerTitle id={labelId}>
+          <TitleIcon icon="money-euro-circle-line" />
+          <br />
           Demander une subvention
         </DrawerTitle>
-        <p>
+        <p className="color-grey fr-text--sm">
           Saisissez le montant de la subvention que vous souhaitez obtenir de l’état.
           Dans la limite de
           {' '}
           {formatMontant(montantMaximal())}
           .
         </p>
-        <label htmlFor={selectEnveloppeId}>
-          Enveloppe de financement concernée
-        </label>
-        <select
-          defaultValue=""
-          id={selectEnveloppeId}
-          onChange={(event) => {
-            setBudgetEnveloppe(enveloppeById[event.target.value].value)
-          }}
-        >
-          <option
-            disabled
-            value=""
+        <div className="fr-select-group">
+          <label
+            className="fr-label"
+            htmlFor={selectEnveloppeId}
           >
-            Choisir
-          </option>
-          {enveloppes.map((enveloppe) => (
+            Enveloppe de financement concernée
+          </label>
+          <select
+            className="fr-select"
+            defaultValue=""
+            id={selectEnveloppeId}
+            onChange={(event) => {
+              setBudgetEnveloppe(enveloppeById[event.target.value].value)
+            }}
+          >
             <option
-              key={enveloppe.id}
-              value={enveloppe.id}
+              disabled
+              value=""
             >
-              {enveloppe.label}
+              Choisir
             </option>
-          ))}
-        </select>
-        <label htmlFor={inputMontantPrestaId}>
+            {enveloppes.map((enveloppe) => (
+              <option
+                key={enveloppe.id}
+                value={enveloppe.id}
+              >
+                {enveloppe.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <label
+          className="fr-label"
+          htmlFor={inputMontantPrestaId}
+        >
           Montant en prestation de service
         </label>
         <input
+          className="fr-input"
           disabled={!isBudgetEnveloppe}
           id={inputMontantPrestaId}
           max={montantMaximal(montantRh)}
@@ -107,10 +122,13 @@ export default function DemanderUneSubvention({
           }}
           type="number"
         />
-        <label htmlFor={inputMontantRhId}>
+        <label
+          className="fr-label fr-mt-3w"
+          htmlFor={inputMontantRhId}
+        >
           Montant en ressources humaines
         </label>
-        <p>
+        <p className="fr-text--sm color-grey fr-mt-1w">
           Il s’agit d’une ressource humaine interne à la structure employeuse faisant partie de la
           gouvernance et récipiendaire des fonds. Format attendu : Montant
           {' '}
@@ -121,6 +139,7 @@ export default function DemanderUneSubvention({
           en euros
         </p>
         <input
+          className="fr-input"
           disabled={!isBudgetEnveloppe}
           id={inputMontantRhId}
           max={montantMaximal(montantPresta)}
@@ -130,36 +149,51 @@ export default function DemanderUneSubvention({
           }}
           type="number"
         />
-        <ul>
-          {isBudgetEnveloppe ?
-            <li>
+        <ul
+          className={`background-blue-france color-blue-france fr-my-4w fr-py-2w fr-pr-2w ${styles['no-style-list']}`}
+        >
+          {isBudgetEnveloppe ? (
+            <li className="fr-grid-row space-between fr-mb-1w">
               Vos droits de subvention
               {' '}
-              {formatMontant(budgetEnveloppe)}
-            </li> : null}
-          <li>
-            Maximum autorisé pour cette action
-            {' '}
-            {formatMontant(montantMaxAction)}
-          </li>
-          {subventionsDemandees > 0 ? (
-            <li>
-              Total subventions demandées
-              {' '}
-              {formatMontant(subventionsDemandees)}
+              <span>
+                {formatMontant(budgetEnveloppe)}
+              </span>
             </li>
           ) : null}
+          <li className="fr-grid-row space-between fr-mb-1w">
+            Maximum autorisé pour cette action
+            {' '}
+            <span>
+              {formatMontant(montantMaxAction)}
+            </span>
+          </li>
+          {subventionsDemandees > 0 ? (
+            <>
+              <hr />
+              <li className="fr-text--bold fr-grid-row space-between fr-mb-1w">
+                Total subventions demandées
+                {' '}
+                <span>
+                  {formatMontant(subventionsDemandees)}
+                </span>
+              </li>
+            </>
+          ) : null}
         </ul>
-        <button
-          aria-controls={drawerId}
-          disabled={!isValid}
-          onClick={() => {
-            setIsDrawerOpen(false)
-          }}
-          type="button"
-        >
-          Enregistrer
-        </button>
+        <div className="fr-btns-group fr-mt-2w">
+          <button
+            aria-controls={drawerId}
+            className="fr-btn"
+            disabled={!isValid}
+            onClick={() => {
+              setIsDrawerOpen(false)
+            }}
+            type="button"
+          >
+            Enregistrer
+          </button>
+        </div>
       </Drawer>
     </>
   )
