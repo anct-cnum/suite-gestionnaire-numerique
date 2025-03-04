@@ -28,7 +28,7 @@ CREATE TABLE "action" (
 CREATE TABLE "demande_de_subvention" (
     "id" SERIAL NOT NULL,
     "createur_id" INTEGER NOT NULL,
-    "status" TEXT NOT NULL,
+    "statut" TEXT NOT NULL,
     "subvention_demandee" DOUBLE PRECISION NOT NULL,
     "subvention_etp" DOUBLE PRECISION,
     "subvention_prestation" DOUBLE PRECISION,

@@ -286,7 +286,7 @@ model ActionRecord {
 model DemandeDeSubventionRecord {
   id                     Int       @id @default(autoincrement())
   createurId             Int       @map("createur_id")
-  status                 String
+  statut                 String
   subventionDemandee     Float     @map("subvention_demandee")
   subventionEtp          Float?    @map("subvention_etp")
   subventionPrestation   Float?    @map("subvention_prestation")
