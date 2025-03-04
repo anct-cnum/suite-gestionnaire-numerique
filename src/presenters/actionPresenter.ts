@@ -112,6 +112,7 @@ export function actionPresenter(
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     lienPourModifier: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
     nom: 'Action test',
+    nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
       {
         color: 'info',
@@ -135,11 +136,13 @@ export function actionPresenter(
       financementAccorde: formatMontant(20_000),
     },
     uid: 'uid-action',
+    urlFeuilleDeRoute: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}/feuille-de-route/116`,
     urlGouvernance: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}`,
   }
 }
 
 export type ActionViewModel = Readonly<{
+  nomFeuilleDeRoute: string
   beneficiaires: Beneficiaires
   besoins: Readonly<{
     financements: Besoins
@@ -164,6 +167,7 @@ export type ActionViewModel = Readonly<{
   }>
   uid: string
   urlGouvernance: string
+  urlFeuilleDeRoute: string
   temporalite: 'pluriannuelle' | 'annuelle'
   anneeDeDebut: string
   anneeDeFin?: string
@@ -259,6 +263,7 @@ export const actionARemplir: ActionViewModel = {
   description: '',
   lienPourModifier: '',
   nom: '',
+  nomFeuilleDeRoute: 'Feuille de route 69',
   porteurs: [
     {
       color: 'info',
@@ -288,6 +293,7 @@ export const actionARemplir: ActionViewModel = {
     financementAccorde: '',
   },
   uid: '',
+  urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
   urlGouvernance: '/gouvernance/11',
 }
 

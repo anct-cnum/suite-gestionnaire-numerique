@@ -185,6 +185,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     description: '<p><strong>Description de l‘action.</strong></p>',
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: 'Structurer une filière de reconditionnement locale 1',
+    nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
       {
         color: 'info',
@@ -214,6 +215,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       financementAccorde: '40 000 €',
     },
     uid: 'actionFooId1',
+    urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
     urlGouvernance: '/gouvernance/11',
     ...overrides,
   }
@@ -241,6 +243,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     description: '',
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
     nom: '',
+    nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
       {
         color: 'info',
@@ -270,6 +273,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       financementAccorde: '0 €',
     },
     uid: 'actionFooId1',
+    urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
     urlGouvernance: '/gouvernance/11',
     ...overrides,
   }

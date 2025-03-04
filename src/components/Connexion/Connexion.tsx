@@ -35,7 +35,7 @@ export default function Connexion({ idProvider }: Props): ReactElement {
               <p>
                 <ExternalLink
                   href="https://www.proconnect.gouv.fr/"
-                  title="Qu’est-ce que ProConnect ? (nouvelle fenêtre)"
+                  title="Qu’est-ce que ProConnect ?"
                 >
                   Qu’est ce que ProConnect ?
                 </ExternalLink>
