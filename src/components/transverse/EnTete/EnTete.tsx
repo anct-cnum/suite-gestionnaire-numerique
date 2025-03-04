@@ -75,54 +75,18 @@ export default function EnTete(): ReactElement {
               </div>
             </div>
             <div className="fr-header__tools">
-              <div className="fr-header__tools-links">
-                <ul
-                  aria-label="menu"
-                  className={`fr-links-group ${styles['fr-links-group']}`}
-                  id="menuUtilisateur"
-                >
-                  <li>
-                    <Link
-                      className="fr-link fr-icon-search-line"
-                      href="/rechercher"
-                    >
-                      Rechercher
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="fr-link fr-icon-question-line"
-                      href="/aide"
-                    >
-                      Aide
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="fr-link fr-icon-notification-3-line"
-                      href="/notifications"
-                    >
-                      Notifications
-                      {/**/}
-                      <Icon icon="arrow-down-s-line" />
-                    </Link>
-                  </li>
-                  <li>
-                    <button
-                      aria-controls={drawerId}
-                      className="fr-link"
-                      data-fr-opened="false"
-                      onClick={() => {
-                        setIsOpen(true)
-                      }}
-                      type="button"
-                    >
-                      {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
-                      <Icon icon="arrow-down-s-line" />
-                    </button>
-                  </li>
-                </ul>
-              </div>
+              <button
+                aria-controls={drawerId}
+                className="fr-link"
+                data-fr-opened="false"
+                onClick={() => {
+                  setIsOpen(true)
+                }}
+                type="button"
+              >
+                {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
+                <Icon icon="arrow-down-s-line" />
+              </button>
             </div>
           </div>
         </div>
