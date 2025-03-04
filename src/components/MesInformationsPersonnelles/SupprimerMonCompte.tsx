@@ -1,7 +1,6 @@
 import { signOut } from 'next-auth/react'
 import { FormEvent, ReactElement, useContext, useId, useState } from 'react'
 
-import styles from './SupprimerMonCompte.module.css'
 import { clientContext } from '../shared/ClientContext'
 import Modal from '../shared/Modal/Modal'
 import ModalTitle from '../shared/ModalTitle/ModalTitle'
@@ -37,9 +36,9 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
             Êtes-vous sûr de vouloir supprimer votre compte ? Cette
             action est irréversible.
           </p>
-          <div className={`fr-input-group ${styles['fr-input-group']} ${emailValidationInfo.groupClass}`}>
+          <div className={`fr-input-group input-group--sobre ${emailValidationInfo.groupClass}`}>
             <label
-              className={`fr-label ${styles['fr-label']}`}
+              className="fr-label"
               htmlFor={champEmailId}
             >
               Saisissez «

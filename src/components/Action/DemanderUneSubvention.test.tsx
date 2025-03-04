@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 import { expectNot } from '@/shared/testHelper'
@@ -59,11 +59,7 @@ describe('faire une demande de subvention', () => {
         })
         expect(titre).toBeInTheDocument()
 
-        const sousTitre = within(drawer).getByText(
-          'Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de 42 500 €.',
-          { selector: 'p' }
-        )
-        expect(sousTitre).toBeInTheDocument()
+        expect(sousTitre('42 500')).toBeInTheDocument()
 
         const selecteurEnveloppes = within(drawer).getByRole('combobox', {
           name: 'Enveloppe de financement concernée',
@@ -123,14 +119,14 @@ describe('faire une demande de subvention', () => {
         {
           enveloppeId: '2',
           expectedDroitsDeSubventionAffiches: '100 000',
-          expectedLimiteAffichee: '42 500',
+          expectedLimiteAffichee: '42 500',
           precision0: 'dont le montant est supérieur ou égal à celui du budget global de l’action',
           precision1: '',
         },
         {
           enveloppeId: '4',
           expectedDroitsDeSubventionAffiches: '10 000',
-          expectedLimiteAffichee: '10 000',
+          expectedLimiteAffichee: '10 000',
           precision0: 'dont le montant est inférieur à celui du budget global de l’action',
           precision1: ', et en tant que limite de la subvention que je peux demander,',
         },
@@ -172,7 +168,7 @@ describe('faire une demande de subvention', () => {
               enveloppeInitialeId: '3',
               erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
               erreurMontantRh: { expectation: expectNot, message: '' },
-              expectedLimiteAffichee: '30 000',
+              expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 30_001,
               montantRh: 0,
@@ -184,7 +180,7 @@ describe('faire une demande de subvention', () => {
               erreurMontantPrestation: { expectation: expectNot, message: '' },
               erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied',
               },
-              expectedLimiteAffichee: '30 000',
+              expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 0,
               montantRh: 30_001,
@@ -195,7 +191,7 @@ describe('faire une demande de subvention', () => {
               enveloppeInitialeId: '3',
               erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
               erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied' },
-              expectedLimiteAffichee: '30 000',
+              expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 29_999,
               montantRh: 2,
@@ -208,7 +204,7 @@ describe('faire une demande de subvention', () => {
               enveloppeInitialeId: '3',
               erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
               erreurMontantRh: { expectation: expectNot, message: '' },
-              expectedLimiteAffichee: '10 000',
+              expectedLimiteAffichee: '10 000',
               expectedTotalAffiche: '10 001',
               montantPrestation: 10_000,
               montantRh: 1,
@@ -486,7 +482,9 @@ function sousFormulaireDemandeSubvention(): HTMLElement {
 
 function sousTitre(limite: string): HTMLElement {
   return within(sousFormulaireDemandeSubvention()).getByText(
-    `Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de ${limite} €.`,
+    matchWithoutMarkup(
+      `Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de ${limite} €.`
+    ),
     { selector: 'p' }
   )
 }
