@@ -44,8 +44,7 @@ describe('pied de page', () => {
     expect(lienMentionsLegales).toHaveAttribute('href', '/mentions-legales')
 
     const lienDonneesPersonnelles = within(liensReglementaires[2]).getByRole('link', { name: 'Données personnelles' })
-    expect(lienDonneesPersonnelles).toHaveAttribute('href', 'https://cdn.conseiller-numerique.gouv.fr/CGU-Données_personnellesConseiller_Numérique.pdf')
-    expect(lienDonneesPersonnelles).toOpenInNewTab('Données personnelles')
+    expect(lienDonneesPersonnelles).toHaveAttribute('href', '/donnees-personnelles')
 
     const licence = within(piedDePage).getByText('Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous', { selector: 'p' })
     const lienLicence = within(licence).getByRole('link', { name: 'licence etalab-2.0' })

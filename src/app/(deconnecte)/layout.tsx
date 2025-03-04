@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
-import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 
 export default async function Layout({ children }: Readonly<PropsWithChildren>): Promise<ReactElement> {
@@ -12,14 +11,11 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   }
 
   return (
-    <>
-      <main
-        className="fr-container fr-pt-3w"
-        id="content"
-      >
-        {children}
-      </main>
-      <PiedDePage />
-    </>
+    <main
+      className="fr-container fr-pt-3w"
+      id="content"
+    >
+      {children}
+    </main>
   )
 }
