@@ -27,7 +27,7 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       emailDeContact: command.email,
       groupementUid: utilisateurCourantState.groupementUid?.value,
       inviteLe: this.#date,
-      isSuperAdmin: utilisateurCourantState.isSuperAdmin,
+      isSuperAdmin: false,
       nom: command.nom,
       prenom: command.prenom,
       region: utilisateurCourantState.region,
