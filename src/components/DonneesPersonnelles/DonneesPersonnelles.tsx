@@ -2,10 +2,10 @@ import { ReactElement } from 'react'
 
 import PageTitle from '../shared/PageTitle/PageTitle'
 
-export default function Accessibilite(): ReactElement {
+export default function DonneesPersonnelles(): ReactElement {
   return (
     <PageTitle>
-      Déclaration d’accessibilité
+      Données personnelles
     </PageTitle>
   )
 }

@@ -24,9 +24,6 @@ export default function PiedDePage(): ReactElement {
             </Link>
           </div>
           <div className="fr-footer__content">
-            <p className="fr-footer__content-desc">
-              Lorem [...] elit ut.
-            </p>
             <ul className="fr-footer__content-list">
               <li className="fr-footer__content-item">
                 <ExternalLink
@@ -86,13 +83,12 @@ export default function PiedDePage(): ReactElement {
               </Link>
             </li>
             <li className="fr-footer__bottom-item">
-              <ExternalLink
+              <Link
                 className="fr-footer__bottom-link"
-                href="https://cdn.conseiller-numerique.gouv.fr/CGU-Données_personnellesConseiller_Numérique.pdf"
-                title="Données personnelles"
+                href="/donnees-personnelles"
               >
                 Données personnelles
-              </ExternalLink>
+              </Link>
             </li>
           </ul>
           <div className="fr-footer__bottom-copy">
