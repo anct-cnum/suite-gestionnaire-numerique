@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
+import Notice from '@/components/shared/Notice/Notice'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { actionARemplir } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
@@ -22,6 +23,7 @@ export default async function ActionAjouterController({ params }: Props): Promis
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w menu-border">
+          <Notice />
           <AjouterUneAction
             action={actionARemplir}
             coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
