@@ -153,14 +153,15 @@ model FeuilleDeRouteRecord {
   gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
-  membreId                   String   @map("membre_id")
   pieceJointe                String?  @map("piece_jointe")
+  porteurId                  String?  @map("porteur_id")
+
 
   oldUUID String @map("old_uuid") @db.Uuid
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   action              ActionRecord[]
-  membre              MembreRecord      @relation(fields: [membreId], references: [id])
+  relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
 
   @@map("feuille_de_route")
 }
@@ -199,7 +200,7 @@ model MembreRecord {
   beneficiaireSubvention        BeneficiaireSubventionRecord[]
   porteurAction                 PorteurActionRecord[]
   coFinancement                 CoFinancementRecord[]
-  feuilleDeRouteRecord          FeuilleDeRouteRecord[]
+  feuillesDeRoute               FeuilleDeRouteRecord[]
 
   @@map("membre")
 }
