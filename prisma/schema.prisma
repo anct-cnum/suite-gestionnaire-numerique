@@ -82,7 +82,7 @@ model UtilisateurRecord {
   departementCode   String?   @map("departement_code")
   derniereConnexion DateTime? @map("derniere_connexion")
   emailDeContact    String    @map("email_de_contact")
-  groupementId      Int?      @map("goupement_id")
+  groupementId      Int?      @map("groupement_id")
   inviteLe          DateTime  @map("invite_le")
   isSuperAdmin      Boolean   @default(false) @map("is_super_admin")
   isSupprime        Boolean   @default(false) @map("is_supprime")
@@ -110,7 +110,7 @@ model UtilisateurRecord {
 }
 
 model GouvernanceRecord {
-  departementCode               String    @id
+  departementCode               String    @id @map("departement_code")
   /// [NotePrivee]
   notePrivee                    Json?     @map("note_privee")
   editeurNotePriveeId           String?   @map("editeur_note_privee_id")
@@ -156,12 +156,11 @@ model FeuilleDeRouteRecord {
   pieceJointe                String?  @map("piece_jointe")
   porteurId                  String?  @map("porteur_id")
 
-
   oldUUID String @map("old_uuid") @db.Uuid
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  action              ActionRecord[]
   relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
+  action              ActionRecord[]
 
   @@map("feuille_de_route")
 }
@@ -286,18 +285,19 @@ model ActionRecord {
 }
 
 model DemandeDeSubventionRecord {
-  id                   Int       @id @default(autoincrement())
-  createdAt            DateTime  @default(now()) @map("created_at")
-  createurId           Int       @map("createur_id")
-  status               String
-  subventionDemandee   Float     @map("subvention_demandee")
-  subventionEtp        Float?    @map("subvention_etp")
-  subventionPrestation Float?    @map("subvention_prestation")
-  dateDeModification   DateTime? @map("date_de_modification")
-  actionId             Int       @map("action_id")
+  id                     Int       @id @default(autoincrement())
+  createurId             Int       @map("createur_id")
+  status                 String
+  subventionDemandee     Float     @map("subvention_demandee")
+  subventionEtp          Float?    @map("subvention_etp")
+  subventionPrestation   Float?    @map("subvention_prestation")
+  dateDeModification     DateTime? @map("date_de_modification")
+  actionId               Int       @map("action_id")
+  enveloppeFinancementId Int       @map("enveloppe_financement_id")
 
-  utilisateur UtilisateurRecord @relation(fields: [createurId], references: [id])
-  action      ActionRecord      @relation(fields: [actionId], references: [id])
+  utilisateur UtilisateurRecord          @relation(fields: [createurId], references: [id])
+  action      ActionRecord               @relation(fields: [actionId], references: [id])
+  enveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeFinancementId], references: [id])
 
   @@map("demande_de_subvention")
 }
@@ -331,6 +331,8 @@ model EnveloppeFinancementRecord {
   dateDeDebut DateTime @map("date_debut")
   dateDeFin   DateTime @map("date_fin")
   montant     Float
+
+  demandeDeSubvention DemandeDeSubventionRecord[]
 
   @@map("enveloppe_financement")
 }

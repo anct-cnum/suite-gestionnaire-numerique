@@ -295,8 +295,8 @@ function grouperDonneesACreer(
       gouvernanceDepartementCode,
       nom: feuilleDeRouteFNE.nom,
       porteurFNEId: feuilleDeRouteFNE.membresFeuilleDeRoute[0]?.membreId,
-      oldUUID: feuilleDeRoute.id,
-      pieceJointe: feuilleDeRoute.pieceJointe,
+      oldUUID: feuilleDeRouteFNE.id,
+      pieceJointe: feuilleDeRouteFNE.pieceJointe,
     })
   }
 

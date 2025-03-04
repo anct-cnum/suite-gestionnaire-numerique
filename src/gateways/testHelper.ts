@@ -408,6 +408,7 @@ function feuilleDeRouteRecordFactory(
     creation: epochTime,
     gouvernanceDepartementCode: '69',
     nom: 'Feuille de route inclusion',
+    oldUUID: '',
     ...override,
   }
 }

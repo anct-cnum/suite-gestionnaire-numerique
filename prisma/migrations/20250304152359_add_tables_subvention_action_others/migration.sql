@@ -2,14 +2,11 @@
   Warnings:
 
   - Added the required column `old_uuid` to the `feuille_de_route` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `feuille_de_route` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterTable
-ALTER TABLE "feuille_de_route" ADD COLUMN     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "old_uuid" UUID NOT NULL,
-ADD COLUMN     "piece_jointe" TEXT,
-ADD COLUMN     "updated_at" TIMESTAMP(3) NOT NULL;
+ALTER TABLE "feuille_de_route" ADD COLUMN     "old_uuid" UUID NOT NULL,
+ADD COLUMN     "piece_jointe" TEXT;
 
 -- CreateTable
 CREATE TABLE "action" (
@@ -23,8 +20,6 @@ CREATE TABLE "action" (
     "feuille_de_route_id" INTEGER NOT NULL,
     "date_de_debut" TIMESTAMP(3) NOT NULL,
     "date_de_fin" TIMESTAMP(3) NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "action_pkey" PRIMARY KEY ("id")
 );
@@ -40,8 +35,6 @@ CREATE TABLE "demande_de_subvention" (
     "date_de_modification" TIMESTAMP(3),
     "action_id" INTEGER NOT NULL,
     "enveloppe_financement_id" INTEGER NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "demande_de_subvention_pkey" PRIMARY KEY ("id")
 );
@@ -52,8 +45,6 @@ CREATE TABLE "beneficiaire_subvention" (
     "action_id" INTEGER NOT NULL,
     "membre_id" TEXT NOT NULL,
     "montant_subvention" DOUBLE PRECISION NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "beneficiaire_subvention_pkey" PRIMARY KEY ("id")
 );
@@ -63,8 +54,6 @@ CREATE TABLE "porteur_action" (
     "id" SERIAL NOT NULL,
     "action_id" INTEGER NOT NULL,
     "membre_id" TEXT NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "porteur_action_pkey" PRIMARY KEY ("id")
 );
@@ -76,8 +65,6 @@ CREATE TABLE "enveloppe_financement" (
     "date_debut" TIMESTAMP(3) NOT NULL,
     "date_fin" TIMESTAMP(3) NOT NULL,
     "montant" DOUBLE PRECISION NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "enveloppe_financement_pkey" PRIMARY KEY ("id")
 );
@@ -89,8 +76,6 @@ CREATE TABLE "co_financement" (
     "id_action" INTEGER NOT NULL,
     "id_membre" TEXT NOT NULL,
     "montant" DOUBLE PRECISION NOT NULL,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "co_financement_pkey" PRIMARY KEY ("id")
 );
