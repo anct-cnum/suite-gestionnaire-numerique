@@ -1,5 +1,4 @@
-// istanbul ignore next @preserve
-// Stryker disable next-line
+// Stryker disable all
 import { ReactElement } from 'react'
 
 import styles from './Notice.module.css'
