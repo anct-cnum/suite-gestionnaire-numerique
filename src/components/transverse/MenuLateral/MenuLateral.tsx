@@ -15,7 +15,6 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
     {
       ariaControls: 'fr-sidemenu-gouvernance',
       ariaExpanded: false,
-      hasSousMenu: true,
       icon: 'compass-3-line',
       label: 'Gouvernance',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
@@ -99,7 +98,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                         />
                         {menu.label}
                       </Link>
-                      {menu.hasSousMenu ? children : null}
+                      {children}
                     </li>
                   </Fragment>
                 )
