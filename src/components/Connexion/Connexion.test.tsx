@@ -19,6 +19,7 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     expect(boutonSeConnecter).toBeEnabled()
     const lienProConnect = screen.getByRole('link', { name: 'Qu’est ce que ProConnect ?' })
     expect(lienProConnect).toHaveAttribute('href', 'https://www.proconnect.gouv.fr/')
+    expect(lienProConnect).toOpenInNewTab('Qu’est-ce que ProConnect ?')
   })
 
   it('quand j’affiche une page quelconque alors je peux m’authentifier', () => {

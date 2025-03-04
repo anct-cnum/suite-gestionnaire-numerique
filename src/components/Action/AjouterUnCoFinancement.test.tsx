@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
+import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jeTapeLeBudgetGlobalDeLAction, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
 
 describe('drawer d‘ajout d‘un co-financement', () => {
   it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {
@@ -8,6 +8,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     afficherFormulaireDeCreationAction()
 
     // WHEN
+    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+    jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourAjouterUnCoFinancement()
 
     // THEN
@@ -27,6 +29,15 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(option3).toBeInTheDocument()
     const option4 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'La Poste', selected: false })
     expect(option4).toBeInTheDocument()
+    const labelRechercheStructure = within(drawer).getByLabelText('Ou rechercher une autre structure')
+    expect(labelRechercheStructure).toBeInTheDocument()
+    const champRechercheStructure = within(drawer).getByRole('textbox', { name: 'Ou rechercher une autre structure' })
+    expect(champRechercheStructure).not.toBeRequired()
+    expect(champRechercheStructure).toHaveAttribute('type', 'text')
+    expect(champRechercheStructure).toHaveAttribute('placeholder', 'Numéro SIRET/RIDET, Nom, ...')
+    const boutonRechercher = within(drawer).getByRole('button', { name: 'Rechercher' })
+    expect(boutonRechercher).toBeEnabled()
+    expect(boutonRechercher).toHaveAttribute('type', 'submit')
     const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: 'Montant du financement *' })
     expect(montantDuFinancement).toBeRequired()
     expect(montantDuFinancement).toHaveAttribute('type', 'number')
@@ -41,6 +52,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     afficherFormulaireDeCreationAction()
 
     // WHEN
+    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+    jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourAjouterUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     jeCreeUnCofinancementDansLeDrawer(drawer)
@@ -48,7 +61,6 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     fireEvent.submit(boutonEnregistrer)
 
     // THEN
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
     const listeCofinancements = await within(formulaire).findAllByRole('listitem')
     expect(listeCofinancements).toHaveLength(1)
     const premierCofinancement = within(listeCofinancements[0]).getByText('CC des Monts du Lyonnais')
@@ -62,6 +74,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     afficherFormulaireDeModificationAction()
 
     // WHEN
+    const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+    jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourModifierUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     jeCreeUnCofinancementDansLeDrawer(drawer)
@@ -69,7 +83,6 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     fireEvent.submit(boutonEnregistrer)
 
     // THEN
-    const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
     const listeCofinancements = await within(formulaire).findAllByRole('listitem')
     expect(listeCofinancements).toHaveLength(5)
     const cinquiemeCofinancement = within(listeCofinancements[4]).getByText('CC des Monts du Lyonnais')
@@ -83,6 +96,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     afficherFormulaireDeCreationAction()
 
     // WHEN
+    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+    jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourAjouterUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     const boutonFermer = within(drawer).getByRole('button', { name: 'Fermer' })
@@ -97,6 +112,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     afficherFormulaireDeModificationAction()
 
     // WHEN
+    const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+    jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourModifierUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     const boutonFermer = within(drawer).getByRole('button', { name: 'Fermer' })

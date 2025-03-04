@@ -54,7 +54,30 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
           ))}
         </select>
       </div>
-      <div>
+      <label
+        className="fr-label fr-mb-1w"
+        htmlFor="rechercheStructure"
+      >
+        Ou rechercher une autre structure
+      </label>
+      <div
+        className="fr-search-bar full-width"
+      >
+        <input
+          className="fr-input"
+          id="rechercheStructure"
+          placeholder="Numéro SIRET/RIDET, Nom, ..."
+          type="text"
+        />
+        <button
+          className="fr-btn"
+          title="Rechercher"
+          type="submit"
+        >
+          Rechercher
+        </button>
+      </div>
+      <div className="fr-mt-3w">
         <label
           className="fr-label fr-mb-1w"
           htmlFor="montantDuFinancement"
