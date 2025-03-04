@@ -4,7 +4,6 @@ import { ReactElement } from 'react'
 
 import teaser from './teaser.png'
 import Badge from '@/components/shared/Badge/Badge'
-import Icon from '@/components/shared/Icon/Icon'
 import PageTitle from '@/components/shared/PageTitle/PageTitle'
 
 export const metadata: Metadata = {
@@ -14,11 +13,10 @@ export const metadata: Metadata = {
 export default function FinancementsController(): ReactElement {
   return (
     <div className="center fr-mt-6w">
-      <Badge color="green-tilleul-verveine">
-        <Icon
-          classname="fr-text--lead"
-          icon="flashlight-fill"
-        />
+      <Badge
+        color="new"
+        icon={true}
+      >
         à venir
       </Badge>
       <PageTitle>
