@@ -1,4 +1,4 @@
-# Suite gestionnaire numérique
+# Mon inclusion numérique
 
 **Sur ce projet, `yarn` est le gestionnaire de paquets utilisé**
 
@@ -60,7 +60,7 @@ yarn psql:test
 Pour accéder à la base de données de production avec un outils, il faut lancer un tunnel SSH avant :
 
 ```bash
-scalingo -a suite-gestionnaire-numerique db-tunnel -i [CHEMIN_DE_TA_CLE_SSH_SCALINGO] [VAR_ENV_SCALINGO_POSTGRESQL_URL]
+scalingo -a mon-inclusion-numerique db-tunnel -i [CHEMIN_DE_TA_CLE_SSH_SCALINGO] [VAR_ENV_SCALINGO_POSTGRESQL_URL]
 ```
 
 Ensuite, dans ton outils, tu configures avec 127.0.0.1:10000 et le reste grâce à la variable d'environnement SCALINGO_POSTGRESQL_URL utilisée juste au dessus.
@@ -160,7 +160,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 ## 🧱 Architecture applicative
 
 ```text
-📦 Suite gestionnaire numérique
+📦 Mon inclusion numérique
  ┣ 📂 .github/workflows           -> Configuration de CodeQL et dependabot
  ┣ 📂 .husky/workflows            -> Configuration du pre-push
  ┣ 📂 public                      -> Assets statiques dont le dsfr.js
