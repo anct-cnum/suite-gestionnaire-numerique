@@ -157,6 +157,20 @@ address {
   border-bottom: 0.1rem solid var(--border-default-grey);
 }
 
+.separator-up {
+  border-top: 0.1rem solid var(--border-default-grey);
+}
+
+.input-group--sobre:not(.fr-input-group--disabled) {
+  &::before {
+    content: none;
+  }
+
+  .fr-label {
+    color: var(--text-label-gray);
+  }
+}
+
 .glycine-background {
   background-color: var(--purple-glycine-950-100);
   border-radius: 0.5rem;
