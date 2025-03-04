@@ -76,23 +76,20 @@ export function makeMjml(link: string): string {
                 <mj-column>
                     <mj-text css-class="text-primary" padding-bottom="30px" font-weight="bold" font-size="20px"
                         align="center">
-                        Bienvenue sur le tableau de pilotage Conseiller numérique 🎉
+                        Bienvenue sur Mon Inclusion Numérique
                     </mj-text>
                     <mj-divider width="50%" padding-bottom="30px"></mj-divider>
                     <mj-text>
-                        ✨ Le tableau de pilotage permet de suivre les indicateurs
-                        essentiels des conseillers numériques et des structures grâce à une
-                        interface simple et personnalisée.
+                        Mon Inclusion Numérique permet de piloter le déploiement de l'inclusion numérique sur votre territoire.
                     </mj-text>
                     <mj-text font-weight="bold" color="#4A86E8">
-                        1. Rejoignez le tableau de pilotage
+                        1. Rejoignez Mon Inclusion Numérique
                     </mj-text>
                     <mj-text>
-                        Cliquez sur le bouton « Lien d’invitation » en bas du mail pour être
-                        redirigé sur la page de connexion.
+                        Cliquez sur le bouton « Rejoindre Mon Inclusion Numérique » en bas de l'e-mail.
                     </mj-text>
                     <mj-text font-weight="bold">
-                        👉 Si vous n'avez pas de compte ProConnect :
+                        👉 Si vous n'avez pas de compte ProConnect
                     </mj-text>
                     <mj-text font-weight="bold" color="#4A86E8">
                         2. Création du compte
@@ -100,7 +97,7 @@ export function makeMjml(link: string): string {
                     <mj-text>
                         Une fois redirigé sur ProConnect, cliquez sur le bouton
                         « Créer un compte » en bas du formulaire de connexion, renseignez vos
-                        informations et cliquez sur « Créer un compte ».
+                        informations et cliquez sur « Créer un compte&nbsp;».
                     </mj-text>
                     <mj-text>
                         Si au bout de 10 minutes vous n’avez pas reçu d’e-mail pour activer
@@ -111,20 +108,16 @@ export function makeMjml(link: string): string {
                         3. Validation
                     </mj-text>
                     <mj-text>
-                        En cliquant sur le lien reçu par e- mail,vous êtes connecté
-                        automatiquement sur ProConnect et redirigé vers le tableau
-                        de pilotage.
+                        En cliquant sur le lien reçu par e-mail, vous êtes connecté automatiquement sur ProConnect et redirigé vers Mon Inclusion Numérique.
                     </mj-text>
                     <mj-text font-weight="bold">
-                        👉 Vous avez un compte ProConnect :
+                        👉 Vous avez un compte ProConnect
                     </mj-text>
                     <mj-text font-weight="bold" color="#4A86E8">
                         2. Identification
                     </mj-text>
                     <mj-text>
-                        Renseignez votre e-mail et mot de passe de compte ProConnect.
-                        Vous serez ensuite redirigé automatiquement vers le tableau de
-                        pilotage.
+                        Renseignez votre e-mail et mot de passe de compte ProConnect. Vous serez ensuite redirigé automatiquement vers Mon Inclusion Numérique.
                     </mj-text>
                     <mj-text font-weight="bold">
                         👉 Vous êtes déjà connecté à ProConnect
@@ -133,26 +126,22 @@ export function makeMjml(link: string): string {
                         1. Connexion
                     </mj-text>
                     <mj-text>
-                        Cliquez sur le bouton « Lien d’invitation » en bas du mail. Une fois
-                        sur la page de connexion ProConnect, vos informations seront
-                        renseignées, vous n’aurez qu'à cliquer sur « Se connecter » pour
-                        être redirigé automatiquement vers le tableau de pilotage.
+                        Cliquez sur le bouton « Rejoindre Mon Inclusion Numérique » en bas de l'e-mail.
+                        Une fois sur la page de connexion ProConnect, saisissez vos informations de connexion,
+                        cliquez sur « Se connecter » pour être redirigé automatiquement vers Mon Inclusion Numérique.
                     </mj-text>
                 </mj-column>
             </mj-section>
             <mj-section css-class="box" padding-top="0" padding-left="100px" padding-right="100px">
-                <mj-column border="1px solid #C8CBCE">
+                <mj-column>
                     <mj-button href="${link}" background-color="#24303A" color="#F4F4F5" font-size="16px"
                         font-weight="bold" text-transform="uppercase">
-                        Lien d'invitation
+                        Rejoindre Mon Inclusion Numérique
                     </mj-button>
-                    <mj-text font-size="14px" line-height="21px" align="center" text-decoration="underline">
-                        (Ce lien expire dans 4 semaines)
-                    </mj-text>
                 </mj-column>
             </mj-section>
             <mj-column width="600px">
-            <mj-button font-size="14px" href="mailto:${smtpReplyTo}" text-decoration="underline"
+                <mj-button font-size="14px" href="mailto:conseiller-numerique@anct.gouv.fr" text-decoration="underline"
                     background-color color="#24303A">
                     Vous n’arrivez pas à créer votre compte ?
                 </mj-button>

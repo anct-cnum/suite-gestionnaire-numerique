@@ -33,7 +33,7 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
       from: smtpFrom,
       html: mjml2html(makeMjml(this.#link)).html,
       replyTo: smtpReplyTo,
-      subject: 'Bienvenue sur votre nouveau tableau de pilotage Conseiller numérique',
+      subject: 'Bienvenue sur Mon Inclusion Numérique',
       to: destinataire,
     })
   }
