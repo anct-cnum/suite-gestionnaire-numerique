@@ -19,7 +19,7 @@ export default function LieuxInclusionController(): ReactElement {
       >
         à venir
       </Badge>
-      <PageTitle>
+      <PageTitle margin="fr-mt-5w fr-h4">
         Visualisez tous les lieux d’inclusion numérique sur votre territoire
       </PageTitle>
       <Image
