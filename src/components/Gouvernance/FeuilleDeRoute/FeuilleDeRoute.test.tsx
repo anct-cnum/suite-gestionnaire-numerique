@@ -73,8 +73,8 @@ describe('feuille de route', () => {
     const buttonsListItems = within(buttonsList).getAllByRole('listitem')
     const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
     expect(boutonPlusDeDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId')
-    const boutonTelechargerPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Télécharger le document PDF' })
-    expect(boutonTelechargerPdf).toBeInTheDocument()
+    const boutonOuvrirPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Ouvrir le document pdf' })
+    expect(boutonOuvrirPdf).toBeInTheDocument()
   })
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
