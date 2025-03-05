@@ -19,7 +19,7 @@ export default function BeneficiairesController(): ReactElement {
       >
         à venir
       </Badge>
-      <PageTitle>
+      <PageTitle margin="fr-mt-5w fr-h4">
         Suivez tous les bénéficiaires de financements sur votre territoire et le statut de leur convention
       </PageTitle>
       <Image

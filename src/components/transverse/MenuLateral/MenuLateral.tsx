@@ -75,7 +75,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       {
         sessionUtilisateurViewModel.displayLiensGouvernance ? (
           <>
-            <p className="fr-text--sm color-grey separator fr-mt-2w">
+            <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
               PILOTAGE
             </p>
             <ul className="fr-sidemenu__list">
@@ -104,7 +104,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
                 )
               })}
             </ul>
-            <div className="fr-text--sm color-grey separator fr-mt-2w">
+            <div className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
               <Badge
                 color="new"
                 icon={true}

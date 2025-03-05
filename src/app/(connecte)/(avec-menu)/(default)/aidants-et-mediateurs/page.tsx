@@ -19,7 +19,7 @@ export default function AidantsEtMediateursController(): ReactElement {
       >
         à venir
       </Badge>
-      <PageTitle>
+      <PageTitle margin="fr-mt-5w fr-h4">
         Identifiez et suivez les aidants et médiateurs de l’inclusion numérique sur votre territoire
       </PageTitle>
       <Image
