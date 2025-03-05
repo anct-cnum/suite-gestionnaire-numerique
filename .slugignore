@@ -2,7 +2,6 @@
 .husky
 .yarn
 src
-node_modules/@babel
 node_modules/@gouvfr/dsfr/example
 node_modules/@gouvfr/dsfr/src
 node_modules/@gouvfr/dsfr/dist/component
