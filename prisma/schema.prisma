@@ -100,9 +100,11 @@ model UtilisateurRecord {
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
 
-  comites        ComiteRecord[]
-  notesPrivees   GouvernanceRecord[] @relation("UtilisateurNotesPrivees")
-  noteDeContexte GouvernanceRecord[] @relation("UtilisateurnoteDeContexte")
+  comites                   ComiteRecord[]
+  notesPrivees              GouvernanceRecord[]         @relation("UtilisateurNotesPrivees")
+  noteDeContexte            GouvernanceRecord[]         @relation("UtilisateurnoteDeContexte")
+  actionRecord              ActionRecord[]
+  demandeDeSubventionRecord DemandeDeSubventionRecord[]
 
   @@map("utilisateur")
 }
@@ -151,10 +153,14 @@ model FeuilleDeRouteRecord {
   gouvernanceDepartementCode String   @map("gouvernance_departement_code")
   creation                   DateTime
   nom                        String
+  pieceJointe                String?  @map("piece_jointe")
   porteurId                  String?  @map("porteur_id")
+
+  oldUUID String @map("old_uuid") @db.Uuid
 
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
+  action              ActionRecord[]
 
   @@map("feuille_de_route")
 }
@@ -190,6 +196,9 @@ model MembreRecord {
   membresGouvernanceEpci        MembreGouvernanceEpciRecord[]
   membresGouvernanceCommune     MembreGouvernanceCommuneRecord[]
   membresGouvernanceStructure   MembreGouvernanceStructureRecord[]
+  beneficiaireSubvention        BeneficiaireSubventionRecord[]
+  porteurAction                 PorteurActionRecord[]
+  coFinancement                 CoFinancementRecord[]
   feuillesDeRoute               FeuilleDeRouteRecord[]
 
   @@map("membre")
@@ -250,6 +259,95 @@ model MembreGouvernanceStructureRecord {
 
   @@unique([structure, membreId, role])
   @@map("membre_gouvernance_structure")
+}
+
+model ActionRecord {
+  id           Int      @id @default(autoincrement())
+  besoins      String[]
+  createurId   Int      @map("createur_id")
+  nom          String
+  contexte     String
+  description  String
+  budgetGlobal Float    @map("budget_global")
+
+  feuilleDeRouteId Int      @map("feuille_de_route_id")
+  dateDeDebut      DateTime @map("date_de_debut")
+  dateDeFin        DateTime @map("date_de_fin")
+
+  utilisateur          UtilisateurRecord           @relation(fields: [createurId], references: [id])
+  feuilleDeRoute       FeuilleDeRouteRecord        @relation(fields: [feuilleDeRouteId], references: [id])
+  demandesDeSubvention DemandeDeSubventionRecord[]
+  porteurAction        PorteurActionRecord[]
+  coFinancement        CoFinancementRecord[]
+
+  @@map("action")
+}
+
+model DemandeDeSubventionRecord {
+  id                     Int       @id @default(autoincrement())
+  createurId             Int       @map("createur_id")
+  statut                 String
+  subventionDemandee     Float     @map("subvention_demandee")
+  subventionEtp          Float?    @map("subvention_etp")
+  subventionPrestation   Float?    @map("subvention_prestation")
+  dateDeModification     DateTime? @map("date_de_modification")
+  actionId               Int       @unique @map("action_id")
+  enveloppeFinancementId Int       @map("enveloppe_financement_id")
+
+  utilisateur  UtilisateurRecord              @relation(fields: [createurId], references: [id])
+  action       ActionRecord                   @relation(fields: [actionId], references: [id])
+  enveloppe    EnveloppeFinancementRecord     @relation(fields: [enveloppeFinancementId], references: [id])
+  beneficiaire BeneficiaireSubventionRecord[]
+
+  @@map("demande_de_subvention")
+}
+
+model BeneficiaireSubventionRecord {
+  id                    Int    @id @default(autoincrement())
+  demandeDeSubventionId Int    @map("demande_de_subvention_id")
+  membreId              String @map("membre_id")
+  montantSubvention     Float  @map("montant_subvention")
+
+  demandeDeSubvention DemandeDeSubventionRecord @relation(fields: [demandeDeSubventionId], references: [id])
+  membre              MembreRecord              @relation(fields: [membreId], references: [id])
+
+  @@map("beneficiaire_subvention")
+}
+
+model PorteurActionRecord {
+  id       Int    @id @default(autoincrement())
+  actionId Int    @map("action_id")
+  membreId String @map("membre_id")
+
+  action ActionRecord @relation(fields: [actionId], references: [id])
+  membre MembreRecord @relation(fields: [membreId], references: [id])
+
+  @@map("porteur_action")
+}
+
+model EnveloppeFinancementRecord {
+  id          Int      @id @default(autoincrement())
+  libelle     String
+  dateDeDebut DateTime @map("date_debut")
+  dateDeFin   DateTime @map("date_fin")
+  montant     Float
+
+  demandeDeSubvention DemandeDeSubventionRecord[]
+
+  @@map("enveloppe_financement")
+}
+
+model CoFinancementRecord {
+  id       Int    @id @default(autoincrement())
+  libelle  String
+  actionId Int    @map("id_action")
+  memberId String @map("id_membre")
+  montant  Float
+
+  action ActionRecord @relation(fields: [actionId], references: [id])
+  membre MembreRecord @relation(fields: [memberId], references: [id])
+
+  @@map("co_financement")
 }
 
 enum Role {
