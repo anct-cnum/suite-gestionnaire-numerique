@@ -19,7 +19,7 @@ export default function FinancementsController(): ReactElement {
       >
         à venir
       </Badge>
-      <PageTitle>
+      <PageTitle margin="fr-mt-5w fr-h4">
         Suivez les demandes de financements et de conventionnement des membres de la gouvernance
       </PageTitle>
       <Image

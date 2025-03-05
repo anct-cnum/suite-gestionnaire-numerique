@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
+import Notice from '@/components/shared/Notice/Notice'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
@@ -12,6 +13,9 @@ export default function TableauDeBordController(): ReactElement {
   const tableauDeBordViewModel = tableauDeBordPresenter()
 
   return (
-    <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
+    <>
+      <Notice />
+      <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
+    </>
   )
 }
