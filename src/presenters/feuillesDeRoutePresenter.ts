@@ -70,8 +70,6 @@ export function feuillesDeRoutePresenter(
 function toFeuilleDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => ({
     actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
-    beneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}`,
-    coFinanceurs: `${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
     links: {
       detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
     },
@@ -86,6 +84,7 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
     },
     uid: feuilleDeRoute.uid,
     wordingDetailDuBudget: `dont ${formatMontant(feuilleDeRoute.totaux.coFinancement)} de co-financements et ${formatMontant(feuilleDeRoute.totaux.financementAccorde)} des financements accordés`,
+    wordingNombreCofinanceursEtBeneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}, ${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
   })
 }
 
@@ -161,8 +160,6 @@ export type FeuilleDeRouteViewModel = Readonly<{
   nom: string
   uid: string
   porteur: string
-  beneficiaires: string
-  coFinanceurs: string
   pieceJointe?: Readonly<{
     apercu: string
     emplacement: string
@@ -180,6 +177,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   links: Readonly<{
     detail: string
   }>
+  wordingNombreCofinanceursEtBeneficiaires: string
 }>
 
 type ActionViewModel = Readonly<{

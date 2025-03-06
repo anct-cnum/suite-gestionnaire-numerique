@@ -85,7 +85,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(titreIndicationDuBesoin).toBeInTheDocument()
       const boutonModifier = within(formulaire).getAllByRole('button', { name: 'Modifier' })[0]
       expect(boutonModifier).toBeInTheDocument()
-      const texteIndicationDuBesoin = within(formulaire).getByText('Indiquez à quel besoins se rapporte l’action pour laquelle vous demandez une subvention. Si vos besoins ont changé depuis leur première expression dans le formulaire de janvier 2024 vous pouvez tout à fait sélectionner une autre catégorie de besoin.', { selector: 'p' })
+      const texteIndicationDuBesoin = within(formulaire).getByText('Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.', { selector: 'p' })
       expect(texteIndicationDuBesoin).toBeInTheDocument()
       const tagBesoinParDefaut = within(formulaire).getByText('Établir un diagnostic territorial', { selector: 'p' })
       expect(tagBesoinParDefaut).toBeInTheDocument()
@@ -153,7 +153,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
       const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { name: 'Ajouter' })
       expect(boutonAjouterUnDestinataire).toBeInTheDocument()
-      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds. Dans le cas où vous renseignez plusieurs destinataires des fonds pour cette action, un encart s’ouvrira vous demandant d’indiquer le montant de la subvention par destinataire.', { selector: 'p' })
+      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
       const boutonDeValidation = within(formulaire).getByRole('button', { name: 'Valider et envoyer' })
       expect(boutonDeValidation).toBeEnabled()

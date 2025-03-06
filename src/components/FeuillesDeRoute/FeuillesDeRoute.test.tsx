@@ -1,6 +1,6 @@
 import { screen, within } from '@testing-library/react'
 
-import { renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import FeuillesDeRoute from './FeuillesDeRoute'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
@@ -18,7 +18,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const sectionBudgetGlobal = screen.getByRole('region', { name: 'budget-global' })
     const montantTotalDesSubventions = within(sectionBudgetGlobal).getAllByText('0 €', { selector: 'p' })[0]
     expect(montantTotalDesSubventions).toBeInTheDocument()
-    const labelMontantTotalDesSubventions = within(sectionBudgetGlobal).getByText('Total des subventions de l‘État', { selector: 'p' })
+    const labelMontantTotalDesSubventions = within(sectionBudgetGlobal).getByText('Total des financements accordés', { selector: 'p' })
     expect(labelMontantTotalDesSubventions).toBeInTheDocument()
     const montantTotalDesCofinancements = within(sectionBudgetGlobal).getAllByText('0 €', { selector: 'p' })[0]
     expect(montantTotalDesCofinancements).toBeInTheDocument()
@@ -38,10 +38,8 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(lientVoirDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1')
     const LienPorteurDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getAllByRole('link', { name: 'CC des Monts du Lyonnais' })[0]
     expect(LienPorteurDeLaFeuilleDeRoute).toBeInTheDocument()
-    const nombreDeBeneficiaires = within(premiereFeuilleDeRoute).getByText('5 bénéficiaires', { selector: 'span' })
-    expect(nombreDeBeneficiaires).toBeInTheDocument()
-    const nombreCofinanceurs = within(premiereFeuilleDeRoute).getByText('3 co-financeurs', { selector: 'span' })
-    expect(nombreCofinanceurs).toBeInTheDocument()
+    const wordingNombreCofinanceursEtBeneficiaires = within(premiereFeuilleDeRoute).getByText(matchWithoutMarkup('5 bénéficiaires, 3 co-financeurs'))
+    expect(wordingNombreCofinanceursEtBeneficiaires).toBeInTheDocument()
     const nombreDactions = within(premiereFeuilleDeRoute).getByText('2 actions attachées à cette feuille de route', { selector: 'p' })
     expect(nombreDactions).toBeInTheDocument()
     const boutonAjouterUneAction = within(premiereFeuilleDeRoute).getByRole('link', { name: 'Ajouter une action' })
@@ -64,6 +62,13 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(montantBudgetTotalDeLaFeuilleDeRoute).toBeInTheDocument()
     const detailDesMontantsDeSubvention = within(premiereFeuilleDeRoute).getByText('dont 0 € de co-financements et 0 € des financements accordés', { selector: 'p' })
     expect(detailDesMontantsDeSubvention).toBeInTheDocument()
+    const sectionOuvrirPdf = screen.getAllByRole('region', { name: 'Feuille de route inclusion.pdf' })[0]
+    const titreSectionOuvrirPdf = within(sectionOuvrirPdf).getByRole('heading', { level: 2, name: 'Feuille de route inclusion.pdf' })
+    expect(titreSectionOuvrirPdf).toBeInTheDocument()
+    const informationsFichier = within(sectionOuvrirPdf).getByText('Le 08/08/2024, 25 Mo, pdf.')
+    expect(informationsFichier).toBeInTheDocument()
+    const boutonOuvrirPdf = within(sectionOuvrirPdf).getByRole('button', { name: 'Ouvrir le pdf' })
+    expect(boutonOuvrirPdf).toHaveAttribute('type', 'button')
   })
 
   it('quand il y a une seule feuille de route, alors le titre est au singulier', () => {
@@ -102,7 +107,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const resultat = feuillesDeRoutePresenter(donnees)
 
     // THEN
-    expect(resultat.feuillesDeRoute[0].beneficiaires).toBe('2 bénéficiaires')
+    expect(resultat.feuillesDeRoute[0].wordingNombreCofinanceursEtBeneficiaires).toBe('2 bénéficiaires, 3 co-financeurs')
   })
 
   it('quand il y a un seul bénéficiaire, alors le texte est au singulier', () => {
@@ -120,7 +125,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     const resultat = feuillesDeRoutePresenter(donnees)
 
     // THEN
-    expect(resultat.feuillesDeRoute[0].beneficiaires).toBe('1 bénéficiaire')
+    expect(resultat.feuillesDeRoute[0].wordingNombreCofinanceursEtBeneficiaires).toBe('1 bénéficiaire, 3 co-financeurs')
   })
 
   function afficherLesFeuillesDeRoute(

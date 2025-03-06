@@ -155,7 +155,7 @@ const invitationEmail = `
                     </mj-text>
                     <mj-text>
                         Si au bout de 10 minutes vous n’avez pas reçu d’e-mail pour activer
-                        votre compte, vérifiez dans vos spams ou cliquez cliquez sur « Cliquez
+                        votre compte, vérifiez dans vos spams ou cliquez sur « Cliquez
                         ici » pour renvoyer le courriel.
                     </mj-text>
                     <mj-text font-weight="bold" color="#4A86E8">

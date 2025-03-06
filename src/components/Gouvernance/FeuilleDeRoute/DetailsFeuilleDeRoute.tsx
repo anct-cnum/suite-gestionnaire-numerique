@@ -15,7 +15,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         {feuilleDeRoute.nom}
       </DrawerTitle>
       <div className="fr-mb-2w">
-        <div className="color-grey">
+        <div className="color-grey fr-mb-1w">
           Responsable de la feuille de route
         </div>
         <Tag>
@@ -47,7 +47,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         </div>
       </div>
       <div className="fr-mb-2w">
-        <div className="color-grey">
+        <div className="color-grey fr-mb-1w">
           {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions`}
         </div>
         {
@@ -75,7 +75,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         </div>
       </div>
       <div className="fr-mb-2w">
-        <div className="color-grey">
+        <div className="color-grey fr-mb-1w">
           {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation`}
         </div>
         {
@@ -108,7 +108,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
             className="fr-btn fr-btn--secondary fr-icon-download-line"
             type="button"
           >
-            Télécharger le document PDF
+            Ouvrir le document pdf
           </button>
         </li>
       </ul>

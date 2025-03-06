@@ -10,6 +10,8 @@
 }
 
 .third-width {
+  display: flex;
+  justify-content: center;
   width: 29%;
 }
 
