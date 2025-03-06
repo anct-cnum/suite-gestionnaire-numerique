@@ -197,6 +197,7 @@ describe('membre repository', () => {
       contactTechnique: null,
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',
+      oldUUID: '30ca3fa5-76b8-471d-a811-d96074b18eb1',
       statut: 'confirme',
       type: 'Préfecture départementale',
     })
