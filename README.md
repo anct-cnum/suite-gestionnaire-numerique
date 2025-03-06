@@ -215,5 +215,10 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
 
 - Déclencher le déploiement (via un _commit_ ou _merge_ de branche sur **main**)
 
+- Se connecter à nouveau à un _one-off container_ Scalingo :  
+  `yarn bash:production`  
+  et installer **prisma**:  
+  `yarn add @prisma/client`
+
 - Lancer le script d'import :  
-  `yarn migration`
+  `yarn migration:all`

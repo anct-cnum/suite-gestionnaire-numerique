@@ -420,6 +420,7 @@ function membreRecordFactory(
     contact: 'email@example.com',
     gouvernanceDepartementCode: '69',
     id: 'prefecture-69',
+    oldUUID: '30CA3FA5-76B8-471D-A811-D96074B18EB1',
     statut: 'confirme',
     type: 'Préfecture départementale',
     ...override,
