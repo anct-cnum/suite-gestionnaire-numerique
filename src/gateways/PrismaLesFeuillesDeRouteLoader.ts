@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { FeuilleDeRouteRecord } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -8,13 +8,6 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
 
   async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
     const feuillesDeRouteRecord = await this.#dataResource.findMany({
-      include: {
-        relationGouvernance: {
-          include: {
-            relationDepartement: true,
-          },
-        },
-      },
       orderBy: {
         creation: 'desc',
       },
@@ -28,11 +21,10 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
 }
 
 function transform(
-  feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecordWithDepartment>
+  feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecord>
 ): FeuillesDeRouteReadModel {
   return {
-    departement: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.nom,
-    feuillesDeRoute: feuillesDeRouteRecord.map((feuillesDeRouteRecord) => {
+    feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord) => {
       return {
         actions: [
           {
@@ -56,7 +48,7 @@ function transform(
         ],
         beneficiaires: 5,
         coFinanceurs: 3,
-        nom: feuillesDeRouteRecord.nom,
+        nom: feuilleDeRouteRecord.nom,
         structureCoPorteuse: {
           nom: 'CC des Monts du Lyonnais',
           uid: 'structureCoPorteuseFooId',
@@ -66,7 +58,8 @@ function transform(
           coFinancement: 0,
           financementAccorde: 0,
         },
-        uid: String(feuillesDeRouteRecord.id),
+        uid: String(feuilleDeRouteRecord.id),
+        uidGouvernance: feuilleDeRouteRecord.gouvernanceDepartementCode,
       }
     }),
     totaux: {
@@ -74,16 +67,5 @@ function transform(
       coFinancement: 0,
       financementAccorde: 0,
     },
-    uidGouvernance: feuillesDeRouteRecord[0].relationGouvernance.relationDepartement.code,
   }
 }
-
-type FeuilleDeRouteRecordWithDepartment = Prisma.FeuilleDeRouteRecordGetPayload<{
-  include: {
-    relationGouvernance: {
-      include: {
-        relationDepartement: true
-      }
-    }
-  }
-}>

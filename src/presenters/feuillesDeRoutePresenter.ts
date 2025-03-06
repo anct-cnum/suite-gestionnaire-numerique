@@ -7,8 +7,7 @@ export function feuillesDeRoutePresenter(
   feuillesDeRouteReadModel: FeuillesDeRouteReadModel
 ): FeuillesDeRouteViewModel {
   return {
-    feuillesDeRoute:
-      feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(feuillesDeRouteReadModel.uidGouvernance)),
+    feuillesDeRoute: feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel()),
     formulaire: {
       contratPreexistant: [
         {
@@ -57,21 +56,20 @@ export function feuillesDeRoutePresenter(
         },
       ],
     },
-    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route · ${feuillesDeRouteReadModel.departement}`,
+    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route`,
     totaux: {
       budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
       coFinancement: formatMontant(feuillesDeRouteReadModel.totaux.coFinancement),
       financementAccorde: formatMontant(feuillesDeRouteReadModel.totaux.financementAccorde),
     },
-    uidGouvernance: feuillesDeRouteReadModel.uidGouvernance,
   }
 }
 
-function toFeuilleDeRouteViewModel(uidGouvernance: string) {
+function toFeuilleDeRouteViewModel() {
   return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => ({
-    actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
+    actions: feuilleDeRoute.actions.map(toActionViewModel(feuilleDeRoute.uidGouvernance, feuilleDeRoute.uid)),
     links: {
-      detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
+      detail: `/gouvernance/${feuilleDeRoute.uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
     },
     nom: feuilleDeRoute.nom,
     nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
@@ -153,7 +151,6 @@ export type FeuillesDeRouteViewModel = Readonly<{
     coFinancement: string
     financementAccorde: string
   }>
-  uidGouvernance: string
 }>
 
 export type FeuilleDeRouteViewModel = Readonly<{

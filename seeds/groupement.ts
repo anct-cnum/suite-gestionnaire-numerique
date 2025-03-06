@@ -26,7 +26,7 @@ void migration()
 function unGroupementDeTest(): Prisma.GroupementRecordUncheckedCreateInput {
   return {
     id: 10_000_000,
-    nom: 'SGN Corporation',
+    nom: 'Groupement MIN',
   }
 }
 

@@ -19,7 +19,6 @@ export interface FeuillesDeRouteLoader {
 }
 
 export type FeuillesDeRouteReadModel = Readonly<{
-  departement: string
   feuillesDeRoute: ReadonlyArray<{
     actions: ReadonlyArray<{
       nom: string
@@ -53,13 +52,13 @@ export type FeuillesDeRouteReadModel = Readonly<{
       financementAccorde: number
     }>
     uid: string
+    uidGouvernance: string
   }>
   totaux: Readonly<{
     budget: number
     coFinancement: number
     financementAccorde: number
   }>
-  uidGouvernance: string
 }>
 
 type Query = Readonly<{

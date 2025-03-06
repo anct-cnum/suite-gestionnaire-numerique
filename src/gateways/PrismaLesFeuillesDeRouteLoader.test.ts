@@ -25,7 +25,6 @@ describe('récupérer les feuilles de route loader', () => {
 
     // THEN
     expect(feuillesDeRouteReadModel).toStrictEqual<FeuillesDeRouteReadModel>({
-      departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [
         {
           actions: [
@@ -61,6 +60,7 @@ describe('récupérer les feuilles de route loader', () => {
             financementAccorde: 0,
           },
           uid: '2',
+          uidGouvernance: '93',
         },
         {
           actions: [
@@ -96,6 +96,7 @@ describe('récupérer les feuilles de route loader', () => {
             financementAccorde: 0,
           },
           uid: '1',
+          uidGouvernance: '93',
         },
       ],
       totaux: {
@@ -103,7 +104,6 @@ describe('récupérer les feuilles de route loader', () => {
         coFinancement: 0,
         financementAccorde: 0,
       },
-      uidGouvernance: '93',
     })
   })
 })

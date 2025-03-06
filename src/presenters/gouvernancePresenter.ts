@@ -2,31 +2,27 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
-import { isNullish } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
   now: Date
 ): GouvernanceViewModel {
-  const hasMembres = gouvernanceReadModel.syntheseMembres.total !== 0
   return {
     ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
     comiteARemplir,
     dateAujourdhui: formatForInputDate(now),
     departement: gouvernanceReadModel.departement,
-    hasMembres,
-    isVide: isGouvernanceVide(gouvernanceReadModel, !hasMembres),
     links: {
       membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     sectionFeuillesDeRoute: {
+      ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
         feuillesDeRoute:
-          gouvernanceReadModel.feuillesDeRoute?.map(toFeuillesDeRouteViewModel(gouvernanceReadModel.uid)),
+          gouvernanceReadModel.feuillesDeRoute.map(toFeuillesDeRouteViewModel(gouvernanceReadModel.uid)),
       },
-      ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
     },
     sectionMembres: {
       ...{ coporteurs: gouvernanceReadModel.syntheseMembres.coporteurs.map(toCoporteursDetailsViewModel) },
@@ -50,8 +46,6 @@ export type GouvernanceViewModel = Readonly<{
   comiteARemplir: ComiteViewModel
   dateAujourdhui: string
   departement: string
-  isVide: boolean
-  hasMembres: boolean
   notePrivee?: Readonly<{
     edition: string
     resume: string
@@ -59,7 +53,7 @@ export type GouvernanceViewModel = Readonly<{
   }>
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
-    feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteViewModel>
+    feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
     total: string
     wording: string
     lien: Readonly<{
@@ -87,14 +81,6 @@ export type GouvernanceViewModel = Readonly<{
     membres: string
   }
 }>
-
-function isGouvernanceVide(gouvernanceReadModel: UneGouvernanceReadModel, pasDeMembre: boolean): boolean {
-  return [
-    gouvernanceReadModel.comites,
-    gouvernanceReadModel.feuillesDeRoute,
-    gouvernanceReadModel.noteDeContexte,
-  ].every(isNullish) && pasDeMembre
-}
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
   const date = comite.date !== undefined && comite.date >= now
@@ -241,9 +227,6 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
 }
 
 function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembres']): string {
-  if (syntheseMembres.total === 0) {
-    return '0 membre'
-  }
   return [
     [syntheseMembres.coporteurs.length, 'co-porteur'] as const,
     [syntheseMembres.total, 'membre'] as const,
@@ -254,9 +237,10 @@ function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembre
 }
 
 function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): GouvernanceViewModel['sectionFeuillesDeRoute'] {
-  if (!gouvernance.feuillesDeRoute) {
+  if (gouvernance.feuillesDeRoute.length === 0) {
     return {
       budgetTotalCumule: '0',
+      feuillesDeRoute: [],
       lien: {
         label: '',
         url: '/',
@@ -280,6 +264,7 @@ function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): Gouve
 
   return {
     budgetTotalCumule: formaterEnNombreFrancais(budgetTotalCumule),
+    feuillesDeRoute: [],
     lien,
     total: String(nombreDeFeuillesDeRoute),
     wording: `feuille${formatPluriel(nombreDeFeuillesDeRoute)} de route`,
