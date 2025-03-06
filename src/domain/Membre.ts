@@ -36,6 +36,10 @@ export abstract class Membre extends Entity<MembreState> {
     return uidGouvernance === this.uidGouvernance.state.value
   }
 
+  peutLireUneNotePrivee(roles: ReadonlyArray<string>): boolean {
+    return this.roles.some((role) => roles.includes(role.state.value))
+  }
+
   abstract confirmer(): Result<MembreFailure, Membre>
 }
 
