@@ -31,7 +31,7 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
             {' '}
           </p>
           <p className="color-blue-france fr-mb-0">
-            Total des subventions de l‘État
+            Total des financements accordés
             {' '}
           </p>
         </div>

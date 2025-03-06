@@ -89,9 +89,7 @@ export function FormulaireAction({
             />
           </div>
           <p className="color-grey">
-            Indiquez à quel besoins se rapporte l’action pour laquelle vous demandez une subvention.
-            Si vos besoins ont changé depuis leur première expression dans le formulaire de janvier 2024
-            vous pouvez tout à fait sélectionner une autre catégorie de besoin.
+            Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.
           </p>
           <hr />
           {besoins
@@ -468,8 +466,6 @@ export function FormulaireAction({
           </div>
           <p className="color-grey">
             Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.
-            Dans le cas où vous renseignez plusieurs destinataires des fonds pour cette action,
-            un encart s’ouvrira vous demandant d’indiquer le montant de la subvention par destinataire.
           </p>
           <div>
             {
