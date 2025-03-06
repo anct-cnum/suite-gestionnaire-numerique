@@ -36,8 +36,12 @@ export abstract class Membre extends Entity<MembreState> {
     return uidGouvernance === this.uidGouvernance.state.value
   }
 
-  peutLireUneNotePrivee(roles: ReadonlyArray<string>): boolean {
-    return this.roles.some((role) => roles.includes(role.state.value))
+  peutLireNotePriveeDeLaGouvernance(gouvernanceUid: GouvernanceUid): boolean {
+    return this.roles.some(role => role.isCoporteur()) && this.appartientALaGouvernance(gouvernanceUid.state.value)
+  }
+
+  static gestionnairePeutVoirNotePrivee(membres: ReadonlyArray<Membre>, codeDepartementGouvernance: string): boolean {
+    return membres.some((membre) => membre.peutLireNotePriveeDeLaGouvernance(new GouvernanceUid(codeDepartementGouvernance)))
   }
 
   abstract confirmer(): Result<MembreFailure, Membre>
@@ -53,16 +57,16 @@ export class Role extends ValueObject<AttributState> {
   constructor(value: string) {
     super({ value })
   }
+
+  isCoporteur(): boolean {
+    return 'coporteur' === this.state.value
+  }
 }
 
 export class Statut extends ValueObject<AttributState> {
   constructor(value: string) {
     super({ value })
   }
-}
-
-export function gestionnairePeutVoirNotePrivee(membres: ReadonlyArray<Membre>, codeDepartement: string): boolean {
-  return membres.some((membre) => membre.state.roles.includes('coporteur') && membre.appartientALaGouvernance(codeDepartement))
 }
 
 export type MembreState = Readonly<{
