@@ -27,7 +27,7 @@ void migration()
 function uneRegionDeTest(): Prisma.RegionRecordUncheckedCreateInput {
   return {
     code: 'zz',
-    nom: 'SGN région',
+    nom: 'Région MIN',
   }
 }
 

@@ -173,7 +173,6 @@ export function feuillesDeRouteReadModelFactory(
   override?: Partial<FeuillesDeRouteReadModel>
 ): FeuillesDeRouteReadModel {
   return {
-    departement: 'Seine-Saint-Denis',
     feuillesDeRoute: [
       {
         actions: [
@@ -209,6 +208,7 @@ export function feuillesDeRouteReadModelFactory(
           financementAccorde: 0,
         },
         uid: 'feuilleDeRouteFooId1',
+        uidGouvernance: 'gouvernanceFooId',
       },
       {
         actions: [
@@ -244,6 +244,7 @@ export function feuillesDeRouteReadModelFactory(
           financementAccorde: 0,
         },
         uid: 'feuilleDeRouteFooId2',
+        uidGouvernance: 'gouvernanceFooId',
       },
     ],
     totaux: {
@@ -251,7 +252,6 @@ export function feuillesDeRouteReadModelFactory(
       coFinancement: 0,
       financementAccorde: 0,
     },
-    uidGouvernance: 'gouvernanceFooId',
     ...override,
   }
 }

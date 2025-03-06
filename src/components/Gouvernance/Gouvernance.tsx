@@ -12,9 +12,7 @@ import ResumeFeuilleDeRoute from './FeuilleDeRoute/ResumeFeuilleDeRoute'
 import ResumeFeuilleDeRouteVide from './FeuilleDeRoute/ResumeFeuilleDeRouteVide'
 import styles from './Gouvernance.module.css'
 import MembreRempli from './Membre/MembreRempli'
-import MembreVide from './Membre/MembreVide'
 import ResumeMembre from './Membre/ResumeMembre'
-import ResumeMembreVide from './Membre/ResumeMembreVide'
 import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import ModifierNoteDeContexte from './NoteDeContexte/ModifierNoteDeContexte'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
@@ -32,7 +30,6 @@ import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { noop } from '@/shared/lang'
 
 export default function Gouvernance(): ReactElement {
   // Stryker disable next-line BooleanLiteral
@@ -59,108 +56,95 @@ export default function Gouvernance(): ReactElement {
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
       </p>
-      {
-        gouvernanceViewModel.isVide ?
-          null :
-          (
-            <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-              {
-                gouvernanceViewModel.hasMembres ?
-                  <ResumeMembre
-                    denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
-                    membresLink={gouvernanceViewModel.links.membres}
-                    total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
-                  /> : (
-                    <Resume style={styles['resume-membres']}>
-                      <ResumeMembreVide />
-                    </Resume>
-                  )
-              }
-              {
-                gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ?
-                  <ResumeFeuilleDeRoute
-                    link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
-                    linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
-                    total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
-                    wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
-                  /> : (
-                    <Resume style={styles['resume-feuilles-de-route']}>
-                      <ResumeFeuilleDeRouteVide />
-                    </Resume>
-                  )
-              }
-              {
-                gouvernanceViewModel.notePrivee ? (
-                  <>
-                    <Drawer
-                      boutonFermeture="Fermer le formulaire de modification d’une note privée"
-                      closeDrawer={() => {
-                        setIsDrawerOpen(false)
-                      }}
-                      id={drawerNotePriveeId}
-                      // Stryker disable next-line BooleanLiteral
-                      isFixedWidth={false}
-                      isOpen={isDrawerOpen}
-                      labelId={labelNotePriveeId}
-                    >
-                      <ModifierUneNotePrivee
-                        closeDrawer={() => {
-                          setIsDrawerOpen(false)
-                        }}
-                        edition={gouvernanceViewModel.notePrivee.edition}
-                        id={drawerNotePriveeId}
-                        labelId={labelNotePriveeId}
-                        texte={gouvernanceViewModel.notePrivee.texte}
-                        uidGouvernance={gouvernanceViewModel.uid}
-                      />
-                    </Drawer>
-                    <Resume style={styles['resume-note-privee']}>
-                      <ResumeNotePrivee
-                        edition={gouvernanceViewModel.notePrivee.edition}
-                        id={drawerNotePriveeId}
-                        showDrawer={() => {
-                          setIsDrawerOpen(true)
-                        }}
-                        texte={gouvernanceViewModel.notePrivee.resume}
-                      />
-                    </Resume>
-                  </>
-                ) : (
-                  <>
-                    <Drawer
-                      boutonFermeture="Fermer le formulaire de création d’une note privée"
-                      closeDrawer={() => {
-                        setIsDrawerOpen(false)
-                      }}
-                      id={drawerNotePriveeId}
-                      // Stryker disable next-line BooleanLiteral
-                      isFixedWidth={false}
-                      isOpen={isDrawerOpen}
-                      labelId={labelNotePriveeId}
-                    >
-                      <AjouterUneNotePrivee
-                        closeDrawer={() => {
-                          setIsDrawerOpen(false)
-                        }}
-                        id={drawerNotePriveeId}
-                        labelId={labelNotePriveeId}
-                        uidGouvernance={gouvernanceViewModel.uid}
-                      />
-                    </Drawer>
-                    <Resume style={styles['resume-note-privee-vide']}>
-                      <ResumeNotePriveeVide
-                        id={drawerNotePriveeId}
-                        showDrawer={() => {
-                          setIsDrawerOpen(true)
-                        }}
-                      />
-                    </Resume>
-                  </>
-                )
-              }
-            </div>
+      <div className="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+        <ResumeMembre
+          denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
+          membresLink={gouvernanceViewModel.links.membres}
+          total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
+        />
+        {
+          gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute.length > 0 ?
+            <ResumeFeuilleDeRoute
+              link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
+              linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
+              total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
+              wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
+            /> : (
+              <Resume style={styles['resume-feuilles-de-route']}>
+                <ResumeFeuilleDeRouteVide />
+              </Resume>
+            )
+        }
+        {
+          gouvernanceViewModel.notePrivee ? (
+            <>
+              <Drawer
+                boutonFermeture="Fermer le formulaire de modification d’une note privée"
+                closeDrawer={() => {
+                  setIsDrawerOpen(false)
+                }}
+                id={drawerNotePriveeId}
+                // Stryker disable next-line BooleanLiteral
+                isFixedWidth={false}
+                isOpen={isDrawerOpen}
+                labelId={labelNotePriveeId}
+              >
+                <ModifierUneNotePrivee
+                  closeDrawer={() => {
+                    setIsDrawerOpen(false)
+                  }}
+                  edition={gouvernanceViewModel.notePrivee.edition}
+                  id={drawerNotePriveeId}
+                  labelId={labelNotePriveeId}
+                  texte={gouvernanceViewModel.notePrivee.texte}
+                  uidGouvernance={gouvernanceViewModel.uid}
+                />
+              </Drawer>
+              <Resume style={styles['resume-note-privee']}>
+                <ResumeNotePrivee
+                  edition={gouvernanceViewModel.notePrivee.edition}
+                  id={drawerNotePriveeId}
+                  showDrawer={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                  texte={gouvernanceViewModel.notePrivee.resume}
+                />
+              </Resume>
+            </>
+          ) : (
+            <>
+              <Drawer
+                boutonFermeture="Fermer le formulaire de création d’une note privée"
+                closeDrawer={() => {
+                  setIsDrawerOpen(false)
+                }}
+                id={drawerNotePriveeId}
+                // Stryker disable next-line BooleanLiteral
+                isFixedWidth={false}
+                isOpen={isDrawerOpen}
+                labelId={labelNotePriveeId}
+              >
+                <AjouterUneNotePrivee
+                  closeDrawer={() => {
+                    setIsDrawerOpen(false)
+                  }}
+                  id={drawerNotePriveeId}
+                  labelId={labelNotePriveeId}
+                  uidGouvernance={gouvernanceViewModel.uid}
+                />
+              </Drawer>
+              <Resume style={styles['resume-note-privee-vide']}>
+                <ResumeNotePriveeVide
+                  id={drawerNotePriveeId}
+                  showDrawer={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                />
+              </Resume>
+            </>
           )
-      }
+        }
+      </div>
       <section aria-labelledby="comitologie">
         <Drawer
           boutonFermeture="Fermer le formulaire de création d’un comité"
@@ -211,59 +195,45 @@ export default function Gouvernance(): ReactElement {
             </SectionRemplie>
           ) : (
             <SectionVide
-              buttonLabel="Ajouter un comité"
-              drawerComiteId={drawerComiteId}
               id="comitologie"
-              showDrawer={() => {
-                setIsDrawerOpen(true)
-              }}
               title="Comitologie"
             >
-              <ComitologieVide />
+              <ComitologieVide
+                drawerComiteId={drawerComiteId}
+                showDrawer={() => {
+                  setIsDrawerOpen(true)
+                }}
+              />
             </SectionVide>
           )
         }
       </section>
       <section aria-labelledby="membre">
-        {
-          gouvernanceViewModel.hasMembres ? (
-            <SectionRemplie
-              button={(
-                <Link
-                  className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
-                  href={`/gouvernance/${gouvernanceViewModel.uid}/membres`}
-                >
-                  Gérer
-                </Link>
-              )}
-              id="membre"
-              subTitle={
-                <SubSectionTitle>
-                  {gouvernanceViewModel.sectionMembres.wordingRecap}
-                </SubSectionTitle>
-              }
-              title={`${gouvernanceViewModel.sectionMembres.totalEtWording[0]} ${gouvernanceViewModel.sectionMembres.totalEtWording[1]}`}
+        <SectionRemplie
+          button={(
+            <Link
+              className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
+              href={`/gouvernance/${gouvernanceViewModel.uid}/membres`}
             >
-              <MembreRempli
-                coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
-              />
-            </SectionRemplie>
-          ) : (
-            <SectionVide
-              buttonLabel="Ajouter un membre"
-              drawerComiteId=""
-              id="membre"
-              showDrawer={noop}
-              title="0 membre"
-            >
-              <MembreVide />
-            </SectionVide>
-          )
-        }
+              Gérer
+            </Link>
+          )}
+          id="membre"
+          subTitle={
+            <SubSectionTitle>
+              {gouvernanceViewModel.sectionMembres.wordingRecap}
+            </SubSectionTitle>
+          }
+          title={`${gouvernanceViewModel.sectionMembres.totalEtWording[0]} ${gouvernanceViewModel.sectionMembres.totalEtWording[1]}`}
+        >
+          <MembreRempli
+            coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
+          />
+        </SectionRemplie>
       </section>
       <section aria-labelledby="feuilleDeRoute">
         {
-          gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute ? (
+          gouvernanceViewModel.sectionFeuillesDeRoute.feuillesDeRoute.length > 0 ? (
             <SectionRemplie
               button={(
                 <Link
@@ -287,13 +257,10 @@ export default function Gouvernance(): ReactElement {
             </SectionRemplie>
           ) : (
             <SectionVide
-              buttonLabel="Ajouter une feuille de route"
-              drawerComiteId=""
               id="feuilleDeRoute"
-              showDrawer={noop}
               title="0 feuille de route"
             >
-              <FeuilleDeRouteVide />
+              <FeuilleDeRouteVide lien={`/gouvernance/${gouvernanceViewModel.uid}/feuilles-de-route`} />
             </SectionVide>
           )
         }
@@ -355,15 +322,15 @@ export default function Gouvernance(): ReactElement {
           ) : (
             <>
               <SectionVide
-                buttonLabel="Ajouter une note de contexte"
-                drawerComiteId={drawerNoteDeContexteId}
                 id="noteDeContexte"
-                showDrawer={() => {
-                  setIsDrawerOpen(true)
-                }}
                 title="Note de contexte"
               >
-                <NoteDeContexteVide />
+                <NoteDeContexteVide
+                  drawerNoteDeContexteId={drawerNoteDeContexteId}
+                  showDrawer={() => {
+                    setIsDrawerOpen(true)
+                  }}
+                />
               </SectionVide>
 
               <Drawer

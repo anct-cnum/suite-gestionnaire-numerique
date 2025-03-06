@@ -42,8 +42,6 @@ export function gouvernanceViewModelFactory(
     },
     dateAujourdhui: '',
     departement: '',
-    hasMembres: false,
-    isVide: false,
     links: {
       membres: '/',
     },
@@ -72,7 +70,7 @@ export function gouvernanceViewModelFactory(
       },
       sousTitre: '',
     },
-    uid: '',
+    uid: 'gouvernanceFooId',
     ...override,
   }
 }

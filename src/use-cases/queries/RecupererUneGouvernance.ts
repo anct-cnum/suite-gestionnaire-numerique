@@ -29,7 +29,7 @@ export interface UneGouvernanceLoader {
 export type UneGouvernanceReadModel = Readonly<{
   departement: string
   comites?: ReadonlyArray<ComiteReadModel>
-  feuillesDeRoute?: ReadonlyArray<FeuilleDeRouteReadModel>
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>
   syntheseMembres: SyntheseMembres
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel

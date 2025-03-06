@@ -22,11 +22,11 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(labelMontantTotalDesSubventions).toBeInTheDocument()
     const montantTotalDesCofinancements = within(sectionBudgetGlobal).getAllByText('0 €', { selector: 'p' })[0]
     expect(montantTotalDesCofinancements).toBeInTheDocument()
-    const labelMontantTotalDesCofinancements = screen.getByText('Total des co-financements', { selector: 'p' })
+    const labelMontantTotalDesCofinancements = within(sectionBudgetGlobal).getByText('Total des co-financements', { selector: 'p' })
     expect(labelMontantTotalDesCofinancements).toBeInTheDocument()
     const montantBudgetTotalDesFeuillesDeRoute = within(sectionBudgetGlobal).getAllByText('0 €', { selector: 'p' })[2]
     expect(montantBudgetTotalDesFeuillesDeRoute).toBeInTheDocument()
-    const labelBudgetTotalDesFeuillesDeRoute = screen.getByText('Budget total des feuilles de route', { selector: 'p' })
+    const labelBudgetTotalDesFeuillesDeRoute = within(sectionBudgetGlobal).getByText('Budget total des feuilles de route', { selector: 'p' })
     expect(labelBudgetTotalDesFeuillesDeRoute).toBeInTheDocument()
     const listeDesFeuillesDeRoute = screen.getByRole('list', { name: 'Feuilles de route' })
     expect(listeDesFeuillesDeRoute).toBeInTheDocument()
@@ -71,10 +71,28 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(boutonOuvrirPdf).toHaveAttribute('type', 'button')
   })
 
+  it('quand il n’y a pas de feuille de route, alors un bandeau s’affiche explicitant d’en ajouter', () => {
+    // WHEN
+    afficherLesFeuillesDeRoute({}, feuillesDeRouteReadModelFactory({ feuillesDeRoute: [] }))
+
+    // THEN
+    const labelMontantTotalDesSubventions = screen.queryByText('Total des subventions de l‘État', { selector: 'p' })
+    expect(labelMontantTotalDesSubventions).not.toBeInTheDocument()
+    const labelMontantTotalDesCofinancements = screen.queryByText('Total des co-financements', { selector: 'p' })
+    expect(labelMontantTotalDesCofinancements).not.toBeInTheDocument()
+    const labelBudgetTotalDesFeuillesDeRoute = screen.queryByText('Budget total des feuilles de route', { selector: 'p' })
+    expect(labelBudgetTotalDesFeuillesDeRoute).not.toBeInTheDocument()
+
+    const contenuFeuilleDeRoute = screen.getByRole('article')
+    const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute).getByText('Aucune feuille de route', { selector: 'p' })
+    expect(contenuTitreFeuilleDeRoute).toBeInTheDocument()
+    const feuilleDeRoute = within(contenuFeuilleDeRoute).getByText('Cliquez sur le bouton ajouter une feuille de route pour définir votre première feuille de route.', { selector: 'p' })
+    expect(feuilleDeRoute).toBeInTheDocument()
+  })
+
   it('quand il y a une seule feuille de route, alors le titre est au singulier', () => {
     // WHEN
     afficherLesFeuillesDeRoute({}, feuillesDeRouteReadModelFactory({
-      departement: 'Seine-Saint-Denis',
       feuillesDeRoute: [feuillesDeRouteReadModelFactory().feuillesDeRoute[0]],
     }))
 
@@ -133,6 +151,6 @@ describe('les feuilles de route d’une gouvernance', () => {
     mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
   ): void {
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
-    renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)
+    renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options, { departement: 'Seine-Saint-Denis' })
   }
 })

@@ -107,9 +107,9 @@ function transformStructuresCoNumToStructures(
 
 function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
   return {
-    adresse: '3 BIS AVENUE CHARLES DE GAULLE',
-    codePostal: '84200',
-    commune: 'PARIS',
+    adresse: '3 avenue Charles De Gaulle',
+    codePostal: '75000',
+    commune: 'Paris',
     contact: {
       email: 'contact@example.com',
       fonction: 'Président',
@@ -120,8 +120,8 @@ function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
     departementCode: 'zzz',
     id: 10_000_000,
     idMongo: 'zzz',
-    identifiantEtablissement: 'toto',
-    nom: 'SGN structure',
+    identifiantEtablissement: 'zzzzzzzzzzzzzz',
+    nom: 'Structure MIN',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
   }
