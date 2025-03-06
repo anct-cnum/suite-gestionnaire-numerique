@@ -255,20 +255,20 @@ function unUtilisateurDeTest(): Prisma.UtilisateurRecordUncheckedCreateInput {
 
   return {
     dateDeCreation: now,
-    departementCode: '11',
+    departementCode: 'zzz',
     derniereConnexion: now,
     emailDeContact: 'compte.de.test@example.com',
-    groupementId: 18,
+    groupementId: 10_000_000,
     inviteLe: now,
     isSuperAdmin: true,
     isSupprime: false,
     nom: 'Test',
     prenom: 'CompteDe',
-    regionCode: '52',
+    regionCode: 'zz',
     role: 'administrateur_dispositif',
     ssoEmail: 'compte.de.test@example.com',
     ssoId: 'e7a41249-942d-46b7-b362-5f00d3166ea1',
-    structureId: 292,
+    structureId: 10_000_000,
     telephone: '0102030405',
   }
 }

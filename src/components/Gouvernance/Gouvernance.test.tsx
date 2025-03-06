@@ -21,39 +21,6 @@ describe('gouvernance', () => {
     expect(sousTitre).toBeInTheDocument()
   })
 
-  it('quand j’affiche une gouvernance totalement vide, alors elle n’affiche pas ses résumés', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      comites: undefined,
-      feuillesDeRoute: undefined,
-      noteDeContexte: undefined,
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [],
-        total: 0,
-      },
-    }), epochTimePlusOneDay)
-
-    // WHEN
-    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
-
-    // THEN
-    const membre = screen.queryByText(matchWithoutMarkup('2 membres de la gouvernance'), { selector: 'p' })
-    expect(membre).not.toBeInTheDocument()
-    const membreAVide = screen.queryByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'p' })
-    expect(membreAVide).not.toBeInTheDocument()
-    const feuilleDeRoute = screen.queryByText(matchWithoutMarkup('2 feuilles de route territoriale'), { selector: 'p' })
-    expect(feuilleDeRoute).not.toBeInTheDocument()
-    const feuilleDeRouteVide = screen.queryByText(matchWithoutMarkup('0 feuille de route territoriale'), { selector: 'p' })
-    expect(feuilleDeRouteVide).not.toBeInTheDocument()
-    const auteurDeLaNote = screen.queryAllByText('Modifié le 01/01/1970 par Jean Deschamps', { selector: 'p' })
-    expect(auteurDeLaNote).toStrictEqual([])
-    const resume = screen.queryByText('Aucune note de contexte pour le moment.', { selector: 'p' })
-    expect(resume).not.toBeInTheDocument()
-    const contenuTitreComitologie = screen.getByText('Actuellement, vous n’avez pas de comité', { selector: 'p' })
-    expect(contenuTitreComitologie).toBeInTheDocument()
-  })
-
   it('quand j’affiche une gouvernance sans comité, alors elle s’affiche avec sa section lui demandant d’en ajouter un', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ comites: undefined, departement: 'Rhône' }), epochTimePlusOneDay)
@@ -162,40 +129,6 @@ describe('gouvernance', () => {
     expect(columns2Body).toHaveLength(3)
     expect(columns2Body[1].textContent).toBe('Comité technique : 02/01/1970')
     expect(columns2Body[2].textContent).toBe('Trimestriel')
-  })
-
-  it('quand j’affiche une gouvernance sans membre, alors elle s’affiche avec son résumé et sa section lui demandant d’en ajouter un', () => {
-    // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      departement: 'Rhône',
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [],
-        total: 0,
-      },
-    }), epochTimePlusOneDay)
-
-    // WHEN
-    renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
-
-    // THEN
-    const resumes = screen.getAllByText(matchWithoutMarkup('0 membre de la gouvernance'), { selector: 'div' })
-    expect(resumes[0]).toBeInTheDocument()
-
-    const sectionMembre = screen.getByRole('region', { name: '0 membre' })
-    const enTeteMembre = within(sectionMembre).getByRole('banner')
-    const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '0 membre' })
-    expect(titreMembre).toBeInTheDocument()
-    const contenuMembre = within(sectionMembre).getByRole('article')
-    const contenuTitreMembre = within(contenuMembre).getByText('Actuellement, il n’y a aucun membre dans la gouvernance', { selector: 'p' })
-    expect(contenuTitreMembre).toBeInTheDocument()
-    const membre = within(contenuMembre).getByText('Vous pouvez inviter les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer et/ou de porter une feuille de route territoriale en leur partageant ce lien vers les formulaires prévus à cet effet :', { selector: 'p' })
-    expect(membre).toBeInTheDocument()
-    const lienMembre = screen.getByRole('link', { name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance' })
-    expect(lienMembre).toHaveAttribute('href', 'https://inclusion-numerique.anct.gouv.fr/gouvernance')
-    expect(lienMembre).toOpenInNewTab('Formulaire d’invitation à la gouvernance')
-    const ajouterDesMembres = within(sectionMembre).getByRole('button', { name: 'Ajouter un membre' })
-    expect(ajouterDesMembres).toHaveAttribute('type', 'button')
   })
 
   it('quand j’affiche une gouvernance avec au moins un membre, alors elle s’affiche avec son résumé et sa section membre', () => {
@@ -340,7 +273,7 @@ describe('gouvernance', () => {
 
   it('quand j’affiche une gouvernance sans feuille de route, alors elle s’affiche avec son résumé à 0 et sa section lui demandant d’en ajouter une', () => {
     // GIVEN
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: undefined }), epochTimePlusOneDay)
+    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ departement: 'Rhône', feuillesDeRoute: [] }), epochTimePlusOneDay)
 
     // WHEN
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
@@ -356,10 +289,10 @@ describe('gouvernance', () => {
     const contenuFeuilleDeRoute = within(sectionFeuilleDeRoute).getAllByRole('article')
     const contenuTitreFeuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Aucune feuille de route', { selector: 'p' })
     expect(contenuTitreFeuilleDeRoute).toBeInTheDocument()
-    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Commencez par créer des porteurs au sein de la gouvernance pour définir votre première feuille de route.', { selector: 'p' })
+    const feuilleDeRoute = within(contenuFeuilleDeRoute[0]).getByText('Cliquez sur le bouton gérer les feuilles de route pour définir votre première feuille de route.', { selector: 'p' })
     expect(feuilleDeRoute).toBeInTheDocument()
-    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('button', { name: 'Ajouter une feuille de route' })
-    expect(ajouterDesFeuilleDeRoutes).toHaveAttribute('type', 'button')
+    const ajouterDesFeuilleDeRoutes = within(sectionFeuilleDeRoute).getByRole('link', { name: 'Gérer les feuilles de route' })
+    expect(ajouterDesFeuilleDeRoutes).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuilles-de-route')
   })
 
   it('quand j’affiche une gouvernance avec au moins une feuille de route, alors elle s’affiche avec son résumé et sa section feuille de route', () => {

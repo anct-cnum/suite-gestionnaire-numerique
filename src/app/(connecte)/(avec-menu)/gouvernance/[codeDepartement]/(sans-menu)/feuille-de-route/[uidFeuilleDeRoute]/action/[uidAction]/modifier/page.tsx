@@ -5,10 +5,8 @@ import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
-import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
-import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
@@ -18,11 +16,8 @@ export default async function ActionModifierController({ params }: Props): Promi
     const gouvernanceReadModel = await new RecupererUneGouvernance(gouvernanceLoader).handle({ codeDepartement })
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
-    const feuillesDeRouteReadModel = await
-    new RecupererLesFeuillesDeRoute(
-      new PrismaLesFeuillesDeRouteLoader()
-    ).handle({ codeDepartement })
-    const actionViewModel = actionPresenter(feuillesDeRouteReadModel)
+    const actionViewModel = actionPresenter(codeDepartement)
+
     return (
       <div className="fr-grid-row">
         <div className="fr-col-2">

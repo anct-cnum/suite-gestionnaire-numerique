@@ -1,10 +1,7 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
-import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export function actionPresenter(
-  feuillesDeRouteReadModel: FeuillesDeRouteReadModel
-): ActionViewModel {
+export function actionPresenter(codeDepartement: string): ActionViewModel {
   return {
     anneeDeDebut: '2025',
     anneeDeFin: undefined,
@@ -110,7 +107,7 @@ export function actionPresenter(
     ],
     contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-    lienPourModifier: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
+    lienPourModifier: `/gouvernance/${codeDepartement}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
     nom: 'Action test',
     nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
@@ -136,8 +133,8 @@ export function actionPresenter(
       financementAccorde: formatMontant(20_000),
     },
     uid: 'uid-action',
-    urlFeuilleDeRoute: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}/feuille-de-route/116`,
-    urlGouvernance: `/gouvernance/${feuillesDeRouteReadModel.uidGouvernance}`,
+    urlFeuilleDeRoute: `/gouvernance/${codeDepartement}/feuille-de-route/116`,
+    urlGouvernance: `/gouvernance/${codeDepartement}`,
   }
 }
 

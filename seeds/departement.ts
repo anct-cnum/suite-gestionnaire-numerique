@@ -27,7 +27,7 @@ void migration()
 function unDepartementDeTest(): Prisma.DepartementRecordUncheckedCreateInput {
   return {
     code: 'zzz',
-    nom: 'SGN département',
+    nom: 'Département MIN',
     regionCode: 'zz',
   }
 }
