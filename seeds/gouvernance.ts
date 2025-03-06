@@ -441,7 +441,7 @@ function grouperDonneesACreer(
             // @ts-expect-error
             id: membreId,
             idFNE: membreFNE.id,
-
+            oldUUID: membreFNE.id,
             statut,
             // @ts-expect-error
             type: membreFNE.relationInformationSiret?.formeJuridique ?? type,
@@ -451,6 +451,7 @@ function grouperDonneesACreer(
             gouvernanceDepartementCode,
             id: prefectureMembreId,
             idFNE: prefectureMembreId,
+            oldUUID: crypto.randomUUID(),
             statut: 'confirme',
             type: 'Préfecture départementale',
           }
