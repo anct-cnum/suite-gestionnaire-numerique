@@ -61,6 +61,12 @@ export class Statut extends ValueObject<AttributState> {
   }
 }
 
+// vérifier que les membres font partie de la gouvernance
+export function gestionnairePeutVoirNotePrivee(membres: ReadonlyArray<Membre>): boolean {
+  const roles = membres.flatMap(membre => membre.state.roles)
+  return roles.includes('coporteur')
+}
+
 export type MembreState = Readonly<{
   nom: string
   roles: ReadonlyArray<string>

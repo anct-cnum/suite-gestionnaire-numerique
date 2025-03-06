@@ -2,6 +2,8 @@ import { UneGouvernanceLoader, RecupererUneGouvernance, UneGouvernanceReadModel 
 import { GetMembresDuGestionnaireRepository } from '../commands/shared/MembreRepository'
 import { gouvernanceReadModelFactory } from '../testHelper'
 import { Membre } from '@/domain/Membre'
+import { membreFactory } from '@/domain/MembreFactory'
+import { membreConfirmeFactory } from '@/domain/testHelper'
 
 describe('recupérer une gouvernance', () => {
   beforeEach(() => {
@@ -191,10 +193,13 @@ describe('recupérer une gouvernance', () => {
       },
     }
 
-    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new GetMembresDuGestionnaireRepositoryStub())
+    const queryHandler = new RecupererUneGouvernance(new GouvernanceLoaderSpy(), new GetMembresNonCoporteursDuGestionnaireRepositoryStub())
 
     // WHEN
-    const gouvernance = await queryHandler.handle({ codeDepartement: '69', uidUtilisateurCourant: 'fooId' })
+    const gouvernance = await queryHandler.handle({
+      codeDepartement: '69',
+      uidUtilisateurCourant: 'membreNonCoporteurId'
+    })
 
     // THEN
     expect(gouvernance).toStrictEqual({
@@ -240,6 +245,16 @@ class GouvernanceLoaderSpy implements UneGouvernanceLoader {
 
 class GetMembresDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
   async get(): Promise<Array<Membre>> {
-    return Promise.resolve([])
+    return Promise.resolve([
+      membreConfirmeFactory({roles: ['coporteur']})
+    ])
+  }
+}
+
+class GetMembresNonCoporteursDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
+  async get(): Promise<Array<Membre>> {
+    return Promise.resolve([
+      membreConfirmeFactory({roles: ['observateur']})
+    ])
   }
 }

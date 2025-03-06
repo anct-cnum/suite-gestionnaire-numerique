@@ -1,9 +1,9 @@
+import { gestionnairePeutVoirNotePrivee } from '@/domain/Membre'
 import { GetMembresDuGestionnaireRepository } from '../commands/shared/MembreRepository'
 import { QueryHandler } from '../QueryHandler'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
-  // @ts-expect-error
   readonly #repository: GetMembresDuGestionnaireRepository
 
   constructor(loader: UneGouvernanceLoader, repository: GetMembresDuGestionnaireRepository) {
@@ -12,7 +12,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
   }
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.get(query.codeDepartement)
+    const readModel = await this.#loader.get(query.codeDepartement)
       .then((gouvernance) => ({
         ...gouvernance,
         syntheseMembres: {
@@ -23,6 +23,15 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
             .toArray(),
         },
       }))
+    const membres = await this.#repository.get(query.uidUtilisateurCourant)
+    if (!gestionnairePeutVoirNotePrivee(membres)) {
+      const readModelSansNotePrivee = {
+        ...readModel,
+        notePrivee: undefined
+      }
+      return readModelSansNotePrivee
+    }
+    return readModel
   }
 }
 
