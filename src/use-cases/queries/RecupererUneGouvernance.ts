@@ -1,6 +1,6 @@
-import { gestionnairePeutVoirNotePrivee } from '@/domain/Membre'
 import { GetMembresDuGestionnaireRepository } from '../commands/shared/MembreRepository'
 import { QueryHandler } from '../QueryHandler'
+import { gestionnairePeutVoirNotePrivee } from '@/domain/Membre'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
@@ -24,14 +24,11 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
         },
       }))
     const membres = await this.#repository.get(query.uidUtilisateurCourant)
-    if (!gestionnairePeutVoirNotePrivee(membres)) {
-      const readModelSansNotePrivee = {
-        ...readModel,
-        notePrivee: undefined
-      }
-      return readModelSansNotePrivee
+    const peutVoirNotePrivee = gestionnairePeutVoirNotePrivee(membres, query.codeDepartement)
+    return peutVoirNotePrivee ? readModel : {
+      ...readModel,
+      notePrivee: undefined,
     }
-    return readModel
   }
 }
 
