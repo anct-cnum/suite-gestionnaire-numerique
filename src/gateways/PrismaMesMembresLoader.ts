@@ -42,6 +42,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
       },
       departement: gouvernanceRecord.relationDepartement.nom,
       membres: toMembres(gouvernanceRecord.membres)
+        .toSorted(alphaAsc('id'))
         .toSorted(alphaAsc('nom'))
         .map(toMesMembresReadModel),
       roles: [],
