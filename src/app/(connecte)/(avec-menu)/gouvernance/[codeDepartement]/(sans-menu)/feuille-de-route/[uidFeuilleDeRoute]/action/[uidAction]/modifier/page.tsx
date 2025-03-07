@@ -26,7 +26,7 @@ export default async function ActionModifierController({ params }: Props): Promi
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const noopRepository = new class implements GetMembresDuGestionnaireRepository {
     // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-      async get(): Promise<Array<Membre>> {
+      async getMembres(): Promise<Array<Membre>> {
         return Promise.resolve([])
       }
     }()
