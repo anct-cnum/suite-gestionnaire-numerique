@@ -184,4 +184,9 @@
       "",
     ],
   },
+  "apostrophe Français": {
+    "prefix": "_apostrophe",
+    "description": "L’apostrophe Français",
+    "body": ["’"],
+  },
 }
