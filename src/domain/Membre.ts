@@ -37,7 +37,7 @@ export abstract class Membre extends Entity<MembreState> {
   }
 
   peutLireNotePriveeDeLaGouvernance(gouvernanceUid: GouvernanceUid): boolean {
-    return this.roles.some(role => role.isCoporteur()) && this.appartientALaGouvernance(gouvernanceUid.state.value)
+    return this.roles.some((role) => role.isCoporteur()) && this.appartientALaGouvernance(gouvernanceUid.state.value)
   }
 
   static gestionnairePeutVoirNotePrivee(membres: ReadonlyArray<Membre>, codeDepartementGouvernance: string): boolean {
@@ -59,7 +59,7 @@ export class Role extends ValueObject<AttributState> {
   }
 
   isCoporteur(): boolean {
-    return 'coporteur' === this.state.value
+    return this.state.value === 'coporteur'
   }
 }
 
