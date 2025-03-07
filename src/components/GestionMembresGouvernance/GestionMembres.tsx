@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, ReactElement, useId, useState } from 'react'
+import { Fragment, ReactElement, useEffect, useId, useState } from 'react'
 
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
@@ -16,7 +16,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   const selectRoleId = useId()
   const selectTypologieId = useId()
   const labelId = useId()
-  const drawerId = 'drawerId'
+  const drawerId = 'drawerGererLesMembresId'
 
   const [membresView, setMembresView] = useState<MembresView>({
     membres: membresViewModel.membres,
@@ -26,6 +26,17 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   })
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  // Ce code n'est pas testé
+  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
+  useEffect(() => {
+    setMembresView({
+      membres: membresViewModel.membres,
+      roleSelectionne: toutRole,
+      statutSelectionne: 'confirme',
+      typologieSelectionnee: touteTypologie,
+    })
+  }, [membresViewModel.membres])
 
   const candidatsEtSuggeres = membresViewModel.candidats
     .concat(membresViewModel.suggeres)

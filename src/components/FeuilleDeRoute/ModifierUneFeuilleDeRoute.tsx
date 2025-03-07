@@ -21,7 +21,7 @@ export default function ModifierUneFeuilleDeRoute({
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerId = 'drawerId'
+  const drawerId = 'drawerModifierUneFeuilleDeRouteId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
 
