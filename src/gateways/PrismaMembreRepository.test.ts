@@ -4,7 +4,7 @@ import { PrismaMembreRepository } from './PrismaMembreRepository'
 import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MembreUid } from '@/domain/Membre'
-import { membreConfirmeFactory } from '@/domain/testHelper'
+import { membreConfirmeFactory, membrePotentielFactory } from '@/domain/testHelper'
 
 describe('membre repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -201,5 +201,22 @@ describe('membre repository', () => {
       statut: 'confirme',
       type: 'Préfecture départementale',
     })
+  })
+
+  it('rechercher les membres d’un gestionnaire', async () => {
+    // GIVEN
+    await creerUneRegion({ code: '84' })
+    await creerUnDepartement({ code: '69', regionCode: '84' })
+    await creerUneGouvernance({ departementCode: '69' })
+    await creerUnContact()
+    await creerUnMembre({ id: 'structure-69-69', statut: 'candidat' })
+    await creerUnMembreStructure({ membreId: 'structure-69-69', role: 'observateur', structure: 'HUBIKOOP' })
+    await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
+
+    // WHEN
+    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire')
+
+    // THEN
+    expect(membres).toStrictEqual([membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } }), membreConfirmeFactory({ roles: ['observateur'], uidGouvernance: { value: '75' } }), membrePotentielFactory({ roles: ['observateur'], uidGouvernance: { value: '84' } })])
   })
 })

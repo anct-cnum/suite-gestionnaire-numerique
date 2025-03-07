@@ -9,7 +9,10 @@ export interface UpdateMembreRepository {
 }
 
 export interface GetMembresDuGestionnaireRepository {
-  get(uidGestionnaire: string): Promise<ReadonlyArray<Membre>>
+  getMembres(uidGestionnaire: string): Promise<ReadonlyArray<Membre>>
 }
 
-export interface MembreRepository extends GetMembreRepository, UpdateMembreRepository {}
+export interface MembreRepository
+  extends GetMembreRepository,
+  UpdateMembreRepository,
+  GetMembresDuGestionnaireRepository {}
