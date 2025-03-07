@@ -53,6 +53,7 @@ export default defineConfig({
     },
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
+    reporters: ['verbose'],
     sequence: { shuffle: true },
     server: {
       deps: {
