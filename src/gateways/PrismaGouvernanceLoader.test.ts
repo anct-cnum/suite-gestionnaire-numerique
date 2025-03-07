@@ -340,7 +340,7 @@ const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
     totalMontantSubventionFormationAccorde: NaN,
     ...partialMembre,
   })),
-  total: 13,
+  total: 9,
 }
 
 async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {

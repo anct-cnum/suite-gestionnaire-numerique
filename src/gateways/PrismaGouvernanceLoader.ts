@@ -140,7 +140,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
           type: membre.type ?? '',
           ...bouchonCoporteur,
         })),
-      total: membres.length,
+      total: membres.filter(({ statut }) => statut === 'confirme').length,
     },
     uid: gouvernanceRecord.departementCode,
   }
