@@ -1,6 +1,7 @@
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
+import { membreConfirmeFactory } from '@/domain/testHelper'
 import { MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
@@ -58,6 +59,10 @@ export class PrismaMembreRepository implements MembreRepository {
         value: record.gouvernanceDepartementCode,
       },
     }) as Membre
+  }
+
+  async getMembres(uidGestionnaire: string): Promise<ReadonlyArray<Membre>> {
+    return [membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } })] as ReadonlyArray<Membre>
   }
 
   async update(membre: Membre): Promise<void> {

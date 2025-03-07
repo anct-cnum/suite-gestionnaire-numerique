@@ -306,19 +306,19 @@ class GouvernanceLoaderSpy implements UneGouvernanceLoader {
 }
 
 class GetMembresDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async get(): Promise<Array<Membre>> {
+  async getMembres(): Promise<Array<Membre>> {
     return Promise.resolve([membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } })])
   }
 }
 
 class GetMembresNonCoporteursDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async get(): Promise<Array<Membre>> {
+  async getMembres(): Promise<Array<Membre>> {
     return Promise.resolve([membreConfirmeFactory({ roles: ['observateur'], uidGouvernance: { value: '69' } })])
   }
 }
 
 class GetMembresCoporteursDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async get(): Promise<Array<Membre>> {
+  async getMembres(): Promise<Array<Membre>> {
     return Promise.resolve([membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '75' } })])
   }
 }
