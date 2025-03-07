@@ -1,7 +1,6 @@
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
-import { membreConfirmeFactory } from '@/domain/testHelper'
 import { MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
@@ -62,7 +61,46 @@ export class PrismaMembreRepository implements MembreRepository {
   }
 
   async getMembres(uidGestionnaire: string): Promise<ReadonlyArray<Membre>> {
-    return [membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } })] as ReadonlyArray<Membre>
+    // return [membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } })] as ReadonlyArray<Membre>
+    const utilisateur = await prisma.utilisateurRecord.findUniqueOrThrow({
+      where: {
+        ssoId: uidGestionnaire,
+      },
+    })
+    console.log('########utilisateur', utilisateur)
+    const membres = await this.#membreDataResource.findMany({
+      include: {
+        membresGouvernanceCommune: true,
+        membresGouvernanceDepartement: {
+          include: {
+            relationDepartement: true,
+          },
+        },
+        membresGouvernanceEpci: true,
+        membresGouvernanceSgar: {
+          include: {
+            relationSgar: true,
+          },
+        },
+        membresGouvernanceStructure: true,
+      },
+      where: {
+        gouvernanceDepartementCode: utilisateur.departementCode ?? undefined,
+      },
+    })
+    return membres.map((record) => {
+      return membreFactory({
+        nom: 'La Poste',
+        roles: ['observateur'],
+        statut: 'confirme',
+        uid: {
+          value: record.id,
+        },
+        uidGouvernance: {
+          value: record.gouvernanceDepartementCode,
+        },
+      }) as Membre
+    })
   }
 
   async update(membre: Membre): Promise<void> {
