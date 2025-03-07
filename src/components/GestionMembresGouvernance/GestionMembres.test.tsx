@@ -15,7 +15,7 @@ describe('membres', () => {
     const exporter = screen.getByRole('button', { name: 'Exporter' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
-    expect(ajouterUnMembre).toHaveAttribute('aria-controls', 'drawerId')
+    expect(ajouterUnMembre).toHaveAttribute('aria-controls', 'drawerGererLesMembresId')
     expect(exporter).toHaveAttribute('type', 'button')
 
     const navigationTypesMembres = screen.getByRole('list')
