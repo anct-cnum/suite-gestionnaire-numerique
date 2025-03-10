@@ -36,7 +36,7 @@ model DepartementRecord {
   relationRegion             RegionRecord                         @relation(fields: [regionCode], references: [code])
   gouvernances               GouvernanceRecord[]
   membresGouvernance         MembreGouvernanceDepartementRecord[]
-  departementEnveloppeRecord departementEnveloppeRecord[]
+  departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
 }
