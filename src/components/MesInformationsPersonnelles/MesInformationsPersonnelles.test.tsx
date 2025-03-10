@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -496,4 +496,16 @@ function afficherMesInformationsPersonnelles(
     />,
     options
   )
+}
+
+function saisirLeTexte(name: string | RegExp, value: string): HTMLElement {
+  const input = screen.getByLabelText(name)
+  fireEvent.change(input, { target: { value } })
+  return input
+}
+
+function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
 }

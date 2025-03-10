@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, renderComponent, stubbedServerAction } from '../testHelper'
 import GestionMembres from './GestionMembres'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
@@ -203,6 +203,12 @@ describe('membres gouvernance', () => {
 
   function jAjouteUnMembre(): HTMLElement {
     return presserLeBouton('Ajouter')
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })
 

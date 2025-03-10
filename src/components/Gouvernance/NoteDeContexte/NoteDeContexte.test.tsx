@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, presserLeBoutonDans, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -270,5 +270,11 @@ function jOuvreLeFormulairePourModifierUneNoteDeContexte(): void {
 }
 
 function jEffaceLaNoteDeContexte(context: HTMLElement): void {
-  presserLeBoutonDans(context, 'Effacer')
+  fireEvent.click(within(context).getByRole('button', { name: 'Effacer' }))
+}
+
+function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
 }

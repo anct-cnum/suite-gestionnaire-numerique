@@ -1,7 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, presserLeBouton, renderComponent } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -562,4 +562,10 @@ function jOuvreLesDetailsDuMembre(nomDuMembre: string): void {
 
 function jeFermeLesDetailsDuMembre(nomDuMembre: string): HTMLElement {
   return presserLeBouton(nomDuMembre)
+}
+
+function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
 }
