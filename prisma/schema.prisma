@@ -357,7 +357,7 @@ model CoFinancementRecord {
 }
 
 model DepartementEnveloppeRecord {
-  departementCode String @id @map("departement_code")
+  departementCode String @map("departement_code")
   enveloppeId     Int    @map("enveloppe_id")
   plafond         Float
 

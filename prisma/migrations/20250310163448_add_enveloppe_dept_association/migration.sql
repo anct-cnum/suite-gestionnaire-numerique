@@ -19,9 +19,7 @@ ALTER TABLE "demande_de_subvention" DROP COLUMN "old_uuid";
 CREATE TABLE "departement_enveloppe" (
     "departement_code" TEXT NOT NULL,
     "enveloppe_id" INTEGER NOT NULL,
-    "plafond" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "departement_enveloppe_pkey" PRIMARY KEY ("departement_code")
+    "plafond" DOUBLE PRECISION NOT NULL
 );
 
 -- CreateIndex
