@@ -4,12 +4,11 @@ import { PropsWithChildren, ReactElement } from 'react'
 import GouvernanceProvider from '@/components/shared/GouvernanceContext'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
 import { SousMenuGouvernance } from '@/components/transverse/MenuLateral/SousMenuGouvernance'
-import { Membre } from '@/domain/Membre'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
+import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
-import { GetMembresDuGestionnaireRepository } from '@/use-cases/commands/shared/MembreRepository'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export default async function Layout({
@@ -23,18 +22,11 @@ export default async function Layout({
       redirect('/connexion')
     }
     const codeDepartement = (await params).codeDepartement
-    const gouvernanceLoader = new PrismaGouvernanceLoader()
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
-    const noopRepository = new class implements GetMembresDuGestionnaireRepository {
-      // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-      async get(): Promise<Array<Membre>> {
-        return Promise.resolve([])
-      }
-    }()
     const gouvernanceReadModel = await new RecupererUneGouvernance(
-      gouvernanceLoader,
-      noopRepository
+      new PrismaGouvernanceLoader(),
+      new PrismaMembreRepository()
     ).handle({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,

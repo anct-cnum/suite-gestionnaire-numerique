@@ -66,9 +66,9 @@ export class PrismaMembreRepository implements MembreRepository {
     const utilisateur = await this.#utilisateurDataResource.findUniqueOrThrow({
       where: {
         ssoId: uidGestionnaire,
-      }
+      },
     })
-    if (!utilisateur.departementCode) {
+    if (utilisateur.departementCode === null || utilisateur.departementCode === '') {
       return []
     }
     const departementCode = utilisateur.departementCode
@@ -104,8 +104,7 @@ export class PrismaMembreRepository implements MembreRepository {
         uidGouvernance: {
           value: departementCode,
         },
-      }) as Membre
-    )
+      }) as Membre)
   }
 
   async update(membre: Membre): Promise<void> {

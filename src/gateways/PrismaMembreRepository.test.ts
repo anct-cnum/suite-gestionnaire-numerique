@@ -218,7 +218,7 @@ describe('membre repository', () => {
     await creerUnMembreStructure({ membreId: 'structure-93-93', structure: 'La Poste' })
 
     // WHEN
-    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire', '69')
+    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire')
 
     // THEN
     expect(membres).toHaveLength(1)
@@ -231,5 +231,16 @@ describe('membre repository', () => {
         uidGouvernance: { value: '69' },
       }).state
     )
+  })
+
+  it('rechercher les membres d’un gestionnaire sans code de département', async () => {
+    // GIVEN
+    await creerUnUtilisateur({ role: 'gestionnaire_departement', ssoId: 'uidGestionnaire' })
+
+    // WHEN
+    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire')
+
+    // THEN
+    expect(membres).toHaveLength(0)
   })
 })
