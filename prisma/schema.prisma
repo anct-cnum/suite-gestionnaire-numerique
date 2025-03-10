@@ -311,8 +311,10 @@ model DemandeDeSubventionRecord {
 }
 
 model BeneficiaireSubventionRecord {
-  demandeDeSubventionId Int    @unique @map("demande_de_subvention_id")
+  demandeDeSubventionId Int    @map("demande_de_subvention_id")
   membreId              String @map("membre_id")
+
+  @@unique([demandeDeSubventionId, membreId])
 
   demandeDeSubvention DemandeDeSubventionRecord @relation(fields: [demandeDeSubventionId], references: [id])
   membre              MembreRecord              @relation(fields: [membreId], references: [id])
