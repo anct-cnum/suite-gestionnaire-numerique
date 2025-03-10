@@ -224,9 +224,7 @@ function transformUtilisateursFNEToUtilisateurs(
       role = 'gestionnaire_region'
     }
 
-    const ssoId = utilisateurFNERecord.accounts.length > 0
-      ? decodeJwt(utilisateurFNERecord.accounts[0].id_token).sub
-      : ''
+    const ssoId = utilisateurFNERecord.email
 
     return {
       dateDeCreation: utilisateurFNERecord.created,
@@ -283,10 +281,6 @@ async function migrateUtilisateurs(
   })
 }
 
-function decodeJwt(token: string): Token {
-  return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString()) as Token
-}
-
 async function retrieveStructures(): Promise<Array<Partial<Prisma.StructureRecordUncheckedCreateInput>>> {
   return prisma.structureRecord.findMany({
     select: {
@@ -332,8 +326,4 @@ type UtilisateurFNERecord = Readonly<{
   lastName: string | null
   role: string
   roleScope: string | null
-}>
-
-type Token = Readonly<{
-  sub: string
 }>
