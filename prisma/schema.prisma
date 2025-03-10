@@ -33,9 +33,10 @@ model DepartementRecord {
   structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
-  relationRegion     RegionRecord                         @relation(fields: [regionCode], references: [code])
-  gouvernances       GouvernanceRecord[]
-  membresGouvernance MembreGouvernanceDepartementRecord[]
+  relationRegion         RegionRecord                         @relation(fields: [regionCode], references: [code])
+  gouvernances           GouvernanceRecord[]
+  membresGouvernance     MembreGouvernanceDepartementRecord[]
+  departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
 }
@@ -301,8 +302,6 @@ model DemandeDeSubventionRecord {
   creation             DateTime @map("creation")
   derniereModification DateTime @map("derniere_modification")
 
-  oldUUID String @map("old_uuid") @db.Uuid
-
   utilisateur  UtilisateurRecord              @relation(fields: [createurId], references: [id])
   action       ActionRecord                   @relation(fields: [actionId], references: [id])
   enveloppe    EnveloppeFinancementRecord     @relation(fields: [enveloppeFinancementId], references: [id])
@@ -314,7 +313,6 @@ model DemandeDeSubventionRecord {
 model BeneficiaireSubventionRecord {
   demandeDeSubventionId Int    @unique @map("demande_de_subvention_id")
   membreId              String @map("membre_id")
-  montantSubvention     Float  @map("montant_subvention")
 
   demandeDeSubvention DemandeDeSubventionRecord @relation(fields: [demandeDeSubventionId], references: [id])
   membre              MembreRecord              @relation(fields: [membreId], references: [id])
@@ -340,14 +338,14 @@ model EnveloppeFinancementRecord {
   dateDeFin   DateTime @map("date_fin")
   montant     Float
 
-  demandeDeSubvention DemandeDeSubventionRecord[]
+  demandesDeSubvention   DemandeDeSubventionRecord[]
+  departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
 }
 
 model CoFinancementRecord {
   id       Int    @id @default(autoincrement())
-  libelle  String
   actionId Int    @map("id_action")
   memberId String @map("id_membre")
   montant  Float
@@ -356,6 +354,18 @@ model CoFinancementRecord {
   membre MembreRecord @relation(fields: [memberId], references: [id])
 
   @@map("co_financement")
+}
+
+model DepartementEnveloppeRecord {
+  departementCode String @map("departement_code")
+  enveloppeId     Int    @map("enveloppe_id")
+  plafond         Float
+
+  relationDepartement DepartementRecord          @relation(fields: [departementCode], references: [code])
+  relationEnveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeId], references: [id])
+
+  @@unique([departementCode, enveloppeId])
+  @@map("departement_enveloppe")
 }
 
 enum Role {
