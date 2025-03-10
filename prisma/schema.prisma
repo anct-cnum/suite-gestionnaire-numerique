@@ -339,7 +339,7 @@ model EnveloppeFinancementRecord {
   montant     Float
 
   demandesDeSubvention        DemandeDeSubventionRecord[]
-  departementEnveloppeRecord departementEnveloppeRecord[]
+  departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
 }
