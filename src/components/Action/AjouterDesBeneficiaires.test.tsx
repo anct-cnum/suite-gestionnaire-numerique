@@ -1,6 +1,6 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 import { actionViewModelFactory } from '@/presenters/testHelper'
@@ -80,6 +80,12 @@ describe('ajout des bénéficiaires', () => {
       })
     })
   })
+
+  function presserLeBouton(name: string, description?: string): HTMLElement {
+    const button = screen.getByRole('button', { description, name })
+    fireEvent.click(button)
+    return button
+  }
 
   function afficherLeFormulaireAction(overrides: Partial<ActionViewModel> = {}): void {
     renderComponent(

@@ -1,6 +1,6 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
-import { presserLeBouton, renderComponent } from '../testHelper'
+import { renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 
@@ -103,6 +103,12 @@ describe('ajouter des besoins', () => {
 
   function jeFermeLeFormulairePourAjouterDesBesoins(): HTMLElement {
     return presserLeBouton('Fermer l’ajout des besoins')
+  }
+
+  function presserLeBouton(name: string, description?: string): HTMLElement {
+    const button = screen.getByRole('button', { description, name })
+    fireEvent.click(button)
+    return button
   }
 
   function afficherLeFormulaireAction(): void {
