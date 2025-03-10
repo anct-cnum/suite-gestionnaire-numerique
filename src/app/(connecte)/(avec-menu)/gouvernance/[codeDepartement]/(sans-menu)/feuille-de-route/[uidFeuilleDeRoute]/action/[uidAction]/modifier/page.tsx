@@ -4,13 +4,12 @@ import { ReactElement } from 'react'
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
-import { Membre } from '@/domain/Membre'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
+import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
-import { GetMembresDuGestionnaireRepository } from '@/use-cases/commands/shared/MembreRepository'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
@@ -21,18 +20,11 @@ export default async function ActionModifierController({ params }: Props): Promi
       redirect('/connexion')
     }
     const codeDepartement = (await params).codeDepartement
-    const gouvernanceLoader = new PrismaGouvernanceLoader()
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
-    const noopRepository = new class implements GetMembresDuGestionnaireRepository {
-    // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-      async getMembres(): Promise<Array<Membre>> {
-        return Promise.resolve([])
-      }
-    }()
     const gouvernanceReadModel = await new RecupererUneGouvernance(
-      gouvernanceLoader,
-      noopRepository
+      new PrismaGouvernanceLoader(),
+      new PrismaMembreRepository()
     ).handle({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,
