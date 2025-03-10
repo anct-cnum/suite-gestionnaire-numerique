@@ -33,9 +33,9 @@ model DepartementRecord {
   structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
-  relationRegion             RegionRecord                         @relation(fields: [regionCode], references: [code])
-  gouvernances               GouvernanceRecord[]
-  membresGouvernance         MembreGouvernanceDepartementRecord[]
+  relationRegion         RegionRecord                         @relation(fields: [regionCode], references: [code])
+  gouvernances           GouvernanceRecord[]
+  membresGouvernance     MembreGouvernanceDepartementRecord[]
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
@@ -338,7 +338,7 @@ model EnveloppeFinancementRecord {
   dateDeFin   DateTime @map("date_fin")
   montant     Float
 
-  demandesDeSubvention        DemandeDeSubventionRecord[]
+  demandesDeSubvention   DemandeDeSubventionRecord[]
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
@@ -364,6 +364,7 @@ model DepartementEnveloppeRecord {
   relationDepartement DepartementRecord          @relation(fields: [departementCode], references: [code])
   relationEnveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeId], references: [id])
 
+  @@unique([departementCode, enveloppeId])
   @@map("departement_enveloppe")
 }
 
