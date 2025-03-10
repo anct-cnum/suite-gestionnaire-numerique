@@ -361,8 +361,8 @@ model DepartementEnveloppeRecord {
   enveloppeId     Int    @map("enveloppe_id")
   plafond         Float
 
-  departement DepartementRecord          @relation(fields: [departementCode], references: [code])
-  enveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeId], references: [id])
+  relationDepartement DepartementRecord          @relation(fields: [departementCode], references: [code])
+  relationEnveloppe   EnveloppeFinancementRecord @relation(fields: [enveloppeId], references: [id])
 
   @@map("departement_enveloppe")
 }
