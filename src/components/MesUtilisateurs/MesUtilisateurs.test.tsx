@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, rolesAvecStructure, stubbedServerAction } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime, epochTimeMinusOneDay, epochTimeMinusTwoDays, epochTimePlusOneDay } from '@/shared/testHelper'
@@ -520,7 +520,7 @@ describe('mes utilisateurs', () => {
   }
 
   function jeTapeUnNom(value: string): void {
-    saisirLeTexte('Rechercher par nom ou adresse électronique', value)
+    fireEvent.change(screen.getByLabelText('Rechercher par nom ou adresse électronique'), { target: { value } })
   }
 
   function jeRecherche(): void {
@@ -531,6 +531,12 @@ describe('mes utilisateurs', () => {
     presserLeBouton('Reinitialiser')
   }
 })
+
+function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
+}
 
 function afficherMesUtilisateurs(
   mesUtilisateursReadModel = [utilisateurActifReadModel, utilisateurEnAttenteReadModel],

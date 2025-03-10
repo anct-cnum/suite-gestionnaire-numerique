@@ -7,7 +7,7 @@ import { FormulaireAction } from './FormulaireAction'
 import MenuLateral from './MenuLateral'
 import ModifierUneAction from './ModifierUneAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { matchWithoutMarkup, presserLeBoutonDans, presserLeBoutonRadio, renderComponent, stubbedServerAction } from '../testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
@@ -281,7 +281,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 2' } })
       jeTapeLeContexteDeLaction(formulaire)
       jeTapeLaDescriptionDeLaction(formulaire)
-      presserLeBoutonRadio('Pluriannuelle')
+      fireEvent.click(screen.getByRole('radio', { name: 'Pluriannuelle' }))
       jeSelectionneLAnneeDeDebut('2026')
       jeSelectionneLAnneeDeFin('2028')
       jeTapeLeBudgetGlobalDeLAction(formulaire)
@@ -310,7 +310,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       afficherFormulaireDeCreationAction()
 
       // WHEN
-      presserLeBoutonRadio('Annuelle')
+      fireEvent.click(screen.getByRole('radio', { name: 'Annuelle' }))
 
       // THEN
       const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
@@ -389,10 +389,10 @@ describe('formulaire d‘ajout d‘une action', () => {
     it('étant un utilisateur, quand je change la temporalite à annuelle, la temporalite est mise à jour', () => {
       // GIVEN
       afficherFormulaireDeCreationAction()
-      presserLeBoutonRadio('Pluriannuelle')
+      fireEvent.click(screen.getByRole('radio', { name: 'Pluriannuelle' }))
 
       // WHEN
-      presserLeBoutonRadio('Annuelle')
+      fireEvent.click(screen.getByRole('radio', { name: 'Annuelle' }))
 
       // THEN
       const radioAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
@@ -545,12 +545,16 @@ function jeSelectionneLAnneeDeFin(annee: string): void {
 
 function jeValideLeFormulaireDAjout(): HTMLElement {
   const form = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-  return presserLeBoutonDans(form, 'Valider et envoyer')
+  const button = within(form).getByRole('button', { name: 'Valider et envoyer' })
+  fireEvent.click(button)
+  return button
 }
 
 function jeValideLeFormulaireDeModification(): HTMLElement {
   const form = screen.getByRole('form', { name: 'Modifier une action' })
-  return presserLeBoutonDans(form, 'Valider et envoyer')
+  const button = within(form).getByRole('button', { name: 'Valider et envoyer' })
+  fireEvent.click(button)
+  return button
 }
 
 function jeTapeLeContexteDeLaction(formulaire: HTMLElement): void {

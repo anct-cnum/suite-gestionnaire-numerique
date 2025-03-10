@@ -468,7 +468,7 @@
       "expect(XXX).toHaveValue('XXX')",
     ],
   },
-  "getByText": {
+  "rechercher par un texte": {
     "prefix": "_getByText",
     "scope": "typescriptreact",
     "description": "Tester une chaîne de caractères",
@@ -476,6 +476,50 @@
       "const XXX = screen.getByText('XXX', { selector: 'p' })",
       "expect(XXX).toBeInTheDocument()",
     ],
+  },
+  "presser le bouton": {
+    "prefix": "_presserLeBouton",
+    "scope": "typescriptreact",
+    "description": "Presser le bouton",
+    "body": [
+      "const button = screen.getByRole('button', { description: 'XXX', name: 'XXX' })",
+      "fireEvent.click(button)",
+      "return button",
+    ],
+  },
+  "cocher la case": {
+    "prefix": "_cocherLaCase",
+    "scope": "typescriptreact",
+    "description": "Cocher la case",
+    "body": ["fireEvent.click(screen.getByRole('checkbox', { name: 'XXX' }))"],
+  },
+  "presser le bouton radio": {
+    "prefix": "_presserLeBoutonRadio",
+    "scope": "typescriptreact",
+    "description": "Presser le bouton radio",
+    "body": ["fireEvent.click(screen.getByRole('radio', { name: 'XXX' }))"],
+  },
+  "saisir le texte": {
+    "prefix": "_saisirLeTexte",
+    "scope": "typescriptreact",
+    "description": "Saisir le texte",
+    "body": [
+      "const input = screen.getByLabelText('XXX')",
+      "fireEvent.change(input, { target: { value: 'XXX' } })",
+      "return input",
+    ],
+  },
+  "sélectionner l'élement": {
+    "prefix": "_selectionnerLElement",
+    "scope": "typescriptreact",
+    "description": "Sélectionner l'élement",
+    "body": ["await select('XXX', 'XXX')"],
+  },
+  "doublure de conceal": {
+    "prefix": "_stubbedConceal",
+    "scope": "typescriptreact",
+    "description": "La doublure de la fonction DSFR conceal pour fermer le drawer",
+    "body": ["vi.stubGlobal('dsfr', stubbedConceal())"],
   },
   "it fermer drawer": {
     "prefix": "_itFermerDrawer",

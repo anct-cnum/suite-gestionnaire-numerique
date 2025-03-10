@@ -1,7 +1,7 @@
 import { within, screen, fireEvent, waitFor } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -368,11 +368,11 @@ describe('comitologie', () => {
   }
 
   function jeSelectionneUnType(name: string): void {
-    presserLeBoutonRadio(name)
+    fireEvent.click(screen.getByRole('radio', { name }))
   }
 
   function jeSelectionneUneFrequence(name: string): void {
-    presserLeBoutonRadio(name)
+    fireEvent.click(screen.getByRole('radio', { name }))
   }
 
   function jeChoisisUneDate(container: HTMLElement, value: string): HTMLElement {
@@ -398,5 +398,11 @@ describe('comitologie', () => {
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(), epochTimePlusOneDay)
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })
