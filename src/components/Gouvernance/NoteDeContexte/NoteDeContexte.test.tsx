@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, presserLeBoutonDans, renderComponent } from '@/components/testHelper'
+import { presserLeBouton, presserLeBoutonDans, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -63,7 +63,7 @@ describe('note de contexte', () => {
 
     it('quand je clique sur le bouton enregistrer le drawer se ferme et une notification s‘affiche', async () => {
       // GIVEN
-      const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const ajouterUneNoteDeContexteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
       jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
@@ -84,7 +84,7 @@ describe('note de contexte', () => {
 
     it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {
       // GIVEN
-      const ajouterUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const ajouterUneNoteDeContexteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernance({ ajouterUneNoteDeContexteAction, pathname: '/gouvernance/11' })
       jOuvreLeFormulairePourAjouterUneNoteDeContexte()
 
@@ -134,7 +134,7 @@ describe('note de contexte', () => {
 
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme et une notification s‘affiche', async () => {
       // GIVEN
-      const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUneNoteDeContexteAction = stubbedServerAction(['OK'])
       afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -160,7 +160,7 @@ describe('note de contexte', () => {
 
     it('puis que je la modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const modifierUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUneNoteDeContexteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernanceAvecNoteDeContexte({ modifierUneNoteDeContexteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -175,7 +175,7 @@ describe('note de contexte', () => {
 
   it('puis que je veux supprimer la note de contexte, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
     // GIVEN
-    const supprimerUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['OK']))
+    const supprimerUneNoteDeContexteAction = stubbedServerAction(['OK'])
     afficherUneGouvernanceAvecNoteDeContexte({ pathname: '/gouvernance/11', supprimerUneNoteDeContexteAction })
 
     // WHEN
@@ -201,7 +201,7 @@ describe('note de contexte', () => {
 
   it('puis que je veux supprimer la note de contexte mais qu’une erreur intervient, alors une notification s’affiche', async () => {
     // GIVEN
-    const supprimerUneNoteDeContexteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+    const supprimerUneNoteDeContexteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
     afficherUneGouvernanceAvecNoteDeContexte({ pathname: '/gouvernance/11', supprimerUneNoteDeContexteAction })
 
     // WHEN

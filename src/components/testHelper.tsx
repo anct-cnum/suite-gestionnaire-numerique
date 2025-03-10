@@ -125,6 +125,10 @@ export function stubbedConceal() {
   })
 }
 
+export function stubbedServerAction(result: ReadonlyArray<string>): Mock<() => Promise<ReadonlyArray<string>>> {
+  return vi.fn<() => Promise<ReadonlyArray<string>>>().mockResolvedValueOnce(result)
+}
+
 export function presserLeBouton(name: string, description?: string): HTMLElement {
   const button = screen.getByRole('button', { description, name })
   fireEvent.click(button)
