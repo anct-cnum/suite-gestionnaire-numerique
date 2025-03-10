@@ -1,7 +1,7 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from './Gouvernance'
-import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -597,5 +597,11 @@ describe('gouvernance', () => {
 
   function jeDeplieLaNoteDeContexte(): HTMLElement {
     return presserLeBouton('Lire plus')
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })

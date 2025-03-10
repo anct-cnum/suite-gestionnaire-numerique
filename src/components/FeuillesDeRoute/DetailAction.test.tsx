@@ -1,6 +1,6 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import FeuillesDeRoute from './FeuillesDeRoute'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
@@ -98,6 +98,12 @@ describe('détail d’une action', () => {
 
   function jeFermeLAction(): HTMLElement {
     return presserLeBouton('Fermer le détail de Structurer une filière de reconditionnement locale 2')
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 
   function afficherLesFeuillesDeRoute(

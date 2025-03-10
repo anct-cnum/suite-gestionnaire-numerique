@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, presserLeBoutonRadio, renderComponent, stubbedConceal } from '../testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedConceal } from '../testHelper'
 import FeuillesDeRoute from './FeuillesDeRoute'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
@@ -145,11 +145,11 @@ describe('ajouter une feuille de route', () => {
   }
 
   function jeSelectionneUnPerimetre(name: string): void {
-    presserLeBoutonRadio(name)
+    fireEvent.click(screen.getByRole('radio', { name }))
   }
 
   function jeSelectionneUnContrat(name: string): void {
-    presserLeBoutonRadio(name)
+    fireEvent.click(screen.getByRole('radio', { name }))
   }
 
   function jEnregistreLaFeuilleDeRoute(): HTMLElement {
@@ -162,6 +162,12 @@ describe('ajouter une feuille de route', () => {
 
   function jOuvreLeFormulairePourAjouterUneFeuilleDeRoute(): void {
     presserLeBouton('Ajouter une feuille de route')
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 
   function afficherLesFeuillesDeRoute(

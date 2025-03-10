@@ -1,8 +1,8 @@
-import { screen, within } from '@testing-library/react'
-import { clearFirst } from 'react-select-event'
+import { fireEvent, screen, within } from '@testing-library/react'
+import { clearFirst, select } from 'react-select-event'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { cocherLaCase, presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, structuresFetch, selectionnerLElement } from '@/components/testHelper'
+import { renderComponent, rolesAvecStructure, structuresFetch } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { epochTime } from '@/shared/testHelper'
 
@@ -354,7 +354,7 @@ describe('filtrer mes utilisateurs', () => {
   })
 
   function jeSelectionneUniquementLesUtilisateursActives(): void {
-    cocherLaCase('Uniquement les utilisateurs activés')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Uniquement les utilisateurs activés' }))
   }
 
   function jeTapeMaRecherche(value: string): HTMLElement {
@@ -362,7 +362,7 @@ describe('filtrer mes utilisateurs', () => {
   }
 
   async function jeSelectionneUneZoneGeographique(zoneGeographique: string): Promise<void> {
-    await selectionnerLElement(screen.getByRole('combobox', { name: 'Par zone géographique' }), zoneGeographique)
+    await select(screen.getByRole('combobox', { name: 'Par zone géographique' }), zoneGeographique)
   }
 
   function jeTapeUneStructure(value: string): HTMLElement {
@@ -370,15 +370,15 @@ describe('filtrer mes utilisateurs', () => {
   }
 
   async function jeSelectionneUneStructure(input: HTMLElement, nomStructure: string): Promise<void> {
-    await selectionnerLElement(input, nomStructure)
+    await select(input, nomStructure)
   }
 
   function jeSelectionneGestionnaireRegion(): void {
-    cocherLaCase('Gestionnaire région')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire région' }))
   }
 
   function jeSelectionneGestionnaireDepartement(): void {
-    cocherLaCase('Gestionnaire département')
+    fireEvent.click(screen.getByRole('checkbox', { name: 'Gestionnaire département' }))
   }
 
   function jeReinitialiseLesFiltres(): void {
@@ -403,5 +403,17 @@ describe('filtrer mes utilisateurs', () => {
   ): void {
     const mesUtilisateursViewModel = mesUtilisateursPresenter([], 'fooId', totalUtilisateur, rolesAvecStructure, epochTime)
     renderComponent(<MesUtilisateurs mesUtilisateursViewModel={mesUtilisateursViewModel} />, options)
+  }
+
+  function saisirLeTexte(name: string, value: string): HTMLElement {
+    const input = screen.getByLabelText(name)
+    fireEvent.change(input, { target: { value } })
+    return input
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })
