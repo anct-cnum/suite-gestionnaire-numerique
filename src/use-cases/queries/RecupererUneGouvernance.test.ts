@@ -173,7 +173,7 @@ describe('recupérer une gouvernance', () => {
     expect(spiedCodeDepartement).toBe('69')
   })
 
-  it('quand une gouvernance est demandée sur un département par un membre qui n‘est pas co-porteur alors on la récupère sans note privée', async () => {
+  it('quand une gouvernance est demandée sur un département par un membre qui n‘est pas co-porteur alors on ajoute la propriété peutVoirNotePrivee à false', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -218,11 +218,11 @@ describe('recupérer une gouvernance', () => {
     // THEN
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
-      notePrivee: undefined,
+      peutVoirNotePrivee: false,
     })
   })
 
-  it('quand une gouvernance est demandée sur un département par un membre qui est co-porteur mais ne fait pas partie de la gouvernance alors on la récupère sans note privée', async () => {
+  it('quand une gouvernance est demandée sur un département par un membre qui est co-porteur mais ne fait pas partie de la gouvernance alors on ajoute la propriété peutVoirNotePrivee à false', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -266,7 +266,7 @@ describe('recupérer une gouvernance', () => {
     // THEN
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
-      notePrivee: undefined,
+      peutVoirNotePrivee: false,
     })
   })
 })
