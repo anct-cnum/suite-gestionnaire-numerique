@@ -125,6 +125,7 @@ export function gouvernanceReadModelFactory(
       prenomEditeur: 'Lucie',
       texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
     },
+    peutVoirNotePrivee: true,
     syntheseMembres: {
       candidats: 0,
       coporteurs: [

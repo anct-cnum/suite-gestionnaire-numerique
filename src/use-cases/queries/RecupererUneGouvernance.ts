@@ -27,7 +27,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
     const peutVoirNotePrivee = Membre.gestionnairePeutVoirNotePrivee(membres, query.codeDepartement)
     return peutVoirNotePrivee ? readModel : {
       ...readModel,
-      notePrivee: undefined,
+      peutVoirNotePrivee: false,
     }
   }
 }
@@ -44,6 +44,7 @@ export type UneGouvernanceReadModel = Readonly<{
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   uid: string
+  peutVoirNotePrivee: boolean
 }>
 
 export type ComiteReadModel = Readonly<{
