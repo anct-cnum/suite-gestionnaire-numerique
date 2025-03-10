@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import Connexion from './Connexion'
-import { presserLeBouton } from '../testHelper'
 
 describe('connexion : en tant qu’utilisateur non authentifié', () => {
   it('quand je me rend sur la page de connexion alors elle s’affiche', () => {
@@ -28,7 +27,8 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     render(<Connexion idProvider="pro-connect" />)
 
     // WHEN
-    presserLeBouton('S’identifier avec ProConnect')
+    const button = screen.getByRole('button', { name: 'S’identifier avec ProConnect' })
+    fireEvent.click(button)
 
     // THEN
     expect(nextAuth.signIn).toHaveBeenCalledWith('pro-connect', { callbackUrl: '/' })

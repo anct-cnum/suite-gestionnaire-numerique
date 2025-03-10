@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, presserLeBouton, presserLeBoutonDans, renderComponent, saisirLeTexte, stubbedServerAction } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -251,12 +251,12 @@ describe('note privée', () => {
     }
 
     function jEffaceLaNotePrivee(context: HTMLElement): void {
-      presserLeBoutonDans(context, 'Effacer')
+      fireEvent.click(within(context).getByRole('button', { name: 'Effacer' }))
     }
   })
 
   function jeTapeUneNotePrivee(value: string): void {
-    saisirLeTexte('Votre note', value)
+    fireEvent.change(screen.getByLabelText('Votre note'), { target: { value } })
   }
 
   function jEnregistreLaNotePrivee(): HTMLElement {
@@ -281,6 +281,12 @@ describe('note privée', () => {
       },
     }), now)
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 
   const now = epochTime

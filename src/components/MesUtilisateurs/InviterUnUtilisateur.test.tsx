@@ -1,7 +1,8 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { select } from 'react-select-event'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, presserLeBouton, saisirLeTexte, selectionnerLElement, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, stubbedServerAction } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -440,11 +441,11 @@ describe('inviter un utilisateur', () => {
   }
 
   async function jeSelectionneSaStructure(input: HTMLElement, nomStructure: string): Promise<void> {
-    await selectionnerLElement(input, nomStructure)
+    await select(input, nomStructure)
   }
 
   async function jeSelectionneSonDepartement(departement: string): Promise<void> {
-    await selectionnerLElement(screen.getByLabelText('Département *'), departement)
+    await select(screen.getByLabelText('Département *'), departement)
   }
 
   function jeSelectionneUnDepartementInexistant(): void {
@@ -482,5 +483,17 @@ describe('inviter un utilisateur', () => {
       }),
       ...options,
     })
+  }
+
+  function saisirLeTexte(name: string | RegExp, value: string): HTMLElement {
+    const input = screen.getByLabelText(name)
+    fireEvent.change(input, { target: { value } })
+    return input
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })

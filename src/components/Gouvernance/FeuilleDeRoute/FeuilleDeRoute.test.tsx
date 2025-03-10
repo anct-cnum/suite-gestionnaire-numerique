@@ -1,7 +1,7 @@
-import { within, screen } from '@testing-library/react'
+import { within, screen, fireEvent } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, renderComponent } from '@/components/testHelper'
+import { renderComponent } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -134,5 +134,11 @@ describe('feuille de route', () => {
   function afficherUneGouvernance(override?: Partial<Parameters<typeof gouvernanceReadModelFactory>[0]>): void {
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory(override), epochTime)
     renderComponent(<Gouvernance />, undefined, gouvernanceViewModel)
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })

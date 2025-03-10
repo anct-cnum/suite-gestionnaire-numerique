@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
-import { presserLeBouton, renderComponent, stubbedServerAction } from '@/components/testHelper'
+import { renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
@@ -167,6 +167,12 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
         }),
       }
     )
+  }
+
+  function presserLeBouton(name: string): HTMLElement {
+    const button = screen.getByRole('button', { name })
+    fireEvent.click(button)
+    return button
   }
 })
 
