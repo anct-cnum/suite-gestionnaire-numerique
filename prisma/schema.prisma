@@ -338,7 +338,7 @@ model EnveloppeFinancementRecord {
   dateDeFin   DateTime @map("date_fin")
   montant     Float
 
-  demandeDeSubvention        DemandeDeSubventionRecord[]
+  demandesDeSubvention        DemandeDeSubventionRecord[]
   departementEnveloppeRecord departementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
