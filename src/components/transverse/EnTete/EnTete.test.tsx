@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import EnTete from './EnTete'
-import { presserLeBouton, renderComponent } from '@/components/testHelper'
+import { presserLeBouton, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 
 describe('en-tête : en tant qu’utilisateur authentifié', () => {
@@ -95,7 +95,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
     it('quand je change de rôle dans le sélecteur de rôle alors mon rôle change et la page courante est rafraîchie', async () => {
       // GIVEN
-      const changerMonRoleAction = vi.fn(async () => Promise.resolve(['OK']))
+      const changerMonRoleAction = stubbedServerAction(['OK'])
       afficherLEnTetePeutChangerDeRole(changerMonRoleAction)
 
       // WHEN
@@ -157,7 +157,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
       }) })
   }
 
-  function afficherLEnTetePeutChangerDeRole(spiedChangerMonRoleAction = async (): Promise<Array<string>> => Promise.resolve(['OK'])): void {
+  function afficherLEnTetePeutChangerDeRole(spiedChangerMonRoleAction = async (): Promise<ReadonlyArray<string>> => Promise.resolve(['OK'])): void {
     renderComponent(
       <EnTete />,
       {

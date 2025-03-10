@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
 
 import MesInformationsPersonnelles from './MesInformationsPersonnelles'
-import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { mesInformationsPersonnellesPresenter } from '@/presenters/mesInformationsPersonnellesPresenter'
 import { mesInformationsPersonnellesReadModelFactory } from '@/use-cases/testHelper'
 
@@ -276,7 +276,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
       it('quand je confirme la suppression en cliquant sur le bouton devenu ainsi actif, il s’inactive et change de contenu, m’informant que la suppression est en cours, puis je suis déconnecté', async () => {
         // GIVEN
-        const supprimerMonCompteAction = vi.fn(async () => Promise.resolve(['OK']))
+        const supprimerMonCompteAction = stubbedServerAction(['OK'])
         vi.spyOn(nextAuth, 'signOut').mockResolvedValueOnce({ url: '' })
         afficherMesInformationsPersonnelles({ supprimerMonCompteAction })
 
@@ -407,7 +407,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('quand je modifie mes informations personnelles, alors le drawer se ferme, une notification s’affiche et mes informations personnelles sont mises à jour', async () => {
       // GIVEN
-      const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierMesInformationsPersonnellesAction = stubbedServerAction(['OK'])
       afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction, pathname: '/mes-informations-personnelles' })
 
       // WHEN
@@ -438,7 +438,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
 
     it('quand je modifie mes informations personnelles mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const modifierMesInformationsPersonnellesAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierMesInformationsPersonnellesAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherMesInformationsPersonnelles({ modifierMesInformationsPersonnellesAction })
 
       // WHEN

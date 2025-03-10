@@ -112,9 +112,9 @@ describe('ajouter des besoins', () => {
         cofinancements={[]}
         drawerId="drawerId"
         label="label"
-        setIsDrawerOpen={vi.fn()}
-        supprimerUnCofinancement={vi.fn()}
-        validerFormulaire={vi.fn()}
+        setIsDrawerOpen={vi.fn<() => void>()}
+        supprimerUnCofinancement={vi.fn<() => void>()}
+        validerFormulaire={vi.fn<() => Promise<void>>()}
       >
         vide
       </FormulaireAction>

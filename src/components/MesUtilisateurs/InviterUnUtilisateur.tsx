@@ -181,7 +181,6 @@ export default function InviterUnUtilisateur({
   function fermerEtReinitialiser(htmlFormElement: HTMLFormElement): void {
     closeDrawer()
     setRoleSelectionne('')
-    // eslint-disable-next-line no-restricted-syntax
     window.dsfr(dialogRef.current).modal.conceal()
     htmlFormElement.reset()
   }
