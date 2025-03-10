@@ -1,7 +1,7 @@
 import { within, screen, fireEvent, waitFor } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent } from '@/components/testHelper'
+import { presserLeBouton, presserLeBoutonRadio, matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTimePlusOneDay } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -77,7 +77,7 @@ describe('comitologie', () => {
 
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour et le formulaire est réinitialisé', async () => {
       // GIVEN
-      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const ajouterUnComiteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -115,7 +115,7 @@ describe('comitologie', () => {
 
     it('puis que je ne remplis pas la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
       // GIVEN
-      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const ajouterUnComiteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -137,7 +137,7 @@ describe('comitologie', () => {
 
     it('puis que je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const ajouterUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const ajouterUnComiteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernance({ ajouterUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -235,7 +235,7 @@ describe('comitologie', () => {
 
     it('puis que je le modifie et que je l’enregistre, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
       // GIVEN
-      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUnComiteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -268,7 +268,7 @@ describe('comitologie', () => {
 
     it('puis que je modifie sans remplir la date et le commentaire qui sont facultatifs, alors la gouvernance est mise à jour', async () => {
       // GIVEN
-      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUnComiteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -294,7 +294,7 @@ describe('comitologie', () => {
 
     it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const modifierUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUnComiteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernance({ modifierUnComiteAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -310,7 +310,7 @@ describe('comitologie', () => {
 
     it('puis que je le supprime, alors le drawer se ferme, une notification s’affiche et la gouvernance est mise à jour', async () => {
       // GIVEN
-      const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const supprimerUnComiteAction = stubbedServerAction(['OK'])
       afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
 
       // WHEN
@@ -335,7 +335,7 @@ describe('comitologie', () => {
 
     it('puis que je le supprime mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const supprimerUnComiteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const supprimerUnComiteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernance({ pathname: '/gouvernance/11', supprimerUnComiteAction })
 
       // WHEN

@@ -33,7 +33,6 @@ export function urlDeFiltrage(form: FormData, totalDesRoles: number): URL {
   }
 
   if (!isNullishOrEmpty(selectedStructure)) {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     url.searchParams.append('structure', selectedStructure)
   }
 

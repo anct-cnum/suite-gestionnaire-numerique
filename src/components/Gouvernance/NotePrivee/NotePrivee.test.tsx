@@ -1,7 +1,7 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
-import { matchWithoutMarkup, presserLeBouton, presserLeBoutonDans, renderComponent, saisirLeTexte } from '@/components/testHelper'
+import { matchWithoutMarkup, presserLeBouton, presserLeBoutonDans, renderComponent, saisirLeTexte, stubbedServerAction } from '@/components/testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -71,7 +71,7 @@ describe('note privée', () => {
 
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
       // GIVEN
-      const ajouterUneNotePriveeAction = vi.fn(async () => Promise.resolve(['OK']))
+      const ajouterUneNotePriveeAction = stubbedServerAction(['OK'])
       afficherUneGouvernanceSansNotePrivee({ ajouterUneNotePriveeAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -97,7 +97,7 @@ describe('note privée', () => {
 
     it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const ajouterUneNotePriveeAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const ajouterUneNotePriveeAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernanceSansNotePrivee({ ajouterUneNotePriveeAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -163,7 +163,7 @@ describe('note privée', () => {
 
     it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
       // GIVEN
-      const modifierUneNotePriveeAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUneNotePriveeAction = stubbedServerAction(['OK'])
       afficherUneGouvernanceAvecNotePrivee({ modifierUneNotePriveeAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -189,7 +189,7 @@ describe('note privée', () => {
 
     it('puis que je le modifie mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const modifierUneNotePriveeAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUneNotePriveeAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernanceAvecNotePrivee({ modifierUneNotePriveeAction, pathname: '/gouvernance/11' })
 
       // WHEN
@@ -203,7 +203,7 @@ describe('note privée', () => {
 
     it('puis que je veux supprimer la note privée, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
       // GIVEN
-      const supprimerUneNotePriveeAction = vi.fn(async () => Promise.resolve(['OK']))
+      const supprimerUneNotePriveeAction = stubbedServerAction(['OK'])
       afficherUneGouvernanceAvecNotePrivee({ pathname: '/gouvernance/11', supprimerUneNotePriveeAction })
 
       // WHEN
@@ -228,7 +228,7 @@ describe('note privée', () => {
 
     it('puis que je veux supprimer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const supprimerUneNotePriveeAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const supprimerUneNotePriveeAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneGouvernanceAvecNotePrivee({ pathname: '/gouvernance/11', supprimerUneNotePriveeAction })
 
       // WHEN

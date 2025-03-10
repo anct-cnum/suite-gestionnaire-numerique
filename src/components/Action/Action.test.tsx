@@ -7,7 +7,7 @@ import { FormulaireAction } from './FormulaireAction'
 import MenuLateral from './MenuLateral'
 import ModifierUneAction from './ModifierUneAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { matchWithoutMarkup, presserLeBoutonDans, presserLeBoutonRadio, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, presserLeBoutonDans, presserLeBoutonRadio, renderComponent, stubbedServerAction } from '../testHelper'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
@@ -67,6 +67,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(lienBesoin).not.toHaveAttribute('aria-current')
     })
   })
+
   describe('formulaire', () => {
     it('étant un utilisateur,lorsque je veux ajouter une action, alors je vois le formulaire d‘ajout d‘une action', () => {
       // WHEN
@@ -161,7 +162,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux le valider', async () => {
       // GIVEN
-      const ajouterUneActionAction = vi.fn(async () => Promise.resolve(['OK']))
+      const ajouterUneActionAction = stubbedServerAction(['OK'])
       afficherFormulaireDeCreationValidation(ajouterUneActionAction)
 
       // WHEN
@@ -271,7 +272,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je modifie une action, alors je peux la valider', async () => {
       // GIVEN
-      const modifierUneActionAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUneActionAction = stubbedServerAction(['OK'])
       afficherFormulaireDeModificationAction(modifierUneActionAction)
 
       // WHEN
@@ -318,7 +319,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux voir les différents états du bouton', () => {
       // GIVEN
-      const ajouterUneActionAction = vi.fn().mockResolvedValue(['OK'])
+      const ajouterUneActionAction = stubbedServerAction(['OK'])
       renderComponent(
         <AjouterUneAction
           action={actionViewModelFactory()}
@@ -338,7 +339,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je remplis correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
       // GIVEN
-      const ajouterUneActionAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const ajouterUneActionAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       renderComponent(
         <AjouterUneAction
           action={actionVideViewModelFactory()}
@@ -363,7 +364,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je modifie correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
       // GIVEN
-      const modifierUneActionAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUneActionAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       renderComponent(
         <ModifierUneAction
           action={actionVideViewModelFactory()}
@@ -450,7 +451,9 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
   )
 }
 
-export function afficherFormulaireDeModificationAction(modifierUneActionAction: Mock = vi.fn()): void {
+export function afficherFormulaireDeModificationAction(
+  modifierUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
+): void {
   renderComponent(
     <ModifierUneAction
       action={actionViewModelFactory()}
@@ -482,7 +485,9 @@ export function afficherFormulaireDeModificationAction(modifierUneActionAction: 
   )
 }
 
-function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = vi.fn()): void {
+function afficherFormulaireDeCreationValidation(
+  ajouterUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
+): void {
   const validerFormulaire = async (
     event: FormEvent<HTMLFormElement>,
     contexte: string,
@@ -510,8 +515,8 @@ function afficherFormulaireDeCreationValidation(ajouterUneActionAction: Mock = v
       date={epochTime}
       drawerId=""
       label="Ajouter une action à la feuille de route"
-      setIsDrawerOpen={vi.fn()}
-      supprimerUnCofinancement={vi.fn()}
+      setIsDrawerOpen={vi.fn<() => void>()}
+      supprimerUnCofinancement={vi.fn<() => void>()}
       validerFormulaire={validerFormulaire}
     >
       <SubmitButton
