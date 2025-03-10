@@ -89,7 +89,6 @@ export default function ModifierUneFeuilleDeRoute({
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
     setIsDrawerOpen(false)
-    // eslint-disable-next-line no-restricted-syntax
     window.dsfr(drawerRef.current).modal.conceal()
     setIsDisabled(false)
   }

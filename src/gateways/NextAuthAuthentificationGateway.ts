@@ -137,7 +137,7 @@ async function recupereretMettreAJourUtilisateur(
   utilisateurLoader: PrismaUtilisateurLoader,
   utilisateurRepository: PrismaUtilisateurRepository
 ): Promise<UnUtilisateurReadModel | null> {
-  let utilisateurReadModel = null
+  let utilisateurReadModel
   try {
     utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)
   } catch (error) {

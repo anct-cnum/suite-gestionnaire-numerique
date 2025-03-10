@@ -93,15 +93,15 @@ describe('filtrer mes utilisateurs', () => {
 
   it('quand je clique sur le bouton pour réinitialiser les filtres alors je repars de zéro', () => {
     // GIVEN
-    const spiedRouterPush = vi.fn()
+    const spiedRouterPush = vi.fn<() => void>()
     afficherMesUtilisateurs({
       router: {
-        back: vi.fn(),
-        forward: vi.fn(),
-        prefetch: vi.fn(),
+        back: vi.fn<() => void>(),
+        forward: vi.fn<() => void>(),
+        prefetch: vi.fn<() => void>(),
         push: spiedRouterPush,
-        refresh: vi.fn(),
-        replace: vi.fn(),
+        refresh: vi.fn<() => void>(),
+        replace: vi.fn<() => void>(),
       },
     })
 
@@ -127,15 +127,15 @@ describe('filtrer mes utilisateurs', () => {
   describe('quand je filtre', () => {
     it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
-      const spiedRouterPush = vi.fn()
+      const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
+          back: vi.fn<() => void>(),
+          forward: vi.fn<() => void>(),
+          prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
+          refresh: vi.fn<() => void>(),
+          replace: vi.fn<() => void>(),
         },
       })
 
@@ -152,15 +152,15 @@ describe('filtrer mes utilisateurs', () => {
 
     it('sur certains rôles alors je n’affiche qu’eux', () => {
       // GIVEN
-      const spiedRouterPush = vi.fn()
+      const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
+          back: vi.fn<() => void>(),
+          forward: vi.fn<() => void>(),
+          prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
+          refresh: vi.fn<() => void>(),
+          replace: vi.fn<() => void>(),
         },
       })
 
@@ -176,15 +176,15 @@ describe('filtrer mes utilisateurs', () => {
 
     it('sur un département alors je n’affiche qu’eux', async () => {
       // GIVEN
-      const spiedRouterPush = vi.fn()
+      const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
+          back: vi.fn<() => void>(),
+          forward: vi.fn<() => void>(),
+          prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
+          refresh: vi.fn<() => void>(),
+          replace: vi.fn<() => void>(),
         },
       })
 
@@ -199,15 +199,15 @@ describe('filtrer mes utilisateurs', () => {
 
     it('sur une région alors je n’affiche qu’eux', async () => {
       // GIVEN
-      const spiedRouterPush = vi.fn()
+      const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
+          back: vi.fn<() => void>(),
+          forward: vi.fn<() => void>(),
+          prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
+          refresh: vi.fn<() => void>(),
+          replace: vi.fn<() => void>(),
         },
       })
 
@@ -223,15 +223,15 @@ describe('filtrer mes utilisateurs', () => {
     it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', async () => {
       // GIVEN
       vi.stubGlobal('fetch', vi.fn(structuresFetch))
-      const spiedRouterPush = vi.fn()
+      const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
         router: {
-          back: vi.fn(),
-          forward: vi.fn(),
-          prefetch: vi.fn(),
+          back: vi.fn<() => void>(),
+          forward: vi.fn<() => void>(),
+          prefetch: vi.fn<() => void>(),
           push: spiedRouterPush,
-          refresh: vi.fn(),
-          replace: vi.fn(),
+          refresh: vi.fn<() => void>(),
+          replace: vi.fn<() => void>(),
         },
       })
 
@@ -272,15 +272,15 @@ describe('filtrer mes utilisateurs', () => {
         async ({ expectedFetchInput, expectedRouterPush, zoneGeographique }) => {
           // GIVEN
           vi.stubGlobal('fetch', vi.fn(structuresFetch))
-          const spiedRouterPush = vi.fn()
+          const spiedRouterPush = vi.fn<() => void>()
           afficherMesUtilisateurs({
             router: {
-              back: vi.fn(),
-              forward: vi.fn(),
-              prefetch: vi.fn(),
+              back: vi.fn<() => void>(),
+              forward: vi.fn<() => void>(),
+              prefetch: vi.fn<() => void>(),
               push: spiedRouterPush,
-              refresh: vi.fn(),
-              replace: vi.fn(),
+              refresh: vi.fn<() => void>(),
+              replace: vi.fn<() => void>(),
             },
           })
 
@@ -300,15 +300,15 @@ describe('filtrer mes utilisateurs', () => {
       it('après avoir effacé la zone géographique précédemment sélectionnée, alors je n’affiche que les utilisateurs liés à cette structure', async () => {
         // GIVEN
         vi.stubGlobal('fetch', structuresFetch)
-        const spiedRouterPush = vi.fn()
+        const spiedRouterPush = vi.fn<() => void>()
         afficherMesUtilisateurs({
           router: {
-            back: vi.fn(),
-            forward: vi.fn(),
-            prefetch: vi.fn(),
+            back: vi.fn<() => void>(),
+            forward: vi.fn<() => void>(),
+            prefetch: vi.fn<() => void>(),
             push: spiedRouterPush,
-            refresh: vi.fn(),
-            replace: vi.fn(),
+            refresh: vi.fn<() => void>(),
+            replace: vi.fn<() => void>(),
           },
         })
 
@@ -327,15 +327,15 @@ describe('filtrer mes utilisateurs', () => {
       it('après avoir sélectionné une zone géographique différente, alors je ne filtre plus les utilisateurs liés à cette structure', async () => {
         // GIVEN
         vi.stubGlobal('fetch', structuresFetch)
-        const spiedRouterPush = vi.fn()
+        const spiedRouterPush = vi.fn<() => void>()
         afficherMesUtilisateurs({
           router: {
-            back: vi.fn(),
-            forward: vi.fn(),
-            prefetch: vi.fn(),
+            back: vi.fn<() => void>(),
+            forward: vi.fn<() => void>(),
+            prefetch: vi.fn<() => void>(),
             push: spiedRouterPush,
-            refresh: vi.fn(),
-            replace: vi.fn(),
+            refresh: vi.fn<() => void>(),
+            replace: vi.fn<() => void>(),
           },
         })
 

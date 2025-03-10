@@ -2,7 +2,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure } from '@/components/testHelper'
+import { presserLeBouton, saisirLeTexte, renderComponent, rolesAvecStructure, stubbedServerAction } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime, epochTimeMinusOneDay, epochTimeMinusTwoDays, epochTimePlusOneDay } from '@/shared/testHelper'
@@ -54,7 +54,7 @@ describe('mes utilisateurs', () => {
 
   it('étant du groupe admin quand je recherche un utilisateur par son nom alors il s’affiche dans la liste', () => {
     // GIVEN
-    const spiedRouterPush = vi.fn()
+    const spiedRouterPush = vi.fn<() => void>()
     afficherMesUtilisateurs(
       [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
       {
@@ -74,7 +74,7 @@ describe('mes utilisateurs', () => {
 
   it('étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
     // GIVEN
-    const spiedRouterPush = vi.fn()
+    const spiedRouterPush = vi.fn<() => void>()
     afficherMesUtilisateurs(
       [utilisateurActifReadModel, utilisateurEnAttenteReadModel],
       {
@@ -287,7 +287,7 @@ describe('mes utilisateurs', () => {
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" alors le drawer se ferme, une notification s’affiche et la liste est mise à jour', async () => {
       // GIVEN
-      const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+      const reinviterUnUtilisateurAction = stubbedServerAction(['OK'])
       afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { pathname: '/mes-utilisateurs', reinviterUnUtilisateurAction })
 
       // WHEN
@@ -308,7 +308,7 @@ describe('mes utilisateurs', () => {
 
     it('quand je clique sur le bouton "Renvoyer cette invitation" mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const reinviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const reinviterUnUtilisateurAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherMesUtilisateurs([utilisateurEnAttenteReadModel], { reinviterUnUtilisateurAction })
 
       // WHEN
@@ -410,7 +410,7 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression, alors le drawer se ferme, une notification s’affiche, la liste est mise à jour', async () => {
       // GIVEN
-      const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+      const supprimerUnUtilisateurAction = stubbedServerAction(['OK'])
       afficherMesUtilisateurs(
         [utilisateurEnAttenteReadModel],
         { pathname: '/mes-utilisateurs', supprimerUnUtilisateurAction }
@@ -434,7 +434,7 @@ describe('mes utilisateurs', () => {
 
     it('je confirme la suppression mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const supprimerUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const supprimerUnUtilisateurAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherMesUtilisateurs(
         [utilisateurEnAttenteReadModel],
         { supprimerUnUtilisateurAction }

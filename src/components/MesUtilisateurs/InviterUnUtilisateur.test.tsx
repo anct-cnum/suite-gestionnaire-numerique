@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, presserLeBouton, saisirLeTexte, selectionnerLElement } from '@/components/testHelper'
+import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, presserLeBouton, saisirLeTexte, selectionnerLElement, stubbedServerAction } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -140,7 +140,7 @@ describe('inviter un utilisateur', () => {
 
   it('en tant qu’administrateur, quand je fais une recherche dans le champ de structure, alors je peux y faire une recherche utilisée dans le formulaire', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+    const inviterUnUtilisateurAction = stubbedServerAction(['OK'])
     vi.stubGlobal('dsfr', stubbedConceal())
     vi.stubGlobal('fetch', vi.fn(structuresFetch))
     afficherMesUtilisateurs({
@@ -247,7 +247,7 @@ describe('inviter un utilisateur', () => {
 
   it('quand je remplis correctement le formulaire et avec une nouvelle adresse électronique, alors le drawer se ferme, une notification s’affiche et le formulaire est réinitialisé', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['OK']))
+    const inviterUnUtilisateurAction = stubbedServerAction(['OK'])
     vi.stubGlobal('dsfr', stubbedConceal())
     vi.stubGlobal('fetch', vi.fn(structuresFetch))
     afficherMesUtilisateurs({ inviterUnUtilisateurAction, pathname: '/mes-utilisateurs' })
@@ -296,7 +296,7 @@ describe('inviter un utilisateur', () => {
       'Gestionnaire région': 'Région',
       'Gestionnaire structure': 'Structure',
     }
-    const inviterUnUtilisateurAction = vi.fn()
+    const inviterUnUtilisateurAction = vi.fn<() => Promise<ReadonlyArray<string>>>()
       .mockResolvedValueOnce(['emailExistant'])
       .mockResolvedValueOnce(['OK'])
     vi.stubGlobal('dsfr', stubbedConceal())
@@ -336,7 +336,7 @@ describe('inviter un utilisateur', () => {
 
   it('quand je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+    const inviterUnUtilisateurAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
     vi.stubGlobal('dsfr', stubbedConceal())
     afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
@@ -355,7 +355,7 @@ describe('inviter un utilisateur', () => {
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire et avec un mail existant, alors il y a un message d’erreur', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['emailExistant']))
+    const inviterUnUtilisateurAction = stubbedServerAction(['emailExistant'])
     afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 
     // WHEN
@@ -375,7 +375,7 @@ describe('inviter un utilisateur', () => {
 
   it('dans le drawer d’invitation, quand je remplis correctement le formulaire mais que l’invitation ne peut pas se faire, alors le drawer se ferme', async () => {
     // GIVEN
-    const inviterUnUtilisateurAction = vi.fn(async () => Promise.resolve(['utilisateurNePeutPasGererUtilisateurACreer']))
+    const inviterUnUtilisateurAction = stubbedServerAction(['utilisateurNePeutPasGererUtilisateurACreer'])
     vi.stubGlobal('dsfr', stubbedConceal())
     afficherMesUtilisateurs({ inviterUnUtilisateurAction })
 

@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, presserLeBoutonRadio, renderComponent, stubbedConceal } from '../testHelper'
+import { matchWithoutMarkup, presserLeBouton, presserLeBoutonRadio, renderComponent, stubbedConceal, stubbedServerAction } from '../testHelper'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
 
@@ -78,7 +78,7 @@ describe('modifier une feuille de route', () => {
 
     it('puis que je modifie le formulaire, alors le drawer se ferme, une notification s’affiche, la feuille de route est mise à jour', async () => {
       // GIVEN
-      const modifierUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['OK']))
+      const modifierUneFeuilleDeRouteAction = stubbedServerAction(['OK'])
       vi.stubGlobal('dsfr', stubbedConceal())
       afficherUneFeuilleDeRoute({ modifierUneFeuilleDeRouteAction, pathname: '/gouvernance/11/feuilles-de-route' })
 
@@ -112,7 +112,7 @@ describe('modifier une feuille de route', () => {
 
     it('puis que je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const modifierUneFeuilleDeRouteAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const modifierUneFeuilleDeRouteAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       vi.stubGlobal('dsfr', stubbedConceal())
       afficherUneFeuilleDeRoute({ modifierUneFeuilleDeRouteAction })
 

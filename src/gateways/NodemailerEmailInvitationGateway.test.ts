@@ -1,3 +1,5 @@
+// eslint-disable devrait être inutile mais la configuration ne fonctionne pas sans ça
+/* eslint-disable import/no-restricted-paths */
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
@@ -36,7 +38,7 @@ describe('envoi de mail d’invitation', () => {
     },
   ])('$desc', async ({ transport, emailInvitationGateway }) => {
     // GIVEN
-    const mockSendMail = vi.fn()
+    const mockSendMail = vi.fn<() => void>()
     const spiedCreateTransport = vi
       .spyOn(nodemailer, 'createTransport')
       // @ts-expect-error

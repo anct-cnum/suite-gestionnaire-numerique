@@ -88,9 +88,9 @@ describe('ajout des porteurs', () => {
         cofinancements={[]}
         drawerId=""
         label="Ajouter une action"
-        setIsDrawerOpen={vi.fn()}
-        supprimerUnCofinancement={vi.fn()}
-        validerFormulaire={vi.fn()}
+        setIsDrawerOpen={vi.fn<() => void>()}
+        supprimerUnCofinancement={vi.fn<() => void>()}
+        validerFormulaire={vi.fn<() => Promise<void>>()}
       >
         vide
       </FormulaireAction>

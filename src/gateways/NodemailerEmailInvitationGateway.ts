@@ -1,7 +1,8 @@
+// eslint-disable devrait être inutile mais la configuration ne fonctionne pas sans ça
+/* eslint-disable import/no-restricted-paths */
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
-// eslint-disable-next-line import/no-restricted-paths
 import { smtpFrom, smtpReplyTo, makeMjml } from './invitationEmail'
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
@@ -22,6 +23,7 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
 
   async send(destinataire: string): Promise<void> {
     const authParams = this.#user === '' ? {} : { auth: { pass: this.#password, user: this.#user } }
+    // eslint-disable-next-line import/no-named-as-default-member
     const mailSender = nodemailer.createTransport({
       // @ts-expect-error
       host: this.#host,

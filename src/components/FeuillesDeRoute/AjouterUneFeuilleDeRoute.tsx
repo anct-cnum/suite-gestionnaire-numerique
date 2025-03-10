@@ -86,7 +86,6 @@ export default function AjouterUneFeuilleDeRoute({
     }
     setIsDrawerOpen(false);
     (event.target as HTMLFormElement).reset()
-    // eslint-disable-next-line no-restricted-syntax
     window.dsfr(drawerRef.current).modal.conceal()
     setIsDisabled(false)
   }

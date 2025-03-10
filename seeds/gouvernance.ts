@@ -1,10 +1,10 @@
+/* eslint-disable complexity */
 /* eslint-disable no-console */
 /* eslint-disable default-case */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/switch-exhaustiveness-check */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-/* eslint-disable no-case-declarations*/
 
 import {
   ComiteRecord,

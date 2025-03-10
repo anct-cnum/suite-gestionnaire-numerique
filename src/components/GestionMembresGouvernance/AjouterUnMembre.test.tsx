@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, presserLeBouton, renderComponent } from '../testHelper'
+import { matchWithoutMarkup, presserLeBouton, renderComponent, stubbedServerAction } from '../testHelper'
 import GestionMembres from './GestionMembres'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
@@ -146,7 +146,7 @@ describe('membres gouvernance', () => {
 
     it('puis que je sélectionne un membre et je le valide, alors le drawer se ferme, le formulaire est réinitialisé, une notification s’affiche et les membres sont mis à jour', async () => {
       // GIVEN
-      const accepterUnMembreAction = vi.fn(async () => Promise.resolve(['OK']))
+      const accepterUnMembreAction = stubbedServerAction(['OK'])
       afficherMembres({ accepterUnMembreAction, pathname: '/membres/11' })
 
       // WHEN
@@ -175,7 +175,7 @@ describe('membres gouvernance', () => {
 
     it('quand je remplis correctement le formulaire mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const accepterUnMembreAction = vi.fn(async () => Promise.resolve(['Le format est incorrect', 'autre erreur']))
+      const accepterUnMembreAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherMembres({ accepterUnMembreAction })
 
       // WHEN
