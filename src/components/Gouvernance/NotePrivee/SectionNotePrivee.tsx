@@ -18,7 +18,7 @@ export default function SectionNotePrivee({
   isDrawerOpen,
   setIsDrawerOpen,
 }: Readonly<Props>): ReactElement | null {
-  if (!gouvernanceViewModel.peutVoireNotePrivee) {
+  if (!gouvernanceViewModel.peutVoirNotePrivee) {
     return null
   }
   if (gouvernanceViewModel.notePrivee) {
@@ -45,7 +45,10 @@ export default function SectionNotePrivee({
             uidGouvernance={gouvernanceViewModel.uid}
           />
         </Drawer>
-        <Resume style={styles['resume-note-privee']}>
+        <Resume
+          peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
+          style={styles['resume-note-privee']}
+        >
           <ResumeNotePrivee
             edition={gouvernanceViewModel.notePrivee.edition}
             id={drawerNotePriveeId}
@@ -80,7 +83,10 @@ export default function SectionNotePrivee({
           uidGouvernance={gouvernanceViewModel.uid}
         />
       </Drawer>
-      <Resume style={styles['resume-note-privee-vide']}>
+      <Resume
+        peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
+        style={styles['resume-note-privee-vide']}
+      >
         <ResumeNotePriveeVide
           id={drawerNotePriveeId}
           showDrawer={() => {

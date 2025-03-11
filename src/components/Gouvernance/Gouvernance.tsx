@@ -57,6 +57,7 @@ export default function Gouvernance(): ReactElement {
         <ResumeMembre
           denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
           membresLink={gouvernanceViewModel.links.membres}
+          peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
           total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
         />
         {
@@ -64,21 +65,25 @@ export default function Gouvernance(): ReactElement {
             <ResumeFeuilleDeRoute
               link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
               linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
+              peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
               total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
               wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
             /> : (
-              <Resume style={styles['resume-feuilles-de-route']}>
+              <Resume
+                peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
+                style={styles['resume-feuilles-de-route']}
+              >
                 <ResumeFeuilleDeRouteVide />
               </Resume>
             )
         }
-         <SectionNotePrivee
-           drawerNotePriveeId={drawerNotePriveeId}
-           gouvernanceViewModel={gouvernanceViewModel}
-           isDrawerOpen={isDrawerOpen}
-           labelNotePriveeId={labelNotePriveeId}
-           setIsDrawerOpen={setIsDrawerOpen}
-         />
+        <SectionNotePrivee
+          drawerNotePriveeId={drawerNotePriveeId}
+          gouvernanceViewModel={gouvernanceViewModel}
+          isDrawerOpen={isDrawerOpen}
+          labelNotePriveeId={labelNotePriveeId}
+          setIsDrawerOpen={setIsDrawerOpen}
+        />
       </div>
       <section aria-labelledby="comitologie">
         <Drawer

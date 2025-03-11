@@ -278,7 +278,7 @@ describe('note privée', () => {
   function afficherUneGouvernanceSansNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
     const gouvernanceViewModel = {
       ...gouvernancePresenter(gouvernanceReadModelFactory({ notePrivee: undefined }), now),
-      peutVoireNotePrivee: true,
+      peutVoirNotePrivee: true,
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
@@ -293,7 +293,7 @@ describe('note privée', () => {
           texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
         },
       }), now),
-      peutVoireNotePrivee: true,
+      peutVoirNotePrivee: true,
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
@@ -310,7 +310,7 @@ describe('note privée', () => {
           texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
         },
       }), now),
-      peutVoireNotePrivee: false,
+      peutVoirNotePrivee: false,
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
