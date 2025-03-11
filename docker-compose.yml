@@ -3,7 +3,7 @@ services:
     extends:
       file: common-services.yml
       service: postgres
-    container_name: sgn_db_dev
+    container_name: min_db_dev
     ports:
       - target: 5432
         published: 5432
@@ -16,7 +16,7 @@ services:
     extends:
       file: common-services.yml
       service: postgres
-    container_name: sgn_db_test
+    container_name: min_db_test
     ports:
       - target: 5432
         published: 5434
@@ -29,7 +29,7 @@ services:
     extends:
       file: common-services.yml
       service: mailpit
-    container_name: sgn_mailpit_dev
+    container_name: min_mailpit_dev
     ports:
       - 8025:8025
       - 1025:1025
