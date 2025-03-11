@@ -99,6 +99,11 @@ yarn migration:utilisateur
 
 Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 
+## ⬆️ Mise à jour Matomo
+
+Ne pas oublier de changer la version du fichier `/public/matomo-vX.js` s'il vient à être modifié.
+Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.beta.gouv.fr/index.php?module=CoreHome&action=index&idSite=200&period=day&date=today&updated=1).
+
 ## 🛠️ Les outils
 
 ### TypeScript
@@ -198,7 +203,7 @@ Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 Se référer à [cette page de dicussion](https://github.com/anct-cnum/suite-gestionnaire-numerique/discussions/202)
 dédiée à une description exhaustive de l'architecture applicative en vigueur sur l'application.
 
-## ⚡Production
+## ⚡ Production
 
 ### Importer les données FNE et CoNum (<ins>avant mise en service</ins>)
 
@@ -217,7 +222,7 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
 
 - Se connecter à nouveau à un _one-off container_ Scalingo :  
   `yarn bash:production`  
-  et installer **prisma**:  
+  et installer **prisma** :  
   `yarn add @prisma/client`
 
 - Lancer le script d'import :  
