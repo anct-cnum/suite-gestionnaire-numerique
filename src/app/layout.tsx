@@ -43,6 +43,14 @@ export default function Layout({ children }: Readonly<PropsWithChildren>): React
           src="/dsfr-1.13.0.module.min.js"
           strategy="lazyOnload"
         />
+        {
+          process.env.NODE_ENV === 'production' ? (
+            <Script
+              src="/matomo-v1.js"
+              strategy="lazyOnload"
+            />
+          ) : null
+        }
       </head>
       <body>
         {children}
