@@ -84,12 +84,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(badgeEnConstruction).toBeInTheDocument()
       const titreIndicationDuBesoin = within(formulaire).getByText(matchWithoutMarkup('Besoins liés à l‘action *'), { selector: 'p' })
       expect(titreIndicationDuBesoin).toBeInTheDocument()
-      const boutonModifier = within(formulaire).getAllByRole('button', { name: 'Modifier' })[0]
-      expect(boutonModifier).toBeInTheDocument()
+      const boutonAjouter = within(formulaire).getByTitle('Ajouter des besoins')
+      expect(boutonAjouter).toBeInTheDocument()
       const texteIndicationDuBesoin = within(formulaire).getByText('Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.', { selector: 'p' })
       expect(texteIndicationDuBesoin).toBeInTheDocument()
-      const tagBesoinParDefaut = within(formulaire).getByText('Établir un diagnostic territorial', { selector: 'p' })
-      expect(tagBesoinParDefaut).toBeInTheDocument()
       const titreSectionInformationSurLAction = within(formulaire).getByText('Informations sur l‘action', { selector: 'p' })
       expect(titreSectionInformationSurLAction).toBeInTheDocument()
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
@@ -113,8 +111,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
       const labelSectionPorteurDeLAaction = within(formulaire).getByText('Indiquez quelle est la structure porteuse de cette action', { selector: 'p' })
       expect(labelSectionPorteurDeLAaction).toBeInTheDocument()
-      const boutonModifierLePorteurDeLAaction = within(formulaire).getAllByRole('button', { name: 'Modifier' })[1]
-      expect(boutonModifierLePorteurDeLAaction).toBeInTheDocument()
+      const boutonAjouterLePorteurDeLAaction = within(formulaire).getByTitle('Ajouter des porteurs')
+      expect(boutonAjouterLePorteurDeLAaction).toBeInTheDocument()
       const tagPorteurDeLAactionParDefaut = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
       expect(tagPorteurDeLAactionParDefaut).toBeInTheDocument()
       const titreSectionTemporaliteDeLAaction = within(formulaire).getByText('Temporalité de l‘action', { selector: 'p' })
@@ -152,7 +150,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonAjouterUnFinancement).toBeDisabled()
       const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) des fonds *'), { selector: 'p' })
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
-      const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { name: 'Ajouter' })
+      const boutonAjouterUnDestinataire = within(formulaire).getByTitle('Ajouter des bénéficiaires des fonds')
       expect(boutonAjouterUnDestinataire).toBeInTheDocument()
       const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
@@ -196,6 +194,8 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // THEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
+      const boutonModifierLesBesoins = within(formulaire).getAllByRole('button', { name: 'Modifier' })[0]
+      expect(boutonModifierLesBesoins).toBeInTheDocument()
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       expect(nomDeLAction).toHaveValue('Structurer une filière de reconditionnement locale 1')
       const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })

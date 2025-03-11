@@ -11,6 +11,7 @@ export default function AjouterDesBesoins({
   financements,
   formations,
   formationsProfesionnels,
+  hasBesoins,
   outillages,
   toutEffacer,
 }: Props): ReactElement {
@@ -24,7 +25,11 @@ export default function AjouterDesBesoins({
     <>
       <button
         aria-controls={drawerId}
-        className="fr-btn fr-btn--tertiary"
+        className={
+          hasBesoins ?
+            'fr-btn fr-btn--tertiary' :
+            'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
+        }
         data-fr-opened="false"
         onClick={() => {
           setIsDrawerOpen(true)
@@ -32,7 +37,7 @@ export default function AjouterDesBesoins({
         title="Ajouter des besoins"
         type="button"
       >
-        Modifier
+        {hasBesoins ? 'Modifier' : 'Ajouter'}
       </button>
       <Drawer
         boutonFermeture="Fermer l’ajout des besoins"
@@ -131,6 +136,7 @@ function Fieldset(
 
 type Props = Readonly<{
   financements: ActionViewModel['besoins']['financements']
+  hasBesoins: boolean
   formations: ActionViewModel['besoins']['formations']
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']
   outillages: ActionViewModel['besoins']['outillages']

@@ -251,13 +251,23 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       financements: [],
       formations: [
         {
-          isChecked: true,
+          isChecked: false,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         },
       ],
-      formationsProfessionnels: [],
-      outillages: [],
+      formationsProfessionnels: [{
+        isChecked: false,
+        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+        value: 'appuyer_certification_qualiopi',
+      }],
+      outillages: [
+        {
+          isChecked: false,
+          label: 'Structurer une filière de reconditionnement locale',
+          value: 'structurer_filiere_reconditionnement_locale',
+        },
+      ],
     },
     budgetGlobal: 0,
     budgetPrevisionnel: [],
