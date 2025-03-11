@@ -65,7 +65,7 @@ scalingo -a mon-inclusion-numerique db-tunnel -i [CHEMIN_DE_TA_CLE_SSH_SCALINGO]
 
 Ensuite, dans ton outils, tu configures avec 127.0.0.1:10000 et le reste grâce à la variable d'environnement SCALINGO_POSTGRESQL_URL utilisée juste au dessus.
 
-Quand le schéma de SGN est modifié, regénérer les tables à partir des schémas Prisma, créer les migrations au besoin et générer les types pour Prisma Client :
+Quand le schéma de MIN est modifié, regénérer les tables à partir des schémas Prisma, créer les migrations au besoin et générer les types pour Prisma Client :
 
 ```bash
 yarn prisma:migrate
