@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 export default function InformationLogo(): ReactElement {
   return (
     <svg
+      aria-hidden="true"
       className="fr-mr-2w"
       height="20"
       viewBox="0 0 20 20"

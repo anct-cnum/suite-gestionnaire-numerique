@@ -580,35 +580,43 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           <Image
             alt=""
             className="fr-mr-2w"
-            height={56}
-            src={`${process.env.NEXT_PUBLIC_HOST}/data-inclusion.svg`}
-            width={56}
+            height={50}
+            src={`${process.env.NEXT_PUBLIC_HOST}/coop.svg`}
+            width={50}
           />
           <Image
             alt=""
             className="fr-mr-2w"
-            height={56}
-            src={`${process.env.NEXT_PUBLIC_HOST}/conum.svg`}
-            width={56}
-          />
-          <Image
-            alt=""
-            className="fr-mr-2w"
-            height={56}
-            src={`${process.env.NEXT_PUBLIC_HOST}/aidants-connect.svg`}
-            width={56}
-          />
-          <Image
-            alt=""
-            className="fr-mr-2w"
-            height={56}
-            src={`${process.env.NEXT_PUBLIC_HOST}/mednum-transparent.svg`}
-            width={56}
-          />
-          <Image
-            alt=""
             height={50}
             src={`${process.env.NEXT_PUBLIC_HOST}/carto-nationale.svg`}
+            width={50}
+          />
+          <Image
+            alt=""
+            className="fr-mr-2w"
+            height={50}
+            src={`${process.env.NEXT_PUBLIC_HOST}/aidants-connect.svg`}
+            width={50}
+          />
+          <Image
+            alt=""
+            className="fr-mr-2w"
+            height={50}
+            src={`${process.env.NEXT_PUBLIC_HOST}/conum.svg`}
+            width={50}
+          />
+          <Image
+            alt=""
+            className="fr-mr-2w"
+            height={50}
+            src={`${process.env.NEXT_PUBLIC_HOST}/mednum.svg`}
+            width={50}
+          />
+          <Image
+            alt=""
+            className="fr-mr-2w"
+            height={50}
+            src={`${process.env.NEXT_PUBLIC_HOST}/data-inclusion.svg`}
             width={50}
           />
         </div>
