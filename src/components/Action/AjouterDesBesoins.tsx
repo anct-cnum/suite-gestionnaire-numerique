@@ -34,13 +34,13 @@ export default function AjouterDesBesoins({
         onClick={() => {
           setIsDrawerOpen(true)
         }}
-        title="Ajouter des besoins"
+        title={hasBesoins ? 'Modifier les besoins' : 'Ajouter des besoins'}
         type="button"
       >
         {hasBesoins ? 'Modifier' : 'Ajouter'}
       </button>
       <Drawer
-        boutonFermeture="Fermer l’ajout des besoins"
+        boutonFermeture={hasBesoins ? 'Fermer la modification des besoins' : 'Fermer l‘ajout des besoins'}
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}

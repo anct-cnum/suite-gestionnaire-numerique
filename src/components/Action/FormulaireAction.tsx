@@ -85,12 +85,7 @@ export function FormulaireAction({
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
-              hasBesoins={
-                action.besoins.financements.some(item => item.isChecked) ||
-                action.besoins.formations.some(item => item.isChecked) ||
-                action.besoins.formationsProfessionnels.some(item => item.isChecked) ||
-                action.besoins.outillages.some(item => item.isChecked)
-              }
+              hasBesoins={action.hasBesoins}
               outillages={action.besoins.outillages}
               toutEffacer={toutEffacer}
             />

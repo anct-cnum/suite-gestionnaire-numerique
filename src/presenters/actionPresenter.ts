@@ -131,6 +131,22 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
     enveloppes,
+    hasBesoins: checkHasBesoins({
+      financements: [
+        {
+          isChecked: true,
+          label: 'Structurer un fond local pour l’inclusion numérique',
+          value: 'structurer_fond_local',
+        }],
+      formations: [
+        {
+          isChecked: true,
+          label: 'Établir un diagnostic territorial',
+          value: 'etablir_diagnostic_territorial',
+        }],
+      formationsProfessionnels: [],
+      outillages: [],
+    }),
     lienPourModifier: `/gouvernance/${codeDepartement}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
     nom: 'Action test',
     nomFeuilleDeRoute: 'Feuille de route 69',
@@ -163,6 +179,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
 }
 
 export type ActionViewModel = Readonly<{
+  hasBesoins: boolean
   nomFeuilleDeRoute: string
   beneficiaires: Beneficiaires
   besoins: Readonly<{
@@ -284,6 +301,22 @@ export const actionARemplir: ActionViewModel = {
   contexte: '',
   description: '',
   enveloppes,
+  hasBesoins: checkHasBesoins({
+    financements: [
+      {
+        isChecked: false,
+        label: 'Structurer un fond local pour l’inclusion numérique',
+        value: 'structurer_fond_local',
+      }],
+    formations: [
+      {
+        isChecked: false,
+        label: 'Établir un diagnostic territorial',
+        value: 'etablir_diagnostic_territorial',
+      }],
+    formationsProfessionnels: [],
+    outillages: [],
+  }),
   lienPourModifier: '',
   nom: '',
   nomFeuilleDeRoute: 'Feuille de route 69',
@@ -347,3 +380,16 @@ type Enveloppe = Readonly<{
   value: number
   id: string
 }>
+function checkHasBesoins(besoins: {
+  financements: Besoins
+  formations: Besoins
+  formationsProfessionnels: Besoins
+  outillages: Besoins
+}): boolean {
+  return (
+    besoins.financements.some(item => item.isChecked) ||
+    besoins.formations.some(item => item.isChecked) ||
+    besoins.formationsProfessionnels.some(item => item.isChecked) ||
+    besoins.outillages.some(item => item.isChecked)
+  )
+}
