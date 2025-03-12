@@ -8,6 +8,7 @@ import Drawer from '../shared/Drawer/Drawer'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
+import { LabelValue } from '@/presenters/shared/labelValue'
 
 export default function ModifierUneFeuilleDeRoute({
   contratPreexistant,
@@ -96,7 +97,7 @@ export default function ModifierUneFeuilleDeRoute({
 
 type Props = Readonly<{
   contratPreexistant: FeuilleDeRouteViewModel['formulaire']['contratPreexistant']
-  membres: FeuilleDeRouteViewModel['formulaire']['membres']
+  membres: ReadonlyArray<LabelValue>
   nom: string
   perimetres: FeuilleDeRouteViewModel['formulaire']['perimetres']
   uidFeuilleDeRoute: string

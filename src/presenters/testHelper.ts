@@ -6,24 +6,28 @@ import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 
 const enveloppes: ActionViewModel['enveloppes'] = [
   {
-    id: '1',
+    budget: 50_000,
+    isSelected: false,
     label: 'Conseiller Numérique - 2024',
-    value: 50_000,
+    value: '1',
   },
   {
-    id: '2',
+    budget: 100_000,
+    isSelected: false,
     label: 'Conseiller Numérique - Plan France Relance',
-    value: 100_000,
+    value: '2',
   },
   {
-    id: '3',
+    budget: 30_000,
+    isSelected: false,
     label: 'Formation Aidant Numérique/Aidants Connect - 2024',
-    value: 30_000,
+    value: '3',
   },
   {
-    id: '4',
+    budget: 10_000,
+    isSelected: false,
     label: 'Ingénierie France Numérique Ensemble - 2024',
-    value: 10_000,
+    value: '4',
   },
 ]
 

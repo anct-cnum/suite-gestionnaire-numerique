@@ -9,21 +9,20 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
   const { changerMonRoleAction, pathname, roles, sessionUtilisateurViewModel } = useContext(clientContext)
 
   return (
-    <div className="fr-select-group">
-      <Select
-        ariaControlsId={ariaControlsId}
-        id="role"
-        name="role"
-        onChange={changerDeRole}
-        options={roles.map((role) => ({
-          isSelected: role === sessionUtilisateurViewModel.role.nom,
-          label: role,
-          uid: role,
-        }))}
-      >
-        Rôle
-      </Select>
-    </div>
+    <Select
+      ariaControlsId={ariaControlsId}
+      id="role"
+      name="role"
+      onChange={changerDeRole}
+      options={roles.map((role) => ({
+        id: role,
+        isSelected: role === sessionUtilisateurViewModel.role.nom,
+        label: role,
+        value: role,
+      }))}
+    >
+      Rôle
+    </Select>
   )
 
   async function changerDeRole({ currentTarget }: FormEvent<HTMLSelectElement>): Promise<void> {
