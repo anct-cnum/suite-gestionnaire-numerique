@@ -8,6 +8,7 @@ import Select from '../shared/Select/Select'
 import TextInput from '../shared/TextInput/TextInput'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { LabelValue } from '@/presenters/shared/labelValue'
 
 export default function FormulaireFeuilleDeRoute({
   children,
@@ -56,6 +57,7 @@ export default function FormulaireFeuilleDeRoute({
         </TextInput>
         <Select
           id="membres"
+          isPlaceholderSelectable={true}
           name="membre"
           options={membres}
           required={true}
@@ -104,7 +106,7 @@ type Props = PropsWithChildren<Readonly<{
   contratPreexistant: FeuillesDeRouteViewModel['formulaire']['contratPreexistant']
   label: string
   labelId: string
-  membres: FeuillesDeRouteViewModel['formulaire']['membres']
+  membres: ReadonlyArray<LabelValue>
   nom: string
   perimetres: FeuillesDeRouteViewModel['formulaire']['perimetres']
   validerFormulaire(event: FormEvent<HTMLFormElement>): void

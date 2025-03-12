@@ -1,4 +1,5 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { LabelValue } from './shared/labelValue'
 import { formatMontant } from './shared/number'
 
 export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRoute: string): FeuilleDeRouteViewModel {
@@ -54,18 +55,13 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
       membres: [
         {
           isSelected: false,
-          label: 'Choisir',
-          uid: '',
-        },
-        {
-          isSelected: false,
           label: 'Croix Rouge Française',
-          uid: 'membre1FooId',
+          value: 'membre1FooId',
         },
         {
           isSelected: true,
           label: 'La Poste',
-          uid: 'membre2FooId',
+          value: 'membre2FooId',
         },
       ],
       perimetres: [
@@ -141,11 +137,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
       isChecked: boolean
       label: string
     }>
-    membres: ReadonlyArray<{
-      isSelected: boolean
-      label: string
-      uid: string
-    }>
+    membres: ReadonlyArray<LabelValue>
     perimetres: ReadonlyArray<{
       id: 'regional' | 'departemental' | 'epci_groupement'
       isChecked: boolean

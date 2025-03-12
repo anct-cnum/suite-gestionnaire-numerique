@@ -1,6 +1,7 @@
 import { FormEvent, ReactElement, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
@@ -21,39 +22,17 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
       <p className="fr-text--sm color-grey">
         Précisez l‘origine du financement
       </p>
-      <div className="fr-select-group">
-        <label
-          className="fr-label"
-          htmlFor="cofinanceur"
-        >
-          Membre de la gouvernance
-        </label>
-        <select
-          className="fr-select"
-          id="cofinanceur"
-          name="cofinanceur"
-          onChange={(event) => {
-            setCoFinanceur(event.target.value)
-          }}
-          required={true}
-          value={coFinanceur}
-        >
-          <option
-            hidden
-            value=""
-          >
-            Choisir
-          </option>
-          {coporteurs.length > 0 && coporteurs.map((coporteur) => (
-            <option
-              key={coporteur.nom}
-              value={coporteur.nom}
-            >
-              {coporteur.nom}
-            </option>
-          ))}
-        </select>
-      </div>
+      <Select
+        id="cofinanceur"
+        name="cofinanceur"
+        onChange={(event) => {
+          setCoFinanceur(event.target.value)
+        }}
+        options={coporteurs.length > 0 ? coporteurs.map(({ nom }) => ({ label: nom, value: nom })) : []}
+        required={true}
+      >
+        Membre de la gouvernance
+      </Select>
       <label
         className="fr-label fr-mb-1w"
         htmlFor="rechercheStructure"

@@ -11,9 +11,11 @@ import Badge from '../shared/Badge/Badge'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
+import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { ActionViewModel } from '@/presenters/actionPresenter'
+import { LabelValue } from '@/presenters/shared/labelValue'
 
 export function FormulaireAction({
   action,
@@ -229,36 +231,14 @@ export function FormulaireAction({
               >
                 Annuelle
               </label>
-              <div className="fr-select-group">
-                <label
-                  className="fr-label"
-                  htmlFor="anneeDeDebut"
-                >
-                  Année de début de l‘action
-                </label>
-                <select
-                  className="fr-select"
-                  defaultValue={action.anneeDeDebut}
-                  id="anneeDeDebut"
-                  name="anneeDeDebut"
-                >
-                  <option
-                    disabled
-                    hidden
-                    value=""
-                  >
-                    {action.anneeDeDebut}
-                  </option>
-                  {years.map((year) => (
-                    <option
-                      key={year}
-                      value={year}
-                    >
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                id="anneeDeDebut"
+                name="anneeDeDebut"
+                options={years.map(toLabelValue(Number(action.anneeDeDebut)))}
+                placeholder={action.anneeDeDebut}
+              >
+                Année de début de l‘action
+              </Select>
             </div>
             <div className={styles['select-width']}>
               <input
@@ -277,37 +257,16 @@ export function FormulaireAction({
               >
                 Pluriannuelle
               </label>
-              <div className="fr-select-group">
-                <label
-                  className="fr-label"
-                  htmlFor="anneeDeFin"
-                >
-                  Année de fin de l‘action
-                </label>
-                <select
-                  className="fr-select"
-                  defaultValue={action.anneeDeFin}
-                  disabled={temporalite !== 'pluriannuelle'}
-                  id="anneeDeFin"
-                  name="anneeDeFin"
-                >
-                  <option
-                    disabled
-                    hidden
-                    value=""
-                  >
-                    -
-                  </option>
-                  {years.map((year) => (
-                    <option
-                      key={year}
-                      value={year}
-                    >
-                      {year}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                disabled={temporalite !== 'pluriannuelle'}
+                id="anneeDeFin"
+                name="anneeDeFin"
+                options={years.map(toLabelValue(Number(action.anneeDeFin)))}
+                placeholder="-"
+
+              >
+                Année de fin de l‘action
+              </Select>
             </div>
           </div>
         </div>
@@ -500,6 +459,14 @@ export function FormulaireAction({
       }
     }
   }
+}
+
+function toLabelValue(selected: number) {
+  return (year: number): LabelValue<number> => ({
+    isSelected: selected === year,
+    label: `${year}`,
+    value: year,
+  })
 }
 
 type Props = PropsWithChildren<Readonly<{

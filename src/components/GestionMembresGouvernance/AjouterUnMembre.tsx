@@ -48,10 +48,11 @@ export default function AjouterUnMembre({
           </legend>
           <Select
             id="membres"
+            isPlaceholderSelectable={true}
             name="membre"
             onChange={selectionnerUnMembre}
-            options={[{ isSelected: true, label: 'Sélectionner un membre', uid: '' }]
-              .concat(candidatsEtSuggeres.map(({ nom, uid }) => ({ isSelected: false, label: nom, uid })))}
+            options={candidatsEtSuggeres.map(({ nom, uid }) => ({ id: 'uid', isSelected: false, label: nom, value: uid }))}
+            placeholder="Sélectionner un membre"
             required={true}
           >
             Membre candidat ou suggéré

@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactElement, RefObject, useEffect, useId, useMemo, 
 import styles from './Action.module.css'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import Select from '../shared/Select/Select'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 import { formatMontant } from '@/presenters/shared/number'
@@ -82,37 +83,16 @@ export default function DemanderUneSubvention({
           {/**/}
           .
         </p>
-        <div className="fr-select-group">
-          <label
-            className="fr-label"
-            htmlFor={selectEnveloppeId}
-          >
-            Enveloppe de financement concernée
-          </label>
-          <select
-            className="fr-select"
-            defaultValue=""
-            id={selectEnveloppeId}
-            onChange={(event) => {
-              setBudgetEnveloppe(enveloppeById[event.target.value].value)
-            }}
-          >
-            <option
-              hidden
-              value=""
-            >
-              Choisir
-            </option>
-            {enveloppes.map((enveloppe) => (
-              <option
-                key={enveloppe.id}
-                value={enveloppe.id}
-              >
-                {enveloppe.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Select
+          id={selectEnveloppeId}
+          name="enveloppes"
+          onChange={(event) => {
+            setBudgetEnveloppe(enveloppeById[event.target.value].budget)
+          }}
+          options={enveloppes}
+        >
+          Enveloppe de financement concernée
+        </Select>
         {
           montantInput({
             children: (
@@ -258,7 +238,7 @@ export default function DemanderUneSubvention({
 }
 
 function enveloppeByIdReducer(enveloppeById: EnveloppeById, enveloppe: Enveloppe): EnveloppeById {
-  return Object.assign(enveloppeById, { [enveloppe.id]: enveloppe })
+  return Object.assign(enveloppeById, { [enveloppe.value]: enveloppe })
 }
 
 type Enveloppe = ActionViewModel['enveloppes'][number]
