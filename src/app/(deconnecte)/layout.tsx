@@ -11,10 +11,7 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   }
 
   return (
-    <main
-      className="fr-container fr-pt-3w"
-      id="content"
-    >
+    <main>
       {children}
     </main>
   )

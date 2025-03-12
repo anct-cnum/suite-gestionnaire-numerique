@@ -109,6 +109,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
             </div>
             <div>
               <svg
+                aria-hidden="true"
                 height="107"
                 viewBox="0 0 76 107"
                 width="76"
