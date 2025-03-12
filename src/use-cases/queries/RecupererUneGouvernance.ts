@@ -25,9 +25,9 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
       }))
     const membres = await this.#repository.getMembres(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Membre.gestionnairePeutVoirNotePrivee(membres, query.codeDepartement)
-    return peutVoirNotePrivee ? readModel : {
+    return  {
       ...readModel,
-      peutVoirNotePrivee: false,
+      peutVoirNotePrivee,
     }
   }
 }

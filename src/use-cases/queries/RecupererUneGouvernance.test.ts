@@ -173,7 +173,7 @@ describe('recupérer une gouvernance', () => {
     expect(spiedCodeDepartement).toBe('69')
   })
 
-  it('quand une gouvernance est demandée sur un département par un membre qui n‘est pas co-porteur alors on ajoute la propriété peutVoirNotePrivee à false', async () => {
+  it('quand une gouvernance est demandée sur un département par un membre qui n‘est pas co-porteur alors il ne peut pas voir la note privée', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,

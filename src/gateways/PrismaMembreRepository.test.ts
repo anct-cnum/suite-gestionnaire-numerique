@@ -233,7 +233,7 @@ describe('membre repository', () => {
     )
   })
 
-  it('rechercher les membres d’un gestionnaire sans code de département', async () => {
+  it('si un gestionnaire n’a pas de code département, alors aucun membre ne lui est associé', async () => {
     // GIVEN
     await creerUnUtilisateur({ role: 'gestionnaire_departement', ssoId: 'uidGestionnaire' })
 
