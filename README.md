@@ -207,23 +207,43 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
 
 ### Importer les données FNE et CoNum (<ins>avant mise en service</ins>)
 
-- Se connecter à un _one-off container_ Scalingo :  
-  `yarn bash:production`  
+- Se connecter à un _one-off container_ Scalingo :
+  `yarn bash:production`
   Il s'agit d'un environnement éphémère identique à celui de production et connecté à la même base de données.
 
-- Installer **prisma** :  
+- Installer **prisma** :
   `yarn add @prisma/client`
 
 - Si le déploiement inclut des migrations "cassantes", c'est à dire qui ne peuvent s'exécuter sans reconstruire
-  intégralement la structure de la base de données, recréer la structure :  
+  intégralement la structure de la base de données, recréer la structure :
   `yarn prisma:reset`
 
 - Déclencher le déploiement (via un _commit_ ou _merge_ de branche sur **main**)
 
-- Se connecter à nouveau à un _one-off container_ Scalingo :  
-  `yarn bash:production`  
-  et installer **prisma** :  
+- Se connecter à nouveau à un _one-off container_ Scalingo :
+  `yarn bash:production`
+  et installer **prisma** :
   `yarn add @prisma/client`
 
-- Lancer le script d'import :  
+- Lancer le script d'import :
   `yarn migration:all`
+
+### Pro connect
+
+- Production:
+  URLs de redirection post CONNEXION: https://mon-inclusion-numerique.osc-fr1.scalingo.io/api/auth/callback/pro-connect
+  URLs de redirection post DÉCONNEXION: https://mon-inclusion-numerique.osc-fr1.scalingo.io/connexion
+  Lien du dossier démarches-simplifiées: https://www.demarches-simplifiees.fr/dossiers/22822056
+
+  Les client_id et client_secret de production à renseigner dans les variables d'environnement de scalingo se trouve dans le vaultwarden
+  PRO_CONNECT_CLIENT_ID = clientID
+  PRO_CONNECT_CLIENT_SECRET = clienSecret
+  PRO_CONNECT_URL = https://auth.agentconnect.gouv.fr/api/v2
+
+- Développement:
+  Les client_id et client_secret de dev à renseigner dans le .env.local se trouve dans le vaultwarden
+  PRO_CONNECT_CLIENT_ID = clientID
+  PRO_CONNECT_CLIENT_SECRET = clienSecret
+  PRO_CONNECT_URL = https://fca.integ01.dev-agentconnect.fr/api/v2
+
+  Compte Pro connect de dev: test@fia1.fr
