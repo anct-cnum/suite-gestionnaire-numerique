@@ -1,0 +1,11 @@
+.center {
+  align-items: center;
+  height: 100vh;
+  text-align: center;
+}
+
+.blue-background {
+  background:
+    url('./hexagone.svg') no-repeat 0 0/50%,
+    linear-gradient(to left, var(--grey-1000-100) 50%, var(--blue-france-925-125) 50%);
+}

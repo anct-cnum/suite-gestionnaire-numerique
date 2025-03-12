@@ -9,16 +9,19 @@ describe('connexion : en tant qu’utilisateur non authentifié', () => {
     render(<Connexion idProvider="pro-connect" />)
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: 'Connexion à mon inclusion numérique' })
+    const surTitre = screen.getByText('Mon inclusion numérique')
+    expect(surTitre).toBeInTheDocument()
+    const informations = screen.getByText('Pilotez votre politique d’inclusion numérique grâce aux données')
+    expect(informations).toBeInTheDocument()
+    const titre = screen.getByRole('heading', { level: 1, name: 'Se connecter' })
     expect(titre).toBeInTheDocument()
-    const sousTitre = screen.getByRole('heading', { level: 2, name: 'Se connecter avec ProConnect' })
+    const sousTitre = screen.getByText('Accédez à ce service grâce à ProConnect, votre identifiant unique pour accéder à plusieurs services de l’État.', { selector: 'p' })
     expect(sousTitre).toBeInTheDocument()
     const boutonSeConnecter = screen.getByRole('button', { name: 'S’identifier avec ProConnect' })
     expect(boutonSeConnecter).toHaveAttribute('type', 'button')
-    expect(boutonSeConnecter).toBeEnabled()
-    const lienProConnect = screen.getByRole('link', { name: 'Qu’est ce que ProConnect ?' })
+    const lienProConnect = screen.getByRole('link', { name: 'En savoir plus sur ProConnect' })
     expect(lienProConnect).toHaveAttribute('href', 'https://www.proconnect.gouv.fr/')
-    expect(lienProConnect).toOpenInNewTab('Qu’est-ce que ProConnect ?')
+    expect(lienProConnect).toOpenInNewTab('ProConnect')
   })
 
   it('quand j’affiche une page quelconque alors je peux m’authentifier', () => {
