@@ -9,15 +9,18 @@ import { Notification } from '../shared/Notification/Notification'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 
-export default function AjouterUneNoteDeContextualisation(): ReactElement {
-  const { ajouterUneNoteDeContextualisationAction, pathname } = useContext(clientContext)
+export default function ModifierUneNoteDeContextualisation({ contextualisation }: Props): ReactElement {
+  const {
+    modifierUneNoteDeContextualisationAction,
+    supprimerUneNoteDeContextualisationAction,
+    pathname,
+  } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor('')
-  const drawerId = 'drawerAjouterNoteDeContextualisationId'
+  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor(contextualisation)
+  const drawerId = 'drawerModifierNoteDeContextualisationId'
   const labelId = useId()
-
   return (
     <>
       <button
@@ -27,13 +30,13 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
         onClick={() => {
           setIsDrawerOpen(true)
         }}
-        title="Ajouter la contextualisation"
+        title="Modifier la contextualisation"
         type="button"
       >
-        Ajouter
+        Modifier
       </button>
       <Drawer
-        boutonFermeture="Fermer le formulaire de création d‘une note de contextualisation"
+        boutonFermeture="Fermer le formulaire de modification d'une note de contextualisation"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
@@ -48,14 +51,14 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
           texte=""
-          validerFormulaire={creerUneNoteDeContextualisation}
+          validerFormulaire={modifierUneNoteDeContextualisation}
         >
           <div className="fr-btns-group fr-mt-2w">
             <SubmitButton
               ariaControls={drawerId}
               isDisabled={isDisabled}
             >
-              {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
             {
               contenu.trim() ?
@@ -74,17 +77,33 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
     </>
   )
 
-  async function creerUneNoteDeContextualisation(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function modifierUneNoteDeContextualisation(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault()
-
     setIsDisabled(true)
-    const messages = await ajouterUneNoteDeContextualisationAction({ contenu, path: pathname })
+    if (contenu === '') {
+      const messages = await supprimerUneNoteDeContextualisationAction({ path: pathname })
+      if (messages.includes('OK')) {
+        Notification('success', { description: 'supprimée', title: 'Note de contextualisation ' })
+        setIsDrawerOpen(false)
+      } else {
+        Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+      }
+      setIsDisabled(false)
+      return
+    }
+
+    const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname })
     if (messages.includes('OK')) {
-      Notification('success', { description: 'ajoutée', title: 'Note de contextualisation ' })
+      Notification('success', { description: 'modifiée', title: 'Note de contextualisation ' })
       setIsDrawerOpen(false)
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
+
     setIsDisabled(false)
   }
+}
+
+type Props = {
+  readonly contextualisation: string
 }

@@ -11,6 +11,7 @@ import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
 import { ajouterUneActionAction } from '@/app/api/actions/ajouterUneActionAction'
 import { ajouterUneFeuilleDeRouteAction } from '@/app/api/actions/ajouterUneFeuilleDeRouteAction'
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
+import { ajouterUneNoteDeContextualisationAction } from '@/app/api/actions/ajouterUneNoteDeContextualisationAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
@@ -19,11 +20,13 @@ import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction
 import { modifierUneActionAction } from '@/app/api/actions/modifierUneActionAction'
 import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFeuilleDeRouteAction'
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
+import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
 import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
+import { supprimerUneNoteDeContextualisationAction } from '@/app/api/actions/supprimerUneNoteDeContextualisationAction'
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
@@ -45,6 +48,7 @@ export default function ClientContext({
       ajouterUneActionAction,
       ajouterUneFeuilleDeRouteAction,
       ajouterUneNoteDeContexteAction,
+      ajouterUneNoteDeContextualisationAction,
       ajouterUneNotePriveeAction,
       changerMonRoleAction,
       inviterUnUtilisateurAction,
@@ -53,6 +57,7 @@ export default function ClientContext({
       modifierUneActionAction,
       modifierUneFeuilleDeRouteAction,
       modifierUneNoteDeContexteAction,
+      modifierUneNoteDeContextualisationAction,
       modifierUneNotePriveeAction,
       pathname,
       reinviterUnUtilisateurAction,
@@ -64,6 +69,7 @@ export default function ClientContext({
       supprimerUnComiteAction,
       supprimerUnUtilisateurAction,
       supprimerUneNoteDeContexteAction,
+      supprimerUneNoteDeContextualisationAction,
       supprimerUneNotePriveeAction,
       utilisateursParPage,
     }),
@@ -90,9 +96,11 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
   ajouterUneActionAction: typeof ajouterUneActionAction
   modifierUneActionAction: typeof modifierUneActionAction
+  modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
+  ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
   modifierUnComiteAction: typeof modifierUnComiteAction
   modifierUneFeuilleDeRouteAction: typeof modifierUneFeuilleDeRouteAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
@@ -105,6 +113,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUnComiteAction: typeof supprimerUnComiteAction
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
+  supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   utilisateursParPage: number
 }>
 

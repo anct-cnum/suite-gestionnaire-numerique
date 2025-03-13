@@ -13,7 +13,7 @@ export default function FormulaireNoteDeContextualisation({
 }: Props): ReactElement {
   return (
     <form
-      aria-label="Note de contextualisation"
+      aria-label="Contextualisation des demandes de subvention"
       method="dialog"
       onSubmit={validerFormulaire}
     >
