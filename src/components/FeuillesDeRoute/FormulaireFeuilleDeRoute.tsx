@@ -7,7 +7,6 @@ import RadioGroup from '../shared/Radio/RadioGroup'
 import Select from '../shared/Select/Select'
 import TextInput from '../shared/TextInput/TextInput'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 import { LabelValue } from '@/presenters/shared/labelValue'
 
 export default function FormulaireFeuilleDeRoute({
@@ -103,11 +102,11 @@ export default function FormulaireFeuilleDeRoute({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  contratPreexistant: FeuillesDeRouteViewModel['formulaire']['contratPreexistant']
+  contratPreexistant: ReadonlyArray<LabelValue>
   label: string
   labelId: string
   membres: ReadonlyArray<LabelValue>
   nom: string
-  perimetres: FeuillesDeRouteViewModel['formulaire']['perimetres']
+  perimetres: ReadonlyArray<LabelValue>
   validerFormulaire(event: FormEvent<HTMLFormElement>): void
 }>>

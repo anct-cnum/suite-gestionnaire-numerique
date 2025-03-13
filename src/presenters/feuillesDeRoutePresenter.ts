@@ -12,14 +12,14 @@ export function feuillesDeRoutePresenter(
     formulaire: {
       contratPreexistant: [
         {
-          id: 'oui',
-          isChecked: false,
+          isSelected: false,
           label: 'Oui',
+          value: 'oui',
         },
         {
-          id: 'non',
-          isChecked: false,
+          isSelected: false,
           label: 'Non',
+          value: 'non',
         },
       ],
       membres: [
@@ -36,19 +36,19 @@ export function feuillesDeRoutePresenter(
       ],
       perimetres: [
         {
-          id: 'regional',
-          isChecked: false,
+          isSelected: false,
           label: 'Régional',
+          value: 'regional',
         },
         {
-          id: 'departemental',
-          isChecked: false,
+          isSelected: false,
           label: 'Départemental',
+          value: 'departemental',
         },
         {
-          id: 'epci_groupement',
-          isChecked: false,
+          isSelected: false,
           label: 'EPCI ou groupement de communes',
+          value: 'epci_groupement',
         },
       ],
     },
@@ -125,17 +125,9 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
 export type FeuillesDeRouteViewModel = Readonly<{
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
   formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<{
-      id: 'oui' | 'non'
-      isChecked: boolean
-      label: string
-    }>
+    contratPreexistant: ReadonlyArray<LabelValue<'oui' | 'non'>>
     membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<{
-      id: 'regional' | 'departemental' | 'epci_groupement'
-      isChecked: boolean
-      label: string
-    }>
+    perimetres: ReadonlyArray<LabelValue<'regional' | 'departemental' | 'epci_groupement'>>
   }>
   titre: string
   totaux: Readonly<{
