@@ -42,14 +42,14 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
     formulaire: {
       contratPreexistant: [
         {
-          id: 'oui',
-          isChecked: false,
+          isSelected: false,
           label: 'Oui',
+          value: 'oui',
         },
         {
-          id: 'non',
-          isChecked: true,
+          isSelected: true,
           label: 'Non',
+          value: 'non',
         },
       ],
       membres: [
@@ -66,19 +66,19 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
       ],
       perimetres: [
         {
-          id: 'regional',
-          isChecked: false,
+          isSelected: false,
           label: 'Régional',
+          value: 'regional',
         },
         {
-          id: 'departemental',
-          isChecked: true,
+          isSelected: true,
           label: 'Départemental',
+          value: 'departemental',
         },
         {
-          id: 'epci_groupement',
-          isChecked: false,
+          isSelected: false,
           label: 'EPCI ou groupement de communes',
+          value: 'epci_groupement',
         },
       ],
     },
@@ -132,17 +132,9 @@ export type FeuilleDeRouteViewModel = Readonly<{
   contextualisation: string
   contratPreexistant: boolean
   formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<{
-      id: 'oui' | 'non'
-      isChecked: boolean
-      label: string
-    }>
+    contratPreexistant: ReadonlyArray<LabelValue<'oui' | 'non'>>
     membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<{
-      id: 'regional' | 'departemental' | 'epci_groupement'
-      isChecked: boolean
-      label: string
-    }>
+    perimetres: ReadonlyArray<LabelValue<'regional' | 'departemental' | 'epci_groupement'>>
   }>
   historiques: ReadonlyArray<{
     activite: string

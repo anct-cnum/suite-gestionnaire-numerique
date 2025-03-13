@@ -121,13 +121,14 @@ function Fieldset(
       {
         checkboxes.map((checkbox) => (
           <Checkbox
-            defaultChecked={checkbox.isChecked}
             id={checkbox.value}
+            isSelected={checkbox.isSelected}
             key={checkbox.value}
-            label={checkbox.label}
-            name="besoins"
+            label="besoins"
             value={checkbox.value}
-          />
+          >
+            {checkbox.label}
+          </Checkbox>
         ))
       }
     </fieldset>

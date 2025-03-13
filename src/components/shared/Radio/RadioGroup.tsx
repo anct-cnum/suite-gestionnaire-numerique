@@ -1,16 +1,17 @@
 import { ChangeEventHandler, ReactElement } from 'react'
 
 import Radio from './Radio'
+import { LabelValue } from '@/presenters/shared/labelValue'
 import { noop } from '@/shared/lang'
 
 export default function RadioGroup({ nomGroupe, options, onChange }: Props): ReactElement {
   return (
     <div role="radiogroup">
-      {options.map(({ isChecked = false, id, label }) => (
+      {options.map(({ isSelected = false, value, label }) => (
         <Radio
-          id={id}
-          isChecked={isChecked}
-          key={id}
+          id={value}
+          isChecked={isSelected}
+          key={value}
           nomGroupe={nomGroupe}
           onChange={onChange ?? noop}
         >
@@ -23,10 +24,6 @@ export default function RadioGroup({ nomGroupe, options, onChange }: Props): Rea
 
 type Props = Readonly<{
   nomGroupe: string
-  options: ReadonlyArray<{
-    isChecked?: boolean
-    id: string
-    label: string
-  }>
+  options: ReadonlyArray<LabelValue>
   onChange?: ChangeEventHandler<HTMLInputElement>
 }>
