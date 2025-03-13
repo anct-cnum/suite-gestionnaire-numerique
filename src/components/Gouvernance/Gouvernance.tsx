@@ -17,10 +17,7 @@ import AjouterNoteDeContexte from './NoteDeContexte/AjouterNoteDeContexte'
 import ModifierNoteDeContexte from './NoteDeContexte/ModifierNoteDeContexte'
 import NoteDeContexteVide from './NoteDeContexte/NoteDeContexteVide'
 import SubSectionButton from './NoteDeContexte/SubSectionButton'
-import AjouterUneNotePrivee from './NotePrivee/AjouterUneNotePrivee'
-import ModifierUneNotePrivee from './NotePrivee/ModifierUneNotePrivee'
-import ResumeNotePrivee from './NotePrivee/ResumeNotePrivee'
-import ResumeNotePriveeVide from './NotePrivee/ResumeNotePriveeVide'
+import SectionNotePrivee from './NotePrivee/SectionNotePrivee'
 import Resume from './Resume'
 import SectionRemplie from './SectionRemplie'
 import SectionVide from './SectionVide'
@@ -60,6 +57,7 @@ export default function Gouvernance(): ReactElement {
         <ResumeMembre
           denomination={gouvernanceViewModel.sectionMembres.totalEtWording[1]}
           membresLink={gouvernanceViewModel.links.membres}
+          peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
           total={gouvernanceViewModel.sectionMembres.totalEtWording[0]}
         />
         {
@@ -67,83 +65,25 @@ export default function Gouvernance(): ReactElement {
             <ResumeFeuilleDeRoute
               link={gouvernanceViewModel.sectionFeuillesDeRoute.lien.url}
               linkLabel={gouvernanceViewModel.sectionFeuillesDeRoute.lien.label}
+              peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
               total={gouvernanceViewModel.sectionFeuillesDeRoute.total}
               wording={gouvernanceViewModel.sectionFeuillesDeRoute.wording}
             /> : (
-              <Resume style={styles['resume-feuilles-de-route']}>
+              <Resume
+                peutVoirNotePrivee={gouvernanceViewModel.peutVoirNotePrivee}
+                style={styles['resume-feuilles-de-route']}
+              >
                 <ResumeFeuilleDeRouteVide />
               </Resume>
             )
         }
-        {
-          gouvernanceViewModel.notePrivee ? (
-            <>
-              <Drawer
-                boutonFermeture="Fermer le formulaire de modification d’une note privée"
-                closeDrawer={() => {
-                  setIsDrawerOpen(false)
-                }}
-                id={drawerNotePriveeId}
-                // Stryker disable next-line BooleanLiteral
-                isFixedWidth={false}
-                isOpen={isDrawerOpen}
-                labelId={labelNotePriveeId}
-              >
-                <ModifierUneNotePrivee
-                  closeDrawer={() => {
-                    setIsDrawerOpen(false)
-                  }}
-                  edition={gouvernanceViewModel.notePrivee.edition}
-                  id={drawerNotePriveeId}
-                  labelId={labelNotePriveeId}
-                  texte={gouvernanceViewModel.notePrivee.texte}
-                  uidGouvernance={gouvernanceViewModel.uid}
-                />
-              </Drawer>
-              <Resume style={styles['resume-note-privee']}>
-                <ResumeNotePrivee
-                  edition={gouvernanceViewModel.notePrivee.edition}
-                  id={drawerNotePriveeId}
-                  showDrawer={() => {
-                    setIsDrawerOpen(true)
-                  }}
-                  texte={gouvernanceViewModel.notePrivee.resume}
-                />
-              </Resume>
-            </>
-          ) : (
-            <>
-              <Drawer
-                boutonFermeture="Fermer le formulaire de création d’une note privée"
-                closeDrawer={() => {
-                  setIsDrawerOpen(false)
-                }}
-                id={drawerNotePriveeId}
-                // Stryker disable next-line BooleanLiteral
-                isFixedWidth={false}
-                isOpen={isDrawerOpen}
-                labelId={labelNotePriveeId}
-              >
-                <AjouterUneNotePrivee
-                  closeDrawer={() => {
-                    setIsDrawerOpen(false)
-                  }}
-                  id={drawerNotePriveeId}
-                  labelId={labelNotePriveeId}
-                  uidGouvernance={gouvernanceViewModel.uid}
-                />
-              </Drawer>
-              <Resume style={styles['resume-note-privee-vide']}>
-                <ResumeNotePriveeVide
-                  id={drawerNotePriveeId}
-                  showDrawer={() => {
-                    setIsDrawerOpen(true)
-                  }}
-                />
-              </Resume>
-            </>
-          )
-        }
+        <SectionNotePrivee
+          drawerNotePriveeId={drawerNotePriveeId}
+          gouvernanceViewModel={gouvernanceViewModel}
+          isDrawerOpen={isDrawerOpen}
+          labelNotePriveeId={labelNotePriveeId}
+          setIsDrawerOpen={setIsDrawerOpen}
+        />
       </div>
       <section aria-labelledby="comitologie">
         <Drawer

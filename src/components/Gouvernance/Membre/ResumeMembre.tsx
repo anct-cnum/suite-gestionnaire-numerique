@@ -4,9 +4,12 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeMembre({ total, denomination, membresLink }: Props): ReactElement {
+export default function ResumeMembre({ total, denomination, membresLink, peutVoirNotePrivee }: Props): ReactElement {
   return (
-    <Resume style={styles['resume-membres']}>
+    <Resume
+      peutVoirNotePrivee={peutVoirNotePrivee}
+      style={styles['resume-membres']}
+    >
       <p>
         <span className="fr-display--sm">
           {total}
@@ -33,4 +36,5 @@ type Props = Readonly<{
   denomination: string
   total: number
   membresLink: string
+  peutVoirNotePrivee: boolean
 }>

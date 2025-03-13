@@ -32,6 +32,15 @@ describe('note privée', () => {
     expect(edition).toBeInTheDocument()
   })
 
+  it('en étant non coporteur sur la gouvernance quand j‘affiche une gouvernance avec une note privée, alors elle ne s’affiche pas', () => {
+    // WHEN
+    afficherUneGouvernanceAvecNotePriveeNonCoPorteur()
+
+    // THEN
+    const contenu = screen.queryByText(matchWithoutMarkup('Note privée (interne)lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim...'), { selector: 'p' })
+    expect(contenu).not.toBeInTheDocument()
+  })
+
   describe('quand je clique sur rédiger une note privée,', () => {
     it('alors s’affiche le formulaire de création', () => {
       // GIVEN
@@ -69,7 +78,7 @@ describe('note privée', () => {
       expect(drawer).not.toBeVisible()
     })
 
-    it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s’affiche, la gouvernance est mise à jour', async () => {
+    it('puis que je remplis correctement le formulaire, alors le drawer se ferme, une notification s‘affiche, la gouvernance est mise à jour', async () => {
       // GIVEN
       const ajouterUneNotePriveeAction = stubbedServerAction(['OK'])
       afficherUneGouvernanceSansNotePrivee({ ajouterUneNotePriveeAction, pathname: '/gouvernance/11' })
@@ -247,7 +256,7 @@ describe('note privée', () => {
     }
 
     function jeFermeLeFormulairePourModifierUneNotePrivee(): HTMLElement {
-      return presserLeBouton('Fermer le formulaire de modification d’une note privée')
+      return presserLeBouton('Fermer le formulaire de modification d‘une note privée')
     }
 
     function jEffaceLaNotePrivee(context: HTMLElement): void {
@@ -267,19 +276,42 @@ describe('note privée', () => {
   }
 
   function afficherUneGouvernanceSansNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({ notePrivee: undefined }), now)
+    const gouvernanceViewModel = {
+      ...gouvernancePresenter(gouvernanceReadModelFactory({ notePrivee: undefined }), now),
+      peutVoirNotePrivee: true,
+    }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
 
   function afficherUneGouvernanceAvecNotePrivee(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
-    const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
-      notePrivee: {
-        dateDEdition: epochTime,
-        nomEditeur: 'Lu',
-        prenomEditeur: 'Lucie',
-        texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
-      },
-    }), now)
+    const gouvernanceViewModel = {
+      ...gouvernancePresenter(gouvernanceReadModelFactory({
+        notePrivee: {
+          dateDEdition: epochTime,
+          nomEditeur: 'Lu',
+          prenomEditeur: 'Lucie',
+          texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
+        },
+      }), now),
+      peutVoirNotePrivee: true,
+    }
+    renderComponent(<Gouvernance />, options, gouvernanceViewModel)
+  }
+
+  function afficherUneGouvernanceAvecNotePriveeNonCoPorteur(
+    options?: Partial<Parameters<typeof renderComponent>[1]>
+  ): void {
+    const gouvernanceViewModel = {
+      ...gouvernancePresenter(gouvernanceReadModelFactory({
+        notePrivee: {
+          dateDEdition: epochTime,
+          nomEditeur: 'Lu',
+          prenomEditeur: 'Lucie',
+          texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
+        },
+      }), now),
+      peutVoirNotePrivee: false,
+    }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
 
