@@ -85,6 +85,7 @@ export function FormulaireAction({
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
+              hasBesoins={action.hasBesoins}
               outillages={action.besoins.outillages}
               toutEffacer={toutEffacer}
             />
@@ -397,23 +398,26 @@ export function FormulaireAction({
                       key={cofinancement.coFinanceur}
                     >
                       <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
-                        <p className="fr-col-9 fr-mb-0">
+                        <p className="fr-col-10 fr-mb-0">
                           {cofinancement.coFinanceur}
                         </p>
-                        {' '}
-                        <p className="fr-col-2 fr-mb-0">
-                          {cofinancement.montant}
-                        </p>
-                        <button
-                          className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line fr-col-1 color-red"
-                          onClick={() => {
-                            supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
-                          }}
-                          title="Label bouton"
-                          type="button"
+                        <div
+                          className={`fr-col-2 ${styles['deletion-section']}`}
                         >
-                          Supprimer
-                        </button>
+                          <p className="fr-mb-0 fr-mr-2w">
+                            {cofinancement.montant}
+                          </p>
+                          <button
+                            className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
+                            onClick={() => {
+                              supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
+                            }}
+                            title="Label bouton"
+                            type="button"
+                          >
+                            Supprimer
+                          </button>
+                        </div>
                       </div>
                     </li>
                   ))}
