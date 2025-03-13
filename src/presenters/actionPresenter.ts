@@ -36,14 +36,14 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     beneficiaires: [
       {
         color: 'info',
-        isChecked: true,
+        isSelected: true,
         label: 'Rhône (69)',
         statut: 'Co-porteur',
         value: 'membreFooId3',
       },
       {
         color: 'info',
-        isChecked: false,
+        isSelected: false,
         label: 'CC des Monts du Lyonnais',
         statut: 'Co-porteur',
         value: 'membreFooId4',
@@ -52,63 +52,63 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     besoins: {
       financements: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Structurer un fond local pour l’inclusion numérique',
           value: 'structurer_fond_local',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Monter des dossiers de subvention complexes',
           value: 'monter_dossier_subvention',
         },
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
           value: 'animer_et_mettre_en_oeuvre_gouvernance',
         },
       ],
       formations: [
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Co-construire la feuille de route avec les membres',
           value: 'coconstruire_feuille_avec_membres',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Rédiger la feuille de route',
           value: 'rediger_feuille',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Appui juridique dédié à la gouvernance',
           value: 'appui_juridique_dedie_gouvernance',
         },
       ],
       formationsProfessionnels: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
           value: 'appuyer_certification_qualiopi',
         },
       ],
       outillages: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Structurer une filière de reconditionnement locale',
           value: 'structurer_filiere_reconditionnement_locale',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Collecter des données territoriales pour alimenter un hub national',
           value: 'collecter_donnees_territoriales',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
           value: 'sensibiliser_acteurs',
         },
@@ -139,13 +139,13 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     hasBesoins: checkHasBesoins({
       financements: [
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Structurer un fond local pour l’inclusion numérique',
           value: 'structurer_fond_local',
         }],
       formations: [
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         }],
@@ -158,14 +158,14 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     porteurs: [
       {
         color: 'info',
-        isChecked: false,
+        isSelected: false,
         label: 'Rhône (69)',
         statut: 'Co-porteur',
         value: 'membreFooId1',
       },
       {
         color: 'info',
-        isChecked: true,
+        isSelected: true,
         label: 'CC des Monts du Lyonnais',
         statut: 'Co-porteur',
         value: 'membreFooId2',
@@ -223,14 +223,14 @@ export const actionARemplir: ActionViewModel = {
   beneficiaires: [
     {
       color: 'info',
-      isChecked: false,
+      isSelected: false,
       label: 'Rhône (69)',
       statut: 'Co-porteur',
       value: 'membreFooId3',
     },
     {
       color: 'info',
-      isChecked: false,
+      isSelected: false,
       label: 'CC des Monts du Lyonnais',
       statut: 'Co-porteur',
       value: 'membreFooId4',
@@ -239,63 +239,63 @@ export const actionARemplir: ActionViewModel = {
   besoins: {
     financements: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Structurer un fond local pour l’inclusion numérique',
         value: 'structurer_fond_local',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Monter des dossiers de subvention complexes',
         value: 'monter_dossier_subvention',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
         value: 'animer_et_mettre_en_oeuvre_gouvernance',
       },
     ],
     formations: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Établir un diagnostic territorial',
         value: 'etablir_diagnostic_territorial',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Co-construire la feuille de route avec les membres',
         value: 'coconstruire_feuille_avec_membres',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Rédiger la feuille de route',
         value: 'rediger_feuille',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Appui juridique dédié à la gouvernance',
         value: 'appui_juridique_dedie_gouvernance',
       },
     ],
     formationsProfessionnels: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
         value: 'appuyer_certification_qualiopi',
       },
     ],
     outillages: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Structurer une filière de reconditionnement locale',
         value: 'structurer_filiere_reconditionnement_locale',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Collecter des données territoriales pour alimenter un hub national',
         value: 'collecter_donnees_territoriales',
       },
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
         value: 'sensibiliser_acteurs',
       },
@@ -309,13 +309,13 @@ export const actionARemplir: ActionViewModel = {
   hasBesoins: checkHasBesoins({
     financements: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Structurer un fond local pour l’inclusion numérique',
         value: 'structurer_fond_local',
       }],
     formations: [
       {
-        isChecked: false,
+        isSelected: false,
         label: 'Établir un diagnostic territorial',
         value: 'etablir_diagnostic_territorial',
       }],
@@ -328,14 +328,14 @@ export const actionARemplir: ActionViewModel = {
   porteurs: [
     {
       color: 'info',
-      isChecked: false,
+      isSelected: false,
       label: 'Rhône (69)',
       statut: 'Co-porteur',
       value: 'membreFooId1',
     },
     {
       color: 'info',
-      isChecked: false,
+      isSelected: false,
       label: 'CC des Monts du Lyonnais',
       statut: 'Co-porteur',
       value: 'membreFooId2',
@@ -358,27 +358,17 @@ export const actionARemplir: ActionViewModel = {
   urlGouvernance: '/gouvernance/11',
 }
 
-export type Besoins = ReadonlyArray<{
-  isChecked: boolean
-  label: string
-  value: string
-}>
+export type Besoins = ReadonlyArray<LabelValue>
 
-export type Porteurs = ReadonlyArray<{
+export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
   color: 'success' | 'error' | 'info' | 'warning' | 'new'
-  isChecked: boolean
-  label: string
   statut: string
-  value: string
-}>
+}>>
 
-export type Beneficiaires = ReadonlyArray<{
+export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
   color: 'success' | 'error' | 'info' | 'warning' | 'new'
-  isChecked: boolean
-  label: string
   statut: string
-  value: string
-}>
+}>>
 
 function checkHasBesoins(besoins: {
   financements: Besoins
@@ -386,12 +376,9 @@ function checkHasBesoins(besoins: {
   formationsProfessionnels: Besoins
   outillages: Besoins
 }): boolean {
-  return (
-    besoins.financements.some(item => item.isChecked) ||
-    besoins.formations.some(item => item.isChecked) ||
-    besoins.formationsProfessionnels.some(item => item.isChecked) ||
-    besoins.outillages.some(item => item.isChecked)
-  )
+  return Object.values(besoins)
+    .flat()
+    .some(besoin => Boolean(besoin.isSelected))
 }
 
 type Enveloppe = LabelValue & Readonly<{ budget: number }>

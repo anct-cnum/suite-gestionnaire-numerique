@@ -39,7 +39,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           <div className="fr-tag fr-ml-1w">
             {
               feuilleDeRouteViewModel.formulaire.perimetres
-                .filter((perimetre) => perimetre.isChecked)
+                .filter((perimetre) => Boolean(perimetre.isSelected))
                 .map((perimetre) => `Périmètre ${perimetre.label.toLowerCase()}`)
             }
           </div>

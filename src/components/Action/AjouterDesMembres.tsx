@@ -22,7 +22,7 @@ export default function AjouterDesMembres({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const labelId = useId()
   const fieldset = useRef<HTMLFieldSetElement>(null)
-  const hasMembres = membres.filter((membre) => membre.isChecked).length > 0
+  const hasMembres = membres.filter((membre) => Boolean(membre.isSelected)).length > 0
 
   return (
     <>
@@ -82,22 +82,19 @@ export default function AjouterDesMembres({
           {
             membres.map((membre) => (
               <Checkbox
-                defaultChecked={membre.isChecked}
                 id={membre.value}
+                isSelected={membre.isSelected}
                 key={membre.value}
-                label={
-                  <>
-                    <span>
-                      {membre.label}
-                    </span>
-                    <Badge color={membre.color}>
-                      {membre.statut}
-                    </Badge>
-                  </>
-                }
-                name={checkboxName}
+                label={checkboxName}
                 value={membre.value}
-              />
+              >
+                <span>
+                  {membre.label}
+                </span>
+                <Badge color={membre.color}>
+                  {membre.statut}
+                </Badge>
+              </Checkbox>
             ))
           }
           <div className="fr-btns-group">

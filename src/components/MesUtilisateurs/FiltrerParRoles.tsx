@@ -52,13 +52,14 @@ export default function FiltrerParRoles(): ReactElement {
       {
         checkboxes.map((checkbox) => (
           <Checkbox
-            defaultChecked={roles?.includes(checkbox.value) ?? true}
             id={checkbox.value}
+            isSelected={roles?.includes(checkbox.value) ?? true}
             key={checkbox.value}
-            label={checkbox.label}
-            name="roles"
+            label="roles"
             value={checkbox.value}
-          />
+          >
+            {checkbox.label}
+          </Checkbox>
         ))
       }
     </fieldset>

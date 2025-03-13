@@ -110,14 +110,14 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     beneficiaires: [
       {
         color: 'info',
-        isChecked: true,
+        isSelected: true,
         label: 'Rhône (69)',
         statut: 'Co-porteur',
         value: 'membreFooId3',
       },
       {
         color: 'info',
-        isChecked: false,
+        isSelected: false,
         label: 'CC des Monts du Lyonnais',
         statut: 'Co-porteur',
         value: 'membreFooId4',
@@ -126,63 +126,63 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     besoins: {
       financements: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Structurer un fond local pour l’inclusion numérique',
           value: 'structurer_fond_local',
         },
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Monter des dossiers de subvention complexes',
           value: 'monter_dossier_subvention',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
           value: 'animer_et_mettre_en_oeuvre_gouvernance',
         },
       ],
       formations: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         },
         {
-          isChecked: true,
+          isSelected: true,
           label: 'Co-construire la feuille de route avec les membres',
           value: 'coconstruire_feuille_avec_membres',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Rédiger la feuille de route',
           value: 'rediger_feuille',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Appui juridique dédié à la gouvernance',
           value: 'appui_juridique_dedie_gouvernance',
         },
       ],
       formationsProfessionnels: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
           value: 'appuyer_certification_qualiopi',
         },
       ],
       outillages: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Structurer une filière de reconditionnement locale',
           value: 'structurer_filiere_reconditionnement_locale',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Collecter des données territoriales pour alimenter un hub national',
           value: 'collecter_donnees_territoriales',
         },
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
           value: 'sensibiliser_acteurs',
         },
@@ -217,14 +217,14 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     porteurs: [
       {
         color: 'info',
-        isChecked: false,
+        isSelected: false,
         label: 'Rhône (69)',
         statut: 'Co-porteur',
         value: 'membreFooId1',
       },
       {
         color: 'info',
-        isChecked: true,
+        isSelected: true,
         label: 'CC des Monts du Lyonnais',
         statut: 'Co-porteur',
         value: 'membreFooId2',
@@ -257,19 +257,19 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       financements: [],
       formations: [
         {
-          isChecked: false,
+          isSelected: true,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         },
       ],
       formationsProfessionnels: [{
-        isChecked: false,
+        isSelected: false,
         label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
         value: 'appuyer_certification_qualiopi',
       }],
       outillages: [
         {
-          isChecked: false,
+          isSelected: false,
           label: 'Structurer une filière de reconditionnement locale',
           value: 'structurer_filiere_reconditionnement_locale',
         },

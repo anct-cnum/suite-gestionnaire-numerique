@@ -97,7 +97,7 @@ export function FormulaireAction({
           </p>
           <hr />
           {besoins
-            .filter((besoin) => besoin.isChecked)
+            .filter((besoin) => Boolean(besoin.isSelected))
             .map((besoin) => (
               <p
                 className="fr-tag fr-mr-1w"
@@ -190,7 +190,7 @@ export function FormulaireAction({
           <hr />
           {
             action.porteurs
-              .filter((porteur) => porteur.isChecked)
+              .filter((porteur) => Boolean(porteur.isSelected))
               .map((porteur) => (
                 <Fragment key={porteur.value}>
                   <Tag>
@@ -431,7 +431,7 @@ export function FormulaireAction({
           <div>
             {
               action.beneficiaires
-                .filter((beneficiaire) => beneficiaire.isChecked)
+                .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.value}>
                     <Tag>

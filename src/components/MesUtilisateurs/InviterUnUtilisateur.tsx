@@ -28,8 +28,8 @@ export default function InviterUnUtilisateur({
   const prenomId = useId()
   const emailId = useId()
   const rolesGerables = sessionUtilisateurViewModel.role.rolesGerables.map((roleGerable) => ({
-    id: roleGerable,
     label: roleGerable,
+    value: roleGerable,
   }))
 
   return (

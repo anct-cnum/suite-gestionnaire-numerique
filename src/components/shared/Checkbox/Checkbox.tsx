@@ -1,19 +1,21 @@
-import React, { ReactElement, ReactNode } from 'react'
+import React, { PropsWithChildren, ReactElement } from 'react'
+
+import { LabelValue } from '@/presenters/shared/labelValue'
 
 export default function Checkbox({
-  defaultChecked,
-  label,
+  children,
+  isSelected,
   id,
-  name,
+  label,
   value,
 }: Props): ReactElement {
   return (
     <div className="fr-fieldset__element">
       <div className="fr-checkbox-group">
         <input
-          defaultChecked={defaultChecked}
+          defaultChecked={isSelected}
           id={id}
-          name={name}
+          name={label}
           type="checkbox"
           value={value}
         />
@@ -21,17 +23,11 @@ export default function Checkbox({
           className="fr-label"
           htmlFor={id}
         >
-          {label}
+          {children}
         </label>
       </div>
     </div>
   )
 }
 
-type Props = Readonly<{
-  defaultChecked: boolean
-  id: string
-  label: ReactNode
-  name: string
-  value: string
-}>
+type Props = PropsWithChildren<LabelValue & Readonly<{ id: string }>>
