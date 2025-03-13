@@ -207,25 +207,25 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
 
 ### Importer les données FNE et CoNum (<ins>avant mise en service</ins>)
 
-- Se connecter à un _one-off container_ Scalingo :
-  `yarn bash:production`
+- Se connecter à un _one-off container_ Scalingo :  
+  `yarn bash:production`  
   Il s'agit d'un environnement éphémère identique à celui de production et connecté à la même base de données.
 
-- Installer **prisma** :
+- Installer **prisma** :  
   `yarn add @prisma/client`
 
 - Si le déploiement inclut des migrations "cassantes", c'est à dire qui ne peuvent s'exécuter sans reconstruire
-  intégralement la structure de la base de données, recréer la structure :
+  intégralement la structure de la base de données, recréer la structure :  
   `yarn prisma:reset`
 
 - Déclencher le déploiement (via un _commit_ ou _merge_ de branche sur **main**)
 
-- Se connecter à nouveau à un _one-off container_ Scalingo :
-  `yarn bash:production`
-  et installer **prisma** :
+- Se connecter à nouveau à un _one-off container_ Scalingo :  
+  `yarn bash:production`  
+  et installer **prisma** :  
   `yarn add @prisma/client`
 
-- Lancer le script d'import :
+- Lancer le script d'import :  
   `yarn migration:all`
 
 ### Pro connect
