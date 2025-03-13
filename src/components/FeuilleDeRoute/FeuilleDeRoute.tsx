@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useId, useState } from 'react'
+import { ReactElement } from 'react'
 
 import AjouterUneNoteDeContextualisation from './AjouterUneNoteDeContextualisation'
 import styles from './FeuilleDeRoute.module.css'
 import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
+import ModifierUneNoteDeContextualisation from './ModifierUneNoteDeContextualisation'
 import Badge from '../shared/Badge/Badge'
-import Drawer from '../shared/Drawer/Drawer'
 import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
@@ -17,9 +17,6 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 
 export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): ReactElement {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const labelAjouterNoteDeContextualisationId = useId()
-  const drawerId ='drawerAjouterNoteDeContextualisationId'
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
@@ -73,52 +70,19 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
             </h2>
             {
               feuilleDeRouteViewModel.contextualisation
-                ? (
-                  <button
-                    className="fr-btn fr-btn--tertiary"
-                    title="Modifier la contextualisation"
-                    type="button"
-                  >
-                    Modifier
-                  </button>
-                )
-                : (
-                  <>
-                    <button
-                      aria-controls={drawerId}
-                      className="fr-btn fr-btn--secondary"
-                      data-fr-opened="false"
-                      onClick={() => {
-                        setIsDrawerOpen(true)
-                      }}
-                      title="Ajouter la contextualisation"
-                      type="button"
-                    >
-                      Ajouter
-                    </button>
-                    <Drawer
-                      boutonFermeture="Fermer le formulaire de création d’une note de contextualisation"
-                      closeDrawer={() => {
-                        setIsDrawerOpen(false)
-                      }}
-                      id={drawerId}
-                      // Stryker disable next-line BooleanLiteral
-                      isFixedWidth={false}
-                      isOpen={isDrawerOpen}
-                      labelId={labelAjouterNoteDeContextualisationId}
-                    >
-                      <AjouterUneNoteDeContextualisation
-                        id={drawerId}
-                        labelId={labelAjouterNoteDeContextualisationId}
-                      />
-                    </Drawer>
-                  </>
-                )
+                ? <ModifierUneNoteDeContextualisation contextualisation={feuilleDeRouteViewModel.contextualisation} />
+                : <AjouterUneNoteDeContextualisation />
             }
           </header>
-          <ReadMore
-            texte={feuilleDeRouteViewModel.contextualisation}
-          />
+          {
+            feuilleDeRouteViewModel.contextualisation
+              ? (
+                <ReadMore
+                  texte={feuilleDeRouteViewModel.contextualisation}
+                />
+              )
+              : null
+          }
         </section>
         <section
           aria-labelledby="upload"

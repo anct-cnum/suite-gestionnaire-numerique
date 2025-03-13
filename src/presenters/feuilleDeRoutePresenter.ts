@@ -37,7 +37,7 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
       etat: formatMontant(30_000),
       total: formatMontant(140_000),
     },
-    contextualisation: '',
+    contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p>',
     contratPreexistant: false,
     formulaire: {
       contratPreexistant: [
