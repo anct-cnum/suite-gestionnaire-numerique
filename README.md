@@ -227,3 +227,23 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
 
 - Lancer le script d'import :  
   `yarn migration:all`
+
+### Pro connect
+
+- Production:
+  URLs de redirection post CONNEXION: https://mon-inclusion-numerique.osc-fr1.scalingo.io/api/auth/callback/pro-connect
+  URLs de redirection post DÉCONNEXION: https://mon-inclusion-numerique.osc-fr1.scalingo.io/connexion
+  Lien du dossier démarches-simplifiées: https://www.demarches-simplifiees.fr/dossiers/22822056
+
+  Les client_id et client_secret de production à renseigner dans les variables d'environnement de scalingo se trouve dans le vaultwarden
+  PRO_CONNECT_CLIENT_ID = clientID
+  PRO_CONNECT_CLIENT_SECRET = clienSecret
+  PRO_CONNECT_URL = https://auth.agentconnect.gouv.fr/api/v2
+
+- Développement:
+  Les client_id et client_secret de dev à renseigner dans le .env.local se trouve dans le vaultwarden
+  PRO_CONNECT_CLIENT_ID = clientID
+  PRO_CONNECT_CLIENT_SECRET = clienSecret
+  PRO_CONNECT_URL = https://fca.integ01.dev-agentconnect.fr/api/v2
+
+  Compte Pro connect de dev: test@fia1.fr
