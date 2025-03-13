@@ -17,6 +17,7 @@ export function gouvernancePresenter(
       membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
+    peutVoirNotePrivee: false,
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
@@ -42,6 +43,7 @@ export function gouvernancePresenter(
 }
 
 export type GouvernanceViewModel = Readonly<{
+  peutVoirNotePrivee: boolean
   comites?: ReadonlyArray<ComiteResumeViewModel>
   comiteARemplir: ComiteViewModel
   dateAujourdhui: string

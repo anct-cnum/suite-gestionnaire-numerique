@@ -68,6 +68,7 @@ export function gouvernanceViewModelFactory(
     links: {
       membres: '/',
     },
+    peutVoirNotePrivee: true,
     sectionFeuillesDeRoute: {
       budgetTotalCumule: '',
       feuillesDeRoute: [],

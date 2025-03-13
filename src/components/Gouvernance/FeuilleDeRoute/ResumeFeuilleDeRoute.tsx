@@ -9,9 +9,13 @@ export default function ResumeFeuilleDeRoute({
   linkLabel,
   total,
   wording,
+  peutVoirNotePrivee,
 }: Props): ReactElement {
   return (
-    <Resume style={styles['resume-feuilles-de-route']}>
+    <Resume
+      peutVoirNotePrivee={peutVoirNotePrivee}
+      style={styles['resume-feuilles-de-route']}
+    >
       <p>
         <span className="fr-display--sm">
           {total}
@@ -39,4 +43,5 @@ type Props = Readonly<{
   linkLabel: string
   total: string
   wording: string
+  peutVoirNotePrivee: boolean
 }>
