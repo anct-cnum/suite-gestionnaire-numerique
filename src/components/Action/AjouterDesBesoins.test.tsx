@@ -8,7 +8,7 @@ describe('ajouter des besoins', () => {
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des besoins s’affiche', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireDeModificationAction()
 
       // WHEN
       jOuvreLeFormulairePourAjouterDesBesoins()
@@ -64,7 +64,7 @@ describe('ajouter des besoins', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireDeModificationAction()
 
       // WHEN
       jOuvreLeFormulairePourAjouterDesBesoins()
@@ -78,7 +78,7 @@ describe('ajouter des besoins', () => {
 
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireDeModificationAction()
 
       // WHEN
       jOuvreLeFormulairePourAjouterDesBesoins()
@@ -94,7 +94,7 @@ describe('ajouter des besoins', () => {
   })
 
   function jOuvreLeFormulairePourAjouterDesBesoins(): void {
-    presserLeBouton('Modifier', 'Ajouter des besoins')
+    presserLeBouton('Modifier', 'Modifier les besoins')
   }
 
   function jEffaceLeFormulaire(): void {
@@ -102,7 +102,7 @@ describe('ajouter des besoins', () => {
   }
 
   function jeFermeLeFormulairePourAjouterDesBesoins(): HTMLElement {
-    return presserLeBouton('Fermer l’ajout des besoins')
+    return presserLeBouton('Fermer la modification des besoins')
   }
 
   function presserLeBouton(name: string, description?: string): HTMLElement {
@@ -111,7 +111,7 @@ describe('ajouter des besoins', () => {
     return button
   }
 
-  function afficherLeFormulaireAction(): void {
+  function afficherLeFormulaireDeModificationAction(): void {
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory()}

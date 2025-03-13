@@ -52,3 +52,9 @@
 .no-style-list {
   list-style-type: none;
 }
+
+.deletion-section {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
