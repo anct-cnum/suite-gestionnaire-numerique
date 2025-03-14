@@ -1,14 +1,18 @@
+import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { QueryHandler } from '../QueryHandler'
+import { Gouvernance } from '@/domain/Gouvernance'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
+  readonly #repository: GetUtilisateurRepository
 
-  constructor(loader: UneGouvernanceLoader) {
+  constructor(loader: UneGouvernanceLoader, repository: GetUtilisateurRepository) {
     this.#loader = loader
+    this.#repository = repository
   }
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
-    return this.#loader.get(query.codeDepartement)
+    const readModel = await this.#loader.get(query.codeDepartement)
       .then((gouvernance) => ({
         ...gouvernance,
         syntheseMembres: {
@@ -19,6 +23,12 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
             .toArray(),
         },
       }))
+    const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
+    const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
+    return  {
+      ...readModel,
+      peutVoirNotePrivee,
+    }
   }
 }
 
@@ -34,6 +44,7 @@ export type UneGouvernanceReadModel = Readonly<{
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   uid: string
+  peutVoirNotePrivee: boolean
 }>
 
 export type ComiteReadModel = Readonly<{
@@ -115,6 +126,7 @@ type SyntheseMembres = Readonly<{
 
 type Query = Readonly<{
   codeDepartement: string
+  uidUtilisateurCourant: string
 }>
 
 function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {

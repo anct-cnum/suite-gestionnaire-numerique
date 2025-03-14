@@ -78,6 +78,7 @@ describe('gouvernance loader', () => {
         prenomEditeur: 'Jean',
         texte: 'un contenu quelconque',
       },
+      peutVoirNotePrivee: true,
       syntheseMembres,
       uid: '93',
     })
@@ -118,6 +119,7 @@ describe('gouvernance loader', () => {
       feuillesDeRoute,
       noteDeContexte: undefined,
       notePrivee: undefined,
+      peutVoirNotePrivee: true,
       syntheseMembres,
       uid: codeDepartement,
     })

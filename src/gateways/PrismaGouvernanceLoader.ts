@@ -118,6 +118,7 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
     })),
     noteDeContexte,
     notePrivee,
+    peutVoirNotePrivee: true,
     syntheseMembres: {
       candidats: membres.filter(({ statut }) => statut === 'candidat').length,
       coporteurs: membres

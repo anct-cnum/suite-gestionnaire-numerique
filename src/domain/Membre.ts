@@ -49,6 +49,10 @@ export class Role extends ValueObject<AttributState> {
   constructor(value: string) {
     super({ value })
   }
+
+  isCoporteur(): boolean {
+    return this.state.value === 'coporteur'
+  }
 }
 
 export class Statut extends ValueObject<AttributState> {
