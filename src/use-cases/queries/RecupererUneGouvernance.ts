@@ -1,12 +1,12 @@
-import { GetMembresDuGestionnaireRepository } from '../commands/shared/MembreRepository'
+import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { QueryHandler } from '../QueryHandler'
-import { Membre } from '@/domain/Membre'
+import { GestionnaireDepartement } from '@/domain/GestionnaireDepartement'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
-  readonly #repository: GetMembresDuGestionnaireRepository
+  readonly #repository: GetUtilisateurRepository
 
-  constructor(loader: UneGouvernanceLoader, repository: GetMembresDuGestionnaireRepository) {
+  constructor(loader: UneGouvernanceLoader, repository: GetUtilisateurRepository) {
     this.#loader = loader
     this.#repository = repository
   }
@@ -23,8 +23,8 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
             .toArray(),
         },
       }))
-    const membres = await this.#repository.getMembres(query.uidUtilisateurCourant)
-    const peutVoirNotePrivee = Membre.gestionnairePeutVoirNotePrivee(membres, query.codeDepartement)
+    const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
+    const peutVoirNotePrivee = utilisateurCourant instanceof GestionnaireDepartement
     return  {
       ...readModel,
       peutVoirNotePrivee,
