@@ -36,7 +36,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
         Modifier
       </button>
       <Drawer
-        boutonFermeture="Fermer le formulaire de modification d'une note de contextualisation"
+        boutonFermeture="Fermer le formulaire de modification d‘une note de contextualisation"
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
@@ -50,7 +50,6 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
           contenu={contenu}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
-          texte=""
           validerFormulaire={modifierUneNoteDeContextualisation}
         >
           <div className="fr-btns-group fr-mt-2w">
@@ -91,7 +90,6 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
       setIsDisabled(false)
       return
     }
-
     const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname })
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiée', title: 'Note de contextualisation ' })
@@ -99,7 +97,6 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }
-
     setIsDisabled(false)
   }
 }
