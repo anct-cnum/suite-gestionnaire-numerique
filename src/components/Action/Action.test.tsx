@@ -533,12 +533,12 @@ function afficherMenuLateral(): void {
 
 function jeSelectionneLAnneeDeDebut(annee: string): void {
   const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
-  fireEvent.change(selectAnneeDebut, { target: { value: annee } })
+  fireEvent.input(selectAnneeDebut, { target: { value: annee } })
 }
 
 function jeSelectionneLAnneeDeFin(annee: string): void {
   const selectAnneeDeFin = screen.getByLabelText('Année de fin de l‘action')
-  fireEvent.change(selectAnneeDeFin, { target: { value: annee } })
+  fireEvent.input(selectAnneeDeFin, { target: { value: annee } })
 }
 
 function jeValideLeFormulaireDAjout(): HTMLElement {
@@ -562,7 +562,7 @@ function jeTapeLeContexteDeLaction(formulaire: HTMLElement): void {
 
 export function jeTapeLeBudgetGlobalDeLAction(formulaire: HTMLElement): void {
   const budgetGlobal = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-  fireEvent.change(budgetGlobal, { target: { value: 1000 } })
+  fireEvent.input(budgetGlobal, { target: { value: 1000 } })
 }
 
 function jeTapeLeNomDeLAction(formulaire: HTMLElement): void {
@@ -585,5 +585,5 @@ export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
   fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
   const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
-  fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
+  fireEvent.input(montantDuFinancement, { target: { value: 1000 } })
 }

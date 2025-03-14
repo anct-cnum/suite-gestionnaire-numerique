@@ -135,6 +135,15 @@ input[type='search']::-webkit-search-cancel-button {
   display: none;
 }
 
+input[type='number'] {
+  appearance: textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  appearance: none;
+}
+
 /* c'est une classe de la librairie tip tap nécessaire afin de gérer le scroll dans l'éditeur */
 .ProseMirror {
   overflow: auto;
@@ -161,7 +170,7 @@ address {
   border-top: 0.1rem solid var(--border-default-grey);
 }
 
-.input-group--sobre:not(.fr-input-group--disabled) {
+.input-group--custom-success-error:not(.fr-input-group--disabled) {
   &::before {
     content: none;
   }
@@ -169,6 +178,16 @@ address {
   .fr-label {
     color: var(--text-label-gray);
   }
+}
+
+.input-group-horizontal .fr-input-group {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.input-group-horizontal--third-width .fr-input-wrap {
+  width: 29%;
 }
 
 .glycine-background {
