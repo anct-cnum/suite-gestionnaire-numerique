@@ -39,7 +39,6 @@ export default function FormulaireNoteDeContextualisation({
 
 type Props = PropsWithChildren<Readonly<{
   labelId: string
-  texte: string
   contenu: string
   gererLeChangementDeContenu(contenu: string): void
   validerFormulaire(event: FormEvent<HTMLFormElement>): void

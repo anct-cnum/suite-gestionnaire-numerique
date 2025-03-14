@@ -47,7 +47,6 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
           contenu={contenu}
           gererLeChangementDeContenu={gererLeChangementDeContenu}
           labelId={labelId}
-          texte=""
           validerFormulaire={creerUneNoteDeContextualisation}
         >
           <div className="fr-btns-group fr-mt-2w">

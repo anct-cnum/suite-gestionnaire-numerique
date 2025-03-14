@@ -302,7 +302,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     ...overrides,
   }
 }
-
+// istanbul ignore next @preserve
 export function feuilleDeRouteViewModelFactory(
   codeDepartement = '11',
   uidFeuilleDeRoute = '116',

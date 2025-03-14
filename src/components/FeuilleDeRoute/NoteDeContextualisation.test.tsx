@@ -1,18 +1,13 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import FeuilleDeRoute from './FeuilleDeRoute'
-import { presserLeBouton, renderComponent, stubbedServerAction } from '../testHelper'
+import { renderComponent, stubbedServerAction } from '../testHelper'
 import { feuilleDeRouteViewModelFactory } from '@/presenters/testHelper'
 
 describe('note de contextualisation', () => {
   it('quand j’affiche une feuille de route sans note de contextualisation, alors elle s’affiche avec un bouton pour ajouter une note de contextualisation', () => {
-    // GIVEN
-    const viewModel = feuilleDeRouteViewModelFactory('11', '113', {
-      contextualisation: '',
-    })
-
     // WHEN
-    render(<FeuilleDeRoute feuilleDeRouteViewModel={viewModel} />)
+    afficherUneFeuilleDeRouteSansNoteDeContextualisation()
 
     // THEN
     const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
@@ -189,6 +184,20 @@ describe('note de contextualisation', () => {
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
+
+    it('puis que je clique sur fermer, alors le drawer se ferme', () => {
+      // GIVEN
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation()
+
+      // WHEN
+      jouvreLeDrawerDeModificationDeNoteDeContextualisation()
+      const drawer = screen.getByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
+      const fermer = jeFermeLeFormulairePourModifierUneNoteDeContextualisation()
+
+      // // THEN
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerModifierNoteDeContextualisationId')
+      expect(drawer).not.toBeVisible()
+    })
   })
 })
 
@@ -228,6 +237,10 @@ function jeFermeLeFormulairePourAjouterUneNoteDeContextualisation(): HTMLElement
   return presserLeBouton('Fermer le formulaire de création d‘une note de contextualisation')
 }
 
+function jeFermeLeFormulairePourModifierUneNoteDeContextualisation(): HTMLElement {
+  return presserLeBouton('Fermer le formulaire de modification d‘une note de contextualisation')
+}
+
 function jeTapeUneNoteDeContextualisation(): HTMLElement {
   const editeurDeTextEnrichi = within(screen.getByRole('form', { name: 'Contextualisation des demandes de subvention' })).getByRole('textarea', { name: 'Éditeur de note de contextualisation' })
   fireEvent.input(editeurDeTextEnrichi, { target: { innerHTML: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>' } })
@@ -246,4 +259,10 @@ function jEffaceLaNoteDeContextualisation(): HTMLElement {
   const supprimer = within(form).getByRole('button', { name: 'Supprimer' })
   fireEvent.click(supprimer)
   return supprimer
+}
+
+function presserLeBouton(name: string): HTMLElement {
+  const button = screen.getByRole('button', { name })
+  fireEvent.click(button)
+  return button
 }
