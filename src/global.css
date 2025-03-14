@@ -171,6 +171,16 @@ address {
   }
 }
 
+.input-group-horizontal .fr-input-group {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.input-group-horizontal--third-width .fr-input {
+  width: 29%;
+}
+
 .glycine-background {
   background-color: var(--purple-glycine-950-100);
   border-radius: 0.5rem;

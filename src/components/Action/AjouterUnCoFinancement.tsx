@@ -1,6 +1,7 @@
 import { FormEvent, ReactElement, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import NumberInput from '../shared/NumberInput/NumberInput'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
@@ -54,54 +55,43 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
           ))}
         </select>
       </div>
-      <label
-        className="fr-label fr-mb-1w"
-        htmlFor="rechercheStructure"
-      >
-        Ou rechercher une autre structure
-      </label>
-      <div
-        className="fr-search-bar full-width"
-      >
-        <input
-          className="fr-input"
-          id="rechercheStructure"
-          placeholder="Numéro SIRET/RIDET, Nom, ..."
-          type="text"
-        />
-        <button
-          className="fr-btn"
-          title="Rechercher"
-          type="submit"
-        >
-          Rechercher
-        </button>
-      </div>
-      <div className="fr-mt-3w">
+      <div className="fr-input-group">
         <label
           className="fr-label fr-mb-1w"
-          htmlFor="montantDuFinancement"
+          htmlFor="rechercheStructure"
         >
-          Montant du financement
-          {' '}
-          <span className="color-red">
-            *
-          </span>
+          Ou rechercher une autre structure
         </label>
+        <div
+          className="fr-search-bar full-width"
+        >
+          <input
+            className="fr-input"
+            id="rechercheStructure"
+            placeholder="Numéro SIRET/RIDET, Nom, ..."
+            type="text"
+          />
+          <button
+            className="fr-btn"
+            title="Rechercher"
+            type="submit"
+          >
+            Rechercher
+          </button>
+        </div>
       </div>
-      <input
-        className="fr-input"
+      <NumberInput
         id="montantDuFinancement"
         min={0}
         name="montantDuFinancement"
-        onChange={(event) => {
+        onInput={(event) => {
           setMontant(event.target.value)
         }}
         placeholder="5 000"
         required={true}
-        type="number"
-        value={montant}
-      />
+      >
+        Montant du financement
+      </NumberInput>
       <div className="fr-btns-group fr-mt-2w">
         <SubmitButton
           ariaControls="ajouter-un-cofinancement"
