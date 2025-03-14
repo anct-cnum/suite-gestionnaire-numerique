@@ -1,8 +1,8 @@
 import { UneGouvernanceLoader, RecupererUneGouvernance, UneGouvernanceReadModel } from './RecupererUneGouvernance'
-import { GetMembresDuGestionnaireRepository } from '../commands/shared/MembreRepository'
+import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { gouvernanceReadModelFactory } from '../testHelper'
-import { Membre } from '@/domain/Membre'
-import { membreConfirmeFactory } from '@/domain/testHelper'
+import { utilisateurFactory } from '@/domain/testHelper'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('recupérer une gouvernance', () => {
   beforeEach(() => {
@@ -14,7 +14,7 @@ describe('recupérer une gouvernance', () => {
     // GIVEN
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new GetMembresDuGestionnaireRepositoryStub()
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -37,7 +37,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new GetMembresDuGestionnaireRepositoryStub()
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -77,7 +77,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new GetMembresDuGestionnaireRepositoryStub()
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -138,7 +138,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new GetMembresDuGestionnaireRepositoryStub()
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -173,7 +173,7 @@ describe('recupérer une gouvernance', () => {
     expect(spiedCodeDepartement).toBe('69')
   })
 
-  it('quand une gouvernance est demandée sur un département par un membre qui n‘est pas co-porteur alors il ne peut pas voir la note privée', async () => {
+  it('quand une gouvernance est consultée par un utilisateur qui n‘est pas gestionnaire département alors il ne peut pas voir la note privée', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
@@ -206,7 +206,7 @@ describe('recupérer une gouvernance', () => {
 
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new GetMembresCoporteursDuGestionnaireRepositoryStub()
+      new UtilisateurNonGestionnaireDepartementRepositoryStub()
     )
 
     // WHEN
@@ -215,54 +215,6 @@ describe('recupérer une gouvernance', () => {
       uidUtilisateurCourant: 'membreNonCoporteurId',
     })
 
-    // THEN
-    expect(gouvernance).toStrictEqual({
-      ...uneGouvernance,
-      peutVoirNotePrivee: false,
-    })
-  })
-
-  it('quand une gouvernance est demandée sur un département par un membre qui est co-porteur mais ne fait pas partie de la gouvernance alors on ajoute la propriété peutVoirNotePrivee à false', async () => {
-    // GIVEN
-    uneGouvernance = {
-      ...uneGouvernance,
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'didier.durand@exemple.com',
-              nom: 'Didier',
-              poste: 'chargé de mission',
-              prenom: 'Durant',
-            },
-            feuillesDeRoute: [{ montantSubventionAccorde: 5_000, montantSubventionFormationAccorde: 5_000, nom: 'Feuille de route inclusion' }],
-            links: {
-              plusDetails: '/',
-            },
-            nom: 'Département du Rhône',
-            roles: ['observateur'],
-            telephone: '+33 4 45 00 45 01',
-            totalMontantSubventionAccorde: 5_000,
-            totalMontantSubventionFormationAccorde: 5_000,
-            type: 'Collectivité, EPCI',
-          },
-        ],
-        total: 2,
-      },
-    }
-
-    const queryHandler = new RecupererUneGouvernance(
-      new GouvernanceLoaderSpy(),
-      new GetMembresNonCoporteursDuGestionnaireRepositoryStub()
-    )
-
-    // WHEN
-    const gouvernance = await queryHandler.handle({
-      codeDepartement: '69',
-      uidUtilisateurCourant: 'membreNonCoporteurId',
-    })
     // THEN
     expect(gouvernance).toStrictEqual({
       ...uneGouvernance,
@@ -304,21 +256,14 @@ class GouvernanceLoaderSpy implements UneGouvernanceLoader {
     return Promise.resolve(uneGouvernance)
   }
 }
-
-class GetMembresDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async getMembres(): Promise<Array<Membre>> {
-    return Promise.resolve([membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '69' } })])
+class UtilisateurRepositoryStub implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    return Promise.resolve(utilisateurFactory({ role:'Gestionnaire département' }))
   }
 }
 
-class GetMembresNonCoporteursDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async getMembres(): Promise<Array<Membre>> {
-    return Promise.resolve([membreConfirmeFactory({ roles: ['observateur'], uidGouvernance: { value: '69' } })])
-  }
-}
-
-class GetMembresCoporteursDuGestionnaireRepositoryStub implements GetMembresDuGestionnaireRepository {
-  async getMembres(): Promise<Array<Membre>> {
-    return Promise.resolve([membreConfirmeFactory({ roles: ['coporteur'], uidGouvernance: { value: '75' } })])
+class UtilisateurNonGestionnaireDepartementRepositoryStub implements GetUtilisateurRepository {
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    return Promise.resolve(utilisateurFactory())
   }
 }
