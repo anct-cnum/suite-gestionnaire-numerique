@@ -1,4 +1,5 @@
 import { Departement, DepartementState } from './Departement'
+import { GestionnaireDepartement } from './GestionnaireDepartement'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid } from './Utilisateur'
 import { Result } from '@/shared/lang'
@@ -59,6 +60,15 @@ export class Gouvernance extends Entity<State> {
     )
   }
 
+  static laNotePriveePeutEtreGereePar(utilisateur: Utilisateur, codeDepartementGouvernance: string): boolean {
+    return utilisateur instanceof GestionnaireDepartement
+      && codeDepartementGouvernance === utilisateur.state.departement.code
+  }
+
+  laNotePriveePeutEtreGereePar(utilisateur: Utilisateur): boolean {
+    return Gouvernance.laNotePriveePeutEtreGereePar(utilisateur, this.#departement.state.code)
+  }
+
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
     if (this.#noteDeContexte === undefined) {
       this.#noteDeContexte = noteDeContexte
@@ -106,10 +116,6 @@ export class Gouvernance extends Entity<State> {
     return utilisateur.isAdmin
       || this.#departement.state.code === utilisateur.state.departement?.code
       || this.#departement.state.codeRegion === utilisateur.state.region?.code
-  }
-
-  laNotePriveePeutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return this.#departement.state.code === utilisateur.state.departement?.code
   }
 }
 
@@ -189,4 +195,3 @@ type NotePriveeState = Readonly<{
   uidEditeur: string
   value: string
 }>
-

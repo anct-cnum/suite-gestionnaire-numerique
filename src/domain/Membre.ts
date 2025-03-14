@@ -32,19 +32,8 @@ export abstract class Membre extends Entity<MembreState> {
     }
   }
 
-  static gestionnairePeutVoirNotePrivee(membres: ReadonlyArray<Membre>, codeDepartementGouvernance: string): boolean {
-    return membres.some((membre) =>
-      membre.peutLireNotePriveeDeLaGouvernance(
-        new GouvernanceUid(codeDepartementGouvernance)
-      ))
-  }
-
   appartientALaGouvernance(uidGouvernance: string): boolean {
     return uidGouvernance === this.uidGouvernance.state.value
-  }
-
-  peutLireNotePriveeDeLaGouvernance(gouvernanceUid: GouvernanceUid): boolean {
-    return this.roles.some((role) => role.isCoporteur()) && this.appartientALaGouvernance(gouvernanceUid.state.value)
   }
 
   abstract confirmer(): Result<MembreFailure, Membre>
