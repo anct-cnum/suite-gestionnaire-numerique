@@ -8,8 +8,10 @@ import MenuLateral from './MenuLateral'
 import ModifierUneAction from './ModifierUneAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
+import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
+import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('formulaire d‘ajout d‘une action', () => {
   describe('menu latéral', () => {
@@ -323,7 +325,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       renderComponent(
         <AjouterUneAction
           action={actionViewModelFactory()}
-          coporteurs={[]}
           date={epochTime}
         />,
         { ajouterUneActionAction }
@@ -343,7 +344,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       renderComponent(
         <AjouterUneAction
           action={actionVideViewModelFactory()}
-          coporteurs={[]}
           date={epochTime}
         />,
         { ajouterUneActionAction }
@@ -368,7 +368,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       renderComponent(
         <ModifierUneAction
           action={actionVideViewModelFactory()}
-          coporteurs={[]}
         />,
         { modifierUneActionAction }
       )
@@ -419,69 +418,107 @@ describe('formulaire d‘ajout d‘une action', () => {
 })
 
 export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+  const gouvernanceViewModel = gouvernancePresenter(
+    gouvernanceReadModelFactory({
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'john.doe@example.com',
+              nom: 'Doe',
+              poste: 'Chargé de mission',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [],
+            links: {},
+            nom: 'CC des Monts du Lyonnais',
+            roles: [],
+            telephone: '+33 1 23 45 67 89',
+            type: '',
+          },
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'john.doe@example.com',
+              nom: 'Doe',
+              poste: 'Chargé de mission',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [],
+            links: {},
+            nom: 'Croix Rouge Française',
+            roles: [],
+            telephone: '+33 1 23 45 67 89',
+            type: '',
+          },
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'john.doe@example.com',
+              nom: 'Doe',
+              poste: 'Chargé de mission',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [],
+            links: {},
+            nom: 'La Poste',
+            roles: [],
+            telephone: '+33 1 23 45 67 89',
+            type: '',
+          },
+        ],
+        total: 1,
+      },
+    }),
+    epochTime
+  )
   renderComponent(
     <AjouterUneAction
       action={actionVideViewModelFactory()}
-      coporteurs={[
-        {
-          details: [],
-          logo: '',
-          nom: 'CC des Monts du Lyonnais',
-          roles: [],
-          type: '',
-        },
-        {
-          details: [],
-          logo: '',
-          nom: 'Croix Rouge Française',
-          roles: [],
-          type: '',
-        },
-        {
-          details: [],
-          logo: '',
-          nom: 'La Poste',
-          roles: [],
-          type: '',
-        },
-      ]}
       date={epochTime}
     />,
-    options
+    options,
+    gouvernanceViewModel
   )
 }
 
 export function afficherFormulaireDeModificationAction(
   modifierUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
 ): void {
+  const gouvernanceViewModel = gouvernancePresenter(
+    gouvernanceReadModelFactory({
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'john.doe@example.com',
+              nom: 'Doe',
+              poste: 'Chargé de mission',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [],
+            links: {},
+            nom: 'CC des Monts du Lyonnais',
+            roles: [],
+            telephone: '+33 1 23 45 67 89',
+            type: '',
+          },
+        ],
+        total: 1,
+      },
+    }),
+    epochTime
+  )
   renderComponent(
     <ModifierUneAction
       action={actionViewModelFactory()}
-      coporteurs={[
-        {
-          details: [],
-          logo: '',
-          nom: 'CC des Monts du Lyonnais',
-          roles: [],
-          type: '',
-        },
-        {
-          details: [],
-          logo: '',
-          nom: 'Croix Rouge Française',
-          roles: [],
-          type: '',
-        },
-        {
-          details: [],
-          logo: '',
-          nom: 'La Poste',
-          roles: [],
-          type: '',
-        },
-      ]}
     />,
-    { modifierUneActionAction }
+    { modifierUneActionAction },
+    gouvernanceViewModel
   )
 }
 
