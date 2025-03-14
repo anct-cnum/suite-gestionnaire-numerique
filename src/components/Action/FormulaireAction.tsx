@@ -8,6 +8,7 @@ import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
 import DemanderUneSubvention from './DemanderUneSubvention'
 import Badge from '../shared/Badge/Badge'
+import NumberInput from '../shared/NumberInput/NumberInput'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
@@ -282,33 +283,22 @@ export function FormulaireAction({
             et les co-financements éventuels des membres ou ...
           </p>
           <hr />
-          <div className={styles['horizontal-text-input']}>
-            <div className={styles['half-width']}>
-              <label
-                className="fr-label fr-text--bold"
-                htmlFor="budgetGlobal"
-              >
+          <div className="input-group-horizontal input-group-horizontal--third-width fr-mb-2w">
+            <NumberInput
+              defaultValue={action.budgetGlobal}
+              icon="money-euro-circle-line"
+              id="budgetGlobal"
+              min={0}
+              name="budgetGlobal"
+              onInput={(event) => {
+                setBudgetGlobal(Number(event.currentTarget.value))
+              }}
+              required={true}
+            >
+              <span className="fr-text--bold">
                 Budget global de l‘action
-                {' '}
-                <span className="color-red">
-                  *
-                </span>
-              </label>
-            </div>
-            <div className={styles['third-width']}>
-              <input
-                className="fr-input"
-                defaultValue={action.budgetGlobal}
-                id="budgetGlobal"
-                min={0}
-                name="budgetGlobal"
-                onChange={(event) => {
-                  setBudgetGlobal(Number(event.target.value))
-                }}
-                required={true}
-                type="number"
-              />
-            </div>
+              </span>
+            </NumberInput>
           </div>
           <hr />
           <div className={styles['horizontal-text-input']}>
