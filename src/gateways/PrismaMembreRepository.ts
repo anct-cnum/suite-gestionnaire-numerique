@@ -1,4 +1,3 @@
-import { toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
@@ -6,7 +5,6 @@ import { MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
   readonly #membreDataResource = prisma.membreRecord
-  readonly #utilisateurDataResource = prisma.utilisateurRecord
 
   async get(uid: MembreState['uid']['value']): Promise<Membre> {
     const record = await this.#membreDataResource.findUniqueOrThrow({
@@ -60,51 +58,6 @@ export class PrismaMembreRepository implements MembreRepository {
         value: record.gouvernanceDepartementCode,
       },
     }) as Membre
-  }
-
-  async getMembres(uidGestionnaire: string): Promise<ReadonlyArray<Membre>> {
-    const utilisateur = await this.#utilisateurDataResource.findUniqueOrThrow({
-      where: {
-        ssoId: uidGestionnaire,
-      },
-    })
-    if (utilisateur.departementCode === null || utilisateur.departementCode === '') {
-      return []
-    }
-    const departementCode = utilisateur.departementCode
-    const membres = await this.#membreDataResource.findMany({
-      include: {
-        membresGouvernanceCommune: true,
-        membresGouvernanceDepartement: {
-          include: {
-            relationDepartement: true,
-          },
-        },
-        membresGouvernanceEpci: true,
-        membresGouvernanceSgar: {
-          include: {
-            relationSgar: true,
-          },
-        },
-        membresGouvernanceStructure: true,
-        relationContact: true,
-      },
-      where: {
-        gouvernanceDepartementCode: departementCode,
-      },
-    })
-    return toMembres(membres).map((membre) =>
-      membreFactory({
-        nom: membre.nom,
-        roles: membre.roles,
-        statut: membre.statut as StatutFactory,
-        uid: {
-          value: membre.id,
-        },
-        uidGouvernance: {
-          value: departementCode,
-        },
-      }) as Membre)
   }
 
   async update(membre: Membre): Promise<void> {

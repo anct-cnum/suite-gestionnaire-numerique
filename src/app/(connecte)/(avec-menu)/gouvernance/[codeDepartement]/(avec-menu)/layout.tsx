@@ -1,12 +1,13 @@
 import { notFound, redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
+import prisma from '../../../../../../../prisma/prismaClient'
 import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
 import { SousMenuGouvernance } from '@/components/transverse/MenuLateral/SousMenuGouvernance'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
-import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -25,7 +26,7 @@ export default async function Layout({
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(),
-      new PrismaMembreRepository()
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord)
     ).handle({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,

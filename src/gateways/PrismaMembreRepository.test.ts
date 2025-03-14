@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaMembreRepository } from './PrismaMembreRepository'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure, creerUnUtilisateur } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MembreUid } from '@/domain/Membre'
 import { membreConfirmeFactory } from '@/domain/testHelper'
@@ -201,46 +201,5 @@ describe('membre repository', () => {
       statut: 'confirme',
       type: 'Préfecture départementale',
     })
-  })
-
-  it('rechercher les membres d’un gestionnaire', async () => {
-    // GIVEN
-    await creerUneRegion({ code: '84' })
-    await creerUnDepartement({ code: '69', regionCode: '84' })
-    await creerUnDepartement({ code: '84', regionCode: '84' })
-    await creerUneGouvernance({ departementCode: '69' })
-    await creerUneGouvernance({ departementCode: '84' })
-    await creerUnContact()
-    await creerUnUtilisateur({ departementCode: '69', role: 'gestionnaire_departement', ssoId: 'uidGestionnaire' })
-    await creerUnMembre({ gouvernanceDepartementCode: '69', id: 'structure-69-69' })
-    await creerUnMembreStructure({ membreId: 'structure-69-69', structure: 'Croix rouge' })
-    await creerUnMembre({ gouvernanceDepartementCode: '84', id: 'structure-93-93', statut: 'confirme' })
-    await creerUnMembreStructure({ membreId: 'structure-93-93', structure: 'La Poste' })
-
-    // WHEN
-    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire')
-
-    // THEN
-    expect(membres).toHaveLength(1)
-    expect(membres[0].state).toStrictEqual(
-      membreConfirmeFactory({
-        nom: 'Croix rouge',
-        roles: ['observateur'],
-        statut: 'confirme',
-        uid: { value: 'structure-69-69' },
-        uidGouvernance: { value: '69' },
-      }).state
-    )
-  })
-
-  it('si un gestionnaire n’a pas de code département, alors aucun membre ne lui est associé', async () => {
-    // GIVEN
-    await creerUnUtilisateur({ role: 'gestionnaire_departement', ssoId: 'uidGestionnaire' })
-
-    // WHEN
-    const membres = await new PrismaMembreRepository().getMembres('uidGestionnaire')
-
-    // THEN
-    expect(membres).toHaveLength(0)
   })
 })
