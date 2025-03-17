@@ -351,48 +351,48 @@ export function feuilleDeRouteViewModelFactory(
     formulaire: {
       contratPreexistant: [
         {
-          id: 'oui',
-          isChecked: false,
+          isSelected: false,
           label: 'Oui',
+          value: 'oui',
         },
         {
-          id: 'non',
-          isChecked: true,
+          isSelected: true,
           label: 'Non',
+          value: 'non',
         },
       ],
       membres: [
         {
           isSelected: false,
           label: 'Choisir',
-          uid: '',
+          value: 'choisir',
         },
         {
           isSelected: false,
           label: 'Croix Rouge Française',
-          uid: 'membre1FooId',
+          value: 'membre1FooId',
         },
         {
           isSelected: true,
           label: 'La Poste',
-          uid: 'membre2FooId',
+          value: 'membre2FooId',
         },
       ],
       perimetres: [
         {
-          id: 'regional',
-          isChecked: false,
+          isSelected: false,
           label: 'Régional',
+          value: 'regional',
         },
         {
-          id: 'departemental',
-          isChecked: true,
+          isSelected: true,
           label: 'Départemental',
+          value: 'departemental',
         },
         {
-          id: 'epci_groupement',
-          isChecked: false,
+          isSelected: false,
           label: 'EPCI ou groupement de communes',
+          value: 'epci_groupement',
         },
       ],
     },

@@ -4,7 +4,7 @@ import { supprimerUneNoteDeContextualisationAction } from './supprimerUneNoteDeC
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 
 describe('supprimer une note de contextualisation', () => {
-  it('quand une note de contextuelisation est supprimée avec tous ses champs requis, alors cela renvoie un succès', async () => {
+  it('quand une note de contextualisation est supprimée avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
@@ -18,7 +18,7 @@ describe('supprimer une note de contextualisation', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('quand une note de contextuelisation est supprimée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
+  it('quand une note de contextualisation est supprimée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
     // WHEN
     const messages = await supprimerUneNoteDeContextualisationAction({
       path: '',
