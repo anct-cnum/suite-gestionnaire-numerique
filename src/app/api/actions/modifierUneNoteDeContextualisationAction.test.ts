@@ -4,7 +4,7 @@ import { modifierUneNoteDeContextualisationAction } from './modifierUneNoteDeCon
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 
 describe('modifier une note de contextualisation', () => {
-  it('quand une note de contextuelisation est modifiée avec tous ses champs requis, alors cela renvoie un succès', async () => {
+  it('quand une note de contextualisation est modifiée avec tous ses champs requis, alors cela renvoie un succès', async () => {
     // GIVEN
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce('userFooId')
     vi.spyOn(nextCache, 'revalidatePath').mockImplementationOnce(vi.fn())
@@ -19,10 +19,10 @@ describe('modifier une note de contextualisation', () => {
     expect(messages).toStrictEqual(['OK'])
   })
 
-  it('quand une note de contextuelisation est modifiée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
+  it('quand une note de contextualisation est modifiée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
     // WHEN
     const messages = await modifierUneNoteDeContextualisationAction({
-      contenu: '<p>ma note de contextuelisation</p>',
+      contenu: '<p>ma note de contextualisation</p>',
       path: '',
     })
 
