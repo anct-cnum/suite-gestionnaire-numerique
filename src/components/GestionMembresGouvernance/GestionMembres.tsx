@@ -1,9 +1,10 @@
 'use client'
 
-import { Fragment, ReactElement, useEffect, useId, useState } from 'react'
+import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
+import { clientContext } from '../shared/ClientContext'
 import Drawer from '../shared/Drawer/Drawer'
 import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
@@ -13,6 +14,7 @@ import { MembreViewModel, MembresViewModel } from '@/presenters/membresPresenter
 import { alphaAsc } from '@/shared/lang'
 
 export default function GestionMembres({ membresViewModel }: Props): ReactElement {
+  const { router } = useContext(clientContext)
   const selectRoleId = useId()
   const selectTypologieId = useId()
   const labelId = useId()
@@ -181,9 +183,15 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             key={membre.uid}
           >
             <td>
-              <div className="font-weight-700">
+              <button
+                className="primary font-weight-700 fr-px-0 no-hover d-block"
+                onClick={() => {
+                  router.push(`/gouvernance/${membresViewModel.uidGouvernance}/membre/${membre.uid}`)
+                }}
+                type="button"
+              >
                 {membre.nom}
-              </div>
+              </button>
               {membre.typologie.simple.value}
             </td>
             <td>

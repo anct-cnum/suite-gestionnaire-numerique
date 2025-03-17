@@ -22,7 +22,7 @@ export default async function ActionAjouterController({ params }: Props): Promis
         <div className="fr-col-2">
           <MenuLateral />
         </div>
-        <div className="fr-col-10 fr-pl-7w menu-border">
+        <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <AjouterUneAction
             action={actionARemplir}

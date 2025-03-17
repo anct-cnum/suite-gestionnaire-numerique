@@ -9,6 +9,7 @@ import carto from './carto.png'
 import styles from './TableauDeBord.module.css'
 import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
+import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
@@ -353,10 +354,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 key={detail.label}
               >
                 <div>
-                  <span
-                    aria-hidden="true"
-                    className={`${styles.dot} ${styles[detail.color]}`}
-                  />
+                  <Dot color={detail.color} />
                   {' '}
                   {detail.label}
                 </div>
@@ -397,10 +395,11 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </div>
         <div className="fr-grid-row fr-mb-4w">
           <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div className={styles['remonter-graphique']}>
+            <div>
               <Doughnut
                 backgroundColor={tableauDeBordViewModel.beneficiaire.graphique.backgroundColor}
                 data={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.total)}
+                isFull={false}
                 labels={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.label)}
               />
             </div>
@@ -430,10 +429,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                     key={detail.label}
                   >
                     <div>
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.dot} ${styles[detail.color]}`}
-                      />
+                      <Dot color={detail.color} />
                       {' '}
                       {detail.label}
                     </div>
@@ -479,10 +475,11 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </div>
         <div className="fr-grid-row fr-mb-3w fr-pb-3w separator">
           <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div className={styles['remonter-graphique']}>
+            <div>
               <Doughnut
                 backgroundColor={tableauDeBordViewModel.mediateur.graphique.backgroundColor}
                 data={tableauDeBordViewModel.mediateur.details.map((detail) => detail.total)}
+                isFull={false}
                 labels={tableauDeBordViewModel.mediateur.details.map((detail) => detail.label)}
               />
             </div>
@@ -505,10 +502,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                     key={detail.label}
                   >
                     <div>
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.dot} ${styles[detail.color]}`}
-                      />
+                      <Dot color={detail.color} />
                       {' '}
                       {detail.label}
                     </div>
@@ -523,10 +517,11 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </div>
         <div className="fr-grid-row">
           <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div className={styles['remonter-graphique']}>
+            <div>
               <Doughnut
                 backgroundColor={tableauDeBordViewModel.aidant.graphique.backgroundColor}
                 data={tableauDeBordViewModel.aidant.details.map((detail) => detail.total)}
+                isFull={false}
                 labels={tableauDeBordViewModel.aidant.details.map((detail) => detail.label)}
               />
             </div>
@@ -549,10 +544,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                     key={detail.label}
                   >
                     <div>
-                      <span
-                        aria-hidden="true"
-                        className={`${styles.dot} ${styles[detail.color]}`}
-                      />
+                      <Dot color={detail.color} />
                       {' '}
                       {detail.label}
                     </div>

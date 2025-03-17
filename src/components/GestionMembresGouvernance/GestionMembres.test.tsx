@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import GestionMembres from './GestionMembres'
+import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
-describe('membres', () => {
+describe('gestion des membres gouvernance', () => {
   it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', () => {
     // WHEN
     afficherMembres()
@@ -73,6 +74,8 @@ describe('membres', () => {
     expect(columnsHead[2]).toHaveAttribute('scope', 'col')
     expect(columnsHead[3].textContent).toBe('Action')
     expect(columnsHead[3]).toHaveAttribute('scope', 'col')
+    const lienMembre = within(columnsBody[0]).getByRole('button', { name: 'Préfecture du Rhône' })
+    expect(lienMembre).toHaveAttribute('type', 'button')
     expect(columnsBody[0].textContent).toBe('Préfecture du RhônePréfecture départementale')
     expect(columnsBody[1].textContent).toBe('Laetitia Henrich')
     expect(columnsBody[2].textContent).toBe('Co-porteur ')
@@ -137,6 +140,27 @@ describe('membres', () => {
       const [columnsBody] = membresRow(rowsBody, index)
       expect(columnsBody[0].textContent).toBe(cell0)
     })
+  })
+
+  it('quand je clique sur un membre, alors je suis redirigé vers son détail', () => {
+    const spiedRouterPush = vi.fn<() => void>()
+    afficherMembres({
+      router: {
+        back: vi.fn<() => void>(),
+        forward: vi.fn<() => void>(),
+        prefetch: vi.fn<() => void>(),
+        push: spiedRouterPush,
+        refresh: vi.fn<() => void>(),
+        replace: vi.fn<() => void>(),
+      },
+    })
+
+    // WHEN
+    const button = screen.getByRole('button', { name: 'Préfecture du Rhône' })
+    fireEvent.click(button)
+
+    // THEN
+    expect(spiedRouterPush).toHaveBeenCalledWith('/gouvernance/69/membre/prefecture-69')
   })
 
   it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', () => {
@@ -246,7 +270,7 @@ function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonl
   return [columnsBody, within(columnsBody[3]).getByRole('button', { name: 'Supprimer' })]
 }
 
-function afficherMembres(): void {
+function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
   const membresViewModel = membresPresenter(membresReadModelFactory())
-  render(<GestionMembres membresViewModel={membresViewModel} />)
+  renderComponent(<GestionMembres membresViewModel={membresViewModel} />, options)
 }

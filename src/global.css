@@ -84,6 +84,18 @@
   display: block;
 }
 
+ul {
+  --ul-type: none;
+
+  margin: 0;
+  padding: 0;
+}
+
+dd,
+dt {
+  padding: 0;
+}
+
 tr {
   position: relative;
 }

@@ -4,10 +4,10 @@ import { ReactElement } from 'react'
 import styles from './FeuilleDeRoute.module.css'
 import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
 import Badge from '../shared/Badge/Badge'
+import Historique from '../shared/Historique/Historique'
 import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
-import Table from '../shared/Table/Table'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
@@ -65,7 +65,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
               Contextualisation des demandes de subvention
             </h2>
             <button
-              className="fr-btn fr-btn--tertiary"
+              className="fr-link fr-icon-edit-fill fr-link--icon-right fr-mt-n2w"
               title="Modifier la contextualisation"
               type="button"
             >
@@ -271,43 +271,14 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           }
         </section>
         <section
-          aria-labelledby="activiteEtHistorique"
+          aria-labelledby="historique"
           className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles['no-margin']}`}
         >
-          <header>
-            <h2
-              className="fr-h6 fr-m-0"
-              id="activiteEtHistorique"
-            >
-              Activité et historique
-            </h2>
-            <p className="fr-text--sm color-grey fr-m-0">
-              Historique des dernières activités pour cette feuille de route.
-            </p>
-          </header>
-          <Table
-            enTetes={['Date', 'Activité', 'Éditeur']}
-            isHeadHidden={true}
+          <Historique
+            historique={feuilleDeRouteViewModel.historiques}
+            sousTitre="Historique des dernières activités pour cette feuille de route."
             titre="Activité et historique"
-          >
-            {feuilleDeRouteViewModel.historiques.map((historique, index) => (
-              <tr
-                data-row-key={index}
-                id={`table-sm-row-key-${index}`}
-                key={historique.activite}
-              >
-                <td>
-                  {historique.date}
-                </td>
-                <td className="font-weight-700">
-                  {historique.activite}
-                </td>
-                <td>
-                  {historique.editeur}
-                </td>
-              </tr>
-            ))}
-          </Table>
+          />
         </section>
       </div>
     </div>

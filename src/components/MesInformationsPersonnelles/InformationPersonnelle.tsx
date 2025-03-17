@@ -6,7 +6,7 @@ export default function InformationPersonnelle({ label, value }: Props): ReactEl
       <div className="color-grey">
         {label}
       </div>
-      <div className="font-weight-700">
+      <div className="font-weight-500">
         {value}
       </div>
     </div>

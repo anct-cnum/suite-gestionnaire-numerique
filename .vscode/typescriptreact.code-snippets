@@ -244,6 +244,18 @@
       "expect(titre).toBeInTheDocument()",
     ],
   },
+  "role = region": {
+    "prefix": "_getBySection",
+    "scope": "typescriptreact",
+    "description": "Tester une section",
+    "body": [
+      "const sectionXXX = screen.getByRole('region', { name: 'XXX' })",
+      "const enTeteXXX = within(sectionXXX).getByRole('banner')",
+      "const titreXXX = within(enTeteXXX).getByRole('heading', { level: 2, name: 'XXX' })",
+      "expect(titreXXX).toBeInTheDocument()",
+      "const articleXXX = within(sectionXXX).getByRole('article', { name: 'XXX' })",
+    ],
+  },
   "role = navigation": {
     "prefix": "_getByNavigation",
     "scope": "typescriptreact",

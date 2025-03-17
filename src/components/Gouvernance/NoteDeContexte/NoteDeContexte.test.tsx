@@ -1,4 +1,4 @@
-import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { renderComponent, stubbedServerAction } from '@/components/testHelper'
@@ -181,10 +181,8 @@ describe('note de contexte', () => {
     // WHEN
     jOuvreLeFormulairePourModifierUneNoteDeContexte()
     const drawer = modifierUneNoteDeContexteDrawer()
-    const noteDeContexte = screen.getByRole('textarea', { name: 'Éditeur de note de contexte' })
-    await waitFor(() => {
-      jEffaceLaNoteDeContexte(drawer)
-    })
+    const noteDeContexte = await screen.findByRole('textarea', { name: 'Éditeur de note de contexte' })
+    jEffaceLaNoteDeContexte(drawer)
     const enregistrer = jEnregistreLaNoteDeContexte()
 
     // THEN
