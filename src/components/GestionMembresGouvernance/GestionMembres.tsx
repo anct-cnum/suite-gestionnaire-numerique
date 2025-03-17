@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Fragment, ReactElement, useEffect, useId, useState } from 'react'
 
 import AjouterUnMembre from './AjouterUnMembre'
@@ -181,9 +182,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             key={membre.uid}
           >
             <td>
-              <div className="font-weight-700">
+              <Link
+                className="primary font-weight-700 fr-px-0 no-hover d-block"
+                href={`/gouvernance/${membresViewModel.uidGouvernance}/membre/${membre.uid}`}
+              >
                 {membre.nom}
-              </div>
+              </Link>
               {membre.typologie.simple.value}
             </td>
             <td>

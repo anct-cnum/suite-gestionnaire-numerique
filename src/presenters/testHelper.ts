@@ -398,19 +398,19 @@ export function feuilleDeRouteViewModelFactory(
     },
     historiques: [
       {
-        activite: 'Versement effectué',
         date: '12/02/2024',
         editeur: 'Par Banque des territoires',
+        libelle: 'Versement effectué',
       },
       {
-        activite: 'Demande acceptée',
         date: '08/02/2024',
         editeur: 'Par ANCT',
+        libelle: 'Demande acceptée',
       },
       {
-        activite: 'Action Structurer un fonds local pour l‘inclusion numérique',
         date: '15/01/2024',
         editeur: 'Par Lucie B',
+        libelle: 'Action Structurer un fonds local pour l‘inclusion numérique',
       },
     ],
     infosActions: '3 actions, 5 bénéficiaires, 3 co-financeurs',

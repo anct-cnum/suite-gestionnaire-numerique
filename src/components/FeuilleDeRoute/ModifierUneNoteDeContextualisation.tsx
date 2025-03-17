@@ -27,7 +27,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
     <>
       <button
         aria-controls={drawerId}
-        className="fr-btn fr-btn--secondary"
+        className="fr-link fr-icon-edit-fill fr-link--icon-right fr-mt-n2w"
         data-fr-opened="false"
         onClick={() => {
           setIsDrawerOpen(true)
