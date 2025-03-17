@@ -76,6 +76,10 @@
   justify-content: space-between;
 }
 
+.no-hover {
+  background-image: unset;
+}
+
 .no-hover:hover {
   background-color: unset !important;
 }
@@ -84,17 +88,29 @@
   display: block;
 }
 
+ul {
+  --ul-type: none;
+
+  margin: 0;
+  padding: 0;
+}
+
+dd,
+dt {
+  padding: 0;
+}
+
 tr {
   position: relative;
 }
 
-table :any-link.primary,
-table button.primary {
+table .primary,
+table :any-link.primary {
   position: revert;
 }
 
-table :any-link.primary::before,
-table button.primary::before {
+table .primary::before,
+table :any-link.primary::before {
   content: '';
   inset: 0;
   position: absolute;
