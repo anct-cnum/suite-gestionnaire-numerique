@@ -39,4 +39,8 @@ export function alphaAsc<K extends string, V extends Record<K, string>>(key?: K)
   return (left, right) => (left as V)[key!].localeCompare((right as V)[key!])
 }
 
+export function sum(augend: number, addend: number): number {
+  return augend + addend
+}
+
 type JsonPrimitive = boolean | number | string

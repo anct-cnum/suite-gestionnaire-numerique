@@ -53,6 +53,7 @@ function groupMembresById(membresById: MembresById, membreUniqueRole: Associatio
     },
   }
 }
+
 type MembreRecord = Prisma.MembreRecordGetPayload<{
   include: {
     membresGouvernanceCommune: true

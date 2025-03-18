@@ -8,7 +8,17 @@ import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
 describe('les feuilles de route d’une gouvernance', () => {
   it('quand j’affiche la page des feuilles de route, alors elles s’affichent avec leurs actions et le total des budgets', () => {
     // WHEN
-    afficherLesFeuillesDeRoute()
+    const baseReadModel = feuillesDeRouteReadModelFactory()
+    afficherLesFeuillesDeRoute({}, feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [
+        {
+          ...baseReadModel.feuillesDeRoute[0],
+          beneficiaires: 5,
+          coFinanceurs: 3,
+        },
+        baseReadModel.feuillesDeRoute[1],
+      ],
+    }))
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Feuilles de route · Seine-Saint-Denis' })
@@ -117,6 +127,7 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
           beneficiaires: 2,
+          coFinanceurs: 3,
         },
       ],
     })
@@ -135,6 +146,7 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
           beneficiaires: 1,
+          coFinanceurs: 3,
         },
       ],
     })
@@ -148,9 +160,9 @@ describe('les feuilles de route d’une gouvernance', () => {
 
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
-    mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
+    readModel = feuillesDeRouteReadModelFactory()
   ): void {
-    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
+    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(readModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options, { departement: 'Seine-Saint-Denis' })
   }
 })

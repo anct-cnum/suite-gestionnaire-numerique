@@ -4,11 +4,9 @@ import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export function feuillesDeRoutePresenter(
-  feuillesDeRouteReadModel: FeuillesDeRouteReadModel
-): FeuillesDeRouteViewModel {
+export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): FeuillesDeRouteViewModel {
   return {
-    feuillesDeRoute: feuillesDeRouteReadModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel()),
+    feuillesDeRoute: readModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(readModel.uidGouvernance)),
     formulaire: {
       contratPreexistant: [
         {
@@ -24,14 +22,19 @@ export function feuillesDeRoutePresenter(
       ],
       membres: [
         {
+          isSelected: true,
+          label: 'Choisir',
+          value: '',
+        },
+        {
           isSelected: false,
           label: 'Croix Rouge Française',
-          value: 'membre1FooId',
+          value: 'membre1FooValue',
         },
         {
           isSelected: false,
           label: 'La Poste',
-          value: 'membre2FooId',
+          value: 'membre2FooValue',
         },
       ],
       perimetres: [
@@ -52,20 +55,20 @@ export function feuillesDeRoutePresenter(
         },
       ],
     },
-    titre: `Feuille${formatPluriel(feuillesDeRouteReadModel.feuillesDeRoute.length)} de route`,
+    titre: `Feuille${formatPluriel(readModel.feuillesDeRoute.length)} de route`,
     totaux: {
-      budget: formatMontant(feuillesDeRouteReadModel.totaux.budget),
-      coFinancement: formatMontant(feuillesDeRouteReadModel.totaux.coFinancement),
-      financementAccorde: formatMontant(feuillesDeRouteReadModel.totaux.financementAccorde),
+      budget: formatMontant(readModel.totaux.budget),
+      coFinancement: formatMontant(readModel.totaux.coFinancement),
+      financementAccorde: formatMontant(readModel.totaux.financementAccorde),
     },
   }
 }
 
-function toFeuilleDeRouteViewModel() {
+function toFeuilleDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => ({
-    actions: feuilleDeRoute.actions.map(toActionViewModel(feuilleDeRoute.uidGouvernance, feuilleDeRoute.uid)),
+    actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
     links: {
-      detail: `/gouvernance/${feuilleDeRoute.uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
+      detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
     },
     nom: feuilleDeRoute.nom,
     nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
@@ -117,7 +120,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
     lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
     nom: action.nom,
     porteur: 'CC des Monts du Lyonnais',
-    statut: actionStatutViewModelByStatut[action.statut],
+    statut: actionStatutViewModelByStatut[action.subvention?.statut ?? 'nonSubventionnee'],
     uid: action.uid,
   })
 }

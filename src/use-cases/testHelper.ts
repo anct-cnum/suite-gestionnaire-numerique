@@ -178,30 +178,61 @@ export function feuillesDeRouteReadModelFactory(
       {
         actions: [
           {
+            beneficiaireUids: ['beneficiaireId1', 'beneficiaireId2', 'beneficiaireId3'],
+            budgetGlobal: 70_000,
+            coFinancements: [
+              {
+                coFinanceurUid: 'coFinanceurId',
+                montant: 20_000,
+              },
+              {
+                coFinanceurUid: 'coFinanceurOrangeId',
+                montant: 10_000,
+              },
+              {
+                coFinanceurUid: 'coFinanceurId',
+                montant: 10_000,
+              },
+            ],
             nom: 'Structurer une filière de reconditionnement locale 1',
-            statut: 'subventionAcceptee',
+            porteurs: [
+              {
+                nom: 'CC des Monts du Lyonnais',
+                uid: 'coPorteuseFooId',
+              },
+            ],
+            subvention: {
+              montants: {
+                prestation: 20_000,
+                ressourcesHumaines: 10_000,
+              },
+              statut: 'acceptee',
+            },
             totaux: {
-              coFinancement: 30_000,
-              financementAccorde: 40_000,
+              coFinancement: 0,
+              financementAccorde: 0,
             },
             uid: 'actionFooId1',
           },
           {
+            beneficiaireUids: ['beneficiaireId1', 'beneficiaireId5'],
+            budgetGlobal: 100_000,
+            coFinancements: [],
             nom: 'Structurer une filière de reconditionnement locale 2',
-            statut: 'subventionAcceptee',
+            porteurs: [],
             totaux: {
-              coFinancement: 50_000,
-              financementAccorde: 20_000,
+              coFinancement: 0,
+              financementAccorde: 0,
             },
             uid: 'actionFooId2',
           },
         ],
-        beneficiaires: 5,
-        coFinanceurs: 3,
+        beneficiaires: 0,
+        coFinanceurs: 0,
         nom: 'Feuille de route 1',
         structureCoPorteuse: {
           nom: 'CC des Monts du Lyonnais',
-          uid: 'structureCoPorteuseFooId',
+          uid: 'coPorteuseFooId',
         },
         totaux: {
           budget: 0,
@@ -209,35 +240,42 @@ export function feuillesDeRouteReadModelFactory(
           financementAccorde: 0,
         },
         uid: 'feuilleDeRouteFooId1',
-        uidGouvernance: 'gouvernanceFooId',
       },
       {
         actions: [
           {
-            nom: 'Ressource humaine 1',
-            statut: 'subventionAcceptee',
+            beneficiaireUids: ['beneficiaireId1'],
+            budgetGlobal: 70_000,
+            coFinancements: [
+              {
+                coFinanceurUid: 'coFinanceurId2',
+                montant: 20_000,
+              },
+            ],
+            nom: 'Structurer une filière de reconditionnement locale 3',
+            porteurs: [
+              {
+                nom: 'Emmaüs Connect',
+                uid: 'porteurId1',
+              },
+              {
+                nom: 'Orange',
+                uid: 'porteurId2',
+              },
+            ],
             totaux: {
-              coFinancement: 60_000,
-              financementAccorde: 20_000,
+              coFinancement: 0,
+              financementAccorde: 0,
             },
             uid: 'actionFooId1',
           },
-          {
-            nom: 'Ressource humaine 2',
-            statut: 'subventionAcceptee',
-            totaux: {
-              coFinancement: 40_000,
-              financementAccorde: 30_000,
-            },
-            uid: 'actionFooId2',
-          },
         ],
-        beneficiaires: 5,
-        coFinanceurs: 3,
+        beneficiaires: 0,
+        coFinanceurs: 0,
         nom: 'Feuille de route 2',
         structureCoPorteuse: {
-          nom: 'CC des Monts du Lyonnais',
-          uid: 'structureCoPorteuseFooId',
+          nom: 'Croix Rouge Française',
+          uid: 'coPorteuseFooId2',
         },
         totaux: {
           budget: 0,
@@ -245,7 +283,6 @@ export function feuillesDeRouteReadModelFactory(
           financementAccorde: 0,
         },
         uid: 'feuilleDeRouteFooId2',
-        uidGouvernance: 'gouvernanceFooId',
       },
     ],
     totaux: {
@@ -253,6 +290,7 @@ export function feuillesDeRouteReadModelFactory(
       coFinancement: 0,
       financementAccorde: 0,
     },
+    uidGouvernance: 'gouvernanceFooId',
     ...override,
   }
 }
