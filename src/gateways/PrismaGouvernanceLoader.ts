@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import { Membre, toMembres } from './shared/MembresGouvernance'
+import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
 import { CoporteurDetailReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -10,35 +10,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
 
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
-      include: {
-        comites: {
-          include: {
-            relationUtilisateur: true,
-          },
-        },
-        feuillesDeRoute: true,
-        membres: {
-          include: {
-            membresGouvernanceCommune: true,
-            membresGouvernanceDepartement: {
-              include: {
-                relationDepartement: true,
-              },
-            },
-            membresGouvernanceEpci: true,
-            membresGouvernanceSgar: {
-              include: {
-                relationSgar: true,
-              },
-            },
-            membresGouvernanceStructure: true,
-            relationContact: true,
-          },
-        },
-        relationDepartement: true,
-        relationEditeurNoteDeContexte: true,
-        relationEditeurNotePrivee: true,
-      },
+      include,
       where: {
         departementCode: codeDepartement,
       },
@@ -48,12 +20,14 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   }
 }
 
-function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadModel {
+function transform(
+  gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>
+): UneGouvernanceReadModel {
   const noteDeContexte =
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     gouvernanceRecord.noteDeContexte &&
-    gouvernanceRecord.relationEditeurNoteDeContexte &&
-    gouvernanceRecord.derniereEditionNoteDeContexte
+      gouvernanceRecord.relationEditeurNoteDeContexte &&
+      gouvernanceRecord.derniereEditionNoteDeContexte
       ? {
         dateDeModification: new Date(gouvernanceRecord.derniereEditionNoteDeContexte),
         nomAuteur: gouvernanceRecord.relationEditeurNoteDeContexte.nom,
@@ -147,42 +121,25 @@ function transform(gouvernanceRecord: GouvernanceRecord): UneGouvernanceReadMode
   }
 }
 
-type GouvernanceRecord = Prisma.GouvernanceRecordGetPayload<{
-  include: {
-    comites: {
-      include: {
-        relationUtilisateur: true
-      }
-    }
-    relationDepartement: {
-      select: {
-        code: true
-        nom: true
-      }
-    }
-    relationEditeurNotePrivee: true
-    relationEditeurNoteDeContexte: true
-    feuillesDeRoute: true
-    membres: {
-      include: {
-        membresGouvernanceCommune: true
-        membresGouvernanceDepartement: {
-          include: {
-            relationDepartement: true
-          }
-        }
-        membresGouvernanceEpci: true
-        membresGouvernanceSgar: {
-          include: {
-            relationSgar: true
-          }
-        }
-        membresGouvernanceStructure: true
-        relationContact: true
-      }
-    }
-  }
-}>
+const include = {
+  comites: {
+    include: {
+      relationUtilisateur: true,
+    },
+  },
+  feuillesDeRoute: true,
+  membres: {
+    include: membreInclude,
+  },
+  relationDepartement: {
+    select: {
+      code: true,
+      nom: true,
+    },
+  },
+  relationEditeurNoteDeContexte: true,
+  relationEditeurNotePrivee: true,
+}
 
 function isCoporteur(membre: Membre): boolean {
   return membre.roles.includes('coporteur')

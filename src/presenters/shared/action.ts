@@ -1,31 +1,33 @@
-import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { StatutSubvention } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export const actionStatutViewModelByStatut: Record<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]['statut'], ActionStatutViewModel> = {
+export const actionStatutViewModelByStatut: Record<StatutSubvention | 'nonSubventionnee', ActionStatutViewModel> = {
+  acceptee: {
+    background: 'purple',
+    icon: 'flashlight-line',
+    libelle: 'Subvention acceptée',
+    variant: 'success',
+  },
   deposee: {
     background: 'purple',
     icon: 'flashlight-line',
-    iconStyle: 'pin-action--deposee',
     libelle: 'Demande déposée',
     variant: 'new',
   },
   enCours: {
     background: 'green',
     icon: 'user-add-line',
-    iconStyle: 'pin-action--en-cours',
     libelle: 'Instruction en cours',
     variant: 'info',
   },
-  subventionAcceptee: {
-    background: 'purple',
-    icon: 'flashlight-line',
-    iconStyle: 'pin-action-acceptee',
-    libelle: 'Subvention acceptée',
+  nonSubventionnee: {
+    background: 'white',
+    icon: '',
+    libelle: 'Non subventionnée',
     variant: 'success',
   },
-  subventionRefusee: {
+  refusee: {
     background: 'green',
     icon: 'user-star-line',
-    iconStyle: 'pin-action--refusee',
     libelle: 'Subvention refusée',
     variant: 'error',
   },
@@ -36,5 +38,4 @@ export type ActionStatutViewModel = Readonly<{
   icon: string
   libelle: string
   variant: 'success' | 'error' | 'info' | 'warning' | 'new'
-  iconStyle: string
 }>

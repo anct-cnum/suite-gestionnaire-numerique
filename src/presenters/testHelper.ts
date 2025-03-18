@@ -236,7 +236,6 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     statut: {
       background: 'pink',
       icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action--deposee',
       libelle: 'Demande déposée',
       variant: 'new',
     },
@@ -291,7 +290,6 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     statut: {
       background: 'pink',
       icon: 'fr-icon-flashlight-line',
-      iconStyle: 'pin-action--deposee',
       libelle: 'Demande déposée',
       variant: 'new',
     },
@@ -323,7 +321,7 @@ export function feuilleDeRouteViewModelFactory(
         nom: 'Structurer une filière de reconditionnement locale',
         perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
         porteur: 'CC des Monts du Lyonnais',
-        statut: actionStatutViewModelByStatut.subventionAcceptee,
+        statut: actionStatutViewModelByStatut.acceptee,
         uid: 'actionFooId1',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId1/modifier`,
       },
@@ -336,7 +334,7 @@ export function feuilleDeRouteViewModelFactory(
         nom: 'Formation Aidants Connect',
         perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
         porteur: 'CC des Monts du Lyonnais',
-        statut: actionStatutViewModelByStatut.subventionRefusee,
+        statut: actionStatutViewModelByStatut.refusee,
         uid: 'actionFooId2',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId2/modifier`,
       },

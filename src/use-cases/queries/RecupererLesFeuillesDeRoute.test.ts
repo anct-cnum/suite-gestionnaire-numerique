@@ -7,7 +7,7 @@ describe('recupérer les feuilles de route', () => {
     spiedCodeDepartement = ''
   })
 
-  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant les totaux des différents budgets', async () => {
+  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant les totaux des différents budgets ainsi que les totaux du nombre de cofinanceurs et de bénéficiaires', async () => {
     // GIVEN
     const codeDepartement = '93'
     const recupererLesFeuillesDeRoute = new RecupererLesFeuillesDeRoute(new FeuillesDeRouteLoaderSpy())
@@ -17,31 +17,181 @@ describe('recupérer les feuilles de route', () => {
 
     // THEN
     expect(spiedCodeDepartement).toBe(codeDepartement)
-    expect(feuillesDeRoute).toStrictEqual(feuillesDeRouteReadModelFactory({
+    expect(feuillesDeRoute).toStrictEqual({
       feuillesDeRoute: [
         {
-          ...desFeuillesDeRoute.feuillesDeRoute[0],
-          totaux: {
-            budget: 140_000,
-            coFinancement: 80_000,
-            financementAccorde: 60_000,
+          actions: [
+            {
+              beneficiaires: [
+                {
+                  nom: 'beneficiaireId1',
+                  uid: '1',
+                },
+                {
+                  nom: 'beneficiaireId2',
+                  uid: '2',
+                },
+                {
+                  nom: 'beneficiaireId3',
+                  uid: '3',
+                },
+              ],
+              besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+              budgetGlobal: 70_000,
+              coFinancements: [
+                {
+                  coFinanceur: { nom: 'Co-financeur 1', uid: 'coFinanceurId' },
+                  montant: 20_000,
+                },
+                {
+                  coFinanceur: { nom: 'Co-financeur Orange', uid: 'coFinanceurOrangeId' },
+                  montant: 10_000,
+                },
+                {
+                  coFinanceur: { nom: 'Co-financeur 1', uid: 'coFinanceurId' },
+                  montant: 10_000,
+                },
+              ],
+              contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              nom: 'Structurer une filière de reconditionnement locale 1',
+              porteurs: [
+                {
+                  nom: 'CC des Monts du Lyonnais',
+                  uid: 'coPorteuseFooId',
+                },
+              ],
+              subvention: {
+                enveloppe: 'Ingénierie France Numérique Ensemble',
+                montants: {
+                  prestation: 20_000,
+                  ressourcesHumaines: 10_000,
+                },
+                statut: 'acceptee',
+              },
+              totaux: {
+                coFinancement: 0,
+                financementAccorde: 0,
+              },
+              uid: 'actionFooId1',
+            },
+            {
+              beneficiaires: [
+                {
+                  nom: 'beneficiaireId1',
+                  uid: '1',
+                },
+                {
+                  nom: 'beneficiaireId5',
+                  uid: '5',
+                },
+              ],
+              besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+              budgetGlobal: 100_000,
+              coFinancements: [],
+              contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              nom: 'Structurer une filière de reconditionnement locale 2',
+              porteurs: [],
+              totaux: {
+                coFinancement: 0,
+                financementAccorde: 0,
+              },
+              uid: 'actionFooId2',
+            },
+          ],
+
+          beneficiaires: 4,
+          coFinanceurs: 2,
+          nom: 'Feuille de route 1',
+          structureCoPorteuse: {
+            nom: 'CC des Monts du Lyonnais',
+            uid: 'coPorteuseFooId',
           },
+          totaux: {
+            budget: 70_000,
+            coFinancement: 40_000,
+            financementAccorde: 30_000,
+          },
+
+          uid: 'feuilleDeRouteFooId1',
         },
         {
-          ...desFeuillesDeRoute.feuillesDeRoute[1],
-          totaux: {
-            budget: 150_000,
-            coFinancement: 100_000,
-            financementAccorde: 50_000,
+          actions: [
+            {
+              beneficiaires: [
+                {
+                  nom: 'beneficiaireId1',
+                  uid: '1',
+                },
+              ],
+              besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+              budgetGlobal: 70_000,
+              coFinancements: [
+                {
+                  coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
+                  montant: 20_000,
+                },
+              ],
+              contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              nom: 'Structurer une filière de reconditionnement locale 3',
+              porteurs: [
+                {
+                  nom: 'Emmaüs Connect',
+                  uid: 'porteurId1',
+                },
+                {
+                  nom: 'Orange',
+                  uid: 'porteurId2',
+                },
+              ],
+              totaux: {
+                coFinancement: 0,
+                financementAccorde: 0,
+              },
+              uid: 'actionFooId1',
+            },
+          ],
+          beneficiaires: 1,
+          coFinanceurs: 1,
+          nom: 'Feuille de route 2',
+          structureCoPorteuse: {
+            nom: 'Croix Rouge Française',
+            uid: 'coPorteuseFooId2',
           },
+          totaux: {
+            budget: 20_000,
+            coFinancement: 20_000,
+            financementAccorde: 0,
+          },
+          uid: 'feuilleDeRouteFooId2',
+        },
+      ],
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+        {
+          nom: 'Meetkap',
+          roles: ['coporteur'],
+          uid: 'structure-95351745500010-44',
+        },
+        {
+          nom: 'Emmaüs Connect',
+          roles: ['coporteur', 'recipiendaire'],
+          uid: 'porteurId1',
+        },
+        {
+          nom: 'Orange',
+          roles: ['observateur'],
+          uid: 'porteurId2',
         },
       ],
       totaux: {
-        budget: 290_000,
-        coFinancement: 180_000,
-        financementAccorde: 110_000,
+        budget: 90_000,
+        coFinancement: 60_000,
+        financementAccorde: 30_000,
       },
-    }))
+      uidGouvernance: 'gouvernanceFooId',
+    })
   })
 
   it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant le financement accordé selon si l’action a sa subvention acceptée', async () => {
@@ -58,23 +208,27 @@ describe('recupérer les feuilles de route', () => {
     expect(spiedCodeDepartement).toBe(codeDepartement)
     expect(feuillesDeRoute.feuillesDeRoute[0].totaux).toStrictEqual(
       {
-        budget: 100_000,
-        coFinancement: 80_000,
-        financementAccorde: 20_000,
-      }
-    )
-    expect(feuillesDeRoute.feuillesDeRoute[1].totaux).toStrictEqual(
-      {
-        budget: 100_000,
-        coFinancement: 100_000,
+        budget: 40_000,
+        coFinancement: 40_000,
         financementAccorde: 0,
       }
     )
+    expect(feuillesDeRoute.feuillesDeRoute[0].beneficiaires).toBe(4)
+    expect(feuillesDeRoute.feuillesDeRoute[0].coFinanceurs).toBe(2)
+    expect(feuillesDeRoute.feuillesDeRoute[1].totaux).toStrictEqual(
+      {
+        budget: 20_000,
+        coFinancement: 20_000,
+        financementAccorde: 0,
+      }
+    )
+    expect(feuillesDeRoute.feuillesDeRoute[1].beneficiaires).toBe(1)
+    expect(feuillesDeRoute.feuillesDeRoute[1].coFinanceurs).toBe(1)
     expect(feuillesDeRoute.totaux).toStrictEqual(
       {
-        budget: 200_000,
-        coFinancement: 180_000,
-        financementAccorde: 20_000,
+        budget: 60_000,
+        coFinancement: 60_000,
+        financementAccorde: 0,
       }
     )
   })
@@ -100,26 +254,18 @@ class FeuillesDeRouteSansSubventionsAccepteesLoaderSpy implements FeuillesDeRout
           actions: [
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0],
-              statut: 'enCours',
+              subvention: {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0].subvention!,
+                statut: 'enCours',
+              },
             },
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[1],
             },
           ],
         },
-        {
-          ...desFeuillesDeRoute.feuillesDeRoute[1],
-          actions: [
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[1].actions[0],
-              statut: 'enCours',
-            },
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[1].actions[1],
-              statut: 'enCours',
-            },
-          ],
-        },
+        desFeuillesDeRoute.feuillesDeRoute[1],
       ],
     }))
   }

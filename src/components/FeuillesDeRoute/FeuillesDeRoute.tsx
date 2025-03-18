@@ -4,6 +4,7 @@ import { ReactElement, useContext } from 'react'
 
 import AjouterUneFeuilleDeRoute from './AjouterUneFeuilleDeRoute'
 import styles from './FeuillesDeRoute.module.css'
+import ResumeAction from './ResumeAction'
 import ResumeFeuilleDeRoute from './ResumeFeuilleDeRoute'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
@@ -81,7 +82,11 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
             >
               {feuillesDeRouteViewModel.feuillesDeRoute.map((feuilleDeRoute: FeuilleDeRouteViewModel) => (
                 <li key={feuilleDeRoute.nom}>
-                  <ResumeFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} />
+                  <ResumeFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} >
+                    {feuilleDeRoute.actions.length > 0 ?
+                      <ResumeAction actions={feuilleDeRoute.actions} /> :
+                      null}
+                  </ResumeFeuilleDeRoute>
                 </li>
               ))}
             </ul>

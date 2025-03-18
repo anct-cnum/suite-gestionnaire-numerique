@@ -2,7 +2,7 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
-import { epochTime } from '@/shared/testHelper'
+import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
 
 export function utilisateurRecordFactory(
   override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
@@ -116,6 +116,30 @@ export async function creerUneFeuilleDeRoute(
 ): Promise<void> {
   await prisma.feuilleDeRouteRecord.create({
     data: feuilleDeRouteRecordFactory(override),
+  })
+}
+
+export async function creerUneAction(
+  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.actionRecord.create({
+    data: actionRecordFactory(override),
+  })
+}
+
+export async function creerUneDemandeDeSubvention(
+  override?: Partial<Prisma.DemandeDeSubventionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.demandeDeSubventionRecord.create({
+    data: demandeDeSubventionRecordFactory(override),
+  })
+}
+
+export async function creerUnBeneficiaireSubvention(
+  override?: Partial<Prisma.BeneficiaireSubventionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.beneficiaireSubventionRecord.create({
+    data: beneficiaireSubventionRecordFactory(override),
   })
 }
 
@@ -409,6 +433,74 @@ function feuilleDeRouteRecordFactory(
     gouvernanceDepartementCode: '69',
     nom: 'Feuille de route inclusion',
     oldUUID: 'D5BA203C-6DAA-4B30-B7F5-6E5B9DF97F9C',
+    pieceJointe: undefined,
+    porteurId: undefined,
+    ...override,
+  }
+}
+
+function actionRecordFactory(
+  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
+): Prisma.ActionRecordUncheckedCreateInput {
+  return {
+    besoins: ['besoin 1', 'besoin 2'],
+    budgetGlobal: 0,
+    contexte: "Contexte de l'action",
+    createurId: 1,
+    creation: epochTime,
+    dateDeDebut: epochTime,
+    dateDeFin: epochTimePlusOneDay,
+    derniereModification: epochTime,
+    description: "Description détaillée de l'action",
+    feuilleDeRouteId: 1,
+    nom: 'Action test',
+    ...override,
+  }
+}
+
+export async function creerUneEnveloppeFinancement(
+  override?: Partial<Prisma.EnveloppeFinancementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.enveloppeFinancementRecord.create({
+    data: enveloppeFinancementRecordFactory(override),
+  })
+}
+
+function demandeDeSubventionRecordFactory(
+  override?: Partial<Prisma.DemandeDeSubventionRecordUncheckedCreateInput>
+): Prisma.DemandeDeSubventionRecordUncheckedCreateInput {
+  return {
+    actionId: 1,
+    createurId: 1,
+    creation: epochTime,
+    derniereModification: epochTime,
+    enveloppeFinancementId: 1,
+    statut: 'deposee',
+    subventionDemandee: 0,
+    subventionEtp: undefined,
+    subventionPrestation: undefined,
+    ...override,
+  }
+}
+
+function enveloppeFinancementRecordFactory(
+  override?: Partial<Prisma.EnveloppeFinancementRecordUncheckedCreateInput>
+): Prisma.EnveloppeFinancementRecordUncheckedCreateInput {
+  return {
+    dateDeDebut: epochTime,
+    dateDeFin: epochTimePlusOneDay,
+    libelle: 'Enveloppe test',
+    montant: 0,
+    ...override,
+  }
+}
+
+function beneficiaireSubventionRecordFactory(
+  override?: Partial<Prisma.BeneficiaireSubventionRecordUncheckedCreateInput>
+): Prisma.BeneficiaireSubventionRecordUncheckedCreateInput {
+  return {
+    demandeDeSubventionId: 1,
+    membreId: 'defaultMembreId',
     ...override,
   }
 }
@@ -509,5 +601,42 @@ async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCre
       statut: 'suggere',
       ...override,
     }),
+  })
+}
+
+function coFinancementRecordFactory(
+  override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>
+): Prisma.CoFinancementRecordUncheckedCreateInput {
+  return {
+    actionId: 1,
+    memberId: 'membre1',
+    montant: 0,
+    ...override,
+  }
+}
+
+export async function creerUnCoFinancement(
+  override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.coFinancementRecord.create({
+    data: coFinancementRecordFactory(override),
+  })
+}
+
+function porteurActionRecordFactory(
+  override?: Partial<Prisma.PorteurActionRecordUncheckedCreateInput>
+): Prisma.PorteurActionRecordUncheckedCreateInput {
+  return {
+    actionId: 1,
+    membreId: 'membre1',
+    ...override,
+  }
+}
+
+export async function creerUnPorteurAction(
+  override?: Partial<Prisma.PorteurActionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.porteurActionRecord.create({
+    data: porteurActionRecordFactory(override),
   })
 }

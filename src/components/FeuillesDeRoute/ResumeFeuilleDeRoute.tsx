@@ -1,13 +1,12 @@
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { PropsWithChildren, ReactElement } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
-import ResumeAction from './ResumeAction'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactElement {
+export default function ResumeFeuilleDeRoute({ feuilleDeRoute, children }: Props): ReactElement {
   return (
     <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>
@@ -45,7 +44,7 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
           </Link>
         </div>
         <hr className="fr-mb-1w fr-py-1w" />
-        <ResumeAction actions={feuilleDeRoute.actions} />
+        {children}
         <div className="container">
           <div className="fr-grid-row">
             <div className="fr-col-4">
@@ -113,6 +112,6 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute }: Props): ReactEl
   )
 }
 
-type Props = Readonly<{
+type Props = PropsWithChildren<Readonly<{
   feuilleDeRoute: FeuilleDeRouteViewModel
-}>
+}>>

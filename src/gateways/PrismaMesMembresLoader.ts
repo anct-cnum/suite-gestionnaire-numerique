@@ -1,4 +1,4 @@
-import { Membre, toMembres } from './shared/MembresGouvernance'
+import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
 import { MembreReadModel, MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
@@ -10,22 +10,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         membres: {
-          include: {
-            membresGouvernanceCommune: true,
-            membresGouvernanceDepartement: {
-              include: {
-                relationDepartement: true,
-              },
-            },
-            membresGouvernanceEpci: true,
-            membresGouvernanceSgar: {
-              include: {
-                relationSgar: true,
-              },
-            },
-            membresGouvernanceStructure: true,
-            relationContact: true,
-          },
+          include: membreInclude,
         },
         relationDepartement: true,
       },
