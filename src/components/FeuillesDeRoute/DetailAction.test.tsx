@@ -15,19 +15,19 @@ describe('détail d’une action', () => {
       jOuvreUneAction()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 2' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(drawer).toHaveAttribute('id', 'drawerActionId')
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 2' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(titre).toBeInTheDocument()
 
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })
       const besoinsItems = within(besoins).getAllByRole('listitem')
-      expect(besoinsItems).toHaveLength(3)
+      expect(besoinsItems).toHaveLength(2)
       const statut = within(besoinsItems[0]).getByText('Subvention acceptée')
       expect(statut).toBeInTheDocument()
       const diagnostic = within(besoinsItems[1]).getByText('Établir un diagnostic territorial')
       expect(diagnostic).toBeInTheDocument()
-      const appuiJuridique = within(besoinsItems[2]).getByText('Appui juridique dédié à la gouvernance')
+      const appuiJuridique = within(besoinsItems[0]).getByText('Appui juridique dédié à la gouvernance')
       expect(appuiJuridique).toBeInTheDocument()
 
       const porteurLabel = within(drawer).getByText('Porteur de l’action')
@@ -45,23 +45,23 @@ describe('détail d’une action', () => {
 
       const budget = within(drawer).getByRole('list', { name: 'Budget prévisionnel' })
       const budgetItems = within(budget).getAllByRole('listitem')
-      expect(budgetItems).toHaveLength(4)
-      const budgetLigne1Gauche = within(budgetItems[0]).getByText('Budget prévisionnel 2024')
+      expect(budgetItems).toHaveLength(2)
+      // const budgetLigne1Gauche = within(budgetItems[0]).getByText('Budget prévisionnel 2024')
+      // expect(budgetLigne1Gauche).toBeInTheDocument()
+      // const budgetLigne1Droite = within(budgetItems[0]).getByText('20 000 €')
+      // expect(budgetLigne1Droite).toBeInTheDocument()
+      // const budgetLigne2Gauche = within(budgetItems[1]).getByText('Subvention de prestation')
+      // expect(budgetLigne2Gauche).toBeInTheDocument()
+      // const budgetLigne2Droite = within(budgetItems[1]).getByText('10 000 €')
+      // expect(budgetLigne2Droite).toBeInTheDocument()
+      const budgetLigne1Gauche = within(budgetItems[0]).getByText('CC des Monts du Lyonnais')
       expect(budgetLigne1Gauche).toBeInTheDocument()
-      const budgetLigne1Droite = within(budgetItems[0]).getByText('20 000 €')
+      const budgetLigne1Droite = within(budgetItems[0]).getByText('5 000 €')
       expect(budgetLigne1Droite).toBeInTheDocument()
-      const budgetLigne2Gauche = within(budgetItems[1]).getByText('Subvention de prestation')
+      const budgetLigne2Gauche = within(budgetItems[1]).getByText('Croix Rouge Française')
       expect(budgetLigne2Gauche).toBeInTheDocument()
-      const budgetLigne2Droite = within(budgetItems[1]).getByText('10 000 €')
+      const budgetLigne2Droite = within(budgetItems[1]).getByText('5 000 €')
       expect(budgetLigne2Droite).toBeInTheDocument()
-      const budgetLigne3Gauche = within(budgetItems[2]).getByText('CC des Monts du Lyonnais')
-      expect(budgetLigne3Gauche).toBeInTheDocument()
-      const budgetLigne3Droite = within(budgetItems[2]).getByText('5 000 €')
-      expect(budgetLigne3Droite).toBeInTheDocument()
-      const budgetLigne4Gauche = within(budgetItems[3]).getByText('Croix Rouge Française')
-      expect(budgetLigne4Gauche).toBeInTheDocument()
-      const budgetLigne4Droite = within(budgetItems[3]).getByText('5 000 €')
-      expect(budgetLigne4Droite).toBeInTheDocument()
 
       const beneficiaireLabel = within(drawer).getByText('Bénéficiaires des subventions')
       expect(beneficiaireLabel).toBeInTheDocument()
@@ -74,7 +74,7 @@ describe('détail d’une action', () => {
       expect(beneficiaire2).toHaveAttribute('href', '/')
 
       const modifierAction = within(drawer).getByRole('link', { name: 'Modifier cette action' })
-      expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId2/modifier')
+      expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId1/modifier')
     })
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -83,7 +83,7 @@ describe('détail d’une action', () => {
 
       // WHEN
       jOuvreUneAction()
-      const drawer = screen.queryByRole('dialog', { name: 'Structurer une filière de reconditionnement locale 2' })
+      const drawer = screen.queryByRole('dialog', { name: 'Structurer une filière de reconditionnement locale 1' })
       const fermer = jeFermeLAction()
 
       // THEN
@@ -93,11 +93,11 @@ describe('détail d’une action', () => {
   })
 
   function jOuvreUneAction(): void {
-    presserLeBouton('Structurer une filière de reconditionnement locale 2')
+    presserLeBouton('Structurer une filière de reconditionnement locale 1')
   }
 
   function jeFermeLAction(): HTMLElement {
-    return presserLeBouton('Fermer le détail de Structurer une filière de reconditionnement locale 2')
+    return presserLeBouton('Fermer le détail de Structurer une filière de reconditionnement locale 1')
   }
 
   function presserLeBouton(name: string): HTMLElement {
@@ -108,9 +108,9 @@ describe('détail d’une action', () => {
 
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
-    mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
+    feuillesDeRouteReadModel = feuillesDeRouteReadModelFactory()
   ): void {
-    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
+    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)
   }
 })

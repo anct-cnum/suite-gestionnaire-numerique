@@ -16,6 +16,14 @@ export default function ResumeAction({ actions }: Props): ReactElement {
   const drawerId = 'drawerActionId'
   const labelId = useId()
 
+  if (actions.length === 0) {
+    return (
+      <p>
+        Aucune action n‘a été trouvée.
+      </p>
+    )
+  }
+
   return (
     <>
       <ul aria-label="actions">
@@ -41,9 +49,13 @@ export default function ResumeAction({ actions }: Props): ReactElement {
                     {action.nom}
                   </button>
                   <br />
-                  <Tag>
-                    {action.porteur}
-                  </Tag>
+                  {
+                    action.porteurs.map((porteur) => (
+                      <Tag key={porteur.value}>
+                        {porteur.label}
+                      </Tag>
+                    ))
+                  }
                 </div>
               </div>
               <div className="fr-col-4 right">

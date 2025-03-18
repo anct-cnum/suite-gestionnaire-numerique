@@ -41,9 +41,13 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
       <div className="color-grey fr-mt-2w">
         Porteur de l’action
       </div>
-      <Tag>
-        {action.porteur}
-      </Tag>
+      {
+        action.porteurs.map((porteur) => (
+          <Tag key={porteur.value}>
+            {porteur.label}
+          </Tag>
+        ))
+      }
       <div className="color-grey fr-mt-2w">
         Description de l’action
       </div>

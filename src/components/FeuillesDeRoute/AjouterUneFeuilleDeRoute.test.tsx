@@ -86,11 +86,10 @@ describe('ajouter une feuille de route', () => {
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre2FooId')
+      jeSelectionneUnMembre('membre2FooValue')
       jeSelectionneUnPerimetre('Régional')
       jeSelectionneUnContrat('Oui')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
-
       // THEN
       expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
       expect(enregistrer).toBeDisabled()
@@ -106,7 +105,7 @@ describe('ajouter une feuille de route', () => {
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'membre2FooId',
+        uidMembre: 'membre2FooValue',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Feuille de route ajoutée')
@@ -123,7 +122,7 @@ describe('ajouter une feuille de route', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre1FooId')
+      jeSelectionneUnMembre('membre1FooValue')
       jeSelectionneUnPerimetre('Régional')
       jeSelectionneUnContrat('Oui')
       jEnregistreLaFeuilleDeRoute()
