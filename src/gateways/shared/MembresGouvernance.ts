@@ -11,6 +11,27 @@ export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<M
   )
 }
 
+export function toMembre(membre: MembreRecord): Membre {
+  return associationsMembreEtRoleUnique(membre).reduce(groupMembresById, {})[membre.id]
+}
+
+export const membreInclude = {
+  membresGouvernanceCommune: true,
+  membresGouvernanceDepartement: {
+    include: {
+      relationDepartement: true,
+    },
+  },
+  membresGouvernanceEpci: true,
+  membresGouvernanceSgar: {
+    include: {
+      relationSgar: true,
+    },
+  },
+  membresGouvernanceStructure: true,
+  relationContact: true,
+}
+
 export type Membre = Readonly<{ roles: ReadonlyArray<string> }> & MembreSansRole
 
 function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<AssociationMembreEtRoleUnique> {
@@ -53,23 +74,9 @@ function groupMembresById(membresById: MembresById, membreUniqueRole: Associatio
     },
   }
 }
+
 type MembreRecord = Prisma.MembreRecordGetPayload<{
-  include: {
-    membresGouvernanceCommune: true
-    membresGouvernanceDepartement: {
-      include: {
-        relationDepartement: true
-      }
-    }
-    membresGouvernanceEpci: true
-    membresGouvernanceSgar: {
-      include: {
-        relationSgar: true
-      }
-    }
-    membresGouvernanceStructure: true
-    relationContact: true
-  }
+  include: typeof membreInclude
 }>
 
 type AssociationMembreEtRoleUnique = Readonly<{ role: string }> & MembreSansRole

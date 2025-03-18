@@ -23,7 +23,7 @@ describe('détail d’une action', () => {
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })
       const besoinsItems = within(besoins).getAllByRole('listitem')
       expect(besoinsItems).toHaveLength(3)
-      const statut = within(besoinsItems[0]).getByText('Subvention acceptée')
+      const statut = within(besoinsItems[0]).getByText('Non subventionnée')
       expect(statut).toBeInTheDocument()
       const diagnostic = within(besoinsItems[1]).getByText('Établir un diagnostic territorial')
       expect(diagnostic).toBeInTheDocument()
@@ -108,9 +108,9 @@ describe('détail d’une action', () => {
 
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
-    mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
+    feuillesDeRouteReadModel = feuillesDeRouteReadModelFactory()
   ): void {
-    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
+    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)
   }
 })

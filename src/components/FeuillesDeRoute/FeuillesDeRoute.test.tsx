@@ -6,9 +6,22 @@ import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('les feuilles de route d’une gouvernance', () => {
-  it('quand j’affiche la page des feuilles de route, alors elles s’affichent avec leurs actions et le total des budgets', () => {
+  it('quand j’affiche la page des feuilles de route, alors elles s’affichent avec leurs actions s’il y’en a et le total des budgets', () => {
     // WHEN
-    afficherLesFeuillesDeRoute()
+    const baseReadModel = feuillesDeRouteReadModelFactory()
+    afficherLesFeuillesDeRoute({}, feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [
+        {
+          ...baseReadModel.feuillesDeRoute[0],
+          beneficiaires: 5,
+          coFinanceurs: 3,
+        },
+        {
+          ...baseReadModel.feuillesDeRoute[1],
+          actions: [],
+        },
+      ],
+    }))
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Feuilles de route · Seine-Saint-Denis' })
@@ -69,6 +82,18 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(informationsFichier).toBeInTheDocument()
     const boutonOuvrirPdf = within(sectionOuvrirPdf).getByRole('button', { name: 'Ouvrir le pdf' })
     expect(boutonOuvrirPdf).toHaveAttribute('type', 'button')
+    const secondeFeuilleDeRoute = elementsDeLaListeDesFeuillesDeRoute[3]
+    const titreDeLaSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute)
+      .getByRole('heading', { level: 2, name: 'Feuille de route 2' })
+    expect(titreDeLaSecondeFeuilleDeRoute).toBeInTheDocument()
+    expect(within(secondeFeuilleDeRoute)
+      .getByRole('link', { name: 'Voir le détail' }))
+      .toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId2')
+    const nombreDActionsSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute)
+      .getByText('0 action attachée à cette feuille de route', { selector: 'p' })
+    expect(nombreDActionsSecondeFeuilleDeRoute).toBeInTheDocument()
+    const listeDesActionsSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute).queryByRole('list', { name: 'actions' })
+    expect(listeDesActionsSecondeFeuilleDeRoute).not.toBeInTheDocument()
   })
 
   it('quand il n’y a pas de feuille de route, alors un bandeau s’affiche explicitant d’en ajouter', () => {
@@ -117,6 +142,7 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
           beneficiaires: 2,
+          coFinanceurs: 3,
         },
       ],
     })
@@ -135,6 +161,7 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
           beneficiaires: 1,
+          coFinanceurs: 3,
         },
       ],
     })
@@ -148,9 +175,9 @@ describe('les feuilles de route d’une gouvernance', () => {
 
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
-    mesInformationsPersonnellesReadModel = feuillesDeRouteReadModelFactory()
+    readModel = feuillesDeRouteReadModelFactory()
   ): void {
-    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(mesInformationsPersonnellesReadModel)
+    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(readModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options, { departement: 'Seine-Saint-Denis' })
   }
 })

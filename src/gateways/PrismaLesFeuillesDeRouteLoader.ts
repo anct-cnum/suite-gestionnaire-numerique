@@ -1,13 +1,32 @@
-import { FeuilleDeRouteRecord } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
+import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
-import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { alphaAsc } from '@/shared/lang'
+import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel, StatutSubvention } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
 export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
-  readonly #dataResource = prisma.feuilleDeRouteRecord
+  readonly #feuilleDeRouteDao = prisma.feuilleDeRouteRecord
+  readonly #membreDao = prisma.membreRecord
 
   async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
-    const feuillesDeRouteRecord = await this.#dataResource.findMany({
+    const membreConfirmesGouvernance = await this.#membreDao.findMany({
+      include: membreInclude,
+      where: {
+        AND: [
+          {
+            statut: {
+              equals: 'confirme',
+            },
+          },
+          {
+            gouvernanceDepartementCode: codeDepartement,
+          },
+        ],
+      },
+    })
+    const feuillesDeRouteRecord = await this.#feuilleDeRouteDao.findMany({
+      include,
       orderBy: {
         creation: 'desc',
       },
@@ -15,57 +34,118 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
         gouvernanceDepartementCode: codeDepartement,
       },
     })
-
-    return transform(feuillesDeRouteRecord)
+    return transform(feuillesDeRouteRecord, membreConfirmesGouvernance, codeDepartement )
   }
 }
 
 function transform(
-  feuillesDeRouteRecord: ReadonlyArray<FeuilleDeRouteRecord>
+  feuillesDeRouteRecord: ReadonlyArray<Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>>,
+  membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>,
+  codeDepartement: string
+
 ): FeuillesDeRouteReadModel {
   return {
-    feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord) => {
-      return {
-        actions: [
-          {
-            nom: 'Structurer une filière de reconditionnement locale 1',
-            statut: 'deposee',
-            totaux: {
-              coFinancement: 30_000,
-              financementAccorde: 40_000,
+    feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord) => ({
+      actions: feuilleDeRouteRecord.action.map((action) => {
+        const demandeDeSubvention =
+          action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
+        return {
+          beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
+          besoins: action.besoins,
+          budgetGlobal: action.budgetGlobal,
+          coFinancements: action.coFinancement.map(({ membre, montant }) => ({
+            coFinanceur: fromMembre(toMembre(membre)),
+            montant,
+          })),
+          contexte: action.contexte,
+          description: action.description,
+          nom: action.nom,
+          porteurs: toMembres(action.porteurAction.map(({ membre }) => membre)).map(fromMembre),
+          subvention: demandeDeSubvention ? {
+            enveloppe: demandeDeSubvention.enveloppe.libelle,
+            montants: {
+              prestation: demandeDeSubvention.subventionPrestation ?? 0,
+              ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
             },
-            uid: 'actionFooId1',
+            statut: demandeDeSubvention.statut as StatutSubvention,
+          } : undefined,
+          totaux: {
+            coFinancement: 0,
+            financementAccorde: 0,
           },
-          {
-            nom: 'Structurer une filière de reconditionnement locale 2',
-            statut: 'enCours',
-            totaux: {
-              coFinancement: 50_000,
-              financementAccorde: 20_000,
-            },
-            uid: 'actionFooId2',
-          },
-        ],
-        beneficiaires: 5,
-        coFinanceurs: 3,
-        nom: feuilleDeRouteRecord.nom,
-        structureCoPorteuse: {
-          nom: 'CC des Monts du Lyonnais',
-          uid: 'structureCoPorteuseFooId',
-        },
-        totaux: {
-          budget: 0,
-          coFinancement: 0,
-          financementAccorde: 0,
-        },
-        uid: String(feuilleDeRouteRecord.id),
-        uidGouvernance: feuilleDeRouteRecord.gouvernanceDepartementCode,
-      }
-    }),
+          uid: String(action.id),
+        }
+      }),
+      beneficiaires: 0,
+      coFinanceurs: 0,
+      nom: feuilleDeRouteRecord.nom,
+      structureCoPorteuse: feuilleDeRouteRecord.relationMembre
+        ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
+        : undefined,
+      totaux: {
+        budget: 0,
+        coFinancement: 0,
+        financementAccorde: 0,
+      },
+      uid: String(feuilleDeRouteRecord.id),
+    })),
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions: toMembres(membresConfirmesGouvernance)
+      .toSorted(alphaAsc('id'))
+      .toSorted(alphaAsc('nom'))
+      .map(fromMembreAvecRoles),
     totaux: {
       budget: 0,
       coFinancement: 0,
       financementAccorde: 0,
     },
+    uidGouvernance: codeDepartement,
   }
+}
+
+function fromMembre(
+  { nom, id }: Membre
+): NonNullable<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['structureCoPorteuse']> {
+  return { nom, uid: id }
+}
+
+function fromMembreAvecRoles(
+  { id, nom, roles  }: Membre
+): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
+  return { nom, roles, uid: id }
+}
+
+const include = {
+  action: {
+    include: {
+      coFinancement: {
+        include: {
+          membre: {
+            include: membreInclude,
+          },
+        },
+      },
+      demandesDeSubvention: {
+        include: {
+          beneficiaire: {
+            include: {
+              membre: {
+                include: membreInclude,
+              },
+            },
+          },
+          enveloppe: true,
+        },
+      },
+      porteurAction: {
+        include: {
+          membre: {
+            include: membreInclude,
+          },
+        },
+      },
+    },
+  },
+  relationMembre: {
+    include: membreInclude,
+  },
 }

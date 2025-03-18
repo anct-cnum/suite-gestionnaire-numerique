@@ -1,4 +1,5 @@
 import { QueryHandler } from '../QueryHandler'
+import { sum } from '@/shared/lang'
 
 export class RecupererLesFeuillesDeRoute implements QueryHandler<Query, FeuillesDeRouteReadModel> {
   readonly #loader: FeuillesDeRouteLoader
@@ -8,9 +9,34 @@ export class RecupererLesFeuillesDeRoute implements QueryHandler<Query, Feuilles
   }
 
   async handle(query: Query): Promise<FeuillesDeRouteReadModel> {
-    return this.#loader.feuillesDeRoute(query.codeDepartement)
-      .then(calculateTotauxActions)
-      .then(calculateTotauxFeuillesDeRoute)
+    const readModel = await this.#loader.feuillesDeRoute(query.codeDepartement)
+    const feuillesDeRoute = readModel.feuillesDeRoute.map(feuilleDeRoute => {
+      const coFinancement = sommerCoFinancements(feuilleDeRoute.actions)
+      const financementAccorde = sommerFinancementsAccordes(feuilleDeRoute.actions)
+      return {
+        ...feuilleDeRoute,
+        beneficiaires: nombreDeBeneficiaires(feuilleDeRoute.actions),
+        coFinanceurs: nombreDeCofinanceurs(feuilleDeRoute.actions),
+        totaux: {
+          ...feuilleDeRoute.totaux,
+          budget: coFinancement + financementAccorde,
+          coFinancement,
+          financementAccorde,
+        },
+      }
+    })
+    const coFinancementGlobal = sommerFinancementGlobal(feuillesDeRoute, 'coFinancement')
+    const financementAccordeGlobal = sommerFinancementGlobal(feuillesDeRoute, 'financementAccorde')
+    const budgetGlobal = coFinancementGlobal + financementAccordeGlobal
+    return {
+      ...readModel,
+      feuillesDeRoute,
+      totaux: {
+        budget: budgetGlobal,
+        coFinancement: coFinancementGlobal,
+        financementAccorde: financementAccordeGlobal,
+      },
+    }
   }
 }
 
@@ -19,20 +45,63 @@ export interface FeuillesDeRouteLoader {
 }
 
 export type FeuillesDeRouteReadModel = Readonly<{
-  feuillesDeRoute: ReadonlyArray<{
-    actions: ReadonlyArray<{
-      nom: string
-      porteur?: Readonly<{
-        nom: string
-        uid: string
-      }>
-      statut: 'deposee' | 'enCours' | 'subventionAcceptee' | 'subventionRefusee'
-      totaux: Readonly<{
-        coFinancement: number
-        financementAccorde: number
-      }>
-      uid: string
-    }>
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<MembreAvecRoleDansLaGouvernance>
+  totaux: Readonly<{
+    budget: number
+    coFinancement: number
+    financementAccorde: number
+  }>
+  uidGouvernance: string
+}>
+
+export type StatutSubvention = 'deposee' | 'enCours' | 'acceptee' | 'refusee'
+
+function sommerCoFinancements(actions: ReadonlyArray<ActionReadModel>): number {
+  return actions
+    .flatMap(({ coFinancements }) => coFinancements)
+    .flatMap(({ montant }) => montant)
+    .reduce(sum, 0)
+}
+
+function sommerFinancementsAccordes(actions: ReadonlyArray<ActionReadModel>): number {
+  return actions
+    .filter(action => action.subvention?.statut === 'acceptee')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    .map(({ subvention }) => subvention!.montants.prestation + subvention!.montants.ressourcesHumaines)
+    .reduce(sum, 0)
+}
+
+function sommerFinancementGlobal(
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>,
+  total: keyof FeuilleDeRouteReadModel['totaux']
+): number {
+  return feuillesDeRoute
+    .map(({ totaux }) => totaux[total])
+    .reduce(sum, 0)
+}
+
+function nombreDeBeneficiaires(
+  actions: ReadonlyArray<ActionReadModel>
+): number {
+  const beneficiaires = actions
+    .flatMap(({ beneficiaires }) => beneficiaires)
+    .flatMap(({ uid }) => uid)
+  return new Set(beneficiaires).size
+}
+
+function nombreDeCofinanceurs(
+  actions: ReadonlyArray<ActionReadModel>
+): number {
+  const cofinanceurs = actions
+    .flatMap(({ coFinancements }) => coFinancements)
+    .flatMap(({ coFinanceur }) => coFinanceur.uid)
+  return new Set(cofinanceurs).size
+}
+
+type FeuilleDeRouteReadModel = Readonly<
+  {
+    actions: ReadonlyArray<ActionReadModel>
     beneficiaires: number
     coFinanceurs: number
     nom: string
@@ -42,62 +111,50 @@ export type FeuillesDeRouteReadModel = Readonly<{
       nom: string
       upload: Date
     }>
-    structureCoPorteuse: Readonly<{
-      nom: string
-      uid: string
-    }>
+    structureCoPorteuse?: Membre
     totaux: Readonly<{
       budget: number
       coFinancement: number
       financementAccorde: number
     }>
     uid: string
-    uidGouvernance: string
   }>
-  totaux: Readonly<{
-    budget: number
-    coFinancement: number
-    financementAccorde: number
+
+type ActionReadModel = Readonly<
+  {
+    nom: string
+    porteurs: ReadonlyArray<Membre>
+    coFinancements: ReadonlyArray<Readonly<{
+      coFinanceur: Membre
+      montant: number
+    }>>
+    beneficiaires: ReadonlyArray<Membre>
+    contexte: string
+    description: string
+    besoins: ReadonlyArray<string>
+    subvention?: Readonly<{
+      enveloppe: string
+      montants: Readonly<{
+        prestation: number
+        ressourcesHumaines: number
+      }>
+      statut: StatutSubvention
+    }>
+    totaux: Readonly<{
+      coFinancement: number
+      financementAccorde: number
+    }>
+    budgetGlobal: number
+    uid: string
   }>
-}>
 
 type Query = Readonly<{
   codeDepartement: string
 }>
 
-function calculateTotauxActions(feuillesDeRoute: FeuillesDeRouteReadModel): FeuillesDeRouteReadModel {
-  return {
-    ...feuillesDeRoute,
-    feuillesDeRoute: feuillesDeRoute.feuillesDeRoute.map((feuilleDeRoute) => {
-      const { coFinancement, financementAccorde } = feuilleDeRoute.actions.reduce((budget, action) => ({
-        coFinancement: budget.coFinancement + action.totaux.coFinancement,
-        financementAccorde: budget.financementAccorde + (action.statut === 'subventionAcceptee' ? action.totaux.financementAccorde : 0),
-      }), { coFinancement: 0, financementAccorde: 0 })
+type Membre = Readonly<{
+  nom: string
+  uid: string
+}>
 
-      return {
-        ...feuilleDeRoute,
-        totaux: {
-          budget: coFinancement + financementAccorde,
-          coFinancement,
-          financementAccorde,
-        },
-      }
-    }),
-  }
-}
-
-function calculateTotauxFeuillesDeRoute(feuillesDeRoute: FeuillesDeRouteReadModel): FeuillesDeRouteReadModel {
-  const { coFinancement, financementAccorde } = feuillesDeRoute.feuillesDeRoute.reduce((budget, feuilleDeRoute) => ({
-    coFinancement: budget.coFinancement + feuilleDeRoute.totaux.coFinancement,
-    financementAccorde: budget.financementAccorde + feuilleDeRoute.totaux.financementAccorde,
-  }), { coFinancement: 0, financementAccorde: 0 })
-
-  return {
-    ...feuillesDeRoute,
-    totaux: {
-      budget: coFinancement + financementAccorde,
-      coFinancement,
-      financementAccorde,
-    },
-  }
-}
+type MembreAvecRoleDansLaGouvernance = Membre & Readonly<{ roles: ReadonlyArray<string> }>
