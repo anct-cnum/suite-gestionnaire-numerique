@@ -16,6 +16,7 @@ describe('modifier une note de contextualisation', () => {
     })
 
     // THEN
+    expect(nextCache.revalidatePath).toHaveBeenCalledWith('/gouvernance/11/feuille-de-route/116')
     expect(messages).toStrictEqual(['OK'])
   })
 

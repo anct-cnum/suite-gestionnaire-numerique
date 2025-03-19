@@ -110,7 +110,7 @@ describe('note de contextualisation', () => {
       expect(editeurDeTextEnrichi).toBeInTheDocument()
       const boutonEnregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(boutonEnregistrer).toHaveAttribute('type', 'submit')
-      const boutonSupprimer = within(formulaire).queryByRole('button', { name: 'Supprimer' })
+      const boutonSupprimer = within(formulaire).getByRole('button', { name: 'Supprimer' })
       expect(boutonSupprimer).toBeInTheDocument()
     })
 

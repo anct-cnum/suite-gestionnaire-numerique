@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -12,6 +13,7 @@ export async function modifierUneNoteDeContextualisationAction(
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }
+  revalidatePath(validationResult.data.path)
   return Promise.resolve(['OK'])
 }
 
@@ -21,6 +23,5 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  contenu: z.string().min(1, { message: 'Le contenu doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })
