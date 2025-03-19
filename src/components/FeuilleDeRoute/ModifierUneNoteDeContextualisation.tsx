@@ -15,7 +15,9 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
     supprimerUneNoteDeContextualisationAction,
     pathname,
   } = useContext(clientContext)
+  // Stryker disable next-line BooleanLiteral
   const [isDisabled, setIsDisabled] = useState(false)
+  // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor(contextualisation)

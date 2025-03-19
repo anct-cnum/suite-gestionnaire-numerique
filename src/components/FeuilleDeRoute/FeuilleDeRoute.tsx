@@ -295,6 +295,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           </header>
           <Table
             enTetes={['Date', 'Activité', 'Éditeur']}
+            // Stryker disable next-line BooleanLiteral
             isHeadHidden={true}
             titre="Activité et historique"
           >

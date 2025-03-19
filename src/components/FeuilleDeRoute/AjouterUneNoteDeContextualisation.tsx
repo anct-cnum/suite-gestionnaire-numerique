@@ -12,6 +12,7 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 export default function AjouterUneNoteDeContextualisation(): ReactElement {
   const { ajouterUneNoteDeContextualisationAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
+  // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor('')

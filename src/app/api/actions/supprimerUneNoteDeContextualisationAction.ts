@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import { ResultAsync } from '@/use-cases/CommandHandler'
@@ -12,6 +13,7 @@ export async function supprimerUneNoteDeContextualisationAction(
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }
+  revalidatePath(validationResult.data.path)
   return Promise.resolve(['OK'])
 }
 
