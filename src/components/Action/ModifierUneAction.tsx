@@ -5,17 +5,19 @@ import { FormEvent, ReactElement, useContext, useState } from 'react'
 import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import { FormulaireAction } from './FormulaireAction'
 import Drawer from '../shared/Drawer/Drawer'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel } from '@/presenters/actionPresenter'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function ModifierUneAction({ action, coporteurs }: Props): ReactElement {
+export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
 
   return (
     <>
@@ -99,5 +101,4 @@ export default function ModifierUneAction({ action, coporteurs }: Props): ReactE
 
 type Props = Readonly<{
   action: ActionViewModel
-  coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>
 }>

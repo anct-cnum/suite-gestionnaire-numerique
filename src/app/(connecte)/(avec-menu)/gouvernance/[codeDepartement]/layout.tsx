@@ -1,9 +1,8 @@
 import { notFound, redirect } from 'next/navigation'
 import { PropsWithChildren, ReactElement } from 'react'
 
-import prisma from '../../../../../../../prisma/prismaClient'
-import MenuLateral from '@/components/transverse/MenuLateral/MenuLateral'
-import { SousMenuGouvernance } from '@/components/transverse/MenuLateral/SousMenuGouvernance'
+import prisma from '../../../../../../prisma/prismaClient'
+import GouvernanceProvider from '@/components/shared/GouvernanceContext'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceLoader } from '@/gateways/PrismaGouvernanceLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -34,28 +33,10 @@ export default async function Layout({
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
-    const afficherSousMenuMembre = gouvernanceViewModel.sectionMembres.coporteurs.length > 0
-    const afficherSousMenuFeuilleDeRoute = Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0
-    const afficherSouSMenu = afficherSousMenuMembre || afficherSousMenuFeuilleDeRoute
     return (
-      <div className="fr-grid-row">
-        <div className="fr-col-3 fr-col-lg-2">
-          {
-            afficherSouSMenu ?
-              <MenuLateral>
-                <SousMenuGouvernance
-                  isAfficherSousMenuFeuilleDeRoute={afficherSousMenuFeuilleDeRoute}
-                  isAfficherSousMenuMembre={afficherSousMenuMembre}
-                />
-              </MenuLateral>
-              :
-              <MenuLateral />
-          }
-        </div>
-        <div className="fr-col-9 fr-col-lg-10 fr-pl-7w menu-border">
-          {children}
-        </div>
-      </div>
+      <GouvernanceProvider gouvernanceViewModel={gouvernanceViewModel}>
+        {children}
+      </GouvernanceProvider>
     )
   } catch {
     notFound()
