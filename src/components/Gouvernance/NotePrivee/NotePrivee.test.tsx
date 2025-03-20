@@ -293,7 +293,6 @@ describe('note privée', () => {
           texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
         },
       }), now),
-      peutVoirNotePrivee: true,
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }
@@ -309,8 +308,8 @@ describe('note privée', () => {
           prenomEditeur: 'Lucie',
           texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna. lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
         },
+        peutVoirNotePrivee: false,
       }), now),
-      peutVoirNotePrivee: false,
     }
     renderComponent(<Gouvernance />, options, gouvernanceViewModel)
   }

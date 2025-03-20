@@ -17,7 +17,7 @@ export function gouvernancePresenter(
       membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
-    peutVoirNotePrivee: false,
+    peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
