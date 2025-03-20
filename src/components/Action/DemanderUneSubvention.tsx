@@ -1,8 +1,9 @@
-import { PropsWithChildren, ReactElement, RefObject, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useMemo, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import NumberInput from '../shared/NumberInput/NumberInput'
 import Select from '../shared/Select/Select'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ActionViewModel } from '@/presenters/actionPresenter'
@@ -17,9 +18,7 @@ export default function DemanderUneSubvention({
   const labelId = useId()
   const selectEnveloppeId = useId()
   const inputMontantPrestaId = useId()
-  const inputMontantPrestaErrorTextId = useId()
   const inputMontantRhId = useId()
-  const inputMontantRhErrorTextId = useId()
   const drawerId = 'drawerDemanderUneSubventionId'
 
   const inputMontantPrestaRef = useRef<HTMLInputElement>(null)
@@ -46,7 +45,7 @@ export default function DemanderUneSubvention({
     <>
       <button
         aria-controls={drawerId}
-        className="fr-btn fr-btn--icon-left fr-fi-add-line"
+        className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
         data-fr-opened="false"
         disabled={!isBudgetAction}
         onClick={() => {
@@ -74,42 +73,59 @@ export default function DemanderUneSubvention({
           <br />
           Demander une subvention
         </DrawerTitle>
-        <p className="color-grey fr-text--sm">
-          Saisissez le montant de la subvention que vous souhaitez obtenir de l’état.
-          {' '}
-          <span className="color-blue-france">
-            {`Dans la limite de ${formatMontant(montantMaximal())}`}
-          </span>
-          {/**/}
-          .
-        </p>
-        <Select
-          id={selectEnveloppeId}
-          name="enveloppes"
-          onChange={(event) => {
-            setBudgetEnveloppe(enveloppeById[event.target.value].budget)
-          }}
-          options={enveloppes}
-        >
-          Enveloppe de financement concernée
-        </Select>
-        {
-          montantInput({
-            children: (
-              <>
-                Montant en prestation de service
-              </>
-            ),
-            errorTextId: inputMontantPrestaErrorTextId,
-            id: inputMontantPrestaId,
-            max: montantMaximal(montantRh),
-            onInput: setMontantPresta,
-            ref: inputMontantPrestaRef,
-          })
-        }
-        {montantInput({
-          children: (
-            <>
+        <fieldset className="fr-fieldset">
+          <legend className="color-grey fr-text--sm">
+            Saisissez le montant de la subvention que vous souhaitez obtenir de l’état.
+            {' '}
+            <span className="color-blue-france">
+              {`Dans la limite de ${formatMontant(montantMaximal())}`}
+            </span>
+            {/**/}
+            .
+          </legend>
+          <div className="fr-fieldset__element">
+            <Select
+              id={selectEnveloppeId}
+              name="enveloppes"
+              onChange={(event) => {
+                setBudgetEnveloppe(enveloppeById[event.target.value].budget)
+              }}
+              options={enveloppes}
+            >
+              Enveloppe de financement concernée
+            </Select>
+          </div>
+          <div className="fr-fieldset__element">
+            <NumberInput
+              disabled={!isBudgetEnveloppe}
+              displayValidationMessage={displayValidationMessage}
+              icon="money-euro-circle-line"
+              id={inputMontantPrestaId}
+              max={montantMaximal(montantRh)}
+              min={0}
+              name="Montant en prestation de service"
+              onInput={(event) => {
+                setMontantPresta(Number(event.currentTarget.value))
+              }}
+              ref={inputMontantPrestaRef}
+            >
+              Montant en prestation de service
+            </NumberInput>
+          </div>
+          <div className="fr-fieldset__element">
+            <NumberInput
+              disabled={!isBudgetEnveloppe}
+              displayValidationMessage={displayValidationMessage}
+              icon="money-euro-circle-line"
+              id={inputMontantRhId}
+              max={montantMaximal(montantPresta)}
+              min={0}
+              name="Montant en ressources humaines"
+              onInput={(event) => {
+                setMontantRh(Number(event.currentTarget.value))
+              }}
+              ref={inputMontantRhRef}
+            >
               Montant en ressources humaines
               {' '}
               <span className="fr-hint-text">
@@ -124,14 +140,9 @@ export default function DemanderUneSubvention({
                 {' '}
                 en euros
               </span>
-            </>
-          ),
-          errorTextId: inputMontantRhErrorTextId,
-          id: inputMontantRhId,
-          max: montantMaximal(montantPresta),
-          onInput: setMontantRh,
-          ref: inputMontantRhRef,
-        })}
+            </NumberInput>
+          </div>
+        </fieldset>
         <ul
           className={`background-blue-france color-blue-france fr-my-4w fr-py-2w fr-pr-2w ${styles['no-style-list']}`}
         >
@@ -165,7 +176,7 @@ export default function DemanderUneSubvention({
           <button
             aria-controls={drawerId}
             className="fr-btn"
-            disabled={!isValid}
+            disabled={!(isBudgetEnveloppe && isValid)}
             onClick={() => {
               setIsDrawerOpen(false)
             }}
@@ -177,49 +188,6 @@ export default function DemanderUneSubvention({
       </Drawer>
     </>
   )
-
-  function montantInput({ ref, id, errorTextId, max, onInput, children }: MontantInputProps): ReactElement {
-    const input = ref.current
-    const isInput = input !== null
-    const isInvalid = isInput && !input.validity.valid
-    const inputGroupDisabledStyle = isBudgetEnveloppe ? '' : 'fr-input-group--disabled'
-    const [displayErrorText, inputGroupErrorStyle] = isInvalid
-      ? [Number(input.max) > 0, 'fr-input-group--error']
-      : [false, '']
-    return (
-      <div className={`fr-input-group input-group--sobre ${inputGroupDisabledStyle} ${inputGroupErrorStyle}`}>
-        <label
-          className="fr-label"
-          htmlFor={id}
-        >
-          {children}
-        </label>
-        <input
-          aria-describedby={displayErrorText ? errorTextId : undefined}
-          className="fr-input"
-          disabled={!isBudgetEnveloppe}
-          id={id}
-          max={max}
-          min="0"
-          onInput={(event) => {
-            onInput(Number(event.currentTarget.value))
-          }}
-          ref={ref}
-          type="number"
-        />
-        {
-          displayErrorText ?
-            <p
-              className="fr-error-text"
-              id={errorTextId}
-            >
-              {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion*/}
-              {input!.validationMessage}
-            </p> : null
-        }
-      </div>
-    )
-  }
 
   function isSaisieValide(): boolean {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -241,17 +209,13 @@ function enveloppeByIdReducer(enveloppeById: EnveloppeById, enveloppe: Enveloppe
   return Object.assign(enveloppeById, { [enveloppe.value]: enveloppe })
 }
 
+function displayValidationMessage(input: HTMLInputElement): boolean {
+  return Number(input.max) > 0
+}
+
 type Enveloppe = ActionViewModel['enveloppes'][number]
 
 type EnveloppeById = Readonly<Record<string, Enveloppe>>
-
-type MontantInputProps = PropsWithChildren<Readonly<{
-  ref: RefObject<HTMLInputElement | null>
-  id: string
-  errorTextId: string
-  max: number
-  onInput(montant: number): void
-}>>
 
 type Props = Readonly<{
   enveloppes: ActionViewModel['enveloppes']

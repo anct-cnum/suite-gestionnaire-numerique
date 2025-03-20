@@ -1,6 +1,6 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
-import { matchWithoutMarkup, renderComponent } from '../testHelper'
+import { renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 import { expectNot } from '@/shared/testHelper'
@@ -39,9 +39,9 @@ describe('faire une demande de subvention', () => {
 
     it(
       'et que j’ai saisi un budget global valide, quand je clique sur "Demander une subvention", alors le' +
-        ' sous-formulaire de demande de subvention s’affiche sans enveloppe sélectionnée, indiquant le maximum' +
-        ' autorisé pour cette action correspondant au budget global préalablement saisi, avec des champs de saisie de' +
-        ' montants et un bouton de soumission désactivés',
+      ' sous-formulaire de demande de subvention s’affiche sans enveloppe sélectionnée, indiquant le maximum' +
+      ' autorisé pour cette action correspondant au budget global préalablement saisi, avec des champs de saisie de' +
+      ' montants et un bouton de soumission désactivés',
       () => {
         // GIVEN
         jAfficheLeFormulaireAction(42_500)
@@ -132,7 +132,7 @@ describe('faire une demande de subvention', () => {
         },
       ])(
         '$precision0, alors son montant s’affiche en tant que droits de subvention$precision1 et les champs de' +
-          ' saisie de montants deviennent actifs',
+        ' saisie de montants deviennent actifs',
         ({ enveloppeId, expectedLimiteAffichee, expectedDroitsDeSubventionAffiches }) => {
           // GIVEN
           jAfficheLeFormulaireAction(42_500)
@@ -160,7 +160,7 @@ describe('faire une demande de subvention', () => {
     describe('et que j’ai sélectionné une enveloppe de financement, quand je saisis des montants', () => {
       describe(
         'dont la somme excède le montant de l’enveloppe qui est inférieur au budget maximal de l’action, alors' +
-          ' je ne peux soumettre ma demande et un message d’erreur m’en informe',
+        ' je ne peux soumettre ma demande et un message d’erreur m’en informe',
         () => {
           it.each([
             {
@@ -178,7 +178,8 @@ describe('faire une demande de subvention', () => {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
               erreurMontantPrestation: { expectation: expectNot, message: '' },
-              erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied',
+              erreurMontantRh: {
+                expectation: expect, message: 'Constraints not satisfied',
               },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
@@ -259,12 +260,12 @@ describe('faire une demande de subvention', () => {
 
       describe(
         'dont la somme excède le budget maximal de l’action qui est inférieur au montant de l’enveloppe,' +
-          ' alors je ne peux soumettre ma demande et un message d’erreur m’en informe',
+        ' alors je ne peux soumettre ma demande et un message d’erreur m’en informe',
         () => {
           it.each([
             {
               erreurMontantPrestation: { expectation: expectNot, message: '' },
-              erreurMontantRh: {  expectation: expect, message: 'Constraints not satisfied' },
+              erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied' },
               montantPrestation: 0,
               montantRh: 42_501,
               raison: 'car le montant en ressources humaines excède le budget maximal de l’action',
@@ -279,7 +280,7 @@ describe('faire une demande de subvention', () => {
             },
             {
               erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expect,  message: 'Constraints not satisfied' },
+              erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied' },
               montantPrestation: 2,
               montantRh: 42_499,
               raison:
@@ -320,8 +321,8 @@ describe('faire une demande de subvention', () => {
 
       describe(
         'dont la somme excède le montant de l’enveloppe ou le budget maximal de l’action, puis que je corrige' +
-          ' ma saisie de manière à ce que la somme n’excède aucune des deux limites, alors je peux soumettre ma' +
-          ' demande',
+        ' ma saisie de manière à ce que la somme n’excède aucune des deux limites, alors je peux soumettre ma' +
+        ' demande',
         () => {
           it.each([
             {
@@ -375,7 +376,7 @@ describe('faire une demande de subvention', () => {
       describe('dont la somme n’excède ni le montant de l’enveloppe, ni celui du budget total de l’action', () => {
         describe(
           'alors la somme s’affiche en tant que total des subventions demandées et je peux soumettre ma' +
-            ' demande, le bouton de soumission s’activant',
+          ' demande, le bouton de soumission s’activant',
           () => {
             it.each([
               {
@@ -481,11 +482,11 @@ function sousFormulaireDemandeSubvention(): HTMLElement {
 }
 
 function sousTitre(limite: string): HTMLElement {
-  return within(sousFormulaireDemandeSubvention()).getByText(
-    matchWithoutMarkup(
-      `Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de ${limite} €.`
-    ),
-    { selector: 'p' }
+  return within(sousFormulaireDemandeSubvention()).getByRole(
+    'group',
+    {
+      name: `Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de ${limite} € .`,
+    }
   )
 }
 
