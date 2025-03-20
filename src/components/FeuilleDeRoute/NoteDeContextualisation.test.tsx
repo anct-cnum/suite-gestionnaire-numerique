@@ -73,6 +73,8 @@ describe('note de contextualisation', () => {
       expect(drawer).not.toBeVisible()
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Note de contextualisation ajoutée')
+      expect(boutonEnregistrer).toBeEnabled()
+      expect(boutonEnregistrer).toHaveAccessibleName('Enregistrer')
     })
 
     it('quand je clique sur le bouton enregistrer mais qu‘une erreur intervient, alors une notification apparaît', async () => {

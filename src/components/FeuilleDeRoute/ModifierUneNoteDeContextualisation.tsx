@@ -62,7 +62,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
               {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
             </SubmitButton>
             {
-              contenu.trim() ?
+              contenu ?
                 <button
                   className="fr-btn red-button"
                   onClick={viderLeContenu}

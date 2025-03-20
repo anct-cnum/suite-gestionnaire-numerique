@@ -58,7 +58,7 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
               {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
             </SubmitButton>
             {
-              contenu.trim() ?
+              contenu ?
                 <button
                   className="fr-btn red-button"
                   onClick={viderLeContenu}
