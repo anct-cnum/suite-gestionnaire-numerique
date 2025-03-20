@@ -1,8 +1,12 @@
+'use client'
+
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import AjouterUneNoteDeContextualisation from './AjouterUneNoteDeContextualisation'
 import styles from './FeuilleDeRoute.module.css'
 import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
+import ModifierUneNoteDeContextualisation from './ModifierUneNoteDeContextualisation'
 import Badge from '../shared/Badge/Badge'
 import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
@@ -64,17 +68,21 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
             >
               Contextualisation des demandes de subvention
             </h2>
-            <button
-              className="fr-btn fr-btn--tertiary"
-              title="Modifier la contextualisation"
-              type="button"
-            >
-              Modifier
-            </button>
+            {
+              feuilleDeRouteViewModel.contextualisation
+                ? <ModifierUneNoteDeContextualisation contextualisation={feuilleDeRouteViewModel.contextualisation} />
+                : <AjouterUneNoteDeContextualisation />
+            }
           </header>
-          <ReadMore
-            texte={feuilleDeRouteViewModel.contextualisation}
-          />
+          {
+            feuilleDeRouteViewModel.contextualisation
+              ? (
+                <ReadMore
+                  texte={feuilleDeRouteViewModel.contextualisation}
+                />
+              )
+              : null
+          }
         </section>
         <section
           aria-labelledby="upload"
@@ -287,6 +295,7 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           </header>
           <Table
             enTetes={['Date', 'Activité', 'Éditeur']}
+            // Stryker disable next-line BooleanLiteral
             isHeadHidden={true}
             titre="Activité et historique"
           >
