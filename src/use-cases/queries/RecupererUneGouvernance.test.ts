@@ -271,7 +271,7 @@ describe('recupérer une gouvernance', () => {
     })
   })
 
-  it('quand une gouvernance est consultée par un utilisateur qui est gestionnaire département sur un le même département que celui de la gouvernance alors il peut voir la note privée', async () => {
+  it('quand une gouvernance est consultée par un utilisateur qui est gestionnaire département sur le même département que celui de la gouvernance alors il peut voir la note privée', async () => {
     // GIVEN
     uneGouvernance = {
       ...uneGouvernance,
