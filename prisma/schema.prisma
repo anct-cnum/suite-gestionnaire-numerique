@@ -5,6 +5,7 @@ generator client {
 
 generator json {
   provider = "prisma-json-types-generator"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
@@ -15,6 +16,7 @@ datasource db {
   // https://www.prisma.io/docs/orm/prisma-migrate/understanding-prisma-migrate/shadow-database
   // Du coup, on a créée une application Scalingo qui contient qu'une database dédiée à ça
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  schemas    = ["min", "main", "admin", "reference"]
 }
 
 model GroupementRecord {
@@ -25,6 +27,7 @@ model GroupementRecord {
   utilisateurs UtilisateurRecord[]
 
   @@map("groupement")
+  @@schema("min")
 }
 
 model DepartementRecord {
@@ -41,6 +44,7 @@ model DepartementRecord {
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
+  @@schema("admin")
 }
 
 model RegionRecord {
@@ -52,6 +56,7 @@ model RegionRecord {
   membresGouvernance MembreGouvernanceSgarRecord[]
 
   @@map("region")
+  @@schema("admin")
 }
 
 model StructureRecord {
@@ -76,6 +81,7 @@ model StructureRecord {
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
   @@map("structure")
+  @@schema("main")
 }
 
 model UtilisateurRecord {
@@ -110,6 +116,7 @@ model UtilisateurRecord {
   demandeDeSubventionRecord DemandeDeSubventionRecord[]
 
   @@map("utilisateur")
+  @@schema("min")
 }
 
 model GouvernanceRecord {
@@ -130,6 +137,7 @@ model GouvernanceRecord {
   membres         MembreRecord[]
 
   @@map("gouvernance")
+  @@schema("min")
 }
 
 model ComiteRecord {
@@ -148,6 +156,7 @@ model ComiteRecord {
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
+  @@schema("min")
 }
 
 model FeuilleDeRouteRecord {
@@ -166,6 +175,7 @@ model FeuilleDeRouteRecord {
   action              ActionRecord[]
 
   @@map("feuille_de_route")
+  @@schema("min")
 }
 
 model ContactMembreGouvernanceRecord {
@@ -179,6 +189,7 @@ model ContactMembreGouvernanceRecord {
   membresContactTechnique MembreRecord[] @relation("contactTechnique")
 
   @@map("contact_membre_gouvernance")
+  @@schema("min")
 }
 
 model MembreRecord {
@@ -207,6 +218,7 @@ model MembreRecord {
   feuillesDeRoute               FeuilleDeRouteRecord[]
 
   @@map("membre")
+  @@schema("min")
 }
 
 model MembreGouvernanceDepartementRecord {
@@ -219,6 +231,7 @@ model MembreGouvernanceDepartementRecord {
 
   @@unique([departementCode, membreId, role])
   @@map("membre_gouvernance_departement")
+  @@schema("min")
 }
 
 model MembreGouvernanceSgarRecord {
@@ -231,6 +244,7 @@ model MembreGouvernanceSgarRecord {
 
   @@unique([sgarCode, membreId, role])
   @@map("membre_gouvernance_sgar")
+  @@schema("min")
 }
 
 model MembreGouvernanceEpciRecord {
@@ -242,6 +256,7 @@ model MembreGouvernanceEpciRecord {
 
   @@id([epci, membreId, role])
   @@map("membre_gouvernance_epci")
+  @@schema("min")
 }
 
 model MembreGouvernanceCommuneRecord {
@@ -253,6 +268,7 @@ model MembreGouvernanceCommuneRecord {
 
   @@unique([commune, membreId, role])
   @@map("membre_gouvernance_commune")
+  @@schema("min")
 }
 
 model MembreGouvernanceStructureRecord {
@@ -264,6 +280,7 @@ model MembreGouvernanceStructureRecord {
 
   @@unique([structure, membreId, role])
   @@map("membre_gouvernance_structure")
+  @@schema("min")
 }
 
 model ActionRecord {
@@ -289,6 +306,7 @@ model ActionRecord {
   coFinancement        CoFinancementRecord[]
 
   @@map("action")
+  @@schema("min")
 }
 
 model DemandeDeSubventionRecord {
@@ -310,6 +328,7 @@ model DemandeDeSubventionRecord {
   beneficiaire BeneficiaireSubventionRecord[]
 
   @@map("demande_de_subvention")
+  @@schema("min")
 }
 
 model BeneficiaireSubventionRecord {
@@ -321,6 +340,7 @@ model BeneficiaireSubventionRecord {
 
   @@unique([demandeDeSubventionId, membreId])
   @@map("beneficiaire_subvention")
+  @@schema("min")
 }
 
 model PorteurActionRecord {
@@ -332,6 +352,7 @@ model PorteurActionRecord {
 
   @@unique([actionId, membreId])
   @@map("porteur_action")
+  @@schema("min")
 }
 
 model EnveloppeFinancementRecord {
@@ -345,6 +366,7 @@ model EnveloppeFinancementRecord {
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
+  @@schema("min")
 }
 
 model CoFinancementRecord {
@@ -357,6 +379,7 @@ model CoFinancementRecord {
   membre MembreRecord @relation(fields: [memberId], references: [id])
 
   @@map("co_financement")
+  @@schema("min")
 }
 
 model DepartementEnveloppeRecord {
@@ -369,6 +392,7 @@ model DepartementEnveloppeRecord {
 
   @@unique([departementCode, enveloppeId])
   @@map("departement_enveloppe")
+  @@schema("min")
 }
 
 enum Role {
@@ -380,4 +404,5 @@ enum Role {
   instructeur
   pilote_politique_publique
   support_animation
+  @@schema("min")
 }
