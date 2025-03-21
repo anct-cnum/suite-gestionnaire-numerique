@@ -1,7 +1,7 @@
 import { ReactElement } from 'react'
 import { Doughnut as ReactDoughnut } from 'react-chartjs-2'
 
-export default function Doughnut({ backgroundColor, data, labels }: Props): ReactElement {
+export default function Doughnut({ backgroundColor, data, isFull = true, labels }: Props): ReactElement {
   return (
     <ReactDoughnut
       data={{
@@ -15,8 +15,9 @@ export default function Doughnut({ backgroundColor, data, labels }: Props): Reac
         labels,
       }}
       options={{
-        circumference: 180,
+        circumference: isFull ? 360 : 180,
         cutout: '80%',
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             display: false,
@@ -31,5 +32,6 @@ export default function Doughnut({ backgroundColor, data, labels }: Props): Reac
 type Props = Readonly<{
   backgroundColor: ReadonlyArray<string>
   data: ReadonlyArray<number>
+  isFull?: boolean
   labels: Array<string>
 }>

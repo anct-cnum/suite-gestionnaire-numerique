@@ -1,10 +1,11 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import GestionMembres from './GestionMembres'
+import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
-describe('membres', () => {
+describe('gestion des membres gouvernance', () => {
   it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', () => {
     // WHEN
     afficherMembres()
@@ -73,6 +74,8 @@ describe('membres', () => {
     expect(columnsHead[2]).toHaveAttribute('scope', 'col')
     expect(columnsHead[3].textContent).toBe('Action')
     expect(columnsHead[3]).toHaveAttribute('scope', 'col')
+    const lienMembre = within(columnsBody[0]).getByRole('link', { name: 'Préfecture du Rhône' })
+    expect(lienMembre).toHaveAttribute('href', '/gouvernance/69/membre/prefecture-69')
     expect(columnsBody[0].textContent).toBe('Préfecture du RhônePréfecture départementale')
     expect(columnsBody[1].textContent).toBe('Laetitia Henrich')
     expect(columnsBody[2].textContent).toBe('Co-porteur ')
@@ -246,7 +249,7 @@ function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonl
   return [columnsBody, within(columnsBody[3]).getByRole('button', { name: 'Supprimer' })]
 }
 
-function afficherMembres(): void {
+function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
   const membresViewModel = membresPresenter(membresReadModelFactory())
-  render(<GestionMembres membresViewModel={membresViewModel} />)
+  renderComponent(<GestionMembres membresViewModel={membresViewModel} />, options)
 }

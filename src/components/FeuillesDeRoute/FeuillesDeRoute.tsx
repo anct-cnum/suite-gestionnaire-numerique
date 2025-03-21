@@ -13,7 +13,7 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
-    <div className={`fr-container fr-mt-5w ${styles['feuilles-de-route']}`}>
+    <div className="fr-container fr-mt-5w">
       <div className={styles['align-items']}>
         <PageTitle margin="fr-mb-0">
           {feuillesDeRouteViewModel.titre}
