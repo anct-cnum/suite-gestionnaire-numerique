@@ -7,7 +7,7 @@ describe('recupérer les feuilles de route', () => {
     spiedCodeDepartement = ''
   })
 
-  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant les totaux des différents budgets', async () => {
+  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant les totaux des différents budgets ainsi que les totaux du nombre de cofinanceurs et de bénéficiaires', async () => {
     // GIVEN
     const codeDepartement = '93'
     const recupererLesFeuillesDeRoute = new RecupererLesFeuillesDeRoute(new FeuillesDeRouteLoaderSpy())
@@ -21,25 +21,29 @@ describe('recupérer les feuilles de route', () => {
       feuillesDeRoute: [
         {
           ...desFeuillesDeRoute.feuillesDeRoute[0],
+          beneficiaires: 4,
+          coFinanceurs: 2,
           totaux: {
-            budget: 140_000,
-            coFinancement: 80_000,
-            financementAccorde: 60_000,
+            budget: 70_000,
+            coFinancement: 40_000,
+            financementAccorde: 30_000,
           },
         },
         {
           ...desFeuillesDeRoute.feuillesDeRoute[1],
+          beneficiaires: 1,
+          coFinanceurs: 1,
           totaux: {
-            budget: 150_000,
-            coFinancement: 100_000,
-            financementAccorde: 50_000,
+            budget: 20_000,
+            coFinancement: 20_000,
+            financementAccorde: 0,
           },
         },
       ],
       totaux: {
-        budget: 290_000,
-        coFinancement: 180_000,
-        financementAccorde: 110_000,
+        budget: 90_000,
+        coFinancement: 60_000,
+        financementAccorde: 30_000,
       },
     }))
   })
@@ -58,23 +62,27 @@ describe('recupérer les feuilles de route', () => {
     expect(spiedCodeDepartement).toBe(codeDepartement)
     expect(feuillesDeRoute.feuillesDeRoute[0].totaux).toStrictEqual(
       {
-        budget: 100_000,
-        coFinancement: 80_000,
-        financementAccorde: 20_000,
-      }
-    )
-    expect(feuillesDeRoute.feuillesDeRoute[1].totaux).toStrictEqual(
-      {
-        budget: 100_000,
-        coFinancement: 100_000,
+        budget: 40_000,
+        coFinancement: 40_000,
         financementAccorde: 0,
       }
     )
+    expect(feuillesDeRoute.feuillesDeRoute[0].beneficiaires).toBe(4)
+    expect(feuillesDeRoute.feuillesDeRoute[0].coFinanceurs).toBe(2)
+    expect(feuillesDeRoute.feuillesDeRoute[1].totaux).toStrictEqual(
+      {
+        budget: 20_000,
+        coFinancement: 20_000,
+        financementAccorde: 0,
+      }
+    )
+    expect(feuillesDeRoute.feuillesDeRoute[1].beneficiaires).toBe(1)
+    expect(feuillesDeRoute.feuillesDeRoute[1].coFinanceurs).toBe(1)
     expect(feuillesDeRoute.totaux).toStrictEqual(
       {
-        budget: 200_000,
-        coFinancement: 180_000,
-        financementAccorde: 20_000,
+        budget: 60_000,
+        coFinancement: 60_000,
+        financementAccorde: 0,
       }
     )
   })
@@ -100,26 +108,18 @@ class FeuillesDeRouteSansSubventionsAccepteesLoaderSpy implements FeuillesDeRout
           actions: [
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0],
-              statut: 'enCours',
+              subvention: {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0].subvention!,
+                statut: 'enCours',
+              },
             },
             {
               ...desFeuillesDeRoute.feuillesDeRoute[0].actions[1],
             },
           ],
         },
-        {
-          ...desFeuillesDeRoute.feuillesDeRoute[1],
-          actions: [
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[1].actions[0],
-              statut: 'enCours',
-            },
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[1].actions[1],
-              statut: 'enCours',
-            },
-          ],
-        },
+        desFeuillesDeRoute.feuillesDeRoute[1],
       ],
     }))
   }

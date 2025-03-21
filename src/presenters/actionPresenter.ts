@@ -344,7 +344,6 @@ export const actionARemplir: ActionViewModel = {
   statut: {
     background: 'blue',
     icon: '',
-    iconStyle: '',
     libelle: '',
     variant: 'new',
   },
