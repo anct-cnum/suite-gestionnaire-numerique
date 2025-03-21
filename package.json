@@ -54,7 +54,7 @@
     "chart.js": "^4.4.8",
     "mjml": "^4.15.3",
     "mongodb": "^6.14.2",
-    "next": "^15.2.2",
+    "next": "^15.2.3",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.16",
     "prisma-json-types-generator": "^3.2.2",
