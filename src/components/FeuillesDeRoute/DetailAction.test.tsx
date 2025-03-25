@@ -15,19 +15,19 @@ describe('détail d’une action', () => {
       jOuvreUneAction()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 2' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(drawer).toHaveAttribute('id', 'drawerActionId')
-      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 2' })
+      const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(titre).toBeInTheDocument()
 
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })
       const besoinsItems = within(besoins).getAllByRole('listitem')
-      expect(besoinsItems).toHaveLength(3)
-      const statut = within(besoinsItems[0]).getByText('Non subventionnée')
+      expect(besoinsItems).toHaveLength(2)
+      const statut = within(drawer).getByText('Subvention acceptée')
       expect(statut).toBeInTheDocument()
-      const diagnostic = within(besoinsItems[1]).getByText('Établir un diagnostic territorial')
+      const diagnostic = within(besoinsItems[0]).getByText('Établir un diagnostic territorial')
       expect(diagnostic).toBeInTheDocument()
-      const appuiJuridique = within(besoinsItems[2]).getByText('Appui juridique dédié à la gouvernance')
+      const appuiJuridique = within(besoinsItems[1]).getByText('Appui juridique dédié à la gouvernance')
       expect(appuiJuridique).toBeInTheDocument()
 
       const porteurLabel = within(drawer).getByText('Porteur de l’action')
@@ -44,37 +44,47 @@ describe('détail d’une action', () => {
       expect(lirePlus).toHaveClass('fr-icon-arrow-down-s-line')
 
       const budget = within(drawer).getByRole('list', { name: 'Budget prévisionnel' })
-      const budgetItems = within(budget).getAllByRole('listitem')
-      expect(budgetItems).toHaveLength(4)
-      const budgetLigne1Gauche = within(budgetItems[0]).getByText('Budget prévisionnel 2024')
+      const budgetTerms = within(budget).getAllByRole('term')
+      const budgetDefinitions = within(budget).getAllByRole('definition')
+      expect(budgetTerms).toHaveLength(6)
+      expect(budgetDefinitions).toHaveLength(6)
+      const budgetLigne1Gauche = within(budgetTerms[0]).getByText('Budget prévisionnel')
       expect(budgetLigne1Gauche).toBeInTheDocument()
-      const budgetLigne1Droite = within(budgetItems[0]).getByText('20 000 €')
+      const budgetLigne1Droite = within(budgetDefinitions[0]).getByText('70 000 €')
       expect(budgetLigne1Droite).toBeInTheDocument()
-      const budgetLigne2Gauche = within(budgetItems[1]).getByText('Subvention de prestation')
+      const budgetLigne2Gauche = within(budgetTerms[1]).getByText('Subvention de prestation')
       expect(budgetLigne2Gauche).toBeInTheDocument()
-      const budgetLigne2Droite = within(budgetItems[1]).getByText('10 000 €')
+      const budgetLigne2Droite = within(budgetDefinitions[1]).getByText('20 000 €')
       expect(budgetLigne2Droite).toBeInTheDocument()
-      const budgetLigne3Gauche = within(budgetItems[2]).getByText('CC des Monts du Lyonnais')
+      const budgetLigne3Gauche = within(budgetTerms[2]).getByText('Subvention en ressource humaines')
       expect(budgetLigne3Gauche).toBeInTheDocument()
-      const budgetLigne3Droite = within(budgetItems[2]).getByText('5 000 €')
+      const budgetLigne3Droite = within(budgetDefinitions[2]).getByText('10 000 €')
       expect(budgetLigne3Droite).toBeInTheDocument()
-      const budgetLigne4Gauche = within(budgetItems[3]).getByText('Croix Rouge Française')
+      const budgetLigne4Gauche = within(budgetTerms[3]).getByText('Co-financeur 1')
       expect(budgetLigne4Gauche).toBeInTheDocument()
-      const budgetLigne4Droite = within(budgetItems[3]).getByText('5 000 €')
+      const budgetLigne4Droite = within(budgetDefinitions[3]).getByText('20 000 €')
       expect(budgetLigne4Droite).toBeInTheDocument()
+      const budgetLigne5Gauche = within(budgetTerms[4]).getByText('Co-financeur Orange')
+      expect(budgetLigne5Gauche).toBeInTheDocument()
+      const budgetLigne5Droite = within(budgetDefinitions[4]).getByText('10 000 €')
+      expect(budgetLigne5Droite).toBeInTheDocument()
+      const budgetLigne6Gauche = within(budgetTerms[5]).getByText('Co-financeur 1')
+      expect(budgetLigne6Gauche).toBeInTheDocument()
+      const budgetLigne6Droite = within(budgetDefinitions[5]).getByText('10 000 €')
+      expect(budgetLigne6Droite).toBeInTheDocument()
 
       const beneficiaireLabel = within(drawer).getByText('Bénéficiaires des subventions')
       expect(beneficiaireLabel).toBeInTheDocument()
       const beneficiaires = within(drawer).getByRole('list', { name: 'Bénéficiaires des subventions' })
       const beneficiairesItems = within(beneficiaires).getAllByRole('listitem')
-      expect(beneficiairesItems).toHaveLength(2)
-      const beneficiaire1 = within(beneficiairesItems[0]).getByRole('link', { name: 'Croix Rouge Française' })
+      expect(beneficiairesItems).toHaveLength(3)
+      const beneficiaire1 = within(beneficiairesItems[0]).getByRole('link', { name: 'CAF DE LA CHARENTE' })
       expect(beneficiaire1).toHaveAttribute('href', '/')
-      const beneficiaire2 = within(beneficiairesItems[1]).getByRole('link', { name: 'La Poste' })
+      const beneficiaire2 = within(beneficiairesItems[1]).getByRole('link', { name: 'HUBIKOOP' })
       expect(beneficiaire2).toHaveAttribute('href', '/')
 
       const modifierAction = within(drawer).getByRole('link', { name: 'Modifier cette action' })
-      expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId2/modifier')
+      expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId1/modifier')
     })
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
@@ -83,7 +93,7 @@ describe('détail d’une action', () => {
 
       // WHEN
       jOuvreUneAction()
-      const drawer = screen.queryByRole('dialog', { name: 'Structurer une filière de reconditionnement locale 2' })
+      const drawer = screen.queryByRole('dialog', { name: 'Structurer une filière de reconditionnement locale 1' })
       const fermer = jeFermeLAction()
 
       // THEN
@@ -93,11 +103,11 @@ describe('détail d’une action', () => {
   })
 
   function jOuvreUneAction(): void {
-    presserLeBouton('Structurer une filière de reconditionnement locale 2')
+    presserLeBouton('Structurer une filière de reconditionnement locale 1')
   }
 
   function jeFermeLAction(): HTMLElement {
-    return presserLeBouton('Fermer le détail de Structurer une filière de reconditionnement locale 2')
+    return presserLeBouton('Fermer le détail de Structurer une filière de reconditionnement locale 1')
   }
 
   function presserLeBouton(name: string): HTMLElement {

@@ -14,10 +14,10 @@
   margin-bottom: 1rem;
 }
 
-.budget li:first-child {
+.budget__global {
   font-weight: 900;
 }
 
-.budget li:nth-child(2) {
+.budget__subvention {
   color: var(--text-title-blue-france);
 }

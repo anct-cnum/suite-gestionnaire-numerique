@@ -24,15 +24,15 @@ describe('recupérer les feuilles de route', () => {
             {
               beneficiaires: [
                 {
-                  nom: 'beneficiaireId1',
+                  nom: 'CAF DE LA CHARENTE',
                   uid: '1',
                 },
                 {
-                  nom: 'beneficiaireId2',
+                  nom: 'HUBIKOOP',
                   uid: '2',
                 },
                 {
-                  nom: 'beneficiaireId3',
+                  nom: 'HYPRA',
                   uid: '3',
                 },
               ],
@@ -78,11 +78,11 @@ describe('recupérer les feuilles de route', () => {
             {
               beneficiaires: [
                 {
-                  nom: 'beneficiaireId1',
+                  nom: 'CAF DE LA CHARENTE',
                   uid: '1',
                 },
                 {
-                  nom: 'beneficiaireId5',
+                  nom: 'Kocoya THinkLab',
                   uid: '5',
                 },
               ],
@@ -121,7 +121,7 @@ describe('recupérer les feuilles de route', () => {
             {
               beneficiaires: [
                 {
-                  nom: 'beneficiaireId1',
+                  nom: 'CAF DE LA CHARENTE',
                   uid: '1',
                 },
               ],

@@ -19,6 +19,7 @@ describe('les feuilles de route d’une gouvernance', () => {
         {
           ...baseReadModel.feuillesDeRoute[1],
           actions: [],
+          structureCoPorteuse: undefined,
         },
       ],
     }))
@@ -49,8 +50,8 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(titreDeLaPremiereFeuilleDeRoute).toBeInTheDocument()
     const lientVoirDetails = within(premiereFeuilleDeRoute).getByRole('link', { name: 'Voir le détail' })
     expect(lientVoirDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1')
-    const LienPorteurDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getAllByRole('link', { name: 'CC des Monts du Lyonnais' })[0]
-    expect(LienPorteurDeLaFeuilleDeRoute).toBeInTheDocument()
+    const lienPorteurDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getAllByRole('link', { name: 'CC des Monts du Lyonnais' })[0]
+    expect(lienPorteurDeLaFeuilleDeRoute).toBeInTheDocument()
     const wordingNombreCofinanceursEtBeneficiaires = within(premiereFeuilleDeRoute).getByText(matchWithoutMarkup('5 bénéficiaires, 3 co-financeurs'))
     expect(wordingNombreCofinanceursEtBeneficiaires).toBeInTheDocument()
     const nombreDactions = within(premiereFeuilleDeRoute).getByText('2 actions attachées à cette feuille de route', { selector: 'p' })
@@ -89,6 +90,8 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(within(secondeFeuilleDeRoute)
       .getByRole('link', { name: 'Voir le détail' }))
       .toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId2')
+    const infoAbsencePorteur = within(secondeFeuilleDeRoute).getByText('Aucune structure porteuse')
+    expect(infoAbsencePorteur).toBeInTheDocument()
     const nombreDActionsSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute)
       .getByText('0 action attachée à cette feuille de route', { selector: 'p' })
     expect(nombreDActionsSecondeFeuilleDeRoute).toBeInTheDocument()

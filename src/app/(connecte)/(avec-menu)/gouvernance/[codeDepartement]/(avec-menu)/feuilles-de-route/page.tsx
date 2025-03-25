@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import FeuillesDeRoute from '@/components/FeuillesDeRoute/FeuillesDeRoute'
-import Notice from '@/components/shared/Notice/Notice'
 import { PrismaLesFeuillesDeRouteLoader } from '@/gateways/PrismaLesFeuillesDeRouteLoader'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
 import { RecupererLesFeuillesDeRoute } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -20,12 +19,7 @@ export default async function FeuillesDeRouteController({ params }: Props): Prom
       new PrismaLesFeuillesDeRouteLoader()
     ).handle({ codeDepartement })
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
-    return (
-      <>
-        <Notice />
-        <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
-      </>
-    )
+    return  <FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />
   } catch {
     notFound()
   }

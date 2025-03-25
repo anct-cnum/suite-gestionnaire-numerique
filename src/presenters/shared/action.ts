@@ -20,10 +20,10 @@ export const actionStatutViewModelByStatut: Record<StatutSubvention | 'nonSubven
     variant: 'info',
   },
   nonSubventionnee: {
-    background: 'white',
-    icon: '',
+    background: 'blue',
+    icon: 'user-star-line',
     libelle: 'Non subventionnée',
-    variant: 'success',
+    variant: 'warning',
   },
   refusee: {
     background: 'green',

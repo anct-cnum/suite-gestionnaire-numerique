@@ -41,9 +41,13 @@ export default function ResumeAction({ actions }: Props): ReactElement {
                     {action.nom}
                   </button>
                   <br />
-                  <Tag>
-                    {action.porteur}
-                  </Tag>
+                  {
+                    action.porteurs.map((porteur) => (
+                      <Tag key={porteur.value}>
+                        {porteur.label}
+                      </Tag>
+                    ))
+                  }
                 </div>
               </div>
               <div className="fr-col-4 right">
