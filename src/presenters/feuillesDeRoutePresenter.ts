@@ -10,46 +10,34 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
     formulaire: {
       contratPreexistant: [
         {
-          isSelected: false,
           label: 'Oui',
           value: 'oui',
         },
         {
-          isSelected: false,
           label: 'Non',
           value: 'non',
         },
       ],
       membres: [
         {
-          isSelected: true,
           label: 'Choisir',
           value: '',
         },
-        {
-          isSelected: false,
-          label: 'Croix Rouge Française',
-          value: 'membre1FooValue',
-        },
-        {
-          isSelected: false,
-          label: 'La Poste',
-          value: 'membre2FooValue',
-        },
+        ...readModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions.map(({ nom, uid }) => ({
+          label: nom,
+          value: uid,
+        })),
       ],
       perimetres: [
         {
-          isSelected: false,
           label: 'Régional',
           value: 'regional',
         },
         {
-          isSelected: false,
           label: 'Départemental',
           value: 'departemental',
         },
         {
-          isSelected: false,
           label: 'EPCI ou groupement de communes',
           value: 'epci_groupement',
         },
@@ -73,7 +61,7 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
     nom: feuilleDeRoute.nom,
     nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
     pieceJointe: undefined,
-    porteur: 'CC des Monts du Lyonnais',
+    porteur: feuilleDeRoute.structureCoPorteuse?.nom,
     totaux: {
       budget: formatMontant(feuilleDeRoute.totaux.budget),
       coFinancement: formatMontant(feuilleDeRoute.totaux.coFinancement),
@@ -87,39 +75,32 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
-    beneficiaires: [
-      {
-        nom: 'Croix Rouge Française',
-        url: '/',
+    beneficiaires: action.beneficiaires.map(({ nom }) => ({ nom, url: '/' })),
+    besoins: action.besoins,
+    budgetPrevisionnel: {
+      coFinancements: action.coFinancements.map(({ coFinanceur, montant }) => ({
+        libelle: coFinanceur.nom,
+        montant: formatMontant(montant),
+      })),
+      global: {
+        libelle: 'Budget prévisionnel',
+        montant: formatMontant(action.budgetGlobal),
       },
-      {
-        nom: 'La Poste',
-        url: '/',
-      },
-    ],
-    besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
-    budgetPrevisionnel: [
-      {
-        coFinanceur: 'Budget prévisionnel 2024',
-        montant: formatMontant(20_000),
-      },
-      {
-        coFinanceur: 'Subvention de prestation',
-        montant: formatMontant(10_000),
-      },
-      {
-        coFinanceur: 'CC des Monts du Lyonnais',
-        montant: formatMontant(5_000),
-      },
-      {
-        coFinanceur: 'Croix Rouge Française',
-        montant: formatMontant(5_000),
-      },
-    ],
-    description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+      subventions: action.subvention ? [
+        {
+          libelle: 'Subvention de prestation',
+          montant: formatMontant(action.subvention.montants.prestation),
+        },
+        {
+          libelle: 'Subvention en ressource humaines',
+          montant: formatMontant(action.subvention.montants.ressourcesHumaines),
+        },
+      ] : [],
+    },
+    description: action.description,
     lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
     nom: action.nom,
-    porteur: 'CC des Monts du Lyonnais',
+    porteurs: action.porteurs.map(({ nom, uid }) => ({ label: nom, value: uid })),
     statut: actionStatutViewModelByStatut[action.subvention?.statut ?? 'nonSubventionnee'],
     uid: action.uid,
   })
@@ -143,7 +124,7 @@ export type FeuillesDeRouteViewModel = Readonly<{
 export type FeuilleDeRouteViewModel = Readonly<{
   nom: string
   uid: string
-  porteur: string
+  porteur?: string
   pieceJointe?: Readonly<{
     apercu: string
     emplacement: string
@@ -170,14 +151,20 @@ type ActionViewModel = Readonly<{
     url: string
   }>
   besoins: ReadonlyArray<string>
-  budgetPrevisionnel: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
+  budgetPrevisionnel: Readonly<{
+    global: Financement
+    subventions: ReadonlyArray<Financement>
+    coFinancements: ReadonlyArray<Financement>
   }>
   description: string
   lienPourModifier: string
   nom: string
-  porteur?: string
+  porteurs: ReadonlyArray<LabelValue>
   statut: ActionStatutViewModel
   uid: string
+}>
+
+type Financement = Readonly<{
+  libelle: string
+  montant: string
 }>

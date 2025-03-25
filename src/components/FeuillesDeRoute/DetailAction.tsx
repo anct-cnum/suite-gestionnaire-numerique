@@ -20,15 +20,13 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
         <br />
         {action.nom}
       </DrawerTitle>
+      <Badge color={action.statut.variant}>
+        {action.statut.libelle}
+      </Badge>
       <ul
         aria-label="Besoins"
         className="fr-tags-group fr-mb-2w"
       >
-        <li className="fr-mr-1w">
-          <Badge color={action.statut.variant}>
-            {action.statut.libelle}
-          </Badge>
-        </li>
         {action.besoins.map((besoin) => (
           <li
             className="fr-mr-1w color-grey"
@@ -41,31 +39,56 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
       <div className="color-grey fr-mt-2w">
         Porteur de l’action
       </div>
-      <Tag>
-        {action.porteur}
-      </Tag>
+      {
+        action.porteurs.map((porteur) => (
+          <Tag key={porteur.value}>
+            {porteur.label}
+          </Tag>
+        ))
+      }
       <div className="color-grey fr-mt-2w">
         Description de l’action
       </div>
       <ReadMore texte={action.description} />
-      <ul
+      <dl
         aria-label="Budget prévisionnel"
         className={`${styles.budget} grey-border fr-p-2w fr-mt-2w`}
+        role="list"
       >
-        {action.budgetPrevisionnel.map((budget) => (
-          <li
-            className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-            key={budget.coFinanceur}
+        <div className={`${styles.budget__global} fr-grid-row fr-btns-group--space-between fr-mb-1w`}>
+          <dt>
+            {action.budgetPrevisionnel.global.libelle}
+          </dt>
+          <dd>
+            {action.budgetPrevisionnel.global.montant}
+          </dd>
+        </div>
+        {action.budgetPrevisionnel.subventions.map((subvention) => (
+          <div
+            className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w`}
+            key={subvention.libelle}
           >
-            <div>
-              {budget.coFinanceur}
-            </div>
-            <div>
-              {budget.montant}
-            </div>
-          </li>
+            <dt>
+              {subvention.libelle}
+            </dt>
+            <dd>
+              {subvention.montant}
+            </dd>
+          </div>))}
+        {action.budgetPrevisionnel.coFinancements.map((coFinancement) => (
+          <div
+            className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
+            key={coFinancement.libelle}
+          >
+            <dt>
+              {coFinancement.libelle}
+            </dt>
+            <dd>
+              {coFinancement.montant}
+            </dd>
+          </div>
         ))}
-      </ul>
+      </dl>
       <div className="color-grey fr-mt-2w">
         Bénéficiaires des subventions
       </div>

@@ -5,6 +5,7 @@ import styles from './FeuillesDeRoute.module.css'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
+import { isNullish } from '@/shared/lang'
 
 export default function ResumeFeuilleDeRoute({ feuilleDeRoute, children }: Props): ReactElement {
   return (
@@ -23,9 +24,13 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute, children }: Props
         <h2 className="fr-h3 color-blue-france fr-mb-1w">
           {feuilleDeRoute.nom}
         </h2>
-        <Tag>
-          {feuilleDeRoute.porteur}
-        </Tag>
+        {isNullish(feuilleDeRoute.porteur) ?
+          <div className="fr-tag">
+            Aucune structure porteuse
+          </div> :
+          <Tag>
+            {feuilleDeRoute.porteur}
+          </Tag>}
         {' '}
         <span>
           {feuilleDeRoute.wordingNombreCofinanceursEtBeneficiaires}
