@@ -32,10 +32,12 @@ describe('ajouter une feuille de route', () => {
       expect(porteur).toBeRequired()
       const choisir = within(porteur).getByRole('option', { name: 'Choisir', selected: true })
       expect(choisir).toBeInTheDocument()
-      const membre1 = within(porteur).getByRole('option', { name: 'Croix Rouge Française' })
+      const membre1 = within(porteur).getByRole('option', { name: 'Meetkap' })
       expect(membre1).toBeInTheDocument()
-      const membre2 = within(porteur).getByRole('option', { name: 'La Poste' })
+      const membre2 = within(porteur).getByRole('option', { name: 'Emmaüs Connect' })
       expect(membre2).toBeInTheDocument()
+      const membre3 = within(porteur).getByRole('option', { name: 'Orange' })
+      expect(membre3).toBeInTheDocument()
 
       const fieldsets = within(formulaire).getAllByRole('group')
       const perimetre = within(fieldsets[0]).getByText(matchWithoutMarkup('Quel est le périmètre géographique de la feuille de route ? *'), { selector: 'legend' })
@@ -86,7 +88,7 @@ describe('ajouter une feuille de route', () => {
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre2FooValue')
+      jeSelectionneUnMembre('structure-95351745500010-44')
       jeSelectionneUnPerimetre('Régional')
       jeSelectionneUnContrat('Oui')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
@@ -105,7 +107,7 @@ describe('ajouter une feuille de route', () => {
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'membre2FooValue',
+        uidMembre: 'structure-95351745500010-44',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Feuille de route ajoutée')
@@ -122,7 +124,7 @@ describe('ajouter une feuille de route', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('membre1FooValue')
+      jeSelectionneUnMembre('porteurId1')
       jeSelectionneUnPerimetre('Régional')
       jeSelectionneUnContrat('Oui')
       jEnregistreLaFeuilleDeRoute()
