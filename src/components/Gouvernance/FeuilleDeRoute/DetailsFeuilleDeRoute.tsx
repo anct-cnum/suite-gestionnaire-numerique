@@ -5,6 +5,7 @@ import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import Tag from '@/components/shared/Tag/Tag'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
+import { isNullish } from '@/shared/lang'
 
 export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props): ReactElement {
   return (
@@ -18,9 +19,13 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         <div className="color-grey fr-mb-1w">
           Responsable de la feuille de route
         </div>
-        <Tag>
-          {feuilleDeRoute.porteur}
-        </Tag>
+        {isNullish(feuilleDeRoute.porteur) ?
+          <div className="fr-tag">
+            Aucune structure porteuse
+          </div> :
+          <Tag>
+            {feuilleDeRoute.porteur}
+          </Tag>}
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">

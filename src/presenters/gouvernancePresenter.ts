@@ -2,6 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
+import { isNullishOrEmpty } from '@/shared/lang'
 import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
@@ -135,7 +136,7 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       montantSubventionDemande: formatMontant(feuilleDeRoute.montantSubventionDemande),
       montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
       nom: feuilleDeRoute.nom,
-      porteur: feuilleDeRoute.porteur.nom,
+      porteur: feuilleDeRoute.porteur?.nom,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
       wordingBeneficiairesSubventionFormation: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormation)}`,
@@ -173,7 +174,8 @@ function toCoporteursDetailsViewModel(coporteurs: CoporteurDetailReadModel): Mem
     ],
     ...coporteurs.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],
     {
-      information: coporteurs.telephone === '' ? '-' : coporteurs.telephone,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      information: isNullishOrEmpty(coporteurs.telephone) ? '-' : coporteurs.telephone!,
       intitule: 'Téléphone',
     },
   ]
@@ -308,7 +310,7 @@ export type ComiteViewModel = Readonly<{
 
 export type FeuilleDeRouteViewModel = Readonly<{
   nom: string
-  porteur: string
+  porteur?: string
   totalActions: string
   budgetGlobal: string
   lien: string

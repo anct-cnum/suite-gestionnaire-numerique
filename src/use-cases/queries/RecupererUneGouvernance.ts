@@ -25,7 +25,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
       }))
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    return  {
+    return {
       ...readModel,
       peutVoirNotePrivee,
     }
@@ -60,7 +60,7 @@ export type ComiteReadModel = Readonly<{
 
 export type FeuilleDeRouteReadModel = Readonly<{
   nom: string
-  porteur: MembreReadModel
+  porteur?: MembreReadModel
   totalActions: number
   budgetGlobal: number
   montantSubventionDemande: number
@@ -91,7 +91,7 @@ export type CoporteurDetailReadModel = Readonly<{
     mailContact: string
     denomination: 'Contact référent' | 'Contact politique de la collectivité'
   }>
-  telephone: string
+  telephone?: string
   feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
     montantSubventionAccorde: number
