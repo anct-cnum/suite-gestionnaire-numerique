@@ -17,15 +17,13 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
         ...gouvernance,
         syntheseMembres: {
           ...gouvernance.syntheseMembres,
-          coporteurs: gouvernance.syntheseMembres.coporteurs.values()
-            .map(toMembreDetailAvecTotauxReadModel)
-            .map(toMembreDetailIntitulerReadModel)
-            .toArray(),
+          coporteurs: gouvernance.syntheseMembres.coporteurs
+            .map(toMembreDetailIntitulerReadModel),
         },
       }))
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    return  {
+    return {
       ...readModel,
       peutVoirNotePrivee,
     }
@@ -62,9 +60,9 @@ export type FeuilleDeRouteReadModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
   budgetGlobal: number
-  montantSubventionAccorde: number
-  montantSubventionDemande: number
-  montantSubventionFormationAccorde: number
+  montantSubventionAccordee: number
+  montantSubventionDemandee: number
+  montantSubventionFormationAccordee: number
   nom: string
   pieceJointe?: Readonly<{
     apercu: string
@@ -76,7 +74,7 @@ export type FeuilleDeRouteReadModel = Readonly<{
     }>
     nom: string
   }>
-  porteur: MembreReadModel
+  porteur?: MembreReadModel
   totalActions: number
   uid: string
 }>
@@ -85,6 +83,7 @@ export type MembreReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<string>
   type: string
+  uid: string
 }>
 
 export type TypeDeComite = 'autre' | 'consultatif' | 'stratégique' | 'technique'
@@ -99,18 +98,17 @@ export type CoporteurDetailReadModel = Readonly<{
   }>
   contactTechnique?: string
   feuillesDeRoute: ReadonlyArray<Readonly<{
-    montantSubventionAccorde: number
-    montantSubventionFormationAccorde: number
     nom: string
+    uid: string
   }>>
   links: Readonly<{
     plusDetails?: string
   }>
   nom: string
   roles: ReadonlyArray<string>
-  telephone: string
-  totalMontantSubventionAccorde?: number
-  totalMontantSubventionFormationAccorde?: number
+  telephone?: string
+  totalMontantsSubventionsAccordees?: number
+  totalMontantsSubventionsFormationAccordees?: number
   type: string
 }>
 
@@ -138,22 +136,6 @@ type Query = Readonly<{
   codeDepartement: string
   uidUtilisateurCourant: string
 }>
-
-function toMembreDetailAvecTotauxReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
-  const totaux = isPrefectureDepartementale(membre)
-    ? {} : membre.feuillesDeRoute.reduce((result, feuilleDeRoute) => ({
-      totalMontantSubventionAccorde: result.totalMontantSubventionAccorde + feuilleDeRoute.montantSubventionAccorde,
-      totalMontantSubventionFormationAccorde: result.totalMontantSubventionFormationAccorde +
-        feuilleDeRoute.montantSubventionFormationAccorde,
-    }), {
-      totalMontantSubventionAccorde: 0,
-      totalMontantSubventionFormationAccorde: 0,
-    })
-  return {
-    ...membre,
-    ...totaux,
-  }
-}
 
 function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): CoporteurDetailReadModel {
   const [denomination, links] = isPrefectureDepartementale(membre)

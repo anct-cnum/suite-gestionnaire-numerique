@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaGouvernanceLoader } from './PrismaGouvernanceLoader'
-import { creerMembres, creerUnComite, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
+import { creerMembres, creerUnBeneficiaireSubvention, creerUnComite, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
@@ -17,7 +17,7 @@ describe('gouvernance loader', () => {
     await creerUneRegion({ code: '53', nom: 'Bretagne' })
     await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
-    await creerUnUtilisateur({ nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUnUtilisateur({ id: 0, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
     await creerUneGouvernance({ departementCode: '75' })
     await creerUneGouvernance({
       departementCode: '93',
@@ -32,10 +32,72 @@ describe('gouvernance loader', () => {
     })
     await creerComites('93', 0)
     await creerComites('75', 2)
-    await creerFeuillesDeRoute('93', 0)
-    await creerFeuillesDeRoute('75', 2)
     await creerMembres('93')
     await creerMembres('75')
+    await creerFeuillesDeRoute('93', 0)
+    await creerFeuillesDeRoute('75', 2)
+    await creerFeuillesDeRoute('93', 4)
+    await creerUneAction({
+      budgetGlobal: 70_000,
+      createurId: 0,
+      feuilleDeRouteId: 1,
+      id: 1,
+      nom: 'Structurer une filière de reconditionnement locale 1',
+    })
+    await creerUneAction({
+      budgetGlobal: 25_000,
+      createurId: 0,
+      feuilleDeRouteId: 2,
+      id: 2,
+      nom: 'Organiser un marathon',
+    })
+    await creerUneAction({
+      budgetGlobal: 55_500,
+      createurId: 0,
+      feuilleDeRouteId: 6,
+      id: 3,
+      nom: 'Structurer une filière de reconditionnement locale 2',
+    })
+    await creerUneAction({
+      budgetGlobal: 55_500,
+      createurId: 0,
+      feuilleDeRouteId: 6,
+      id: 4,
+      nom: 'Structurer une filière de reconditionnement locale 2',
+    })
+    await creerUneEnveloppeFinancement({ id: 1 })
+    await creerUneEnveloppeFinancement({ id: 2, libelle: 'Enveloppe de formation' })
+    await creerUneDemandeDeSubvention({ actionId: 1, createurId: 0, enveloppeFinancementId: 1, id: 1 })
+    await creerUneDemandeDeSubvention({
+      actionId: 3,
+      createurId: 0,
+      enveloppeFinancementId: 1,
+      id: 2,
+      subventionDemandee: 25_000,
+      subventionEtp: 8_999,
+      subventionPrestation: 21_001,
+    })
+    await creerUneDemandeDeSubvention({
+      actionId: 4,
+      createurId: 0,
+      enveloppeFinancementId: 2,
+      id: 3,
+      subventionDemandee: 50,
+      subventionEtp: 17.65,
+      subventionPrestation: 1.5,
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId: 'commune-94028-93',
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId: 'epci-200072056-93',
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 3,
+      membreId: 'structure-38012986643097-93',
+    })
 
     // WHEN
     const gouvernanceReadModel = await new PrismaGouvernanceLoader().get('93')
@@ -65,7 +127,91 @@ describe('gouvernance loader', () => {
         },
       ],
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute,
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [
+            { nom: 'CC Porte du Jura', roles: ['beneficiaire', 'coporteur'], type: 'Collectivité, EPCI', uid: 'epci-200072056-93' },
+            { nom: 'Créteil', roles: ['coporteur'], type: 'Collectivité, commune', uid: 'commune-94028-93' },
+          ],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 70_000,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route inclusion 1',
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+          },
+          porteur: undefined,
+          totalActions: 1,
+          uid: '1',
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 25_000,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route numérique du Rhône 2',
+          porteur: {
+            nom: 'Trévérien',
+            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
+            type: '',
+            uid: 'commune-35345-93',
+          },
+          totalActions: 1,
+          uid: '2',
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route inclusion 5',
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+          },
+          porteur: undefined,
+          totalActions: 0,
+          uid: '5',
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [{
+            nom: 'Orange',
+            roles: [
+              'coporteur',
+              'recipiendaire',
+            ],
+            type: 'Entreprise privée',
+            uid: 'structure-38012986643097-93',
+          }],
+          budgetGlobal: 111_000,
+          montantSubventionAccordee: 30_000,
+          montantSubventionDemandee: 25_050,
+          montantSubventionFormationAccordee: 19.15,
+          nom: 'Feuille de route numérique du Rhône 6',
+          porteur: {
+            nom: 'Trévérien',
+            roles: [
+              'beneficiaire',
+              'coporteur',
+              'recipiendaire',
+            ],
+            type: '',
+            uid: 'commune-35345-93',
+          },
+          totalActions: 2,
+          uid: '6',
+        },
+      ],
       noteDeContexte: {
         dateDeModification: epochTime,
         nomAuteur: 'Deschamps',
@@ -78,8 +224,73 @@ describe('gouvernance loader', () => {
         prenomEditeur: 'Jean',
         texte: 'un contenu quelconque',
       },
-      peutVoirNotePrivee: true,
-      syntheseMembres,
+      peutVoirNotePrivee: false,
+      syntheseMembres: {
+        candidats: 2,
+        coporteurs: [
+          {
+            feuillesDeRoute: [],
+            nom: 'Bretagne',
+            roles: ['coporteur'],
+            type: 'Préfecture régionale',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'CC Porte du Jura',
+            roles: ['beneficiaire', 'coporteur'],
+            type: 'Collectivité, EPCI',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Créteil',
+            roles: ['coporteur'],
+            type: 'Collectivité, commune',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Orange',
+            roles: ['coporteur', 'recipiendaire'],
+            type: 'Entreprise privée',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Seine-Saint-Denis',
+            roles: ['coporteur'],
+            type: 'Préfecture départementale',
+          },
+          {
+            feuillesDeRoute: [
+              {
+                nom: 'Feuille de route numérique du Rhône 2',
+                uid: '2',
+              },
+              {
+                nom: 'Feuille de route numérique du Rhône 6',
+                uid: '6',
+              },
+            ],
+            nom: 'Trévérien',
+            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
+            totalMontantsSubventionsAccordees: 30_000,
+            totalMontantsSubventionsFormationAccordees: 19.15,
+            type: '',
+          },
+        ].map((partialMembre) => ({
+          contactReferent: {
+            denomination: 'Contact référent',
+            mailContact: 'commune-35345-93@example.com',
+            nom: 'Tartempion',
+            poste: 'Directeur',
+            prenom: 'Michel',
+          },
+          contactTechnique: undefined,
+          links: {},
+          totalMontantsSubventionsAccordees: 0,
+          totalMontantsSubventionsFormationAccordees: 0,
+          ...partialMembre,
+        })),
+        total: 9,
+      },
       uid: '93',
     })
   })
@@ -100,28 +311,150 @@ describe('gouvernance loader', () => {
 
   it('quand une gouvernance est demandée par son code département existant et qu’elle n’a pas de note de contexte ni comité ni note privée, alors elle est renvoyée sans note de contexte ni comité ni note privée', async () => {
     // GIVEN
-    const codeDepartement = '93'
     await creerUneRegion({ code: '11' })
     await creerUneRegion({ code: '53', nom: 'Bretagne' })
-    await creerUnDepartement({ code: codeDepartement, nom: 'Seine-Saint-Denis' })
+    await creerUnDepartement({ code: '93', nom: 'Seine-Saint-Denis' })
     await creerUnDepartement({ code: '75', nom: 'Paris' })
-    await creerUneGouvernance({ departementCode: codeDepartement })
-    await creerFeuillesDeRoute(codeDepartement, 0)
+    await creerUneGouvernance({ departementCode: '93' })
     await creerMembres('93')
+    await creerFeuillesDeRoute('93', 0)
+    await creerUnUtilisateur({ id: 0, nom: 'Deschamps', prenom: 'Jean', ssoId: 'userFooId' })
+    await creerUneAction({
+      budgetGlobal: 70_000,
+      createurId: 0,
+      feuilleDeRouteId: 1,
+      id: 1,
+      nom: 'Structurer une filière de reconditionnement locale 1',
+    })
+    await creerUneEnveloppeFinancement({ id: 1 })
+    await creerUneDemandeDeSubvention({
+      actionId: 1,
+      createurId: 0,
+      enveloppeFinancementId: 1,
+      id: 1,
+      subventionDemandee: 30_000,
+      subventionEtp: 10_000,
+      subventionPrestation: 20_000,
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId: 'commune-94028-93',
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId: 'epci-200072056-93',
+    })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get('93')
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
       comites: undefined,
       departement: 'Seine-Saint-Denis',
-      feuillesDeRoute,
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [
+            { nom: 'CC Porte du Jura', roles: ['beneficiaire', 'coporteur'], type: 'Collectivité, EPCI', uid: 'epci-200072056-93' },
+            { nom: 'Créteil', roles: ['coporteur'], type: 'Collectivité, commune', uid: 'commune-94028-93' },
+          ],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 70_000,
+          montantSubventionAccordee: 30_000,
+          montantSubventionDemandee: 30_000,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route inclusion 1',
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+          },
+          porteur: undefined,
+          totalActions: 1,
+          uid: '1',
+        },
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route numérique du Rhône 2',
+          porteur: {
+            nom: 'Trévérien',
+            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
+            type: '',
+            uid: 'commune-35345-93',
+          },
+          totalActions: 0,
+          uid: '2',
+        },
+      ],
       noteDeContexte: undefined,
       notePrivee: undefined,
-      peutVoirNotePrivee: true,
-      syntheseMembres,
-      uid: codeDepartement,
+      peutVoirNotePrivee: false,
+      syntheseMembres: {
+        candidats: 2,
+        coporteurs: [
+          {
+            feuillesDeRoute: [],
+            nom: 'Bretagne',
+            roles: ['coporteur'],
+            type: 'Préfecture régionale',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'CC Porte du Jura',
+            roles: ['beneficiaire', 'coporteur'],
+            type: 'Collectivité, EPCI',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Créteil',
+            roles: ['coporteur'],
+            type: 'Collectivité, commune',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Orange',
+            roles: ['coporteur', 'recipiendaire'],
+            type: 'Entreprise privée',
+          },
+          {
+            feuillesDeRoute: [],
+            nom: 'Seine-Saint-Denis',
+            roles: ['coporteur'],
+            type: 'Préfecture départementale',
+          },
+          {
+            feuillesDeRoute: [
+              {
+                nom: 'Feuille de route numérique du Rhône 2',
+                uid: '2',
+              },
+            ],
+            nom: 'Trévérien',
+            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
+            type: '',
+          },
+        ].map((partialMembre) => ({
+          contactReferent: {
+            denomination: 'Contact référent',
+            mailContact: 'commune-35345-93@example.com',
+            nom: 'Tartempion',
+            poste: 'Directeur',
+            prenom: 'Michel',
+          },
+          contactTechnique: undefined,
+          links: {},
+          totalMontantsSubventionsAccordees: 0,
+          totalMontantsSubventionsFormationAccordees: 0,
+          ...partialMembre,
+        })),
+        total: 9,
+      },
+      uid: '93',
     })
   })
 
@@ -243,113 +576,6 @@ describe('gouvernance loader', () => {
   })
 })
 
-const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
-  {
-    beneficiairesSubvention: [
-      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
-    ],
-    beneficiairesSubventionFormation: [
-      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
-    ],
-    budgetGlobal: 145_000,
-    montantSubventionAccorde: 5_000,
-    montantSubventionDemande: 40_000,
-    montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route inclusion',
-    pieceJointe: {
-      apercu: '',
-      emplacement: '',
-      nom: 'feuille-de-route-fake.pdf',
-    },
-    porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
-    totalActions: 3,
-    uid: '1',
-  },
-  {
-    beneficiairesSubvention: [
-      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
-    ],
-    beneficiairesSubventionFormation: [
-      { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' },
-      { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' },
-    ],
-    budgetGlobal: 145_000,
-    montantSubventionAccorde: 5_000,
-    montantSubventionDemande: 40_000,
-    montantSubventionFormationAccorde: 5_000,
-    nom: 'Feuille de route numérique du Rhône',
-    porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
-    totalActions: 3,
-    uid: '2',
-  },
-]
-
-const syntheseMembres: UneGouvernanceReadModel['syntheseMembres'] = {
-  candidats: 2,
-  coporteurs: [
-    {
-      nom: 'Bretagne',
-      roles: ['coporteur'],
-      type: 'Préfecture régionale',
-    },
-    {
-      nom: 'CC Porte du Jura',
-      roles: ['beneficiaire', 'coporteur'],
-      type: 'Collectivité, EPCI',
-    },
-    {
-      nom: 'Créteil',
-      roles: ['coporteur'],
-      type: 'Collectivité, commune',
-    },
-    {
-      nom: 'Orange',
-      roles: ['coporteur', 'recipiendaire'],
-      type: 'Entreprise privée',
-    },
-    {
-      nom: 'Seine-Saint-Denis',
-      roles: ['coporteur'],
-      type: 'Préfecture départementale',
-    },
-    {
-      nom: 'Trévérien',
-      roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
-      type: '',
-    },
-  ].map((partialMembre) => ({
-    contactReferent: {
-      denomination: 'Contact référent',
-      mailContact: 'commune-35345-93@example.com',
-      nom: 'Tartempion',
-      poste: 'Directeur',
-      prenom: 'Michel',
-    },
-    contactTechnique: undefined,
-    feuillesDeRoute: [
-      {
-        montantSubventionAccorde: 5_000,
-        montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route inclusion',
-      },
-      {
-        montantSubventionAccorde: 5_000,
-        montantSubventionFormationAccorde: 5_000,
-        nom: 'Feuille de route numérique du Rhône',
-      },
-    ],
-    links: {},
-    telephone: '+33 4 45 00 45 00',
-    totalMontantSubventionAccorde: NaN,
-    totalMontantSubventionFormationAccorde: NaN,
-    ...partialMembre,
-  })),
-  total: 9,
-}
-
 async function creerComites(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
   await creerUnComite({
     commentaire: 'commentaire',
@@ -376,6 +602,18 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
 }
 
 async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
-  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 1 + incrementId, pieceJointe: 'feuille-de-route-fake.pdf' })
-  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 2 + incrementId, nom: 'Feuille de route numérique du Rhône' })
+  const id1 = 1 + incrementId
+  const id2 = 2 + incrementId
+  await creerUneFeuilleDeRoute({
+    gouvernanceDepartementCode,
+    id: id1,
+    nom: `Feuille de route inclusion ${id1}`,
+    pieceJointe: 'feuille-de-route-fake.pdf',
+  })
+  await creerUneFeuilleDeRoute({
+    gouvernanceDepartementCode,
+    id: id2,
+    nom: `Feuille de route numérique du Rhône ${id2}`,
+    porteurId: 'commune-35345-93',
+  })
 }
