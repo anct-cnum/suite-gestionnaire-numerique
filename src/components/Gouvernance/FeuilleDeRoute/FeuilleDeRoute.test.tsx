@@ -12,12 +12,17 @@ describe('feuille de route', () => {
     afficherUneGouvernance({
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' }],
-          beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure' }, { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure' }],
+          beneficiairesSubvention: [
+            { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure', uid: '0' },
+            { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure', uid: '1' },
+          ],
+          beneficiairesSubventionFormation: [
+            { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Structure', uid: '0'  },
+            { nom: 'CC des Monts du Lyonnais', roles: ['coporteur'], type: 'Structure', uid: '1' }],
           budgetGlobal: 145_000,
-          montantSubventionAccorde: 100_000,
-          montantSubventionDemande: 115_000,
-          montantSubventionFormationAccorde: 5_000,
+          montantSubventionAccordee: 100_000,
+          montantSubventionDemandee: 115_000,
+          montantSubventionFormationAccordee: 5_000,
           nom: 'Feuille de route inclusion',
           pieceJointe: {
             apercu: '',
@@ -29,7 +34,7 @@ describe('feuille de route', () => {
             },
             nom: 'feuille-de-route-fake.pdf',
           },
-          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration', uid: '0' },
           totalActions: 3,
           uid: 'feuilleDeRouteFooId',
         },
@@ -89,6 +94,54 @@ describe('feuille de route', () => {
     expect(linkOuvrirPdf).toBeInTheDocument()
   })
 
+  it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de porteur alors un tiret est affiché à la place', () => {
+    // GIVEN
+    afficherUneGouvernance({
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [{
+            nom: 'Préfecture du Rhône',
+            roles: ['coporteur'],
+            type: 'Structure',
+            uid: '0',
+          }, {
+            nom: 'CC des Monts du Lyonnais',
+            roles: ['coporteur'],
+            type: 'Structure',
+            uid: '1',
+          }],
+          beneficiairesSubventionFormation: [{
+            nom: 'Préfecture du Rhône',
+            roles: ['coporteur'],
+            type: 'Structure',
+            uid: '0',
+          },
+          {
+            nom: 'CC des Monts du Lyonnais',
+            roles: ['coporteur'],
+            type: 'Structure',
+            uid: '1',
+          }],
+          budgetGlobal: 50_000,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 15_000,
+          montantSubventionFormationAccordee: 0,
+          nom: 'Feuille de route inclusion',
+          totalActions: 1,
+          uid: 'feuilleDeRouteFooId',
+        },
+      ],
+    })
+
+    // WHEN
+    jOuvreLesDetailsDUneFeuilleDeRoute()
+
+    // THEN
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
+    const tiret = within(drawer).getByText('-')
+    expect(tiret).toHaveAttribute('title', 'Aucun responsable')
+  })
+
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
     // GIVEN
     afficherUneGouvernance({
@@ -97,11 +150,11 @@ describe('feuille de route', () => {
           beneficiairesSubvention: [],
           beneficiairesSubventionFormation: [],
           budgetGlobal: 50_000,
-          montantSubventionAccorde: 0,
-          montantSubventionDemande: 15_000,
-          montantSubventionFormationAccorde: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 15_000,
+          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration', uid: '0' },
           totalActions: 1,
           uid: 'feuilleDeRouteFooId',
         },
@@ -129,11 +182,11 @@ describe('feuille de route', () => {
           beneficiairesSubvention: [],
           beneficiairesSubventionFormation: [],
           budgetGlobal: 50_000,
-          montantSubventionAccorde: 0,
-          montantSubventionDemande: 15_000,
-          montantSubventionFormationAccorde: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 15_000,
+          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration', uid: '0' },
           totalActions: 1,
           uid: 'feuilleDeRouteFooId',
         },

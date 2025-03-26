@@ -6,6 +6,7 @@ import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import Tag from '@/components/shared/Tag/Tag'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
+import { isNullish } from '@/shared/lang'
 
 export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props): ReactElement {
   return (
@@ -19,9 +20,13 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
         <div className="color-grey fr-mb-1w">
           Responsable de la feuille de route
         </div>
-        <Tag>
-          {feuilleDeRoute.porteur}
-        </Tag>
+        {isNullish(feuilleDeRoute.porteur) ?
+          <div title="Aucun responsable">
+            -
+          </div> :
+          <Tag>
+            {feuilleDeRoute.porteur}
+          </Tag>}
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
@@ -36,7 +41,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Montant de la subvention demandée
         </div>
         <div className="font-weight-700">
-          {feuilleDeRoute.montantSubventionDemande}
+          {feuilleDeRoute.montantSubventionDemandee}
         </div>
       </div>
       <div className="fr-mb-2w">
@@ -44,7 +49,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Montant de la subvention accordée
         </div>
         <div className="font-weight-700">
-          {feuilleDeRoute.montantSubventionAccorde}
+          {feuilleDeRoute.montantSubventionAccordee}
         </div>
       </div>
       <div className="fr-mb-2w">
@@ -72,7 +77,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
           Montant de la subvention formation accordée
         </div>
         <div className="font-weight-700">
-          {`${feuilleDeRoute.montantSubventionFormationAccorde} €`}
+          {`${feuilleDeRoute.montantSubventionFormationAccordee} €`}
         </div>
       </div>
       <div className="fr-mb-2w">
