@@ -36,7 +36,7 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
             Êtes-vous sûr de vouloir supprimer votre compte ? Cette
             action est irréversible.
           </p>
-          <div className={`fr-input-group input-group--sobre ${emailValidationInfo.groupClass}`}>
+          <div className={`fr-input-group input-group--custom-success-error ${emailValidationInfo.groupClass}`}>
             <label
               className="fr-label"
               htmlFor={champEmailId}
