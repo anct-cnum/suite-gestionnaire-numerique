@@ -19,8 +19,12 @@ describe('les feuilles de route d’une gouvernance', () => {
           pieceJointe: {
             apercu: '',
             emplacement: '',
+            metadonnees: {
+              format: 'pdf',
+              taille: '25 Mo',
+              upload: epochTime,
+            },
             nom: 'user/1234/feuille-de-route-fake.pdf',
-            upload: epochTime,
           },
         },
         {
@@ -236,8 +240,12 @@ describe('les feuilles de route d’une gouvernance', () => {
         pieceJointe: {
           apercu: '',
           emplacement: '',
+          metadonnees: {
+            format: 'pdf',
+            taille: '25 Mo',
+            upload: epochTime,
+          },
           nom: 'user/1234/feuille-de-route-fake.pdf',
-          upload: epochTime,
         },
       },
       feuillesDeRouteReadModelFactory().feuillesDeRoute[1],

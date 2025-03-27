@@ -126,6 +126,8 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel => {
     const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
+    const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
+    const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
       beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
@@ -138,7 +140,8 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
         href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
-        upload: feuilleDeRoute.pieceJointe.upload ? formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.upload): '',
+        metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
+          `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
       },
       porteur: feuilleDeRoute.porteur.nom,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
@@ -328,7 +331,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
     apercu: string
     emplacement: string
     nom: string
-    upload: string
+    metadonnee: string
     href: string
   }>
 }>

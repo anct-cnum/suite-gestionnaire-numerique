@@ -83,13 +83,10 @@ export default function ResumeFeuilleDeRoute({ feuilleDeRoute, children }: Props
                 >
                   {feuilleDeRoute.pieceJointe.nom}
                 </h2>
-                {isNullishOrEmpty(feuilleDeRoute.pieceJointe.upload) ?
+                {isNullishOrEmpty(feuilleDeRoute.pieceJointe.metadonnee) ?
                   null :
                   <span className="fr-hint-text">
-                    Le
-                    {' '}
-                    {feuilleDeRoute.pieceJointe.upload}
-                    , 25 Mo, pdf.
+                    {feuilleDeRoute.pieceJointe.metadonnee}
                   </span>}
               </header>
               <div className="fr-upload-group" />

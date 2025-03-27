@@ -22,8 +22,12 @@ describe('feuille de route', () => {
           pieceJointe: {
             apercu: '',
             emplacement: '',
+            metadonnees: {
+              format: 'pdf',
+              taille: '25 Mo',
+              upload: epochTime,
+            },
             nom: 'feuille-de-route-fake.pdf',
-            upload: epochTime,
           },
           porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
