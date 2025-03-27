@@ -8,7 +8,7 @@ export async function GET(request: NextRequest, _response: NextResponse, s3 = ne
     accessKeyId: process.env.AWS_S3_ACCESS_KEY,
     secretAccessKey: process.env.AWS_S3_SECRET_KEY,
   },
-  endpoint: process.env.AWS_S3_HOST,
+  endpoint: 'https://s3.fr-par.scw.cloud',
   region: process.env.AWS_S3_REGION,
 } as S3ClientConfig)): Promise<NextResponse<object | null>> {
   try {
