@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { GET } from './route'
 
-describe('route de téléchargement de fichier pdf', () => {
-  it('devrait retourner une 200 quand l’utilisateur télécharge un Pdf valide', async () => {
+describe('route de téléchargement de document', () => {
+  it('devrait retourner une 200 quand l’utilisateur télécharge un document valide', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -28,7 +28,7 @@ describe('route de téléchargement de fichier pdf', () => {
     expect(result.headers.get('Content-Disposition')).toBe('inline; filename="feuille-de-route-test.pdf"')
   })
 
-  it('devrait retourner une erreur quand le pdf est introuvable', async () => {
+  it('devrait retourner une erreur quand le document est introuvable', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -44,10 +44,10 @@ describe('route de téléchargement de fichier pdf', () => {
 
     // THEN
     expect(result.status).toBe(404)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le PDF n’existe pas' })
+    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n’existe pas' })
   })
 
-  it('devrait retourner une erreur quand le pdf ne contient aucune donnée', async () => {
+  it('devrait retourner une erreur quand le corps de la réponse est vide', async () => {
     // GIVEN
     const req = {
       nextUrl: {
@@ -64,11 +64,11 @@ describe('route de téléchargement de fichier pdf', () => {
     } as unknown as S3Client)
 
     // THEN
-    expect(result.status).toBe(403)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le PDF est vide' })
+    expect(result.status).toBe(404)
+    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n’existe pas' })
   })
 
-  it('devrait retourner une erreur quand les variables d’environnement sont incorrectes', async () => {
+  it('devrait retourner une erreur quand l’erreur n’est pas gérée', async () => {
     // GIVEN
     const req = {
       nextUrl: {

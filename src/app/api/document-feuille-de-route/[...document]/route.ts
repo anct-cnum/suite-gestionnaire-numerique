@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, _response: NextResponse, s3 = ne
       })
     )
     if (!recuperationPdf.Body) {
-      return NextResponse.json({ message: 'Le PDF est vide' }, { status: 403 })
+      throw new Error('document_empty_body')
     }
     return new NextResponse(recuperationPdf.Body.transformToWebStream(), {
       headers: {
@@ -30,10 +30,10 @@ export async function GET(request: NextRequest, _response: NextResponse, s3 = ne
       status: 200,
     })
   } catch (error) {
-    if (error instanceof Error && error.message === 'The specified key does not exist.') {
-      return NextResponse.json({ message: 'Le PDF n’existe pas' }, { status: 404 })
+    if (error instanceof Error && (error.message === 'The specified key does not exist.' || error.message === 'document_empty_body')) {
+      return NextResponse.json({ message: 'Le document n’existe pas' }, { status: 404 })
     }
-    throw new Error(String(error))
+    throw error
   }
 }
 
