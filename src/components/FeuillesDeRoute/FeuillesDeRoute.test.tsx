@@ -3,6 +3,7 @@ import { screen, within } from '@testing-library/react'
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import FeuillesDeRoute from './FeuillesDeRoute'
 import { feuillesDeRoutePresenter } from '@/presenters/feuillesDeRoutePresenter'
+import { epochTime } from '@/shared/testHelper'
 import { feuillesDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('les feuilles de route d’une gouvernance', () => {
@@ -15,6 +16,12 @@ describe('les feuilles de route d’une gouvernance', () => {
           ...baseReadModel.feuillesDeRoute[0],
           beneficiaires: 5,
           coFinanceurs: 3,
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'user/1234/feuille-de-route-fake.pdf',
+            upload: epochTime,
+          },
         },
         {
           ...baseReadModel.feuillesDeRoute[1],
@@ -76,13 +83,16 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(montantBudgetTotalDeLaFeuilleDeRoute).toBeInTheDocument()
     const detailDesMontantsDeSubvention = within(premiereFeuilleDeRoute).getByText('dont 0 € de co-financements et 0 € des financements accordés', { selector: 'p' })
     expect(detailDesMontantsDeSubvention).toBeInTheDocument()
-    const sectionOuvrirPdf = screen.getAllByRole('region', { name: 'Feuille de route inclusion.pdf' })[0]
-    const titreSectionOuvrirPdf = within(sectionOuvrirPdf).getByRole('heading', { level: 2, name: 'Feuille de route inclusion.pdf' })
+    const sectionOuvrirPdf = screen.getAllByRole('region', { name: 'feuille-de-route-fake.pdf' })[0]
+    expect(sectionOuvrirPdf).toHaveAttribute('aria-labelledby', 'openPdf')
+    const titreSectionOuvrirPdf = within(sectionOuvrirPdf).getByRole('heading', { level: 2, name: 'feuille-de-route-fake.pdf' })
     expect(titreSectionOuvrirPdf).toBeInTheDocument()
-    const informationsFichier = within(sectionOuvrirPdf).getByText('Le 08/08/2024, 25 Mo, pdf.')
+    const informationsFichier = within(sectionOuvrirPdf).getByText('Le 01/01/1970, 25 Mo, pdf.')
     expect(informationsFichier).toBeInTheDocument()
-    const boutonOuvrirPdf = within(sectionOuvrirPdf).getByRole('button', { name: 'Ouvrir le pdf' })
-    expect(boutonOuvrirPdf).toHaveAttribute('type', 'button')
+    const informationsLink = within(sectionOuvrirPdf).getByRole('link', { name: 'Ouvrir le pdf' })
+    expect(informationsLink).toHaveAttribute('href', '/api/document-feuille-de-route/user/1234/feuille-de-route-fake.pdf')
+    expect(informationsLink).toHaveAttribute('title', 'Ouvrir le pdf - nouvelle fenêtre')
+    expect(informationsLink).toBeInTheDocument()
     const secondeFeuilleDeRoute = elementsDeLaListeDesFeuillesDeRoute[3]
     const titreDeLaSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute)
       .getByRole('heading', { level: 2, name: 'Feuille de route 2' })
@@ -176,9 +186,63 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(resultat.feuillesDeRoute[0].wordingNombreCofinanceursEtBeneficiaires).toBe('1 bénéficiaire, 3 co-financeurs')
   })
 
+  it('quand il n’y a pas de pièce jointe alors la section PDF n’est pas affichée', () => {
+    // GIVEN
+    const donnees = feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [
+        {
+          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+          pieceJointe: undefined,
+        },
+      ],
+    })
+
+    // WHEN
+    afficherLesFeuillesDeRoute({}, donnees)
+
+    // THEN
+    const sectionOuvrirLePDF = screen.queryByRole('link', { name: 'Ouvrir le pdf' })
+    expect(sectionOuvrirLePDF).not.toBeInTheDocument()
+  })
+
+  it('quand il y a une pièce jointe sans la date d’upload alors la date n’est pas affichée', () => {
+    // GIVEN
+    const donnees = feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [
+        {
+          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+          },
+        },
+      ],
+    })
+
+    // WHEN
+    afficherLesFeuillesDeRoute({}, donnees)
+
+    // THEN
+    const informationsFichier = screen.queryByText('Le 01/01/1970, 25 Mo, pdf.')
+    expect(informationsFichier).not.toBeInTheDocument()
+  })
+
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
-    readModel = feuillesDeRouteReadModelFactory()
+    readModel = feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [{
+        ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+        pieceJointe: {
+          apercu: '',
+          emplacement: '',
+          nom: 'user/1234/feuille-de-route-fake.pdf',
+          upload: epochTime,
+        },
+      },
+      feuillesDeRouteReadModelFactory().feuillesDeRoute[1],
+      ],
+    })
   ): void {
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(readModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options, { departement: 'Seine-Saint-Denis' })

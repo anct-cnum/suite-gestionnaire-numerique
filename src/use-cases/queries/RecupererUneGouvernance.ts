@@ -69,6 +69,12 @@ export type FeuilleDeRouteReadModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
   uid: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    nom: string
+    upload?: Date
+  }>
 }>
 
 export type MembreReadModel = Readonly<{

@@ -135,6 +135,11 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       montantSubventionDemande: formatMontant(feuilleDeRoute.montantSubventionDemande),
       montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
       nom: feuilleDeRoute.nom,
+      pieceJointe: feuilleDeRoute.pieceJointe && {
+        ...feuilleDeRoute.pieceJointe,
+        href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+        upload: feuilleDeRoute.pieceJointe.upload ? formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.upload): '',
+      },
       porteur: feuilleDeRoute.porteur.nom,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
@@ -319,6 +324,13 @@ export type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
   wordingBeneficiairesSubvention: string
   wordingBeneficiairesSubventionFormation: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    nom: string
+    upload: string
+    href: string
+  }>
 }>
 
 type MembreViewModel = Readonly<{

@@ -258,6 +258,11 @@ const feuillesDeRoute: UneGouvernanceReadModel['feuillesDeRoute'] = [
     montantSubventionDemande: 40_000,
     montantSubventionFormationAccorde: 5_000,
     nom: 'Feuille de route inclusion',
+    pieceJointe: {
+      apercu: '',
+      emplacement: '',
+      nom: 'feuille-de-route-fake.pdf',
+    },
     porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
     totalActions: 3,
     uid: '1',
@@ -371,6 +376,6 @@ async function creerComites(gouvernanceDepartementCode: string, incrementId: num
 }
 
 async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incrementId: number): Promise<void> {
-  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 1 + incrementId })
+  await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 1 + incrementId, pieceJointe: 'feuille-de-route-fake.pdf' })
   await creerUneFeuilleDeRoute({ gouvernanceDepartementCode, id: 2 + incrementId, nom: 'Feuille de route numérique du Rhône' })
 }

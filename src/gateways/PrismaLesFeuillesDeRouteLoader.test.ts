@@ -64,6 +64,7 @@ describe('récupérer les feuilles de route loader', () => {
       gouvernanceDepartementCode: '93',
       id: 2,
       nom: 'Feuille de route 2',
+      pieceJointe: 'feuille-de-route-fake.pdf',
     })
     await creerUneFeuilleDeRoute({ creation: epochTime, gouvernanceDepartementCode: '75', id: 3, nom: 'fdr3' })
     await creerUneAction({
@@ -164,6 +165,11 @@ describe('récupérer les feuilles de route loader', () => {
           beneficiaires: 0,
           coFinanceurs: 0,
           nom: 'Feuille de route 2',
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+          },
           structureCoPorteuse: undefined,
           totaux: {
             budget: 0,

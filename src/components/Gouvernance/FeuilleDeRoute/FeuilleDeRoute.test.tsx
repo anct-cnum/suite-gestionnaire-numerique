@@ -19,7 +19,13 @@ describe('feuille de route', () => {
           montantSubventionDemande: 115_000,
           montantSubventionFormationAccorde: 5_000,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            nom: 'feuille-de-route-fake.pdf',
+            upload: epochTime,
+          },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 3,
           uid: 'feuilleDeRouteFooId',
         },
@@ -73,8 +79,10 @@ describe('feuille de route', () => {
     const buttonsListItems = within(buttonsList).getAllByRole('listitem')
     const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
     expect(boutonPlusDeDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId')
-    const boutonOuvrirPdf = within(buttonsListItems[1]).getByRole('button', { name: 'Ouvrir le document pdf' })
-    expect(boutonOuvrirPdf).toBeInTheDocument()
+    const linkOuvrirPdf = within(buttonsListItems[1]).getByRole('link', { name: 'Ouvrir le document pdf' })
+    expect(linkOuvrirPdf).toHaveAttribute('href', '/api/document-feuille-de-route/feuille-de-route-fake.pdf')
+    expect(linkOuvrirPdf).toHaveAttribute('title', 'Ouvrir le document pdf - nouvelle fenêtre')
+    expect(linkOuvrirPdf).toBeInTheDocument()
   })
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
@@ -89,7 +97,7 @@ describe('feuille de route', () => {
           montantSubventionDemande: 15_000,
           montantSubventionFormationAccorde: 0,
           nom: 'Feuille de route inclusion',
-          porteur: { nom: 'Préfecture du Rhône', roles: ['Co-porteur'], type: 'Administration' },
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
           totalActions: 1,
           uid: 'feuilleDeRouteFooId',
         },
@@ -107,6 +115,33 @@ describe('feuille de route', () => {
     expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
     const tirets = within(drawer).getAllByText('-')
     expect(tirets).toHaveLength(2)
+  })
+
+  it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de pièce jointe alors le bouton "Ouvrir le document pdf" n’est pas affichée', () => {
+    // GIVEN
+    afficherUneGouvernance({
+      feuillesDeRoute: [
+        {
+          beneficiairesSubvention: [],
+          beneficiairesSubventionFormation: [],
+          budgetGlobal: 50_000,
+          montantSubventionAccorde: 0,
+          montantSubventionDemande: 15_000,
+          montantSubventionFormationAccorde: 0,
+          nom: 'Feuille de route inclusion',
+          porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
+          totalActions: 1,
+          uid: 'feuilleDeRouteFooId',
+        },
+      ],
+    })
+
+    // WHEN
+    jOuvreLesDetailsDUneFeuilleDeRoute()
+
+    // THEN
+    const linkOuvrirPdf = screen.queryByRole('link', { name: 'Ouvrir le document pdf' })
+    expect(linkOuvrirPdf).not.toBeInTheDocument()
   })
 
   it('quand je clique sur une feuille de route puis que je clique sur fermer, alors le drawer se ferme', () => {

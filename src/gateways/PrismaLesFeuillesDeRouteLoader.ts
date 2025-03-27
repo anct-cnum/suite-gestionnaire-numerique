@@ -79,6 +79,14 @@ function transform(
       beneficiaires: 0,
       coFinanceurs: 0,
       nom: feuilleDeRouteRecord.nom,
+      ...Boolean(feuilleDeRouteRecord.pieceJointe) && {
+        pieceJointe: {
+          apercu: '',
+          emplacement: '',
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          nom: feuilleDeRouteRecord.pieceJointe!,
+        },
+      },
       structureCoPorteuse: feuilleDeRouteRecord.relationMembre
         ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
         : undefined,

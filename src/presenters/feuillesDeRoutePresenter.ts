@@ -1,4 +1,5 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { formaterEnDateFrancaise } from './shared/date'
 import { LabelValue } from './shared/labelValue'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
@@ -60,7 +61,13 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
     },
     nom: feuilleDeRoute.nom,
     nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
-    pieceJointe: undefined,
+    pieceJointe: feuilleDeRoute.pieceJointe && {
+      ...feuilleDeRoute.pieceJointe,
+      href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      nom: feuilleDeRoute.pieceJointe.nom.split('/').pop()!,
+      upload: feuilleDeRoute.pieceJointe.upload ? formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.upload) : '',
+    },
     porteur: feuilleDeRoute.structureCoPorteuse?.nom,
     totaux: {
       budget: formatMontant(feuilleDeRoute.totaux.budget),
@@ -129,7 +136,8 @@ export type FeuilleDeRouteViewModel = Readonly<{
     apercu: string
     emplacement: string
     nom: string
-    upload: Date
+    upload?: string
+    href: string
   }>
   actions: ReadonlyArray<ActionViewModel>
   wordingDetailDuBudget: string
