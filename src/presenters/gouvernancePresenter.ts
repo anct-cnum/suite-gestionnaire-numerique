@@ -126,6 +126,8 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel => {
     const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
+    const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
+    const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel),
       beneficiairesSubventionFormation: feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel),
@@ -135,6 +137,12 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       montantSubventionDemande: formatMontant(feuilleDeRoute.montantSubventionDemande),
       montantSubventionFormationAccorde: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccorde),
       nom: feuilleDeRoute.nom,
+      pieceJointe: feuilleDeRoute.pieceJointe && {
+        ...feuilleDeRoute.pieceJointe,
+        href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+        metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
+          `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
+      },
       porteur: feuilleDeRoute.porteur.nom,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
@@ -319,6 +327,13 @@ export type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
   wordingBeneficiairesSubvention: string
   wordingBeneficiairesSubventionFormation: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    nom: string
+    metadonnee: string
+    href: string
+  }>
 }>
 
 type MembreViewModel = Readonly<{

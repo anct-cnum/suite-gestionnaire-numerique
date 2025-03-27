@@ -86,6 +86,13 @@ function transform(
       montantSubventionDemande: 40_000,
       montantSubventionFormationAccorde: 5_000,
       nom: feuilleDeRoute.nom,
+      ...Boolean(feuilleDeRoute.pieceJointe) && {
+        pieceJointe: {
+          apercu: '',
+          emplacement: '',
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          nom: feuilleDeRoute.pieceJointe!,
+        } },
       porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Administration' },
       totalActions: 3,
       uid: String(feuilleDeRoute.id),

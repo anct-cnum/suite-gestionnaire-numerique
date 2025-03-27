@@ -109,7 +109,11 @@ type FeuilleDeRouteReadModel = Readonly<
       apercu: string
       emplacement: string
       nom: string
-      upload: Date
+      metadonnees?: Readonly<{
+        format: string
+        taille: string
+        upload: Date
+      }>
     }>
     structureCoPorteuse?: Membre
     totaux: Readonly<{

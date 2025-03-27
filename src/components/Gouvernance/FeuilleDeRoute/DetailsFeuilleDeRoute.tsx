@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import Tag from '@/components/shared/Tag/Tag'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
@@ -103,14 +104,17 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
             Plus de détails
           </Link>
         </li>
-        <li>
-          <button
-            className="fr-btn fr-btn--secondary fr-icon-download-line"
-            type="button"
-          >
-            Ouvrir le document pdf
-          </button>
-        </li>
+        {feuilleDeRoute.pieceJointe ?
+          <li>
+            <ExternalLink
+              className="fr-btn fr-btn--secondary fr-mt-2w"
+              href={feuilleDeRoute.pieceJointe.href}
+              title="Ouvrir le document pdf"
+            >
+              Ouvrir le document pdf
+            </ExternalLink>
+          </li>
+          : null}
       </ul>
     </>
   )

@@ -1,4 +1,5 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { formaterEnDateFrancaise } from './shared/date'
 import { LabelValue } from './shared/labelValue'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
@@ -53,24 +54,35 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
 }
 
 function toFeuilleDeRouteViewModel(uidGouvernance: string) {
-  return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => ({
-    actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
-    links: {
-      detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
-    },
-    nom: feuilleDeRoute.nom,
-    nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
-    pieceJointe: undefined,
-    porteur: feuilleDeRoute.structureCoPorteuse?.nom,
-    totaux: {
-      budget: formatMontant(feuilleDeRoute.totaux.budget),
-      coFinancement: formatMontant(feuilleDeRoute.totaux.coFinancement),
-      financementAccorde: formatMontant(feuilleDeRoute.totaux.financementAccorde),
-    },
-    uid: feuilleDeRoute.uid,
-    wordingDetailDuBudget: `dont ${formatMontant(feuilleDeRoute.totaux.coFinancement)} de co-financements et ${formatMontant(feuilleDeRoute.totaux.financementAccorde)} des financements accordés`,
-    wordingNombreCofinanceursEtBeneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}, ${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
-  })
+  return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => {
+    const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
+    const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
+    return {
+      actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
+      links: {
+        detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
+      },
+      nom: feuilleDeRoute.nom,
+      nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
+      pieceJointe: feuilleDeRoute.pieceJointe && {
+        ...feuilleDeRoute.pieceJointe,
+        href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+        metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
+          `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        nom: feuilleDeRoute.pieceJointe.nom.split('/').pop()!,
+      },
+      porteur: feuilleDeRoute.structureCoPorteuse?.nom,
+      totaux: {
+        budget: formatMontant(feuilleDeRoute.totaux.budget),
+        coFinancement: formatMontant(feuilleDeRoute.totaux.coFinancement),
+        financementAccorde: formatMontant(feuilleDeRoute.totaux.financementAccorde),
+      },
+      uid: feuilleDeRoute.uid,
+      wordingDetailDuBudget: `dont ${formatMontant(feuilleDeRoute.totaux.coFinancement)} de co-financements et ${formatMontant(feuilleDeRoute.totaux.financementAccorde)} des financements accordés`,
+      wordingNombreCofinanceursEtBeneficiaires: `${feuilleDeRoute.beneficiaires} bénéficiaire${formatPluriel(feuilleDeRoute.beneficiaires)}, ${feuilleDeRoute.coFinanceurs} co-financeur${formatPluriel(feuilleDeRoute.coFinanceurs)}`,
+    }
+  }
 }
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
@@ -129,7 +141,8 @@ export type FeuilleDeRouteViewModel = Readonly<{
     apercu: string
     emplacement: string
     nom: string
-    upload: Date
+    metadonnee: string
+    href: string
   }>
   actions: ReadonlyArray<ActionViewModel>
   wordingDetailDuBudget: string
