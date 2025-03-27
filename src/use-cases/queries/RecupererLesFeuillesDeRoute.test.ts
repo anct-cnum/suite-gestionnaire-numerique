@@ -235,7 +235,6 @@ describe('recupérer les feuilles de route', () => {
 })
 
 let desFeuillesDeRoute: FeuillesDeRouteReadModel = feuillesDeRouteReadModelFactory()
-
 let spiedCodeDepartement = ''
 
 class FeuillesDeRouteLoaderSpy implements FeuillesDeRouteLoader {
