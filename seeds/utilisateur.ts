@@ -46,7 +46,7 @@ void migration()
 // - structure -> "Gestionnaire groupement" si associé au rôle "grandReseau" ou "hub" sinon "Gestionnaire structure"
 // - structure_coop -> on ne migre pas car obsolète
 async function retrieveUtilisateursCoNum(): Promise<Array<UtilisateurCoNumRecord>> {
-  const { db, client } = await coNumClient()
+  const { client, db } = await coNumClient()
 
   try {
     return await db.collection('users')
@@ -306,13 +306,13 @@ type UtilisateurCoNumRecord = Readonly<{
   entityId: string
   hub: string
   lastLogin: Date
-  name: string
   mailSentDate: Date
+  name: string
   nom: string
   prenom: string
   region: string
-  roles: Array<string>
   reseau: string
+  roles: Array<string>
   sub: string
 }>
 
@@ -322,8 +322,8 @@ type UtilisateurFNERecord = Readonly<{
   }>
   created: Date
   email: string
-  firstName: string | null
-  lastName: string | null
+  firstName: null | string
+  lastName: null | string
   role: string
-  roleScope: string | null
+  roleScope: null | string
 }>

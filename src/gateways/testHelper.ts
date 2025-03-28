@@ -369,6 +369,30 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
   })
 }
 
+export async function creerUneEnveloppeFinancement(
+  override?: Partial<Prisma.EnveloppeFinancementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.enveloppeFinancementRecord.create({
+    data: enveloppeFinancementRecordFactory(override),
+  })
+}
+
+export async function creerUnCoFinancement(
+  override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.coFinancementRecord.create({
+    data: coFinancementRecordFactory(override),
+  })
+}
+
+export async function creerUnPorteurAction(
+  override?: Partial<Prisma.PorteurActionRecordUncheckedCreateInput>
+): Promise<void> {
+  await prisma.porteurActionRecord.create({
+    data: porteurActionRecordFactory(override),
+  })
+}
+
 function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
@@ -416,8 +440,8 @@ function structureRecordFactory(
     },
     departementCode: '75',
     id: 10,
-    idMongo: '123456',
     identifiantEtablissement: '41816609600069',
+    idMongo: '123456',
     nom: 'Solidarnum',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
@@ -456,14 +480,6 @@ function actionRecordFactory(
     nom: 'Action test',
     ...override,
   }
-}
-
-export async function creerUneEnveloppeFinancement(
-  override?: Partial<Prisma.EnveloppeFinancementRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.enveloppeFinancementRecord.create({
-    data: enveloppeFinancementRecordFactory(override),
-  })
 }
 
 function demandeDeSubventionRecordFactory(
@@ -615,14 +631,6 @@ function coFinancementRecordFactory(
   }
 }
 
-export async function creerUnCoFinancement(
-  override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.coFinancementRecord.create({
-    data: coFinancementRecordFactory(override),
-  })
-}
-
 function porteurActionRecordFactory(
   override?: Partial<Prisma.PorteurActionRecordUncheckedCreateInput>
 ): Prisma.PorteurActionRecordUncheckedCreateInput {
@@ -631,12 +639,4 @@ function porteurActionRecordFactory(
     membreId: 'membre1',
     ...override,
   }
-}
-
-export async function creerUnPorteurAction(
-  override?: Partial<Prisma.PorteurActionRecordUncheckedCreateInput>
-): Promise<void> {
-  await prisma.porteurActionRecord.create({
-    data: porteurActionRecordFactory(override),
-  })
 }

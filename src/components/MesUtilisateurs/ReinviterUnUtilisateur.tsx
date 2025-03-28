@@ -5,10 +5,10 @@ import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { Notification } from '../shared/Notification/Notification'
 
 export default function ReinviterUnUtilisateur({
-  utilisateur,
-  labelId,
-  drawerId,
   closeDrawer,
+  drawerId,
+  labelId,
+  utilisateur,
 }: Props): ReactElement {
   const { pathname, reinviterUnUtilisateurAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -58,12 +58,12 @@ export default function ReinviterUnUtilisateur({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
+  drawerId: string
+  labelId: string
   utilisateur: Readonly<{
     email: string
     inviteLe: string
     uid: string
   }>
-  labelId: string
-  drawerId: string
-  closeDrawer(): void
 }>

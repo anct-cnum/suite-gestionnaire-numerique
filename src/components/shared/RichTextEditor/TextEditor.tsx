@@ -1,13 +1,13 @@
 'use client'
 
 import { Link } from '@tiptap/extension-link'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { EditorContent, useEditor } from '@tiptap/react'
 import { StarterKit } from '@tiptap/starter-kit'
 import { ReactElement } from 'react'
 
 import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
-export default function TextEditor({ contenu, onChange, height, ariaLabel }: Props): ReactElement {
+export default function TextEditor({ ariaLabel, contenu, height, onChange }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
     editorProps: {
@@ -47,7 +47,7 @@ export default function TextEditor({ contenu, onChange, height, ariaLabel }: Pro
 
 type Props = Readonly<{
   ariaLabel: string
-  height: number
   contenu: string
+  height: number
   onChange(content: string): void
 }>

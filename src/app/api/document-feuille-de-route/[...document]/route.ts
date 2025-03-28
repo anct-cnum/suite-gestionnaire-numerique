@@ -1,6 +1,6 @@
 'use server'
 
-import { S3Client, GetObjectCommand, S3ClientConfig } from '@aws-sdk/client-s3'
+import { GetObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest, _response: NextResponse, s3 = new S3Client({
@@ -10,7 +10,7 @@ export async function GET(request: NextRequest, _response: NextResponse, s3 = ne
   },
   endpoint: 'https://s3.fr-par.scw.cloud',
   region: process.env.AWS_S3_REGION,
-} as S3ClientConfig)): Promise<NextResponse<object | null>> {
+} as S3ClientConfig)): Promise<NextResponse<null | object>> {
   try {
     const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
     const recuperationPdf = await s3.send(

@@ -12,8 +12,8 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 export default function ModifierUneNoteDeContextualisation({ contextualisation }: Props): ReactElement {
   const {
     modifierUneNoteDeContextualisationAction,
-    supprimerUneNoteDeContextualisationAction,
     pathname,
+    supprimerUneNoteDeContextualisationAction,
   } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isDisabled, setIsDisabled] = useState(false)

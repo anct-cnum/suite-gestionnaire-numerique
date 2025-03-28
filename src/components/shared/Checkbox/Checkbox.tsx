@@ -4,8 +4,8 @@ import { LabelValue } from '@/presenters/shared/labelValue'
 
 export default function Checkbox({
   children,
-  isSelected,
   id,
+  isSelected,
   label,
   value,
 }: Props): ReactElement {

@@ -9,6 +9,25 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
+  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
+    const utilisateurRecord = await this.#dataResource.findUnique({
+      include: {
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
+      },
+      where: {
+        isSupprime: false,
+        ssoId: uid,
+      },
+    })
+    if (!utilisateurRecord) {
+      throw new Error('Utilisateur non trouvé')
+    }
+    return transform(utilisateurRecord)
+  }
+
   async mesUtilisateursEtLeTotal(
     utilisateurCourant: UnUtilisateurReadModel,
     pageCourante: number,
@@ -120,25 +139,6 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       total,
       utilisateursCourants: utilisateursRecord.map(transform),
     }
-  }
-
-  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    const utilisateurRecord = await this.#dataResource.findUnique({
-      include: {
-        relationDepartement: true,
-        relationGroupement: true,
-        relationRegion: true,
-        relationStructure: true,
-      },
-      where: {
-        isSupprime: false,
-        ssoId: uid,
-      },
-    })
-    if (!utilisateurRecord) {
-      throw new Error('Utilisateur non trouvé')
-    }
-    return transform(utilisateurRecord)
   }
 }
 

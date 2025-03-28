@@ -78,17 +78,17 @@ const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
 }
 
 const spiedUidsToFind: Array<string> = []
-let spiedUtilisateurToDrop: Utilisateur | null
+let spiedUtilisateurToDrop: null | Utilisateur
 
-class UtilisateurRepositorySpy implements GetUtilisateurRepository, DropUtilisateurRepository {
-  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    spiedUidsToFind.push(uid)
-    return Promise.resolve(utilisateursByUid[uid])
-  }
-
+class UtilisateurRepositorySpy implements DropUtilisateurRepository, GetUtilisateurRepository {
   async drop(utilisateur: Utilisateur | UtilisateurUid): Promise<boolean> {
     spiedUtilisateurToDrop = utilisateur as Utilisateur
     return Promise.resolve(Boolean(utilisateur))
+  }
+
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUidsToFind.push(uid)
+    return Promise.resolve(utilisateursByUid[uid])
   }
 }
 

@@ -5,6 +5,10 @@ export class Exception<Failure extends string> extends Error {
     super(failure)
   }
 
+  static of<Failure extends string>(failure: Failure): Exception<Failure> {
+    return new Exception(failure)
+  }
+
   static toResult<Failure extends string>(run: () => never | void): Result<Failure> {
     try {
       run()
@@ -12,9 +16,5 @@ export class Exception<Failure extends string> extends Error {
     } catch (error: unknown) {
       return (error as Exception<Failure>).message as Failure
     }
-  }
-
-  static of<Failure extends string>(failure: Failure): Exception<Failure> {
-    return new Exception(failure)
   }
 }

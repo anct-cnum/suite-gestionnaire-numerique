@@ -7,7 +7,7 @@ import ModalTitle from '../shared/ModalTitle/ModalTitle'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { emailPattern } from '@/shared/patterns'
 
-export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Props): ReactElement {
+export default function SupprimerMonCompte({ closeModal, email, id, isOpen }: Props): ReactElement {
   const { supprimerMonCompteAction } = useContext(clientContext)
   const [emailValidationInfo, setEmailValidationInfo] =
     useState<EmailValidationInfo>(emailValidationInfoByState.invalid)
@@ -113,10 +113,10 @@ export default function SupprimerMonCompte({ id, email, isOpen, closeModal }: Pr
 }
 
 type Props = Readonly<{
-  id: string
-  email: string
-  isOpen: boolean
   closeModal(): void
+  email: string
+  id: string
+  isOpen: boolean
 }>
 
 type EmailValidationState = 'correct' | 'incorrect' | 'invalid'
@@ -124,9 +124,9 @@ type EmailValidationState = 'correct' | 'incorrect' | 'invalid'
 type EmailValidationInfo = Readonly<{
   groupClass: string
   inputClass: string
-  messageClass: string
-  message: string
   isOk: boolean
+  message: string
+  messageClass: string
 }>
 
 const emailValidationInfoByState: Readonly<Record<EmailValidationState, EmailValidationInfo>> = {

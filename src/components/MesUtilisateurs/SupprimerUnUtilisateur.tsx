@@ -6,10 +6,10 @@ import ModalTitle from '../shared/ModalTitle/ModalTitle'
 import { Notification } from '../shared/Notification/Notification'
 
 export default function SupprimerUnUtilisateur({
+  closeModal,
   id,
   isOpen,
   utilisateurASupprimer,
-  closeModal,
 }: Props): ReactElement {
   const { pathname, supprimerUnUtilisateurAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -73,10 +73,10 @@ export default function SupprimerUnUtilisateur({
 }
 
 type Props = Readonly<{
+  closeModal(): void
   id: string
   isOpen: boolean
   utilisateurASupprimer: UtilisateurASupprimer
-  closeModal(): void
 }>
 
 type UtilisateurASupprimer = Readonly<{

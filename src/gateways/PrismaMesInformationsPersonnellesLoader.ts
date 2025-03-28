@@ -1,6 +1,6 @@
-import { UtilisateurEtSesRelationsRecord, toTypologieRole } from './shared/RoleMapper'
+import { toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
-import { MesInformationsPersonnellesReadModel, MesInformationsPersonnellesLoader } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
+import { MesInformationsPersonnellesLoader, MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
 export class PrismaMesInformationsPersonnellesLoader implements MesInformationsPersonnellesLoader {
   readonly #dataResource = prisma.utilisateurRecord

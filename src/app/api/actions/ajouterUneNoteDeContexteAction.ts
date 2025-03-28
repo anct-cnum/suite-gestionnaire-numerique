@@ -36,8 +36,8 @@ export async function ajouterUneNoteDeContexteAction(
 
 type ActionParams = Readonly<{
   contenu: string
-  uidGouvernance: string
   path: string
+  uidGouvernance: string
 }>
 
 const validator = z.object({

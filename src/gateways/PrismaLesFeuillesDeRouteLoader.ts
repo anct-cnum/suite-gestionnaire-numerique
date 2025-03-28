@@ -111,7 +111,7 @@ function transform(
 }
 
 function fromMembre(
-  { nom, id }: Membre
+  { id, nom }: Membre
 ): NonNullable<FeuillesDeRouteReadModel['feuillesDeRoute'][number]['structureCoPorteuse']> {
   return { nom, uid: id }
 }

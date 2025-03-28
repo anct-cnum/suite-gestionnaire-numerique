@@ -32,9 +32,14 @@ describe('rechercher mes utilisateurs', () => {
 const dummyUtilisateur = utilisateurReadModelFactory()
 
 class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
+  spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
   spiedFindMesUtilisateursEtLeTotalArgs:
     Parameters<typeof MesUtilisateursLoaderSpy.prototype.mesUtilisateursEtLeTotal> | undefined
-  spiedFindByUidIdArgs: Parameters<typeof MesUtilisateursLoaderSpy.prototype.findByUid> | undefined
+
+  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
+    this.spiedFindByUidIdArgs = [uid]
+    return Promise.resolve(dummyUtilisateur)
+  }
 
   async mesUtilisateursEtLeTotal(
     utilisateur: UnUtilisateurReadModel,
@@ -58,10 +63,5 @@ class MesUtilisateursLoaderSpy implements MesUtilisateursLoader {
       total: 1,
       utilisateursCourants: [],
     })
-  }
-
-  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
-    this.spiedFindByUidIdArgs = [uid]
-    return Promise.resolve(dummyUtilisateur)
   }
 }

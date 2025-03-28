@@ -12,7 +12,7 @@ export class ModifierMesInformationsPersonnelles implements CommandHandler<Comma
 
   async handle(command: Command): ResultAsync<Failure> {
     const {
-      modification: { nom, prenom, emailDeContact: email, telephone },
+      modification: { emailDeContact: email, nom, prenom, telephone },
       uidUtilisateurCourant,
     } = command
 

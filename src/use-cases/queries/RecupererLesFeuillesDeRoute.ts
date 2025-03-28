@@ -55,7 +55,7 @@ export type FeuillesDeRouteReadModel = Readonly<{
   uidGouvernance: string
 }>
 
-export type StatutSubvention = 'deposee' | 'enCours' | 'acceptee' | 'refusee'
+export type StatutSubvention = 'acceptee' | 'deposee' | 'enCours' | 'refusee'
 
 function sommerCoFinancements(actions: ReadonlyArray<ActionReadModel>): number {
   return actions
@@ -108,12 +108,12 @@ type FeuilleDeRouteReadModel = Readonly<
     pieceJointe?: Readonly<{
       apercu: string
       emplacement: string
-      nom: string
       metadonnees?: Readonly<{
         format: string
         taille: string
         upload: Date
       }>
+      nom: string
     }>
     structureCoPorteuse?: Membre
     totaux: Readonly<{
@@ -126,16 +126,17 @@ type FeuilleDeRouteReadModel = Readonly<
 
 type ActionReadModel = Readonly<
   {
-    nom: string
-    porteurs: ReadonlyArray<Membre>
+    beneficiaires: ReadonlyArray<Membre>
+    besoins: ReadonlyArray<string>
+    budgetGlobal: number
     coFinancements: ReadonlyArray<Readonly<{
       coFinanceur: Membre
       montant: number
     }>>
-    beneficiaires: ReadonlyArray<Membre>
     contexte: string
     description: string
-    besoins: ReadonlyArray<string>
+    nom: string
+    porteurs: ReadonlyArray<Membre>
     subvention?: Readonly<{
       enveloppe: string
       montants: Readonly<{
@@ -148,7 +149,6 @@ type ActionReadModel = Readonly<
       coFinancement: number
       financementAccorde: number
     }>
-    budgetGlobal: number
     uid: string
   }>
 

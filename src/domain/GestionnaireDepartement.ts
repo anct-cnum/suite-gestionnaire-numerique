@@ -3,6 +3,13 @@ import { Role } from './Role'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, UtilisateurUid } from './Utilisateur'
 
 export class GestionnaireDepartement extends Utilisateur {
+  override get state(): GestionnaireDepartementState {
+    return {
+      ...super.state,
+      departement: this.#departement.state,
+    }
+  }
+
   readonly #departement: Departement
 
   constructor(
@@ -30,17 +37,10 @@ export class GestionnaireDepartement extends Utilisateur {
     this.#departement = departement
   }
 
-  override get state(): GestionnaireDepartementState {
-    return {
-      ...super.state,
-      departement: this.#departement.state,
-    }
-  }
-
   override peutGerer(autre: Utilisateur): boolean {
     return autre instanceof GestionnaireDepartement && autre.#departement.equals(this.#departement)
   }
 }
 
-type GestionnaireDepartementState = UtilisateurState &
-  Readonly<{ departement: DepartementState }>
+type GestionnaireDepartementState = Readonly<{ departement: DepartementState }> &
+  UtilisateurState

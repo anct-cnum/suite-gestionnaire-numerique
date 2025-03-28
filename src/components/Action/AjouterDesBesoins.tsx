@@ -110,8 +110,8 @@ export default function AjouterDesBesoins({
 }
 
 function Fieldset(
-  { titre, checkboxes }:
-  Readonly<{ titre: string; checkboxes: Besoins }>
+  { checkboxes, titre }:
+  Readonly<{ checkboxes: Besoins; titre: string }>
 ): ReactElement {
   return (
     <fieldset className="fr-fieldset">
@@ -137,9 +137,9 @@ function Fieldset(
 
 type Props = Readonly<{
   financements: ActionViewModel['besoins']['financements']
-  hasBesoins: boolean
   formations: ActionViewModel['besoins']['formations']
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']
+  hasBesoins: boolean
   outillages: ActionViewModel['besoins']['outillages']
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
 }>

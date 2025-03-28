@@ -32,8 +32,8 @@ export async function supprimerUneNoteDeContexteAction(
 }
 
 type ActionParams = Readonly<{
-  uidGouvernance: string
   path: string
+  uidGouvernance: string
 }>
 
 const validator = z.object({

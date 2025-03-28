@@ -3,10 +3,20 @@ import { Entity, Uid, ValueObject } from './shared/Model'
 import { Result } from '@/shared/lang'
 
 export abstract class Membre extends Entity<MembreState> {
+  override get state(): MembreState {
+    return {
+      nom: this.nom,
+      roles: this.roles.map((role) => role.state.value),
+      statut: this.statut.state.value,
+      uid: this.uid.state,
+      uidGouvernance: this.uidGouvernance.state,
+    }
+  }
+
   protected readonly nom: string
-  protected readonly uidGouvernance: GouvernanceUid
-  protected readonly statut: Statut
   protected readonly roles: ReadonlyArray<Role>
+  protected readonly statut: Statut
+  protected readonly uidGouvernance: GouvernanceUid
 
   constructor(
     uid: MembreUid,
@@ -20,16 +30,6 @@ export abstract class Membre extends Entity<MembreState> {
     this.nom = nom
     this.roles = roles
     this.statut = statut
-  }
-
-  override get state(): MembreState {
-    return {
-      nom: this.nom,
-      roles: this.roles.map((role) => role.state.value),
-      statut: this.statut.state.value,
-      uid: this.uid.state,
-      uidGouvernance: this.uidGouvernance.state,
-    }
   }
 
   appartientALaGouvernance(uidGouvernance: string): boolean {

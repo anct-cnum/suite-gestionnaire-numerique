@@ -18,7 +18,7 @@ const providerName = 'Pro Connect'
 const providerScope = 'openid given_name usual_name siret phone email'
 const nextAuthOptions = {
   callbacks: {
-    jwt({ token, profile }): JWT {
+    jwt({ profile, token }): JWT {
       if (profile) {
         return {
           ...token,
@@ -118,25 +118,25 @@ export async function getSessionSub(): Promise<string> {
 export type ProConnectProvider = Readonly<Record<'pro-connect', ClientSafeProvider>>
 
 export type Profile = Readonly<{
-  id: string
-  sub: string
-  email: string
-  given_name: string
-  usual_name: string
-  siret: string
-  phone_number: string
-  idp_id: string
   aud: string
+  email: string
   exp: number
+  given_name: string
   iat: number
+  id: string
+  idp_id: string
   iss: string
+  phone_number: string
+  siret: string
+  sub: string
+  usual_name: string
 }>
 
 async function recupereretMettreAJourUtilisateur(
   profile: Profile,
   utilisateurLoader: PrismaUtilisateurLoader,
   utilisateurRepository: PrismaUtilisateurRepository
-): Promise<UnUtilisateurReadModel | null> {
+): Promise<null | UnUtilisateurReadModel> {
   let utilisateurReadModel
   try {
     utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)

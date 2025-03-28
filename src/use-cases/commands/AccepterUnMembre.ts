@@ -6,9 +6,9 @@ import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre, MembreFailure } from '@/domain/Membre'
 
 export class AccepterUnMembre implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #membreRepository: MembreRepository
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     utilisateurRepository: UtilisateurRepository,
@@ -47,8 +47,8 @@ export class AccepterUnMembre implements CommandHandler<Command> {
 }
 
 type Failure =
-  | 'membrePotentielNonAssocieALaGouvernance'
   | 'gestionnaireNePeutPasAccepterLeMembrePotentiel'
+  | 'membrePotentielNonAssocieALaGouvernance'
   | MembreFailure
 
 type Command = Readonly<{

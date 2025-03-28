@@ -53,6 +53,46 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
   }
 }
 
+export type FeuillesDeRouteViewModel = Readonly<{
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
+  formulaire: Readonly<{
+    contratPreexistant: ReadonlyArray<LabelValue<'non' | 'oui'>>
+    membres: ReadonlyArray<LabelValue>
+    perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
+  }>
+  titre: string
+  totaux: Readonly<{
+    budget: string
+    coFinancement: string
+    financementAccorde: string
+  }>
+}>
+
+export type FeuilleDeRouteViewModel = Readonly<{
+  actions: ReadonlyArray<ActionViewModel>
+  links: Readonly<{
+    detail: string
+  }>
+  nom: string
+  nombreDActionsAttachees: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    href: string
+    metadonnee: string
+    nom: string
+  }>
+  porteur?: string
+  totaux: Readonly<{
+    budget: string
+    coFinancement: string
+    financementAccorde: string
+  }>
+  uid: string
+  wordingDetailDuBudget: string
+  wordingNombreCofinanceursEtBeneficiaires: string
+}>
+
 function toFeuilleDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuillesDeRouteReadModel['feuillesDeRoute'][number]): FeuilleDeRouteViewModel => {
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
@@ -118,46 +158,6 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   })
 }
 
-export type FeuillesDeRouteViewModel = Readonly<{
-  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
-  formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<LabelValue<'oui' | 'non'>>
-    membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<LabelValue<'regional' | 'departemental' | 'epci_groupement'>>
-  }>
-  titre: string
-  totaux: Readonly<{
-    budget: string
-    coFinancement: string
-    financementAccorde: string
-  }>
-}>
-
-export type FeuilleDeRouteViewModel = Readonly<{
-  nom: string
-  uid: string
-  porteur?: string
-  pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
-    nom: string
-    metadonnee: string
-    href: string
-  }>
-  actions: ReadonlyArray<ActionViewModel>
-  wordingDetailDuBudget: string
-  nombreDActionsAttachees: string
-  totaux: Readonly<{
-    budget: string
-    coFinancement: string
-    financementAccorde: string
-  }>
-  links: Readonly<{
-    detail: string
-  }>
-  wordingNombreCofinanceursEtBeneficiaires: string
-}>
-
 type ActionViewModel = Readonly<{
   beneficiaires: ReadonlyArray<{
     nom: string
@@ -165,9 +165,9 @@ type ActionViewModel = Readonly<{
   }>
   besoins: ReadonlyArray<string>
   budgetPrevisionnel: Readonly<{
+    coFinancements: ReadonlyArray<Financement>
     global: Financement
     subventions: ReadonlyArray<Financement>
-    coFinancements: ReadonlyArray<Financement>
   }>
   description: string
   lienPourModifier: string

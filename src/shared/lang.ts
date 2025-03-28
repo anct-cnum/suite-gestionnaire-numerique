@@ -18,7 +18,7 @@ export function isNullish(value: unknown): boolean {
   return value === undefined || value === null
 }
 
-export function isNullishOrEmpty(str: string | undefined | null): boolean {
+export function isNullishOrEmpty(str: null | string | undefined): boolean {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   return isNullish(str) || isEmpty(str!)
 }

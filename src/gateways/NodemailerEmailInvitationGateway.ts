@@ -3,15 +3,15 @@
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
-import { smtpFrom, smtpReplyTo, makeMjml } from './invitationEmail'
+import { makeMjml, smtpFrom, smtpReplyTo } from './invitationEmail'
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
 export class NodemailerEmailInvitationGateway implements EmailGateway {
   readonly #host: string
+  readonly #link: string
+  readonly #password: string
   readonly #port: string
   readonly #user: string
-  readonly #password: string
-  readonly #link: string
 
   constructor(host: string, port: string, link: string, user = '', password = '') {
     this.#host = host

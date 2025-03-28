@@ -31,7 +31,7 @@ describe('modifier mes informations personnelles', () => {
         expectedResult: 'telephoneInvalide',
         modification: { telephone: '000' },
       },
-    ])('$desc', async ({ modification, expectedResult }) => {
+    ])('$desc', async ({ expectedResult, modification }) => {
       // GIVEN
       const commandHandler = new ModifierMesInformationsPersonnelles(new RepositorySpy())
 
@@ -78,8 +78,8 @@ const informationsPersonnellesModifiees = {
   },
   uidUtilisateurCourant: 'fooId',
 }
-let spiedMesInformationsPersonnellesToModify: Utilisateur | null
-let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
+let spiedMesInformationsPersonnellesToModify: null | Utilisateur
+let spiedUtilisateurUidToFind: null | UtilisateurUidState['value']
 
 class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {

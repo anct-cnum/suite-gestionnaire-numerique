@@ -103,6 +103,6 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
 }
 
 type Props = Readonly<{
-  date: Date
   action: ActionViewModel
+  date: Date
 }>

@@ -235,8 +235,8 @@ export type TableauDeBordViewModel = Readonly<{
     total: number
   }>
   taches: ReadonlyArray<{
-    label: string
     context: string
+    label: string
     lien: string
   }>
 }>

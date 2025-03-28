@@ -9,6 +9,10 @@ abstract class Model {
 }
 
 export abstract class ValueObject<State extends Struct> extends Model {
+  override get state(): State {
+    return this.#state
+  }
+
   readonly #state: State
 
   constructor(state: State) {
@@ -16,25 +20,21 @@ export abstract class ValueObject<State extends Struct> extends Model {
     this.#state = state
     Object.freeze(this)
   }
-
-  override get state(): State {
-    return this.#state
-  }
 }
 
 export abstract class Uid<State extends UidState> extends ValueObject<State> {}
 
 export abstract class Entity<State extends EntityState> extends Model {
+  abstract override get state(): State
+
   protected readonly uid: Uid<State['uid']>
 
   protected constructor(uid: Uid<State['uid']>) {
     super()
     this.uid = uid
   }
-
-  abstract override get state(): State
 }
 
 type EntityState = Readonly<{ uid: UidState }> & Struct
 
-type UidState = Readonly<{ value: string | number }> & Struct
+type UidState = Readonly<{ value: number | string }> & Struct

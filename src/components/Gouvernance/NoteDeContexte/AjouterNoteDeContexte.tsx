@@ -10,10 +10,10 @@ import TextEditor from '@/components/shared/RichTextEditor/TextEditor'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function AjouterNoteDeContexte({
+  closeDrawer,
   id,
   labelId,
   uidGouvernance,
-  closeDrawer,
 }: Props): ReactElement {
   const { ajouterUneNoteDeContexteAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -79,8 +79,8 @@ export default function AjouterNoteDeContexte({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
   id: string
   labelId: string
   uidGouvernance: string
-  closeDrawer(): void
 }>

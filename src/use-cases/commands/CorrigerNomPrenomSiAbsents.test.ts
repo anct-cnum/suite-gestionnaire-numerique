@@ -63,7 +63,7 @@ describe('corriger nom prenom si absents', () => {
     },
   ])(
     '$desc, mais la mise à jour est invalide : la notification d’invalidité est émise et aucune mise à jour n’est effectuée',
-    async ({ nomAvantCorrection, prenomAvantCorrection, correctionNom, correctionPrenom }) => {
+    async ({ correctionNom, correctionPrenom, nomAvantCorrection, prenomAvantCorrection }) => {
       // GIVEN
       const nom = nomAvantCorrection
       const prenom = prenomAvantCorrection
@@ -120,12 +120,12 @@ describe('corriger nom prenom si absents', () => {
   ])(
     '$desc',
     async ({
-      nomAvantCorrection,
-      prenomAvantCorrection,
-      nomApresCorrection,
-      prenomApresCorrection,
       correctionNom,
       correctionPrenom,
+      nomApresCorrection,
+      nomAvantCorrection,
+      prenomApresCorrection,
+      prenomAvantCorrection,
     }) => {
       // GIVEN
       const nom = nomAvantCorrection
@@ -156,8 +156,8 @@ describe('corriger nom prenom si absents', () => {
   )
 })
 
-let spiedUidToFind: string | null
-let spiedUtilisateurToUpdate: Utilisateur | null
+let spiedUidToFind: null | string
+let spiedUtilisateurToUpdate: null | Utilisateur
 
 class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {

@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function ResumeNotePrivee({ id, edition, showDrawer, texte }: Props): ReactElement {
+export default function ResumeNotePrivee({ edition, id, showDrawer, texte }: Props): ReactElement {
   return (
     <button
       aria-controls={id}
@@ -24,8 +24,8 @@ export default function ResumeNotePrivee({ id, edition, showDrawer, texte }: Pro
 }
 
 type Props = Readonly<{
-  id: string
   edition: string
-  texte: string
+  id: string
   showDrawer(): void
+  texte: string
 }>

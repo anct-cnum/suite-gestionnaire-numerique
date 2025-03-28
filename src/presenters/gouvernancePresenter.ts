@@ -2,7 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
-import { ComiteReadModel, FeuilleDeRouteReadModel, CoporteurDetailReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { ComiteReadModel, CoporteurDetailReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
@@ -43,25 +43,28 @@ export function gouvernancePresenter(
 }
 
 export type GouvernanceViewModel = Readonly<{
-  peutVoirNotePrivee: boolean
-  comites?: ReadonlyArray<ComiteResumeViewModel>
   comiteARemplir: ComiteViewModel
+  comites?: ReadonlyArray<ComiteResumeViewModel>
   dateAujourdhui: string
   departement: string
+  links: {
+    membres: string
+  }
   notePrivee?: Readonly<{
     edition: string
     resume: string
     texte: string
   }>
+  peutVoirNotePrivee: boolean
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
-    total: string
-    wording: string
     lien: Readonly<{
       label: string
       url: string
     }>
+    total: string
+    wording: string
   }>
   sectionMembres: Readonly<{
     coporteurs: ReadonlyArray<MembreDetailsViewModel>
@@ -79,9 +82,67 @@ export type GouvernanceViewModel = Readonly<{
     sousTitre: string
   }>
   uid: string
-  links: {
-    membres: string
-  }
+}>
+
+export type ComiteViewModel = Readonly<{
+  commentaire?: string
+  date?: string
+  derniereEdition?: string
+  editeur?: string
+  frequences: ReadonlyArray<{
+    id: string
+    isChecked: boolean
+    label: string
+    value: string
+  }>
+  types: ReadonlyArray<{
+    id: string
+    isChecked: boolean
+    label: string
+    value: string
+  }>
+  uid: number
+}>
+
+export type FeuilleDeRouteViewModel = Readonly<{
+  beneficiairesSubvention: ReadonlyArray<MembreViewModel>
+  beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
+  budgetGlobal: string
+  lien: string
+  montantSubventionAccorde: string
+  montantSubventionDemande: string
+  montantSubventionFormationAccorde: string
+  nom: string
+  pieceJointe?: Readonly<{
+    apercu: string
+    emplacement: string
+    href: string
+    metadonnee: string
+    nom: string
+  }>
+  porteur: string
+  totalActions: string
+  wordingBeneficiairesSubvention: string
+  wordingBeneficiairesSubventionFormation: string
+}>
+
+export type MembreDetailsViewModel = Readonly<{
+  details: ReadonlyArray<
+    Readonly<{
+      feuillesDeRoute?: ReadonlyArray<
+        Readonly<{
+          nom: string
+        }>
+      >
+      information: string
+      intitule: string
+    }>
+  >
+  logo: string
+  nom: string
+  plusDetailsHref?: string
+  roles: ReadonlyArray<RoleViewModel>
+  type: string
 }>
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
@@ -289,51 +350,9 @@ function buildSousTitreNoteDeContexte(noteDeContexte: UneGouvernanceReadModel['n
   return `Modifié le ${formaterEnDateFrancaise(noteDeContexte.dateDeModification)} par ${noteDeContexte.prenomAuteur} ${noteDeContexte.nomAuteur}`
 }
 
-type ComiteResumeViewModel = Readonly<{
-  intitule: string
+type ComiteResumeViewModel = ComiteViewModel & Readonly<{
   frequence: string
-}> & ComiteViewModel
-
-export type ComiteViewModel = Readonly<{
-  commentaire?: string
-  date?: string
-  derniereEdition?: string
-  editeur?: string
-  frequences: ReadonlyArray<{
-    id: string
-    isChecked: boolean
-    label: string
-    value: string
-  }>
-  types: ReadonlyArray<{
-    id: string
-    isChecked: boolean
-    label: string
-    value: string
-  }>
-  uid: number
-}>
-
-export type FeuilleDeRouteViewModel = Readonly<{
-  nom: string
-  porteur: string
-  totalActions: string
-  budgetGlobal: string
-  lien: string
-  montantSubventionDemande: string
-  montantSubventionAccorde: string
-  montantSubventionFormationAccorde: string
-  beneficiairesSubvention: ReadonlyArray<MembreViewModel>
-  beneficiairesSubventionFormation: ReadonlyArray<MembreViewModel>
-  wordingBeneficiairesSubvention: string
-  wordingBeneficiairesSubventionFormation: string
-  pieceJointe?: Readonly<{
-    apercu: string
-    emplacement: string
-    nom: string
-    metadonnee: string
-    href: string
-  }>
+  intitule: string
 }>
 
 type MembreViewModel = Readonly<{
@@ -341,25 +360,6 @@ type MembreViewModel = Readonly<{
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
-}>
-
-export type MembreDetailsViewModel = Readonly<{
-  nom: string
-  logo: string
-  roles: ReadonlyArray<RoleViewModel>
-  type: string
-  details: ReadonlyArray<
-    Readonly<{
-      intitule: string
-      information: string
-      feuillesDeRoute?: ReadonlyArray<
-        Readonly<{
-          nom: string
-        }>
-      >
-    }>
-  >
-  plusDetailsHref?: string
 }>
 
 const frequences = [

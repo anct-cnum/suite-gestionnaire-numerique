@@ -1,14 +1,15 @@
 export type UnUtilisateurReadModel = Readonly<{
-  departementCode: string | null
+  departementCode: null | string
   derniereConnexion: Date
   email: string
-  groupementId: number | null
+  groupementId: null | number
   inviteLe: Date
   isActive: boolean
   isGestionnaireDepartement: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string
+  regionCode: null | string
   role: Readonly<{
     categorie: string
     doesItBelongToGroupeAdmin: boolean
@@ -16,8 +17,7 @@ export type UnUtilisateurReadModel = Readonly<{
     organisation: string
     rolesGerables: ReadonlyArray<string>
   }>
-  regionCode: string | null
-  structureId: number | null
+  structureId: null | number
   telephone: string
   uid: string
 }>

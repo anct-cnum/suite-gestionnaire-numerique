@@ -46,10 +46,10 @@ describe('mettre à jour la date de dernière connexion à chaque connexion', ()
   })
 })
 
-let spiedUidToFind: string | null
-let spiedUtilisateurToUpdate: Utilisateur | null
+let spiedUidToFind: null | string
+let spiedUtilisateurToUpdate: null | Utilisateur
 
-class UtilisateurRepositorySpy implements UpdateUtilisateurRepository, GetUtilisateurRepository {
+class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({

@@ -184,8 +184,8 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
 }
 
 export type ActionViewModel = Readonly<{
-  hasBesoins: boolean
-  nomFeuilleDeRoute: string
+  anneeDeDebut: string
+  anneeDeFin?: string
   beneficiaires: Beneficiaires
   besoins: Readonly<{
     financements: Besoins
@@ -193,28 +193,28 @@ export type ActionViewModel = Readonly<{
     formationsProfessionnels: Besoins
     outillages: Besoins
   }>
+  budgetGlobal: number
   budgetPrevisionnel: ReadonlyArray<{
     coFinanceur: string
     montant: string
   }>
-  budgetGlobal: number
-  enveloppes: ReadonlyArray<Enveloppe>
-  description: string
   contexte: string
+  description: string
+  enveloppes: ReadonlyArray<Enveloppe>
+  hasBesoins: boolean
   lienPourModifier: string
   nom: string
+  nomFeuilleDeRoute: string
   porteurs: Porteurs
   statut: ActionStatutViewModel
+  temporalite: 'annuelle' | 'pluriannuelle'
   totaux: Readonly<{
     coFinancement: string
     financementAccorde: string
   }>
   uid: string
-  urlGouvernance: string
   urlFeuilleDeRoute: string
-  temporalite: 'pluriannuelle' | 'annuelle'
-  anneeDeDebut: string
-  anneeDeFin?: string
+  urlGouvernance: string
 }>
 
 export const actionARemplir: ActionViewModel = {
@@ -360,12 +360,12 @@ export const actionARemplir: ActionViewModel = {
 export type Besoins = ReadonlyArray<LabelValue>
 
 export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
-  color: 'success' | 'error' | 'info' | 'warning' | 'new'
+  color: 'error' | 'info' | 'new' | 'success' | 'warning'
   statut: string
 }>>
 
 export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
-  color: 'success' | 'error' | 'info' | 'warning' | 'new'
+  color: 'error' | 'info' | 'new' | 'success' | 'warning'
   statut: string
 }>>
 

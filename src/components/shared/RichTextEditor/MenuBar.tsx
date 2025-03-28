@@ -6,7 +6,7 @@ import { MenuButton } from './MenuButton'
 import styles from './RichTextEditor.module.css'
 
 // istanbul ignore next @preserve
-export function BarreDeMenuEditeurDeTexte({ editor }: Props): ReactElement | null {
+export function BarreDeMenuEditeurDeTexte({ editor }: Props): null | ReactElement {
   if (!editor) {
     return null
   }

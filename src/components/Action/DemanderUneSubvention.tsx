@@ -178,7 +178,7 @@ export default function DemanderUneSubvention({
     </>
   )
 
-  function montantInput({ ref, id, errorTextId, max, onInput, children }: MontantInputProps): ReactElement {
+  function montantInput({ children, errorTextId, id, max, onInput, ref }: MontantInputProps): ReactElement {
     const input = ref.current
     const isInput = input !== null
     const isInvalid = isInput && !input.validity.valid
@@ -246,11 +246,11 @@ type Enveloppe = ActionViewModel['enveloppes'][number]
 type EnveloppeById = Readonly<Record<string, Enveloppe>>
 
 type MontantInputProps = PropsWithChildren<Readonly<{
-  ref: RefObject<HTMLInputElement | null>
-  id: string
   errorTextId: string
+  id: string
   max: number
   onInput(montant: number): void
+  ref: RefObject<HTMLInputElement | null>
 }>>
 
 type Props = Readonly<{

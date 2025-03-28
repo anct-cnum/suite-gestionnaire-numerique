@@ -60,16 +60,16 @@ export type MonUtilisateur = DetailsUtilisateurViewModel & Readonly<{
   isActif: boolean
   picto: string
   statut: Readonly<{
-    couleur: 'success' | 'grey-main'
-    libelle: 'En attente' | 'Activé'
+    couleur: 'grey-main' | 'success'
+    libelle: 'Activé' | 'En attente'
   }>
   uid: string
 }>
 
 export type DetailsUtilisateurViewModel = Readonly<{
   derniereConnexion: string
-  inviteLe: string
   emailDeContact: string
+  inviteLe: string
   prenomEtNom: string
   role: string
   structure: string
@@ -79,8 +79,8 @@ export type DetailsUtilisateurViewModel = Readonly<{
 export type RolesAvecStructure = Readonly<Record<string, {
   label: string
   options: ReadonlyArray<{
-    value: string
     label: string
+    value: string
   }>
   placeholder: string
 }>>

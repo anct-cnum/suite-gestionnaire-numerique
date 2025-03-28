@@ -6,9 +6,9 @@ import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command> {
+  readonly #date: Date
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
-  readonly #date: Date
 
   constructor(
     gouvernanceRepository: GouvernanceRepository,
@@ -41,6 +41,8 @@ export class AjouterNoteDeContexteAGouvernance implements CommandHandler<Command
   }
 }
 
+export interface GouvernanceRepository extends GetGouvernanceRepository, UpdateGouvernanceRepository {}
+
 type Failure = 'utilisateurNePeutPasAjouterNoteDeContexte' | GouvernanceFailure
 
 type Command = Readonly<{
@@ -48,7 +50,5 @@ type Command = Readonly<{
   uidEditeur: string
   uidGouvernance: string
 }>
-
-export interface GouvernanceRepository extends GetGouvernanceRepository, UpdateGouvernanceRepository {}
 
 type UtilisateurRepository = GetUtilisateurRepository

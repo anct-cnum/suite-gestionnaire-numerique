@@ -1,7 +1,7 @@
 import { DepartementState } from './Departement'
 import { GroupementState } from './Groupement'
 import { RegionState } from './Region'
-import { Role, TypologieRole, type RoleState } from './Role'
+import { Role, type RoleState, TypologieRole } from './Role'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
@@ -10,15 +10,34 @@ import { isEmpty, Result } from '@/shared/lang'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export abstract class Utilisateur extends Entity<UtilisateurState> {
-  readonly #isSuperAdmin: boolean
+  get isAdmin(): boolean {
+    return this.#isAdmin
+  }
+
+  override get state(): UtilisateurState {
+    return {
+      derniereConnexion: this.#derniereConnexion?.toJSON(),
+      emailDeContact: this.#emailDeContact.state.value,
+      inviteLe: this.#inviteLe.toJSON(),
+      isActive: Boolean(this.#derniereConnexion),
+      isSuperAdmin: this.#isSuperAdmin,
+      nom: this.#nom.state.value,
+      prenom: this.#prenom.state.value,
+      role: this.#role.state,
+      telephone: this.#telephone.state.value,
+      uid: this.uid.state,
+    }
+  }
+
+  #derniereConnexion?: ValidDate<UtilisateurFailure>
+  #emailDeContact: Email
+  #inviteLe: ValidDate<UtilisateurFailure>
   readonly #isAdmin = false
-  #role: Role
+  readonly #isSuperAdmin: boolean
   #nom: Nom
   #prenom: Prenom
-  #emailDeContact: Email
+  #role: Role
   #telephone: Telephone
-  #inviteLe: ValidDate<UtilisateurFailure>
-  #derniereConnexion?: ValidDate<UtilisateurFailure>
 
   constructor(
     uid: UtilisateurUid,
@@ -44,28 +63,17 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#telephone = telephone
   }
 
-  override get state(): UtilisateurState {
-    return {
-      derniereConnexion: this.#derniereConnexion?.toJSON(),
-      emailDeContact: this.#emailDeContact.state.value,
-      inviteLe: this.#inviteLe.toJSON(),
-      isActive: Boolean(this.#derniereConnexion),
-      isSuperAdmin: this.#isSuperAdmin,
-      nom: this.#nom.state.value,
-      prenom: this.#prenom.state.value,
-      role: this.#role.state,
-      telephone: this.#telephone.state.value,
-      uid: this.uid.state,
-    }
+  changerDateDeDerniereConnexion(date: Date): void {
+    this.#derniereConnexion = new ValidDate(date, 'dateDeDerniereConnexionInvalide')
   }
 
-  get isAdmin(): boolean {
-    return this.#isAdmin
+  changerDateDInvitation(inviteLe: Date): void {
+    this.#inviteLe = new ValidDate(inviteLe, 'dateDInvitationInvalide')
   }
 
-  changerPrenom(prenom: string): Result<UtilisateurFailure> {
+  changerEmail(email: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
-      this.#prenom = new Prenom(prenom)
+      this.#emailDeContact = new Email(email)
     })
   }
 
@@ -75,20 +83,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     })
   }
 
-  changerEmail(email: string): Result<UtilisateurFailure> {
+  changerPrenom(prenom: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
-      this.#emailDeContact = new Email(email)
+      this.#prenom = new Prenom(prenom)
     })
-  }
-
-  changerTelephone(telephone: string): Result<UtilisateurFailure> {
-    return Exception.toResult<UtilisateurFailure>(() => {
-      this.#telephone = new Telephone(telephone)
-    })
-  }
-
-  changerDateDInvitation(inviteLe: Date): void {
-    this.#inviteLe = new ValidDate(inviteLe, 'dateDInvitationInvalide')
   }
 
   changerRole(nouveauRole: TypologieRole): Result<UtilisateurFailure> {
@@ -99,8 +97,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return 'utilisateurNonAutoriseAChangerSonRole'
   }
 
-  changerDateDeDerniereConnexion(date: Date): void {
-    this.#derniereConnexion = new ValidDate(date, 'dateDeDerniereConnexionInvalide')
+  changerTelephone(telephone: string): Result<UtilisateurFailure> {
+    return Exception.toResult<UtilisateurFailure>(() => {
+      this.#telephone = new Telephone(telephone)
+    })
   }
 
   abstract peutGerer(autre: Utilisateur): boolean
@@ -109,35 +109,35 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
 export class UtilisateurUid extends Uid<UtilisateurUidState> {}
 
 export type UtilisateurUidState = Readonly<{
-  value: string
   email: string
+  value: string
 }>
 
 export type UtilisateurState = Readonly<{
-  uid: UtilisateurUidState
+  departement?: DepartementState
+  derniereConnexion?: string
   emailDeContact: string
+  groupementUid?: GroupementState['uid']
   inviteLe: string
   isActive: boolean
   isSuperAdmin: boolean
   nom: string
   prenom: string
-  role: RoleState
-  telephone: string
-  derniereConnexion?: string
-  departement?: DepartementState
-  groupementUid?: GroupementState['uid']
   region?: RegionState
+  role: RoleState
   structureUid?: StructureState['uid']
+  telephone: string
+  uid: UtilisateurUidState
 }>
 
 export type UtilisateurFailure =
-  | 'utilisateurNonAutoriseAChangerSonRole'
-  | 'prenomAbsent'
-  | 'nomAbsent'
-  | 'emailInvalide'
-  | 'telephoneInvalide'
   | 'dateDeDerniereConnexionInvalide'
   | 'dateDInvitationInvalide'
+  | 'emailInvalide'
+  | 'nomAbsent'
+  | 'prenomAbsent'
+  | 'telephoneInvalide'
+  | 'utilisateurNonAutoriseAChangerSonRole'
 
 export class Nom extends ValueObject<AttributUtilisateurState> {
   constructor(value: string) {

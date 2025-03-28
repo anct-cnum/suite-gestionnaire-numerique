@@ -32,7 +32,7 @@ export const membreInclude = {
   relationContact: true,
 }
 
-export type Membre = Readonly<{ roles: ReadonlyArray<string> }> & MembreSansRole
+export type Membre = MembreSansRole & Readonly<{ roles: ReadonlyArray<string> }>
 
 function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<AssociationMembreEtRoleUnique> {
   return [
@@ -43,7 +43,7 @@ function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<Ass
     })),
     membre.membresGouvernanceEpci.map(({ epci, role }) => ({ nom: epci, role })),
     membre.membresGouvernanceSgar.map(({ relationSgar, role }) => ({ nom: relationSgar.nom, role })),
-    membre.membresGouvernanceStructure.map(({ structure, role }) => ({ nom: structure, role })),
+    membre.membresGouvernanceStructure.map(({ role, structure }) => ({ nom: structure, role })),
   ]
     .flat()
     .map(({ nom, role }) => ({
@@ -79,20 +79,20 @@ type MembreRecord = Prisma.MembreRecordGetPayload<{
   include: typeof membreInclude
 }>
 
-type AssociationMembreEtRoleUnique = Readonly<{ role: string }> & MembreSansRole
+type AssociationMembreEtRoleUnique = MembreSansRole & Readonly<{ role: string }>
 
 type MembreSansRole = Readonly<{
   contactReferent: {
     email: string
-    prenom: string
-    nom: string
     fonction: string
+    nom: string
+    prenom: string
   }
-  contactTechnique: string | null
-  nom: string
-  type: string | null
+  contactTechnique: null | string
   id: string
+  nom: string
   statut: string
+  type: null | string
 }>
 
 type MembresById = Readonly<Record<string, Membre>>

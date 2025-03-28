@@ -3,8 +3,8 @@ import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 
 export class MettreAJourDateDeDerniereConnexion implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
   readonly #date: Date
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(utilisateurRepository: UtilisateurRepository, date: Date) {
     this.#utilisateurRepository = utilisateurRepository

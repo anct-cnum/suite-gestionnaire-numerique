@@ -10,7 +10,7 @@ import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import Table from '@/components/shared/Table/Table'
-import { MembreViewModel, MembresViewModel } from '@/presenters/membresPresenter'
+import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 import { alphaAsc } from '@/shared/lang'
 
 export default function GestionMembres({ membresViewModel }: Props): ReactElement {
@@ -283,11 +283,11 @@ type Props = Readonly<{
   membresViewModel: MembresViewModel
 }>
 
-type StatutSelectionnable = 'confirme' | 'candidat' | 'suggere'
+type StatutSelectionnable = 'candidat' | 'confirme' | 'suggere'
 
 type MembresView = Readonly<{
-  statutSelectionne: StatutSelectionnable
-  roleSelectionne: string
-  typologieSelectionnee: string
   membres: ReadonlyArray<MembreViewModel>
+  roleSelectionne: string
+  statutSelectionne: StatutSelectionnable
+  typologieSelectionnee: string
 }>

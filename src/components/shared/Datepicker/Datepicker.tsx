@@ -1,10 +1,10 @@
 import React, { PropsWithChildren, ReactElement, useId } from 'react'
 
 export default function Datepicker({
-  defaultValue = '',
   children,
-  name,
+  defaultValue = '',
   min,
+  name,
 }: Props): ReactElement {
   const id = useId()
 
@@ -30,6 +30,6 @@ export default function Datepicker({
 
 type Props = PropsWithChildren<Readonly<{
   defaultValue?: string
-  name: string
   min?: string
+  name: string
 }>>

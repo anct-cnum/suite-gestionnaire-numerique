@@ -22,6 +22,14 @@ export class PrismaComiteRepository implements ComiteRepository {
     return true
   }
 
+  async drop(comite: Comite): Promise<void> {
+    await this.#dataResource.delete({
+      where: {
+        id: Number(comite.state.uid.value),
+      },
+    })
+  }
+
   async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     const record = await this.#dataResource.findUniqueOrThrow({
       include: {
@@ -65,14 +73,6 @@ export class PrismaComiteRepository implements ComiteRepository {
         frequence: comite.state.frequence,
         type: comite.state.type,
       },
-      where: {
-        id: Number(comite.state.uid.value),
-      },
-    })
-  }
-
-  async drop(comite: Comite): Promise<void> {
-    await this.#dataResource.delete({
       where: {
         id: Number(comite.state.uid.value),
       },

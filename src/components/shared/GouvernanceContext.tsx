@@ -1,7 +1,7 @@
 // Stryker disable all
 'use client'
 
-import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
+import { createContext, PropsWithChildren, ReactElement, useMemo } from 'react'
 
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 

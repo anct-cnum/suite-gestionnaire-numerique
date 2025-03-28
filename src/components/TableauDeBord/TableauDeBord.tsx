@@ -1,6 +1,6 @@
 'use client'
 
-import { ArcElement, Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js'
+import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } from 'chart.js'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'

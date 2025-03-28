@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Resume({ children, style, peutVoirNotePrivee }: Props): ReactElement {
+export default function Resume({ children, peutVoirNotePrivee, style }: Props): ReactElement {
   return (
     <div className={peutVoirNotePrivee ? 'fr-col-12 fr-col-md-4 fr-col-sm-6' : 'fr-col-6'}>
       <div className={`fr-card color-blue-france ${style}`}>
@@ -15,6 +15,6 @@ export default function Resume({ children, style, peutVoirNotePrivee }: Props): 
 }
 
 type Props = PropsWithChildren<Readonly<{
-  style: string
   peutVoirNotePrivee: boolean
+  style: string
 }>>

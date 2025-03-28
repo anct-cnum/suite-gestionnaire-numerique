@@ -36,7 +36,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const rechercherMesUtilisateurs = new RechercherMesUtilisateurs(utilisateurLoader)
-  const { utilisateursCourants, total } =
+  const { total, utilisateursCourants } =
     await rechercherMesUtilisateurs.handle({
       uid: sub,
       utilisateursActives,
@@ -89,9 +89,9 @@ type Props = Readonly<{
     codeDepartement: string
     codeRegion: string
     page: string
-    roles: string
-    utilisateursActives: string
-    structure: string
     prenomOuNomOuEmail: string
+    roles: string
+    structure: string
+    utilisateursActives: string
   }>>>
 }>

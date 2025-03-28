@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaStructureLoader } from '@/gateways/PrismaStructureLoader'
-import { isNullishOrEmpty, isNullish } from '@/shared/lang'
+import { isNullish, isNullishOrEmpty } from '@/shared/lang'
 import { RechercherLesStructures, StructuresReadModel } from '@/use-cases/queries/RechercherLesStructures'
 
-export async function GET(request: NextRequest): Promise<NextResponse<StructuresReadModel | null>> {
+export async function GET(request: NextRequest): Promise<NextResponse<null | StructuresReadModel>> {
   const session = await getSession()
   if (isNullish(session)) {
     return NextResponse.json(null, { status: 403 })

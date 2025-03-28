@@ -49,6 +49,10 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }
   }
 
+  async drop(utilisateur: Utilisateur): Promise<boolean> {
+    return this.#drop(utilisateur.state.uid.value)
+  }
+
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     const record = await this.#dataResource.findUnique({
       include: {
@@ -79,10 +83,6 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       telephone: record.telephone,
       uid: { email: record.ssoEmail, value: record.ssoId },
     }).create(toTypologieRole(record.role))
-  }
-
-  async drop(utilisateur: Utilisateur): Promise<boolean> {
-    return this.#drop(utilisateur.state.uid.value)
   }
 
   async update(utilisateur: Utilisateur): Promise<void> {

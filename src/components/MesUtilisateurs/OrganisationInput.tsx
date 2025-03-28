@@ -1,18 +1,18 @@
 // Stryker disable all
 import { ReactElement } from 'react'
-import Select, { StylesConfig, Options } from 'react-select'
+import Select, { Options, StylesConfig } from 'react-select'
 import AsyncSelect from 'react-select/async'
 
 import { makeSearchParams, StructureSearchViewModel, toStructureSearchViewModels } from '@/presenters/rechercheStructuresPresenter'
 
 export default function OrganisationInput({
+  extraSearchParams,
   label,
   options,
   organisation,
   placeholder,
-  setOrganisation,
   required,
-  extraSearchParams,
+  setOrganisation,
 }: Props): ReactElement {
   return (
     <div className="fr-select-group">
@@ -78,15 +78,15 @@ export default function OrganisationInput({
 }
 
 type Props = Readonly<{
+  extraSearchParams?: URLSearchParams
   label: string
   options: ReadonlyArray<{
-    value: string
     label: string
+    value: string
   }>
   organisation: string
   placeholder: string
   required: boolean
-  extraSearchParams?: URLSearchParams
   setOrganisation(organisation: string): void
 }>
 

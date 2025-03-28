@@ -50,19 +50,19 @@ describe('route /structures', () => {
         desc: 'sur un nom de structure et un code de département',
         expectedFindParams: { match: 'la poste', zone: { code: '06', type: 'departement' } },
         searchParams: new Map([
-          ['search', 'la poste'],
           ['departement', '06'],
+          ['search', 'la poste'],
         ]),
       },
       {
         desc: 'sur un nom de structure et un code de région',
         expectedFindParams: { match: 'la poste', zone: { code: '93', type: 'region' } },
         searchParams: new Map([
-          ['search', 'la poste'],
           ['region', '93'],
+          ['search', 'la poste'],
         ]),
       },
-    ])('$desc', async ({ searchParams, expectedFindParams }) => {
+    ])('$desc', async ({ expectedFindParams, searchParams }) => {
       // GIVEN
       vi.spyOn(ssoGateway, 'getSession').mockResolvedValueOnce({ user: {} as ssoGateway.Profile })
       const spiedFind = vi.spyOn(RechercherLesStructures.prototype, 'handle')

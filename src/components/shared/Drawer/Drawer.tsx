@@ -3,13 +3,13 @@ import { PropsWithChildren, ReactElement, Ref } from 'react'
 import styles from './Drawer.module.css'
 
 export default function Drawer({
-  id,
-  isOpen,
-  closeDrawer,
   boutonFermeture,
-  isFixedWidth,
-  labelId,
   children,
+  closeDrawer,
+  id,
+  isFixedWidth,
+  isOpen,
+  labelId,
   ref,
 }: Props): ReactElement {
   // istanbul ignore next @preserve
@@ -46,11 +46,11 @@ export default function Drawer({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  id: string
-  isOpen: boolean
   boutonFermeture: string
-  labelId: string
-  isFixedWidth: boolean
-  ref?: Ref<HTMLDialogElement>
   closeDrawer(): void
+  id: string
+  isFixedWidth: boolean
+  isOpen: boolean
+  labelId: string
+  ref?: Ref<HTMLDialogElement>
 }>>

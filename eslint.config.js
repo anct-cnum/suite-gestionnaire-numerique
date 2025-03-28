@@ -6,6 +6,7 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import react from 'eslint-plugin-react'
 import sonarjs from 'eslint-plugin-sonarjs'
 import testingLibrary from 'eslint-plugin-testing-library'
+import perfectionist from 'eslint-plugin-perfectionist'
 import unusedImports from 'eslint-plugin-unused-imports'
 import tseslint from 'typescript-eslint'
 import 'eslint-plugin-only-warn'
@@ -30,6 +31,7 @@ export default [
   importPlugin.flatConfigs.recommended,
   importPlugin.flatConfigs.typescript,
   jsxA11y.flatConfigs.recommended,
+  perfectionist.configs['recommended-alphabetical'],
   {
     plugins: {
       '@stylistic': stylistic,
@@ -72,6 +74,7 @@ export default [
       'prefer-named-capture-group': 'off',
       'require-unicode-regexp': 'off',
       'sort-imports': 'off',
+      'sort-keys': ['error', 'asc', { 'caseSensitive': false }],
       'import/newline-after-import': 'error',
       'import/no-anonymous-default-export': 'off',
       'import/no-extraneous-dependencies': 'error',
@@ -162,6 +165,18 @@ export default [
       'jsx-a11y/no-interactive-element-to-noninteractive-role': 'error',
       'jsx-a11y/no-aria-hidden-on-focusable': 'error',
       'jsx-a11y/lang': 'error',
+      'perfectionist/sort-imports': "off",
+      'perfectionist/sort-jsx-props': "off",
+      'perfectionist/sort-modules': ["error", { 'groups': [
+        [
+          'export-class',
+          'export-function',
+          'export-enum',
+          'export-interface',
+          'export-type',
+        ],
+        'unknown',
+      ], 'type': 'unsorted' }],
       'react/forbid-component-props': 'off',
       'react/jsx-boolean-value': 'off',
       'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
@@ -245,6 +260,7 @@ export default [
       '@typescript-eslint/explicit-member-accessibility': 'off',
       '@typescript-eslint/init-declarations': 'off',
       '@typescript-eslint/max-params': 'off',
+      "@typescript-eslint/member-ordering": "off",
       '@typescript-eslint/method-signature-style': ['error', 'method'],
       '@typescript-eslint/naming-convention': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',

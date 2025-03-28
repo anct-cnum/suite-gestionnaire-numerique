@@ -77,7 +77,7 @@ const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.net'
 const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
+let spiedUtilisateurUidToFind: null | UtilisateurUidState['value']
 let spiedComiteToDrop: Comite | null
 let spiedComiteUidToFind: Comite['uid']['state']['value'] | null
 
@@ -117,6 +117,11 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
 }
 
 class ComiteRepositorySpy implements DropComiteRepository, GetComiteRepository {
+  async drop(comite: Comite): Promise<void> {
+    spiedComiteToDrop = comite
+    return Promise.resolve()
+  }
+
   async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({
@@ -124,10 +129,5 @@ class ComiteRepositorySpy implements DropComiteRepository, GetComiteRepository {
       uidEditeur: { email: emailEditeur, value: uidEditeur },
       uidGouvernance: { value: uidGouvernance },
     }))
-  }
-
-  async drop(comite: Comite): Promise<void> {
-    spiedComiteToDrop = comite
-    return Promise.resolve()
   }
 }

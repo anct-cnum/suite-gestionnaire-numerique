@@ -7,13 +7,13 @@ import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function ModifierUnComite({
+  closeDrawer,
   comite,
   dateAujourdhui,
   id,
   label,
   labelId,
   uidGouvernance,
-  closeDrawer,
 }: Props): ReactElement {
   const { modifierUnComiteAction, pathname, supprimerUnComiteAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -99,11 +99,11 @@ export default function ModifierUnComite({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
   comite: ComiteViewModel
   dateAujourdhui: string
   id: string
   label: string
   labelId: string
   uidGouvernance: string
-  closeDrawer(): void
 }>

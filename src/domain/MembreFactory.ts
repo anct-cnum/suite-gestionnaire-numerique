@@ -29,7 +29,7 @@ export function membreFactory({
   )
 }
 
-export type StatutFactory = 'confirme' | 'candidat' | 'suggere'
+export type StatutFactory = 'candidat' | 'confirme' | 'suggere'
 
 type FactoryParams = Readonly<{
   nom: string

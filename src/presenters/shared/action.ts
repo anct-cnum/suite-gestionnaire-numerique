@@ -1,6 +1,6 @@
 import { StatutSubvention } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 
-export const actionStatutViewModelByStatut: Record<StatutSubvention | 'nonSubventionnee', ActionStatutViewModel> = {
+export const actionStatutViewModelByStatut: Record<'nonSubventionnee' | StatutSubvention, ActionStatutViewModel> = {
   acceptee: {
     background: 'purple',
     icon: 'flashlight-line',
@@ -34,8 +34,8 @@ export const actionStatutViewModelByStatut: Record<StatutSubvention | 'nonSubven
 }
 
 export type ActionStatutViewModel = Readonly<{
-  background: 'purple' | 'green' | 'pink' | 'red' | 'white' | 'blue'
+  background: 'blue' | 'green' | 'pink' | 'purple' | 'red' | 'white'
   icon: string
   libelle: string
-  variant: 'success' | 'error' | 'info' | 'warning' | 'new'
+  variant: 'error' | 'info' | 'new' | 'success' | 'warning'
 }>

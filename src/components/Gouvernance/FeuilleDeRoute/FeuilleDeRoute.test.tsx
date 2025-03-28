@@ -1,4 +1,4 @@
-import { within, screen, fireEvent } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { renderComponent } from '@/components/testHelper'

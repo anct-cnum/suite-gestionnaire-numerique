@@ -21,8 +21,8 @@ export type StructureSearchViewModel = Readonly<{
 }>
 
 function toStructureSearchViewModel({
-  nom,
   commune,
+  nom,
   uid,
 }: UneStructureReadModel): StructureSearchViewModel {
   return {

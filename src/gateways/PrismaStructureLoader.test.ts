@@ -52,7 +52,7 @@ describe('structures loader', () => {
         intention: 'aucune structure n’est trouvée s’il n’y a aucune correspondance',
         match: 'Solidarnum',
       },
-    ])('alors $intention', async ({ match, expected }) => {
+    ])('alors $intention', async ({ expected, match }) => {
       // GIVEN
       await createStructures()
 

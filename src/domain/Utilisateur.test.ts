@@ -58,7 +58,7 @@ describe('utilisateur', () => {
           peutGererDesc: 'peut gérer un gestionnaire de la même structure que la sienne',
           role: 'Gestionnaire structure' as const,
         },
-      ])('$role', ({ role, nePeutGererDesc, peutGererDesc, codeOrganisation, codeOrganisationAutre }) => {
+      ])('$role', ({ codeOrganisation, codeOrganisationAutre, nePeutGererDesc, peutGererDesc, role }) => {
         it.each(Roles.filter((roleAGerer) => role !== roleAGerer))('ne peut gérer %s', (roleAGerer) => {
           // GIVEN
           const utilisateurGerant = utilisateurFactory({ ...utilisateurProps, role })

@@ -17,12 +17,12 @@ import Search from '../shared/Search/Search'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { clientContext } from '@/components/shared/ClientContext'
-import { MesUtilisateursViewModel, DetailsUtilisateurViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
+import { DetailsUtilisateurViewModel, MesUtilisateursViewModel, MonUtilisateur } from '@/presenters/mesUtilisateursPresenter'
 
 export default function MesUtilisateurs(
   { mesUtilisateursViewModel }: Props
 ): ReactElement {
-  const { sessionUtilisateurViewModel, router } = useContext(clientContext)
+  const { router, sessionUtilisateurViewModel } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isModaleSuppressionOpen, setIsModaleSuppressionOpen] = useState(false)
   const [utilisateurASupprimer, setUtilisateurASupprimer] = useState({ prenomEtNom: '', uid: '' })

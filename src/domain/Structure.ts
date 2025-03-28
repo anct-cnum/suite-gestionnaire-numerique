@@ -1,8 +1,8 @@
 import { Uid } from './shared/Model'
 
 export type StructureState = Readonly<{
-  uid: StructureUidState
   nom: string
+  uid: StructureUidState
 }>
 
 export class StructureUid extends Uid<StructureUidState> {}

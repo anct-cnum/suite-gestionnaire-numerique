@@ -175,7 +175,7 @@ describe('inviter un utilisateur action', () => {
         path: '',
         prenom: 'Martin',
       },
-    ])('$desc', async ({ email, nom, prenom, role, codeOrganisation, path, expectedError }) => {
+    ])('$desc', async ({ codeOrganisation, email, expectedError, nom, path, prenom, role }) => {
       // GIVEN
       const inviterUnUtilisateurParams = {
         codeOrganisation,

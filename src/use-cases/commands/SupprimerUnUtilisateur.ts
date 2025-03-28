@@ -21,11 +21,11 @@ export class SupprimerUnUtilisateur implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'suppressionNonAutorisee' | 'compteASupprimerDejaSupprime'
+type Failure = 'compteASupprimerDejaSupprime' | 'suppressionNonAutorisee'
 
 type Command = Readonly<{
-  uidUtilisateurCourant: string
   uidUtilisateurASupprimer: string
+  uidUtilisateurCourant: string
 }>
 
-interface UtilisateurRepository extends GetUtilisateurRepository, DropUtilisateurRepository {}
+interface UtilisateurRepository extends DropUtilisateurRepository, GetUtilisateurRepository {}

@@ -24,7 +24,7 @@ describe('menu lateral', () => {
     { index: 0, name: 'Gouvernance', url: '/gouvernance/93' },
     { index: 1, name: 'Membres', url: '/gouvernance/93/membres' },
     { index: 2, name: 'Feuilles de route', url: '/gouvernance/93/feuilles-de-route' },
-  ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
+  ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ index, name, url }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement()
 
@@ -45,7 +45,7 @@ describe('menu lateral', () => {
     { index: 1, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
     { index: 2, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
     { index: 3, name: 'Lieux d‘inclusion', url: '/lieux-inclusion' },
-  ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ name, url, index }) => {
+  ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ index, name, url }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement()
 
@@ -75,7 +75,7 @@ describe('menu lateral', () => {
     { index: 1, name: 'Gouvernance', pathname: '/gouvernance/93' },
     { index: 2, name: 'Membres', pathname: '/gouvernance/93/membres' },
     { index: 3, name: 'Financements', pathname: '/gouvernance/93/financements' },
-  ])('étant un utilisateur, quand je clique sur un lien du menu, alors je vois qu’il est sélectionné', ({ index, pathname, name }) => {
+  ])('étant un utilisateur, quand je clique sur un lien du menu, alors je vois qu’il est sélectionné', ({ index, name, pathname }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement(pathname)
 
@@ -120,7 +120,7 @@ describe('menu lateral', () => {
       feuillesTotal: '0',
       membresTotal: '1',
     },
-  ])('étant un utilisateur, quand seul $expectedMenus est présent, alors je le vois', ({ membresTotal, feuillesTotal, expectedMenus }) => {
+  ])('étant un utilisateur, quand seul $expectedMenus est présent, alors je le vois', ({ expectedMenus, feuillesTotal, membresTotal }) => {
     // WHEN
     renderComponent(
       <MenuLateral>

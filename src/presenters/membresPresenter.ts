@@ -1,6 +1,6 @@
-import { toRoleViewModel, RoleViewModel } from './shared/role'
+import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { isEmpty } from '@/shared/lang'
-import { MesMembresReadModel, MembreReadModel } from '@/use-cases/queries/RecupererMesMembres'
+import { MembreReadModel, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export function membresPresenter(mesMembresReadModel: MesMembresReadModel): MembresViewModel {
   return {
@@ -14,17 +14,17 @@ export function membresPresenter(mesMembresReadModel: MesMembresReadModel): Memb
 }
 
 export type MembresViewModel = Readonly<{
-  departement: string
   autorisations: Readonly<{
+    accesMembreConfirme: boolean
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
-    accesMembreConfirme: boolean
   }>
-  typologies: ReadonlyArray<TypologieViewModel>
-  roles: ReadonlyArray<RoleViewModel>
-  membres: ReadonlyArray<MembreViewModel>
   candidats: ReadonlyArray<MembreViewModel>
+  departement: string
+  membres: ReadonlyArray<MembreViewModel>
+  roles: ReadonlyArray<RoleViewModel>
   suggeres: ReadonlyArray<MembreViewModel>
+  typologies: ReadonlyArray<TypologieViewModel>
   uidGouvernance: string
 }>
 
@@ -37,13 +37,13 @@ export type MembreViewModel = Readonly<{
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   siret: string
+  statut: string
   suppressionDuMembreAutorise: boolean
   typologie: {
-    simple: TypologieViewModel
     elaboree: TypologieViewModel
+    simple: TypologieViewModel
   }
   uid: string
-  statut: string
 }>
 
 function membresParStatut(membres: ReadonlyArray<MembreReadModel>): MembresByStatut {
@@ -75,7 +75,7 @@ function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
   }
 }
 
-function handleTypologieIndefinie(mode: 'simple' | 'elaboree') {
+function handleTypologieIndefinie(mode: 'elaboree' | 'simple') {
   return (typologie: string): TypologieViewModel => ({
     label: isEmpty(typologie) ? labelTypologieIndefinieByMode[mode] : typologie,
     value: typologie,
@@ -93,7 +93,7 @@ const nomListeMembresParStatut: Readonly<Record<MembreReadModel['statut'], keyof
   suggere: 'suggeres',
 }
 
-type MembresByStatut = Pick<MembresViewModel, 'membres' | 'suggeres' | 'candidats'>
+type MembresByStatut = Pick<MembresViewModel, 'candidats' | 'membres' | 'suggeres'>
 
 type TypologieViewModel = Readonly<{
   label: string

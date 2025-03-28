@@ -133,7 +133,7 @@ describe('faire une demande de subvention', () => {
       ])(
         '$precision0, alors son montant s’affiche en tant que droits de subvention$precision1 et les champs de' +
           ' saisie de montants deviennent actifs',
-        ({ enveloppeId, expectedLimiteAffichee, expectedDroitsDeSubventionAffiches }) => {
+        ({ enveloppeId, expectedDroitsDeSubventionAffiches, expectedLimiteAffichee }) => {
           // GIVEN
           jAfficheLeFormulaireAction(42_500)
 
@@ -215,14 +215,14 @@ describe('faire une demande de subvention', () => {
           ])(
             '$raison',
             ({
-              enveloppeInitialeId,
               enveloppeDeRemplacementId,
+              enveloppeInitialeId,
+              erreurMontantPrestation,
+              erreurMontantRh,
+              expectedLimiteAffichee,
+              expectedTotalAffiche,
               montantPrestation,
               montantRh,
-              expectedTotalAffiche,
-              erreurMontantPrestation,
-              expectedLimiteAffichee,
-              erreurMontantRh,
             }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
@@ -288,7 +288,7 @@ describe('faire une demande de subvention', () => {
             },
           ])(
             '$raison',
-            ({ montantPrestation, montantRh, erreurMontantPrestation, erreurMontantRh }) => {
+            ({ erreurMontantPrestation, erreurMontantRh, montantPrestation, montantRh }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
 
@@ -397,7 +397,7 @@ describe('faire une demande de subvention', () => {
                 precision:
                   'saisie d’un montant en prestation de service et d’un montant en ressources humaines',
               },
-            ])('$precision', ({ montantPrestation, montantRh, expected }) => {
+            ])('$precision', ({ expected, montantPrestation, montantRh }) => {
               // GIVEN
               jAfficheLeFormulaireAction(42_500)
 

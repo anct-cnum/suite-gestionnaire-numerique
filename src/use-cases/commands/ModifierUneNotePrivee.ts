@@ -6,9 +6,9 @@ import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
 export class ModifierUneNotePrivee implements CommandHandler<Command> {
+  readonly #date: Date
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
-  readonly #date: Date
 
   constructor(
     gouvernanceRepository: GouvernanceRepository,

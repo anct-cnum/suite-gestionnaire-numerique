@@ -498,7 +498,7 @@ function afficherMesInformationsPersonnelles(
   )
 }
 
-function saisirLeTexte(name: string | RegExp, value: string): HTMLElement {
+function saisirLeTexte(name: RegExp | string, value: string): HTMLElement {
   const input = screen.getByLabelText(name)
   fireEvent.change(input, { target: { value } })
   return input

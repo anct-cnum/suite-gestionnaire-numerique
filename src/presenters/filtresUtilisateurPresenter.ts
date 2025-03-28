@@ -63,7 +63,7 @@ export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
   return regionsEtDepartements
 }
 
-export function zoneGeographiqueParDefaut(codeRegion: string | null, codeDepartement: string | null): ZoneGeographique {
+export function zoneGeographiqueParDefaut(codeRegion: null | string, codeDepartement: null | string): ZoneGeographique {
   return regionsEtDepartements().find(
     (regionEtDepartement) => {
       const [codeRegionSelectionnee, codeDepartementSelectionne] =
@@ -103,6 +103,6 @@ const regionDepartementSeparator = '_'
 
 export type ZoneGeographique = Readonly<{
   label: string
-  type: 'region' | 'departement'
+  type: 'departement' | 'region'
   value: string
 }>

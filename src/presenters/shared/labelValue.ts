@@ -1,5 +1,5 @@
-export type LabelValue<Value extends string | number = string> = Readonly<{
+export type LabelValue<Value extends number | string = string> = Readonly<{
+  isSelected?: boolean
   label: string
   value: Value
-  isSelected?: boolean
 }>

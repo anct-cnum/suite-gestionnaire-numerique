@@ -8,9 +8,9 @@ import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { MembreDetailsViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function Membre({
-  membreDetails,
-  labelId,
   details,
+  labelId,
+  membreDetails,
 }: Props): ReactElement {
   return (
     <>
@@ -80,7 +80,7 @@ export default function Membre({
 }
 
 type Props = Readonly<{
-  membreDetails: MembreDetailsViewModel
-  labelId: string
   details: MembreDetailsViewModel['details']
+  labelId: string
+  membreDetails: MembreDetailsViewModel
 }>

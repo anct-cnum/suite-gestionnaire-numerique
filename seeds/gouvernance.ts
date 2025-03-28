@@ -10,13 +10,13 @@ import {
   ComiteRecord,
   FeuilleDeRouteRecord,
   GouvernanceRecord,
-  MembreGouvernanceDepartementRecord,
-  MembreGouvernanceSgarRecord,
-  MembreGouvernanceEpciRecord,
   MembreGouvernanceCommuneRecord,
+  MembreGouvernanceDepartementRecord,
+  MembreGouvernanceEpciRecord,
+  MembreGouvernanceSgarRecord,
   MembreGouvernanceStructureRecord,
-  UtilisateurRecord,
   MembreRecord,
+  UtilisateurRecord,
 } from '@prisma/client'
 
 import { Prisma as PrismaFNE } from './fne/client-fne'
@@ -213,17 +213,17 @@ function associerMembresNonConfirmesAuxGouvernances(
           codesDepartement.add(membre.relationCommune.codeDepartement)
         }
         break
-      case 'epci':
-        if (membre.relationEpci) {
-          membre.relationEpci.communes.forEach(({ codeDepartement }) => {
-            codesDepartement.add(codeDepartement)
-          })
-        }
-        break
       case 'conseil-regional':
         if (membre.relationRegion) {
           membre.relationRegion.departements.forEach(({ code }) => {
             codesDepartement.add(code)
+          })
+        }
+        break
+      case 'epci':
+        if (membre.relationEpci) {
+          membre.relationEpci.communes.forEach(({ codeDepartement }) => {
+            codesDepartement.add(codeDepartement)
           })
         }
         break
@@ -540,34 +540,34 @@ async function creerGouvernanceEtMembresFictifs(): Promise<void> {
 }
 
 type Contacts = Readonly<{
-  relationContactPolitique: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
-  relationContactStructure: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
-  relationContactTechnique: PrismaFNE.$ContactFormulaireGouvernancePayload['scalars'] | null
+  relationContactPolitique: null | PrismaFNE.$ContactFormulaireGouvernancePayload['scalars']
+  relationContactStructure: null | PrismaFNE.$ContactFormulaireGouvernancePayload['scalars']
+  relationContactTechnique: null | PrismaFNE.$ContactFormulaireGouvernancePayload['scalars']
 }>
 
 type MembreGouvernanceFNEConfirme = PrismaFNE.$MembreGouvernancePayload['scalars'] &
   Readonly<{
-    relationEpci: PrismaFNE.$EpciPayload['scalars'] | null
-    relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
-    relationCommune: PrismaFNE.$CommunePayload['scalars'] | null
-    relationFormulaireGouvernance: PrismaFNE.$FormulaireGouvernancePayload['scalars'] & Contacts
     beneficiairesSubventions: ReadonlyArray<
       PrismaFNE.$BeneficiaireSubventionPayload['scalars'] &
       Readonly<{
         relationDemandeDeSubvention: PrismaFNE.$BeneficiaireSubventionPayload['objects']['relationDemandeDeSubvention']['scalars']
       }>
     >
+    relationCommune: null | PrismaFNE.$CommunePayload['scalars']
+    relationEpci: null | PrismaFNE.$EpciPayload['scalars']
+    relationFormulaireGouvernance: Contacts & PrismaFNE.$FormulaireGouvernancePayload['scalars']
+    relationInformationSiret: null | PrismaFNE.$InformationSiretPayload['scalars']
   }>
 
-type MembreGouvernanceFNENonConfirme = PrismaFNE.$FormulaireGouvernancePayload['scalars'] &
-  Readonly<{
-    relationEpci: (PrismaFNE.$EpciPayload['scalars']
-      & Readonly<{ communes: ReadonlyArray<PrismaFNE.$CommunePayload['scalars']> }>) | null
-    relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
-    relationCommune: PrismaFNE.$CommunePayload['scalars'] | null
-    relationRegion: (PrismaFNE.$RegionPayload['scalars']
-      & Readonly<{ departements: ReadonlyArray<PrismaFNE.$DepartementPayload['scalars']> }>) | null
-  }> & Contacts
+type MembreGouvernanceFNENonConfirme = Contacts &
+  PrismaFNE.$FormulaireGouvernancePayload['scalars'] & Readonly<{
+    relationCommune: null | PrismaFNE.$CommunePayload['scalars']
+    relationEpci: null | (PrismaFNE.$EpciPayload['scalars']
+      & Readonly<{ communes: ReadonlyArray<PrismaFNE.$CommunePayload['scalars']> }>)
+    relationInformationSiret: null | PrismaFNE.$InformationSiretPayload['scalars']
+    relationRegion: null | (PrismaFNE.$RegionPayload['scalars']
+      & Readonly<{ departements: ReadonlyArray<PrismaFNE.$DepartementPayload['scalars']> }>)
+  }>
 
 type MembreGouvernanceFNE = MembreGouvernanceFNEConfirme | MembreGouvernanceFNENonConfirme
 
@@ -575,16 +575,16 @@ type MembresFNENonConfirmesByCodeDepartement = Readonly<Record<string, ReadonlyA
 
 type GouvernanceFNE = PrismaFNE.$GouvernancePayload['scalars'] &
   Readonly<{
-    relationEpci: PrismaFNE.$EpciPayload['scalars'] | null
-    relationUserCreateur: PrismaFNE.$UserFNEPayload['scalars']
-    relationUserDerniereModification: PrismaFNE.$UserFNEPayload['scalars']
-    relationInformationSiret: PrismaFNE.$InformationSiretPayload['scalars'] | null
-    relationBeneficiaireDotationFormation: MembreGouvernanceFNEConfirme | null
     comites: ReadonlyArray<PrismaFNE.$ComitePayload['scalars']>
     feuillesDeRoute: ReadonlyArray<
       PrismaFNE.$FeuilleDeRoutePayload['scalars']
       & Readonly<{ membresFeuilleDeRoute: ReadonlyArray<PrismaFNE.$MembreFeuilleDeRoutePayload['scalars']> }>>
     membres: ReadonlyArray<MembreGouvernanceFNEConfirme>
+    relationBeneficiaireDotationFormation: MembreGouvernanceFNEConfirme | null
+    relationEpci: null | PrismaFNE.$EpciPayload['scalars']
+    relationInformationSiret: null | PrismaFNE.$InformationSiretPayload['scalars']
+    relationUserCreateur: PrismaFNE.$UserFNEPayload['scalars']
+    relationUserDerniereModification: PrismaFNE.$UserFNEPayload['scalars']
   }>
 
 type Comite = Omit<ComiteRecord, 'id'>
@@ -593,20 +593,20 @@ type FeuilleDeRoute = Omit<FeuilleDeRouteRecord, 'id'>
 
 type FeuilleDeRouteWithIdFNEPorteur = Omit<FeuilleDeRoute, 'porteurId'> & Readonly<{ porteurFNEId: string }>
 
-type GroupeGouvernance = Readonly<{
-  gouvernances: ReadonlyArray<GouvernanceRecord>
+type GroupeGouvernance = GroupeMembres & Readonly<{
   comites: ReadonlyArray<Comite>
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteWithIdFNEPorteur>
-}> & GroupeMembres
+  gouvernances: ReadonlyArray<GouvernanceRecord>
+}>
 
 type MembreWithIdFNE = MembreRecord & Readonly<{ idFNE: string }>
 
 type GroupeMembres = Readonly<{
   membres: ReadonlyArray<MembreWithIdFNE>
-  membresDepartements: MembreEtRolesById<MembreGouvernanceDepartementSansRole>
-  membresSgars: MembreEtRolesById<MembreGouvernanceSgarSansRole>
-  membresEpcis: MembreEtRolesById<MembreGouvernanceEpciSansRole>
   membresCommunes: MembreEtRolesById<MembreGouvernanceCommuneSansRole>
+  membresDepartements: MembreEtRolesById<MembreGouvernanceDepartementSansRole>
+  membresEpcis: MembreEtRolesById<MembreGouvernanceEpciSansRole>
+  membresSgars: MembreEtRolesById<MembreGouvernanceSgarSansRole>
   membresStructures: MembreEtRolesById<MembreGouvernanceStructureSansRole>
 }>
 

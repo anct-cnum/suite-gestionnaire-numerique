@@ -5,9 +5,9 @@ import { TypologieRole } from '@/domain/Role'
 import { UtilisateurFactory } from '@/domain/UtilisateurFactory'
 
 export class InviterUnUtilisateur implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
-  readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
+  readonly #emailGatewayFactory: EmailGatewayFactory
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     utilisateurRepository: UtilisateurRepository,
@@ -55,16 +55,16 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
 }
 
 type Command = Readonly<{
-  prenom: string
-  nom: string
   email: string
+  nom: string
+  prenom: string
   role?: Readonly<{
-    type: TypologieRole
     codeOrganisation?: string
+    type: TypologieRole
   }>
   uidUtilisateurCourant: string
 }>
 
-type Failure = 'utilisateurNePeutPasGererUtilisateurACreer' | 'emailExistant'
+type Failure = 'emailExistant' | 'utilisateurNePeutPasGererUtilisateurACreer'
 
-interface UtilisateurRepository extends GetUtilisateurRepository, AddUtilisateurRepository {}
+interface UtilisateurRepository extends AddUtilisateurRepository, GetUtilisateurRepository {}

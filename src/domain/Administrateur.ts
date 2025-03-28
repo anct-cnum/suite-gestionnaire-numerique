@@ -1,12 +1,12 @@
 import { Utilisateur, UtilisateurState } from './Utilisateur'
 
 export class Administrateur extends Utilisateur {
-  override get state(): AdministrateurState {
-    return super.state
-  }
-
   override get isAdmin(): boolean {
     return true
+  }
+
+  override get state(): AdministrateurState {
+    return super.state
   }
 
   override peutGerer(): boolean {
