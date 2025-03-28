@@ -6,7 +6,7 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
-export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onSubmit }: Props): ReactElement {
+export default function AjouterUnCoFinancement({ coporteurs, label, labelId, onSubmit }: Props): ReactElement {
   const [coFinanceur, setCoFinanceur] = useState('')
   const [montant, setMontant] = useState('')
   return (
@@ -101,8 +101,8 @@ export default function AjouterUnCoFinancement({ label, labelId, coporteurs, onS
 }
 
 type Props = Readonly<{
+  coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>
   label: string
   labelId: string
-  coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>
   onSubmit(coFinanceur: string, montant: string): void
 }>

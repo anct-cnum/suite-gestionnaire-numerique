@@ -5,6 +5,15 @@ import { Utilisateur, UtilisateurUid } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class Gouvernance extends Entity<State> {
+  override get state(): State {
+    return {
+      departement: this.#departement.state,
+      noteDeContexte: this.#noteDeContexte?.state,
+      notePrivee: this.#notePrivee?.state,
+      uid: this.uid.state,
+    }
+  }
+
   readonly #departement: Departement
   #noteDeContexte?: NoteDeContexte
   #notePrivee?: NotePrivee
@@ -21,20 +30,11 @@ export class Gouvernance extends Entity<State> {
     this.#notePrivee = notePrivee
   }
 
-  override get state(): State {
-    return {
-      departement: this.#departement.state,
-      noteDeContexte: this.#noteDeContexte?.state,
-      notePrivee: this.#notePrivee?.state,
-      uid: this.uid.state,
-    }
-  }
-
   static create({
+    departement,
     noteDeContexte,
     notePrivee,
     uid,
-    departement,
   }: GouvernanceFactoryParams): Gouvernance {
     const noteDeContexteAjoutee = noteDeContexte
       ? new NoteDeContexte(
@@ -65,29 +65,12 @@ export class Gouvernance extends Entity<State> {
       && codeDepartementGouvernance === utilisateur.state.departement.code
   }
 
-  laNotePriveePeutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return Gouvernance.laNotePriveePeutEtreGereePar(utilisateur, this.#departement.state.code)
-  }
-
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
     if (this.#noteDeContexte === undefined) {
       this.#noteDeContexte = noteDeContexte
       return 'OK'
     }
     return 'noteDeContexteDejaExistante'
-  }
-
-  modifierNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
-    if (this.#noteDeContexte !== undefined) {
-      this.#noteDeContexte = noteDeContexte
-      return 'OK'
-    }
-
-    return 'noteDeContexteInexistante'
-  }
-
-  supprimerNoteDeContexte(): void {
-    this.#noteDeContexte = undefined
   }
 
   ajouterNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {
@@ -99,6 +82,19 @@ export class Gouvernance extends Entity<State> {
     return 'notePriveeDejaExistante'
   }
 
+  laNotePriveePeutEtreGereePar(utilisateur: Utilisateur): boolean {
+    return Gouvernance.laNotePriveePeutEtreGereePar(utilisateur, this.#departement.state.code)
+  }
+
+  modifierNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
+    if (this.#noteDeContexte !== undefined) {
+      this.#noteDeContexte = noteDeContexte
+      return 'OK'
+    }
+
+    return 'noteDeContexteInexistante'
+  }
+
   modifierNotePrivee(notePrivee: NotePrivee): Result<GouvernanceFailure> {
     if (this.#notePrivee !== undefined) {
       this.#notePrivee = notePrivee
@@ -108,14 +104,18 @@ export class Gouvernance extends Entity<State> {
     return 'notePriveeInexistante'
   }
 
-  supprimerNotePrivee(): void {
-    this.#notePrivee = undefined
-  }
-
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
     return utilisateur.isAdmin
       || this.#departement.state.code === utilisateur.state.departement?.code
       || this.#departement.state.codeRegion === utilisateur.state.region?.code
+  }
+
+  supprimerNoteDeContexte(): void {
+    this.#noteDeContexte = undefined
+  }
+
+  supprimerNotePrivee(): void {
+    this.#notePrivee = undefined
   }
 }
 
@@ -156,7 +156,7 @@ export class NotePrivee extends ValueObject<NotePriveeState> {
 
 export type GouvernanceUidState = Readonly<{ value: string }>
 
-export type GouvernanceFailure = 'notePriveeDejaExistante' | 'notePriveeInexistante' | 'noteDeContexteDejaExistante' | 'noteDeContexteInexistante'
+export type GouvernanceFailure = 'noteDeContexteDejaExistante' | 'noteDeContexteInexistante' | 'notePriveeDejaExistante' | 'notePriveeInexistante'
 
 type GouvernanceFactoryParams = Readonly<{
   departement: {

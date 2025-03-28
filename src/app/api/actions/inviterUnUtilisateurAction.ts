@@ -41,12 +41,12 @@ export async function inviterUnUtilisateurAction(
 }
 
 type ActionParams = Readonly<{
-  email: string
   codeOrganisation?: string
+  email: string
   nom: string
-  role?: string
   path: string
   prenom: string
+  role?: string
 }>
 
 const validator = z.object({

@@ -78,7 +78,7 @@ describe('utilisateur factory', () => {
       params: {},
       role: 'Support animation' as const,
     },
-  ])('$desc', ({ role, params, expectedType }) => {
+  ])('$desc', ({ expectedType, params, role }) => {
     // GIVEN
     const utilisateurParams = {
       derniereConnexion: epochTime,
@@ -139,7 +139,7 @@ describe('utilisateur factory', () => {
       desc: 'un utilisateur n’ayant pas de numéro de téléphone est créé avec un téléphone vide',
       expectedTelephone: '',
     },
-  ])('$desc', ({ telephone, expectedTelephone }) => {
+  ])('$desc', ({ expectedTelephone, telephone }) => {
     // GIVEN
     const utilisateurParams = {
       derniereConnexion: epochTime,

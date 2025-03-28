@@ -19,13 +19,13 @@ import { LabelValue } from '@/presenters/shared/labelValue'
 
 export function FormulaireAction({
   action,
-  cofinancements,
-  label,
-  validerFormulaire,
   children,
+  cofinancements,
+  drawerId,
+  label,
   setIsDrawerOpen,
   supprimerUnCofinancement,
-  drawerId,
+  validerFormulaire,
 }: Props): ReactElement {
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
@@ -470,14 +470,14 @@ function toLabelValue(selected: number) {
 }
 
 type Props = PropsWithChildren<Readonly<{
-  date?: Date
   action: ActionViewModel
   cofinancements: ReadonlyArray<{
     coFinanceur: string
     montant: string
   }>
-  label: string
+  date?: Date
   drawerId: string
+  label: string
   setIsDrawerOpen(isDrawerOpen: boolean): void
   supprimerUnCofinancement(index: number): void
   validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>

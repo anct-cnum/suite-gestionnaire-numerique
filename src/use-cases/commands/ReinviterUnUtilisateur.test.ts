@@ -119,10 +119,10 @@ const utilisateursByUid: Record<string, Utilisateur> = {
 }
 
 let spiedUidToFind: string
-let spiedUtilisateurToUpdate: Utilisateur | null
+let spiedUtilisateurToUpdate: null | Utilisateur
 let spiedDestinataire: string
 
-class RepositorySpy implements UpdateUtilisateurRepository, GetUtilisateurRepository {
+class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateursByUid[uid])

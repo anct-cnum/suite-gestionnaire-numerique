@@ -133,9 +133,9 @@ export type FeuilleDeRouteViewModel = Readonly<{
   contextualisation: string
   contratPreexistant: boolean
   formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<LabelValue<'oui' | 'non'>>
+    contratPreexistant: ReadonlyArray<LabelValue<'non' | 'oui'>>
     membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<LabelValue<'regional' | 'departemental' | 'epci_groupement'>>
+    perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
   }>
   historiques: ReadonlyArray<HistoriqueViewModel>
   infosActions: string

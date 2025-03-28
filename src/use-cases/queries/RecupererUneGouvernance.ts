@@ -37,48 +37,48 @@ export interface UneGouvernanceLoader {
 }
 
 export type UneGouvernanceReadModel = Readonly<{
-  departement: string
   comites?: ReadonlyArray<ComiteReadModel>
+  departement: string
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>
-  syntheseMembres: SyntheseMembres
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
-  uid: string
   peutVoirNotePrivee: boolean
+  syntheseMembres: SyntheseMembres
+  uid: string
 }>
 
 export type ComiteReadModel = Readonly<{
   commentaire?: string
   date?: Date
   derniereEdition: Date
+  frequence: string
   id: number
   nomEditeur: string
-  frequence: string
   prenomEditeur: string
   type: TypeDeComite
 }>
 
 export type FeuilleDeRouteReadModel = Readonly<{
-  nom: string
-  porteur: MembreReadModel
-  totalActions: number
-  budgetGlobal: number
-  montantSubventionDemande: number
-  montantSubventionAccorde: number
-  montantSubventionFormationAccorde: number
   beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
-  uid: string
+  budgetGlobal: number
+  montantSubventionAccorde: number
+  montantSubventionDemande: number
+  montantSubventionFormationAccorde: number
+  nom: string
   pieceJointe?: Readonly<{
     apercu: string
     emplacement: string
-    nom: string
     metadonnees?: Readonly<{
       format: string
       taille: string
       upload: Date
     }>
+    nom: string
   }>
+  porteur: MembreReadModel
+  totalActions: number
+  uid: string
 }>
 
 export type MembreReadModel = Readonly<{
@@ -87,31 +87,31 @@ export type MembreReadModel = Readonly<{
   type: string
 }>
 
-export type TypeDeComite = 'stratégique' | 'technique' | 'consultatif' | 'autre'
+export type TypeDeComite = 'autre' | 'consultatif' | 'stratégique' | 'technique'
 
 export type CoporteurDetailReadModel = Readonly<{
-  nom: string
-  roles: ReadonlyArray<string>
-  type: string
-  contactTechnique?: string
   contactReferent: Readonly<{
-    nom: string
-    prenom: string
-    poste: string
+    denomination: 'Contact politique de la collectivité' | 'Contact référent'
     mailContact: string
-    denomination: 'Contact référent' | 'Contact politique de la collectivité'
-  }>
-  telephone: string
-  feuillesDeRoute: ReadonlyArray<Readonly<{
     nom: string
+    poste: string
+    prenom: string
+  }>
+  contactTechnique?: string
+  feuillesDeRoute: ReadonlyArray<Readonly<{
     montantSubventionAccorde: number
     montantSubventionFormationAccorde: number
+    nom: string
   }>>
-  totalMontantSubventionFormationAccorde?: number
-  totalMontantSubventionAccorde?: number
   links: Readonly<{
     plusDetails?: string
   }>
+  nom: string
+  roles: ReadonlyArray<string>
+  telephone: string
+  totalMontantSubventionAccorde?: number
+  totalMontantSubventionFormationAccorde?: number
+  type: string
 }>
 
 type NoteDeContexteReadModel = Readonly<{
@@ -129,9 +129,9 @@ type NotePriveeReadModel = Readonly<{
 }>
 
 type SyntheseMembres = Readonly<{
+  candidats: number
   coporteurs: ReadonlyArray<CoporteurDetailReadModel>
   total: number
-  candidats: number
 }>
 
 type Query = Readonly<{

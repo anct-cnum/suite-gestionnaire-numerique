@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { select } from 'react-select-event'
 
 import MesUtilisateurs from './MesUtilisateurs'
-import { renderComponent, matchWithoutMarkup, structuresFetch, rolesAvecStructure, stubbedConceal, stubbedServerAction } from '@/components/testHelper'
+import { matchWithoutMarkup, renderComponent, rolesAvecStructure, structuresFetch, stubbedConceal, stubbedServerAction } from '@/components/testHelper'
 import { mesUtilisateursPresenter } from '@/presenters/mesUtilisateursPresenter'
 import { sessionUtilisateurViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -485,7 +485,7 @@ describe('inviter un utilisateur', () => {
     })
   }
 
-  function saisirLeTexte(name: string | RegExp, value: string): HTMLElement {
+  function saisirLeTexte(name: RegExp | string, value: string): HTMLElement {
     const input = screen.getByLabelText(name)
     fireEvent.change(input, { target: { value } })
     return input

@@ -12,12 +12,12 @@ import Resume from '../Resume'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function SectionNotePrivee({
-  gouvernanceViewModel,
   drawerNotePriveeId,
-  labelNotePriveeId,
+  gouvernanceViewModel,
   isDrawerOpen,
+  labelNotePriveeId,
   setIsDrawerOpen,
-}: Readonly<Props>): ReactElement | null {
+}: Readonly<Props>): null | ReactElement {
   if (!gouvernanceViewModel.peutVoirNotePrivee) {
     return null
   }
@@ -99,9 +99,9 @@ export default function SectionNotePrivee({
 }
 
 type Props = {
-  gouvernanceViewModel: GouvernanceViewModel
   drawerNotePriveeId: string
-  labelNotePriveeId: string
+  gouvernanceViewModel: GouvernanceViewModel
   isDrawerOpen: boolean
+  labelNotePriveeId: string
   setIsDrawerOpen(isOpen: boolean): void
 }

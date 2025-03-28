@@ -24,7 +24,7 @@ describe('rechercher les structures', () => {
       intention: 'et par région : le critère de correspondance ainsi que le code de la région sont transmis',
       zone: { code: '93', type: 'region' } as const,
     },
-  ])('recherche de stucture par correspondance du nom $intention', async ({ expectedCall, expectedArgs, zone }) => {
+  ])('recherche de stucture par correspondance du nom $intention', async ({ expectedArgs, expectedCall, zone }) => {
     // GIVEN
     const query = { match: 'la poste', zone }
     const rechercherLesStructures = new RechercherLesStructures(new StructuresLoaderSpy())
@@ -39,9 +39,10 @@ describe('rechercher les structures', () => {
 })
 
 let spiedCall: keyof StructuresLoaderSpy | null
-let spiedArgs: Parameters<typeof StructuresLoaderSpy.prototype.structures>
+let spiedArgs: null
+  | Parameters<typeof StructuresLoaderSpy.prototype.structures>
   | Parameters<typeof StructuresLoaderSpy.prototype.structuresByDepartement>
-  | Parameters<typeof StructuresLoaderSpy.prototype.structuresByRegion> | null
+  | Parameters<typeof StructuresLoaderSpy.prototype.structuresByRegion>
 
 class StructuresLoaderSpy implements StructureLoader {
   async structures(match: string): Promise<StructuresReadModel> {

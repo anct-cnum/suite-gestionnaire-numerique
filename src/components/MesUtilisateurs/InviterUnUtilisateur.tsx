@@ -15,8 +15,8 @@ import { emailPattern } from '@/shared/patterns'
 
 export default function InviterUnUtilisateur({
   closeDrawer,
-  labelId,
   dialogRef,
+  labelId,
   rolesAvecStructure,
 }: Props): ReactElement {
   const [emailDejaExistant, setEmailDejaExistant] = useState<Erreur>()
@@ -191,13 +191,13 @@ export default function InviterUnUtilisateur({
 }
 
 type Props = Readonly<{
-  labelId: string
-  dialogRef: RefObject<HTMLDialogElement | null>
-  rolesAvecStructure: RolesAvecStructure
   closeDrawer(): void
+  dialogRef: RefObject<HTMLDialogElement | null>
+  labelId: string
+  rolesAvecStructure: RolesAvecStructure
 }>
 
 type Erreur = Readonly<{
-  content: ReactNode
   className: string
+  content: ReactNode
 }>

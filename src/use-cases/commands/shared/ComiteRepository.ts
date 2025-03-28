@@ -17,7 +17,7 @@ export interface DropComiteRepository {
 }
 
 export interface ComiteRepository extends
-  GetComiteRepository,
-  DropComiteRepository,
   AddComiteRepository,
+  DropComiteRepository,
+  GetComiteRepository,
   UpdateComiteRepository {}

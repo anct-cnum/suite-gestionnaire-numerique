@@ -28,8 +28,8 @@ export interface StructureLoader {
 export type StructuresReadModel = ReadonlyArray<UneStructureReadModel>
 
 export type UneStructureReadModel = Readonly<{
-  nom: string
   commune: string
+  nom: string
   uid: string
 }>
 
@@ -38,7 +38,7 @@ type TypeZone = 'departement' | 'region'
 type Query = Readonly<{
   match: string
   zone?: Readonly<{
-    type: TypeZone
     code: string
+    type: TypeZone
   }>
 }>

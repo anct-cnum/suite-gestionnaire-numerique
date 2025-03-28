@@ -36,7 +36,7 @@ describe('envoi de mail d’invitation', () => {
         secure: false,
       },
     },
-  ])('$desc', async ({ transport, emailInvitationGateway }) => {
+  ])('$desc', async ({ emailInvitationGateway, transport }) => {
     // GIVEN
     const mockSendMail = vi.fn<() => void>()
     const spiedCreateTransport = vi

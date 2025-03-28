@@ -6,12 +6,12 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function ModifierUneNotePrivee({
+  closeDrawer,
   edition,
   id,
   labelId,
   texte,
   uidGouvernance,
-  closeDrawer,
 }: Props): ReactElement {
   const { modifierUneNotePriveeAction, pathname, supprimerUneNotePriveeAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
@@ -86,10 +86,10 @@ export default function ModifierUneNotePrivee({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
   edition: string
   id: string
   labelId: string
   texte: string
   uidGouvernance: string
-  closeDrawer(): void
 }>

@@ -14,9 +14,9 @@ import Toggle from '../shared/Toggle/Toggle'
 import { toutesLesRegions, urlDeFiltrage, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 
 export default function FiltrerMesUtilisateurs({
+  closeDrawer,
   id,
   labelId,
-  closeDrawer,
   resetSearch,
 }: Props): ReactElement {
   const { roles, router, searchParams } = useContext(clientContext)
@@ -104,8 +104,8 @@ export default function FiltrerMesUtilisateurs({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
   id: string
   labelId: string
-  closeDrawer(): void
   resetSearch(): void
 }>

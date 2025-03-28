@@ -3,16 +3,16 @@ import { ChangeEventHandler, PropsWithChildren, ReactElement } from 'react'
 import { LabelValue } from '@/presenters/shared/labelValue'
 import { noop } from '@/shared/lang'
 
-export default function Select<Value extends string | number>({
+export default function Select<Value extends number | string>({
   ariaControlsId,
   children,
   disabled = false,
-  isPlaceholderSelectable = false,
-  placeholder = 'Choisir',
   id,
+  isPlaceholderSelectable = false,
   name,
   onChange,
   options,
+  placeholder = 'Choisir',
   required = false,
 }: Props<Value>): ReactElement {
   return (
@@ -54,14 +54,14 @@ export default function Select<Value extends string | number>({
   )
 }
 
-type Props<Value extends string | number> = PropsWithChildren<Readonly<{
+type Props<Value extends number | string> = PropsWithChildren<Readonly<{
   ariaControlsId?: string
   disabled?: boolean
   id: string
   isPlaceholderSelectable?: boolean
   name: string
   onChange?: ChangeEventHandler<HTMLSelectElement>
-  placeholder?: string
   options: ReadonlyArray<LabelValue<Value>>
+  placeholder?: string
   required?: boolean
 }>>

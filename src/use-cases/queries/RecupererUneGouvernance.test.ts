@@ -1,4 +1,4 @@
-import { UneGouvernanceLoader, RecupererUneGouvernance, UneGouvernanceReadModel } from './RecupererUneGouvernance'
+import { RecupererUneGouvernance, UneGouvernanceLoader, UneGouvernanceReadModel } from './RecupererUneGouvernance'
 import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { gouvernanceReadModelFactory } from '../testHelper'
 import { utilisateurFactory } from '@/domain/testHelper'

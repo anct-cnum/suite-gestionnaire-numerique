@@ -2,7 +2,7 @@ import { toast } from 'react-toastify'
 
 import styles from './Notification.module.css'
 
-export function Notification(status: 'success' | 'error', { description, title }: { description: string; title: string }): void {
+export function Notification(status: 'error' | 'success', { description, title }: { description: string; title: string }): void {
   toast((
     <div>
       <span className={`fr-notice__title fr-icon-${status}-fill`}>

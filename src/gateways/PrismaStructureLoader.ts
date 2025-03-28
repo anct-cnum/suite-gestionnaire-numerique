@@ -49,7 +49,7 @@ export class PrismaStructureLoader implements StructureLoader {
 }
 
 function transform(structuresRecord: ReadonlyArray<StructureRecord>): StructuresReadModel {
-  return structuresRecord.map(({ commune, nom, id }) => ({
+  return structuresRecord.map(({ commune, id, nom }) => ({
     commune,
     nom,
     uid: String(id),

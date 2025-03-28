@@ -27,7 +27,7 @@ async function migration(): Promise<void> {
 void migration()
 
 async function retrieveStructuresCoNum(): Promise<Array<StructureCoNumRecord>> {
-  const { db, client } = await coNumClient()
+  const { client, db } = await coNumClient()
 
   try {
     return await db.collection('structures')
@@ -95,9 +95,9 @@ function transformStructuresCoNumToStructures(
       contact: structureCoNumRecord.contact,
       // On ne peut pas changer directement le 00 en 978 en production car beaucoup de logique est basée dessus
       departementCode: structureCoNumRecord.codeDepartement === '00' ? '978' : structureCoNumRecord.codeDepartement,
+      identifiantEtablissement: structureCoNumRecord.siret || structureCoNumRecord.ridet,
       // eslint-disable-next-line no-underscore-dangle
       idMongo: structureCoNumRecord._id,
-      identifiantEtablissement: structureCoNumRecord.siret || structureCoNumRecord.ridet,
       nom: structureCoNumRecord.nom,
       statut: structureCoNumRecord.statut,
       type: structureCoNumRecord.type,
@@ -119,8 +119,8 @@ function uneStructureDeTest(): Prisma.StructureRecordUncheckedCreateInput {
     },
     departementCode: 'zzz',
     id: 10_000_000,
-    idMongo: 'zzz',
     identifiantEtablissement: 'zzzzzzzzzzzzzz',
+    idMongo: 'zzz',
     nom: 'Structure MIN',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',

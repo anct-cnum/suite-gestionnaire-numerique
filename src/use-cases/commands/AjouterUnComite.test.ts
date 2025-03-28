@@ -180,7 +180,7 @@ const typeValide = 'strategique'
 const uidGouvernance = 'gouvernanceFooId'
 const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: string | null
+let spiedUtilisateurUidToFind: null | string
 let spiedComiteToAdd: Comite | null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {

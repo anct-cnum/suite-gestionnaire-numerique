@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaComiteRepository } from './PrismaComiteRepository'
-import { creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur, comiteRecordFactory } from './testHelper'
+import { comiteRecordFactory, creerUnComite, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { comiteFactory } from '@/domain/testHelper'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'

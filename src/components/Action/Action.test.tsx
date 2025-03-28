@@ -22,7 +22,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       { lien: 'temporaliteAction', titre: 'Temporalité de l‘action' },
       { lien: 'budgetAction', titre: 'Information sur le budget et le financement' },
       { lien: 'destinatairesFonds', titre: 'Destinataire(s) des fonds' },
-    ])('étant un utilisateur, lorsque je veux ajouter une action, alors je vois le menu latéral avec le lien %s', ({ titre, lien }) => {
+    ])('étant un utilisateur, lorsque je veux ajouter une action, alors je vois le menu latéral avec le lien %s', ({ lien, titre }) => {
       // WHEN
       afficherMenuLateral()
 
@@ -520,6 +520,24 @@ export function afficherFormulaireDeModificationAction(
   )
 }
 
+export function jeTapeLeBudgetGlobalDeLAction(formulaire: HTMLElement): void {
+  const budgetGlobal = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
+  fireEvent.change(budgetGlobal, { target: { value: 1000 } })
+}
+
+export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
+  const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+  const boutonAjouterUnCoFinanacement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
+  fireEvent.click(boutonAjouterUnCoFinanacement)
+}
+
+export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
+  const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
+  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
+  const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
+  fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
+}
+
 function afficherFormulaireDeCreationValidation(
   ajouterUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
 ): void {
@@ -597,11 +615,6 @@ function jeTapeLeContexteDeLaction(formulaire: HTMLElement): void {
   fireEvent.input(noteDeContexte, { target: { innerHTML: '<p>Ma note de contexte de l‘action</p>' } })
 }
 
-export function jeTapeLeBudgetGlobalDeLAction(formulaire: HTMLElement): void {
-  const budgetGlobal = within(formulaire).getByRole('spinbutton', { name: 'Budget global de l‘action *' })
-  fireEvent.change(budgetGlobal, { target: { value: 1000 } })
-}
-
 function jeTapeLeNomDeLAction(formulaire: HTMLElement): void {
   const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
   fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
@@ -610,17 +623,4 @@ function jeTapeLeNomDeLAction(formulaire: HTMLElement): void {
 function jeTapeLaDescriptionDeLaction(formulaire: HTMLElement): void {
   const description = within(formulaire).getByRole('textarea', { name: 'Éditeur de description de l‘action' })
   fireEvent.input(description, { target: { innerHTML: '<p>Mes notes de description de l‘action</p>' } })
-}
-
-export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
-  const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-  const boutonAjouterUnCoFinanacement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
-  fireEvent.click(boutonAjouterUnCoFinanacement)
-}
-
-export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
-  const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
-  const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
-  fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
 }

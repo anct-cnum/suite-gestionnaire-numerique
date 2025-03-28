@@ -31,10 +31,10 @@ describe('mettre à jour l’identifiant unique à la première connexion', () =
   })
 })
 
-let spiedUidToFind: string | null
-let spiedUtilisateurToUpdate: Utilisateur | null
+let spiedUidToFind: null | string
+let spiedUtilisateurToUpdate: null | Utilisateur
 
-class UtilisateurRepositorySpy implements UpdateUtilisateurUidRepository, GetUtilisateurRepository {
+class UtilisateurRepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurUidRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUidToFind = uid
     return Promise.resolve(utilisateurFactory({

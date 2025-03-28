@@ -4,7 +4,7 @@ import { GetMembreRepository, UpdateMembreRepository } from './shared/MembreRepo
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { Membre, MembreState } from '@/domain/Membre'
-import { gouvernanceFactory, membrePotentielFactory, membreConfirmeFactory, utilisateurFactory } from '@/domain/testHelper'
+import { gouvernanceFactory, membreConfirmeFactory, membrePotentielFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('accepter un membre', () => {
@@ -117,7 +117,7 @@ const uidMembrePotentiel = 'membrePotentielFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedMembrePotentielUidToFind: MembreState['uid']['value'] | null
 let spiedMembrePotentielToUpdate: Membre | null
-let spiedUtilisateurUidToFind: string | null
+let spiedUtilisateurUidToFind: null | string
 
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {

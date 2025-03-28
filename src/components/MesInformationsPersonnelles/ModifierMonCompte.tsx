@@ -10,12 +10,12 @@ import TextInput from '../shared/TextInput/TextInput'
 import { emailPattern, telephonePattern } from '@/shared/patterns'
 
 export default function ModifierMonCompte({
+  closeDrawer,
   email,
   id,
   labelId,
   nom,
   prenom,
-  closeDrawer,
   telephone,
 }: Props): ReactElement {
   const { modifierMesInformationsPersonnellesAction, pathname } = useContext(clientContext)
@@ -151,11 +151,11 @@ export default function ModifierMonCompte({
 }
 
 type Props = Readonly<{
+  closeDrawer(): void
   email: string
   id: string
   labelId: string
   nom: string
   prenom: string
   telephone: string
-  closeDrawer(): void
 }>

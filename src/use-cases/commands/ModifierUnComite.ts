@@ -6,10 +6,10 @@ import { Comite, ComiteFailure } from '@/domain/Comite'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class ModifierUnComite implements CommandHandler<Command> {
-  readonly #gouvernanceRepository: GouvernanceRepository
-  readonly #utilisateurRepository: UtilisateurRepository
   readonly #comiteRepository: ComiteRepository
   readonly #date: Date
+  readonly #gouvernanceRepository: GouvernanceRepository
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     gouvernanceRepository: GouvernanceRepository,
@@ -69,4 +69,4 @@ type GouvernanceRepository = GetGouvernanceRepository
 
 type UtilisateurRepository = GetUtilisateurRepository
 
-interface ComiteRepository extends UpdateComiteRepository, GetComiteRepository {}
+interface ComiteRepository extends GetComiteRepository, UpdateComiteRepository {}

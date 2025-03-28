@@ -12,6 +12,6 @@ export default function TitleIcon({ background = 'blue', icon }: Props): ReactEl
 }
 
 type Props = Readonly<{
-  background?: 'blue' | 'white' | 'green' | 'pink' | 'purple' | 'red'
+  background?: 'blue' | 'green' | 'pink' | 'purple' | 'red' | 'white'
   icon: string
 }>

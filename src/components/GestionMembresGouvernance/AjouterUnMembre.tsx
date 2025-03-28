@@ -13,10 +13,10 @@ import { MembreViewModel } from '@/presenters/membresPresenter'
 import { isEmpty } from '@/shared/lang'
 
 export default function AjouterUnMembre({
+  candidatsEtSuggeres,
   closeDrawer,
   id,
   labelId,
-  candidatsEtSuggeres,
   uidGouvernance,
 }: Props): ReactElement {
   const { accepterUnMembreAction, pathname } = useContext(clientContext)
@@ -176,9 +176,9 @@ export default function AjouterUnMembre({
 }
 
 type Props = Readonly<{
+  candidatsEtSuggeres: ReadonlyArray<MembreViewModel>
+  closeDrawer(): void
   id: string
   labelId: string
-  candidatsEtSuggeres: ReadonlyArray<MembreViewModel>
   uidGouvernance: string
-  closeDrawer(): void
 }>

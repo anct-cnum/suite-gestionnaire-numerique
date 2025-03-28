@@ -5,9 +5,9 @@ import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class SupprimerUnComite implements CommandHandler<Command> {
+  readonly #comiteRepository: ComiteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #utilisateurRepository: UtilisateurRepository
-  readonly #comiteRepository: ComiteRepository
 
   constructor(
     gouvernanceRepository: GouvernanceRepository,

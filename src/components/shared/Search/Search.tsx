@@ -4,11 +4,11 @@ import SubmitButton from '../SubmitButton/SubmitButton'
 
 export default function Search({
   labelBouton,
-  reinitialiserBouton,
   placeholder,
-  soumettreLaRecherche,
   rechercher,
+  reinitialiserBouton,
   reinitialiserLesTermesDeRechercheNomOuEmail,
+  soumettreLaRecherche,
   termesDeRechercheNomOuEmail,
 }: Props): ReactElement {
   return (
@@ -57,10 +57,10 @@ export default function Search({
 
 type Props = Readonly<{
   labelBouton: string
-  reinitialiserBouton: string
   placeholder: string
-  termesDeRechercheNomOuEmail: string
+  rechercher(event: React.ChangeEvent<HTMLInputElement>): void
+  reinitialiserBouton: string
   reinitialiserLesTermesDeRechercheNomOuEmail(): void
   soumettreLaRecherche(event: React.FormEvent<HTMLFormElement>): void
-  rechercher(event: React.ChangeEvent<HTMLInputElement>): void
+  termesDeRechercheNomOuEmail: string
 }>

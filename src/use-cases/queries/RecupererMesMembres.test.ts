@@ -1,5 +1,5 @@
 import { membresReadModelFactory } from '../testHelper'
-import { MesMembresReadModel, MesMembresLoader, RecupererMesMembres } from './RecupererMesMembres'
+import { MesMembresLoader, MesMembresReadModel, RecupererMesMembres } from './RecupererMesMembres'
 
 describe('recuperer mes membres', () => {
   beforeEach(() => {

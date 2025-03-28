@@ -30,8 +30,8 @@ export async function supprimerUnUtilisateurAction(
 }
 
 type ActionParams = Readonly<{
-  uidUtilisateurASupprimer: string
   path: string
+  uidUtilisateurASupprimer: string
 }>
 
 const validator = z.object({

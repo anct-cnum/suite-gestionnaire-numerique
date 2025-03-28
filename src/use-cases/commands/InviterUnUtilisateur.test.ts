@@ -106,7 +106,7 @@ describe('inviter un utilisateur', () => {
       },
     ])(
       '$desc puis un e-mail lui est envoyé',
-      async ({ utilisateurCourant, utilisateurAInviter }) => {
+      async ({ utilisateurAInviter, utilisateurCourant }) => {
         // GIVEN
         const date = epochTime
         const repository = new RepositorySpy(
@@ -214,7 +214,7 @@ describe('inviter un utilisateur', () => {
 })
 
 let spiedUidToFind: string
-let spiedUtilisateurToAdd: Utilisateur | null
+let spiedUtilisateurToAdd: null | Utilisateur
 let spiedDestinataire: string
 let spiedIsSuperAdmin: boolean | null
 
@@ -225,14 +225,14 @@ class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepositor
     this.#utilisateurCourant = utilisateurCourant
   }
 
-  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    spiedUidToFind = uid
-    return Promise.resolve(this.#utilisateurCourant)
-  }
-
   async add(utilisateur: Utilisateur): Promise<boolean> {
     spiedUtilisateurToAdd = utilisateur
     return Promise.resolve(true)
+  }
+
+  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
+    spiedUidToFind = uid
+    return Promise.resolve(this.#utilisateurCourant)
   }
 }
 

@@ -4,9 +4,9 @@ import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/
 import { UtilisateurFailure } from '@/domain/Utilisateur'
 
 export class ReinviterUnUtilisateur implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
-  readonly #emailGatewayFactory: EmailGatewayFactory
   readonly #date: Date
+  readonly #emailGatewayFactory: EmailGatewayFactory
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
     utilisateurRepository: UtilisateurRepository,

@@ -55,10 +55,10 @@ export function renderComponent(
     sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(),
     supprimerMonCompteAction: vi.fn(),
     supprimerUnComiteAction: vi.fn(),
-    supprimerUnUtilisateurAction: vi.fn(),
     supprimerUneNoteDeContexteAction: vi.fn(),
     supprimerUneNoteDeContextualisationAction: vi.fn(),
     supprimerUneNotePriveeAction: vi.fn(),
+    supprimerUnUtilisateurAction: vi.fn(),
     utilisateursParPage: 10,
   }
 

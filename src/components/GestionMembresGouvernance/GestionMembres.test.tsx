@@ -118,7 +118,7 @@ describe('gestion des membres gouvernance', () => {
       position: 0,
       vue: 'membres',
     },
-  ])('quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné', ({ position, expectedLength, expectedAriaCurrents, expectedRows }) => {
+  ])('quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné', ({ expectedAriaCurrents, expectedLength, expectedRows, position }) => {
     // GIVEN
     afficherMembres()
 

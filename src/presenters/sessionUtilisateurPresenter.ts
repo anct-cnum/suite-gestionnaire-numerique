@@ -24,11 +24,11 @@ export function createSessionUtilisateurPresenter(
 }
 
 export type SessionUtilisateurViewModel = Readonly<{
-  codeDepartement: string | null
+  codeDepartement: null | string
   displayLiensGouvernance: boolean
-  peutChangerDeRole: boolean
   email: string
   nom: string
+  peutChangerDeRole: boolean
   prenom: string
   role: Readonly<{
     doesItBelongToGroupeAdmin: boolean

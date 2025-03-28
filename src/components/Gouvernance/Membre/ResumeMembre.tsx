@@ -4,7 +4,7 @@ import { ReactElement } from 'react'
 import styles from '../Gouvernance.module.css'
 import Resume from '../Resume'
 
-export default function ResumeMembre({ total, denomination, membresLink, peutVoirNotePrivee }: Props): ReactElement {
+export default function ResumeMembre({ denomination, membresLink, peutVoirNotePrivee, total }: Props): ReactElement {
   return (
     <Resume
       peutVoirNotePrivee={peutVoirNotePrivee}
@@ -34,7 +34,7 @@ export default function ResumeMembre({ total, denomination, membresLink, peutVoi
 
 type Props = Readonly<{
   denomination: string
-  total: number
   membresLink: string
   peutVoirNotePrivee: boolean
+  total: number
 }>

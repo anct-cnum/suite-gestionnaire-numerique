@@ -21,7 +21,7 @@ export interface AddUtilisateurRepository {
 }
 
 export interface UtilisateurRepository extends
-  GetUtilisateurRepository,
-  DropUtilisateurRepository,
   AddUtilisateurRepository,
+  DropUtilisateurRepository,
+  GetUtilisateurRepository,
   UpdateUtilisateurRepository {}

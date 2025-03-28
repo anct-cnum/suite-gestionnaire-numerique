@@ -39,9 +39,9 @@ export async function modifierMesInformationsPersonnellesAction(
 type ActionParams = Readonly<{
   emailDeContact: string
   nom: string
+  path: string
   prenom: string
   telephone: string
-  path: string
 }>
 
 const validator = z.object({

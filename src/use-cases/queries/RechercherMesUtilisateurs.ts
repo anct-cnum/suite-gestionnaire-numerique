@@ -13,15 +13,15 @@ export class RechercherMesUtilisateurs implements QueryHandler<
   }
 
   async handle({
-    uid,
-    roles = [],
-    pageCourante = 0,
-    utilisateursActives = false,
-    utilisateursParPage = config.utilisateursParPage,
     codeDepartement = '0',
     codeRegion = '0',
     idStructure,
+    pageCourante = 0,
     prenomOuNomOuEmail,
+    roles = [],
+    uid,
+    utilisateursActives = false,
+    utilisateursParPage = config.utilisateursParPage,
   }: Query): Promise<UtilisateursCourantsEtTotalReadModel> {
     const utilisateur = await this.#mesUtilisateursLoader.findByUid(uid)
 
@@ -61,12 +61,12 @@ export interface MesUtilisateursLoader extends UnUtilisateurLoader {
 type Query = Partial<Readonly<{
   codeDepartement: string
   codeRegion: string
+  idStructure?: number
   pageCourante: number
+  prenomOuNomOuEmail?: string
   roles: ReadonlyArray<string>
   utilisateursActives: boolean
   utilisateursParPage: number
-  idStructure?: number
-  prenomOuNomOuEmail?: string
 }>> & Readonly<{
   uid: string
 }>

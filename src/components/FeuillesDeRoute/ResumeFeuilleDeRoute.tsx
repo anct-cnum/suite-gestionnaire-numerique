@@ -6,9 +6,9 @@ import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
-import { isNullishOrEmpty, isNullish } from '@/shared/lang'
+import { isNullish, isNullishOrEmpty } from '@/shared/lang'
 
-export default function ResumeFeuilleDeRoute({ feuilleDeRoute, children }: Props): ReactElement {
+export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props): ReactElement {
   return (
     <div className="grey-border border-radius fr-mb-2w fr-p-4w">
       <div className={styles['align-items']}>

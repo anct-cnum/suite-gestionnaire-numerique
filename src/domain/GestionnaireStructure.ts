@@ -3,6 +3,13 @@ import { StructureState, StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurState, UtilisateurUid } from './Utilisateur'
 
 export class GestionnaireStructure extends Utilisateur {
+  override get state(): GestionnaireStructureState {
+    return {
+      ...super.state,
+      structureUid: this.#structureUid.state,
+    }
+  }
+
   readonly #structureUid: StructureUid
 
   constructor(
@@ -30,17 +37,10 @@ export class GestionnaireStructure extends Utilisateur {
     this.#structureUid = structureUid
   }
 
-  override get state(): GestionnaireStructureState {
-    return {
-      ...super.state,
-      structureUid: this.#structureUid.state,
-    }
-  }
-
   override peutGerer(autre: Utilisateur): boolean {
     return autre instanceof GestionnaireStructure && autre.#structureUid.equals(this.#structureUid)
   }
 }
 
-type GestionnaireStructureState = UtilisateurState &
-  Readonly<{ structureUid: StructureState['uid'] }>
+type GestionnaireStructureState = Readonly<{ structureUid: StructureState['uid'] }> &
+  UtilisateurState

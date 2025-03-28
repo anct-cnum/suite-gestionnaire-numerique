@@ -10,15 +10,15 @@ import TextEditor from '@/components/shared/RichTextEditor/TextEditor'
 import SubmitButton from '@/components/shared/SubmitButton/SubmitButton'
 
 export default function ModifierNoteDeContexte({
-  texte,
-  sousTitre,
+  closeDrawer,
   id,
   label,
   labelId,
+  sousTitre,
+  texte,
   uidGouvernance,
-  closeDrawer,
 }: Props): ReactElement {
-  const { modifierUneNoteDeContexteAction, supprimerUneNoteDeContexteAction, pathname } = useContext(clientContext)
+  const { modifierUneNoteDeContexteAction, pathname, supprimerUneNoteDeContexteAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor(texte)
@@ -109,11 +109,11 @@ export default function ModifierNoteDeContexte({
 }
 
 type Props = Readonly<{
-  texte: string
-  sousTitre: string
-  id: string
-  labelId: string
-  label: string
-  uidGouvernance: string
   closeDrawer(): void
+  id: string
+  label: string
+  labelId: string
+  sousTitre: string
+  texte: string
+  uidGouvernance: string
 }>

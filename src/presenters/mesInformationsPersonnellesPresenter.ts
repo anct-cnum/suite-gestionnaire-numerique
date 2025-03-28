@@ -15,6 +15,6 @@ export function mesInformationsPersonnellesPresenter(
   }
 }
 
-export type MesInformationsPersonnellesViewModel = MesInformationsPersonnellesReadModel & {
+export type MesInformationsPersonnellesViewModel = {
   telephoneBrut: string
-}
+} & MesInformationsPersonnellesReadModel

@@ -125,6 +125,6 @@ type Props = Readonly<{
   labelPluriel: string
   membres: Beneficiaires | Porteurs
   titre: string
-  urlGouvernance: string
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
+  urlGouvernance: string
 }>

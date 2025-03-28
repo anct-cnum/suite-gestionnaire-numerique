@@ -184,7 +184,7 @@ const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.net'
 const uidEditeur = 'userFooId'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedUtilisateurUidToFind: UtilisateurUidState['value'] | null
+let spiedUtilisateurUidToFind: null | UtilisateurUidState['value']
 let spiedComiteToModify: Comite | null
 let spiedComiteUidToFind: Comite['uid']['state']['value'] | null
 
@@ -223,7 +223,7 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
-class ComiteRepositorySpy implements UpdateComiteRepository, GetComiteRepository {
+class ComiteRepositorySpy implements GetComiteRepository, UpdateComiteRepository {
   async get(uid: Comite['uid']['state']['value']): Promise<Comite> {
     spiedComiteUidToFind = uid
     return Promise.resolve(comiteFactory({

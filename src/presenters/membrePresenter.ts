@@ -229,5 +229,5 @@ export type MembreViewModel = Readonly<{
 
 type Statut = Readonly<{
   libelle: 'En cours' | 'Expirée'
-  variant: 'success' | 'error' | 'info' | 'warning' | 'new'
+  variant: 'error' | 'info' | 'new' | 'success' | 'warning'
 }>

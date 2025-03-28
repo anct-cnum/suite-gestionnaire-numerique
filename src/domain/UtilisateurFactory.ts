@@ -11,18 +11,18 @@ import { StructureUid } from './Structure'
 import { Email, Nom, Prenom, Telephone, Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 
 export class UtilisateurFactory {
-  readonly #uid: UtilisateurUid
+  readonly #departement?: DepartementState
+  readonly #derniereConnexion?: Date
+  readonly #emailDeContact: Email
+  readonly #groupementUid?: number
+  readonly #inviteLe: Date
+  readonly #isSuperAdmin: boolean
   readonly #nom: Nom
   readonly #prenom: Prenom
-  readonly #emailDeContact: Email
-  readonly #isSuperAdmin: boolean
-  readonly #inviteLe: Date
-  readonly #telephone: Telephone
-  readonly #derniereConnexion?: Date
-  readonly #departement?: DepartementState
   readonly #region?: RegionState
   readonly #structureUid?: number
-  readonly #groupementUid?: number
+  readonly #telephone: Telephone
+  readonly #uid: UtilisateurUid
 
   constructor(params: UtilisateurFactoryParams) {
     this.#uid = new UtilisateurUid(params.uid)
@@ -62,15 +62,29 @@ export class UtilisateurFactory {
     switch (role) {
       case 'Gestionnaire département':
         return this.#createGestionnaireDepartement(codeOrganisation)
+      case 'Gestionnaire groupement':
+        return this.#createGestionnaireGroupement(Number(codeOrganisation))
       case 'Gestionnaire région':
         return this.#createGestionnaireRegion(codeOrganisation)
       case 'Gestionnaire structure':
         return this.#createGestionnaireStructure(Number(codeOrganisation))
-      case 'Gestionnaire groupement':
-        return this.#createGestionnaireGroupement(Number(codeOrganisation))
       default:
         return this.#createAdministrateur(new Role(role))
     }
+  }
+
+  #createAdministrateur(role: Role): Utilisateur {
+    return new Administrateur(
+      this.#uid,
+      role,
+      this.#nom,
+      this.#prenom,
+      this.#emailDeContact,
+      this.#isSuperAdmin,
+      this.#inviteLe,
+      this.#telephone,
+      this.#derniereConnexion
+    )
   }
 
   #createGestionnaireDepartement(code: string): Utilisateur {
@@ -84,6 +98,21 @@ export class UtilisateurFactory {
       this.#inviteLe,
       this.#telephone,
       departement,
+      this.#derniereConnexion
+    )
+  }
+
+  #createGestionnaireGroupement(groupementUidValue: number): Utilisateur {
+    const groupementUid = new GroupementUid({ value: this.#groupementUid ?? groupementUidValue })
+    return new GestionnaireGroupement(
+      this.#uid,
+      this.#nom,
+      this.#prenom,
+      this.#emailDeContact,
+      this.#isSuperAdmin,
+      this.#inviteLe,
+      this.#telephone,
+      groupementUid,
       this.#derniereConnexion
     )
   }
@@ -117,48 +146,19 @@ export class UtilisateurFactory {
       this.#derniereConnexion
     )
   }
-
-  #createGestionnaireGroupement(groupementUidValue: number): Utilisateur {
-    const groupementUid = new GroupementUid({ value: this.#groupementUid ?? groupementUidValue })
-    return new GestionnaireGroupement(
-      this.#uid,
-      this.#nom,
-      this.#prenom,
-      this.#emailDeContact,
-      this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#telephone,
-      groupementUid,
-      this.#derniereConnexion
-    )
-  }
-
-  #createAdministrateur(role: Role): Utilisateur {
-    return new Administrateur(
-      this.#uid,
-      role,
-      this.#nom,
-      this.#prenom,
-      this.#emailDeContact,
-      this.#isSuperAdmin,
-      this.#inviteLe,
-      this.#telephone,
-      this.#derniereConnexion
-    )
-  }
 }
 
 type UtilisateurFactoryParams = Readonly<{
-  uid: UtilisateurUidState
+  departement?: DepartementState
   derniereConnexion?: Date
   emailDeContact: string
+  groupementUid?: number
   inviteLe: Date
   isSuperAdmin: boolean
   nom: string
   prenom: string
-  telephone?: string
-  departement?: DepartementState
-  groupementUid?: number
   region?: RegionState
   structureUid?: number
+  telephone?: string
+  uid: UtilisateurUidState
 }>

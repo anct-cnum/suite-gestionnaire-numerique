@@ -24,20 +24,19 @@ export interface MesMembresLoader {
 
 export type MesMembresReadModel = Readonly<{
   autorisations: Readonly<{
+    accesMembreConfirme: boolean
     ajouterUnMembre: boolean
     supprimerUnMembre: boolean
-    accesMembreConfirme: boolean
   }>
   departement: string
-  typologies: ReadonlyArray<string>
-  roles: ReadonlyArray<Role>
   membres: ReadonlyArray<MembreReadModel>
+  roles: ReadonlyArray<Role>
+  typologies: ReadonlyArray<string>
   uidGouvernance: string
 }>
 
 export type MembreReadModel = Readonly<{
   adresse: string
-  suppressionDuMembreAutorise: boolean
   contactReferent: Readonly<{
     email: string
     fonction: string
@@ -47,9 +46,10 @@ export type MembreReadModel = Readonly<{
   nom: string
   roles: ReadonlyArray<Role>
   siret: string
+  statut: Statut
+  suppressionDuMembreAutorise: boolean
   typologie: string
   uid: string
-  statut: Statut
 }>
 
 function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypologie {
@@ -72,6 +72,6 @@ type Query = Readonly<{
 
 type RoleEtTypologie = Pick<MesMembresReadModel, 'roles' | 'typologies'>
 
-type Statut = 'confirme' | 'candidat' | 'suggere'
+type Statut = 'candidat' | 'confirme' | 'suggere'
 
-type Role = 'coporteur' | 'cofinanceur' | 'beneficiaire' | 'recipiendaire' | 'observateur'
+type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'

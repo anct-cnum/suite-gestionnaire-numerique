@@ -4,7 +4,7 @@
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { createContext, ReactElement, PropsWithChildren, useMemo } from 'react'
+import { createContext, PropsWithChildren, ReactElement, useMemo } from 'react'
 
 import { accepterUnMembreAction } from '@/app/api/actions/accepterUnMembreAction'
 import { ajouterUnComiteAction } from '@/app/api/actions/ajouterUnComiteAction'
@@ -67,10 +67,10 @@ export default function ClientContext({
       sessionUtilisateurViewModel,
       supprimerMonCompteAction,
       supprimerUnComiteAction,
-      supprimerUnUtilisateurAction,
       supprimerUneNoteDeContexteAction,
       supprimerUneNoteDeContextualisationAction,
       supprimerUneNotePriveeAction,
+      supprimerUnUtilisateurAction,
       utilisateursParPage,
     }),
     [pathname, roles, router, searchParams, sessionUtilisateurViewModel, utilisateursParPage]
@@ -87,33 +87,33 @@ export const clientContext = createContext<ClientContextProviderValue>({} as Cli
 
 export type ClientContextProviderValue = Readonly<{
   accepterUnMembreAction: typeof accepterUnMembreAction
+  ajouterUnComiteAction: typeof ajouterUnComiteAction
+  ajouterUneActionAction: typeof ajouterUneActionAction
+  ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
+  ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
+  ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
+  ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   changerMonRoleAction: typeof changerMonRoleAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
+  modifierUnComiteAction: typeof modifierUnComiteAction
+  modifierUneActionAction: typeof modifierUneActionAction
+  modifierUneFeuilleDeRouteAction: typeof modifierUneFeuilleDeRouteAction
+  modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
+  modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
+  modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
-  ajouterUnComiteAction: typeof ajouterUnComiteAction
-  ajouterUneFeuilleDeRouteAction: typeof ajouterUneFeuilleDeRouteAction
-  ajouterUneActionAction: typeof ajouterUneActionAction
-  modifierUneActionAction: typeof modifierUneActionAction
-  modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
-  ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
-  modifierUneNoteDeContexteAction: typeof modifierUneNoteDeContexteAction
-  ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
-  ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
-  modifierUnComiteAction: typeof modifierUnComiteAction
-  modifierUneFeuilleDeRouteAction: typeof modifierUneFeuilleDeRouteAction
-  modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
-  supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
   sessionUtilisateurViewModel: SessionUtilisateurViewModel
   supprimerMonCompteAction: typeof supprimerMonCompteAction
   supprimerUnComiteAction: typeof supprimerUnComiteAction
+  supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
+  supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
-  supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   utilisateursParPage: number
 }>
 

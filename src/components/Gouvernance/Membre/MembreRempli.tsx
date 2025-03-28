@@ -7,7 +7,7 @@ import Badge from '@/components/shared/Badge/Badge'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import Icon from '@/components/shared/Icon/Icon'
 import Table from '@/components/shared/Table/Table'
-import { MembreDetailsViewModel, GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import { GouvernanceViewModel, MembreDetailsViewModel } from '@/presenters/gouvernancePresenter'
 
 export default function MembreRempli({ coporteurs }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral

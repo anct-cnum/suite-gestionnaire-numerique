@@ -1,4 +1,4 @@
-import { within, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 
 import Gouvernance from '../Gouvernance'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '@/components/testHelper'

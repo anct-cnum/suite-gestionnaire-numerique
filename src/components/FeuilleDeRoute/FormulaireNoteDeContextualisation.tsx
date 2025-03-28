@@ -6,9 +6,9 @@ import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function FormulaireNoteDeContextualisation({
   children,
-  labelId,
   contenu,
   gererLeChangementDeContenu,
+  labelId,
   validerFormulaire,
 }: Props): ReactElement {
   return (
@@ -38,8 +38,8 @@ export default function FormulaireNoteDeContextualisation({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  labelId: string
   contenu: string
   gererLeChangementDeContenu(contenu: string): void
+  labelId: string
   validerFormulaire(event: FormEvent<HTMLFormElement>): void
 }>>

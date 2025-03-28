@@ -7,9 +7,9 @@ import Resume from '../Resume'
 export default function ResumeFeuilleDeRoute({
   link,
   linkLabel,
+  peutVoirNotePrivee,
   total,
   wording,
-  peutVoirNotePrivee,
 }: Props): ReactElement {
   return (
     <Resume
@@ -41,7 +41,7 @@ export default function ResumeFeuilleDeRoute({
 type Props = Readonly<{
   link: string
   linkLabel: string
+  peutVoirNotePrivee: boolean
   total: string
   wording: string
-  peutVoirNotePrivee: boolean
 }>

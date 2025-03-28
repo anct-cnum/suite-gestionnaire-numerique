@@ -3,8 +3,8 @@ import React, { PropsWithChildren, ReactElement, useId } from 'react'
 import styles from './Toggle.module.css'
 
 export default function Toggle({
-  defaultChecked = false,
   children,
+  defaultChecked = false,
   // Stryker disable next-line BooleanLiteral
   hasSeparator = false,
   name,

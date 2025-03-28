@@ -2,14 +2,14 @@ import React, { PropsWithChildren, ReactElement, ReactNode } from 'react'
 
 export default function TextInput({
   ariaDescribedById,
-  defaultValue = '',
   children,
+  defaultValue = '',
+  erreur = errorDefault,
   id,
   name,
   pattern,
   required,
   type = 'text',
-  erreur = errorDefault,
 }: Props): ReactElement {
   return (
     <div className={`fr-input-group ${erreur.className}`}>
@@ -39,13 +39,13 @@ const errorDefault = { className: '', content: '' }
 type Props = PropsWithChildren<Readonly<{
   ariaDescribedById?: string
   defaultValue?: string
-  id: string
-  name: string
-  pattern?: string
-  required: boolean
-  type?: 'text' | 'tel' | 'email'
   erreur?: Readonly<{
     className: string
     content: ReactNode
   }>
+  id: string
+  name: string
+  pattern?: string
+  required: boolean
+  type?: 'email' | 'tel' | 'text'
 }>>
