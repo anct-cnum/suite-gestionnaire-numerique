@@ -39,6 +39,10 @@ export function alphaAsc<K extends string, V extends Record<K, string>>(key?: K)
   return (left, right) => (left as V)[key!].localeCompare((right as V)[key!])
 }
 
+export function byPredicate<T>(predicate: (t: T) => boolean) {
+  return (left: T, right: T): number => Number(predicate(right)) - Number(predicate(left))
+}
+
 export function sum(augend: number, addend: number): number {
   return augend + addend
 }
