@@ -34,6 +34,7 @@ export type MembreViewModel = Readonly<{
     intitule: string
     intituleCourt: string
   }
+  isDeletable: boolean
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   siret: string
@@ -67,6 +68,7 @@ function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
       intitule: `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`,
       intituleCourt: nomComplet,
     },
+    isDeletable: membre.typologie === 'Préfecture départementale',
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),

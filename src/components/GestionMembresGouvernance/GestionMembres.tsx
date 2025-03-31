@@ -206,6 +206,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             <td className="fr-cell--center">
               <button
                 className="fr-btn fr-btn--tertiary color-red"
+                disabled={membre.isDeletable}
                 title="Supprimer"
                 type="button"
               >
