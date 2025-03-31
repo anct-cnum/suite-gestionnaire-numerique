@@ -1,6 +1,6 @@
-import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
+import { isCoporteur, isPrefectureDepartementale, Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
-import { alphaAsc } from '@/shared/lang'
+import { alphaAsc, byPredicate } from '@/shared/lang'
 import { MembreReadModel, MesMembresLoader, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
 export class PrismaMesMembresLoader implements MesMembresLoader {
@@ -11,6 +11,9 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
       include: {
         membres: {
           include: membreInclude,
+          orderBy: {
+            id: 'asc',
+          },
         },
         relationDepartement: true,
       },
@@ -27,8 +30,9 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
       },
       departement: gouvernanceRecord.relationDepartement.nom,
       membres: toMembres(gouvernanceRecord.membres)
-        .toSorted(alphaAsc('id'))
         .toSorted(alphaAsc('nom'))
+        .toSorted(byPredicate(isCoporteur))
+        .toSorted(byPredicate(isPrefectureDepartementale))
         .map(toMesMembresReadModel),
       roles: [],
       typologies: [],

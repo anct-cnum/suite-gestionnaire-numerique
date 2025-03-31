@@ -15,6 +15,14 @@ export function toMembre(membre: MembreRecord): Membre {
   return associationsMembreEtRoleUnique(membre).reduce(groupMembresById, {})[membre.id]
 }
 
+export function isPrefectureDepartementale(membre: Membre): boolean {
+  return membre.type === 'Préfecture départementale'
+}
+
+export function isCoporteur(membre: Membre): boolean {
+  return membre.roles.includes('coporteur')
+}
+
 export const membreInclude = {
   membresGouvernanceCommune: true,
   membresGouvernanceDepartement: {
