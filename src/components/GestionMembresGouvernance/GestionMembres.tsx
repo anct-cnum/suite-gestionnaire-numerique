@@ -100,11 +100,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         </ul>
       </div>
       <div className="fr-grid-row space-between fr-mt-4w">
-        <div className="fr-tags-group">
+        <div className="fr-grid-row fr-grid-row--middle">
           <div className={styles['label-filtres']}>
             Filtres :
           </div>
-          <div className={`fr-tag fr-accordion__btn ${styles.selecteur}`}>
+          <div className={`fr-tag fr-accordion__btn ${styles.selecteur} fr-mr-1w`}>
             <label
               className="fr-sr-only"
               htmlFor={selectRoleId}

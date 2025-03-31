@@ -10,7 +10,8 @@
 }
 
 .selecteur {
-  background-color: var(--blue-france-975-75);
+  background-color: var(--blue-france-925-125);
+  color: var(--text-title-blue-france);
 }
 
 .selecteur select {
