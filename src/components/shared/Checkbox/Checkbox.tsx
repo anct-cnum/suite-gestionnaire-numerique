@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, ReactElement } from 'react'
 
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 
 export default function Checkbox({
   children,

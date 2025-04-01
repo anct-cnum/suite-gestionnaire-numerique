@@ -33,7 +33,7 @@ describe('détail d’une action', () => {
       const porteurLabel = within(drawer).getByText('Porteur de l’action')
       expect(porteurLabel).toBeInTheDocument()
       const porteur = within(drawer).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-      expect(porteur).toHaveAttribute('href', '/')
+      expect(porteur).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/coPorteuseFooId')
 
       const descriptionLabel = within(drawer).getByText('Description de l’action')
       expect(descriptionLabel).toBeInTheDocument()
@@ -79,9 +79,9 @@ describe('détail d’une action', () => {
       const beneficiairesItems = within(beneficiaires).getAllByRole('listitem')
       expect(beneficiairesItems).toHaveLength(3)
       const beneficiaire1 = within(beneficiairesItems[0]).getByRole('link', { name: 'CAF DE LA CHARENTE' })
-      expect(beneficiaire1).toHaveAttribute('href', '/')
+      expect(beneficiaire1).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/1')
       const beneficiaire2 = within(beneficiairesItems[1]).getByRole('link', { name: 'HUBIKOOP' })
-      expect(beneficiaire2).toHaveAttribute('href', '/')
+      expect(beneficiaire2).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/2')
 
       const modifierAction = within(drawer).getByRole('link', { name: 'Modifier cette action' })
       expect(modifierAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId1/action/actionFooId1/modifier')

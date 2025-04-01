@@ -48,9 +48,9 @@ describe('membres', () => {
       const feuilleDeRouteIntitule = within(drawer).getByText('Feuilles de route')
       expect(feuilleDeRouteIntitule).toBeInTheDocument()
       const FeuilleDeRouteInclusion = within(feuillesDeRouteItems[0]).getByRole('link', { name: 'Feuille de route inclusion' })
-      expect(FeuilleDeRouteInclusion).toHaveAttribute('href', '/')
+      expect(FeuilleDeRouteInclusion).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/0')
       const FeuilleDeRouteNumerique = within(feuillesDeRouteItems[1]).getByRole('link', { name: 'Feuille de route numérique du Rhône' })
-      expect(FeuilleDeRouteNumerique).toHaveAttribute('href', '/')
+      expect(FeuilleDeRouteNumerique).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/1')
       const boutonFermeture = within(drawer).getByRole('button', { name: 'Fermer les détails du membre : Préfecture du Rhône' })
       expect(boutonFermeture).toBeInTheDocument()
       const contactPolitiqueIntitule = within(drawer).getByText('Contact politique de la collectivité')
@@ -323,7 +323,7 @@ describe('membres', () => {
       const FeuilleDeRouteOne = within(feuillesDeRouteItems[0]).getByRole('link', {
         name: 'Feuille de route inclusion',
       })
-      expect(FeuilleDeRouteOne).toHaveAttribute('href', '/')
+      expect(FeuilleDeRouteOne).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/0')
       const boutonFermeture = within(drawer).getByRole('button', {
         name: 'Fermer les détails du membre : Département du Rhône',
       })

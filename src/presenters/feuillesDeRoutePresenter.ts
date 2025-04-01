@@ -1,6 +1,7 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formaterEnDateFrancaise } from './shared/date'
-import { LabelValue } from './shared/labelValue'
+import { HyperLink, LabelValue } from './shared/labels'
+import { feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -71,6 +72,7 @@ export type FeuillesDeRouteViewModel = Readonly<{
 export type FeuilleDeRouteViewModel = Readonly<{
   actions: ReadonlyArray<ActionViewModel>
   links: Readonly<{
+    ajouter: string
     detail: string
   }>
   nom: string
@@ -82,7 +84,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
     metadonnee: string
     nom: string
   }>
-  porteur?: string
+  porteur?: HyperLink
   totaux: Readonly<{
     budget: string
     coFinancement: string
@@ -100,7 +102,8 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
     return {
       actions: feuilleDeRoute.actions.map(toActionViewModel(uidGouvernance, feuilleDeRoute.uid)),
       links: {
-        detail: `/gouvernance/${uidGouvernance}/feuille-de-route/${feuilleDeRoute.uid}`,
+        ajouter: `${feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid)}/action/ajouter`,
+        detail: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
       },
       nom: feuilleDeRoute.nom,
       nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
@@ -112,7 +115,10 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         nom: feuilleDeRoute.pieceJointe.nom.split('/').pop()!,
       },
-      porteur: feuilleDeRoute.structureCoPorteuse?.nom,
+      porteur: feuilleDeRoute.structureCoPorteuse ? {
+        label: feuilleDeRoute.structureCoPorteuse.nom,
+        link: membreLink(uidGouvernance, feuilleDeRoute.structureCoPorteuse.uid),
+      } : undefined,
       totaux: {
         budget: formatMontant(feuilleDeRoute.totaux.budget),
         coFinancement: formatMontant(feuilleDeRoute.totaux.coFinancement),
@@ -127,7 +133,10 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: FeuillesDeRouteReadModel['feuillesDeRoute'][number]['actions'][number]): ActionViewModel => ({
-    beneficiaires: action.beneficiaires.map(({ nom }) => ({ nom, url: '/' })),
+    beneficiaires: action.beneficiaires.map(({ nom, uid }) => ({
+      label: nom,
+      link: membreLink(uidGouvernance, uid),
+    })),
     besoins: action.besoins,
     budgetPrevisionnel: {
       coFinancements: action.coFinancements.map(({ coFinanceur, montant }) => ({
@@ -150,19 +159,19 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       ] : [],
     },
     description: action.description,
-    lienPourModifier: `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}/action/${action.uid}/modifier`,
+    lienPourModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
     nom: action.nom,
-    porteurs: action.porteurs.map(({ nom, uid }) => ({ label: nom, value: uid })),
+    porteurs: action.porteurs.map(({ nom, uid }) => ({
+      label: nom,
+      link: membreLink(uidGouvernance, uid),
+    })),
     statut: actionStatutViewModelByStatut[action.subvention?.statut ?? 'nonSubventionnee'],
     uid: action.uid,
   })
 }
 
 type ActionViewModel = Readonly<{
-  beneficiaires: ReadonlyArray<{
-    nom: string
-    url: string
-  }>
+  beneficiaires: ReadonlyArray<HyperLink>
   besoins: ReadonlyArray<string>
   budgetPrevisionnel: Readonly<{
     coFinancements: ReadonlyArray<Financement>
@@ -172,7 +181,7 @@ type ActionViewModel = Readonly<{
   description: string
   lienPourModifier: string
   nom: string
-  porteurs: ReadonlyArray<LabelValue>
+  porteurs: ReadonlyArray<HyperLink>
   statut: ActionStatutViewModel
   uid: string
 }>

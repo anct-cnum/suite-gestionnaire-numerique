@@ -147,8 +147,6 @@ function isCoporteur(membre: Membre): boolean {
 function fromMembre(membre: Membre): MembreReadModel {
   return {
     nom: membre.nom,
-    roles: membre.roles,
-    type: membre.type ?? '',
     uid: membre.id,
   }
 }

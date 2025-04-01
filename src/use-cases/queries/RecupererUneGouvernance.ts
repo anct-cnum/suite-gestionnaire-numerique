@@ -81,8 +81,6 @@ export type FeuilleDeRouteReadModel = Readonly<{
 
 export type MembreReadModel = Readonly<{
   nom: string
-  roles: ReadonlyArray<string>
-  type: string
   uid: string
 }>
 

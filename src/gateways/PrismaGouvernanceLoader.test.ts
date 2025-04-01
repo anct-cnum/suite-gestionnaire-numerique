@@ -130,8 +130,8 @@ describe('gouvernance loader', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [
-            { nom: 'CC Porte du Jura', roles: ['beneficiaire', 'coporteur'], type: 'Collectivité, EPCI', uid: 'epci-200072056-93' },
-            { nom: 'Créteil', roles: ['coporteur'], type: 'Collectivité, commune', uid: 'commune-94028-93' },
+            { nom: 'CC Porte du Jura', uid: 'epci-200072056-93' },
+            { nom: 'Créteil', uid: 'commune-94028-93' },
           ],
           beneficiairesSubventionFormation: [],
           budgetGlobal: 70_000,
@@ -158,8 +158,6 @@ describe('gouvernance loader', () => {
           nom: 'Feuille de route numérique du Rhône 2',
           porteur: {
             nom: 'Trévérien',
-            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
-            type: '',
             uid: 'commune-35345-93',
           },
           totalActions: 1,
@@ -186,11 +184,6 @@ describe('gouvernance loader', () => {
           beneficiairesSubvention: [],
           beneficiairesSubventionFormation: [{
             nom: 'Orange',
-            roles: [
-              'coporteur',
-              'recipiendaire',
-            ],
-            type: 'Entreprise privée',
             uid: 'structure-38012986643097-93',
           }],
           budgetGlobal: 111_000,
@@ -200,12 +193,6 @@ describe('gouvernance loader', () => {
           nom: 'Feuille de route numérique du Rhône 6',
           porteur: {
             nom: 'Trévérien',
-            roles: [
-              'beneficiaire',
-              'coporteur',
-              'recipiendaire',
-            ],
-            type: '',
             uid: 'commune-35345-93',
           },
           totalActions: 2,
@@ -355,8 +342,8 @@ describe('gouvernance loader', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [
-            { nom: 'CC Porte du Jura', roles: ['beneficiaire', 'coporteur'], type: 'Collectivité, EPCI', uid: 'epci-200072056-93' },
-            { nom: 'Créteil', roles: ['coporteur'], type: 'Collectivité, commune', uid: 'commune-94028-93' },
+            { nom: 'CC Porte du Jura', uid: 'epci-200072056-93' },
+            { nom: 'Créteil', uid: 'commune-94028-93' },
           ],
           beneficiairesSubventionFormation: [],
           budgetGlobal: 70_000,
@@ -383,8 +370,6 @@ describe('gouvernance loader', () => {
           nom: 'Feuille de route numérique du Rhône 2',
           porteur: {
             nom: 'Trévérien',
-            roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
-            type: '',
             uid: 'commune-35345-93',
           },
           totalActions: 0,

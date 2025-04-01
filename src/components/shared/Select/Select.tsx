@@ -1,6 +1,6 @@
 import { ChangeEventHandler, PropsWithChildren, ReactElement } from 'react'
 
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 import { noop } from '@/shared/lang'
 
 export default function Select<Value extends number | string>({

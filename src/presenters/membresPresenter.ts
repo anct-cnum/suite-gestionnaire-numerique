@@ -1,3 +1,4 @@
+import { membreLink } from './shared/link'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { isEmpty } from '@/shared/lang'
 import { MembreReadModel, MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
@@ -8,7 +9,7 @@ export function membresPresenter(mesMembresReadModel: MesMembresReadModel): Memb
     departement: mesMembresReadModel.departement,
     roles: mesMembresReadModel.roles.map(toRoleViewModel),
     typologies: mesMembresReadModel.typologies.map(handleTypologieIndefinie('simple')),
-    ...membresParStatut(mesMembresReadModel.membres),
+    ...membresParStatut(mesMembresReadModel.membres, mesMembresReadModel.uidGouvernance),
     uidGouvernance: mesMembresReadModel.uidGouvernance,
   }
 }
@@ -35,6 +36,7 @@ export type MembreViewModel = Readonly<{
     intituleCourt: string
   }
   isDeletable: boolean
+  link: string
   nom: string
   roles: ReadonlyArray<RoleViewModel>
   siret: string
@@ -47,11 +49,11 @@ export type MembreViewModel = Readonly<{
   uid: string
 }>
 
-function membresParStatut(membres: ReadonlyArray<MembreReadModel>): MembresByStatut {
+function membresParStatut(membres: ReadonlyArray<MembreReadModel>, uidGouvernance: string): MembresByStatut {
   return membres.reduce<MembresByStatut>((membresByStatut, membre) => ({
     ...membresByStatut,
     [nomListeMembresParStatut[membre.statut]]: membresByStatut[nomListeMembresParStatut[membre.statut]]
-      .concat(toMembreViewModel(membre)),
+      .concat(toMembreViewModel(membre, uidGouvernance)),
   }), {
     candidats: [],
     membres: [],
@@ -59,7 +61,7 @@ function membresParStatut(membres: ReadonlyArray<MembreReadModel>): MembresBySta
   })
 }
 
-function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
+function toMembreViewModel(membre: MembreReadModel, uidGouvernance: string): MembreViewModel {
   const contactReferent = membre.contactReferent
   const nomComplet = `${contactReferent.prenom} ${contactReferent.nom}`
   return {
@@ -69,6 +71,7 @@ function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
       intituleCourt: nomComplet,
     },
     isDeletable: membre.isDeletable,
+    link: membreLink(uidGouvernance, membre.uid),
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),

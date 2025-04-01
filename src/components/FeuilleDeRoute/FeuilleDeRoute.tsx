@@ -37,8 +37,8 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
           />
         </div>
         <div className="fr-mb-3w">
-          <Tag>
-            {feuilleDeRouteViewModel.porteur}
+          <Tag href={feuilleDeRouteViewModel.porteur.link}>
+            {feuilleDeRouteViewModel.porteur.label}
           </Tag>
           <div className="fr-tag fr-ml-1w">
             {
@@ -234,8 +234,8 @@ export default function FeuilleDeRoute({ feuilleDeRouteViewModel }: Props): Reac
                     <p>
                       Porteur :
                       {' '}
-                      <Tag>
-                        {action.porteur}
+                      <Tag href={action.porteur.link}>
+                        {action.porteur.label}
                       </Tag>
                     </p>
                   </div>

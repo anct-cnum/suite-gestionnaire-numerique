@@ -1,7 +1,7 @@
 import { ChangeEventHandler, ReactElement } from 'react'
 
 import Radio from './Radio'
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 import { noop } from '@/shared/lang'
 
 export default function RadioGroup({ nomGroupe, onChange, options }: Props): ReactElement {
