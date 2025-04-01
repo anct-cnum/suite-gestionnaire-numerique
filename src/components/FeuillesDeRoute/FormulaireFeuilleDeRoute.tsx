@@ -7,7 +7,7 @@ import RadioGroup from '../shared/Radio/RadioGroup'
 import Select from '../shared/Select/Select'
 import TextInput from '../shared/TextInput/TextInput'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 
 export default function FormulaireFeuilleDeRoute({
   children,

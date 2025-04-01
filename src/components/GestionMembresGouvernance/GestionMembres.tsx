@@ -184,7 +184,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             <td>
               <Link
                 className="primary font-weight-700 fr-px-0 no-hover d-block"
-                href={`/gouvernance/${membresViewModel.uidGouvernance}/membre/${membre.uid}`}
+                href={membre.link}
               >
                 {membre.nom}
               </Link>

@@ -43,7 +43,10 @@ export default function ResumeAction({ actions }: Props): ReactElement {
                   <br />
                   {
                     action.porteurs.map((porteur) => (
-                      <Tag key={porteur.value}>
+                      <Tag
+                        href={porteur.link}
+                        key={porteur.link}
+                      >
                         {porteur.label}
                       </Tag>
                     ))

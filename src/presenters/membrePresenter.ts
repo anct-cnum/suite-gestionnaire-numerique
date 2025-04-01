@@ -1,5 +1,6 @@
 import { formaterEnDateFrancaise } from './shared/date'
 import { HistoriqueViewModel } from './shared/historique'
+import { feuilleDeRouteLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 
@@ -142,11 +143,11 @@ export function membrePresenter(codeDepartement: string): MembreViewModel {
       feuillesDeRoute: [
         {
           libelle: 'Feuille de route inclusion',
-          lien: `/gouvernance/${codeDepartement}/feuille-de-route/113`,
+          lien: feuilleDeRouteLink(codeDepartement, '113'),
         },
         {
           libelle: 'Feuille de route numérique du Rhône',
-          lien: `/gouvernance/${codeDepartement}/feuille-de-route/114`,
+          lien: feuilleDeRouteLink(codeDepartement, '114'),
         },
       ],
       membreDepuisLe: formaterEnDateFrancaise(new Date('2024-03-22')),

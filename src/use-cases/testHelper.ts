@@ -82,28 +82,20 @@ export function gouvernanceReadModelFactory(
         beneficiairesSubvention: [
           {
             nom: 'Structure 1',
-            roles: ['coporteur'],
-            type: 'Administration',
             uid: '0',
           },
           {
             nom: 'Département du Rhône',
-            roles: ['coporteur', 'cofinanceur'],
-            type: 'Collectivité',
             uid: '1',
           },
         ],
         beneficiairesSubventionFormation: [
           {
             nom: 'Structure 1',
-            roles: ['coporteur'],
-            type: 'Structure',
             uid: '0',
           },
           {
             nom: 'Structure 2',
-            roles: ['coporteur'],
-            type: 'Structure',
             uid: '3',
           },
         ],
@@ -122,7 +114,7 @@ export function gouvernanceReadModelFactory(
           },
           nom: 'user/1234/feuille-de-route-fake.pdf',
         },
-        porteur: { nom: 'Préfecture du Rhône', roles: ['coporteur'], type: 'Préfecture départementale', uid: '4' },
+        porteur: { nom: 'Préfecture du Rhône', uid: '4' },
         totalActions: 3,
         uid: 'feuilleDeRouteFooId',
       },

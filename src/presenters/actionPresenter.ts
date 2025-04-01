@@ -1,5 +1,5 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
-import { LabelValue } from './shared/labelValue'
+import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 
 const enveloppes: ReadonlyArray<Enveloppe> = [
@@ -38,6 +38,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
         color: 'info',
         isSelected: true,
         label: 'Rhône (69)',
+        lien: '/gouvernance/69/membre/membreFooId3',
         statut: 'Co-porteur',
         value: 'membreFooId3',
       },
@@ -45,6 +46,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
         color: 'info',
         isSelected: false,
         label: 'CC des Monts du Lyonnais',
+        lien: '/gouvernance/69/membre/membreFooId4',
         statut: 'Co-porteur',
         value: 'membreFooId4',
       },
@@ -160,6 +162,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
         color: 'info',
         isSelected: false,
         label: 'Rhône (69)',
+        lien: '/gouvernance/69/membre/membreFooId1',
         statut: 'Co-porteur',
         value: 'membreFooId1',
       },
@@ -167,6 +170,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
         color: 'info',
         isSelected: true,
         label: 'CC des Monts du Lyonnais',
+        lien: '/gouvernance/69/membre/membreFooId2',
         statut: 'Co-porteur',
         value: 'membreFooId2',
       },
@@ -225,6 +229,7 @@ export const actionARemplir: ActionViewModel = {
       color: 'info',
       isSelected: false,
       label: 'Rhône (69)',
+      lien: '/gouvernance/69/membre/membreFooId3',
       statut: 'Co-porteur',
       value: 'membreFooId3',
     },
@@ -232,6 +237,7 @@ export const actionARemplir: ActionViewModel = {
       color: 'info',
       isSelected: false,
       label: 'CC des Monts du Lyonnais',
+      lien: '/gouvernance/69/membre/membreFooId4',
       statut: 'Co-porteur',
       value: 'membreFooId4',
     },
@@ -330,6 +336,7 @@ export const actionARemplir: ActionViewModel = {
       color: 'info',
       isSelected: false,
       label: 'Rhône (69)',
+      lien: '/gouvernance/69/membre/membreFooId1',
       statut: 'Co-porteur',
       value: 'membreFooId1',
     },
@@ -337,6 +344,7 @@ export const actionARemplir: ActionViewModel = {
       color: 'info',
       isSelected: false,
       label: 'CC des Monts du Lyonnais',
+      lien: '/gouvernance/69/membre/membreFooId2',
       statut: 'Co-porteur',
       value: 'membreFooId2',
     },
@@ -361,11 +369,13 @@ export type Besoins = ReadonlyArray<LabelValue>
 
 export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
   color: 'error' | 'info' | 'new' | 'success' | 'warning'
+  lien: string
   statut: string
 }>>
 
 export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
   color: 'error' | 'info' | 'new' | 'success' | 'warning'
+  lien: string
   statut: string
 }>>
 

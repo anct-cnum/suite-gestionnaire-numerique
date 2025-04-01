@@ -15,7 +15,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { ActionViewModel } from '@/presenters/actionPresenter'
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
   action,
@@ -193,7 +193,7 @@ export function FormulaireAction({
               .filter((porteur) => Boolean(porteur.isSelected))
               .map((porteur) => (
                 <Fragment key={porteur.value}>
-                  <Tag>
+                  <Tag href={porteur.lien}>
                     {porteur.label}
                   </Tag>
                 </Fragment>
@@ -434,7 +434,7 @@ export function FormulaireAction({
                 .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.value}>
-                    <Tag>
+                    <Tag href={beneficiaire.lien}>
                       {beneficiaire.label}
                     </Tag>
                   </Fragment>

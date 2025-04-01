@@ -1,6 +1,7 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { HistoriqueViewModel } from './shared/historique'
-import { LabelValue } from './shared/labelValue'
+import { HyperLink, LabelValue } from './shared/labels'
+import { feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 
 export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRoute: string): FeuilleDeRouteViewModel {
@@ -14,10 +15,13 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
         },
         nom: 'Structurer une filière de reconditionnement locale',
         perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: 'CC des Monts du Lyonnais',
+        porteur: {
+          label: 'CC des Monts du Lyonnais',
+          link: membreLink(codeDepartement, 'membreFooId'),
+        },
         statut: actionStatutViewModelByStatut.acceptee,
         uid: 'actionFooId1',
-        urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId1/modifier`,
+        urlModifier: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/actionFooId1/modifier`,
       },
       {
         budgetPrevisionnel: {
@@ -27,10 +31,13 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
         },
         nom: 'Formation Aidants Connect',
         perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: 'CC des Monts du Lyonnais',
+        porteur: {
+          label: 'CC des Monts du Lyonnais',
+          link: membreLink(codeDepartement, 'membreFooId'),
+        },
         statut: actionStatutViewModelByStatut.refusee,
         uid: 'actionFooId2',
-        urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId2/modifier`,
+        urlModifier: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/actionFooId2/modifier`,
       },
     ],
     budgets: {
@@ -104,10 +111,13 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
     infosDerniereEdition: 'Modifiée le 23/11/2024 par Lucie Brunot',
     nom: 'Feuille de route FNE',
     perimetre: 'Périmètre départemental',
-    porteur: 'Orange',
+    porteur: {
+      label: 'Orange',
+      link: membreLink(codeDepartement, 'membreFooId'),
+    },
     uidFeuilleDeRoute: 'feuilleDeRouteFooId',
     uidGouvernance: 'gouvernanceFooId',
-    urlAjouterUneAction: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/ajouter`,
+    urlAjouterUneAction: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/ajouter`,
   }
 }
 
@@ -120,7 +130,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
     }>
     nom: string
     perimetre: string
-    porteur: string
+    porteur: HyperLink
     statut: ActionStatutViewModel
     uid: string
     urlModifier: string
@@ -142,7 +152,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   infosDerniereEdition: string
   nom: string
   perimetre: string
-  porteur: string
+  porteur: HyperLink
   uidFeuilleDeRoute: string
   uidGouvernance: string
   urlAjouterUneAction: string

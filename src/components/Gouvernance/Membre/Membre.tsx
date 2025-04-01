@@ -49,9 +49,9 @@ export default function Membre({
           {membre.feuillesDeRoute ? (
             <ul className="fr-tags-group">
               {membre.feuillesDeRoute.map((feuilleDeRoute) => (
-                <li key={feuilleDeRoute.nom}>
-                  <Tag>
-                    {feuilleDeRoute.nom}
+                <li key={feuilleDeRoute.label}>
+                  <Tag href={feuilleDeRoute.link}>
+                    {feuilleDeRoute.label}
                   </Tag>
                 </li>
               ))}

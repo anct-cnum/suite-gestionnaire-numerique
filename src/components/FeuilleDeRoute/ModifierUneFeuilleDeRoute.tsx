@@ -7,7 +7,7 @@ import { clientContext } from '../shared/ClientContext'
 import Drawer from '../shared/Drawer/Drawer'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { LabelValue } from '@/presenters/shared/labelValue'
+import { LabelValue } from '@/presenters/shared/labels'
 
 export default function ModifierUneFeuilleDeRoute({
   contratPreexistant,

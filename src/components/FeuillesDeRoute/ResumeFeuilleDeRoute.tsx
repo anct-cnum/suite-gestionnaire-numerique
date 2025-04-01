@@ -6,7 +6,7 @@ import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
-import { isNullish, isNullishOrEmpty } from '@/shared/lang'
+import { isNullishOrEmpty } from '@/shared/lang'
 
 export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props): ReactElement {
   return (
@@ -25,12 +25,12 @@ export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props
         <h2 className="fr-h3 color-blue-france fr-mb-1w">
           {feuilleDeRoute.nom}
         </h2>
-        {isNullish(feuilleDeRoute.porteur) ?
+        {feuilleDeRoute.porteur === undefined ?
           <div className="fr-tag">
             Aucune structure porteuse
           </div> :
-          <Tag>
-            {feuilleDeRoute.porteur}
+          <Tag href={feuilleDeRoute.porteur.link}>
+            {feuilleDeRoute.porteur.label}
           </Tag>}
         {' '}
         <span>
@@ -44,7 +44,7 @@ export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props
           </p>
           <Link
             className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-            href={`/gouvernance/11/feuille-de-route/${feuilleDeRoute.uid}/action/ajouter`}
+            href={feuilleDeRoute.links.ajouter}
           >
             Ajouter une action
           </Link>

@@ -41,7 +41,10 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
       </div>
       {
         action.porteurs.map((porteur) => (
-          <Tag key={porteur.value}>
+          <Tag
+            href={porteur.link}
+            key={porteur.link}
+          >
             {porteur.label}
           </Tag>
         ))
@@ -97,9 +100,9 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
         className="fr-tags-group"
       >
         {action.beneficiaires.map((beneficiaire) => (
-          <li key={beneficiaire.nom}>
-            <Tag>
-              {beneficiaire.nom}
+          <li key={beneficiaire.label}>
+            <Tag href={beneficiaire.link}>
+              {beneficiaire.label}
             </Tag>
           </li>
         ))}
