@@ -50,6 +50,7 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
       nom: membre.contactReferent.nom,
       prenom: membre.contactReferent.prenom,
     },
+    isDeletable: true,
     nom: membre.nom,
     roles: membre.roles as MesMembresReadModel['roles'],
     siret: 'Siret bouchonné',

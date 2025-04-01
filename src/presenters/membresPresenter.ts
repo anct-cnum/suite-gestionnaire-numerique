@@ -68,7 +68,7 @@ function toMembreViewModel(membre: MembreReadModel): MembreViewModel {
       intitule: `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`,
       intituleCourt: nomComplet,
     },
-    isDeletable: membre.typologie === 'Préfecture départementale',
+    isDeletable: membre.isDeletable,
     roles: membre.roles.map(toRoleViewModel),
     typologie: {
       elaboree: handleTypologieIndefinie('elaboree')(membre.typologie),
