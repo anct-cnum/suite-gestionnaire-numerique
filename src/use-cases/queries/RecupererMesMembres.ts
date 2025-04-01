@@ -12,6 +12,12 @@ export class RecupererMesMembres implements QueryHandler<Query, MesMembresReadMo
     return this.#mesMembresLoader.get(query.codeDepartement).then((mesMembres) => {
       return {
         ...mesMembres,
+        membres: mesMembres.membres.map((membre) => (
+          {
+            ...membre,
+            isDeletable: !isPrefectureDepartementale(membre),
+          }
+        )),
         ...rolesEtTypologies(mesMembres.membres),
       }
     })
@@ -43,6 +49,7 @@ export type MembreReadModel = Readonly<{
     nom: string
     prenom: string
   }>
+  isDeletable: boolean
   nom: string
   roles: ReadonlyArray<Role>
   siret: string
@@ -51,6 +58,10 @@ export type MembreReadModel = Readonly<{
   typologie: string
   uid: string
 }>
+
+function isPrefectureDepartementale(membre: MesMembresReadModel['membres'][number]): boolean {
+  return membre.typologie === 'Préfecture départementale'
+}
 
 function rolesEtTypologies(membres: MesMembresReadModel['membres']): RoleEtTypologie {
   const { roles, typologies } = membres.reduce((rolesEtTypologies, membre) => ({
