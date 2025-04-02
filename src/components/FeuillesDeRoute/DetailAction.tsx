@@ -25,11 +25,11 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
       </Badge>
       <ul
         aria-label="Besoins"
-        className="fr-tags-group fr-mb-2w"
+        className="fr-ml-1w"
       >
         {action.besoins.map((besoin) => (
           <li
-            className="fr-mr-1w color-grey"
+            className={`color-grey fr-text--sm ${styles.besoin}`}
             key={besoin}
           >
             {besoin}

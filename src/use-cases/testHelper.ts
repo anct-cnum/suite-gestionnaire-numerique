@@ -286,7 +286,7 @@ export function feuillesDeRouteReadModelFactory(
               },
             ],
             besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
-            budgetGlobal: 70_000,
+            budgetGlobal: 60_000,
             coFinancements: [
               {
                 coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
@@ -310,7 +310,7 @@ export function feuillesDeRouteReadModelFactory(
               coFinancement: 0,
               financementAccorde: 0,
             },
-            uid: 'actionFooId1',
+            uid: 'actionFooId3',
           },
         ],
         beneficiaires: 0,
@@ -326,6 +326,48 @@ export function feuillesDeRouteReadModelFactory(
           financementAccorde: 0,
         },
         uid: 'feuilleDeRouteFooId2',
+      },
+      {
+        actions: [
+          {
+            beneficiaires: [],
+            besoins: ['Établir un diagnostic territorial'],
+            budgetGlobal: 13_000,
+            coFinancements: [
+              {
+                coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
+                montant: 6_000,
+              },
+            ],
+            contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+            nom: 'Structurer une filière de reconditionnement locale 3',
+            porteurs: [],
+            subvention: {
+              enveloppe: 'Ingénierie France Numérique Ensemble',
+              montants: {
+                prestation: 4_000,
+                ressourcesHumaines: 3_000,
+              },
+              statut: 'refusee',
+            },
+            totaux: {
+              coFinancement: 0,
+              financementAccorde: 0,
+            },
+            uid: 'actionFooId4',
+          },
+        ],
+        beneficiaires: 0,
+        coFinanceurs: 0,
+        nom: 'Feuille de route 3',
+        structureCoPorteuse: undefined,
+        totaux: {
+          budget: 0,
+          coFinancement: 0,
+          financementAccorde: 0,
+        },
+        uid: 'feuilleDeRouteFooId3',
       },
     ],
     porteursPotentielsNouvellesFeuillesDeRouteOuActions: [

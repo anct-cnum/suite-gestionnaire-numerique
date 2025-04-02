@@ -49,7 +49,7 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
             >
               <div className={styles['card-resume-montant-subvention']}>
                 <p className="fr-mb-0 color-blue-france fr-h6">
-                  {feuillesDeRouteViewModel.totaux.budget}
+                  {feuillesDeRouteViewModel.totaux.financementAccorde}
                   {' '}
                 </p>
                 <p className="color-blue-france fr-mb-0">
@@ -69,7 +69,7 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
               </div>
               <div className={styles['card-resume-montant-subvention']}>
                 <p className="fr-mb-0 color-blue-france fr-h6">
-                  {feuillesDeRouteViewModel.totaux.financementAccorde}
+                  {feuillesDeRouteViewModel.totaux.budget}
                 </p>
                 <p className="color-blue-france fr-mb-0">
                   Budget total des feuilles de route
@@ -81,10 +81,13 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
               className="fr-p-0"
             >
               {feuillesDeRouteViewModel.feuillesDeRoute.map((feuilleDeRoute: FeuilleDeRouteViewModel) => (
-                <li key={feuilleDeRoute.nom}>
+                <li key={feuilleDeRoute.uid}>
                   <ResumeFeuilleDeRoute feuilleDeRoute={feuilleDeRoute} >
                     {feuilleDeRoute.actions.length > 0 ?
-                      <ResumeAction actions={feuilleDeRoute.actions} /> :
+                      <ResumeAction
+                        actions={feuilleDeRoute.actions}
+                        uidFeuilleDeRoute={feuilleDeRoute.uid}
+                      /> :
                       null}
                   </ResumeFeuilleDeRoute>
                 </li>
