@@ -51,7 +51,7 @@ function transform(
           action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
         return {
           beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-          besoins: action.besoins,
+          besoins: action.besoins.map(besoin => besoin.split('_').join(' ')),
           budgetGlobal: action.budgetGlobal,
           coFinancements: action.coFinancement.map(({ membre, montant }) => ({
             coFinanceur: fromMembre(toMembre(membre)),

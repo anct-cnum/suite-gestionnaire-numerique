@@ -7,7 +7,12 @@ describe('recupérer les feuilles de route', () => {
     spiedCodeDepartement = ''
   })
 
-  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant les totaux des différents budgets ainsi que les totaux du nombre de cofinanceurs et de bénéficiaires', async () => {
+  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées et les données suivantes sont calculées :\n' +
+    '- pour chaque action de chaque feuille de route, les totaux des subventions demandées et des co-financements\n' +
+    '- pour chaque feuille de route :\n' +
+    '-- les nombres de cofinanceurs et de bénéficiaires pour l’ensemble des actions\n' +
+    '-- les totaux des budgets de toutes les actions \n' +
+    '-- les totaux des financement accordés pour et des co-financements pour l’ensemble des actions\n', async () => {
     // GIVEN
     const codeDepartement = '93'
     const recupererLesFeuillesDeRoute = new RecupererLesFeuillesDeRoute(new FeuillesDeRouteLoaderSpy())
@@ -17,7 +22,7 @@ describe('recupérer les feuilles de route', () => {
 
     // THEN
     expect(spiedCodeDepartement).toBe(codeDepartement)
-    expect(feuillesDeRoute).toStrictEqual({
+    expect(feuillesDeRoute).toStrictEqual<FeuillesDeRouteReadModel>({
       feuillesDeRoute: [
         {
           actions: [
@@ -70,8 +75,8 @@ describe('recupérer les feuilles de route', () => {
                 statut: 'acceptee',
               },
               totaux: {
-                coFinancement: 0,
-                financementAccorde: 0,
+                coFinancement: 40_000,
+                financementAccorde: 30_000,
               },
               uid: 'actionFooId1',
             },
@@ -100,7 +105,6 @@ describe('recupérer les feuilles de route', () => {
               uid: 'actionFooId2',
             },
           ],
-
           beneficiaires: 4,
           coFinanceurs: 2,
           nom: 'Feuille de route 1',
@@ -109,11 +113,10 @@ describe('recupérer les feuilles de route', () => {
             uid: 'coPorteuseFooId',
           },
           totaux: {
-            budget: 70_000,
+            budget: 170_000,
             coFinancement: 40_000,
             financementAccorde: 30_000,
           },
-
           uid: 'feuilleDeRouteFooId1',
         },
         {
@@ -126,7 +129,7 @@ describe('recupérer les feuilles de route', () => {
                 },
               ],
               besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
-              budgetGlobal: 70_000,
+              budgetGlobal: 60_000,
               coFinancements: [
                 {
                   coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
@@ -147,10 +150,10 @@ describe('recupérer les feuilles de route', () => {
                 },
               ],
               totaux: {
-                coFinancement: 0,
+                coFinancement: 20_000,
                 financementAccorde: 0,
               },
-              uid: 'actionFooId1',
+              uid: 'actionFooId3',
             },
           ],
           beneficiaires: 1,
@@ -161,11 +164,53 @@ describe('recupérer les feuilles de route', () => {
             uid: 'coPorteuseFooId2',
           },
           totaux: {
-            budget: 20_000,
+            budget: 60_000,
             coFinancement: 20_000,
             financementAccorde: 0,
           },
           uid: 'feuilleDeRouteFooId2',
+        },
+        {
+          actions: [
+            {
+              beneficiaires: [],
+              besoins: ['Établir un diagnostic territorial'],
+              budgetGlobal: 13_000,
+              coFinancements: [
+                {
+                  coFinanceur: { nom: 'Co-financeur 2', uid: 'coFinanceurId2' },
+                  montant: 6_000,
+                },
+              ],
+              contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
+              nom: 'Structurer une filière de reconditionnement locale 3',
+              porteurs: [],
+              subvention: {
+                enveloppe: 'Ingénierie France Numérique Ensemble',
+                montants: {
+                  prestation: 4_000,
+                  ressourcesHumaines: 3_000,
+                },
+                statut: 'refusee',
+              },
+              totaux: {
+                coFinancement: 6_000,
+                financementAccorde: 0,
+              },
+              uid: 'actionFooId4',
+            },
+          ],
+          beneficiaires: 0,
+          coFinanceurs: 1,
+          nom: 'Feuille de route 3',
+          structureCoPorteuse: undefined,
+          totaux: {
+            budget: 13_000,
+            coFinancement: 6_000,
+            financementAccorde: 0,
+          },
+          uid: 'feuilleDeRouteFooId3',
         },
       ],
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
@@ -186,51 +231,12 @@ describe('recupérer les feuilles de route', () => {
         },
       ],
       totaux: {
-        budget: 90_000,
-        coFinancement: 60_000,
+        budget: 243_000,
+        coFinancement: 66_000,
         financementAccorde: 30_000,
       },
       uidGouvernance: 'gouvernanceFooId',
     })
-  })
-
-  it('quand les feuilles de route d’une gouvernance sont demandées, alors elles sont récupérées en calculant le financement accordé selon si l’action a sa subvention acceptée', async () => {
-    // GIVEN
-    const codeDepartement = '93'
-    const recupererLesFeuillesDeRoute = new RecupererLesFeuillesDeRoute(
-      new FeuillesDeRouteSansSubventionsAccepteesLoaderSpy()
-    )
-
-    // WHEN
-    const feuillesDeRoute = await recupererLesFeuillesDeRoute.handle({ codeDepartement })
-
-    // THEN
-    expect(spiedCodeDepartement).toBe(codeDepartement)
-    expect(feuillesDeRoute.feuillesDeRoute[0].totaux).toStrictEqual(
-      {
-        budget: 40_000,
-        coFinancement: 40_000,
-        financementAccorde: 0,
-      }
-    )
-    expect(feuillesDeRoute.feuillesDeRoute[0].beneficiaires).toBe(4)
-    expect(feuillesDeRoute.feuillesDeRoute[0].coFinanceurs).toBe(2)
-    expect(feuillesDeRoute.feuillesDeRoute[1].totaux).toStrictEqual(
-      {
-        budget: 20_000,
-        coFinancement: 20_000,
-        financementAccorde: 0,
-      }
-    )
-    expect(feuillesDeRoute.feuillesDeRoute[1].beneficiaires).toBe(1)
-    expect(feuillesDeRoute.feuillesDeRoute[1].coFinanceurs).toBe(1)
-    expect(feuillesDeRoute.totaux).toStrictEqual(
-      {
-        budget: 60_000,
-        coFinancement: 60_000,
-        financementAccorde: 0,
-      }
-    )
   })
 })
 
@@ -241,32 +247,5 @@ class FeuillesDeRouteLoaderSpy implements FeuillesDeRouteLoader {
   async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
     spiedCodeDepartement = codeDepartement
     return Promise.resolve(desFeuillesDeRoute)
-  }
-}
-
-class FeuillesDeRouteSansSubventionsAccepteesLoaderSpy implements FeuillesDeRouteLoader {
-  async feuillesDeRoute(codeDepartement: string): Promise<FeuillesDeRouteReadModel> {
-    spiedCodeDepartement = codeDepartement
-    return Promise.resolve(feuillesDeRouteReadModelFactory({
-      feuillesDeRoute: [
-        {
-          ...desFeuillesDeRoute.feuillesDeRoute[0],
-          actions: [
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0],
-              subvention: {
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                ...desFeuillesDeRoute.feuillesDeRoute[0].actions[0].subvention!,
-                statut: 'enCours',
-              },
-            },
-            {
-              ...desFeuillesDeRoute.feuillesDeRoute[0].actions[1],
-            },
-          ],
-        },
-        desFeuillesDeRoute.feuillesDeRoute[1],
-      ],
-    }))
   }
 }

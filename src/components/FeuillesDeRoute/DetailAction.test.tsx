@@ -16,7 +16,7 @@ describe('détail d’une action', () => {
 
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 1' })
-      expect(drawer).toHaveAttribute('id', 'drawerActionId')
+      expect(drawer).toHaveAttribute('id', 'drawerActionIdfeuilleDeRouteFooId1')
       const titre = within(drawer).getByRole('heading', { level: 1, name: 'Structurer une filière de reconditionnement locale 1' })
       expect(titre).toBeInTheDocument()
 
@@ -97,7 +97,7 @@ describe('détail d’une action', () => {
       const fermer = jeFermeLAction()
 
       // THEN
-      expect(fermer).toHaveAttribute('aria-controls', 'drawerActionId')
+      expect(fermer).toHaveAttribute('aria-controls', 'drawerActionIdfeuilleDeRouteFooId1')
       expect(drawer).not.toBeVisible()
     })
   })

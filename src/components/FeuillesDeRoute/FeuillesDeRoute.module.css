@@ -21,3 +21,8 @@
 .budget__subvention {
   color: var(--text-title-blue-france);
 }
+
+.besoin {
+  margin-bottom: 0;
+  text-transform: capitalize;
+}

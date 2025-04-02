@@ -9,11 +9,11 @@ import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function ResumeAction({ actions }: Props): ReactElement {
+export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [action, setAction] = useState<FeuilleDeRouteViewModel['actions'][number]>(actions[0])
-  const drawerId = 'drawerActionId'
+  const drawerId = `drawerActionId${uidFeuilleDeRoute}`
   const labelId = useId()
 
   return (
@@ -85,4 +85,5 @@ export default function ResumeAction({ actions }: Props): ReactElement {
 
 type Props = Readonly<{
   actions: FeuilleDeRouteViewModel['actions']
+  uidFeuilleDeRoute: string
 }>
