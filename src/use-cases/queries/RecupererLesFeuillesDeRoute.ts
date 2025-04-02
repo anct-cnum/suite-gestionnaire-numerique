@@ -9,34 +9,35 @@ export class RecupererLesFeuillesDeRoute implements QueryHandler<Query, Feuilles
   }
 
   async handle(query: Query): Promise<FeuillesDeRouteReadModel> {
-    const readModel = await this.#loader.feuillesDeRoute(query.codeDepartement)
-    const feuillesDeRoute = readModel.feuillesDeRoute.map(feuilleDeRoute => {
-      const coFinancement = sommerCoFinancements(feuilleDeRoute.actions)
-      const financementAccorde = sommerFinancementsAccordes(feuilleDeRoute.actions)
+    const rawReadModel = await this.#loader.feuillesDeRoute(query.codeDepartement)
+    const readModelInitial: FeuillesDeRouteReadModel = { ...rawReadModel, feuillesDeRoute: [] }
+    return rawReadModel.feuillesDeRoute.reduce((readModel, feuilleDeRoute) => {
+      const recapitulatifActions = feuilleDeRoute.actions.reduce((recapActions, action) => {
+        const coFinancement = calculerCoFinancements(action)
+        const financementAccorde = calculerFinancementAccorde(action)
+        return {
+          actions: recapActions.actions.concat({ ...action, totaux: { coFinancement, financementAccorde } }),
+          ensembleBeneficiaires: ajouterBeneficiaires(action, recapActions.ensembleBeneficiaires),
+          ensembleCoFinanceurs: ajouterCoFinanceurs(action, recapActions.ensembleCoFinanceurs),
+          totaux: {
+            budget: recapActions.totaux.budget + action.budgetGlobal,
+            coFinancement: recapActions.totaux.coFinancement + coFinancement,
+            financementAccorde: recapActions.totaux.financementAccorde + financementAccorde,
+          },
+        }
+      }, recapitulatifInitialActions)
+      const feuilleDeRouteCalculee = recapFeuilleDeRoute(feuilleDeRoute, recapitulatifActions)
       return {
-        ...feuilleDeRoute,
-        beneficiaires: nombreDeBeneficiaires(feuilleDeRoute.actions),
-        coFinanceurs: nombreDeCofinanceurs(feuilleDeRoute.actions),
+        ...readModel,
+        feuillesDeRoute: readModel.feuillesDeRoute.concat(feuilleDeRouteCalculee),
         totaux: {
-          ...feuilleDeRoute.totaux,
-          budget: coFinancement + financementAccorde,
-          coFinancement,
-          financementAccorde,
+          budget: readModel.totaux.budget + feuilleDeRouteCalculee.totaux.budget,
+          coFinancement: readModel.totaux.coFinancement + feuilleDeRouteCalculee.totaux.coFinancement,
+          financementAccorde: readModel.totaux.financementAccorde
+              + feuilleDeRouteCalculee.totaux.financementAccorde,
         },
       }
-    })
-    const coFinancementGlobal = sommerFinancementGlobal(feuillesDeRoute, 'coFinancement')
-    const financementAccordeGlobal = sommerFinancementGlobal(feuillesDeRoute, 'financementAccorde')
-    const budgetGlobal = coFinancementGlobal + financementAccordeGlobal
-    return {
-      ...readModel,
-      feuillesDeRoute,
-      totaux: {
-        budget: budgetGlobal,
-        coFinancement: coFinancementGlobal,
-        financementAccorde: financementAccordeGlobal,
-      },
-    }
+    }, readModelInitial)
   }
 }
 
@@ -57,46 +58,56 @@ export type FeuillesDeRouteReadModel = Readonly<{
 
 export type StatutSubvention = 'acceptee' | 'deposee' | 'enCours' | 'refusee'
 
-function sommerCoFinancements(actions: ReadonlyArray<ActionReadModel>): number {
-  return actions
-    .flatMap(({ coFinancements }) => coFinancements)
-    .flatMap(({ montant }) => montant)
-    .reduce(sum, 0)
+type RecapAction = Pick<
+  FeuilleDeRouteReadModel, 'actions' | 'totaux'> & Readonly<{
+    ensembleBeneficiaires: Set<string>
+    ensembleCoFinanceurs: Set<string>
+  }>
+
+const recapitulatifInitialActions: RecapAction = {
+  actions: [],
+  ensembleBeneficiaires: new Set<string>(),
+  ensembleCoFinanceurs: new Set<string>(),
+  totaux: {
+    budget: 0,
+    coFinancement: 0,
+    financementAccorde: 0,
+  },
 }
 
-function sommerFinancementsAccordes(actions: ReadonlyArray<ActionReadModel>): number {
-  return actions
-    .filter(action => action.subvention?.statut === 'acceptee')
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .map(({ subvention }) => subvention!.montants.prestation + subvention!.montants.ressourcesHumaines)
-    .reduce(sum, 0)
+function calculerCoFinancements(action: ActionReadModel): number {
+  return action.coFinancements.map(({ montant }) => montant).reduce(sum, 0)
 }
 
-function sommerFinancementGlobal(
-  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>,
-  total: keyof FeuilleDeRouteReadModel['totaux']
-): number {
-  return feuillesDeRoute
-    .map(({ totaux }) => totaux[total])
-    .reduce(sum, 0)
+function calculerFinancementAccorde(action: ActionReadModel): number {
+  return action.subvention?.statut === 'acceptee'
+    ? action.subvention.montants.prestation + action.subvention.montants.ressourcesHumaines
+    : 0
 }
 
-function nombreDeBeneficiaires(
-  actions: ReadonlyArray<ActionReadModel>
-): number {
-  const beneficiaires = actions
-    .flatMap(({ beneficiaires }) => beneficiaires)
-    .flatMap(({ uid }) => uid)
-  return new Set(beneficiaires).size
+function ajouterBeneficiaires(action: ActionReadModel, beneficiaires: Set<string>): Set<string> {
+  return new Set(action.beneficiaires.map(({ uid }) => uid).concat([...beneficiaires]))
 }
 
-function nombreDeCofinanceurs(
-  actions: ReadonlyArray<ActionReadModel>
-): number {
-  const cofinanceurs = actions
-    .flatMap(({ coFinancements }) => coFinancements)
-    .flatMap(({ coFinanceur }) => coFinanceur.uid)
-  return new Set(cofinanceurs).size
+function ajouterCoFinanceurs(action: ActionReadModel, cofinanceurs: Set<string>): Set<string> {
+  return new Set(
+    action.coFinancements
+      .map(({ coFinanceur: { uid } }) => uid)
+      .concat([...cofinanceurs])
+  )
+}
+
+function recapFeuilleDeRoute(
+  feuilleDeRoute: FeuilleDeRouteReadModel,
+  recapActions: RecapAction
+): FeuilleDeRouteReadModel {
+  return {
+    ...feuilleDeRoute,
+    actions: recapActions.actions,
+    beneficiaires: recapActions.ensembleBeneficiaires.size,
+    coFinanceurs: recapActions.ensembleCoFinanceurs.size,
+    totaux: recapActions.totaux,
+  }
 }
 
 type FeuilleDeRouteReadModel = Readonly<
