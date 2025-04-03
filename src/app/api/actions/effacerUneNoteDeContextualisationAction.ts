@@ -5,7 +5,7 @@ import { z } from 'zod'
 
 import { ResultAsync } from '@/use-cases/CommandHandler'
 
-export async function supprimerUneNoteDeContextualisationAction(
+export async function effacerUneNoteDeContextualisationAction(
   actionParam: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParam)
