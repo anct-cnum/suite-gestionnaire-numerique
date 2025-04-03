@@ -51,7 +51,12 @@ function transform(
           action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
         return {
           beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-          besoins: action.besoins,
+          besoins: action.besoins.map(besoin => {
+            const words = besoin.split('_')
+            return words
+              .toSpliced(0, 1, `${words[0].charAt(0).toLocaleUpperCase()}${words[0].slice(1)}`)
+              .join(' ')
+          }),
           budgetGlobal: action.budgetGlobal,
           coFinancements: action.coFinancement.map(({ membre, montant }) => ({
             coFinanceur: fromMembre(toMembre(membre)),

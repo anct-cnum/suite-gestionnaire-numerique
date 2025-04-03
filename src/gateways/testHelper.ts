@@ -467,7 +467,7 @@ function actionRecordFactory(
   override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
 ): Prisma.ActionRecordUncheckedCreateInput {
   return {
-    besoins: ['besoin 1', 'besoin 2'],
+    besoins: ['besoin_1', 'besoin_2'],
     budgetGlobal: 0,
     contexte: "Contexte de l'action",
     createurId: 1,

@@ -116,7 +116,7 @@ describe('récupérer les feuilles de route loader', () => {
           actions: [
             {
               beneficiaires: [],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: ['Besoin 1', 'Besoin 2'],
               budgetGlobal: 70_000,
               coFinancements: [
                 {
@@ -147,7 +147,7 @@ describe('récupérer les feuilles de route loader', () => {
             },
             {
               beneficiaires: [],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: ['Besoin 1', 'Besoin 2'],
               budgetGlobal: 70_000,
               coFinancements: [],
               contexte: "Contexte de l'action",
@@ -187,7 +187,7 @@ describe('récupérer les feuilles de route loader', () => {
                   uid: 'commune-35345-93',
                 },
               ],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: ['Besoin 1', 'Besoin 2'],
               budgetGlobal: 70_000,
               coFinancements: [
                 {
