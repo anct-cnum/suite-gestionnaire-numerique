@@ -14,7 +14,6 @@ import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNote
 import { ajouterUneNoteDeContextualisationAction } from '@/app/api/actions/ajouterUneNoteDeContextualisationAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
-import { effacerUneNoteDeContextualisationAction } from '@/app/api/actions/effacerUneNoteDeContextualisationAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
@@ -27,6 +26,7 @@ import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtili
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
 import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
+import { supprimerUneNoteDeContextualisationAction } from '@/app/api/actions/supprimerUneNoteDeContextualisationAction'
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
@@ -51,7 +51,6 @@ export default function ClientContext({
       ajouterUneNoteDeContextualisationAction,
       ajouterUneNotePriveeAction,
       changerMonRoleAction,
-      effacerUneNoteDeContextualisationAction,
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
@@ -69,6 +68,7 @@ export default function ClientContext({
       supprimerMonCompteAction,
       supprimerUnComiteAction,
       supprimerUneNoteDeContexteAction,
+      supprimerUneNoteDeContextualisationAction,
       supprimerUneNotePriveeAction,
       supprimerUnUtilisateurAction,
       utilisateursParPage,
@@ -94,7 +94,6 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   changerMonRoleAction: typeof changerMonRoleAction
-  effacerUneNoteDeContextualisationAction: typeof effacerUneNoteDeContextualisationAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
   modifierUnComiteAction: typeof modifierUnComiteAction
@@ -112,6 +111,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerMonCompteAction: typeof supprimerMonCompteAction
   supprimerUnComiteAction: typeof supprimerUnComiteAction
   supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
+  supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number

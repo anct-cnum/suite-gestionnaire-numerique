@@ -11,9 +11,9 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 
 export default function ModifierUneNoteDeContextualisation({ contextualisation }: Props): ReactElement {
   const {
-    effacerUneNoteDeContextualisationAction,
     modifierUneNoteDeContextualisationAction,
     pathname,
+    supprimerUneNoteDeContextualisationAction,
   } = useContext(clientContext)
   // Stryker disable next-line BooleanLiteral
   const [isDisabled, setIsDisabled] = useState(false)
@@ -82,9 +82,9 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
     event.preventDefault()
     setIsDisabled(true)
     if (contenu === '') {
-      const messages = await effacerUneNoteDeContextualisationAction({ path: pathname })
+      const messages = await supprimerUneNoteDeContextualisationAction({ path: pathname })
       if (messages.includes('OK')) {
-        Notification('success', { description: 'effacée', title: 'Note de contextualisation ' })
+        Notification('success', { description: 'supprimée', title: 'Note de contextualisation ' })
         setIsDrawerOpen(false)
       } else {
         Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })

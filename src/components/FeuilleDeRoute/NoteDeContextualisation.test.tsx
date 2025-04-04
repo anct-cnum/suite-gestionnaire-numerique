@@ -153,8 +153,8 @@ describe('note de contextualisation', () => {
 
     it('puis que je veux effacer la note de contextualisation, alors une notification s‘affiche', async () => {
       // GIVEN
-      const effacerUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ effacerUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
@@ -167,15 +167,15 @@ describe('note de contextualisation', () => {
       const drawer = await screen.findByRole('dialog', { name: 'Contextualisation des demandes de subvention' })
       expect(drawer).not.toBeVisible()
       const notification = await screen.findByRole('alert')
-      expect(notification.textContent).toBe('Note de contextualisation effacée')
+      expect(notification.textContent).toBe('Note de contextualisation supprimée')
       expect(enregistrer).toHaveAccessibleName('Enregistrer')
       expect(enregistrer).toBeEnabled()
     })
 
     it('puis que je veux effacer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
-      const effacerUneNoteDeContextualisationAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
-      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ effacerUneNoteDeContextualisationAction, pathname: '/gouvernance/11/feuille-de-route/116' })
+      const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
+      afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
 
       // WHEN
       jouvreLeDrawerDeModificationDeNoteDeContextualisation()
