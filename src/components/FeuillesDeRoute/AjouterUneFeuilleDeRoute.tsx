@@ -10,7 +10,6 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function AjouterUneFeuilleDeRoute({
-  contratPreexistant,
   membres,
   perimetres,
   uidGouvernance,
@@ -49,7 +48,6 @@ export default function AjouterUneFeuilleDeRoute({
         ref={drawerRef}
       >
         <FormulaireFeuilleDeRoute
-          contratPreexistant={contratPreexistant}
           label="Ajouter une feuille de route"
           labelId={labelId}
           membres={membres}

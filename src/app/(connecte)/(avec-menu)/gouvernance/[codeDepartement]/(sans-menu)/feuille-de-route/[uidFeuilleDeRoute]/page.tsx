@@ -1,23 +1,21 @@
 import { ReactElement } from 'react'
 
 import FeuilleDeRoute from '@/components/FeuilleDeRoute/FeuilleDeRoute'
-import Notice from '@/components/shared/Notice/Notice'
+import { PrismaUneFeuilleDeRouteLoader } from '@/gateways/PrismaUneFeuilleDeRouteLoader'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
 
 export default async function FeuilleDeRouteController({ params }: Props): Promise<ReactElement> {
-  const { codeDepartement, uidFeuilleDeRoute } = await params
+  const { uidFeuilleDeRoute } = await params
+
+  const readModel = await new PrismaUneFeuilleDeRouteLoader().get(uidFeuilleDeRoute)
 
   return (
-    <>
-      <Notice />
-      <FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRoutePresenter(codeDepartement, uidFeuilleDeRoute)} />
-    </>
+    <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(readModel)} />
   )
 }
 
 type Props = Readonly<{
   params: Promise<Readonly<{
-    codeDepartement: string
     uidFeuilleDeRoute: string
   }>>
 }>

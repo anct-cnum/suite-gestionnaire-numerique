@@ -10,7 +10,6 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export default function ModifierUneFeuilleDeRoute({
-  contratPreexistant,
   membres,
   nom,
   perimetres,
@@ -52,7 +51,6 @@ export default function ModifierUneFeuilleDeRoute({
         ref={drawerRef}
       >
         <FormulaireFeuilleDeRoute
-          contratPreexistant={contratPreexistant}
           label="Modifier une feuille de route"
           labelId={labelId}
           membres={membres}
@@ -73,9 +71,8 @@ export default function ModifierUneFeuilleDeRoute({
 
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, membre, perimetre, contratPreexistant] = form.values() as FormDataIterator<string>
+    const [nom, membre, perimetre] = form.values() as FormDataIterator<string>
     const messages = await modifierUneFeuilleDeRouteAction({
-      contratPreexistant,
       nom,
       path: pathname,
       perimetre,
@@ -95,7 +92,6 @@ export default function ModifierUneFeuilleDeRoute({
 }
 
 type Props = Readonly<{
-  contratPreexistant: ReadonlyArray<LabelValue>
   membres: ReadonlyArray<LabelValue>
   nom: string
   perimetres: ReadonlyArray<LabelValue>

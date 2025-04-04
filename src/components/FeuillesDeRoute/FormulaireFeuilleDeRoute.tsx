@@ -11,7 +11,6 @@ import { LabelValue } from '@/presenters/shared/labels'
 
 export default function FormulaireFeuilleDeRoute({
   children,
-  contratPreexistant,
   label,
   labelId,
   membres,
@@ -80,19 +79,6 @@ export default function FormulaireFeuilleDeRoute({
             options={perimetres}
           />
         </fieldset>
-        <fieldset className="fr-fieldset">
-          <legend className="fr-mb-2w">
-            La feuille de route s’appuie-t-elle sur un contrat préexistant ?
-            {' '}
-            <span className="color-red">
-              *
-            </span>
-          </legend>
-          <RadioGroup
-            nomGroupe="contratPreexistant"
-            options={contratPreexistant}
-          />
-        </fieldset>
         <div className="fr-btns-group">
           {children}
         </div>
@@ -102,7 +88,6 @@ export default function FormulaireFeuilleDeRoute({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  contratPreexistant: ReadonlyArray<LabelValue>
   label: string
   labelId: string
   membres: ReadonlyArray<LabelValue>

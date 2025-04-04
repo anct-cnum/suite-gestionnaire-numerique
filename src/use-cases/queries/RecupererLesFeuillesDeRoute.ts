@@ -1,4 +1,5 @@
 import { QueryHandler } from '../QueryHandler'
+import { StatutSubvention } from './shared/ActionReadModel'
 import { sum } from '@/shared/lang'
 
 export class RecupererLesFeuillesDeRoute implements QueryHandler<Query, FeuillesDeRouteReadModel> {
@@ -55,8 +56,6 @@ export type FeuillesDeRouteReadModel = Readonly<{
   }>
   uidGouvernance: string
 }>
-
-export type StatutSubvention = 'acceptee' | 'deposee' | 'enCours' | 'refusee'
 
 type RecapAction = Pick<
   FeuilleDeRouteReadModel, 'actions' | 'totaux'> & Readonly<{
@@ -135,33 +134,32 @@ type FeuilleDeRouteReadModel = Readonly<
     uid: string
   }>
 
-type ActionReadModel = Readonly<
-  {
-    beneficiaires: ReadonlyArray<Membre>
-    besoins: ReadonlyArray<string>
-    budgetGlobal: number
-    coFinancements: ReadonlyArray<Readonly<{
-      coFinanceur: Membre
-      montant: number
-    }>>
-    contexte: string
-    description: string
-    nom: string
-    porteurs: ReadonlyArray<Membre>
-    subvention?: Readonly<{
-      enveloppe: string
-      montants: Readonly<{
-        prestation: number
-        ressourcesHumaines: number
-      }>
-      statut: StatutSubvention
+type ActionReadModel = Readonly<{
+  beneficiaires: ReadonlyArray<Membre>
+  besoins: ReadonlyArray<string>
+  budgetGlobal: number
+  coFinancements: ReadonlyArray<Readonly<{
+    coFinanceur: Membre
+    montant: number
+  }>>
+  contexte: string
+  description: string
+  nom: string
+  porteurs: ReadonlyArray<Membre>
+  subvention?: Readonly<{
+    enveloppe: string
+    montants: Readonly<{
+      prestation: number
+      ressourcesHumaines: number
     }>
-    totaux: Readonly<{
-      coFinancement: number
-      financementAccorde: number
-    }>
-    uid: string
+    statut: StatutSubvention
   }>
+  totaux: Readonly<{
+    coFinancement: number
+    financementAccorde: number
+  }>
+  uid: string
+}>
 
 type Query = Readonly<{
   codeDepartement: string

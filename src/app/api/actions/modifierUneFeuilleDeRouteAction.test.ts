@@ -9,7 +9,6 @@ describe('modifier une feuille de route action', () => {
 
     // WHEN
     const messages = await modifierUneFeuilleDeRouteAction({
-      contratPreexistant: 'oui',
       nom: 'Feuille de route du Rhône',
       path: '/gouvernance/11/feuilles-de-route',
       perimetre: 'regional',
@@ -26,7 +25,6 @@ describe('modifier une feuille de route action', () => {
   it('quand une feuille de route est modifiée avec un chemin de page non renseigné, alors cela renvoie une erreur', async () => {
     // WHEN
     const messages = await modifierUneFeuilleDeRouteAction({
-      contratPreexistant: 'oui',
       nom: 'Feuille de route du Rhône',
       path: '',
       perimetre: 'regional',

@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 
+import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
@@ -169,10 +170,6 @@ function cumulerMontants(
       : { montantSubventionAccordee: cumul.montantSubventionAccordee + subventionAccordee },
     montantSubventionDemandee: cumul.montantSubventionDemandee + Number(subventionDemandee),
   }
-}
-
-function isEnveloppeDeFormation(enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>): boolean {
-  return /formation/i.test(enveloppe.libelle)
 }
 
 function calculerTotaux(totaux: Totaux, feuilleDeRoute: FeuilleDeRouteReadModel): Totaux {

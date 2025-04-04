@@ -609,7 +609,7 @@ export default function Membre({ viewModel }: Props): ReactElement {
         </section>
         <section
           aria-labelledby="historique"
-          className="grey-border border-radius fr-mb-2w fr-p-4w"
+          className="grey-border border-radius fr-mb-2w fr-p-4w fr-sr-only"
         >
           <Historique
             historique={viewModel.historiques}

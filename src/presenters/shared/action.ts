@@ -1,4 +1,4 @@
-import { StatutSubvention } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export const actionStatutViewModelByStatut: Record<'nonSubventionnee' | StatutSubvention, ActionStatutViewModel> = {
   acceptee: {

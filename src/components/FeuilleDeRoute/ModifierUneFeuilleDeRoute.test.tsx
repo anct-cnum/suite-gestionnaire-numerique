@@ -3,6 +3,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup, renderComponent, stubbedConceal, stubbedServerAction } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
+import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('modifier une feuille de route', () => {
   describe('quand je clique sur modifier une feuille de route', () => {
@@ -49,14 +50,6 @@ describe('modifier une feuille de route', () => {
       const epciGroupement = within(formulaire).getByRole('radio', { name: 'EPCI ou groupement de communes' })
       expect(epciGroupement).toBeRequired()
       expect(epciGroupement).toHaveAttribute('value', 'epci_groupement')
-      const contratPreexistant = within(fieldsets[1]).getByText(matchWithoutMarkup('La feuille de route s’appuie-t-elle sur un contrat préexistant ? *'), { selector: 'legend' })
-      expect(contratPreexistant).toBeInTheDocument()
-      const oui = within(formulaire).getByRole('radio', { name: 'Oui' })
-      expect(oui).toBeRequired()
-      expect(oui).toHaveAttribute('value', 'oui')
-      const non = within(formulaire).getByRole('radio', { checked: true, name: 'Non' })
-      expect(non).toBeRequired()
-      expect(non).toHaveAttribute('value', 'non')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
@@ -88,14 +81,12 @@ describe('modifier une feuille de route', () => {
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
-      jeSelectionneUnContrat('Oui')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
 
       // THEN
       expect(enregistrer).toHaveAccessibleName('Modification en cours...')
       expect(enregistrer).toBeDisabled()
       expect(modifierUneFeuilleDeRouteAction).toHaveBeenCalledWith({
-        contratPreexistant: 'oui',
         nom: 'Feuille de route du Rhône',
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
@@ -121,7 +112,6 @@ describe('modifier une feuille de route', () => {
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('membre1FooId')
       jeSelectionneUnPerimetre('Régional')
-      jeSelectionneUnContrat('Oui')
       jEnregistreLaFeuilleDeRoute()
 
       // THEN
@@ -141,10 +131,6 @@ describe('modifier une feuille de route', () => {
   }
 
   function jeSelectionneUnPerimetre(name: string): void {
-    fireEvent.click(screen.getByRole('radio', { name }))
-  }
-
-  function jeSelectionneUnContrat(name: string): void {
     fireEvent.click(screen.getByRole('radio', { name }))
   }
 
@@ -169,7 +155,7 @@ describe('modifier une feuille de route', () => {
   function afficherUneFeuilleDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const feuilleDeRouteViewModel = feuilleDeRoutePresenter('11', '113')
-    renderComponent(<FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRouteViewModel} />, options)
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory())
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options)
   }
 })

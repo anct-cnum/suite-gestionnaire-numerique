@@ -1,65 +1,27 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { formaterEnDateFrancaise } from './shared/date'
 import { HistoriqueViewModel } from './shared/historique'
 import { HyperLink, LabelValue } from './shared/labels'
-import { feuilleDeRouteLink, membreLink } from './shared/link'
+import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
+import { formatPluriel } from './shared/text'
+import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 
-export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRoute: string): FeuilleDeRouteViewModel {
+export function feuilleDeRoutePresenter(readModel: UneFeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
   return {
-    actions: [
-      {
-        budgetPrevisionnel: {
-          coFinanceur: formatMontant(80_000),
-          montant: formatMontant(20_000),
-          total: formatMontant(100_000),
-        },
-        nom: 'Structurer une filière de reconditionnement locale',
-        perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: {
-          label: 'CC des Monts du Lyonnais',
-          link: membreLink(codeDepartement, 'membreFooId'),
-        },
-        statut: actionStatutViewModelByStatut.acceptee,
-        uid: 'actionFooId1',
-        urlModifier: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/actionFooId1/modifier`,
-      },
-      {
-        budgetPrevisionnel: {
-          coFinanceur: formatMontant(0),
-          montant: formatMontant(20_000),
-          total: formatMontant(20_000),
-        },
-        nom: 'Formation Aidants Connect',
-        perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: {
-          label: 'CC des Monts du Lyonnais',
-          link: membreLink(codeDepartement, 'membreFooId'),
-        },
-        statut: actionStatutViewModelByStatut.refusee,
-        uid: 'actionFooId2',
-        urlModifier: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/actionFooId2/modifier`,
-      },
-    ],
+    action: `${readModel.actions.length} action${formatPluriel(readModel.actions.length)} pour cette feuille de route`,
+    actions: readModel.actions.map(toActionViewModel(readModel.uidGouvernance, readModel.uid)),
     budgets: {
-      cofinancement: formatMontant(90_000),
-      etat: formatMontant(30_000),
-      total: formatMontant(140_000),
+      cofinancement: formatMontant(readModel.montantCofinancements),
+      etat: formatMontant(readModel.montantFinancementsAccordes),
+      total: formatMontant(readModel.budgetTotalActions),
     },
-    contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-    contratPreexistant: false,
+    contextualisation: readModel.contextualisation,
+    document: readModel.document && {
+      href: documentfeuilleDeRouteLink(readModel.document.chemin),
+      nom: readModel.document.nom,
+    },
     formulaire: {
-      contratPreexistant: [
-        {
-          isSelected: false,
-          label: 'Oui',
-          value: 'oui',
-        },
-        {
-          isSelected: true,
-          label: 'Non',
-          value: 'non',
-        },
-      ],
       membres: [
         {
           isSelected: false,
@@ -107,30 +69,34 @@ export function feuilleDeRoutePresenter(codeDepartement: string, uidFeuilleDeRou
         libelle: 'Action Structurer un fonds local pour l’inclusion numérique',
       },
     ],
-    infosActions: '3 actions, 5 bénéficiaires, 3 co-financeurs',
-    infosDerniereEdition: 'Modifiée le 23/11/2024 par Lucie Brunot',
-    nom: 'Feuille de route FNE',
-    perimetre: 'Périmètre départemental',
-    porteur: {
-      label: 'Orange',
-      link: membreLink(codeDepartement, 'membreFooId'),
-    },
-    uidFeuilleDeRoute: 'feuilleDeRouteFooId',
-    uidGouvernance: 'gouvernanceFooId',
-    urlAjouterUneAction: `${feuilleDeRouteLink(codeDepartement, uidFeuilleDeRoute)}/action/ajouter`,
+    infosActions: `${readModel.actions.length} action${formatPluriel(readModel.actions.length)}, ${readModel.beneficiaire} bénéficiaire${formatPluriel(readModel.beneficiaire)}, ${readModel.coFinanceur} co-financeur${formatPluriel(readModel.coFinanceur)}`,
+    infosDerniereEdition: `Modifiée le ${formaterEnDateFrancaise(readModel.edition.date)} par ${readModel.edition.prenom} ${readModel.edition.nom}`,
+    nom: readModel.nom,
+    perimetre: readModel.perimetre,
+    porteur: readModel.porteur ? {
+      label: readModel.porteur.nom,
+      link: membreLink(readModel.uidGouvernance, readModel.porteur.uid),
+    } : undefined,
+    uidFeuilleDeRoute: readModel.uid,
+    uidGouvernance: readModel.uidGouvernance,
+    urlAjouterUneAction: `${feuilleDeRouteLink(readModel.uidGouvernance, readModel.uid)}/action/ajouter`,
   }
 }
 
 export type FeuilleDeRouteViewModel = Readonly<{
+  action: string
   actions: ReadonlyArray<{
+    besoins: string
     budgetPrevisionnel: Readonly<{
+      coFinancement: string
       coFinanceur: string
+      enveloppe: string
       montant: string
       total: string
     }>
+    icone: ActionStatutViewModel
     nom: string
-    perimetre: string
-    porteur: HyperLink
+    porteurs: ReadonlyArray<HyperLink>
     statut: ActionStatutViewModel
     uid: string
     urlModifier: string
@@ -141,9 +107,11 @@ export type FeuilleDeRouteViewModel = Readonly<{
     total: string
   }>
   contextualisation: string
-  contratPreexistant: boolean
+  document?: Readonly<{
+    href: string
+    nom: string
+  }>
   formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<LabelValue<'non' | 'oui'>>
     membres: ReadonlyArray<LabelValue>
     perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
   }>
@@ -152,8 +120,36 @@ export type FeuilleDeRouteViewModel = Readonly<{
   infosDerniereEdition: string
   nom: string
   perimetre: string
-  porteur: HyperLink
+  porteur?: HyperLink
   uidFeuilleDeRoute: string
   uidGouvernance: string
   urlAjouterUneAction: string
 }>
+
+function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
+  return (action: UneFeuilleDeRouteReadModel['actions'][number]): FeuilleDeRouteViewModel['actions'][number] => {
+    // istanbul ignore next @preserve
+    const icone = action.isEnveloppeFormation ?
+      actionStatutViewModelByStatut.enCours : actionStatutViewModelByStatut.acceptee
+
+    return {
+      besoins: `${action.besoins.join(', ') || '-'}, ${action.beneficiaire} bénéficiaire${formatPluriel(action.beneficiaire)}`,
+      budgetPrevisionnel: {
+        coFinancement: formatMontant(action.coFinancement.montant),
+        coFinanceur: `${action.coFinancement.financeur} co-financeur${formatPluriel(action.coFinancement.financeur)}`,
+        enveloppe: action.enveloppe.libelle,
+        montant: formatMontant(action.enveloppe.montant),
+        total: formatMontant(action.budgetPrevisionnel),
+      },
+      icone,
+      nom: action.nom,
+      porteurs: action.porteurs.map((porteur) => ({
+        label: porteur.nom,
+        link: membreLink(uidGouvernance, porteur.uid),
+      })),
+      statut: actionStatutViewModelByStatut[action.statut],
+      uid: action.uid,
+      urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
+    }
+  }
+}

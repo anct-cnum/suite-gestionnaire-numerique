@@ -3,7 +3,8 @@ import { Prisma } from '@prisma/client'
 import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
-import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel, StatutSubvention } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
   readonly #feuilleDeRouteDao = prisma.feuilleDeRouteRecord
@@ -42,7 +43,6 @@ function transform(
   feuillesDeRouteRecord: ReadonlyArray<Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>>,
   membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>,
   codeDepartement: string
-
 ): FeuillesDeRouteReadModel {
   return {
     feuillesDeRoute: feuillesDeRouteRecord.map((feuilleDeRouteRecord) => ({

@@ -2,11 +2,10 @@ import Link from 'next/link'
 import { PropsWithChildren, ReactElement } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
-import ExternalLink from '../shared/ExternalLink/ExternalLink'
+import OuvrirPdf from '../shared/OuvrirPdf/OuvrirPdf'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
-import { isNullishOrEmpty } from '@/shared/lang'
 
 export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props): ReactElement {
   return (
@@ -71,52 +70,14 @@ export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props
       </div>
       {feuilleDeRoute.pieceJointe ?
         <section
-          aria-labelledby="openPdf"
+          aria-labelledby="document"
           className="fr-mb-4w grey-border border-radius fr-p-4w fr-mt-3w"
         >
-          <div className="fr-grid-row space-between">
-            <div>
-              <header>
-                <h2
-                  className="fr-h6 color-blue-france fr-mb-0"
-                  id="openPdf"
-                >
-                  {feuilleDeRoute.pieceJointe.nom}
-                </h2>
-                {isNullishOrEmpty(feuilleDeRoute.pieceJointe.metadonnee) ?
-                  null :
-                  <span className="fr-hint-text">
-                    {feuilleDeRoute.pieceJointe.metadonnee}
-                  </span>}
-              </header>
-              <div className="fr-upload-group" />
-              <ExternalLink
-                className="fr-btn fr-btn--secondary fr-mt-2w"
-                href={feuilleDeRoute.pieceJointe.href}
-                title="Ouvrir le pdf"
-              >
-                Ouvrir le pdf
-              </ExternalLink>
-            </div>
-            <div>
-              <svg
-                aria-hidden="true"
-                height="107"
-                viewBox="0 0 76 107"
-                width="76"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M0 4C0 1.79086 1.79086 0 4 0H72C74.2091 0 76 1.79086 76 4V103C76 105.209 74.2091 107 72 107H4C1.79086 107 0 105.209 0 103V4Z"
-                  fill="#E8EDFF"
-                />
-                <path
-                  d="M26 48.6667L34.004 40.6667H48.664C49.4 40.6667 50 41.2733 50 41.9893V66.0107C49.9993 66.7414 49.4067 67.3333 48.676 67.3333H27.324C26.9704 67.3309 26.6322 67.188 26.3839 66.9362C26.1356 66.6844 25.9975 66.3443 26 65.9907V48.6667ZM35.3334 43.3333V50H28.6667V64.6667H47.3334V43.3333H35.3334Z"
-                  fill="#6A6AF4"
-                />
-              </svg>
-            </div>
-          </div>
+          <OuvrirPdf
+            href={feuilleDeRoute.pieceJointe.href}
+            metadonnee={feuilleDeRoute.pieceJointe.metadonnee}
+            nom={feuilleDeRoute.pieceJointe.nom}
+          />
         </section>
         : null}
     </div>

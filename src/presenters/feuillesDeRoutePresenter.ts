@@ -1,7 +1,7 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { formaterEnDateFrancaise } from './shared/date'
 import { HyperLink, LabelValue } from './shared/labels'
-import { feuilleDeRouteLink, membreLink } from './shared/link'
+import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
@@ -109,7 +109,7 @@ function toFeuilleDeRouteViewModel(uidGouvernance: string) {
       nombreDActionsAttachees: `${feuilleDeRoute.actions.length} action${formatPluriel(feuilleDeRoute.actions.length)} attachée${formatPluriel(feuilleDeRoute.actions.length)} à cette feuille de route`,
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
-        href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
         metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
           `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
