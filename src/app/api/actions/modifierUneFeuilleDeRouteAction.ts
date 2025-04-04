@@ -20,7 +20,6 @@ export async function modifierUneFeuilleDeRouteAction(
 }
 
 type ActionParams = Readonly<{
-  contratPreexistant: string
   nom: string
   path: string
   perimetre: string

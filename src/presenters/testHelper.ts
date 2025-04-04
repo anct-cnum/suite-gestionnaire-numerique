@@ -308,6 +308,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     ...overrides,
   }
 }
+
 // istanbul ignore next @preserve
 export function feuilleDeRouteViewModelFactory(
   codeDepartement = '11',
@@ -315,35 +316,42 @@ export function feuilleDeRouteViewModelFactory(
   override?: Partial<FeuilleDeRouteViewModel>
 ): FeuilleDeRouteViewModel {
   return {
+    action: '2 actions pour cette feuille de route',
     actions: [
       {
+        besoins: 'Établir un diagnostic territorial, 2 bénéficiaires',
         budgetPrevisionnel: {
-          coFinanceur: formatMontant(80_000),
+          coFinancement: formatMontant(80_000),
+          coFinanceur: '2 co-financeurs',
+          enveloppe: 'Enveloppe test',
           montant: formatMontant(20_000),
           total: formatMontant(100_000),
         },
+        icone: actionStatutViewModelByStatut.enCours,
         nom: 'Structurer une filière de reconditionnement locale',
-        perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: {
+        porteurs: [{
           label: 'CC des Monts du Lyonnais',
           link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
-        },
+        }],
         statut: actionStatutViewModelByStatut.acceptee,
         uid: 'actionFooId1',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId1/modifier`,
       },
       {
+        besoins: 'Établir un diagnostic territorial, 2 bénéficiaires',
         budgetPrevisionnel: {
-          coFinanceur: formatMontant(0),
+          coFinancement: formatMontant(0),
+          coFinanceur: '2 co-financeurs',
+          enveloppe: 'Enveloppe test',
           montant: formatMontant(20_000),
           total: formatMontant(20_000),
         },
+        icone: actionStatutViewModelByStatut.enCours,
         nom: 'Formation Aidants Connect',
-        perimetre: 'Établir un diagnostic territorial, 2 bénéficiaires',
-        porteur: {
+        porteurs: [{
           label: 'CC des Monts du Lyonnais',
           link: `/gouvernance/${codeDepartement}/membre/membreFooId`,
-        },
+        }],
         statut: actionStatutViewModelByStatut.refusee,
         uid: 'actionFooId2',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId2/modifier`,
@@ -355,20 +363,7 @@ export function feuilleDeRouteViewModelFactory(
       total: formatMontant(140_000),
     },
     contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
-    contratPreexistant: false,
     formulaire: {
-      contratPreexistant: [
-        {
-          isSelected: false,
-          label: 'Oui',
-          value: 'oui',
-        },
-        {
-          isSelected: true,
-          label: 'Non',
-          value: 'non',
-        },
-      ],
       membres: [
         {
           isSelected: false,
@@ -422,7 +417,7 @@ export function feuilleDeRouteViewModelFactory(
       },
     ],
     infosActions: '3 actions, 5 bénéficiaires, 3 co-financeurs',
-    infosDerniereEdition: 'Modifiée le 23/11/2024 par Lucie Brunot',
+    infosDerniereEdition: 'Modifiée le 23/11/2024 par ~ ~',
     nom: 'Feuille de route FNE',
     perimetre: 'Périmètre départemental',
     porteur: {

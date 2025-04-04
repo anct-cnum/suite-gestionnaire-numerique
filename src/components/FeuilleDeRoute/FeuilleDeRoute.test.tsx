@@ -3,14 +3,15 @@ import { render, screen, within } from '@testing-library/react'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
+import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('feuille de route', () => {
   it('quand je consulte la page du détail d’une feuille de route avec des actions, alors j’accède à ses informations détaillées', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter('11', '113')
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory())
 
     // WHEN
-    render(<FeuilleDeRoute feuilleDeRouteViewModel={viewModel} />)
+    render(<FeuilleDeRoute viewModel={viewModel} />)
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Feuille de route FNE' })
@@ -18,12 +19,12 @@ describe('feuille de route', () => {
     const modifier = screen.getByRole('button', { description: 'Modifier la feuille de route', name: 'Modifier' })
     expect(modifier).toHaveAttribute('type', 'button')
     const porteur = screen.getByRole('link', { name: 'Orange' })
-    expect(porteur).toHaveAttribute('href', '/gouvernance/11/membre/membreFooId')
+    expect(porteur).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/membreFooId')
     const perimetre = screen.getByText('Périmètre départemental')
     expect(perimetre).toBeInTheDocument()
-    const resumeActions = screen.getByText('3 actions, 5 bénéficiaires, 3 co-financeurs')
+    const resumeActions = screen.getByText('2 actions, 4 bénéficiaires, 2 co-financeurs')
     expect(resumeActions).toBeInTheDocument()
-    const derniereEdition = screen.getByText('Modifiée le 23/11/2024 par Lucie Brunot')
+    const derniereEdition = screen.getByText('Modifiée le 01/01/1970 par Lucie Brunot')
     expect(derniereEdition).toBeInTheDocument()
 
     const sectionContextualisation = screen.getByRole('region', { name: 'Contextualisation des demandes de subvention' })
@@ -41,12 +42,13 @@ describe('feuille de route', () => {
     expect(lirePlus).toHaveAttribute('type', 'button')
     expect(lirePlus).toHaveClass('fr-icon-arrow-down-s-line')
 
-    const sectionUpload = screen.getByRole('region', { name: 'Déposez votre document de stratégie' })
+    const sectionUpload = screen.getByRole('region', { name: 'feuille-de-route-fake.pdf' })
     const enTeteUpload = within(sectionUpload).getByRole('banner')
-    const titreUpload = within(enTeteUpload).getByRole('heading', { level: 2, name: 'Déposez votre document de stratégie' })
+    const titreUpload = within(enTeteUpload).getByRole('heading', { level: 2, name: 'feuille-de-route-fake.pdf' })
     expect(titreUpload).toBeInTheDocument()
-    const boutonUpload = within(sectionUpload).getByLabelText('Taille maximale : 25 Mo. Format .pdf')
-    expect(boutonUpload).toHaveAttribute('type', 'file')
+    const ouvrirPdf = screen.getByRole('link', { name: 'Ouvrir le pdf' })
+    expect(ouvrirPdf).toHaveAttribute('href', '/api/document-feuille-de-route/user/fooId/feuille-de-route-fake.pdf')
+    expect(ouvrirPdf).toOpenInNewTab('Ouvrir le pdf')
 
     const sectionActions = screen.getByRole('region', { name: '2 actions pour cette feuille de route' })
     const enTeteActions = within(sectionActions).getAllByRole('banner')
@@ -62,34 +64,41 @@ describe('feuille de route', () => {
     const titreActions = within(enTeteActions[0]).getByRole('heading', { level: 2, name: '2 actions pour cette feuille de route' })
     expect(titreActions).toBeInTheDocument()
     const ajouterUneAction = within(sectionActions).getByRole('link', { name: 'Ajouter une action' })
-    expect(ajouterUneAction).toHaveAttribute('href', '/gouvernance/11/feuille-de-route/113/action/ajouter')
+    expect(ajouterUneAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/ajouter')
 
-    const action1 = within(sectionActions).getByRole('article', { name: 'Structurer une filière de reconditionnement locale' })
+    const action1 = within(sectionActions).getByRole('article', { name: 'Structurer une filière de reconditionnement locale 1' })
     const enTeteAction1 = within(action1).getByRole('banner')
-    const lienAction1 = within(action1).getByRole('link', { description: 'Modifier Structurer une filière de reconditionnement locale', name: 'Modifier' })
-    expect(lienAction1).toHaveAttribute('href', '/gouvernance/11/feuille-de-route/113/action/actionFooId1/modifier')
-    const supprimerAction1 = within(action1).getByRole('button', { name: 'Supprimer Structurer une filière de reconditionnement locale' })
+    const lienAction1 = within(action1).getByRole('link', { description: 'Modifier Structurer une filière de reconditionnement locale 1', name: 'Modifier' })
+    expect(lienAction1).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId/action/actionFooId1/modifier')
+    const supprimerAction1 = within(action1).getByRole('button', { name: 'Supprimer Structurer une filière de reconditionnement locale 1' })
     expect(supprimerAction1).toBeEnabled()
     expect(supprimerAction1).toHaveAttribute('type', 'button')
-    const titreAction1 = within(enTeteAction1).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale' })
+    const titreAction1 = within(enTeteAction1).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale 1' })
     expect(titreAction1).toBeInTheDocument()
     const statutAction1 = within(action1).getByText('Subvention acceptée', { selector: 'p' })
     expect(statutAction1).toBeInTheDocument()
     const besoinsEtBeneficiairesAction1 = within(action1).getByText('Établir un diagnostic territorial, 2 bénéficiaires', { selector: 'p' })
     expect(besoinsEtBeneficiairesAction1).toBeInTheDocument()
-    const porteursAction1 = within(action1).getByText(matchWithoutMarkup('Porteur : CC des Monts du Lyonnais'), { selector: 'p' })
+    const porteursAction1 = within(action1).getByText(matchWithoutMarkup('Porteur : CC des Monts du Lyonnais'))
     expect(porteursAction1).toBeInTheDocument()
     const lienPorteurAction1 = within(action1).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-    expect(lienPorteurAction1).toHaveAttribute('href', '/gouvernance/11/membre/membreFooId')
+    expect(lienPorteurAction1).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/membreFooId')
     const budgetAction1 = within(action1).getByRole('list')
     const budgetItemsAction1 = within(budgetAction1).getAllByRole('listitem')
     expect(budgetItemsAction1).toHaveLength(3)
     const budgetPrevisionnelAction1 = within(budgetItemsAction1[0]).getByText(matchWithoutMarkup('Budget prévisionnel de l’action 100 000 €'))
     expect(budgetPrevisionnelAction1).toBeInTheDocument()
-    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(matchWithoutMarkup('Subvention demandée pour l’action : Conseiller Numérique - Renouvellement - État 20 000 €'))
+    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(matchWithoutMarkup('Subvention demandée pour l’action : Enveloppe test 20 000 €'))
     expect(subventionDemandeeAction1).toBeInTheDocument()
-    const cofinanceurAction1 = within(budgetItemsAction1[2]).getByText(matchWithoutMarkup('2 co-financeurs 80 000 €'))
+    const cofinanceurAction1 = within(budgetItemsAction1[2]).getByText(matchWithoutMarkup('1 co-financeur 80 000 €'))
     expect(cofinanceurAction1).toBeInTheDocument()
+
+    const action2 = within(sectionActions).getByRole('article', { name: 'Structurer une filière de reconditionnement locale 2' })
+    expect(action2).toBeInTheDocument()
+    const besoinsEtBeneficiairesAction2 = within(action2).getByText('-, 2 bénéficiaires', { selector: 'p' })
+    expect(besoinsEtBeneficiairesAction2).toBeInTheDocument()
+    const porteursAction2 = within(action2).getByText(matchWithoutMarkup('Porteur : -'))
+    expect(porteursAction2).toBeInTheDocument()
 
     const sectionHistorique = screen.getByRole('region', { name: 'Activité et historique' })
     const enTeteHistorique = within(sectionHistorique).getByRole('banner')
@@ -125,5 +134,39 @@ describe('feuille de route', () => {
     expect(columns3Body[0].textContent).toBe('15/01/2024')
     expect(columns3Body[1].textContent).toBe('Action Structurer un fonds local pour l’inclusion numérique')
     expect(columns3Body[2].textContent).toBe('Par Lucie B')
+  })
+
+  it('quand je consulte la page du détail d’une feuille de route sans document, alors j’ai l’encart pour en ajouter un', () => {
+    // GIVEN
+    const viewModel = feuilleDeRoutePresenter({
+      ...feuilleDeRouteReadModelFactory(),
+      document: undefined,
+    })
+
+    // WHEN
+    render(<FeuilleDeRoute viewModel={viewModel} />)
+
+    // THEN
+    const sectionUpload = screen.getByRole('region', { name: 'Déposez votre document de stratégie' })
+    const enTeteUpload = within(sectionUpload).getByRole('banner')
+    const titreUpload = within(enTeteUpload).getByRole('heading', { level: 2, name: 'Déposez votre document de stratégie' })
+    expect(titreUpload).toBeInTheDocument()
+    const boutonUpload = within(sectionUpload).getByLabelText('Taille maximale : 25 Mo. Format .pdf')
+    expect(boutonUpload).toHaveAttribute('type', 'file')
+  })
+
+  it('quand je consulte la page du détail d’une feuille de route sans porteur, alors j’ai un "-" à la place', () => {
+    // GIVEN
+    const viewModel = feuilleDeRoutePresenter({
+      ...feuilleDeRouteReadModelFactory(),
+      porteur: undefined,
+    })
+
+    // WHEN
+    render(<FeuilleDeRoute viewModel={viewModel} />)
+
+    // THEN
+    const porteur = screen.getByTitle('Aucun responsable de la feuille de route')
+    expect(porteur).toBeInTheDocument()
   })
 })

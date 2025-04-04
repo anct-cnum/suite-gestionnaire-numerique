@@ -3,6 +3,7 @@
 import { FeuillesDeRouteReadModel } from './queries/RecupererLesFeuillesDeRoute'
 import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInformationsPersonnelles'
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
+import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
@@ -392,6 +393,82 @@ export function feuillesDeRouteReadModelFactory(
       coFinancement: 0,
       financementAccorde: 0,
     },
+    uidGouvernance: 'gouvernanceFooId',
+    ...override,
+  }
+}
+
+export function feuilleDeRouteReadModelFactory(
+  override?: Partial<UneFeuilleDeRouteReadModel>
+): UneFeuilleDeRouteReadModel {
+  return {
+    actions: [
+      {
+        beneficiaire: 2,
+        besoins: ['Établir un diagnostic territorial'],
+        budgetPrevisionnel: 100_000,
+        coFinancement: {
+          financeur: 1,
+          montant: 80_000,
+        },
+        enveloppe: {
+          libelle: 'Enveloppe test',
+          montant: 20_000,
+        },
+        isEditable: true,
+        isEnveloppeFormation: true,
+        nom: 'Structurer une filière de reconditionnement locale 1',
+        porteurs: [
+          {
+            nom: 'CC des Monts du Lyonnais',
+            uid: 'membreFooId',
+          },
+        ],
+        statut: 'acceptee',
+        uid: 'actionFooId1',
+      },
+      {
+        beneficiaire: 2,
+        besoins: [],
+        budgetPrevisionnel: 70_000,
+        coFinancement: {
+          financeur: 1,
+          montant: 15_000,
+        },
+        enveloppe: {
+          libelle: 'Enveloppe test',
+          montant: 10_000,
+        },
+        isEditable: true,
+        isEnveloppeFormation: true,
+        nom: 'Structurer une filière de reconditionnement locale 2',
+        porteurs: [],
+        statut: 'acceptee',
+        uid: 'actionFooId2',
+      },
+    ],
+    beneficiaire: 4,
+    budgetTotalActions: 140_000,
+    coFinanceur: 2,
+    contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+    document: {
+      chemin: 'user/fooId/feuille-de-route-fake.pdf',
+      nom: 'feuille-de-route-fake.pdf',
+    },
+    edition: {
+      date: epochTime,
+      nom: 'Brunot',
+      prenom: 'Lucie',
+    },
+    montantCofinancements: 90_000,
+    montantFinancementsAccordes: 30_000,
+    nom: 'Feuille de route FNE',
+    perimetre: 'Périmètre départemental',
+    porteur: {
+      nom: 'Orange',
+      uid: 'membreFooId',
+    },
+    uid: 'feuilleDeRouteFooId',
     uidGouvernance: 'gouvernanceFooId',
     ...override,
   }

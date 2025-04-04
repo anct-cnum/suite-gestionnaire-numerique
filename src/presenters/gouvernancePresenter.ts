@@ -1,6 +1,6 @@
 import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { HyperLink } from './shared/labels'
-import { feuilleDeRouteLink, membreLink } from './shared/link'
+import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
@@ -203,7 +203,7 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       nom: feuilleDeRoute.nom,
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
-        href: `/api/document-feuille-de-route/${feuilleDeRoute.pieceJointe.nom}`,
+        href: documentfeuilleDeRouteLink(feuilleDeRoute.pieceJointe.nom),
         metadonnee: feuilleDeRoute.pieceJointe.metadonnees ?
           `Le ${formaterEnDateFrancaise(feuilleDeRoute.pieceJointe.metadonnees.upload)}, ${tailleDocument}, ${formatDocument}.` : '',
       },

@@ -263,7 +263,7 @@ describe('mes membres loader', () => {
     })
   })
 
-  it('quand des membres de gouvernance sont demandés pour un départment non existant, alors ils une exception est levée', async () => {
+  it('quand des membres de gouvernance sont demandés pour un départment non existant, alors une exception est levée', async () => {
     // GIVEN
     const codeDepartementInexistant = 'code_departement_inexistant'
     await creerUneRegion({ code: '84', nom: 'Auvergne-Rhône-Alpes' })

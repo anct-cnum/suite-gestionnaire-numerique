@@ -51,14 +51,6 @@ describe('ajouter une feuille de route', () => {
       const epciGroupement = within(formulaire).getByRole('radio', { name: 'EPCI ou groupement de communes' })
       expect(epciGroupement).toBeRequired()
       expect(epciGroupement).toHaveAttribute('value', 'epci_groupement')
-      const contratPreexistant = within(fieldsets[1]).getByText(matchWithoutMarkup('La feuille de route s’appuie-t-elle sur un contrat préexistant ? *'), { selector: 'legend' })
-      expect(contratPreexistant).toBeInTheDocument()
-      const oui = within(formulaire).getByRole('radio', { name: 'Oui' })
-      expect(oui).toBeRequired()
-      expect(oui).toHaveAttribute('value', 'oui')
-      const non = within(formulaire).getByRole('radio', { name: 'Non' })
-      expect(non).toBeRequired()
-      expect(non).toHaveAttribute('value', 'non')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
@@ -90,19 +82,15 @@ describe('ajouter une feuille de route', () => {
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('structure-95351745500010-44')
       jeSelectionneUnPerimetre('Régional')
-      jeSelectionneUnContrat('Oui')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
       // THEN
       expect(enregistrer).toHaveAccessibleName('Ajout en cours...')
       expect(enregistrer).toBeDisabled()
       const perimetre = await screen.findByRole('radio', { checked: false, hidden: true, name: 'Régional' })
       expect(perimetre).toBeInTheDocument()
-      const contratPreexistant = screen.getByRole('radio', { checked: false, hidden: true, name: 'Oui' })
-      expect(contratPreexistant).toBeInTheDocument()
       expect(nom).toHaveValue('')
       expect(drawer).not.toBeVisible()
       expect(ajouterUneFeuilleDeRouteAction).toHaveBeenCalledWith({
-        contratPreexistant: 'oui',
         nom: 'Feuille de route du Rhône',
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
@@ -126,7 +114,6 @@ describe('ajouter une feuille de route', () => {
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
       jeSelectionneUnMembre('porteurId1')
       jeSelectionneUnPerimetre('Régional')
-      jeSelectionneUnContrat('Oui')
       jEnregistreLaFeuilleDeRoute()
 
       // THEN
@@ -146,10 +133,6 @@ describe('ajouter une feuille de route', () => {
   }
 
   function jeSelectionneUnPerimetre(name: string): void {
-    fireEvent.click(screen.getByRole('radio', { name }))
-  }
-
-  function jeSelectionneUnContrat(name: string): void {
     fireEvent.click(screen.getByRole('radio', { name }))
   }
 

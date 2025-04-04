@@ -88,7 +88,6 @@ describe('les feuilles de route d’une gouvernance', () => {
     const detailDesMontantsDeSubvention = within(premiereFeuilleDeRoute).getByText('dont 0 € de co-financements et 0 € des financements accordés', { selector: 'p' })
     expect(detailDesMontantsDeSubvention).toBeInTheDocument()
     const sectionOuvrirPdf = screen.getAllByRole('region', { name: 'feuille-de-route-fake.pdf' })[0]
-    expect(sectionOuvrirPdf).toHaveAttribute('aria-labelledby', 'openPdf')
     const titreSectionOuvrirPdf = within(sectionOuvrirPdf).getByRole('heading', { level: 2, name: 'feuille-de-route-fake.pdf' })
     expect(titreSectionOuvrirPdf).toBeInTheDocument()
     const informationsFichier = within(sectionOuvrirPdf).getByText('Le 01/01/1970, 25 Mo, pdf.')

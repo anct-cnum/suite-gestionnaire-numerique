@@ -209,7 +209,7 @@ function afficherUneFeuilleDeRouteSansNoteDeContextualisation(
   const feuilleDeRouteViewModel = feuilleDeRouteViewModelFactory('11', '113', {
     contextualisation: '',
   })
-  renderComponent(<FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRouteViewModel} />, options)
+  renderComponent(<FeuilleDeRoute viewModel={feuilleDeRouteViewModel} />, options)
 }
 
 function afficherUneFeuilleDeRouteAvecNoteDeContextualisation(
@@ -218,7 +218,7 @@ function afficherUneFeuilleDeRouteAvecNoteDeContextualisation(
   const feuilleDeRouteViewModel = feuilleDeRouteViewModelFactory('11', '113', {
     contextualisation: '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>',
   })
-  renderComponent(<FeuilleDeRoute feuilleDeRouteViewModel={feuilleDeRouteViewModel} />, options)
+  renderComponent(<FeuilleDeRoute viewModel={feuilleDeRouteViewModel} />, options)
 }
 
 function jouvreLeDrawerDAjoutDeNoteDeContextualisation(): void {
