@@ -68,7 +68,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
                   onClick={viderLeContenu}
                   type="button"
                 >
-                  Supprimer
+                  Effacer
                 </button>
                 : null
             }

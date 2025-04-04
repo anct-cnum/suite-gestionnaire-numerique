@@ -15,7 +15,7 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { contenu, gererLeChangementDeContenu, viderLeContenu } = useRichTextEditor('')
+  const { contenu, gererLeChangementDeContenu } = useRichTextEditor('')
   const drawerId = 'drawerAjouterNoteDeContextualisationId'
   const labelId = useId()
 
@@ -57,17 +57,6 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
             >
               {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
             </SubmitButton>
-            {
-              contenu ?
-                <button
-                  className="fr-btn red-button"
-                  onClick={viderLeContenu}
-                  type="button"
-                >
-                  Supprimer
-                </button>
-                : null
-            }
           </div>
         </FormulaireNoteDeContextualisation>
       </Drawer>
