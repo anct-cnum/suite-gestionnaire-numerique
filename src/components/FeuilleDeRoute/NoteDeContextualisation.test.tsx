@@ -151,7 +151,7 @@ describe('note de contextualisation', () => {
       expect(notification.textContent).toBe('Erreur : Le contenu doit être renseigné')
     })
 
-    it('puis que je veux effacer la note de contextualisation, alors une notification s‘affiche', async () => {
+    it('puis que je veux supprimer la note de contextualisation, alors une notification s‘affiche', async () => {
       // GIVEN
       const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['OK'])
       afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
