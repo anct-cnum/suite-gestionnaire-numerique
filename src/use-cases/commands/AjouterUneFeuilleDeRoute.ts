@@ -1,8 +1,8 @@
 import { ResultAsync } from '../CommandHandler'
 import { GouvernanceRepository } from './AjouterNoteDeContexteAGouvernance'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
-import { GouvernanceFailure, GouvernanceUid } from '@/domain/Gouvernance'
+import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographique } from '@/domain/FeuilleDeRoute'
+import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class AjouterUneFeuilleDeRoute {
   readonly #date: Date
@@ -29,18 +29,23 @@ export class AjouterUneFeuilleDeRoute {
       return 'utilisateurNePeutPasAjouterFeuilleDeRoute'
     }
 
-    const feuilleDeRoute = FeuilleDeRoute.create(
-      command.nom,
-      command.perimetreGeographique,
-      command.porteur,
-      editeur.state.uid.value,
-      gouvernance.state.uid.value,
-      this.#date
-    )
+    const feuilleDeRoute = FeuilleDeRoute.create({
+      dateDeModification: this.#date,
+      nom :command.nom,
+      perimetreGeographique:command.perimetreGeographique,
+      porteur:command.porteur,
+      uid: {
+        value: 'identifiantPourLaCreation',
+      },
+      uidEditeur:editeur.state.uid,
+      uidGouvernance: gouvernance.state.uid,
+    } )
+
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       return feuilleDeRoute
     }
     await this.#feuilleDeRouteRepository.add(feuilleDeRoute)
+
     return 'OK'
   }
 }
@@ -49,11 +54,11 @@ export interface FeuilleDeRouteRepository {
   add(feuilleDeRoute: FeuilleDeRoute): Promise<void>
 }
 
-type Failure = 'utilisateurNePeutPasAjouterFeuilleDeRoute' | GouvernanceFailure
+type Failure = 'utilisateurNePeutPasAjouterFeuilleDeRoute' | FeuilleDeRouteFailure
 
 type Command = Readonly<{
   nom: string
-  perimetreGeographique: string
+  perimetreGeographique: PerimetreGeographique
   porteur: string
   uidEditeur: string
   uidGouvernance: string
