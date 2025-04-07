@@ -172,7 +172,7 @@ describe('note de contextualisation', () => {
       expect(enregistrer).toBeEnabled()
     })
 
-    it('puis que je veux effacer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
+    it('puis que je veux supprimer la note privée mais qu’une erreur intervient, alors une notification s’affiche', async () => {
       // GIVEN
       const supprimerUneNoteDeContextualisationAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       afficherUneFeuilleDeRouteAvecNoteDeContextualisation({ pathname: '/gouvernance/11/feuille-de-route/116', supprimerUneNoteDeContextualisationAction })
