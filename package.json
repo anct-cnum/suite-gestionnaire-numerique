@@ -106,7 +106,7 @@
     "prisma": "^6.5.0",
     "react-select-event": "^5.5.1",
     "stylelint": "^16.18.0",
-    "stylelint-config-standard": "^37.0.0",
+    "stylelint-config-standard": "^38.0.0",
     "stylelint-order": "^6.0.4",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
