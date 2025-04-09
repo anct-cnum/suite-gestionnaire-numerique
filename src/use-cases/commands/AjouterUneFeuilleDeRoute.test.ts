@@ -1,8 +1,9 @@
 
-import { AjouterUneFeuilleDeRoute, FeuilleDeRouteRepository } from './AjouterUneFeuilleDeRoute'
+import { AjouterUneFeuilleDeRoute } from './AjouterUneFeuilleDeRoute'
+import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRoute, PerimetreGeographique } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
@@ -16,7 +17,7 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     spiedFeuilleDeRouteToAdd = null
   })
 
-  it('étant donné une gouvernance, quand une feuille de route est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance, quand une feuille de route est créée par son gestionnaire, alors elle est ajoutée à cette gouvernance', async () => {
     // GIVEN
     const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
       new GouvernanceRepositorySpy(),
@@ -29,9 +30,9 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     const result = await ajouterFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
-      porteur,
       uidEditeur,
       uidGouvernance,
+      uidPorteur,
     })
 
     // THEN
@@ -43,7 +44,6 @@ describe('ajouter une feuille de route à une gouvernance', () => {
           dateDeModification: epochTime,
           nom,
           perimetreGeographique,
-          porteur,
           uid: {
             value: 'identifiantPourLaCreation',
           },
@@ -54,6 +54,7 @@ describe('ajouter une feuille de route à une gouvernance', () => {
           uidGouvernance: {
             value: uidGouvernance,
           },
+          uidPorteur: 'poteurFooId',
         }
       ).state
     )
@@ -65,13 +66,13 @@ describe('ajouter une feuille de route à une gouvernance', () => {
       dateDeModification: invalidDate,
       expectedFailure: 'dateDeModificationInvalide',
       intention: 'd’une date de modification invalide',
-      perimetreGeographique: 'départemental' as PerimetreGeographique,
+      perimetreGeographique: 'départemental' as PerimetreGeographiqueTypes,
     },
     {
       dateDeModification: epochTime,
       expectedFailure: 'perimetreGeographiqueInvalide',
       intention: 'd’un périmètre géographique invalide',
-      perimetreGeographique: 'invalide' as PerimetreGeographique,
+      perimetreGeographique: 'invalide' as PerimetreGeographiqueTypes,
     },
   ])('étant donné une gouvernance, quand une feuille de route est créé par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
     // GIVEN
@@ -86,9 +87,9 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     const result = await ajouterFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
-      porteur,
       uidEditeur,
       uidGouvernance,
+      uidPorteur,
     })
 
     // THEN
@@ -109,9 +110,9 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     const result = await ajouterFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
-      porteur,
       uidEditeur,
       uidGouvernance,
+      uidPorteur,
     })
 
     // THEN
@@ -123,8 +124,8 @@ describe('ajouter une feuille de route à une gouvernance', () => {
 const uidGouvernance = 'gouvernanceFooId'
 const uidEditeur = 'userFooId'
 const nom = 'Feuille de route 69'
-const porteur = 'CC des Monts du Lyonnais'
-const perimetreGeographique = 'départemental'
+const uidPorteur = 'poteurFooId'
+const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: null | string

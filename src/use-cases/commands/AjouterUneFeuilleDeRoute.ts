@@ -1,10 +1,11 @@
-import { ResultAsync } from '../CommandHandler'
+import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GouvernanceRepository } from './AjouterNoteDeContexteAGouvernance'
+import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographique } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
-export class AjouterUneFeuilleDeRoute {
+export class AjouterUneFeuilleDeRoute implements CommandHandler<Command> {
   readonly #date: Date
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
@@ -30,15 +31,16 @@ export class AjouterUneFeuilleDeRoute {
     }
 
     const feuilleDeRoute = FeuilleDeRoute.create({
+      dateDeCreation: this.#date,
       dateDeModification: this.#date,
       nom :command.nom,
       perimetreGeographique:command.perimetreGeographique,
-      porteur:command.porteur,
       uid: {
         value: 'identifiantPourLaCreation',
       },
-      uidEditeur:editeur.state.uid,
+      uidEditeur: editeur.state.uid,
       uidGouvernance: gouvernance.state.uid,
+      uidPorteur: command.uidPorteur,
     } )
 
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
@@ -50,16 +52,12 @@ export class AjouterUneFeuilleDeRoute {
   }
 }
 
-export interface FeuilleDeRouteRepository {
-  add(feuilleDeRoute: FeuilleDeRoute): Promise<void>
-}
-
 type Failure = 'utilisateurNePeutPasAjouterFeuilleDeRoute' | FeuilleDeRouteFailure
 
 type Command = Readonly<{
   nom: string
-  perimetreGeographique: PerimetreGeographique
-  porteur: string
+  perimetreGeographique: PerimetreGeographiqueTypes
   uidEditeur: string
   uidGouvernance: string
+  uidPorteur: string
 }>

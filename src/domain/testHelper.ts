@@ -67,10 +67,10 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
 
 export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof FeuilleDeRoute.create>[0]>): FeuilleDeRoute {
   return FeuilleDeRoute.create({
+    dateDeCreation: epochTime,
     dateDeModification: epochTime,
     nom: 'Feuille de route 69',
-    perimetreGeographique: 'départemental',
-    porteur: 'CC des Monts du Lyonnais',
+    perimetreGeographique: 'departemental',
     uid: {
       value: 'feuilleDeRouteFooId',
     },
@@ -81,6 +81,7 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
     uidGouvernance: {
       value: 'gouvernanceFooId',
     },
+    uidPorteur: 'poteurFooId',
     ...override,
   }) as FeuilleDeRoute
 }
