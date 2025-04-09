@@ -3,7 +3,7 @@ import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
-import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
+import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class FeuilleDeRoute extends Entity<State> {
@@ -118,6 +118,12 @@ export class FeuilleDeRoute extends Entity<State> {
 
     return 'noteDeContextualisationInexistante'
   }
+
+  peutEtreGereePar(utilisateur: Utilisateur): boolean {
+    return utilisateur.isAdmin
+      || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
+      || this.#uidGouvernance.state.value === utilisateur.state.region?.code
+  }
 }
 
 const Types = [
@@ -129,8 +135,6 @@ const Types = [
 export type PerimetreGeographiqueTypes = typeof Types[number]
 
 export type FeuilleDeRouteFailure = 'dateDeModificationInvalide' | 'noteDeContextualisationInexistante' | 'perimetreGeographiqueInvalide' | 'utilisateurNePeutPasModifierNoteDeContextualisation'
-
-type UidState = Readonly<{ value: string }>
 
 export class FeuilleDeRouteUid extends Uid<UidState> {
   constructor(value: string) {
@@ -151,6 +155,8 @@ export class NoteDeContextualisation extends ValueObject<NoteDeContextualisation
     })
   }
 }
+
+type UidState = Readonly<{ value: string }>
 
 type NoteDeContextualisationState = Readonly<{
   dateDeModification: string

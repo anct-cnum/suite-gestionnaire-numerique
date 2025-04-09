@@ -11,6 +11,7 @@ import { epochTime } from '@/shared/testHelper'
 describe('modifier une note de contextualisation', () => {
   beforeEach(() => {
     spiedFeuilleDeRouteUidToFind = null
+    spiedGouvernanceUidToFind = null
     spiedFeuilleDeRouteUidToUpdate = null
     spiedUtilisateurUidToFind = null
   })
@@ -31,7 +32,8 @@ describe('modifier une note de contextualisation', () => {
     })
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedFeuilleDeRouteUidToFind?.state).toStrictEqual(new FeuilleDeRouteUid(uidFeuilleDeRoute).state)
+    expect(spiedGouvernanceUidToFind?.state.value).toBe(uidGouvernance)
+    expect(spiedFeuilleDeRouteUidToFind?.state.value).toStrictEqual(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteUidToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
         noteDeContextualisation: {
@@ -40,6 +42,9 @@ describe('modifier une note de contextualisation', () => {
           uidEditeur: new UtilisateurUid(
             utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
           ),
+        },
+        uidGouvernance: {
+          value: '75',
         },
       }).state
     )
@@ -52,6 +57,25 @@ describe('modifier une note de contextualisation', () => {
       new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
+      epochTime
+    )
+    // WHEN
+    const result = await modifierUneNoteDeContextualisationDemandesDeSubvention.handle({
+      contenu,
+      uidEditeur,
+      uidFeuilleDeRoute,
+    })
+    // THEN
+    expect(spiedFeuilleDeRouteUidToUpdate).toBeNull()
+    expect(result).toBe('utilisateurNePeutPasModifierNoteDeContextualisation')
+  })
+
+  it('quand une note de contextualisation est modifiée sur une feuille de route existante mais qui appartient à une autre gouvernance, alors une erreur est renvoyée', async () => {
+    // GIVEN
+    const modifierUneNoteDeContextualisationDemandesDeSubvention = new ModifierUneNoteDeContextualisation(
+      new FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy(),
+      new GouvernanceRepositorySpy(),
+      new GestionnaireRepositorySpy(),
       epochTime
     )
     // WHEN
@@ -91,6 +115,7 @@ const uidGouvernance = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
 const uidEditeur = 'userFooId'
 let spiedFeuilleDeRouteUidToFind: FeuilleDeRouteUid | null
+let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedFeuilleDeRouteUidToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
 
@@ -105,6 +130,9 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
           uidEditeur: new UtilisateurUid(
             utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
           ),
+        },
+        uidGouvernance: {
+          value: '75',
         },
       })
     )
@@ -122,6 +150,29 @@ class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy extends FeuilleDeRo
     return Promise.resolve(
       feuilleDeRouteFactory({
         noteDeContextualisation: undefined,
+        uidGouvernance: {
+          value: '75',
+        },
+      })
+    )
+  }
+}
+
+class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy extends FeuilleDeRouteRepositorySpy {
+  override async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+    spiedFeuilleDeRouteUidToFind = uid
+    return Promise.resolve(
+      feuilleDeRouteFactory({
+        noteDeContextualisation: {
+          contenu: 'un contenu',
+          dateDeModification: epochTime,
+          uidEditeur: new UtilisateurUid(
+            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
+          ),
+        },
+        uidGouvernance: {
+          value: '69',
+        },
       })
     )
   }
@@ -147,7 +198,7 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
-    spiedFeuilleDeRouteUidToFind = uid
+    spiedGouvernanceUidToFind = uid
     return Promise.resolve(
       gouvernanceFactory({
         departement: {

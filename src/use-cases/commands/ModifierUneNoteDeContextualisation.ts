@@ -29,7 +29,7 @@ export class ModifierUneNoteDeContextualisation implements CommandHandler<Comman
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(new FeuilleDeRouteUid(command.uidFeuilleDeRoute))
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidFeuilleDeRoute))
-    if (!gouvernance.peutEtreGereePar(editeur)) {
+    if (!gouvernance.peutEtreGereePar(editeur) || !feuilleDeRoute.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasModifierNoteDeContextualisation'
     }
     const result = feuilleDeRoute.modifierUneNoteDeContextualisation(
