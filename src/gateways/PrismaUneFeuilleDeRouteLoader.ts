@@ -91,7 +91,7 @@ function transform(
     beneficiaire: beneficiaires.size,
     budgetTotalActions: sommeDesBudgetsGlobauxDesActions,
     coFinanceur: sommeDesCoFinanceursDesActions,
-    contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+    contextualisation: !feuilleDeRouteRecord.noteDeContextualisation ? 'fff' : feuilleDeRouteRecord.noteDeContextualisation,
     document: feuilleDeRouteRecord.pieceJointe === null ? undefined : {
       chemin: feuilleDeRouteRecord.pieceJointe,
       nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],

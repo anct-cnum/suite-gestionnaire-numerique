@@ -1,5 +1,5 @@
 import prisma from '../../prisma/prismaClient'
-import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -18,5 +18,46 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     })
 
     return true
+  }
+
+  async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+    console.log('uid: >>>>>>>>>>>>>>>>>>', uid.state);
+    const feuilleDeRoute = await this.#dataResource.findUniqueOrThrow({
+      include: {
+        relationGouvernance: true
+      },
+      where: {
+        id: Number(uid.state.value)
+      }
+    })
+
+    if ((feuilleDeRoute instanceof FeuilleDeRoute)) {
+      throw new Error(`${feuilleDeRoute}`)
+    }
+
+    return FeuilleDeRoute.create({
+      dateDeCreation: feuilleDeRoute.creation,
+      // dateCreation: feuilleDeRoute.creation,
+      // ...feuilleDeRoute.derniereEdition && { dateDeModification: feuilleDeRoute.derniereEdition },
+      nom: feuilleDeRoute.nom,
+      // ...feuilleDeRoute.noteDeContextualisation && { noteDeContextualisation: feuilleDeRoute.noteDeContextualisation },
+      // ...feuilleDeRoute.perimetreGeographique && {perimetreGeographique: feuilleDeRoute.perimetreGeographique},
+      // uid: { value: String(feuilleDeRoute.id) },
+      // uidEditeur: feuilleDeRoute.editeurUtilisateurId,
+      // uidGouvernance: feuilleDeRoute.relationGouvernance.departementCode,
+      // uidPorteur: feuilleDeRoute.porteurId,
+    })
+  }
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    await this.#dataResource.update({
+      data: {
+        derniereEdition: feuilleDeRoute.state.noteDeContextualisation?.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.noteDeContextualisation?.uidEditeur,
+        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation?.value,
+      },
+      where: {
+        id: Number(feuilleDeRoute.state.uid.value)
+      }
+    })
   }
 }

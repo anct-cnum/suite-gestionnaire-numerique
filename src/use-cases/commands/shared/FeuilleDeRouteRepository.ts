@@ -1,7 +1,7 @@
 import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 
 export interface FeuilleDeRouteRepository {
-  add(feuilleDeRoute: FeuilleDeRoute): Promise<void>
+  add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean>
 }
 
 export interface GetFeuilleDeRouteRepository {

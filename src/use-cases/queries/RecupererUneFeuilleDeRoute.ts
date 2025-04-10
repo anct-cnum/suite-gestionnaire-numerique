@@ -30,7 +30,7 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
   beneficiaire: number
   budgetTotalActions: number
   coFinanceur: number
-  contextualisation: string
+  contextualisation?: string
   document?: Readonly<{
     chemin: string
     nom: string

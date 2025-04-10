@@ -13,6 +13,7 @@ describe('modifier une note de contextualisation', () => {
     const messages = await modifierUneNoteDeContextualisationAction({
       contenu: '<p>note de contextualisation</p>',
       path: '/gouvernance/11/feuille-de-route/116',
+      uidFeuilleDeRoute: '',
     })
 
     // THEN
@@ -25,6 +26,7 @@ describe('modifier une note de contextualisation', () => {
     const messages = await modifierUneNoteDeContextualisationAction({
       contenu: '<p>ma note de contextualisation</p>',
       path: '',
+      uidFeuilleDeRoute: ''
     })
 
     // THEN

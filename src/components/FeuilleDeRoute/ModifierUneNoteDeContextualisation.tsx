@@ -92,7 +92,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
       setIsDisabled(false)
       return
     }
-    const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname })
+    const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname, uidFeuilleDeRoute: '3' })
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiée', title: 'Note de contextualisation ' })
       setIsDrawerOpen(false)
