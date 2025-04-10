@@ -1,9 +1,9 @@
 import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
-import { Entity, Uid } from './shared/Model'
+import { Entity, Uid, ValueObject } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
-import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
+import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class FeuilleDeRoute extends Entity<State> {
@@ -12,6 +12,7 @@ export class FeuilleDeRoute extends Entity<State> {
       dateDeCreation: this.#dateDeCreation.toJSON(),
       dateDeModification: this.#dateDeModification.toJSON(),
       nom: this.#nom,
+      noteDeContextualisation: this.#noteDeContextualisation?.state,
       perimetreGeographique: this.#perimetreGeographique,
       uid: this.#uid.state,
       uidEditeur: this.#uidEditeur.state.value,
@@ -23,6 +24,7 @@ export class FeuilleDeRoute extends Entity<State> {
   readonly #dateDeCreation: Date
   readonly #dateDeModification: Date
   readonly #nom: string
+  #noteDeContextualisation?: NoteDeContextualisation
   readonly #perimetreGeographique: PerimetreGeographiqueTypes
   readonly #uid: FeuilleDeRouteUid
   readonly #uidEditeur: UtilisateurUid
@@ -37,7 +39,8 @@ export class FeuilleDeRoute extends Entity<State> {
     uidEditeur: UtilisateurUid,
     uidGouvernance: GouvernanceUid,
     dateDeCreation: Date,
-    dateDeModification: Date
+    dateDeModification: Date,
+    noteDeContextualisation?: NoteDeContextualisation
   ) {
     super(uid)
     this.#uid = uid
@@ -48,12 +51,14 @@ export class FeuilleDeRoute extends Entity<State> {
     this.#uidGouvernance = uidGouvernance
     this.#dateDeCreation = dateDeCreation
     this.#dateDeModification = dateDeModification
+    this.#noteDeContextualisation = noteDeContextualisation
   }
 
   static create({
     dateDeCreation,
     dateDeModification,
     nom,
+    noteDeContextualisation,
     perimetreGeographique,
     uid,
     uidEditeur,
@@ -63,19 +68,31 @@ export class FeuilleDeRoute extends Entity<State> {
     dateDeCreation: Date
     dateDeModification: Date
     nom: string
+    noteDeContextualisation?: Readonly<{
+      contenu: string
+      dateDeModification: Date
+      uidEditeur: UtilisateurUid
+    }>
     perimetreGeographique: PerimetreGeographiqueTypes
     uid: UidState
     uidEditeur: UtilisateurUidState
     uidGouvernance: GouvernanceUidState
     uidPorteur: string
   }): Result<FeuilleDeRouteFailure, FeuilleDeRoute> {
-    try{
-      const dateDeModificationValidee = new ValidDate(dateDeModification,'dateDeModificationInvalide')
-      const dateDeCreationValidee = new ValidDate(dateDeCreation,'dateDeCreationInvalide')
+    try {
+      const dateDeModificationValidee = new ValidDate(dateDeModification, 'dateDeModificationInvalide')
+      const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const validPerimetres: Array<PerimetreGeographiqueTypes> = Types
       if (!validPerimetres.includes(perimetreGeographique)) {
         return 'perimetreGeographiqueInvalide'
       }
+      const noteDeContextualisationAjoutee = noteDeContextualisation
+        ? new NoteDeContextualisation(
+          noteDeContextualisation.dateDeModification,
+          noteDeContextualisation.uidEditeur,
+          noteDeContextualisation.contenu
+        )
+        : undefined
       return new FeuilleDeRoute(
         new FeuilleDeRouteUid(uid.value),
         nom,
@@ -84,12 +101,28 @@ export class FeuilleDeRoute extends Entity<State> {
         new UtilisateurUid(uidEditeur),
         new GouvernanceUid(uidGouvernance.value),
         dateDeCreationValidee,
-        dateDeModificationValidee
+        dateDeModificationValidee,
+        noteDeContextualisationAjoutee
       )
     }
     catch (error: unknown) {
       return (error as Exception<FeuilleDeRouteFailure>).message as FeuilleDeRouteFailure
     }
+  }
+
+  modifierUneNoteDeContextualisation(noteDeContextualisation: NoteDeContextualisation): Result<FeuilleDeRouteFailure> {
+    if (this.#noteDeContextualisation !== undefined) {
+      this.#noteDeContextualisation = noteDeContextualisation
+      return 'OK'
+    }
+
+    return 'noteDeContextualisationInexistante'
+  }
+
+  peutEtreGereePar(utilisateur: Utilisateur): boolean {
+    return utilisateur.isAdmin
+      || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
+      || this.#uidGouvernance.state.value === utilisateur.state.region?.code
   }
 }
 
@@ -101,19 +134,41 @@ const Types = [
 
 export type PerimetreGeographiqueTypes = typeof Types[number]
 
-export type FeuilleDeRouteFailure = 'dateDeCreationInvalide' | 'dateDeModificationInvalide' | 'perimetreGeographiqueInvalide'
+export type FeuilleDeRouteFailure = 'dateDeModificationInvalide' | 'noteDeContextualisationInexistante' | 'perimetreGeographiqueInvalide' | 'utilisateurNePeutPasModifierNoteDeContextualisation'
 
-type UidState = Readonly<{ value: string }>
-class FeuilleDeRouteUid extends Uid<UidState> {
+export class FeuilleDeRouteUid extends Uid<UidState> {
   constructor(value: string) {
     super({ value })
   }
 }
 
+export class NoteDeContextualisation extends ValueObject<NoteDeContextualisationState> {
+  constructor(
+    dateDeModification: Date,
+    uidEditeur: UtilisateurUid,
+    value: string
+  ) {
+    super({
+      dateDeModification: dateDeModification.toJSON(),
+      uidEditeur: uidEditeur.state.value,
+      value,
+    })
+  }
+}
+
+type UidState = Readonly<{ value: string }>
+
+type NoteDeContextualisationState = Readonly<{
+  dateDeModification: string
+  uidEditeur: string
+  value: string
+}>
+
 type State = Readonly<{
   dateDeCreation: string
   dateDeModification: string
   nom: string
+  noteDeContextualisation?: NoteDeContextualisationState
   perimetreGeographique: string
   uid: UidState
   uidEditeur: string
