@@ -1,6 +1,7 @@
 // Stryker disable all
 import { Comite } from './Comite'
 import { Departement, DepartementState } from './Departement'
+import { FeuilleDeRoute } from './FeuilleDeRoute'
 import { Gouvernance } from './Gouvernance'
 import { Membre } from './Membre'
 import { membreFactory } from './MembreFactory'
@@ -62,6 +63,27 @@ export function comiteFactory(override?: Partial<Parameters<typeof Comite.create
     },
     ...override,
   }) as Comite
+}
+
+export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof FeuilleDeRoute.create>[0]>): FeuilleDeRoute {
+  return FeuilleDeRoute.create({
+    dateDeCreation: epochTime,
+    dateDeModification: epochTime,
+    nom: 'Feuille de route 69',
+    perimetreGeographique: 'departemental',
+    uid: {
+      value: 'feuilleDeRouteFooId',
+    },
+    uidEditeur: {
+      email: 'martin.tartempion@example.net',
+      value: 'userFooId',
+    },
+    uidGouvernance: {
+      value: 'gouvernanceFooId',
+    },
+    uidPorteur: 'poteurFooId',
+    ...override,
+  }) as FeuilleDeRoute
 }
 
 export function membrePotentielFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {

@@ -13,7 +13,7 @@ describe('ajouter une note de contexte à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance, quand une note de contexte est créée par son gestionnaire, alors elle est ajoutée à cette gouvernance', async () => {
     // GIVEN
     const ajouterNoteDeContexteAGouvernance = new AjouterNoteDeContexteAGouvernance(
       new GouvernanceRepositorySpy(),

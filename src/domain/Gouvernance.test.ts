@@ -22,7 +22,7 @@ describe('gouvernance', () => {
       utilisateur: utilisateurFactory({ role: 'Support animation' }),
     },
     {
-      intention: 'un gestionnaire département ayant le même département que celui de la gourvernance peut la gérer',
+      intention: 'un gestionnaire département ayant le même département que celui de la gouvernance peut la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }),
     },
     {

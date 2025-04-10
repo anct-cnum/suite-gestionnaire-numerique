@@ -13,7 +13,7 @@ describe('ajouter une note privée à une gouvernance', () => {
     spiedUtilisateurUidToFind = null
   })
 
-  it('étant donné une gouvernance, quand une note privée est créée par son gestionnaire, alors elle est ajoutée à cette gourvernance', async () => {
+  it('étant donné une gouvernance, quand une note privée est créée par son gestionnaire, alors elle est ajoutée à cette gouvernance', async () => {
     // GIVEN
     const ajouterNotePrivee = new AjouterUneNotePrivee(
       new GouvernanceRepositorySpy(),

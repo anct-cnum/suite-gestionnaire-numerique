@@ -32,7 +32,7 @@ describe('ajouter un comité à une gouvernance', () => {
       intention: 'sans date ni commentaire',
       type: typeValide,
     },
-  ])('étant donné une gouvernance, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gourvernance', async ({
+  ])('étant donné une gouvernance, quand un comité est créé $intention par son gestionnaire, alors il est ajouté à cette gouvernance', async ({
     commentaire,
     date,
     expectedDate,
