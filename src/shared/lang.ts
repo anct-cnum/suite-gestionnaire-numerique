@@ -6,6 +6,8 @@ export type Struct = Readonly<{
   [key: string]: JsonPrimitive | ReadonlyArray<JsonPrimitive | Struct> | Struct
 }>
 
+export type Operator<T, U> = (t: T) => U
+
 export function isOk(result: Result<unknown>): boolean {
   return result === 'OK'
 }

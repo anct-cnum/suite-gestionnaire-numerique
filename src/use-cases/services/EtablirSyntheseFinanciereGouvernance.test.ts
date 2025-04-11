@@ -1,42 +1,87 @@
 import { etablirSyntheseFinanciereGouvernance } from './EtablirSyntheseFinanciereGouvernance'
+import { StatutSubvention } from '../queries/shared/ActionReadModel'
 
 describe('établir la synthèse financière d’une gouvernance', () => {
   describe('pour une gouvernance ne comportant ni demande de financement ni co-financement, quand la synthèse'
     + ' financière est établie, alors elle indique l’absence de bénéficiaire et de co-financeur ainsi qu’un budget,'
     + ' des montants de co-financement et de financement accordé nuls', () => {
-    it.each([
-      {
-        cas: 'aucune feuille de route',
-        gouvernanceASynthetiser: {
-          feuillesDeRoute: [],
+      it.each([
+        {
+          cas: 'aucune feuille de route',
+          gouvernanceASynthetiser: {
+            feuillesDeRoute: [],
+          },
+          syntheseAttendue: {
+            beneficiaires: 0,
+            budget: 0,
+            coFinancement: 0,
+            coFinanceurs: 0,
+            feuillesDeRoute: [],
+            financementAccorde: 0,
+          },
         },
-        syntheseAttendue: {
-          beneficiaires: 0,
-          budget: 0,
-          coFinancement: 0,
-          coFinanceurs: 0,
-          feuillesDeRoute: [],
-          financementAccorde: 0,
+        {
+          cas: 'aucune action',
+          gouvernanceASynthetiser: {
+            feuillesDeRoute: [
+              {
+                actions: [],
+                uid: 'feuilleDeRouteId',
+              },
+            ],
+          },
+          syntheseAttendue: {
+            beneficiaires: 0,
+            budget: 0,
+            coFinancement: 0,
+            coFinanceurs: 0,
+            feuillesDeRoute: [
+              {
+                actions: [],
+                beneficiaires: 0,
+                budget: 0,
+                coFinancement: 0,
+                coFinanceurs: 0,
+                financementAccorde: 0,
+                uid: 'feuilleDeRouteId',
+              },
+            ],
+            financementAccorde: 0,
+          },
         },
-      },
-      {
-        cas: 'aucune action',
-        gouvernanceASynthetiser: {
-          feuillesDeRoute: [
-            {
-              actions: [],
-              uid: 'feuilleDeRouteId',
-            },
-          ],
-        },
-        syntheseAttendue: {
-          beneficiaires: 0,
-          budget: 0,
-          coFinancement: 0,
-          coFinanceurs: 0,
-          feuillesDeRoute: [
-            {
-              actions: [],
+        {
+          cas: 'aucune action ne comporte de demande de financement ni de co-financement',
+          gouvernanceASynthetiser: {
+            feuillesDeRoute: [
+              {
+                actions: [
+                  {
+                    beneficiaires: [],
+                    budgetGlobal: 0,
+                    coFinancements: [],
+                    uid: 'actionId',
+                  },
+                ],
+                uid: 'feuilleDeRouteId',
+              },
+            ],
+          },
+          syntheseAttendue: {
+            beneficiaires: 0,
+            budget: 0,
+            coFinancement: 0,
+            coFinanceurs: 0,
+            feuillesDeRoute: [{
+              actions: [
+                {
+                  beneficiaires: 0,
+                  budget: 0,
+                  coFinancement: 0,
+                  coFinanceurs: 0,
+                  financementAccorde: 0,
+                  uid: 'actionId',
+                },
+              ],
               beneficiaires: 0,
               budget: 0,
               coFinancement: 0,
@@ -44,158 +89,104 @@ describe('établir la synthèse financière d’une gouvernance', () => {
               financementAccorde: 0,
               uid: 'feuilleDeRouteId',
             },
-          ],
-          financementAccorde: 0,
-        },
-      },
-      {
-        cas: 'aucune action ne comporte de demande de financement ni de co-financement',
-        gouvernanceASynthetiser: {
-          feuillesDeRoute: [
-            {
-              actions: [
-                {
-                  beneficiaires: [],
-                  budgetGlobal: 0,
-                  coFinancements: [],
-                  uid: 'actionId',
-                },
-              ],
-              uid: 'feuilleDeRouteId',
-            },
-          ],
-        },
-        syntheseAttendue: {
-          beneficiaires: 0,
-          budget: 0,
-          coFinancement: 0,
-          coFinanceurs: 0,
-          feuillesDeRoute: [{
-            actions: [
-              {
-                budget: 0,
-                coFinancement: 0,
-                financementAccorde: 0,
-                uid: 'actionId',
-              },
             ],
-            beneficiaires: 0,
-            budget: 0,
-            coFinancement: 0,
-            coFinanceurs: 0,
             financementAccorde: 0,
-            uid: 'feuilleDeRouteId',
           },
-          ],
-          financementAccorde: 0,
         },
-      },
-    ])('$cas', ({ gouvernanceASynthetiser, syntheseAttendue }) => {
-      // GIVEN
-      const gouvernance = gouvernanceASynthetiser
+      ])('$cas', ({ gouvernanceASynthetiser, syntheseAttendue }) => {
+        // GIVEN
+        const gouvernance = gouvernanceASynthetiser
 
-      // WHEN
-      const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+        // WHEN
+        const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
 
-      // THEN
-      expect(synthese).toStrictEqual<ReturnType<typeof etablirSyntheseFinanciereGouvernance>>(syntheseAttendue)
+        // THEN
+        expect(synthese).toStrictEqual<ReturnType<typeof etablirSyntheseFinanciereGouvernance>>(syntheseAttendue)
+      })
     })
-  })
 
   describe('étant donné une gouvernance, quand sa synthèse financiaire est établie, alors', () => {
     describe('pour chaque action', () => {
       describe('le montant de subvention accordé est égal', () => {
-        it('à la somme des montants demandés des subventions en prestation et en ressources humaines pour les subventions acceptées', () => {
+        it('à la somme des montants demandés des subventions en prestation et en ressources humaines pour les'
+          + ' subventions acceptées', () => {
+            // GIVEN
+            const action = actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires()
+            const gouvernance: Gouvernance = {
+              feuillesDeRoute: [
+                feuilleDeRoute('fooId', action),
+              ],
+            }
+
+            // WHEN
+            const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+            const syntheseAction = synthese.feuillesDeRoute[0].actions[0]
+
+            // THEN
+            expect(action.subvention?.montants.prestation).toBe(20_000)
+            expect(action.subvention?.montants.ressourcesHumaines).toBe(10_000)
+            expect(action.subvention?.statut).toBe('acceptee')
+            expect(syntheseAction.financementAccorde).toBe(30_000)
+          })
+
+        it.each([
+          {
+            libelle: 'déposées',
+            statut: 'deposee' as const,
+          },
+          {
+            libelle: 'en cours',
+            statut: 'enCours' as const,
+          },
+          {
+            libelle: 'refusées',
+            statut: 'refusee' as const,
+          },
+        ])('à zéro pour les demandes de subvention $libelle', ({ statut }) => {
           // GIVEN
+          const action = actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(statut)
           const gouvernance: Gouvernance = {
             feuillesDeRoute: [
-              feuilleDeRoute(
-                'feuilleDeRouteFooId1',
-                actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-                actionSansSubventionNiCoFinancementAvecBeneficiaires
-              ),
-              feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-              feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
+              feuilleDeRoute('fooId', action),
             ],
           }
 
           // WHEN
           const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+          const syntheseAction = synthese.feuillesDeRoute[0].actions[0]
 
           // THEN
-          const action1FeuilleDeRoute1 = gouvernance.feuillesDeRoute[0].actions[0]
-          expect(action1FeuilleDeRoute1.subvention?.montants.prestation).toBe(20_000)
-          expect(action1FeuilleDeRoute1.subvention?.montants.ressourcesHumaines).toBe(10_000)
-          expect(action1FeuilleDeRoute1.subvention?.statut).toBe('acceptee')
-          const syntheseAction1FeuilleDeRoute1 = synthese.feuillesDeRoute[0].actions[0]
-          expect(syntheseAction1FeuilleDeRoute1.financementAccorde).toBe(30_000)
+          expect(action.subvention?.montants.prestation).toBe(20_000)
+          expect(action.subvention?.montants.ressourcesHumaines).toBe(10_000)
+          expect(action.subvention?.statut).toBe(statut)
+          expect(syntheseAction.financementAccorde).toBe(0)
         })
 
         it('à zéro en cas d’absence de demande de subvention', () => {
           // GIVEN
+          const action = actionSansSubventionAvecCoFinancementEtBeneficiaires
           const gouvernance: Gouvernance = {
             feuillesDeRoute: [
-              feuilleDeRoute(
-                'feuilleDeRouteFooId1',
-                actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-                actionSansSubventionNiCoFinancementAvecBeneficiaires
-              ),
-              feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-              feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
+              feuilleDeRoute('fooId', action),
             ],
           }
 
           // WHEN
           const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+          const syntheseAction = synthese.feuillesDeRoute[0].actions[0]
 
           // THEN
-          const action2FeuilleDeRoute1 = gouvernance.feuillesDeRoute[0].actions[1]
-          expect(action2FeuilleDeRoute1.subvention).toBeUndefined()
-          const syntheseAction2FeuilleDeRoute1 = synthese.feuillesDeRoute[0].actions[1]
-          expect(syntheseAction2FeuilleDeRoute1.financementAccorde).toBe(0)
-
-          const action1FeuilleDeRoute2 = gouvernance.feuillesDeRoute[1].actions[0]
-          expect(action1FeuilleDeRoute2.subvention).toBeUndefined()
-          const syntheseAction1FeuilleDeRoute2 = synthese.feuillesDeRoute[1].actions[0]
-          expect(syntheseAction1FeuilleDeRoute2.financementAccorde).toBe(0)
-        })
-
-        it('à zéro dans les cas où la demande de subvention n’a pas été acceptée', () => {
-          // GIVEN
-          const gouvernance: Gouvernance = {
-            feuillesDeRoute: [
-              feuilleDeRoute(
-                'feuilleDeRouteFooId1',
-                actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-                actionSansSubventionNiCoFinancementAvecBeneficiaires
-              ),
-              feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-              feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
-            ],
-          }
-
-          // WHEN
-          const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
-
-          // THEN
-          const action1FeuilleDeRoute3 = gouvernance.feuillesDeRoute[2].actions[0]
-          expect(action1FeuilleDeRoute3.subvention?.statut).toBe('refusee')
-          const syntheseAction1FeuilleDeRoute3 = synthese.feuillesDeRoute[2].actions[0]
-          expect(syntheseAction1FeuilleDeRoute3.financementAccorde).toBe(0)
+          expect(action.subvention).toBeUndefined()
+          expect(syntheseAction.financementAccorde).toBe(0)
         })
       })
 
       it('le montant du co-financement est égal à la somme des montants de chaque co-financement', () => {
         // GIVEN
+        const action = actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires()
         const gouvernance: Gouvernance = {
           feuillesDeRoute: [
-            feuilleDeRoute(
-              'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-              actionSansSubventionNiCoFinancementAvecBeneficiaires
-            ),
-            feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-            feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
+            feuilleDeRoute('id', action),
           ],
         }
 
@@ -203,121 +194,63 @@ describe('établir la synthèse financière d’une gouvernance', () => {
         const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
 
         // THEN
-        const action1FeuilleDeRoute1 = gouvernance.feuillesDeRoute[0].actions[0]
-        expect(action1FeuilleDeRoute1.coFinancements).toHaveLength(3)
-        expect(action1FeuilleDeRoute1.coFinancements[0].montant).toBe(20_000)
-        expect(action1FeuilleDeRoute1.coFinancements[1].montant).toBe(10_000)
-        expect(action1FeuilleDeRoute1.coFinancements[2].montant).toBe(10_000)
+        expect(action.coFinancements).toHaveLength(3)
+        expect(action.coFinancements[0].montant).toBe(20_000)
+        expect(action.coFinancements[1].montant).toBe(10_000)
+        expect(action.coFinancements[2].montant).toBe(10_000)
         const syntheseAction1FeuilleDeRoute1 = synthese.feuillesDeRoute[0].actions[0]
         expect(syntheseAction1FeuilleDeRoute1.coFinancement).toBe(40_000)
-
-        const action2FeuilleDeRoute1 = gouvernance.feuillesDeRoute[0].actions[1]
-        expect(action2FeuilleDeRoute1.coFinancements).toHaveLength(0)
-        const syntheseAction2FeuilleDeRoute1 = synthese.feuillesDeRoute[0].actions[1]
-        expect(syntheseAction2FeuilleDeRoute1.coFinancement).toBe(0)
-
-        const action1FeuilleDeRoute2 = gouvernance.feuillesDeRoute[1].actions[0]
-        expect(action1FeuilleDeRoute2.coFinancements).toHaveLength(1)
-        expect(action1FeuilleDeRoute2.coFinancements[0].montant).toBe(20_000)
-        const syntheseAction1FeuilleDeRoute2 = synthese.feuillesDeRoute[1].actions[0]
-        expect(syntheseAction1FeuilleDeRoute2.coFinancement).toBe(20_000)
-
-        const action1FeuilleDeRoute3 = gouvernance.feuillesDeRoute[2].actions[0]
-        expect(action1FeuilleDeRoute3.coFinancements).toHaveLength(1)
-        expect(action1FeuilleDeRoute3.coFinancements[0].montant).toBe(6_000)
-        const syntheseAction1FeuilleDeRoute3 = synthese.feuillesDeRoute[2].actions[0]
-        expect(syntheseAction1FeuilleDeRoute3.coFinancement).toBe(6_000)
       })
     })
 
     describe('pour chaque feuille de route', () => {
       it('le nombre de bénéficiaires uniques est calculé', () => {
         // GIVEN
+        const action1 = actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires()
+        const action2 = actionSansSubventionNiCoFinancementAvecBeneficiaires
         const gouvernance: Gouvernance = {
           feuillesDeRoute: [
-            feuilleDeRoute(
-              'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-              actionSansSubventionNiCoFinancementAvecBeneficiaires
-            ),
-            feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-            feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
+            feuilleDeRoute('id', action1, action2),
           ],
         }
 
         // WHEN
         const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+        const syntheseFeuilleDeRoute = synthese.feuillesDeRoute[0]
 
         // THEN
-        const feuilleDeRoute1 = gouvernance.feuillesDeRoute[0]
-        const action1FeuilleDeRoute1 = feuilleDeRoute1.actions[0]
-        const action2FeuilleDeRoute1 = feuilleDeRoute1.actions[1]
-        expect(action1FeuilleDeRoute1.beneficiaires).toHaveLength(3)
-        expect(action2FeuilleDeRoute1.beneficiaires).toHaveLength(2)
-        expect(action1FeuilleDeRoute1.beneficiaires[0].uid).toBe('1')
-        expect(action1FeuilleDeRoute1.beneficiaires[1].uid).toBe('2')
-        expect(action1FeuilleDeRoute1.beneficiaires[2].uid).toBe('3')
-        expect(action2FeuilleDeRoute1.beneficiaires[0].uid).toBe('1')
-        expect(action2FeuilleDeRoute1.beneficiaires[1].uid).toBe('5')
-        const syntheseFeuilleDeRoute1 = synthese.feuillesDeRoute[0]
-        expect(syntheseFeuilleDeRoute1.beneficiaires).toBe(4)
-
-        const feuilleDeRoute2 = gouvernance.feuillesDeRoute[1]
-        const action1FeuilleDeRoute2 = feuilleDeRoute2.actions[0]
-        expect(action1FeuilleDeRoute2.beneficiaires).toHaveLength(1)
-        expect(action1FeuilleDeRoute2.beneficiaires[0].uid).toBe('1')
-        const syntheseFeuilleDeRoute2 = synthese.feuillesDeRoute[1]
-        expect(syntheseFeuilleDeRoute2.beneficiaires).toBe(1)
-
-        const feuilleDeRoute3 = gouvernance.feuillesDeRoute[2]
-        const action1FeuilleDeRoute3 = feuilleDeRoute3.actions[0]
-        expect(action1FeuilleDeRoute3.beneficiaires).toHaveLength(0)
-        const syntheseFeuilleDeRoute3 = synthese.feuillesDeRoute[2]
-        expect(syntheseFeuilleDeRoute3.beneficiaires).toBe(0)
+        expect(action1.beneficiaires).toHaveLength(3)
+        expect(action2.beneficiaires).toHaveLength(2)
+        expect(action1.beneficiaires[0].uid).toBe('1')
+        expect(action1.beneficiaires[1].uid).toBe('2')
+        expect(action1.beneficiaires[2].uid).toBe('3')
+        expect(action2.beneficiaires[0].uid).toBe('1')
+        expect(action2.beneficiaires[1].uid).toBe('5')
+        expect(syntheseFeuilleDeRoute.beneficiaires).toBe(4)
       })
 
       it('le nombre de co-financeurs uniques est calculé', () => {
         // GIVEN
+        const action1 = actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires()
+        const action2 = actionSansSubventionAvecCoFinancementEtBeneficiaires
         const gouvernance: Gouvernance = {
           feuillesDeRoute: [
-            feuilleDeRoute(
-              'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
-              actionSansSubventionNiCoFinancementAvecBeneficiaires
-            ),
-            feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
-            feuilleDeRoute('feuilleDeRouteFooId3', actionAvecSubventionEtCoFinancementSansBeneficiaire),
+            feuilleDeRoute('id', action1, action2),
           ],
         }
 
         // WHEN
         const synthese = etablirSyntheseFinanciereGouvernance(gouvernance)
+        const syntheseFeuilleDeRoute1 = synthese.feuillesDeRoute[0]
 
         // THEN
-        const feuilleDeRoute1 = gouvernance.feuillesDeRoute[0]
-        const action1FeuilleDeRoute1 = feuilleDeRoute1.actions[0]
-        const action2FeuilleDeRoute1 = feuilleDeRoute1.actions[1]
-        expect(action1FeuilleDeRoute1.coFinancements).toHaveLength(3)
-        expect(action2FeuilleDeRoute1.coFinancements).toHaveLength(0)
-        expect(action1FeuilleDeRoute1.coFinancements[0].coFinanceur.uid).toBe('coFinanceurId')
-        expect(action1FeuilleDeRoute1.coFinancements[1].coFinanceur.uid).toBe('coFinanceurOrangeId')
-        expect(action1FeuilleDeRoute1.coFinancements[2].coFinanceur.uid).toBe('coFinanceurId')
-        const syntheseFeuilleDeRoute1 = synthese.feuillesDeRoute[0]
-        expect(syntheseFeuilleDeRoute1.coFinanceurs).toBe(2)
-
-        const feuilleDeRoute2 = gouvernance.feuillesDeRoute[1]
-        const action1FeuilleDeRoute2 = feuilleDeRoute2.actions[0]
-        expect(action1FeuilleDeRoute2.coFinancements).toHaveLength(1)
-        expect(action1FeuilleDeRoute2.coFinancements[0].coFinanceur.uid).toBe('coFinanceurId2')
-        const syntheseFeuilleDeRoute2 = synthese.feuillesDeRoute[1]
-        expect(syntheseFeuilleDeRoute2.coFinanceurs).toBe(1)
-
-        const feuilleDeRoute3 = gouvernance.feuillesDeRoute[2]
-        const action1FeuilleDeRoute3 = feuilleDeRoute3.actions[0]
-        expect(action1FeuilleDeRoute3.coFinancements).toHaveLength(1)
-        expect(action1FeuilleDeRoute3.coFinancements[0].coFinanceur.uid).toBe('coFinanceurId2')
-        const syntheseFeuilleDeRoute3 = synthese.feuillesDeRoute[2]
-        expect(syntheseFeuilleDeRoute3.coFinanceurs).toBe(1)
+        expect(action1.coFinancements).toHaveLength(3)
+        expect(action2.coFinancements).toHaveLength(1)
+        expect(action1.coFinancements[0].coFinanceur.uid).toBe('coFinanceurId')
+        expect(action1.coFinancements[1].coFinanceur.uid).toBe('coFinanceurOrangeId')
+        expect(action1.coFinancements[2].coFinanceur.uid).toBe('coFinanceurId')
+        expect(action2.coFinancements[0].coFinanceur.uid).toBe('coFinanceurId2')
+        expect(syntheseFeuilleDeRoute1.coFinanceurs).toBe(3)
       })
 
       it('les sommes des budgets de toutes les actions sont calculées', () => {
@@ -326,7 +259,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -362,7 +295,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -398,7 +331,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -436,7 +369,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -477,7 +410,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -517,7 +450,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -547,7 +480,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -577,7 +510,7 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [
             feuilleDeRoute(
               'feuilleDeRouteFooId1',
-              actionAvecSubventionAccepteeCoFinancementsEtBeneficiares,
+              actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(),
               actionSansSubventionNiCoFinancementAvecBeneficiaires
             ),
             feuilleDeRoute('feuilleDeRouteFooId2', actionSansSubventionAvecCoFinancementEtBeneficiaires),
@@ -614,32 +547,33 @@ function feuilleDeRoute(uid: string, ...actions: ReadonlyArray<Action>): Feuille
   return { actions, uid }
 }
 
-const actionAvecSubventionAccepteeCoFinancementsEtBeneficiares: Action = {
-  beneficiaires: [{ uid: '1' }, { uid: '2' }, { uid: '3' }],
-  budgetGlobal: 70_000,
-  coFinancements: [
-    {
-      coFinanceur: { uid: 'coFinanceurId' },
-      montant: 20_000,
+function actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(statut: StatutSubvention = 'acceptee'): Action {
+  return {
+    beneficiaires: [{ uid: '1' }, { uid: '2' }, { uid: '3' }],
+    budgetGlobal: 70_000,
+    coFinancements: [
+      {
+        coFinanceur: { uid: 'coFinanceurId' },
+        montant: 20_000,
+      },
+      {
+        coFinanceur: { uid: 'coFinanceurOrangeId' },
+        montant: 10_000,
+      },
+      {
+        coFinanceur: { uid: 'coFinanceurId' },
+        montant: 10_000,
+      },
+    ],
+    subvention: {
+      montants: {
+        prestation: 20_000,
+        ressourcesHumaines: 10_000,
+      },
+      statut,
     },
-    {
-      coFinanceur: { uid: 'coFinanceurOrangeId' },
-      montant: 10_000,
-    },
-    {
-      coFinanceur: { uid: 'coFinanceurId' },
-
-      montant: 10_000,
-    },
-  ],
-  subvention: {
-    montants: {
-      prestation: 20_000,
-      ressourcesHumaines: 10_000,
-    },
-    statut: 'acceptee' as const,
-  },
-  uid: 'actionFooId1',
+    uid: 'actionFooId1',
+  }
 }
 
 const actionSansSubventionNiCoFinancementAvecBeneficiaires: Action = {

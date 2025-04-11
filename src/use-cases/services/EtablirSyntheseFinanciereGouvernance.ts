@@ -1,4 +1,4 @@
-import { StatutSubvention } from '../queries/RecupererLesFeuillesDeRoute'
+import { Finances, Gouvernance, SyntheseGouvernance } from './shared/etablisseur-synthese-gouvernance'
 
 export function etablirSyntheseFinanciereGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
   const bilanGouvernance = gouvernance.feuillesDeRoute.reduce(
@@ -18,9 +18,11 @@ function toSynthese(bilan: BilanGouvernance): SyntheseGouvernance {
     coFinanceurs: bilan.coFinanceurs.size,
     feuillesDeRoute: bilan.feuillesDeRoute.map(feuilleDeRoute => ({
       ...feuilleDeRoute,
-      actions: feuilleDeRoute.actions.map(({ budget, coFinancement, financementAccorde, uid }) => (
-        { budget, coFinancement, financementAccorde, uid }
-      )),
+      actions: feuilleDeRoute.actions.map(action => ({
+        ...action,
+        beneficiaires: action.beneficiaires.size,
+        coFinanceurs: action.coFinanceurs.size,
+      })),
       beneficiaires: feuilleDeRoute.beneficiaires.size,
       coFinanceurs: feuilleDeRoute.coFinanceurs.size,
     })),
@@ -28,7 +30,7 @@ function toSynthese(bilan: BilanGouvernance): SyntheseGouvernance {
 }
 
 function makeBilanGouvernance(bilanFeuilleDeRouteFactory: BilanFeuilleDeRouteFactory) {
-  return (bilanGouvernance: BilanGouvernance, feuilleDeRoute: FeuilleDeRoute): BilanGouvernance => {
+  return (bilanGouvernance: BilanGouvernance, feuilleDeRoute: Gouvernance['feuillesDeRoute'][number]): BilanGouvernance => {
     const bilanFeuilleDeRoute = bilanFeuilleDeRouteFactory(feuilleDeRoute)
     return {
       beneficiaires: bilanGouvernance.beneficiaires.union(bilanFeuilleDeRoute.beneficiaires),
@@ -53,7 +55,7 @@ function makeBilanFeuilleDeRoute(uid: string) {
   })
 }
 
-function makeBilanAction(action: Action): BilanAction {
+function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions'][number]): BilanAction {
   const subvention = action.subvention
   const { coFinancement, coFinanceurs } = action.coFinancements
     .reduce(
@@ -97,44 +99,6 @@ const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
   uid: '',
 }
 
-type Gouvernance = Readonly<{
-  feuillesDeRoute: ReadonlyArray<FeuilleDeRoute>
-}>
-
-type FeuilleDeRoute = Readonly<{
-  actions: ReadonlyArray<Action>
-  uid: string
-}>
-
-type Action = Readonly<{
-  beneficiaires: ReadonlyArray<Unique>
-  budgetGlobal: Montant
-  coFinancements: ReadonlyArray<
-    Readonly<{
-      coFinanceur: Unique
-      montant: Montant
-    }>
-  >
-  subvention?: Readonly<{
-    montants: Readonly<{
-      prestation: Montant
-      ressourcesHumaines: Montant
-    }>
-    statut: StatutSubvention
-  }>
-  uid: string
-}>
-
-type SyntheseGouvernance = Readonly<{
-  feuillesDeRoute: ReadonlyArray<SyntheseFeuilleDeRoute>
-}> & Synthese
-
-type SyntheseFeuilleDeRoute = Readonly<{
-  actions: ReadonlyArray<FinancesAction>
-}> & Synthese & Unique
-
-type FinancesAction = Finances & Unique
-
 type BilanGouvernance = Bilan & Readonly<{
   feuillesDeRoute: ReadonlyArray<BilanFeuilleDeRoute>
 }>
@@ -145,28 +109,11 @@ type BilanFeuilleDeRoute = Bilan & Readonly<{
 
 type BilanAction = Bilan & Unique
 
-type Finances = Readonly<{
-  budget: Montant
-  coFinancement: Montant
-  financementAccorde: Montant
-}>
-
-type Synthese = Finances & Readonly<{
-  beneficiaires: Denombrement
-  coFinanceurs: Denombrement
-}>
-
 type Bilan = Finances & Readonly<{
   beneficiaires: ReadonlySet<string>
   coFinanceurs: ReadonlySet<string>
 }>
 
+type BilanFeuilleDeRouteFactory = (feuilleDeRoute: Gouvernance['feuillesDeRoute'][number]) => BilanFeuilleDeRoute
+
 type Unique = Readonly<{ uid: string }>
-
-type BilanFeuilleDeRouteFactory = (feuilleDeRoute: FeuilleDeRoute) => BilanFeuilleDeRoute
-
-// eslint-disable-next-line sonarjs/redundant-type-aliases
-type Denombrement = number
-
-// eslint-disable-next-line sonarjs/redundant-type-aliases
-type Montant = number
