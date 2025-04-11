@@ -9,7 +9,10 @@ import { Notification } from '../shared/Notification/Notification'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 
-export default function ModifierUneNoteDeContextualisation({ contextualisation }: Props): ReactElement {
+export default function ModifierUneNoteDeContextualisation({
+  contextualisation,
+  uidFeuilleDeRoute,
+}: Props): ReactElement {
   const {
     modifierUneNoteDeContextualisationAction,
     pathname,
@@ -92,7 +95,7 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
       setIsDisabled(false)
       return
     }
-    const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname, uidFeuilleDeRoute: '3' })
+    const messages = await modifierUneNoteDeContextualisationAction({ contenu, path: pathname, uidFeuilleDeRoute })
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiée', title: 'Note de contextualisation ' })
       setIsDrawerOpen(false)
@@ -105,4 +108,5 @@ export default function ModifierUneNoteDeContextualisation({ contextualisation }
 
 type Props = {
   readonly contextualisation: string
+  readonly uidFeuilleDeRoute: string
 }

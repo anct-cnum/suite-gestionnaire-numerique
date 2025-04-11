@@ -24,6 +24,7 @@ describe('récupérer une feuille de route loader', () => {
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
+      noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
       porteurId: uidPorteur,
     })

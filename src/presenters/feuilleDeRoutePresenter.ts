@@ -106,7 +106,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
     etat: string
     total: string
   }>
-  contextualisation: string
+  contextualisation?: string
   document?: Readonly<{
     href: string
     nom: string

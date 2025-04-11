@@ -1,5 +1,7 @@
 import prisma from '../../prisma/prismaClient'
 import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
+import { UtilisateurUid } from '@/domain/Utilisateur'
+import { isNullish } from '@/shared/lang'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -21,33 +23,47 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   }
 
   async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
-    console.log('uid: >>>>>>>>>>>>>>>>>>', uid.state);
-    const feuilleDeRoute = await this.#dataResource.findUniqueOrThrow({
+    const record = await this.#dataResource.findUniqueOrThrow({
       include: {
-        relationGouvernance: true
+        relationUtilisateur: true,
       },
       where: {
-        id: Number(uid.state.value)
-      }
+        id: Number(uid.state.value),
+      },
+    })
+    const noteDeContextualisation = !isNullish(record.noteDeContextualisation) &&
+     !isNullish(record.relationUtilisateur?.ssoId) && !isNullish(record.relationUtilisateur?.ssoEmail) ? {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        contenu: record.noteDeContextualisation!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        dateDeModification: record.derniereEdition!,
+        uidEditeur: new UtilisateurUid({
+          email: record.relationUtilisateur?.ssoEmail,
+          value: record.relationUtilisateur?.ssoId,
+        }),
+      } : undefined
+    const feuilleDeRoute = FeuilleDeRoute.create({
+      dateDeCreation: record.creation,
+      dateDeModification: record.derniereEdition,
+      nom: record.nom,
+      noteDeContextualisation,
+      perimetreGeographique: record.perimetreGeographique,
+      uid: { value: String(record.id) },
+      uidEditeur: {
+        email: record.relationUtilisateur.ssoEmail,
+        value: record.relationUtilisateur.ssoId,
+      },
+      uidGouvernance: { value: record.gouvernanceDepartementCode },
+      uidPorteur: record.porteurId,
     })
 
-    if ((feuilleDeRoute instanceof FeuilleDeRoute)) {
-      throw new Error(`${feuilleDeRoute}`)
+    if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
+      throw new Error(feuilleDeRoute)
     }
 
-    return FeuilleDeRoute.create({
-      dateDeCreation: feuilleDeRoute.creation,
-      // dateCreation: feuilleDeRoute.creation,
-      // ...feuilleDeRoute.derniereEdition && { dateDeModification: feuilleDeRoute.derniereEdition },
-      nom: feuilleDeRoute.nom,
-      // ...feuilleDeRoute.noteDeContextualisation && { noteDeContextualisation: feuilleDeRoute.noteDeContextualisation },
-      // ...feuilleDeRoute.perimetreGeographique && {perimetreGeographique: feuilleDeRoute.perimetreGeographique},
-      // uid: { value: String(feuilleDeRoute.id) },
-      // uidEditeur: feuilleDeRoute.editeurUtilisateurId,
-      // uidGouvernance: feuilleDeRoute.relationGouvernance.departementCode,
-      // uidPorteur: feuilleDeRoute.porteurId,
-    })
+    return feuilleDeRoute
   }
+
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
     await this.#dataResource.update({
       data: {
@@ -56,8 +72,8 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation?.value,
       },
       where: {
-        id: Number(feuilleDeRoute.state.uid.value)
-      }
+        id: Number(feuilleDeRoute.state.uid.value),
+      },
     })
   }
 }

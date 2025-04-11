@@ -2,8 +2,8 @@ import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository
 import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
-import { epochTime } from '@/shared/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('feuille de route repository', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -68,16 +68,13 @@ describe('feuille de route repository', () => {
     await creerUnDepartement()
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
-    creerUneFeuilleDeRoute({
-      id: 1,
+    await creerUneFeuilleDeRoute({
       gouvernanceDepartementCode: '75',
+      id: 1,
       nom: 'Feuille de route 69',
       noteDeContextualisation: 'un contenu avant',
     })
     const feuilleDeRoute = feuilleDeRouteFactory({
-      uidGouvernance: {
-        value: '75',
-      },
       noteDeContextualisation: {
         contenu: 'un contenu après',
         dateDeModification: epochTime,
@@ -87,26 +84,24 @@ describe('feuille de route repository', () => {
       },
       uid: {
         value: '1',
-      }
+      },
+      uidGouvernance: {
+        value: '75',
+      },
     })
     // WHEN
     await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute)
-    // const result = await new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid(feuilleDeRoute.state.uid.value))
-    const result = await prisma.feuilleDeRouteRecord.findUnique({
-      where: {
-        id: 1,
-      },
-    })
 
     // THEN
+    const result = await prisma.feuilleDeRouteRecord.findUnique({ where: { id: 1 } })
     expect(result).toStrictEqual({
       creation: epochTime,
       derniereEdition: epochTime,
       editeurUtilisateurId: 'userFooId',
-      gouvernanceDepartementCode: "75",
+      gouvernanceDepartementCode: '75',
       id: 1,
-      nom: "Feuille de route 69",
-      noteDeContextualisation: "un contenu après",
+      nom: 'Feuille de route 69',
+      noteDeContextualisation: 'un contenu après',
       oldUUID: null,
       perimetreGeographique: null,
       pieceJointe: null,

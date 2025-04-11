@@ -91,7 +91,7 @@ function transform(
     beneficiaire: beneficiaires.size,
     budgetTotalActions: sommeDesBudgetsGlobauxDesActions,
     coFinanceur: sommeDesCoFinanceursDesActions,
-    contextualisation: !feuilleDeRouteRecord.noteDeContextualisation ? 'fff' : feuilleDeRouteRecord.noteDeContextualisation,
+    contextualisation: feuilleDeRouteRecord.noteDeContextualisation ?? undefined,
     document: feuilleDeRouteRecord.pieceJointe === null ? undefined : {
       chemin: feuilleDeRouteRecord.pieceJointe,
       nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],
