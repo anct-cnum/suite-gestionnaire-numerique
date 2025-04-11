@@ -40,7 +40,7 @@ export default function Layout({ children }: Readonly<PropsWithChildren>): React
           type="image/x-icon"
         />
         <Script
-          src="/dsfr-1.13.0.module.min.js"
+          src="/dsfr-1.13.1.module.min.js"
           strategy="lazyOnload"
         />
         {

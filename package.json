@@ -30,7 +30,6 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:reset": "prisma migrate reset -f && yarn prisma:generate:fne",
     "psql:local": "docker compose up -d postgres-dev && docker exec -it min_db_dev psql -U min min",
-    "psql:production": "scalingo -a mon-inclusion-numerique pgsql-console",
     "psql:test": "docker compose up -d postgres-test && docker exec -it min_db_test psql -U min min",
     "start": "next start",
     "test": "yarn dotenv:test -- yarn prisma:migrate && yarn dotenv:test -- vitest run",
