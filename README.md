@@ -7,7 +7,7 @@
 Avoir la version LTS de Node décrite dans le fichier `.nvmrc`.
 
 ```bash
-nvm install v20.x.x
+nvm install v22.x.x
 ```
 
 ## 🚀 Démarrage
