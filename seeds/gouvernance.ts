@@ -293,9 +293,12 @@ function grouperDonneesACreer(
   function feuilleDeRouteFromFeuilleDeRouteFNE(gouvernanceDepartementCode: string) {
     return (feuilleDeRouteFNE: GouvernanceFNE['feuillesDeRoute'][number]): FeuilleDeRouteWithIdFNEPorteur => ({
       creation: feuilleDeRouteFNE.creation,
+      derniereEdition: feuilleDeRouteFNE.creation,
+      editeurUtilisateurId: null,
       gouvernanceDepartementCode,
       nom: feuilleDeRouteFNE.nom,
       oldUUID: feuilleDeRouteFNE.id,
+      perimetreGeographique: null,
       pieceJointe: feuilleDeRouteFNE.pieceJointe,
       porteurFNEId: feuilleDeRouteFNE.membresFeuilleDeRoute[0]?.membreId,
     })
