@@ -1,7 +1,6 @@
 import prisma from '../../prisma/prismaClient'
-import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute, FeuilleDeRouteUid, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { UtilisateurUid } from '@/domain/Utilisateur'
-import { isNullish } from '@/shared/lang'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -31,37 +30,24 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         id: Number(uid.state.value),
       },
     })
-    const noteDeContextualisation = !isNullish(record.noteDeContextualisation) &&
-     !isNullish(record.relationUtilisateur?.ssoId) && !isNullish(record.relationUtilisateur?.ssoEmail) ? {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        contenu: record.noteDeContextualisation!,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        dateDeModification: record.derniereEdition!,
-        uidEditeur: new UtilisateurUid({
-          email: record.relationUtilisateur?.ssoEmail,
-          value: record.relationUtilisateur?.ssoId,
-        }),
-      } : undefined
+    
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
-      dateDeModification: record.derniereEdition,
+      dateDeModification: record.derniereEdition ? record.derniereEdition : record.creation,
       nom: record.nom,
-      noteDeContextualisation,
-      perimetreGeographique: record.perimetreGeographique,
+      perimetreGeographique: record.perimetreGeographique ?? 'departemental',
       uid: { value: String(record.id) },
       uidEditeur: {
-        email: record.relationUtilisateur.ssoEmail,
-        value: record.relationUtilisateur.ssoId,
+        email: record.relationUtilisateur?.ssoEmail ?? '~',
+        value: record.relationUtilisateur?.ssoId ?? '~',
       },
       uidGouvernance: { value: record.gouvernanceDepartementCode },
-      uidPorteur: record.porteurId,
+      uidPorteur: record.porteurId ?? '~',
     })
-
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       throw new Error(feuilleDeRoute)
     }
-
-    return feuilleDeRoute
+    return feuilleDeRoute;
   }
 
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {

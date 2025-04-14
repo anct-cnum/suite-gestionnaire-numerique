@@ -59,8 +59,66 @@ describe('feuille de route repository', () => {
     })
     expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory())
   })
+  
+  it('trouver une feuille de route', async () => {
+    // GIVEN
+    const departementCode = '75'
+    const uidEditeur = 'userFooId'
+    const uidPorteur = 'porteurId'
+    
+    await creerUneRegion()
+    await creerUnDepartement()
+    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUneGouvernance({ departementCode })
+   
+    await creerUnContact({
+      email: 'structure@example.com',
+      fonction: 'Directeur',
+      nom: 'Tartempion',
+      prenom: 'Michel',
+    })
+    await creerUnMembre({
+      contact: 'structure@example.com',
+      gouvernanceDepartementCode: departementCode,
+      id: uidPorteur,
+    })
+    await creerUnMembreDepartement({
+      departementCode,
+      membreId: uidPorteur,
+    })
 
-  it('quand je modifie une note de contexte d’une feuille de route', async () => {
+    await creerUneFeuilleDeRoute({
+      creation: epochTime,
+      derniereEdition: epochTime,
+      gouvernanceDepartementCode: departementCode,
+      id: 1,
+      nom: 'Feuille de route test',
+      perimetreGeographique: 'departemental',
+      porteurId: 'porteurId',
+      editeurUtilisateurId:uidEditeur,
+      
+    })
+    // // WHEN
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get('1')
+
+    // THEN    
+    const expected = feuilleDeRouteFactory({
+      dateDeCreation: epochTime,
+      dateDeModification: epochTime,
+      nom: 'Feuille de route test',
+      perimetreGeographique: 'departemental',
+      uid: { value: '1' },
+      uidEditeur: {
+        email: 'martin.tartempion@example.net',
+        value: uidEditeur,
+      },
+      uidGouvernance: { value: departementCode },
+      uidPorteur: 'porteurId',
+    })
+    expect(feuilleDeRoute.state).toStrictEqual(expected.state)
+  })
+
+  it('quand je modifie une note de contextualisation d’une feuille de route', async () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
@@ -108,6 +166,7 @@ describe('feuille de route repository', () => {
       porteurId: null,
     })
   })
+
 })
 
 const emailEditeur = 'martin.tartempion@example.fr'
