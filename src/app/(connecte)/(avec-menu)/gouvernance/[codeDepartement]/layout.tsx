@@ -9,6 +9,7 @@ import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { RecupererUneGouvernance } from '@/use-cases/queries/RecupererUneGouvernance'
+import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/EtablirSyntheseFinanciereGouvernance'
 
 export default async function Layout({
   children,
@@ -24,7 +25,7 @@ export default async function Layout({
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
-      new PrismaGouvernanceLoader(),
+      new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
       new PrismaUtilisateurRepository(prisma.utilisateurRecord)
     ).handle({
       codeDepartement,

@@ -3,6 +3,7 @@ import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, cree
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer les feuilles de route loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -107,7 +108,7 @@ describe('récupérer les feuilles de route loader', () => {
     await creerUnCoFinancement({ actionId: 3, memberId: 'structure-79227291600034-93', montant: 25_000 })
 
     // WHEN
-    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader().feuillesDeRoute('93')
+    const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
     expect(feuillesDeRouteReadModel).toStrictEqual<FeuillesDeRouteReadModel>({
@@ -304,3 +305,35 @@ describe('récupérer les feuilles de route loader', () => {
     })
   })
 })
+
+function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
+  return {
+    beneficiaires: 0,
+    budget: 0,
+    coFinancement: 0,
+    coFinanceurs: 0,
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
+      actions: feuilleDeRoute.actions.map(action => ({
+        beneficiaires: 0,
+        budget: action.budgetGlobal,
+        coFinancement: 0,
+        coFinanceurs: 0,
+        financementAccorde: 0,
+        financementDemande: 0,
+        financementFormationAccorde: 0,
+        uid: action.uid,
+      })),
+      beneficiaires: 0,
+      budget: 0,
+      coFinancement: 0,
+      coFinanceurs: 0,
+      financementAccorde: 0,
+      financementDemande: 0,
+      financementFormationAccorde: 0,
+      uid: feuilleDeRoute.uid,
+    })),
+    financementAccorde: 0,
+    financementDemande: 0,
+    financementFormationAccorde: 0,
+  }
+}

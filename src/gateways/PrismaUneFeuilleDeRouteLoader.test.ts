@@ -5,6 +5,7 @@ import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, cr
 import prisma from '../../prisma/prismaClient'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
+import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -37,22 +38,23 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader().get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
       actions: [
         {
-          beneficiaire: 2,
+          beneficiaire: 0,
           besoins: ['besoin 1', 'besoin 2'],
           budgetPrevisionnel: 70_000,
           coFinancement: {
-            financeur: 1,
-            montant: 15_000,
+            financeur: 0,
+            montant: 0,
           },
           enveloppe: {
             libelle: 'Formation Aidant Numérique/Aidants Connect',
-            montant: 10_000,
+            montant: 0,
           },
           isEditable: false,
           isEnveloppeFormation: true,
@@ -71,8 +73,8 @@ describe('récupérer une feuille de route loader', () => {
           besoins: ['besoin 1', 'besoin 2'],
           budgetPrevisionnel: 70_000,
           coFinancement: {
-            financeur: 1,
-            montant: 15_000,
+            financeur: 0,
+            montant: 0,
           },
           enveloppe: {
             libelle: 'Aucune enveloppe',
@@ -86,9 +88,9 @@ describe('récupérer une feuille de route loader', () => {
           uid: String(uidAction2),
         },
       ],
-      beneficiaire: 2,
-      budgetTotalActions: 140_000,
-      coFinanceur: 2,
+      beneficiaire: 0,
+      budgetTotalActions: 0,
+      coFinanceur: 0,
       contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
       document: {
         chemin: 'user/fooId/feuille-de-route-fake.pdf',
@@ -99,7 +101,7 @@ describe('récupérer une feuille de route loader', () => {
         nom: '~',
         prenom: '~',
       },
-      montantCofinancements: 30_000,
+      montantCofinancements: 0,
       montantFinancementsAccordes: 0,
       nom: 'Feuille de route 1',
       perimetre: 'Périmètre départemental',
@@ -127,7 +129,8 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader().get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel.porteur).toBeUndefined()
@@ -148,7 +151,8 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = await new PrismaUneFeuilleDeRouteLoader().get(uidFeuilleDeRoute)
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(uidFeuilleDeRoute)
 
     // THEN
     expect(readModel.document).toBeUndefined()
@@ -169,7 +173,7 @@ describe('récupérer une feuille de route loader', () => {
     })
 
     // WHEN
-    const readModel = new PrismaUneFeuilleDeRouteLoader().get('999')
+    const readModel = new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('999')
 
     // THEN
     await expect(readModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -245,4 +249,36 @@ async function creerMembre(uid: string, nom = 'Métropole de Lyon'): Promise<voi
     epci: nom,
     membreId: uid,
   })
+}
+
+function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
+  return {
+    beneficiaires: 0,
+    budget: 0,
+    coFinancement: 0,
+    coFinanceurs: 0,
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
+      actions: feuilleDeRoute.actions.map(action => ({
+        beneficiaires: 0,
+        budget: action.budgetGlobal,
+        coFinancement: 0,
+        coFinanceurs: 0,
+        financementAccorde: 0,
+        financementDemande: 0,
+        financementFormationAccorde: 0,
+        uid: action.uid,
+      })),
+      beneficiaires: 0,
+      budget: 0,
+      coFinancement: 0,
+      coFinanceurs: 0,
+      financementAccorde: 0,
+      financementDemande: 0,
+      financementFormationAccorde: 0,
+      uid: feuilleDeRoute.uid,
+    })),
+    financementAccorde: 0,
+    financementDemande: 0,
+    financementFormationAccorde: 0,
+  }
 }
