@@ -393,6 +393,22 @@ export async function creerUnPorteurAction(
   })
 }
 
+export function feuilleDeRouteRecordFactory(
+  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
+): Prisma.FeuilleDeRouteRecordUncheckedCreateInput {
+  return {
+    creation: epochTime,
+    derniereEdition: epochTime,
+    gouvernanceDepartementCode: '69',
+    nom: 'Feuille de route 69',
+    oldUUID: null,
+    perimetreGeographique:'departemental',
+    pieceJointe: null,
+    porteurId: null,
+    ...override,
+  }
+}
+
 function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
@@ -445,20 +461,6 @@ function structureRecordFactory(
     nom: 'Solidarnum',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
-    ...override,
-  }
-}
-
-function feuilleDeRouteRecordFactory(
-  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
-): Prisma.FeuilleDeRouteRecordUncheckedCreateInput {
-  return {
-    creation: epochTime,
-    gouvernanceDepartementCode: '69',
-    nom: 'Feuille de route inclusion',
-    oldUUID: 'D5BA203C-6DAA-4B30-B7F5-6E5B9DF97F9C',
-    pieceJointe: undefined,
-    porteurId: undefined,
     ...override,
   }
 }

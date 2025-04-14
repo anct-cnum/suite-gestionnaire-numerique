@@ -102,6 +102,7 @@ model UtilisateurRecord {
   noteDeContexte            GouvernanceRecord[]         @relation("UtilisateurnoteDeContexte")
   actionRecord              ActionRecord[]
   demandeDeSubventionRecord DemandeDeSubventionRecord[]
+  FeuilleDeRouteRecord      FeuilleDeRouteRecord[]
 
   @@map("utilisateur")
 }
@@ -147,16 +148,20 @@ model ComiteRecord {
 model FeuilleDeRouteRecord {
   id Int @id @default(autoincrement())
 
-  gouvernanceDepartementCode String   @map("gouvernance_departement_code")
+  gouvernanceDepartementCode String    @map("gouvernance_departement_code")
   creation                   DateTime
+  derniereEdition            DateTime? @map("derniere_edition")
   nom                        String
-  pieceJointe                String?  @map("piece_jointe")
-  porteurId                  String?  @map("porteur_id")
+  pieceJointe                String?   @map("piece_jointe")
+  porteurId                  String?   @map("porteur_id")
+  editeurUtilisateurId       String?   @map("editeur_utilisateur_id")
+  perimetreGeographique      String?   @map("perimetre_geographique")
 
-  oldUUID String @map("old_uuid") @db.Uuid
+  oldUUID String? @map("old_uuid") @db.Uuid
 
-  relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
-  relationMembre      MembreRecord?     @relation(fields: [porteurId], references: [id])
+  relationUtilisateur UtilisateurRecord? @relation(fields: [editeurUtilisateurId], references: [ssoId])
+  relationGouvernance GouvernanceRecord  @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
+  relationMembre      MembreRecord?      @relation(fields: [porteurId], references: [id])
   action              ActionRecord[]
 
   @@map("feuille_de_route")

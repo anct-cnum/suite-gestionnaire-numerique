@@ -167,8 +167,8 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
 }
 
 class FeuilleDeRouteRepositorySpy implements FeuilleDeRouteRepository {
-  async add(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+  async add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean> {
     spiedFeuilleDeRouteToAdd = feuilleDeRoute
-    return Promise.resolve()
+    return Promise.resolve(true)
   }
 }
