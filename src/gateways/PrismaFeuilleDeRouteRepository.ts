@@ -1,6 +1,5 @@
 import prisma from '../../prisma/prismaClient'
-import { FeuilleDeRoute, FeuilleDeRouteUid, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
-import { UtilisateurUid } from '@/domain/Utilisateur'
+import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -30,10 +29,10 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         id: Number(uid.state.value),
       },
     })
-    
+
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
-      dateDeModification: record.derniereEdition ? record.derniereEdition : record.creation,
+      dateDeModification: record.derniereEdition ??  record.creation,
       nom: record.nom,
       perimetreGeographique: record.perimetreGeographique ?? 'departemental',
       uid: { value: String(record.id) },
@@ -47,7 +46,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       throw new Error(feuilleDeRoute)
     }
-    return feuilleDeRoute;
+    return feuilleDeRoute
   }
 
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {

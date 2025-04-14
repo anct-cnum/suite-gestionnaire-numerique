@@ -85,16 +85,12 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                 uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
               />}
           </header>
-          {
-            isNullish(viewModel.contextualisation)
-              ? (
-                <ReadMore
-                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                  texte={viewModel.contextualisation!}
-                />
-              )
-              : null
-          }
+          { isNullish(viewModel.contextualisation) ? null : (
+            <ReadMore
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              texte={viewModel.contextualisation!}
+            />
+          )}
         </section>
         <section
           aria-labelledby="document"

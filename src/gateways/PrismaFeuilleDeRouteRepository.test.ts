@@ -1,6 +1,7 @@
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
 import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
@@ -59,18 +60,18 @@ describe('feuille de route repository', () => {
     })
     expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory())
   })
-  
+
   it('trouver une feuille de route', async () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
     const uidPorteur = 'porteurId'
-    
+
     await creerUneRegion()
     await creerUnDepartement()
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
-   
+
     await creerUnContact({
       email: 'structure@example.com',
       fonction: 'Directeur',
@@ -90,18 +91,18 @@ describe('feuille de route repository', () => {
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       derniereEdition: epochTime,
+      editeurUtilisateurId:uidEditeur,
       gouvernanceDepartementCode: departementCode,
       id: 1,
       nom: 'Feuille de route test',
       perimetreGeographique: 'departemental',
       porteurId: 'porteurId',
-      editeurUtilisateurId:uidEditeur,
-      
     })
-    // // WHEN
-    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get('1')
 
-    // THEN    
+    // WHEN
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('1'))
+
+    // THEN
     const expected = feuilleDeRouteFactory({
       dateDeCreation: epochTime,
       dateDeModification: epochTime,
@@ -166,7 +167,6 @@ describe('feuille de route repository', () => {
       porteurId: null,
     })
   })
-
 })
 
 const emailEditeur = 'martin.tartempion@example.fr'
