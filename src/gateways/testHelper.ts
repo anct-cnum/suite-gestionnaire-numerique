@@ -401,6 +401,10 @@ export function feuilleDeRouteRecordFactory(
     derniereEdition: epochTime,
     gouvernanceDepartementCode: '69',
     nom: 'Feuille de route 69',
+    oldUUID: null,
+    perimetreGeographique:'departemental',
+    pieceJointe: null,
+    porteurId: null,
     ...override,
   }
 }

@@ -1,6 +1,6 @@
 
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, feuilleDeRouteRecordFactory } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { feuilleDeRouteFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -24,6 +24,9 @@ describe('feuille de route repository', () => {
       nom: 'Tartempion',
       prenom: 'Michel',
     })
+    await creerUnUtilisateur({
+      ssoId: uidEditeur,
+    })
     await creerUnMembre({
       contact:'structure@example.com',
       gouvernanceDepartementCode: departementCode,
@@ -36,6 +39,7 @@ describe('feuille de route repository', () => {
     const feuilleDeRoute = feuilleDeRouteFactory({
       dateDeCreation: epochTime,
       dateDeModification: epochTime,
+      nom: 'Feuille de route 69',
       perimetreGeographique: 'departemental',
       uidEditeur: {
         email: 'martin.tartempion@example.fr',
@@ -57,7 +61,12 @@ describe('feuille de route repository', () => {
         gouvernanceDepartementCode: departementCode,
       },
     })
-    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory())
+    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({
+      editeurUtilisateurId: uidEditeur,
+      gouvernanceDepartementCode: departementCode,
+      perimetreGeographique: 'departemental',
+      porteurId: uidPorteur,
+    }))
   })
 })
 

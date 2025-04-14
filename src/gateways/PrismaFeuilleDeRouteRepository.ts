@@ -10,6 +10,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       data: {
         creation: feuilleDeRoute.state.dateDeCreation,
         derniereEdition: feuilleDeRoute.state.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
         gouvernanceDepartementCode: feuilleDeRoute.state.uidGouvernance,
         nom: feuilleDeRoute.state.nom,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
