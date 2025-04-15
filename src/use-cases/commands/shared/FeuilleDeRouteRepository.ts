@@ -1,13 +1,15 @@
-import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
-
-export interface FeuilleDeRouteRepository {
-  add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean>
-}
+import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 
 export interface GetFeuilleDeRouteRepository {
-  get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute>
+  get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute>
 }
-
+export interface AddFeuilleDeRouteRepository {
+  add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean>
+}
 export interface UpdateFeuilleDeRouteRepository {
   update(feuilleDeRoute: FeuilleDeRoute): Promise<void>
 }
+export interface FeuilleDeRouteRepository extends
+  AddFeuilleDeRouteRepository,
+  GetFeuilleDeRouteRepository,
+  UpdateFeuilleDeRouteRepository {}
