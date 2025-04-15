@@ -2,23 +2,27 @@
 
 **Sur ce projet, `yarn` est le gestionnaire de paquets utilisé**
 
+```bash
+corepack enable
+```
+
 ## ✅️ Prérequis
 
 Avoir la version LTS de Node décrite dans le fichier `.nvmrc`.
 
 ```bash
-nvm install v20.x.x
+nvm install
 ```
 
 ## 🚀 Démarrage
 
-D'abord, installer les dépendances
+D'abord, installer les dépendances.
 
 ```bash
-yarn install
+yarn
 ```
 
-Remplir les variables d'environnement dans `.env.local`.
+Remplacer les variables d'environnement affectées à "A_REMPLIR" dans `.env.local` en demandant à l'équipe en place. Les autres ne sont pas utiles au bon déroulement de l'application.
 
 Lancer le serveur de développement
 
@@ -27,7 +31,7 @@ yarn db:start
 yarn dev
 ```
 
-Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat
+Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat.
 
 ## 🧪 Tests
 
@@ -53,17 +57,17 @@ Pour accéder à la base de données en CLI selon un environnement :
 
 ```bash
 yarn psql:local
-yarn psql:production (il faut avoir installer la CLI de Scalingo au préalable)
 yarn psql:test
 ```
 
-Pour accéder à la base de données de production avec un outils, il faut lancer un tunnel SSH avant :
+Pour accéder à la base de données de production avec un outils, il faut lancer un tunnel SSH avant. Pour cela, il faut donner une clé SSH publique au DataSpace.
+Une alternative est de se connecter au bastion Scalingo, d'ouvrir un tunnel SSH puis de lancer psql.
 
 ```bash
-scalingo -a mon-inclusion-numerique db-tunnel -i [CHEMIN_DE_TA_CLE_SSH_SCALINGO] [VAR_ENV_SCALINGO_POSTGRESQL_URL]
+yarn bash:production
+ssh -i .ssh/id_rsa -N -f -L $DS_BDD_IP $DS_BASTION_IP -p $DS_BASTION_PORT
+psql "${DATABASE_URL/?schema=min/?options=--search_path%3dmin}"
 ```
-
-Ensuite, dans ton outils, tu configures avec 127.0.0.1:10000 et le reste grâce à la variable d'environnement SCALINGO_POSTGRESQL_URL utilisée juste au dessus.
 
 Quand le schéma de MIN est modifié, regénérer les tables à partir des schémas Prisma, créer les migrations au besoin et générer les types pour Prisma Client :
 
@@ -87,12 +91,6 @@ Quand tu veux enchainer les trois dernières commandes d'affilé :
 
 ```bash
 yarn prisma:reset
-```
-
-Quand tu veux importer les utilisateurs :
-
-```bash
-yarn migration:utilisateur
 ```
 
 ## ⬆️ Mise à jour du DSFR
@@ -178,24 +176,32 @@ Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.be
  ┃  ┣ 📂 domain                   -> Les objets métier
  ┃  ┣ 📂 gateways                 -> Les repositories, loaders et gateways
  ┃  ┣ 📂 presenters               -> Les presenters
- ┃  ┗ 📂 use-cases                -> Les use cases, queries et commands
+ ┃  ┣ 📂 shared                   -> Fonctions communes à tout le projet
+ ┃  ┗ 📂 use-cases                -> Les use cases : queries et commands
+ ┣ 📜 .buildpacks                 -> Container pour le deploy de Scalingo
  ┣ 📜 .editorconfig               -> Configuration de règles de formattage de base
  ┣ 📜 .env                        -> Valeurs par défaut des variables d'environnement
  ┣ 📜 .env.local                  -> Variables d'environnement locale
+ ┣ 📜 .env.test                   -> Variables d'environnement pour les tests
  ┣ 📜 .eslintrc                   -> Configuration ESLint
  ┣ 📜 .gitignore                  -> Fichiers à ne pas commiter
  ┣ 📜 .nvmrc                      -> La version de Node à utiliser
+ ┣ 📜 .prettierignore             -> Fichiers que Prettier ne traite pas
  ┣ 📜 .prettierrc                 -> Configuration Prettier
- ┣ 📜 .slugignore                 -> Les fichiers ignorés de l'image Scalingo au build (étant limité à 1,5 Go)
+ ┣ 📜 .slugignore                 -> Les fichiers ignorés du containter Scalingo au deploy (étant limité à 1,5 Go)
  ┣ 📜 .stylelintrc                -> Configuration Stylelint
+ ┣ 📜 build.sh                    -> Commande lancée au build du deploy chez Scalingo
+ ┣ 📜 eslint.config.js            -> Configuration Eslint strict
  ┣ 📜 knip.json                   -> Configuration Knip
  ┣ 📜 next.config.js              -> Configuration de Next
  ┣ 📜 package.json                -> Configuration du projet Node
+ ┣ 📜 post-install.sh             -> Actions effectuées après la première installation du projet
+ ┣ 📜 Procfile                    -> Commande lancée pour démarrer l'application au deploy chez Scalingo
  ┣ 📜 scalingo.json               -> Configuration de Scalingo
  ┣ 📜 sentry.xxx.config.ts        -> Configuration de Sentry
  ┣ 📜 stryker-backend.conf.json   -> Configuration de Stryker
  ┣ 📜 stryker-frontend.conf.json  -> Configuration de Stryker
- ┣ 📜 tsconfig.json               -> Configuration de TypeScript
+ ┣ 📜 tsconfig.json               -> Configuration de TypeScript strict
  ┣ 📜 vitest.config.js            -> Configuration de Vitest
  ┣ 📜 vitest.setup.js             -> Actions à exécuter avant tous les tests
 ```
@@ -235,7 +241,7 @@ dédiée à une description exhaustive de l'architecture applicative en vigueur 
   URLs de redirection post DÉCONNEXION: https://mon-inclusion-numerique.osc-fr1.scalingo.io/connexion
   Lien du dossier démarches-simplifiées: https://www.demarches-simplifiees.fr/dossiers/22822056
 
-  Les client_id et client_secret de production à renseigner dans les variables d'environnement de scalingo se trouve dans le vaultwarden
+  Les client_id et client_secret de production à renseigner dans les variables d'environnement de Scalingo se trouve dans le vaultwarden
   PRO_CONNECT_CLIENT_ID = clientID
   PRO_CONNECT_CLIENT_SECRET = clienSecret
   PRO_CONNECT_URL = https://auth.agentconnect.gouv.fr/api/v2

@@ -25,8 +25,11 @@ describe('feuille de route repository', () => {
       nom: 'Tartempion',
       prenom: 'Michel',
     })
+    await creerUnUtilisateur({
+      ssoId: uidEditeur,
+    })
     await creerUnMembre({
-      contact: 'structure@example.com',
+      contact:'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
@@ -37,6 +40,7 @@ describe('feuille de route repository', () => {
     const feuilleDeRoute = feuilleDeRouteFactory({
       dateDeCreation: epochTime,
       dateDeModification: epochTime,
+      nom: 'Feuille de route 69',
       perimetreGeographique: 'departemental',
       uidEditeur: {
         email: 'martin.tartempion@example.fr',
@@ -169,4 +173,13 @@ describe('feuille de route repository', () => {
   })
 })
 
-const emailEditeur = 'martin.tartempion@example.fr'
+// const emailEditeur = 'martin.tartempion@example.fr'
+//     expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({
+//       editeurUtilisateurId: uidEditeur,
+//       gouvernanceDepartementCode: departementCode,
+//       perimetreGeographique: 'departemental',
+//       porteurId: uidPorteur,
+//     }))
+//   })
+// })
+

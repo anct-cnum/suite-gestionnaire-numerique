@@ -80,7 +80,7 @@ describe('ajouter une feuille de route', () => {
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter une feuille de route' })
       const nom = jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('structure-95351745500010-44')
+      jeSelectionneLePorteur('structure-95351745500010-44')
       jeSelectionneUnPerimetre('Régional')
       const enregistrer = jEnregistreLaFeuilleDeRoute()
       // THEN
@@ -95,7 +95,7 @@ describe('ajouter une feuille de route', () => {
         path: '/gouvernance/11/feuilles-de-route',
         perimetre: 'regional',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'structure-95351745500010-44',
+        uidPorteur: 'structure-95351745500010-44',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Feuille de route ajoutée')
@@ -112,7 +112,7 @@ describe('ajouter une feuille de route', () => {
       // WHEN
       jOuvreLeFormulairePourAjouterUneFeuilleDeRoute()
       jeTapeLeNomDeLaFeuilleDeRoute('Feuille de route du Rhône')
-      jeSelectionneUnMembre('porteurId1')
+      jeSelectionneLePorteur('porteurId1')
       jeSelectionneUnPerimetre('Régional')
       jEnregistreLaFeuilleDeRoute()
 
@@ -128,7 +128,7 @@ describe('ajouter une feuille de route', () => {
     return input
   }
 
-  function jeSelectionneUnMembre(value: string): void {
+  function jeSelectionneLePorteur(value: string): void {
     fireEvent.change(screen.getByRole('combobox', { name: 'Quel membre de la gouvernance porte la feuille de route ? *' }), { target: { value } })
   }
 

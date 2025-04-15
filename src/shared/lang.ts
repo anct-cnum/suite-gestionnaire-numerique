@@ -43,8 +43,4 @@ export function byPredicate<T>(predicate: (t: T) => boolean) {
   return (left: T, right: T): number => Number(predicate(right)) - Number(predicate(left))
 }
 
-export function sum(augend: number, addend: number): number {
-  return augend + addend
-}
-
 type JsonPrimitive = boolean | number | string

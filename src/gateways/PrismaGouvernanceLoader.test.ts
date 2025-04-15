@@ -5,6 +5,7 @@ import { creerMembres, creerUnBeneficiaireSubvention, creerUnComite, creerUnDepa
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('gouvernance loader', () => {
   beforeEach(async () => prisma.$queryRaw`START TRANSACTION`)
@@ -100,7 +101,7 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get('93')
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -134,7 +135,7 @@ describe('gouvernance loader', () => {
             { nom: 'Créteil', uid: 'commune-94028-93' },
           ],
           beneficiairesSubventionFormation: [],
-          budgetGlobal: 70_000,
+          budgetGlobal: 0,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 0,
           montantSubventionFormationAccordee: 0,
@@ -151,7 +152,7 @@ describe('gouvernance loader', () => {
         {
           beneficiairesSubvention: [],
           beneficiairesSubventionFormation: [],
-          budgetGlobal: 25_000,
+          budgetGlobal: 0,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 0,
           montantSubventionFormationAccordee: 0,
@@ -186,10 +187,10 @@ describe('gouvernance loader', () => {
             nom: 'Orange',
             uid: 'structure-38012986643097-93',
           }],
-          budgetGlobal: 111_000,
-          montantSubventionAccordee: 30_000,
-          montantSubventionDemandee: 25_050,
-          montantSubventionFormationAccordee: 19.15,
+          budgetGlobal: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
+          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route numérique du Rhône 6',
           porteur: {
             nom: 'Trévérien',
@@ -258,8 +259,8 @@ describe('gouvernance loader', () => {
             ],
             nom: 'Trévérien',
             roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
-            totalMontantsSubventionsAccordees: 30_000,
-            totalMontantsSubventionsFormationAccordees: 19.15,
+            totalMontantsSubventionsAccordees: 0,
+            totalMontantsSubventionsFormationAccordees: 0,
             type: '',
           },
         ].map((partialMembre) => ({
@@ -289,7 +290,8 @@ describe('gouvernance loader', () => {
     const codeDepartementInexistant = 'zzz'
 
     // WHEN
-    const gouvernanceReadModel = new PrismaGouvernanceLoader().get(codeDepartementInexistant)
+    const gouvernanceReadModel = new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(codeDepartementInexistant)
 
     // THEN
     await expect(gouvernanceReadModel).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -333,7 +335,7 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get('93')
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
     expect(gouvernanceReadModel).toStrictEqual<UneGouvernanceReadModel>({
@@ -346,9 +348,9 @@ describe('gouvernance loader', () => {
             { nom: 'Créteil', uid: 'commune-94028-93' },
           ],
           beneficiairesSubventionFormation: [],
-          budgetGlobal: 70_000,
-          montantSubventionAccordee: 30_000,
-          montantSubventionDemandee: 30_000,
+          budgetGlobal: 0,
+          montantSubventionAccordee: 0,
+          montantSubventionDemandee: 0,
           montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion 1',
           pieceJointe: {
@@ -463,7 +465,8 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
@@ -502,7 +505,8 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
@@ -541,7 +545,8 @@ describe('gouvernance loader', () => {
     })
 
     // WHEN
-    const gouvernanceReadModel = await new PrismaGouvernanceLoader().get(codeDepartement)
+    const gouvernanceReadModel = await new PrismaGouvernanceLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(codeDepartement)
 
     // THEN
     expect(gouvernanceReadModel.comites).toStrictEqual<UneGouvernanceReadModel['comites']>(
@@ -601,4 +606,36 @@ async function creerFeuillesDeRoute(gouvernanceDepartementCode: string, incremen
     nom: `Feuille de route numérique du Rhône ${id2}`,
     porteurId: 'commune-35345-93',
   })
+}
+
+function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
+  return {
+    beneficiaires: 0,
+    budget: 0,
+    coFinancement: 0,
+    coFinanceurs: 0,
+    feuillesDeRoute: gouvernance.feuillesDeRoute.map(feuilleDeRoute => ({
+      actions: feuilleDeRoute.actions.map(action => ({
+        beneficiaires: 0,
+        budget: action.budgetGlobal,
+        coFinancement: 0,
+        coFinanceurs: 0,
+        financementAccorde: 0,
+        financementDemande: 0,
+        financementFormationAccorde: 0,
+        uid: action.uid,
+      })),
+      beneficiaires: 0,
+      budget: 0,
+      coFinancement: 0,
+      coFinanceurs: 0,
+      financementAccorde: 0,
+      financementDemande: 0,
+      financementFormationAccorde: 0,
+      uid: feuilleDeRoute.uid,
+    })),
+    financementAccorde: 0,
+    financementDemande: 0,
+    financementFormationAccorde: 0,
+  }
 }
