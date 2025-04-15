@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { GouvernanceRepository } from './AjouterNoteDeContexteAGouvernance'
-import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
@@ -9,17 +9,17 @@ export class ModifierUneFeuilleDeRoute implements CommandHandler<Command> {
   readonly #date: Date
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
-  readonly #utilisateurRepository: GetUtilisateurRepository
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
-    gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: GetUtilisateurRepository,
     feuilleDeRouteRepository: FeuilleDeRouteRepository,
+    gouvernanceRepository: GouvernanceRepository,
+    utilisateurRepository: UtilisateurRepository,
     date: Date
   ) {
+    this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
-    this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#date = date
   }
 
@@ -61,3 +61,9 @@ type Command = Readonly<{
   uidGouvernance: string
   uidPorteur: string
 }>
+
+type GouvernanceRepository = GetGouvernanceRepository
+
+type UtilisateurRepository = GetUtilisateurRepository
+
+interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {}

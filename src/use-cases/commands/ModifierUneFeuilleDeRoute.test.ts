@@ -1,5 +1,5 @@
 import { ModifierUneFeuilleDeRoute } from './ModifierUneFeuilleDeRoute'
-import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
@@ -13,14 +13,15 @@ describe('modifier une feuille de route', () => {
     spiedGouvernanceUidToFind = null
     spiedUtilisateurUidToFind = null
     spiedFeuilleDeRouteToUpdate = null
+    spiedFeuilleDeRouteUidToFind = null
   })
 
   it('étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire, alors elle est modifiée', async () => {
     // GIVEN
     const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       epochTime
     )
 
@@ -37,6 +38,7 @@ describe('modifier une feuille de route', () => {
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
+    expect(spiedFeuilleDeRouteUidToFind).toBe(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory(
         {
@@ -76,9 +78,9 @@ describe('modifier une feuille de route', () => {
   ])('étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
     // GIVEN
     const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       dateDeModification
     )
 
@@ -100,9 +102,9 @@ describe('modifier une feuille de route', () => {
   it('étant donné une gouvernance, quand un comité est modifié par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       epochTime
     )
 
@@ -163,7 +165,7 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
-class FeuilleDeRouteRepositorySpy implements FeuilleDeRouteRepository {
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
