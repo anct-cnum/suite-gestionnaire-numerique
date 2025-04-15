@@ -297,6 +297,7 @@ function grouperDonneesACreer(
       editeurUtilisateurId: null,
       gouvernanceDepartementCode,
       nom: feuilleDeRouteFNE.nom,
+      noteDeContextualisation: null,
       oldUUID: feuilleDeRouteFNE.id,
       perimetreGeographique: null,
       pieceJointe: feuilleDeRouteFNE.pieceJointe,

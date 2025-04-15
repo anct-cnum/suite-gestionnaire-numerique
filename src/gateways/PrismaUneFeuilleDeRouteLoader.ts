@@ -81,7 +81,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
       beneficiaire: syntheseFeuilleDeRoute.beneficiaires,
       budgetTotalActions: syntheseFeuilleDeRoute.budget,
       coFinanceur: syntheseFeuilleDeRoute.coFinanceurs,
-      contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      contextualisation: feuilleDeRouteRecord.noteDeContextualisation ?? undefined,
       document: feuilleDeRouteRecord.pieceJointe === null ? undefined : {
         chemin: feuilleDeRouteRecord.pieceJointe,
         nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],

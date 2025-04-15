@@ -207,7 +207,7 @@ function afficherUneFeuilleDeRouteSansNoteDeContextualisation(
   options?: Partial<Parameters<typeof renderComponent>[1]>
 ): void {
   const feuilleDeRouteViewModel = feuilleDeRouteViewModelFactory('11', '113', {
-    contextualisation: '',
+    contextualisation: undefined,
   })
   renderComponent(<FeuilleDeRoute viewModel={feuilleDeRouteViewModel} />, options)
 }

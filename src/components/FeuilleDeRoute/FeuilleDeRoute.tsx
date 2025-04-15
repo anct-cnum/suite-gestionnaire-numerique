@@ -17,6 +17,7 @@ import ReadMore from '../shared/ReadMore/ReadMore'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
+import { isNullish } from '@/shared/lang'
 
 export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
   return (
@@ -76,21 +77,20 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             >
               Contextualisation des demandes de subvention
             </h2>
-            {
-              viewModel.contextualisation
-                ? <ModifierUneNoteDeContextualisation contextualisation={viewModel.contextualisation} />
-                : <AjouterUneNoteDeContextualisation />
-            }
+            { isNullish(viewModel.contextualisation) ?
+              <AjouterUneNoteDeContextualisation /> :
+              <ModifierUneNoteDeContextualisation
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                contextualisation={viewModel.contextualisation!}
+                uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
+              />}
           </header>
-          {
-            viewModel.contextualisation
-              ? (
-                <ReadMore
-                  texte={viewModel.contextualisation}
-                />
-              )
-              : null
-          }
+          { isNullish(viewModel.contextualisation) ? null : (
+            <ReadMore
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              texte={viewModel.contextualisation!}
+            />
+          )}
         </section>
         <section
           aria-labelledby="document"
