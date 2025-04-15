@@ -1,5 +1,7 @@
 import prisma from '../../prisma/prismaClient'
 import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
+import { UtilisateurUid } from '@/domain/Utilisateur'
+import { isNullish } from '@/shared/lang'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -10,7 +12,6 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       data: {
         creation: feuilleDeRoute.state.dateDeCreation,
         derniereEdition: feuilleDeRoute.state.dateDeModification,
-        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
         gouvernanceDepartementCode: feuilleDeRoute.state.uidGouvernance,
         nom: feuilleDeRoute.state.nom,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
@@ -31,10 +32,25 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       },
     })
 
+    const noteDeContextualisation = !isNullish(record.noteDeContextualisation) &&
+      !isNullish(record.relationUtilisateur?.ssoId) && !isNullish(record.relationUtilisateur?.ssoEmail) ? {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        contenu: record.noteDeContextualisation!,
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        dateDeModification: record.derniereEdition!,
+        uidEditeur: new UtilisateurUid({
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          email: record.relationUtilisateur!.ssoEmail,
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          value: record.relationUtilisateur!.ssoId,
+        }),
+      } : undefined
+
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
-      dateDeModification: record.derniereEdition ??  record.creation,
+      dateDeModification: record.derniereEdition ?? record.creation,
       nom: record.nom,
+      noteDeContextualisation,
       perimetreGeographique: record.perimetreGeographique ?? 'departemental',
       uid: { value: String(record.id) },
       uidEditeur: {
