@@ -78,7 +78,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
               Contextualisation des demandes de subvention
             </h2>
             { isNullish(viewModel.contextualisation) ?
-              <AjouterUneNoteDeContextualisation /> :
+              <AjouterUneNoteDeContextualisation uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute} /> :
               <ModifierUneNoteDeContextualisation
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 contextualisation={viewModel.contextualisation!}

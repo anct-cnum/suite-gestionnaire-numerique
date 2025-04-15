@@ -9,7 +9,7 @@ import { Notification } from '../shared/Notification/Notification'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 
-export default function AjouterUneNoteDeContextualisation(): ReactElement {
+export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }: Props): ReactElement {
   const { ajouterUneNoteDeContextualisationAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
@@ -67,7 +67,8 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
     event.preventDefault()
 
     setIsDisabled(true)
-    const messages = await ajouterUneNoteDeContextualisationAction({ contenu, path: pathname })
+    const uidFeuilleDeRoute = pathname.split('/').pop() ?? ''
+    const messages = await ajouterUneNoteDeContextualisationAction({ contenu, path: pathname, uidFeuilleDeRoute })
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Note de contextualisation ' })
       setIsDrawerOpen(false)
@@ -76,4 +77,8 @@ export default function AjouterUneNoteDeContextualisation(): ReactElement {
     }
     setIsDisabled(false)
   }
+}
+
+type Props = {
+  readonly uidFeuilleDeRoute: string
 }
