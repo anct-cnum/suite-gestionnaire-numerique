@@ -68,14 +68,13 @@ export default function AjouterUneFeuilleDeRoute({
 
     setIsDisabled(true)
     const form = new FormData(event.currentTarget)
-    const [nom, membre, perimetre, contratPreexistant] = form.values() as FormDataIterator<string>
+    const [nom, membre, perimetre] = form.values() as FormDataIterator<string>
     const messages = await ajouterUneFeuilleDeRouteAction({
-      contratPreexistant,
       nom,
       path: pathname,
       perimetre,
       uidGouvernance,
-      uidMembre: membre,
+      uidPorteur: membre,
     })
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Feuille de route ' })
@@ -90,7 +89,6 @@ export default function AjouterUneFeuilleDeRoute({
 }
 
 type Props = Readonly<{
-  contratPreexistant: FeuillesDeRouteViewModel['formulaire']['contratPreexistant']
   membres: FeuillesDeRouteViewModel['formulaire']['membres']
   perimetres: FeuillesDeRouteViewModel['formulaire']['perimetres']
   uidGouvernance: string

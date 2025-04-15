@@ -24,7 +24,6 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
           {gouvernanceViewModel.departement}
         </PageTitle>
         <AjouterUneFeuilleDeRoute
-          contratPreexistant={feuillesDeRouteViewModel.formulaire.contratPreexistant}
           membres={feuillesDeRouteViewModel.formulaire.membres}
           perimetres={feuillesDeRouteViewModel.formulaire.perimetres}
           uidGouvernance={gouvernanceViewModel.uid}

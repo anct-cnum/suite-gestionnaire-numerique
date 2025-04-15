@@ -10,16 +10,6 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
   return {
     feuillesDeRoute: readModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(readModel.uidGouvernance)),
     formulaire: {
-      contratPreexistant: [
-        {
-          label: 'Oui',
-          value: 'oui',
-        },
-        {
-          label: 'Non',
-          value: 'non',
-        },
-      ],
       membres: [
         {
           label: 'Choisir',
@@ -57,7 +47,6 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
 export type FeuillesDeRouteViewModel = Readonly<{
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
   formulaire: Readonly<{
-    contratPreexistant: ReadonlyArray<LabelValue<'non' | 'oui'>>
     membres: ReadonlyArray<LabelValue>
     perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
   }>
