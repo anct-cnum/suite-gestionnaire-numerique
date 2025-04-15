@@ -3,7 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import prisma from '../../../../prisma/prismaClient'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
+import { AjouterUneFeuilleDeRoute } from '@/use-cases/commands/AjouterUneFeuilleDeRoute'
 
 export async function ajouterUneFeuilleDeRouteAction(
   actionParams: ActionParams
@@ -14,18 +20,30 @@ export async function ajouterUneFeuilleDeRouteAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
+  const result = await new AjouterUneFeuilleDeRoute(
+    new PrismaGouvernanceRepository(),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    new PrismaFeuilleDeRouteRepository(),
+    new Date()
+  ).handle({
+    nom: actionParams.nom,
+    perimetreGeographique: actionParams.perimetre,
+    uidEditeur: await getSessionSub(),
+    uidGouvernance: actionParams.uidGouvernance,
+    uidPorteur: actionParams.uidPorteur,
+  })
+
   revalidatePath(validationResult.data.path)
 
-  return Promise.resolve(['OK'])
+  return [result]
 }
 
 type ActionParams = Readonly<{
-  contratPreexistant: string
   nom: string
   path: string
   perimetre: string
   uidGouvernance: string
-  uidMembre: string
+  uidPorteur: string
 }>
 
 const validator = z.object({

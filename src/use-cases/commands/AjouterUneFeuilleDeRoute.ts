@@ -41,7 +41,7 @@ export class AjouterUneFeuilleDeRoute implements CommandHandler<Command> {
       uidEditeur: editeur.state.uid,
       uidGouvernance: gouvernance.state.uid,
       uidPorteur: command.uidPorteur,
-    } )
+    })
 
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       return feuilleDeRoute
