@@ -110,6 +110,14 @@ export class FeuilleDeRoute extends Entity<State> {
     }
   }
 
+  ajouterUneNoteDeContextualisation(noteDeContextualisation: NoteDeContextualisation): Result<FeuilleDeRouteFailure> {
+    if (this.#noteDeContextualisation !== undefined) {
+      return 'noteDeContextualisationDejaExistante'
+    }
+    this.#noteDeContextualisation = noteDeContextualisation
+    return 'OK'
+  }
+
   modifierUneNoteDeContextualisation(noteDeContextualisation: NoteDeContextualisation): Result<FeuilleDeRouteFailure> {
     if (this.#noteDeContextualisation !== undefined) {
       this.#noteDeContextualisation = noteDeContextualisation
@@ -134,7 +142,7 @@ const Types = [
 
 export type PerimetreGeographiqueTypes = typeof Types[number]
 
-export type FeuilleDeRouteFailure = 'dateDeModificationInvalide' | 'noteDeContextualisationInexistante' | 'perimetreGeographiqueInvalide' | 'utilisateurNePeutPasModifierNoteDeContextualisation'
+export type FeuilleDeRouteFailure = 'dateDeModificationInvalide' | 'noteDeContextualisationDejaExistante' | 'noteDeContextualisationInexistante' | 'perimetreGeographiqueInvalide' | 'utilisateurNePeutPasModifierNoteDeContextualisation'
 
 export class FeuilleDeRouteUid extends Uid<UidState> {
   constructor(value: string) {
