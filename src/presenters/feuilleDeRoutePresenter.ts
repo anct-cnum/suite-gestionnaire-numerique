@@ -22,18 +22,7 @@ export function feuilleDeRoutePresenter(readModel: UneFeuilleDeRouteReadModel): 
       nom: readModel.document.nom,
     },
     formulaire: {
-      membres: [
-        {
-          isSelected: false,
-          label: 'Croix Rouge Française',
-          value: 'membre1FooId',
-        },
-        {
-          isSelected: true,
-          label: 'La Poste',
-          value: 'membre2FooId',
-        },
-      ],
+      membres: [],
       perimetres: [
         {
           isSelected: false,

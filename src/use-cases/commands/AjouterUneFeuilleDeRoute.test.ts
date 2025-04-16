@@ -1,6 +1,6 @@
 
 import { AjouterUneFeuilleDeRoute } from './AjouterUneFeuilleDeRoute'
-import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { AddFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
@@ -54,7 +54,7 @@ describe('ajouter une feuille de route à une gouvernance', () => {
           uidGouvernance: {
             value: uidGouvernance,
           },
-          uidPorteur: 'poteurFooId',
+          uidPorteur: 'porteurFooId',
         }
       ).state
     )
@@ -124,7 +124,7 @@ describe('ajouter une feuille de route à une gouvernance', () => {
 const uidGouvernance = 'gouvernanceFooId'
 const uidEditeur = 'userFooId'
 const nom = 'Feuille de route 69'
-const uidPorteur = 'poteurFooId'
+const uidPorteur = 'porteurFooId'
 const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
@@ -166,7 +166,7 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
-class FeuilleDeRouteRepositorySpy implements FeuilleDeRouteRepository {
+class FeuilleDeRouteRepositorySpy implements AddFeuilleDeRouteRepository {
   async add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean> {
     spiedFeuilleDeRouteToAdd = feuilleDeRoute
     return Promise.resolve(true)

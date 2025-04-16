@@ -108,6 +108,7 @@ export type CoporteurDetailReadModel = Readonly<{
   totalMontantsSubventionsAccordees?: number
   totalMontantsSubventionsFormationAccordees?: number
   type: string
+  uid: string
 }>
 
 type NoteDeContexteReadModel = Readonly<{

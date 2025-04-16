@@ -435,6 +435,7 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
             roles: [],
             telephone: '+33 1 23 45 67 89',
             type: '',
+            uid: 'membreFooId2',
           },
           {
             contactReferent: {
@@ -450,6 +451,7 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
             roles: [],
             telephone: '+33 1 23 45 67 89',
             type: '',
+            uid: 'membreFooId3',
           },
           {
             contactReferent: {
@@ -465,6 +467,7 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
             roles: [],
             telephone: '+33 1 23 45 67 89',
             type: '',
+            uid: 'membreFooId4',
           },
         ],
         total: 1,
@@ -504,6 +507,7 @@ export function afficherFormulaireDeModificationAction(
             roles: [],
             telephone: '+33 1 23 45 67 89',
             type: '',
+            uid: 'membreFooId2',
           },
         ],
         total: 1,

@@ -55,7 +55,7 @@ describe('modifier une feuille de route', () => {
           uidGouvernance: {
             value: uidGouvernance,
           },
-          uidPorteur: 'poteurFooId',
+          uidPorteur: 'porteurFooId',
         }
       ).state
     )
@@ -99,7 +99,7 @@ describe('modifier une feuille de route', () => {
     expect(result).toBe(expectedFailure)
   })
 
-  it('étant donné une gouvernance, quand un comité est modifié par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand une feuille de route est modifiée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
     const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
       new FeuilleDeRouteRepositorySpy(),
@@ -128,7 +128,7 @@ const uidGouvernance = 'gouvernanceFooId'
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 const uidEditeur = 'userFooId'
 const nom = 'Feuille de route 69'
-const uidPorteur = 'poteurFooId'
+const uidPorteur = 'porteurFooId'
 const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedUtilisateurUidToFind: null | string
@@ -184,7 +184,7 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
           uidGouvernance: {
             value: uidGouvernance,
           },
-          uidPorteur: 'poteurFooId',
+          uidPorteur: 'porteurFooId',
         }
       )
     )

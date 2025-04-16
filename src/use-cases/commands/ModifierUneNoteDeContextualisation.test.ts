@@ -1,7 +1,7 @@
 import { ModifierUneNoteDeContextualisation } from './ModifierUneNoteDeContextualisation'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
@@ -28,7 +28,7 @@ describe('modifier une note de contextualisation', () => {
     })
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedFeuilleDeRouteUidToFind?.state.value).toStrictEqual(uidFeuilleDeRoute)
+    expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteUidToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
         noteDeContextualisation: {
@@ -105,12 +105,12 @@ const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien lib
 const uidFeuilleDeRoute = 'gouvernanceFooId'
 const emailEditeur = 'martin.tartempion@example.com'
 const uidEditeur = 'userFooId'
-let spiedFeuilleDeRouteUidToFind: FeuilleDeRouteUid | null
+let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteUidToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
 
-class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
-  async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository ,UpdateFeuilleDeRouteRepository{
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
@@ -134,8 +134,8 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
   }
 }
 
-class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy extends FeuilleDeRouteRepositorySpy {
-  override async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy implements GetFeuilleDeRouteRepository {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
@@ -146,10 +146,15 @@ class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy extends FeuilleDeRo
       })
     )
   }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteUidToUpdate = feuilleDeRoute
+    return Promise.resolve()
+  }
 }
 
-class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy extends FeuilleDeRouteRepositorySpy {
-  override async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy implements GetFeuilleDeRouteRepository {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
@@ -165,6 +170,11 @@ class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy ext
         },
       })
     )
+  }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteUidToUpdate = feuilleDeRoute
+    return Promise.resolve()
   }
 }
 

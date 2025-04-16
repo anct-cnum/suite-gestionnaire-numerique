@@ -92,7 +92,7 @@ describe('modifier une feuille de route', () => {
         perimetre: 'regional',
         uidFeuilleDeRoute: 'feuilleDeRouteFooId',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'membre1FooId',
+        uidPorteur: 'membre1FooId',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Feuille de route modifiée')

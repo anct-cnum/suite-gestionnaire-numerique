@@ -1,6 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { GouvernanceRepository } from './AjouterNoteDeContexteAGouvernance'
-import { FeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { AddFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
@@ -61,3 +61,7 @@ type Command = Readonly<{
   uidGouvernance: string
   uidPorteur: string
 }>
+
+type GouvernanceRepository = GetGouvernanceRepository
+
+type FeuilleDeRouteRepository = AddFeuilleDeRouteRepository

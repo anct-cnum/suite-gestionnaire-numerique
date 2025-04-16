@@ -78,7 +78,7 @@ export default function ModifierUneFeuilleDeRoute({
       perimetre,
       uidFeuilleDeRoute,
       uidGouvernance,
-      uidMembre: membre,
+      uidPorteur: membre,
     })
     if (messages.includes('OK')) {
       Notification('success', { description: 'modifiée', title: 'Feuille de route ' })

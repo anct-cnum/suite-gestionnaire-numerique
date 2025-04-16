@@ -1,7 +1,5 @@
 import prisma from '../../prisma/prismaClient'
-import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
-import { UtilisateurUid } from '@/domain/Utilisateur'
-import { isNullish } from '@/shared/lang'
+import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
@@ -22,35 +20,21 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return true
   }
 
-  async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     const record = await this.#dataResource.findUniqueOrThrow({
       include: {
         relationUtilisateur: true,
       },
       where: {
-        id: Number(uid.state.value),
+        id: Number(uid),
       },
     })
-
-    const noteDeContextualisation = !isNullish(record.noteDeContextualisation) &&
-      !isNullish(record.relationUtilisateur?.ssoId) && !isNullish(record.relationUtilisateur?.ssoEmail) ? {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        contenu: record.noteDeContextualisation!,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        dateDeModification: record.derniereEdition!,
-        uidEditeur: new UtilisateurUid({
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          email: record.relationUtilisateur!.ssoEmail,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          value: record.relationUtilisateur!.ssoId,
-        }),
-      } : undefined
 
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
       dateDeModification: record.derniereEdition ?? record.creation,
       nom: record.nom,
-      noteDeContextualisation,
+      noteDeContextualisation: record.noteDeContextualisation ?? undefined,
       perimetreGeographique: record.perimetreGeographique ?? 'departemental',
       uid: { value: String(record.id) },
       uidEditeur: {
@@ -67,23 +51,14 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   }
 
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
-    let noteDeContextualisationData
-    if (feuilleDeRoute.state.noteDeContextualisation) {
-      noteDeContextualisationData = {
-        derniereEdition: feuilleDeRoute.state.noteDeContextualisation.dateDeModification,
-        editeurUtilisateurId: feuilleDeRoute.state.noteDeContextualisation.uidEditeur,
-        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation.value,
-      }
-    } else {
-      noteDeContextualisationData = {
-        derniereEdition: feuilleDeRoute.state.dateDeModification,
-        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
-        noteDeContextualisation: null,
-      }
-    }
     await this.#dataResource.update({
       data: {
-        ...noteDeContextualisationData,
+        derniereEdition: feuilleDeRoute.state.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
+        nom: feuilleDeRoute.state.nom,
+        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation ?? null,
+        perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
+        porteurId: feuilleDeRoute.state.uidPorteur,
       },
       where: {
         id: Number(feuilleDeRoute.state.uid.value),

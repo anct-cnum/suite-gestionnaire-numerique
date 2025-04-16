@@ -1,7 +1,7 @@
 import { CommandHandler } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRouteUid, NoteDeContextualisation } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
@@ -26,13 +26,12 @@ export class AjouterUneNoteDeContextualisation implements CommandHandler<Command
     if (!feuilleDeRoute.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterNoteDeContextualisation'
     }
-  
-    const noteDeContextualisation = new NoteDeContextualisation(
+
+    const result = feuilleDeRoute.ajouterUneNoteDeContextualisation(
+      command.contenu,
       this.#date,
-      new UtilisateurUid(editeur.state.uid),
-      command.contenu
+      new UtilisateurUid(editeur.state.uid)
     )
-    const result = feuilleDeRoute.ajouterUneNoteDeContextualisation(noteDeContextualisation)
     if (!isOk(result)) {
       return result as Failure
     }
@@ -50,4 +49,4 @@ type Command = Readonly<{
 type Failure = 'noteDeContextualisationDejaExistante' | 'utilisateurNePeutPasAjouterNoteDeContextualisation'
 type FeuilleDeRouteRepository = GetFeuilleDeRouteRepository & UpdateFeuilleDeRouteRepository
 
-type UtilisateurRepository = GetUtilisateurRepository 
+type UtilisateurRepository = GetUtilisateurRepository
