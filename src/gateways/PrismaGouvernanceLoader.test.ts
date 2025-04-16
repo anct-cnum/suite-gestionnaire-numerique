@@ -221,30 +221,35 @@ describe('gouvernance loader', () => {
             nom: 'Bretagne',
             roles: ['coporteur'],
             type: 'Préfecture régionale',
+            uid: 'region-53-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'CC Porte du Jura',
             roles: ['beneficiaire', 'coporteur'],
             type: 'Collectivité, EPCI',
+            uid: 'epci-200072056-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Créteil',
             roles: ['coporteur'],
             type: 'Collectivité, commune',
+            uid: 'commune-94028-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Orange',
             roles: ['coporteur', 'recipiendaire'],
             type: 'Entreprise privée',
+            uid: 'structure-38012986643097-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Seine-Saint-Denis',
             roles: ['coporteur'],
             type: 'Préfecture départementale',
+            uid: 'prefecture-93',
           },
           {
             feuillesDeRoute: [
@@ -262,6 +267,7 @@ describe('gouvernance loader', () => {
             totalMontantsSubventionsAccordees: 0,
             totalMontantsSubventionsFormationAccordees: 0,
             type: '',
+            uid: 'commune-35345-93',
           },
         ].map((partialMembre) => ({
           contactReferent: {
@@ -275,7 +281,6 @@ describe('gouvernance loader', () => {
           links: {},
           totalMontantsSubventionsAccordees: 0,
           totalMontantsSubventionsFormationAccordees: 0,
-          uid: 'commune-35345-93',
           ...partialMembre,
         })),
         total: 9,
@@ -390,30 +395,35 @@ describe('gouvernance loader', () => {
             nom: 'Bretagne',
             roles: ['coporteur'],
             type: 'Préfecture régionale',
+            uid: 'region-53-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'CC Porte du Jura',
             roles: ['beneficiaire', 'coporteur'],
             type: 'Collectivité, EPCI',
+            uid: 'epci-200072056-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Créteil',
             roles: ['coporteur'],
             type: 'Collectivité, commune',
+            uid: 'commune-94028-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Orange',
             roles: ['coporteur', 'recipiendaire'],
             type: 'Entreprise privée',
+            uid: 'structure-38012986643097-93',
           },
           {
             feuillesDeRoute: [],
             nom: 'Seine-Saint-Denis',
             roles: ['coporteur'],
             type: 'Préfecture départementale',
+            uid: 'prefecture-93',
           },
           {
             feuillesDeRoute: [
@@ -425,6 +435,7 @@ describe('gouvernance loader', () => {
             nom: 'Trévérien',
             roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
             type: '',
+            "uid": "commune-35345-93"
           },
         ].map((partialMembre) => ({
           contactReferent: {
@@ -438,7 +449,6 @@ describe('gouvernance loader', () => {
           links: {},
           totalMontantsSubventionsAccordees: 0,
           totalMontantsSubventionsFormationAccordees: 0,
-          uid: 'commune-35345-93',
           ...partialMembre,
         })),
         total: 9,
