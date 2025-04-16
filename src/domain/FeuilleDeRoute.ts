@@ -116,7 +116,6 @@ export class FeuilleDeRoute extends Entity<State> {
     }
     this.#noteDeContextualisation = noteDeContextualisation
     return 'OK'
-    
   }
 
   modifierUneNoteDeContextualisation(noteDeContextualisation: NoteDeContextualisation): Result<FeuilleDeRouteFailure> {

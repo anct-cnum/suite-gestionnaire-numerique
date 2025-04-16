@@ -7,10 +7,10 @@ import { z } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { sanitizeDefaultOptions } from '@/app/shared/sanitizeDefaultOptions'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUneNoteDeContextualisation } from '@/use-cases/commands/AjouterUneNoteDeContextualisation'
-import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 
 export async function ajouterUneNoteDeContextualisationAction(
   actionParam: ActionParams
@@ -42,6 +42,6 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
   contenu: z.string().min(1, { message: 'Le contenu doit être renseigné' }),
+  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })

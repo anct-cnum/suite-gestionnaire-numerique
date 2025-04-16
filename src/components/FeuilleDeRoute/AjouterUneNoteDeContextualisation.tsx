@@ -67,7 +67,6 @@ export default function AjouterUneNoteDeContextualisation({ uidFeuilleDeRoute }:
     event.preventDefault()
 
     setIsDisabled(true)
-    const uidFeuilleDeRoute = pathname.split('/').pop() ?? ''
     const messages = await ajouterUneNoteDeContextualisationAction({ contenu, path: pathname, uidFeuilleDeRoute })
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Note de contextualisation ' })
