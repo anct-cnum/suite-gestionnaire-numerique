@@ -8,10 +8,22 @@ corepack enable
 
 ## ✅️ Prérequis
 
+### En utilisant nvm
+
 Avoir la version LTS de Node décrite dans le fichier `.nvmrc`.
 
 ```bash
 nvm install
+```
+
+### En utilisant devbox
+
+Pour installer devbox, suivre les instructions sur [devbox.sh](https://devbox.sh/docs/getting-started/installation).
+
+Pour lancer l'environnement de développement, exécuter la commande suivante :
+
+```bash
+devbox shell
 ```
 
 ## 🚀 Démarrage
