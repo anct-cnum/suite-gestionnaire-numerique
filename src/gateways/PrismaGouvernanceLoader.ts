@@ -147,6 +147,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 totalMontantsSubventionsFormationAccordees: 0,
               }),
               type: membre.type ?? '',
+              uid: membre.id,
             }
           }),
         total: membres.filter(({ statut }) => statut === 'confirme').length,

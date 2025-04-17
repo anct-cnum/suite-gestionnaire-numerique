@@ -6,8 +6,12 @@ import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './sh
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
+import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
-export function feuilleDeRoutePresenter(readModel: UneFeuilleDeRouteReadModel): FeuilleDeRouteViewModel {
+export function feuilleDeRoutePresenter(
+  readModel: UneFeuilleDeRouteReadModel,
+  gouvernanceReadModel: UneGouvernanceReadModel
+): FeuilleDeRouteViewModel {
   return {
     action: `${readModel.actions.length} action${formatPluriel(readModel.actions.length)} pour cette feuille de route`,
     actions: readModel.actions.map(toActionViewModel(readModel.uidGouvernance, readModel.uid)),
@@ -22,18 +26,11 @@ export function feuilleDeRoutePresenter(readModel: UneFeuilleDeRouteReadModel): 
       nom: readModel.document.nom,
     },
     formulaire: {
-      membres: [
-        {
-          isSelected: false,
-          label: 'Croix Rouge Française',
-          value: 'membre1FooId',
-        },
-        {
-          isSelected: true,
-          label: 'La Poste',
-          value: 'membre2FooId',
-        },
-      ],
+      membres: gouvernanceReadModel.syntheseMembres.coporteurs.map((membre) => ({
+        isSelected: membre.feuillesDeRoute.some((feuilleDeRoute) => feuilleDeRoute.uid === readModel.uid),
+        label: membre.nom,
+        value: membre.uid,
+      })),
       perimetres: [
         {
           isSelected: false,
@@ -48,7 +45,7 @@ export function feuilleDeRoutePresenter(readModel: UneFeuilleDeRouteReadModel): 
         {
           isSelected: false,
           label: 'EPCI ou groupement de communes',
-          value: 'epci_groupement',
+          value: 'groupementsDeCommunes',
         },
       ],
     },
@@ -113,7 +110,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   }>
   formulaire: Readonly<{
     membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
+    perimetres: ReadonlyArray<LabelValue<'departemental' | 'groupementsDeCommunes' | 'regional'>>
   }>
   historiques: ReadonlyArray<HistoriqueViewModel>
   infosActions: string

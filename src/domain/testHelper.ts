@@ -81,7 +81,7 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
     uidGouvernance: {
       value: 'gouvernanceFooId',
     },
-    uidPorteur: 'poteurFooId',
+    uidPorteur: 'porteurFooId',
     ...override,
   }) as FeuilleDeRoute
 }

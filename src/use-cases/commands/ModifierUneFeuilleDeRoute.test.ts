@@ -1,7 +1,6 @@
-
-import { AjouterUneFeuilleDeRoute } from './AjouterUneFeuilleDeRoute'
-import { AddFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
-import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
+import { ModifierUneFeuilleDeRoute } from './ModifierUneFeuilleDeRoute'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
@@ -9,28 +8,29 @@ import { feuilleDeRouteFactory, gouvernanceFactory, utilisateurFactory } from '@
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime, invalidDate } from '@/shared/testHelper'
 
-describe('ajouter une feuille de route à une gouvernance', () => {
+describe('modifier une feuille de route', () => {
   beforeEach(() => {
     spiedGouvernanceUidToFind = null
-    spiedGouvernanceToUpdate = null
     spiedUtilisateurUidToFind = null
-    spiedFeuilleDeRouteToAdd = null
+    spiedFeuilleDeRouteToUpdate = null
+    spiedFeuilleDeRouteUidToFind = null
   })
 
-  it('étant donné une gouvernance, quand une feuille de route est créée par son gestionnaire, alors elle est ajoutée à cette gouvernance', async () => {
+  it('étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire, alors elle est modifiée', async () => {
     // GIVEN
-    const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
+    const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterFeuilleDeRoute.handle({
+    const result = await modifierFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
       uidEditeur,
+      uidFeuilleDeRoute,
       uidGouvernance,
       uidPorteur,
     })
@@ -38,11 +38,13 @@ describe('ajouter une feuille de route à une gouvernance', () => {
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
-    expect(spiedFeuilleDeRouteToAdd?.state).toStrictEqual(
+    expect(spiedFeuilleDeRouteUidToFind).toBe(uidFeuilleDeRoute)
+    expect(spiedFeuilleDeRouteToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory(
         {
           dateDeModification: epochTime,
           nom,
+          noteDeContextualisation:'<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
           perimetreGeographique,
           uid: {
             value: 'identifiantPourLaCreation',
@@ -74,64 +76,67 @@ describe('ajouter une feuille de route à une gouvernance', () => {
       intention: 'd’un périmètre géographique invalide',
       perimetreGeographique: 'invalide' as PerimetreGeographiqueTypes,
     },
-  ])('étant donné une gouvernance, quand une feuille de route est créé par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
+  ])('étant donné une gouvernance, quand une feuille de route est modifiée par son gestionnaire n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ dateDeModification,expectedFailure,perimetreGeographique }) => {
     // GIVEN
-    const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
+    const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       dateDeModification
     )
 
     // WHEN
-    const result = await ajouterFeuilleDeRoute.handle({
+    const result = await modifierFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
       uidEditeur,
+      uidFeuilleDeRoute,
       uidGouvernance,
       uidPorteur,
     })
 
     // THEN
-    expect(spiedFeuilleDeRouteToAdd).toBeNull()
+    expect(spiedFeuilleDeRouteToUpdate).toBeNull()
     expect(result).toBe(expectedFailure)
   })
 
-  it('étant donné une gouvernance, quand une feuille de route est créée par un gestionnaire qui n’a pas ce droit, alors une erreur est renvoyée', async () => {
+  it('étant donné une gouvernance, quand une feuille de route est modifiée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyée', async () => {
     // GIVEN
-    const ajouterFeuilleDeRoute = new AjouterUneFeuilleDeRoute(
+    const modifierFeuilleDeRoute = new ModifierUneFeuilleDeRoute(
+      new FeuilleDeRouteRepositorySpy(),
       new GouvernanceRepositorySpy(),
       new GestionnaireAutreRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
       epochTime
     )
 
     // WHEN
-    const result = await ajouterFeuilleDeRoute.handle({
+    const result = await modifierFeuilleDeRoute.handle({
       nom,
       perimetreGeographique,
       uidEditeur,
+      uidFeuilleDeRoute,
       uidGouvernance,
       uidPorteur,
     })
 
     // THEN
-    expect(spiedGouvernanceToUpdate).toBeNull()
-    expect(result).toBe('utilisateurNePeutPasAjouterFeuilleDeRoute')
+    expect(spiedFeuilleDeRouteToUpdate).toBeNull()
+    expect(result).toBe('editeurNePeutPasModifierFeuilleDeRoute')
   })
 })
 
 const uidGouvernance = 'gouvernanceFooId'
+const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 const uidEditeur = 'userFooId'
 const nom = 'Feuille de route 69'
 const uidPorteur = 'porteurFooId'
 const perimetreGeographique = 'departemental'
 let spiedGouvernanceUidToFind: GouvernanceUid | null
-let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: null | string
-let spiedFeuilleDeRouteToAdd: FeuilleDeRoute | null
+let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
+let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 
-class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouvernanceRepository {
+class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
     spiedGouvernanceUidToFind = uid
     return Promise.resolve(
@@ -144,11 +149,6 @@ class GouvernanceRepositorySpy implements GetGouvernanceRepository, UpdateGouver
         uid: uidGouvernance,
       })
     )
-  }
-
-  async update(gouvernance: Gouvernance): Promise<void> {
-    spiedGouvernanceToUpdate = gouvernance
-    return Promise.resolve()
   }
 }
 
@@ -166,9 +166,34 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
   }
 }
 
-class FeuilleDeRouteRepositorySpy implements AddFeuilleDeRouteRepository {
-  async add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean> {
-    spiedFeuilleDeRouteToAdd = feuilleDeRoute
-    return Promise.resolve(true)
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
+    spiedFeuilleDeRouteUidToFind = uid
+    return Promise.resolve(
+      feuilleDeRouteFactory(
+        {
+          dateDeModification: epochTime,
+          nom,
+          noteDeContextualisation: '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
+          perimetreGeographique,
+          uid: {
+            value: 'identifiantPourLaCreation',
+          },
+          uidEditeur: {
+            email: 'martin.tartempion@example.net',
+            value: uidEditeur,
+          },
+          uidGouvernance: {
+            value: uidGouvernance,
+          },
+          uidPorteur: 'porteurFooId',
+        }
+      )
+    )
+  }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteToUpdate = feuilleDeRoute
+    return Promise.resolve()
   }
 }

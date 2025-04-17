@@ -28,7 +28,7 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
 
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedFeuilleDeRouteUidToFind?.state).toStrictEqual(new FeuilleDeRouteUid(uidFeuilleDeRoute).state)
+    expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(new FeuilleDeRouteUid(uidFeuilleDeRoute).state.value)
     expect(spiedFeuilleDeRouteToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
         noteDeContextualisation: undefined,
@@ -55,12 +55,12 @@ describe('supprimer une note de contextualisation d’une feuille de route', () 
 })
 
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
-let spiedFeuilleDeRouteUidToFind: FeuilleDeRouteUid | null
+let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
 
 class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
-  async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({

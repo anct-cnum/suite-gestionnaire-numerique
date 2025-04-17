@@ -395,7 +395,7 @@ export function feuilleDeRouteViewModelFactory(
         {
           isSelected: false,
           label: 'EPCI ou groupement de communes',
-          value: 'epci_groupement',
+          value: 'groupementsDeCommunes',
         },
       ],
     },

@@ -3,7 +3,13 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import prisma from '../../../../prisma/prismaClient'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
+import { ModifierUneFeuilleDeRoute } from '@/use-cases/commands/ModifierUneFeuilleDeRoute'
 
 export async function modifierUneFeuilleDeRouteAction(
   actionParams: ActionParams
@@ -14,9 +20,23 @@ export async function modifierUneFeuilleDeRouteAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
+  const result = await new ModifierUneFeuilleDeRoute(
+    new PrismaFeuilleDeRouteRepository(),
+    new PrismaGouvernanceRepository(),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    new Date()
+  ).handle({
+    nom: actionParams.nom,
+    perimetreGeographique: actionParams.perimetre,
+    uidEditeur: await getSessionSub(),
+    uidFeuilleDeRoute: actionParams.uidFeuilleDeRoute,
+    uidGouvernance: actionParams.uidGouvernance,
+    uidPorteur: actionParams.uidPorteur,
+  })
+
   revalidatePath(validationResult.data.path)
 
-  return Promise.resolve(['OK'])
+  return [result]
 }
 
 type ActionParams = Readonly<{
@@ -25,7 +45,7 @@ type ActionParams = Readonly<{
   perimetre: string
   uidFeuilleDeRoute: string
   uidGouvernance: string
-  uidMembre: string
+  uidPorteur: string
 }>
 
 const validator = z.object({

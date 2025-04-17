@@ -19,7 +19,6 @@ export default function FormulaireFeuilleDeRoute({
   validerFormulaire,
 }: Props): ReactElement {
   const nomId = useId()
-
   return (
     <>
       <DrawerTitle id={labelId}>

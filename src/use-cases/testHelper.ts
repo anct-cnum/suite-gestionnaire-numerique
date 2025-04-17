@@ -151,6 +151,7 @@ export function gouvernanceReadModelFactory(
           roles: ['coporteur'],
           telephone: '+33 4 45 00 45 00',
           type: 'Préfecture départementale',
+          uid: 'prefecture-69',
         },
         {
           contactReferent: {
@@ -168,6 +169,7 @@ export function gouvernanceReadModelFactory(
           totalMontantsSubventionsAccordees: 5_000,
           totalMontantsSubventionsFormationAccordees: 5_000,
           type: 'Conseil départemental',
+          uid: 'departement-69-69',
         },
       ],
       total: 2,

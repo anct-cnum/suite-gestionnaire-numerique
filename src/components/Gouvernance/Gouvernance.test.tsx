@@ -156,6 +156,7 @@ describe('gouvernance', () => {
             totalMontantsSubventionsAccordees: 0,
             totalMontantsSubventionsFormationAccordees: 0,
             type: 'Préfecture départementale',
+            uid: 'membreId',
           },
           {
             contactReferent: {
@@ -173,6 +174,7 @@ describe('gouvernance', () => {
             totalMontantsSubventionsAccordees: 0,
             totalMontantsSubventionsFormationAccordees: 0,
             type: 'Conseil départemental',
+            uid: 'membreId2',
           },
         ],
         total: 2,
@@ -254,6 +256,7 @@ describe('gouvernance', () => {
             totalMontantsSubventionsAccordees: 0,
             totalMontantsSubventionsFormationAccordees: 0,
             type: 'Préfecture départementale',
+            uid: 'membreId',
           },
         ],
         total: 1,

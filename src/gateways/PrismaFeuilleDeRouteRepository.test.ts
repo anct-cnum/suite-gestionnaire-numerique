@@ -3,9 +3,7 @@ import { Prisma } from '@prisma/client'
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
 import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
-import { FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
-import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
-import { UtilisateurUid } from '@/domain/Utilisateur'
+import { feuilleDeRouteFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
 describe('feuille de route repository', () => {
@@ -63,6 +61,81 @@ describe('feuille de route repository', () => {
     expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({ porteurId: uidPorteur }))
   })
 
+  it('modifier une feuille de route', async () => {
+    // GIVEN
+    const departementCode = '69'
+    const uidEditeur = 'userFooId'
+    const uidPorteur = 'porteurId'
+    await creerUneRegion()
+    await creerUnDepartement({ code: departementCode })
+    await creerUneGouvernance({ departementCode })
+    await creerUnContact({
+      email: 'structure@example.com',
+      fonction: 'Directeur',
+      nom: 'Tartempion',
+      prenom: 'Michel',
+    })
+    await creerUnMembre({
+      contact: 'structure@example.com',
+      gouvernanceDepartementCode: departementCode,
+      id: uidPorteur,
+    })
+    await creerUnMembreDepartement({
+      departementCode,
+      membreId: uidPorteur,
+    })
+    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUneFeuilleDeRoute({
+      creation: epochTime,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: uidEditeur,
+      gouvernanceDepartementCode: departementCode,
+      id: 1,
+      nom: 'Feuille de route 69',
+      noteDeContextualisation: '<p>un contenu<p>',
+      porteurId: uidPorteur,
+    })
+    await creerUneFeuilleDeRoute({
+      creation: epochTime,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: uidEditeur,
+      gouvernanceDepartementCode: departementCode,
+      id: 2,
+      nom: 'Une autre feuille de route test',
+      noteDeContextualisation: 'un contenu',
+      perimetreGeographique: 'departemental',
+      porteurId: uidPorteur,
+    })
+    const feuilleDeRoute = feuilleDeRouteFactory({
+      dateDeCreation: epochTime,
+      dateDeModification: epochTime,
+      noteDeContextualisation: '<p>un contenu<p>',
+      perimetreGeographique: 'departemental',
+      uid: {
+        value: '1',
+      },
+      uidEditeur: {
+        email: 'martin.tartempion@example.fr',
+        value: uidEditeur,
+      },
+      uidGouvernance: {
+        value: departementCode,
+      },
+      uidPorteur,
+    })
+
+    // WHEN
+    await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute)
+
+    // THEN
+    const feuilleDeRouteRecord = await prisma.feuilleDeRouteRecord.findFirst({
+      where: {
+        id: 1,
+      },
+    })
+    expect(feuilleDeRouteRecord).toMatchObject(feuilleDeRouteRecordFactory({ noteDeContextualisation: '<p>un contenu<p>' ,porteurId: uidPorteur }))
+  })
+
   it('trouver une feuille de route complète', async () => {
     // GIVEN
     const departementCode = '75'
@@ -103,27 +176,20 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: 2,
       nom: 'Feuille de route test',
-      noteDeContextualisation: 'un contenu',
+      noteDeContextualisation: '<p>un contenu<p>',
       perimetreGeographique: 'departemental',
       porteurId: 'porteurId',
     })
 
     // WHEN
-    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('2'))
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get('2')
 
     // THEN
     const expected = feuilleDeRouteFactory({
       dateDeCreation: epochTime,
       dateDeModification: epochTime,
       nom: 'Feuille de route test',
-      noteDeContextualisation: {
-        contenu: 'un contenu',
-        dateDeModification: epochTime,
-        uidEditeur: new UtilisateurUid({
-          email: 'martin.tartempion@example.net',
-          value: uidEditeur,
-        }),
-      },
+      noteDeContextualisation: '<p>un contenu<p>',
       perimetreGeographique: 'departemental',
       uid: { value: '2' },
       uidEditeur: {
@@ -179,7 +245,7 @@ describe('feuille de route repository', () => {
     })
 
     // WHEN
-    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('1'))
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get('1')
 
     // THEN
     const expected = feuilleDeRouteFactory({
@@ -244,7 +310,7 @@ describe('feuille de route repository', () => {
     })
 
     // WHEN
-    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('1'))
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get('1')
 
     // THEN
     const expected = feuilleDeRouteFactory({
@@ -273,7 +339,7 @@ describe('feuille de route repository', () => {
     await creerUneFeuilleDeRoute({ gouvernanceDepartementCode: departementCode, id: 1 })
 
     // WHEN
-    const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('111'))
+    const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('111')
 
     // THEN
     await expect(feuilleDeRoute).rejects.toThrow(Prisma.PrismaClientKnownRequestError)
@@ -292,7 +358,7 @@ describe('feuille de route repository', () => {
       perimetreGeographique: 'toto' })
 
     // WHEN
-    const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get(new FeuilleDeRouteUid('1'))
+    const feuilleDeRoute = new PrismaFeuilleDeRouteRepository().get('1')
 
     // THEN
     await expect(feuilleDeRoute).rejects.toThrow('perimetreGeographiqueInvalide')
@@ -302,30 +368,53 @@ describe('feuille de route repository', () => {
     // GIVEN
     const departementCode = '75'
     const uidEditeur = 'userFooId'
+    const uidPorteur = 'porteurId'
     await creerUneRegion()
     await creerUnDepartement()
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
     await creerUneFeuilleDeRoute({
       gouvernanceDepartementCode: '75',
+      id: 2,
+      nom: 'Feuille de route 69',
+      noteDeContextualisation: '<p>un contenu avant<p>',
+    })
+    await creerUnContact({
+      email: 'structure@example.com',
+      fonction: 'Directeur',
+      nom: 'Tartempion',
+      prenom: 'Michel',
+    })
+    await creerUnMembre({
+      contact: 'structure@example.com',
+      gouvernanceDepartementCode: departementCode,
+      id: uidPorteur,
+    })
+    await creerUnMembreDepartement({
+      departementCode,
+      membreId: uidPorteur,
+    })
+    await creerUneFeuilleDeRoute({
+      editeurUtilisateurId: uidEditeur,
+      gouvernanceDepartementCode: '75',
       id: 1,
       nom: 'Feuille de route 69',
       noteDeContextualisation: 'un contenu avant',
+      porteurId: uidPorteur,
     })
     const feuilleDeRoute = feuilleDeRouteFactory({
-      noteDeContextualisation: {
-        contenu: 'un contenu après',
-        dateDeModification: epochTime,
-        uidEditeur: new UtilisateurUid(
-          utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
-        ),
-      },
+      noteDeContextualisation: '<p>un contenu après<p>',
       uid: {
         value: '1',
+      },
+      uidEditeur: {
+        email: emailEditeur,
+        value: uidEditeur,
       },
       uidGouvernance: {
         value: '75',
       },
+      uidPorteur,
     })
     // WHEN
     await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute)
@@ -339,11 +428,11 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: '75',
       id: 1,
       nom: 'Feuille de route 69',
-      noteDeContextualisation: 'un contenu après',
+      noteDeContextualisation: '<p>un contenu après<p>',
       oldUUID: null,
       perimetreGeographique: 'departemental',
       pieceJointe: null,
-      porteurId: null,
+      porteurId: uidPorteur,
     })
   })
 
@@ -352,17 +441,34 @@ describe('feuille de route repository', () => {
     const departementCode = '75'
     const uidEditeurAvant = 'userFooId0'
     const uidEditeur = 'userFooId'
+    const uidPorteur = 'porteurId'
     await creerUneRegion()
     await creerUnDepartement()
     await creerUnUtilisateur({ ssoEmail: 'toto@exemple.fr', ssoId: uidEditeurAvant })
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneGouvernance({ departementCode })
+    await creerUnContact({
+      email: 'structure@example.com',
+      fonction: 'Directeur',
+      nom: 'Tartempion',
+      prenom: 'Michel',
+    })
+    await creerUnMembre({
+      contact: 'structure@example.com',
+      gouvernanceDepartementCode: departementCode,
+      id: uidPorteur,
+    })
+    await creerUnMembreDepartement({
+      departementCode,
+      membreId: uidPorteur,
+    })
     await creerUneFeuilleDeRoute({
       editeurUtilisateurId: uidEditeurAvant,
       gouvernanceDepartementCode: '75',
       id: 1,
       nom: 'Feuille de route 69',
       noteDeContextualisation: 'un contenu avant',
+      porteurId: uidPorteur,
     })
     const feuilleDeRoute = feuilleDeRouteFactory({
       noteDeContextualisation: undefined,
@@ -373,6 +479,7 @@ describe('feuille de route repository', () => {
       uidGouvernance: {
         value: '75',
       },
+      uidPorteur,
     })
 
     // WHEN
@@ -391,7 +498,7 @@ describe('feuille de route repository', () => {
       oldUUID: null,
       perimetreGeographique: 'departemental',
       pieceJointe: null,
-      porteurId: null,
+      porteurId: uidPorteur,
     })
   })
 })

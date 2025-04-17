@@ -1,9 +1,9 @@
 import { ModifierUneNoteDeContextualisation } from './ModifierUneNoteDeContextualisation'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
+import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
-import { Utilisateur, UtilisateurUid, UtilisateurUidState } from '@/domain/Utilisateur'
+import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
 
 describe('modifier une note de contextualisation', () => {
@@ -28,16 +28,10 @@ describe('modifier une note de contextualisation', () => {
     })
     // THEN
     expect(spiedUtilisateurUidToFind).toBe(uidEditeur)
-    expect(spiedFeuilleDeRouteUidToFind?.state.value).toStrictEqual(uidFeuilleDeRoute)
+    expect(spiedFeuilleDeRouteUidToFind).toStrictEqual(uidFeuilleDeRoute)
     expect(spiedFeuilleDeRouteUidToUpdate?.state).toStrictEqual(
       feuilleDeRouteFactory({
-        noteDeContextualisation: {
-          contenu,
-          dateDeModification: epochTime,
-          uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
-          ),
-        },
+        noteDeContextualisation: '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
         uidGouvernance: {
           value: '75',
         },
@@ -101,26 +95,19 @@ describe('modifier une note de contextualisation', () => {
   })
 })
 
-const contenu = 'Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.'
+const contenu = '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>'
 const uidFeuilleDeRoute = 'gouvernanceFooId'
-const emailEditeur = 'martin.tartempion@example.com'
 const uidEditeur = 'userFooId'
-let spiedFeuilleDeRouteUidToFind: FeuilleDeRouteUid | null
+let spiedFeuilleDeRouteUidToFind: FeuilleDeRoute['uid']['state']['value'] | null
 let spiedFeuilleDeRouteUidToUpdate: FeuilleDeRoute | null
 let spiedUtilisateurUidToFind: null | string
 
-class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {
-  async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository ,UpdateFeuilleDeRouteRepository{
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
-        noteDeContextualisation: {
-          contenu: 'un contenu',
-          dateDeModification: epochTime,
-          uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
-          ),
-        },
+        noteDeContextualisation: '<p>contentu</p>',
         uidGouvernance: {
           value: '75',
         },
@@ -134,8 +121,8 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
   }
 }
 
-class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy extends FeuilleDeRouteRepositorySpy {
-  override async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy implements GetFeuilleDeRouteRepository {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
@@ -146,25 +133,29 @@ class FeuilleDeRouteSansNoteDeContextualisationRepositorySpy extends FeuilleDeRo
       })
     )
   }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteUidToUpdate = feuilleDeRoute
+    return Promise.resolve()
+  }
 }
 
-class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy extends FeuilleDeRouteRepositorySpy {
-  override async get(uid: FeuilleDeRouteUid): Promise<FeuilleDeRoute> {
+class FeuilleDeRouteAvecNoteDeContextualisationAutreGouvernanceRepositorySpy implements GetFeuilleDeRouteRepository {
+  async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     spiedFeuilleDeRouteUidToFind = uid
     return Promise.resolve(
       feuilleDeRouteFactory({
-        noteDeContextualisation: {
-          contenu: 'un contenu',
-          dateDeModification: epochTime,
-          uidEditeur: new UtilisateurUid(
-            utilisateurFactory({ uid: { email: emailEditeur, value: uidEditeur } }).state.uid
-          ),
-        },
+        noteDeContextualisation: '<p>Note de contextualisation</p>',
         uidGouvernance: {
           value: '69',
         },
       })
     )
+  }
+
+  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    spiedFeuilleDeRouteUidToUpdate = feuilleDeRoute
+    return Promise.resolve()
   }
 }
 

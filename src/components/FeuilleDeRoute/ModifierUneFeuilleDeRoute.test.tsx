@@ -3,7 +3,7 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup, renderComponent, stubbedConceal, stubbedServerAction } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
-import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
+import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('modifier une feuille de route', () => {
   describe('quand je clique sur modifier une feuille de route', () => {
@@ -49,7 +49,7 @@ describe('modifier une feuille de route', () => {
       expect(departemental).toHaveAttribute('value', 'departemental')
       const epciGroupement = within(formulaire).getByRole('radio', { name: 'EPCI ou groupement de communes' })
       expect(epciGroupement).toBeRequired()
-      expect(epciGroupement).toHaveAttribute('value', 'epci_groupement')
+      expect(epciGroupement).toHaveAttribute('value', 'groupementsDeCommunes')
 
       const enregistrer = within(formulaire).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
@@ -92,7 +92,7 @@ describe('modifier une feuille de route', () => {
         perimetre: 'regional',
         uidFeuilleDeRoute: 'feuilleDeRouteFooId',
         uidGouvernance: 'gouvernanceFooId',
-        uidMembre: 'membre1FooId',
+        uidPorteur: 'membre1FooId',
       })
       const notification = await screen.findByRole('alert')
       expect(notification.textContent).toBe('Feuille de route modifiée')
@@ -155,7 +155,50 @@ describe('modifier une feuille de route', () => {
   function afficherUneFeuilleDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory())
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
+      syntheseMembres: {
+        candidats: 0,
+        coporteurs: [
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'example@mail.com',
+              nom: 'Doe',
+              poste: 'Manager',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [{
+              nom: '',
+              uid: 'feuilleDeRouteFooId2',
+            }],
+            links: {},
+            nom: 'Croix Rouge Française',
+            roles: [],
+            type: '',
+            uid: 'membre1FooId',
+          },
+          {
+            contactReferent: {
+              denomination: 'Contact référent',
+              mailContact: 'example@mail.com',
+              nom: 'Doe',
+              poste: 'Manager',
+              prenom: 'John',
+            },
+            feuillesDeRoute: [{
+              nom: 'Feuille de route 69',
+              uid: 'feuilleDeRouteFooId',
+            }],
+            links: {},
+            nom: 'La Poste',
+            roles: [],
+            type: '',
+            uid: 'membre2FooId',
+          },
+        ],
+        total: 0,
+      },
+    }))
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options)
   }
 })

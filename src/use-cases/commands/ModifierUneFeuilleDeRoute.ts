@@ -1,25 +1,25 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { AddFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { FeuilleDeRoute, FeuilleDeRouteFailure, PerimetreGeographiqueTypes } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
-export class AjouterUneFeuilleDeRoute implements CommandHandler<Command> {
+export class ModifierUneFeuilleDeRoute implements CommandHandler<Command> {
   readonly #date: Date
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
-  readonly #utilisateurRepository: GetUtilisateurRepository
+  readonly #utilisateurRepository: UtilisateurRepository
 
   constructor(
-    gouvernanceRepository: GouvernanceRepository,
-    utilisateurRepository: GetUtilisateurRepository,
     feuilleDeRouteRepository: FeuilleDeRouteRepository,
+    gouvernanceRepository: GouvernanceRepository,
+    utilisateurRepository: UtilisateurRepository,
     date: Date
   ) {
+    this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#gouvernanceRepository = gouvernanceRepository
     this.#utilisateurRepository = utilisateurRepository
-    this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#date = date
   }
 
@@ -27,41 +27,44 @@ export class AjouterUneFeuilleDeRoute implements CommandHandler<Command> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
     if (!gouvernance.peutEtreGereePar(editeur)) {
-      return 'utilisateurNePeutPasAjouterFeuilleDeRoute'
+      return 'editeurNePeutPasModifierFeuilleDeRoute'
     }
+    const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
 
-    const feuilleDeRoute = FeuilleDeRoute.create({
-      dateDeCreation: this.#date,
+    const feuilleDeRouteModifiee = FeuilleDeRoute.create({
+      dateDeCreation: new Date(feuilleDeRoute.state.dateDeCreation),
       dateDeModification: this.#date,
-      nom :command.nom,
-      perimetreGeographique:command.perimetreGeographique,
-      uid: {
-        value: 'identifiantPourLaCreation',
-      },
+      nom: command.nom,
+      noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation,
+      perimetreGeographique: command.perimetreGeographique,
+      uid: feuilleDeRoute.state.uid,
       uidEditeur: editeur.state.uid,
       uidGouvernance: gouvernance.state.uid,
       uidPorteur: command.uidPorteur,
     })
 
-    if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
-      return feuilleDeRoute
+    if (!(feuilleDeRouteModifiee instanceof FeuilleDeRoute)) {
+      return feuilleDeRouteModifiee
     }
-    await this.#feuilleDeRouteRepository.add(feuilleDeRoute)
+    await this.#feuilleDeRouteRepository.update(feuilleDeRouteModifiee)
 
     return 'OK'
   }
 }
 
-type Failure = 'utilisateurNePeutPasAjouterFeuilleDeRoute' | FeuilleDeRouteFailure
+type Failure = 'editeurNePeutPasModifierFeuilleDeRoute' | FeuilleDeRouteFailure
 
 type Command = Readonly<{
   nom: string
   perimetreGeographique: PerimetreGeographiqueTypes
   uidEditeur: string
+  uidFeuilleDeRoute: string
   uidGouvernance: string
   uidPorteur: string
 }>
 
 type GouvernanceRepository = GetGouvernanceRepository
 
-type FeuilleDeRouteRepository = AddFeuilleDeRouteRepository
+type UtilisateurRepository = GetUtilisateurRepository
+
+interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository {}
