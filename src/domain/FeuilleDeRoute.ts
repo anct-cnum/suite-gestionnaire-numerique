@@ -132,6 +132,10 @@ export class FeuilleDeRoute extends Entity<State> {
       || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
       || this.#uidGouvernance.state.value === utilisateur.state.region?.code
   }
+
+  supprimerNoteDeContextextualisation(): void {
+    this.#noteDeContextualisation = undefined
+  }
 }
 
 const Types = [

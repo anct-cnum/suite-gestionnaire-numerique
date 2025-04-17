@@ -346,6 +346,54 @@ describe('feuille de route repository', () => {
       porteurId: null,
     })
   })
+
+  it('quand je supprime une note de contextualisation d’une feuille de route', async () => {
+    // GIVEN
+    const departementCode = '75'
+    const uidEditeurAvant = 'userFooId0'
+    const uidEditeur = 'userFooId'
+    await creerUneRegion()
+    await creerUnDepartement()
+    await creerUnUtilisateur({ ssoEmail: 'toto@exemple.fr', ssoId: uidEditeurAvant })
+    await creerUnUtilisateur({ ssoId: uidEditeur })
+    await creerUneGouvernance({ departementCode })
+    await creerUneFeuilleDeRoute({
+      editeurUtilisateurId: uidEditeurAvant,
+      gouvernanceDepartementCode: '75',
+      id: 1,
+      nom: 'Feuille de route 69',
+      noteDeContextualisation: 'un contenu avant',
+    })
+    const feuilleDeRoute = feuilleDeRouteFactory({
+      noteDeContextualisation: undefined,
+      uid: {
+        value: '1',
+      },
+      uidEditeur: { email: emailEditeur, value: uidEditeur },
+      uidGouvernance: {
+        value: '75',
+      },
+    })
+
+    // WHEN
+    await new PrismaFeuilleDeRouteRepository().update(feuilleDeRoute)
+
+    // THEN
+    const result = await prisma.feuilleDeRouteRecord.findUnique({ where: { id: 1 } })
+    expect(result).toStrictEqual({
+      creation: epochTime,
+      derniereEdition: epochTime,
+      editeurUtilisateurId: uidEditeur,
+      gouvernanceDepartementCode: '75',
+      id: 1,
+      nom: 'Feuille de route 69',
+      noteDeContextualisation: null,
+      oldUUID: null,
+      perimetreGeographique: 'departemental',
+      pieceJointe: null,
+      porteurId: null,
+    })
+  })
 })
 
 const emailEditeur = 'martin.tartempion@example.fr'

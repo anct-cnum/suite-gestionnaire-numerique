@@ -85,7 +85,7 @@ export default function ModifierUneNoteDeContextualisation({
     event.preventDefault()
     setIsDisabled(true)
     if (contenu === '') {
-      const messages = await supprimerUneNoteDeContextualisationAction({ path: pathname })
+      const messages = await supprimerUneNoteDeContextualisationAction({ path: pathname, uidFeuilleDeRoute })
       if (messages.includes('OK')) {
         Notification('success', { description: 'supprimée', title: 'Note de contextualisation ' })
         setIsDrawerOpen(false)

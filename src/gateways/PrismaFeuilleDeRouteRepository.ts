@@ -67,11 +67,23 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
   }
 
   async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
+    let noteDeContextualisationData
+    if (feuilleDeRoute.state.noteDeContextualisation) {
+      noteDeContextualisationData = {
+        derniereEdition: feuilleDeRoute.state.noteDeContextualisation.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.noteDeContextualisation.uidEditeur,
+        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation.value,
+      }
+    } else {
+      noteDeContextualisationData = {
+        derniereEdition: feuilleDeRoute.state.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
+        noteDeContextualisation: null,
+      }
+    }
     await this.#dataResource.update({
       data: {
-        derniereEdition: feuilleDeRoute.state.noteDeContextualisation?.dateDeModification,
-        editeurUtilisateurId: feuilleDeRoute.state.noteDeContextualisation?.uidEditeur,
-        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation?.value,
+        ...noteDeContextualisationData,
       },
       where: {
         id: Number(feuilleDeRoute.state.uid.value),
