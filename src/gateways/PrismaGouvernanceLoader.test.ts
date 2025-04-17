@@ -435,7 +435,7 @@ describe('gouvernance loader', () => {
             nom: 'Trévérien',
             roles: ['beneficiaire', 'coporteur', 'recipiendaire'],
             type: '',
-            "uid": "commune-35345-93"
+            uid: 'commune-35345-93',
           },
         ].map((partialMembre) => ({
           contactReferent: {

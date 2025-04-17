@@ -31,7 +31,7 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
         },
         {
           label: 'EPCI ou groupement de communes',
-          value: 'epci_groupement',
+          value: 'groupementsDeCommunes',
         },
       ],
     },
@@ -48,7 +48,7 @@ export type FeuillesDeRouteViewModel = Readonly<{
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>
   formulaire: Readonly<{
     membres: ReadonlyArray<LabelValue>
-    perimetres: ReadonlyArray<LabelValue<'departemental' | 'epci_groupement' | 'regional'>>
+    perimetres: ReadonlyArray<LabelValue<'departemental' | 'groupementsDeCommunes' | 'regional'>>
   }>
   titre: string
   totaux: Readonly<{

@@ -1,7 +1,6 @@
 import { CommandHandler } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { UtilisateurUid } from '@/domain/Utilisateur'
 import { isOk } from '@/shared/lang'
 
@@ -22,7 +21,7 @@ export class AjouterUneNoteDeContextualisation implements CommandHandler<Command
 
   async handle(command: Command): Promise<'OK' | Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(new FeuilleDeRouteUid(command.uidFeuilleDeRoute))
+    const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
     if (!feuilleDeRoute.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterNoteDeContextualisation'
     }

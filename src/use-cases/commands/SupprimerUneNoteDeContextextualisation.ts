@@ -1,7 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import { FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 
 export class SupprimerUneNoteDeContextualisation implements CommandHandler<Command> {
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
@@ -16,7 +15,7 @@ export class SupprimerUneNoteDeContextualisation implements CommandHandler<Comma
   }
 
   async handle(command: Command): ResultAsync<Failure> {
-    const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(new FeuilleDeRouteUid(command.uidFeuilleDeRoute))
+    const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
 
     if (!feuilleDeRoute.peutEtreGereePar(editeur)) {

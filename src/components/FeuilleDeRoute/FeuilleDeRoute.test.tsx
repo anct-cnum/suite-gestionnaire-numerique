@@ -3,12 +3,12 @@ import { render, screen, within } from '@testing-library/react'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
-import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
+import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('feuille de route', () => {
   it('quand je consulte la page du détail d’une feuille de route avec des actions, alors j’accède à ses informations détaillées', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory())
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(),gouvernanceReadModelFactory())
 
     // WHEN
     render(<FeuilleDeRoute viewModel={viewModel} />)
@@ -141,7 +141,7 @@ describe('feuille de route', () => {
     const viewModel = feuilleDeRoutePresenter({
       ...feuilleDeRouteReadModelFactory(),
       document: undefined,
-    })
+    }, gouvernanceReadModelFactory())
 
     // WHEN
     render(<FeuilleDeRoute viewModel={viewModel} />)
@@ -160,7 +160,7 @@ describe('feuille de route', () => {
     const viewModel = feuilleDeRoutePresenter({
       ...feuilleDeRouteReadModelFactory(),
       porteur: undefined,
-    })
+    }, gouvernanceReadModelFactory())
 
     // WHEN
     render(<FeuilleDeRoute viewModel={viewModel} />)

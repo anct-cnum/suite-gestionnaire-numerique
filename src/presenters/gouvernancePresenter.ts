@@ -145,7 +145,6 @@ export type MembreDetailsViewModel = Readonly<{
   plusDetailsHref?: string
   roles: ReadonlyArray<RoleViewModel>
   type: string
-  uid: string
 }>
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
@@ -192,22 +191,10 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
-    const beneficiairesSubventionHyperLink = feuilleDeRoute.beneficiairesSubvention
-      .map(toMembresViewModel(uidGouvernance))
-      .map((membre) => ({
-        label: membre.hyperlink.label,
-        link: membre.hyperlink.link,
-      }))
-    const beneficiairesSubventionFormationHyperLink =
-      feuilleDeRoute.beneficiairesSubventionFormation
-        .map(toMembresViewModel(uidGouvernance))
-        .map((membre) => ({
-          label: membre.hyperlink.label,
-          link: membre.hyperlink.link,
-        }))
     return {
-      beneficiairesSubvention: beneficiairesSubventionHyperLink,
-      beneficiairesSubventionFormation: beneficiairesSubventionFormationHyperLink,
+      beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel(uidGouvernance)),
+      beneficiairesSubventionFormation:
+        feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel(uidGouvernance)),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
       lien: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
       montantSubventionAccordee: formatMontant(feuilleDeRoute.montantSubventionAccordee),
@@ -231,18 +218,10 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   }
 }
 
-type MembreViewModel = Readonly<{
-  hyperlink: HyperLink
-  uid: string
-}>
-
 function toMembresViewModel(uidGouvernance: string) {
-  return (membre: MembreReadModel): MembreViewModel => ({
-    hyperlink: {
-      label: membre.nom,
-      link: membreLink(uidGouvernance, membre.uid),
-    },
-    uid: membre.uid,
+  return (membre: MembreReadModel): HyperLink => ({
+    label: membre.nom,
+    link: membreLink(uidGouvernance, membre.uid),
   })
 }
 
@@ -299,7 +278,6 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
       plusDetailsHref: coporteur.links.plusDetails,
       roles: coporteur.roles.map(toRoleViewModel),
       type: coporteur.type,
-      uid: coporteur.uid,
     }
   }
 }

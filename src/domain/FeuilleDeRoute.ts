@@ -113,7 +113,11 @@ export class FeuilleDeRoute extends Entity<State> {
     return 'OK'
   }
 
-  modifierUneNoteDeContextualisation(noteDeContextualisation: string, date: Date,editeur: UtilisateurUid): Result<FeuilleDeRouteFailure> {
+  modifierUneNoteDeContextualisation(
+    noteDeContextualisation: string,
+    date: Date,
+    editeur: UtilisateurUid
+  ): Result<FeuilleDeRouteFailure> {
     if (this.#noteDeContextualisation !== undefined) {
       this.#noteDeContextualisation = noteDeContextualisation
       this.#dateDeModification = new ValidDate(date, 'dateDeModificationInvalide')

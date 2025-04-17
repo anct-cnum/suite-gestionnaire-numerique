@@ -44,6 +44,7 @@ describe('modifier une feuille de route', () => {
         {
           dateDeModification: epochTime,
           nom,
+          noteDeContextualisation:'<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
           perimetreGeographique,
           uid: {
             value: 'identifiantPourLaCreation',
@@ -173,6 +174,7 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository, Update
         {
           dateDeModification: epochTime,
           nom,
+          noteDeContextualisation: '<p>Lorem ipsum dolor sit amet consectetur. Sagittis dui sapien libero tristique leo tortor.<p>',
           perimetreGeographique,
           uid: {
             value: 'identifiantPourLaCreation',

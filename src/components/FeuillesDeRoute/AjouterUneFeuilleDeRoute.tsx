@@ -5,7 +5,6 @@ import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 're
 import FormulaireFeuilleDeRoute from './FormulaireFeuilleDeRoute'
 import { clientContext } from '../shared/ClientContext'
 import Drawer from '../shared/Drawer/Drawer'
-import { gouvernanceContext } from '../shared/GouvernanceContext'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
@@ -22,9 +21,6 @@ export default function AjouterUneFeuilleDeRoute({
   const drawerId = 'drawerAjouterFeuilleDeRouteId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
-  console.log('####coporteurs', coporteurs[0])
   return (
     <>
       <button
