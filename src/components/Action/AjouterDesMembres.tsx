@@ -38,10 +38,11 @@ export default function AjouterDesMembres({
     if (!isDrawerOpen) {
       return
     }
-    const fetchData = async () => {
+
+    async function fetchData(): Promise<void> {
       setLoading(true)
       try {
-        const res = await fetch(`/api/gouvernance/${codeDepartement}/members`, {
+        const res = await fetch(`/api/gouvernance/${String(codeDepartement)}/members`, {
           credentials: 'include',
         })
         const membresGouvernancesViewModels =
@@ -51,7 +52,8 @@ export default function AjouterDesMembres({
         setLoading(false)
       }
     }
-    fetchData()
+
+    void fetchData()
   }, [isDrawerOpen])
 
   return (
@@ -115,26 +117,30 @@ export default function AjouterDesMembres({
           </legend>
           {loading ? (
             <Spinner />
-          ) : (
+          ) :
             gouvernanceMembers.map((membre) => (
               <Checkbox
                 id={membre.uid}
-                isSelected={preSelectedMembers.some((x) => x.uid === membre.uid)}
+                isSelected={preSelectedMembers.some((member) => member.uid === membre.uid)}
                 key={membre.nom}
                 label={checkboxName}
                 value={membre.nom}
               >
-                <span>{membre.nom}</span>
+                <span>
+                  {membre.nom}
+                </span>
                 <span>
                   {membre.roles.map((role) => (
-                    <Badge color={role.color} key={role.nom + role.color}>
+                    <Badge
+                      color={role.color}
+                      key={role.nom + role.color}
+                    >
                       {role.nom}
                     </Badge>
                   ))}
                 </span>
               </Checkbox>
-            ))
-          )}
+            ))}
 
           <div className="fr-btns-group">
             <button

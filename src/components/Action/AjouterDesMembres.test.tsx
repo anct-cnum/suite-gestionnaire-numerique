@@ -10,7 +10,7 @@ vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation')
   return {
     ...actual,
-    useParams: () => ({ codeDepartement: '75' }),
+    useParams: (): { codeDepartement: string } => ({ codeDepartement: '75' }),
   }
 })
 
@@ -30,28 +30,21 @@ describe('test du composant AjouterDesMembres', () => {
     vi.restoreAllMocks()
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function dummyEnregistrer(_fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return (): void => {}
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function dummyToutEffacer(_fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return (): void => {}
-  }
-
   it('le composant devrait afficher la list des membres quand j affiche la drawer',async () => {
-    const { container } = render(<AjouterDesMembres
-      checkboxName="porteurs"
-      drawerId="drawerAjouterDesPorteursId"
-      enregistrer={dummyEnregistrer}
-      labelPluriel="porteurs"
-      preSelectedMembers={[]}
-      titre="Ajouter le(s) porteur(s)"
-      toutEffacer={dummyToutEffacer}
-      urlGouvernance="urlGouvernance"
-    />)
+    render(
+      <AjouterDesMembres
+        checkboxName="porteurs"
+        drawerId="drawerAjouterDesPorteursId"
+        enregistrer={vi.fn<(_fieldset: RefObject<HTMLFieldSetElement | null>) => () => void>()}
+        labelPluriel="porteurs"
+        preSelectedMembers={[]}
+        titre="Ajouter le(s) porteur(s)"
+        toutEffacer={vi.fn<(_fieldset: RefObject<HTMLFieldSetElement | null>) => () => void>()}
+        urlGouvernance="urlGouvernance"
+      />
+    )
 
-    const element = container.querySelector('.spinner')
+    const element = screen.getByTestId('spinner-test-id')
     expect(element).toBeInTheDocument()
 
     const bouton = screen.getByRole('button', { name: /ajouter/i })
@@ -59,6 +52,8 @@ describe('test du composant AjouterDesMembres', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Alice')).toBeInTheDocument()
+    })
+    await waitFor(() => {
       expect(screen.getByText('Bob')).toBeInTheDocument()
     })
   })

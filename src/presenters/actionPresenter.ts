@@ -367,13 +367,13 @@ export const actionARemplir: ActionViewModel = {
 
 export type Besoins = ReadonlyArray<LabelValue>
 
-export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
+type Porteurs = ReadonlyArray<LabelValue & Readonly<{
   color: 'error' | 'info' | 'new' | 'success' | 'warning'
   lien: string
   statut: string
 }>>
 
-export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
+type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
   color: 'error' | 'info' | 'new' | 'success' | 'warning'
   lien: string
   statut: string

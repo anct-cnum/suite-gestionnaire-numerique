@@ -9,35 +9,35 @@ import ModifierUneAction from './ModifierUneAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
-import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
-
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation')
-  return {
-    ...actual,
-    useParams: () => ({ codeDepartement: '69' }),
-  }
-})
-
-beforeEach(() => {
-  vi.stubGlobal('fetch', vi.fn(async () =>
-    Promise.resolve({
-      json: async () =>
-        Promise.resolve([
-          { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
-          { nom: 'Bob', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
-        ]as Array<MembresGouvernancesViewModel>),
-    })) as any)
-})
-
-afterEach(() => {
-  vi.restoreAllMocks()
-})
 
 describe('formulaire d‘ajout d‘une action', () => {
+  vi.mock('next/navigation', async () => {
+    const actual = await vi.importActual('next/navigation')
+    return {
+      ...actual,
+      useParams: () : { codeDepartement: string } => ({ codeDepartement: '69' }),
+    }
+  })
+
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn(async () =>
+      Promise.resolve({
+        json: async () =>
+          Promise.resolve([
+            { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
+            { nom: 'Bob', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
+          ]as Array<MembresGouvernancesViewModel>),
+      })))
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   describe('menu latéral', () => {
     it.each([
       { lien: 'besoinsAction', titre: 'Besoins liés à l‘action' },

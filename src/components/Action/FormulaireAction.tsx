@@ -41,9 +41,11 @@ export function FormulaireAction({
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(Array<MembresGouvernancesViewModel>())
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu: contexteContenu, gererLeChangementDeContenu: gererChangementContexte } =
     useRichTextEditor(action.contexte)
 
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { contenu: descriptionContenu, gererLeChangementDeContenu: gererChangementDescription } =
     useRichTextEditor(action.description)
 
@@ -74,11 +76,11 @@ export function FormulaireAction({
       )
       setPorteurs(
         members
-          .filter((x) => x.selected)
-          .map((x) => {
+          .filter((member) => member.selected)
+          .map((selectedMember) => {
             return {
-              nom: x.member.nom,
-              uid: x.member.uid,
+              nom: selectedMember.member.nom,
+              uid: selectedMember.member.uid,
             } as MembresGouvernancesViewModel
           })
       )
@@ -89,8 +91,8 @@ export function FormulaireAction({
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function addBeneficiaires(_fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return () => {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    return () => {}
   }
 
   return (
@@ -228,7 +230,7 @@ export function FormulaireAction({
             .map((porteur: MembresGouvernancesViewModel) => (
               <Fragment key={porteur.uid + porteur.nom}>
                 <Tag
-                  href={`/gouvernance/${codeDepartement}/membre/${porteur.uid}`}
+                  href={`/gouvernance/${String(codeDepartement)}/membre/${porteur.uid}`}
                   target="_blank"
                 >
                   {porteur.nom}
@@ -445,10 +447,10 @@ export function FormulaireAction({
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={addBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
+              preSelectedMembers={[]}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
-              preSelectedMembers={[]}
             />
           </div>
           <p className="color-grey">
