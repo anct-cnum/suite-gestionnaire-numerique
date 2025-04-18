@@ -213,6 +213,57 @@ describe('gouvernance loader', () => {
         texte: 'un contenu quelconque',
       },
       peutVoirNotePrivee: false,
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+        {
+          nom: 'Bretagne',
+          roles: ['coporteur'],
+          uid: 'region-53-93',
+        },
+        {
+          nom: 'CA Tulle Agglo',
+          roles: ['observateur'],
+          uid: 'epci-241927201-93',
+        },
+        {
+          nom: 'CC Porte du Jura',
+          roles: ['beneficiaire', 'coporteur'],
+          uid: 'epci-200072056-93',
+        },
+        {
+          nom: 'Créteil',
+          roles: ['coporteur'],
+          uid: 'commune-94028-93',
+        },
+        {
+          nom: 'Île-de-France',
+          roles: ['observateur'],
+          uid: 'region-11-93',
+        },
+        {
+          nom: 'Orange',
+          roles: ['coporteur', 'recipiendaire'],
+          uid: 'structure-38012986643097-93',
+        },
+        {
+          nom: 'Seine-Saint-Denis',
+          roles: ['observateur'],
+          uid: 'departement-69-93',
+        },
+        {
+          nom: 'Seine-Saint-Denis',
+          roles: ['coporteur'],
+          uid: 'prefecture-93',
+        },
+        {
+          nom: 'Trévérien',
+          roles: [
+            'beneficiaire',
+            'coporteur',
+            'recipiendaire',
+          ],
+          uid: 'commune-35345-93',
+        },
+      ],
       syntheseMembres: {
         candidats: 2,
         coporteurs: [
@@ -387,6 +438,57 @@ describe('gouvernance loader', () => {
       noteDeContexte: undefined,
       notePrivee: undefined,
       peutVoirNotePrivee: false,
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+        {
+          nom: 'Bretagne',
+          roles: ['coporteur'],
+          uid: 'region-53-93',
+        },
+        {
+          nom: 'CA Tulle Agglo',
+          roles: ['observateur'],
+          uid: 'epci-241927201-93',
+        },
+        {
+          nom: 'CC Porte du Jura',
+          roles: ['beneficiaire', 'coporteur'],
+          uid: 'epci-200072056-93',
+        },
+        {
+          nom: 'Créteil',
+          roles: ['coporteur'],
+          uid: 'commune-94028-93',
+        },
+        {
+          nom: 'Île-de-France',
+          roles: ['observateur'],
+          uid: 'region-11-93',
+        },
+        {
+          nom: 'Orange',
+          roles: ['coporteur', 'recipiendaire'],
+          uid: 'structure-38012986643097-93',
+        },
+        {
+          nom: 'Seine-Saint-Denis',
+          roles: ['observateur'],
+          uid: 'departement-69-93',
+        },
+        {
+          nom: 'Seine-Saint-Denis',
+          roles: ['coporteur'],
+          uid: 'prefecture-93',
+        },
+        {
+          nom: 'Trévérien',
+          roles: [
+            'beneficiaire',
+            'coporteur',
+            'recipiendaire',
+          ],
+          uid: 'commune-35345-93',
+        },
+      ],
       syntheseMembres: {
         candidats: 2,
         coporteurs: [

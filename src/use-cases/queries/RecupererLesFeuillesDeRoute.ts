@@ -1,4 +1,5 @@
 import { StatutSubvention } from './shared/ActionReadModel'
+import { Membre } from './shared/MembresDeLaGouveranceReadModel'
 
 export interface FeuillesDeRouteLoader {
   get(codeDepartement: string): Promise<FeuillesDeRouteReadModel>
@@ -64,11 +65,6 @@ type ActionReadModel = Readonly<{
     coFinancement: number
     financementAccorde: number
   }>
-  uid: string
-}>
-
-type Membre = Readonly<{
-  nom: string
   uid: string
 }>
 

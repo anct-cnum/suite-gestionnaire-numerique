@@ -5,6 +5,7 @@ import { FormEvent, ReactElement, useContext, useId, useRef, useState } from 're
 import FormulaireFeuilleDeRoute from '../FeuillesDeRoute/FormulaireFeuilleDeRoute'
 import { clientContext } from '../shared/ClientContext'
 import Drawer from '../shared/Drawer/Drawer'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { LabelValue } from '@/presenters/shared/labels'
@@ -17,13 +18,13 @@ export default function ModifierUneFeuilleDeRoute({
   uidGouvernance,
 }: Props): ReactElement {
   const { modifierUneFeuilleDeRouteAction, pathname } = useContext(clientContext)
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const drawerId = 'drawerModifierUneFeuilleDeRouteId'
   const labelId = useId()
   const drawerRef = useRef<HTMLDialogElement>(null)
-
   return (
     <>
       <button
