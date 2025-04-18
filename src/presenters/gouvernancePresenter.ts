@@ -6,6 +6,7 @@ import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullishOrEmpty } from '@/shared/lang'
 import { ComiteReadModel, CoporteurDetailReadModel, FeuilleDeRouteReadModel, MembreReadModel, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/shared/MembresDeLaGouveranceReadModel'
 
 export function gouvernancePresenter(
   gouvernanceReadModel: UneGouvernanceReadModel,
@@ -21,6 +22,8 @@ export function gouvernancePresenter(
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions:
+      gouvernanceReadModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions,
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
@@ -62,6 +65,7 @@ export type GouvernanceViewModel = Readonly<{
     texte: string
   }>
   peutVoirNotePrivee: boolean
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions:ReadonlyArray<MembreAvecRoleDansLaGouvernance>
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>

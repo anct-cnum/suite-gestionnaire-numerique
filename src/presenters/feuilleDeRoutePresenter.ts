@@ -6,11 +6,9 @@ import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './sh
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function feuilleDeRoutePresenter(
-  readModel: UneFeuilleDeRouteReadModel,
-  gouvernanceReadModel: UneGouvernanceReadModel
+  readModel: UneFeuilleDeRouteReadModel
 ): FeuilleDeRouteViewModel {
   return {
     action: `${readModel.actions.length} action${formatPluriel(readModel.actions.length)} pour cette feuille de route`,
@@ -26,11 +24,7 @@ export function feuilleDeRoutePresenter(
       nom: readModel.document.nom,
     },
     formulaire: {
-      membres: gouvernanceReadModel.syntheseMembres.coporteurs.map((membre) => ({
-        isSelected: membre.feuillesDeRoute.some((feuilleDeRoute) => feuilleDeRoute.uid === readModel.uid),
-        label: membre.nom,
-        value: membre.uid,
-      })),
+      membres: [],
       perimetres: [
         {
           isSelected: false,

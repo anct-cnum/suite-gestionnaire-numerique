@@ -31,9 +31,9 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             {viewModel.nom}
           </PageTitle>
           <ModifierUneFeuilleDeRoute
-            membres={viewModel.formulaire.membres}
             nom={viewModel.nom}
             perimetres={viewModel.formulaire.perimetres}
+            porteur={viewModel.porteur}
             uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
             uidGouvernance={viewModel.uidGouvernance}
           />

@@ -11,6 +11,7 @@ import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etab
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   readonly #dataResource = prisma.gouvernanceRecord
   readonly #etablisseurSynthese: EtablisseurSyntheseGouvernance
+  readonly #membreDao = prisma.membreRecord
 
   constructor(etablisseurSynthese: EtablisseurSyntheseGouvernance) {
     this.#etablisseurSynthese = etablisseurSynthese
@@ -24,11 +25,28 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       },
     })
 
-    return this.#transform(gouvernanceRecord)
+    const membreConfirmesGouvernance = await this.#membreDao.findMany({
+      include: membreInclude,
+      where: {
+        AND: [
+          {
+            statut: {
+              equals: 'confirme',
+            },
+          },
+          {
+            gouvernanceDepartementCode: codeDepartement,
+          },
+        ],
+      },
+    })
+
+    return this.#transform(gouvernanceRecord, membreConfirmesGouvernance)
   }
 
   #transform(
-    gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>
+    gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>,
+    membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>
   ): UneGouvernanceReadModel {
     const noteDeContexte =
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -121,6 +139,10 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       noteDeContexte,
       notePrivee,
       peutVoirNotePrivee: false,
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions:toMembres(membresConfirmesGouvernance)
+        .toSorted(alphaAsc('id'))
+        .toSorted(alphaAsc('nom'))
+        .map(fromMembreAvecRoles),
       syntheseMembres: {
         candidats: membres.filter(({ statut }) => statut === 'candidat').length,
         coporteurs: membres
@@ -191,6 +213,12 @@ function calculerTotaux(totaux: Totaux, feuilleDeRoute: FeuilleDeRouteReadModel)
     totalMontantsSubventionsFormationAccordees: totaux.totalMontantsSubventionsFormationAccordees +
       feuilleDeRoute.montantSubventionFormationAccordee,
   }
+}
+
+function fromMembreAvecRoles(
+  { id, nom, roles }: Membre
+): UneGouvernanceReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
+  return { nom, roles, uid: id }
 }
 
 const include = {

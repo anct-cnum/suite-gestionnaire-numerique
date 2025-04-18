@@ -1,5 +1,6 @@
 import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { QueryHandler } from '../QueryHandler'
+import { MembreAvecRoleDansLaGouvernance } from './shared/MembresDeLaGouveranceReadModel'
 import { Gouvernance } from '@/domain/Gouvernance'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
@@ -41,6 +42,7 @@ export type UneGouvernanceReadModel = Readonly<{
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
   peutVoirNotePrivee: boolean
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<MembreAvecRoleDansLaGouvernance>
   syntheseMembres: SyntheseMembres
   uid: string
 }>

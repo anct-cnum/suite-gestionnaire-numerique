@@ -1,17 +1,23 @@
-import { render, screen, within } from '@testing-library/react'
+import { screen, within } from '@testing-library/react'
 
 import FeuilleDeRoute from './FeuilleDeRoute'
-import { matchWithoutMarkup } from '../testHelper'
+import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
-import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/use-cases/testHelper'
+import { gouvernanceViewModelFactory } from '@/presenters/testHelper'
+import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('feuille de route', () => {
   it('quand je consulte la page du détail d’une feuille de route avec des actions, alors j’accède à ses informations détaillées', () => {
     // GIVEN
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(),gouvernanceReadModelFactory())
-
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory())
+    const gouvernanceViewModel = gouvernanceViewModelFactory({
+      
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
+    })
+  
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, {}, gouvernanceViewModel)
+    // WHEN
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Feuille de route FNE' })
@@ -141,10 +147,14 @@ describe('feuille de route', () => {
     const viewModel = feuilleDeRoutePresenter({
       ...feuilleDeRouteReadModelFactory(),
       document: undefined,
-    }, gouvernanceReadModelFactory())
-
+    })
+    const gouvernanceViewModel = gouvernanceViewModelFactory({
+      
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
+    })
+  
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, {}, gouvernanceViewModel)
 
     // THEN
     const sectionUpload = screen.getByRole('region', { name: 'Déposez votre document de stratégie' })
@@ -160,11 +170,14 @@ describe('feuille de route', () => {
     const viewModel = feuilleDeRoutePresenter({
       ...feuilleDeRouteReadModelFactory(),
       porteur: undefined,
-    }, gouvernanceReadModelFactory())
-
+    })
+    const gouvernanceViewModel = gouvernanceViewModelFactory({
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
+    })
+  
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
-
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, {}, gouvernanceViewModel)
+    
     // THEN
     const porteur = screen.getByTitle('Aucun responsable de la feuille de route')
     expect(porteur).toBeInTheDocument()
