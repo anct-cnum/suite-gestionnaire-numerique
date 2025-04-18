@@ -8,17 +8,25 @@ import Drawer from '../shared/Drawer/Drawer'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import { Notification } from '../shared/Notification/Notification'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import { LabelValue } from '@/presenters/shared/labels'
+import { HyperLink, LabelValue } from '@/presenters/shared/labels'
 
 export default function ModifierUneFeuilleDeRoute({
-  membres,
   nom,
   perimetres,
+  porteur,
   uidFeuilleDeRoute,
   uidGouvernance,
 }: Props): ReactElement {
   const { modifierUneFeuilleDeRouteAction, pathname } = useContext(clientContext)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  //@typescript-eslint/no-unnecessary-condition
+  const porteursPotentiels = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+  const porteursPotentielsNouvellesFeuillesDeRouteOuActions = 
+    porteursPotentiels.map((membre) => ({
+      isSelected: membre.nom === porteur?.label,
+      label: membre.nom,
+      value: membre.uid,
+    })) 
   const [isDisabled, setIsDisabled] = useState(false)
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -54,7 +62,7 @@ export default function ModifierUneFeuilleDeRoute({
         <FormulaireFeuilleDeRoute
           label="Modifier une feuille de route"
           labelId={labelId}
-          membres={membres}
+          membres={porteursPotentielsNouvellesFeuillesDeRouteOuActions}
           nom={nom}
           perimetres={perimetres}
           validerFormulaire={modifierUneFeuilleDeRoute}
@@ -93,9 +101,9 @@ export default function ModifierUneFeuilleDeRoute({
 }
 
 type Props = Readonly<{
-  membres: ReadonlyArray<LabelValue>
   nom: string
   perimetres: ReadonlyArray<LabelValue>
+  porteur?: HyperLink
   uidFeuilleDeRoute: string
   uidGouvernance: string
 }>

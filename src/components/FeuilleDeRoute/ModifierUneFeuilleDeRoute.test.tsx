@@ -3,7 +3,8 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup, renderComponent, stubbedConceal, stubbedServerAction } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
-import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/use-cases/testHelper'
+import { gouvernanceViewModelFactory } from '@/presenters/testHelper'
+import { feuilleDeRouteReadModelFactory } from '@/use-cases/testHelper'
 
 describe('modifier une feuille de route', () => {
   describe('quand je clique sur modifier une feuille de route', () => {
@@ -155,50 +156,22 @@ describe('modifier une feuille de route', () => {
   function afficherUneFeuilleDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'example@mail.com',
-              nom: 'Doe',
-              poste: 'Manager',
-              prenom: 'John',
-            },
-            feuillesDeRoute: [{
-              nom: '',
-              uid: 'feuilleDeRouteFooId2',
-            }],
-            links: {},
-            nom: 'Croix Rouge Française',
-            roles: [],
-            type: '',
-            uid: 'membre1FooId',
-          },
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'example@mail.com',
-              nom: 'Doe',
-              poste: 'Manager',
-              prenom: 'John',
-            },
-            feuillesDeRoute: [{
-              nom: 'Feuille de route 69',
-              uid: 'feuilleDeRouteFooId',
-            }],
-            links: {},
-            nom: 'La Poste',
-            roles: [],
-            type: '',
-            uid: 'membre2FooId',
-          },
-        ],
-        total: 0,
-      },
-    }))
-    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options)
+    const gouvernanceViewModel = gouvernanceViewModelFactory({
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [{
+        nom: 'Croix Rouge Française',
+        roles: [],
+        uid: 'membre1FooId',
+      }, {
+        nom: 'La Poste',
+        roles: [],
+        uid: 'membre2FooId',
+      }],
+    })
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ porteur: {
+      nom: 'La Poste',
+      uid: 'membre2FooId',
+    } ,
+    uid: 'feuilleDeRouteFooId' }))
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options,gouvernanceViewModel)
   }
 })

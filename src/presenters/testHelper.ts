@@ -76,6 +76,7 @@ export function gouvernanceViewModelFactory(
       membres: '/',
     },
     peutVoirNotePrivee: true,
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
     sectionFeuillesDeRoute: {
       budgetTotalCumule: '',
       feuillesDeRoute: [],
