@@ -10,7 +10,7 @@ vi.mock('next/navigation', async () => {
   const actual = await vi.importActual('next/navigation')
   return {
     ...actual,
-    useParams: () => ({ codeDepartement: '75' }),
+    useParams: (): { codeDepartement: string } => ({ codeDepartement: '75' }),
   }
 })
 
@@ -31,7 +31,7 @@ describe('test du composant AjouterDesMembres', () => {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function dummyEnregistrer(_fieldset: RefObject<HTMLFieldSetElement | null>) {
+  function dummyEnregistrer(_fieldset: RefObject<HTMLFieldSetElement | null>) : () => void {
     return (): void => {}
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -40,16 +40,18 @@ describe('test du composant AjouterDesMembres', () => {
   }
 
   it('le composant devrait afficher la list des membres quand j affiche la drawer',async () => {
-    const { container } = render(<AjouterDesMembres
-      checkboxName="porteurs"
-      drawerId="drawerAjouterDesPorteursId"
-      enregistrer={dummyEnregistrer}
-      labelPluriel="porteurs"
-      preSelectedMembers={[]}
-      titre="Ajouter le(s) porteur(s)"
-      toutEffacer={dummyToutEffacer}
-      urlGouvernance="urlGouvernance"
-    />)
+    const { container } = render(
+      <AjouterDesMembres
+        checkboxName="porteurs"
+        drawerId="drawerAjouterDesPorteursId"
+        enregistrer={dummyEnregistrer}
+        labelPluriel="porteurs"
+        preSelectedMembers={[]}
+        titre="Ajouter le(s) porteur(s)"
+        toutEffacer={dummyToutEffacer}
+        urlGouvernance="urlGouvernance"
+      />
+    )
 
     const element = container.querySelector('.spinner')
     expect(element).toBeInTheDocument()
@@ -59,6 +61,8 @@ describe('test du composant AjouterDesMembres', () => {
 
     await waitFor(() => {
       expect(screen.getByText('Alice')).toBeInTheDocument()
+    })
+    await waitFor(() => {
       expect(screen.getByText('Bob')).toBeInTheDocument()
     })
   })

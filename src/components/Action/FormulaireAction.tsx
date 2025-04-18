@@ -74,11 +74,11 @@ export function FormulaireAction({
       )
       setPorteurs(
         members
-          .filter((x) => x.selected)
-          .map((x) => {
+          .filter((member) => member.selected)
+          .map((selectedMember) => {
             return {
-              nom: x.member.nom,
-              uid: x.member.uid,
+              nom: selectedMember.member.nom,
+              uid: selectedMember.member.uid,
             } as MembresGouvernancesViewModel
           })
       )
@@ -89,8 +89,7 @@ export function FormulaireAction({
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function addBeneficiaires(_fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return () => {
-    }
+    return () => {}
   }
 
   return (
@@ -445,10 +444,10 @@ export function FormulaireAction({
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={addBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
+              preSelectedMembers={[]}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
-              preSelectedMembers={[]}
             />
           </div>
           <p className="color-grey">

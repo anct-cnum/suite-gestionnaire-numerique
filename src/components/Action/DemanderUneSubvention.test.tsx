@@ -6,15 +6,15 @@ import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 import { expectNot } from '@/shared/testHelper'
 
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation')
-  return {
-    ...actual,
-    useParams: () => ({ codeDepartement: '75' }),
-  }
-})
-
 describe('faire une demande de subvention', () => {
+  vi.mock('next/navigation', async () => {
+    const actual = await vi.importActual('next/navigation')
+    return {
+      ...actual,
+      useParams: (): { codeDepartement: string } => ({ codeDepartement: '75' }),
+    }
+  })
+
   describe('étant donné que je me trouve sur le formulaire d’action', () => {
     it('et que je n’ai pas saisi de budget global, alors le bouton de demande de subvention est inactif', () => {
       // GIVEN

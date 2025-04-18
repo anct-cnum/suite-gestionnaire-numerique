@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, { params }: { params: { codeDepartem
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { codeDepartement } = await params
+  const { codeDepartement } = params
   const result = await new RecupererMesMembres(new PrismaMesMembresLoader()).handle({
     codeDepartement,
   })

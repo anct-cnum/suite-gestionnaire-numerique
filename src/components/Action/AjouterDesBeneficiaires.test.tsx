@@ -7,15 +7,15 @@ import { ActionViewModel } from '@/presenters/actionPresenter'
 import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 
-vi.mock('next/navigation', async () => {
-  const actual = await vi.importActual('next/navigation')
-  return {
-    ...actual,
-    useParams: () => ({ codeDepartement: '75' }),
-  }
-})
-
 describe('ajout des bénéficiaires', () => {
+  vi.mock('next/navigation', async () => {
+    const actual = await vi.importActual('next/navigation')
+    return {
+      ...actual,
+      useParams: () : { codeDepartement: string } => ({ codeDepartement: '75' }),
+    }
+  })
+
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn(async () =>
       Promise.resolve({
@@ -24,7 +24,7 @@ describe('ajout des bénéficiaires', () => {
             { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
             { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
           ]as Array<MembresGouvernancesViewModel>),
-      })) as any)
+      })))
   })
 
   afterEach(() => {
@@ -63,6 +63,8 @@ describe('ajout des bénéficiaires', () => {
       await waitFor(() => {
         const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
         expect(membre1).not.toBeRequired()
+      })
+      await waitFor(() => {
         const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
         expect(membre2).not.toBeRequired()
       })
