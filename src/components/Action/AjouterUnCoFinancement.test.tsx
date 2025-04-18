@@ -1,6 +1,31 @@
 import { fireEvent, screen, within } from '@testing-library/react'
 
 import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jeTapeLeBudgetGlobalDeLAction, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
+import { vi } from 'vitest'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
+
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation')
+  return {
+    ...actual,
+    useParams: () => ({ codeDepartement: '69' }),
+  }
+})
+
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn(async () =>
+    Promise.resolve({
+      json: async () =>
+        Promise.resolve([
+          { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
+          { nom: 'Bob', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
+        ]as Array<MembresGouvernancesViewModel>),
+    })) as any)
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('drawer d‘ajout d‘un co-financement', () => {
   it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {

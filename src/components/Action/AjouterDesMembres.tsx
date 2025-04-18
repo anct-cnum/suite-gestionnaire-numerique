@@ -1,5 +1,8 @@
+'use client'
+
 import Link from 'next/link'
-import { ReactElement, RefObject, useId, useRef, useState } from 'react'
+import { useParams } from 'next/navigation'
+import { ReactElement, RefObject, useEffect, useId, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Badge from '../shared/Badge/Badge'
@@ -7,13 +10,15 @@ import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { Beneficiaires, Porteurs } from '@/presenters/actionPresenter'
+import Spinner from '@/components/spinner/Spinner'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
 
 export default function AjouterDesMembres({
   checkboxName,
   drawerId,
+  enregistrer,
   labelPluriel,
-  membres,
+  preSelectedMembers,
   titre,
   toutEffacer,
   urlGouvernance,
@@ -22,16 +27,45 @@ export default function AjouterDesMembres({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const labelId = useId()
   const fieldset = useRef<HTMLFieldSetElement>(null)
-  const hasMembres = membres.filter((membre) => Boolean(membre.isSelected)).length > 0
+
+  const params = useParams()
+  const codeDepartement = params.codeDepartement
+  const [gouvernanceMembers, setGouvernanceMembers] =
+    useState(Array<MembresGouvernancesViewModel>())
+  const [loading, setLoading] = useState(true)
+  const hasMembres = preSelectedMembers.length > 0
+  useEffect(() => {
+    if (!isDrawerOpen) {
+      return
+    }
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/gouvernance/${codeDepartement}/members`, {
+          credentials: 'include',
+        })
+        const membresGouvernancesViewModels =
+          (await res.json()) as Array<MembresGouvernancesViewModel>
+        setGouvernanceMembers(membresGouvernancesViewModels)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [isDrawerOpen])
 
   return (
     <>
       <button
         aria-controls={drawerId}
-        className={hasMembres ? 'fr-btn fr-btn--tertiary' : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'}
+        className={
+          hasMembres
+            ? 'fr-btn fr-btn--tertiary'
+            : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
+        }
         data-fr-opened="false"
         onClick={() => {
-          setIsDrawerOpen(true)
+          setIsDrawerOpen(() => true)
         }}
         title={`Ajouter des ${labelPluriel}`}
         type="button"
@@ -41,7 +75,7 @@ export default function AjouterDesMembres({
       <Drawer
         boutonFermeture={`Fermer l’ajout des ${labelPluriel}`}
         closeDrawer={() => {
-          setIsDrawerOpen(false)
+          setIsDrawerOpen(() => false)
         }}
         id={drawerId}
         // Stryker disable next-line BooleanLiteral
@@ -79,28 +113,34 @@ export default function AjouterDesMembres({
             {' '}
             {labelPluriel}
           </legend>
-          {
-            membres.map((membre) => (
+          {loading ? (
+            <Spinner />
+          ) : (
+            gouvernanceMembers.map((membre) => (
               <Checkbox
-                id={membre.value}
-                isSelected={membre.isSelected}
-                key={membre.value}
+                id={membre.uid}
+                isSelected={preSelectedMembers.some((x) => x.uid === membre.uid)}
+                key={membre.nom}
                 label={checkboxName}
-                value={membre.value}
+                value={membre.nom}
               >
+                <span>{membre.nom}</span>
                 <span>
-                  {membre.label}
+                  {membre.roles.map((role) => (
+                    <Badge color={role.color} key={role.nom + role.color}>
+                      {role.nom}
+                    </Badge>
+                  ))}
                 </span>
-                <Badge color={membre.color}>
-                  {membre.statut}
-                </Badge>
               </Checkbox>
             ))
-          }
+          )}
+
           <div className="fr-btns-group">
             <button
               aria-controls={drawerId}
               className="fr-btn"
+              onClick={enregistrer(fieldset)}
               type="button"
             >
               Enregistrer
@@ -122,8 +162,9 @@ export default function AjouterDesMembres({
 type Props = Readonly<{
   checkboxName: string
   drawerId: string
+  enregistrer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   labelPluriel: string
-  membres: Beneficiaires | Porteurs
+  preSelectedMembers: Array<MembresGouvernancesViewModel>
   titre: string
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   urlGouvernance: string

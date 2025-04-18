@@ -1,28 +1,53 @@
-import { fireEvent, screen, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { vi } from 'vitest'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { ActionViewModel } from '@/presenters/actionPresenter'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation')
+  return {
+    ...actual,
+    useParams: () => ({ codeDepartement: '75' }),
+  }
+})
+
 describe('ajout des bénéficiaires', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn(async () =>
+      Promise.resolve({
+        json: async () =>
+          Promise.resolve([
+            { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
+            { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
+          ]as Array<MembresGouvernancesViewModel>),
+      })) as any)
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('quand il n’y a pas de bénéficiaire alors le bouton ajouter un bénéficiaire s’affiche', () => {
     // WHEN
     afficherLeFormulaireAction({ beneficiaires: [] })
 
     // THEN
-    const bouton = screen.getByRole('button', { name: 'Ajouter' })
+    const bouton = screen.getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
     expect(bouton).toBeEnabled()
     expect(bouton).toHaveAttribute('type', 'button')
   })
 
-  describe('quand je clique sur modifier,', () => {
-    it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
+  describe('quand je clique sur Ajouter,', () => {
+    it('alors le formulaire pour ajouter des bénéficiaires s’affiche',async () => {
       // GIVEN
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
+      presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
 
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
@@ -35,11 +60,12 @@ describe('ajout des bénéficiaires', () => {
       expect(lien).toHaveAttribute('href', '/gouvernance/11')
 
       const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
-
-      const membre1 = within(fieldset).getByRole('checkbox', { checked: true, name: 'Rhône (69) Co-porteur' })
-      expect(membre1).not.toBeRequired()
-      const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
-      expect(membre2).not.toBeRequired()
+      await waitFor(() => {
+        const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
+        expect(membre1).not.toBeRequired()
+        const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
+        expect(membre2).not.toBeRequired()
+      })
 
       const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
       expect(enregistrer).toBeEnabled()
@@ -55,7 +81,7 @@ describe('ajout des bénéficiaires', () => {
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
+      presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
       const fermer = presserLeBouton('Fermer l’ajout des bénéficiaires des fonds')
 
@@ -64,19 +90,21 @@ describe('ajout des bénéficiaires', () => {
       expect(drawer).not.toBeVisible()
     })
 
-    it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
+    it('puis que je clique sur tout effacer, alors le formulaire se vide', async () => {
       // GIVEN
       afficherLeFormulaireAction()
 
       // WHEN
-      presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
+      presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
       presserLeBouton('Tout effacer')
 
       // THEN
-      const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
-      const checkboxes = within(fieldset).getAllByRole('checkbox')
-      checkboxes.forEach((checkbox) => {
-        expect(checkbox).not.toBeChecked()
+      await waitFor(() => {
+        const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
+        const checkboxes = within(fieldset).getAllByRole('checkbox')
+        checkboxes.forEach((checkbox) => {
+          expect(checkbox).not.toBeChecked()
+        })
       })
     })
   })

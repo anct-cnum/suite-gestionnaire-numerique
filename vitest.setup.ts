@@ -1,6 +1,7 @@
 import 'vitest-dom/extend-expect'
+import '@testing-library/jest-dom'
 
-function toOpenInNewTab(element: HTMLElement, content: string): { pass: boolean; message(): string } {
+function toOpenInNewTab(element: HTMLElement, content: string): { message(): string; pass: boolean } {
   if (
     element.title === `${content} - nouvelle fenêtre` &&
     element.getAttribute('target') === '_blank' &&

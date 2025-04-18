@@ -59,6 +59,10 @@ export type MembreReadModel = Readonly<{
   uid: string
 }>
 
+export type Statut = 'candidat' | 'confirme' | 'suggere'
+
+export type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'
+
 function isPrefectureDepartementale(membre: MesMembresReadModel['membres'][number]): boolean {
   return membre.typologie === 'Préfecture départementale'
 }
@@ -82,7 +86,3 @@ type Query = Readonly<{
 }>
 
 type RoleEtTypologie = Pick<MesMembresReadModel, 'roles' | 'typologies'>
-
-type Statut = 'candidat' | 'confirme' | 'suggere'
-
-type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'

@@ -1,7 +1,15 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId, useState } from 'react'
+import { useParams } from 'next/navigation'
+import {
+  FormEvent,
+  Fragment,
+  PropsWithChildren,
+  ReactElement,
+  RefObject,
+  useId,
+  useState,
+} from 'react'
 
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
@@ -15,6 +23,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { ActionViewModel } from '@/presenters/actionPresenter'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -30,16 +39,13 @@ export function FormulaireAction({
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
+  const [porteurs, setPorteurs] = useState(Array<MembresGouvernancesViewModel>())
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
-  const {
-    contenu: contexteContenu,
-    gererLeChangementDeContenu: gererChangementContexte,
-  } = useRichTextEditor(action.contexte)
+  const { contenu: contexteContenu, gererLeChangementDeContenu: gererChangementContexte } =
+    useRichTextEditor(action.contexte)
 
-  const {
-    contenu: descriptionContenu,
-    gererLeChangementDeContenu: gererChangementDescription,
-  } = useRichTextEditor(action.description)
+  const { contenu: descriptionContenu, gererLeChangementDeContenu: gererChangementDescription } =
+    useRichTextEditor(action.description)
 
   const besoins = [
     ...action.besoins.financements,
@@ -47,6 +53,45 @@ export function FormulaireAction({
     ...action.besoins.formationsProfessionnels,
     ...action.besoins.outillages,
   ]
+  const params = useParams()
+  const codeDepartement = params.codeDepartement
+
+  function addPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (!fieldset.current) {return}
+
+      const members = Array.from(fieldset.current.querySelectorAll('input')).map(
+        (input: HTMLInputElement) => {
+          return {
+            member : {
+              nom: input.value,
+              uid: input.id,
+            },
+            selected: input.checked,
+          } as MemberSelected
+        }
+      )
+      setPorteurs(
+        members
+          .filter((x) => x.selected)
+          .map((x) => {
+            return {
+              nom: x.member.nom,
+              uid: x.member.uid,
+            } as MembresGouvernancesViewModel
+          })
+      )
+    }
+  }
+
+  // pour le ticket 533
+  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function addBeneficiaires(_fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+    }
+  }
 
   return (
     <form
@@ -54,11 +99,7 @@ export function FormulaireAction({
       className="fr-mt-5w"
       onSubmit={async (event) => {
         event.preventDefault()
-        await validerFormulaire(
-          event,
-          contexteContenu,
-          descriptionContenu
-        )
+        await validerFormulaire(event, contexteContenu, descriptionContenu)
       }}
     >
       <Tag href={action.urlFeuilleDeRoute}>
@@ -93,7 +134,8 @@ export function FormulaireAction({
             />
           </div>
           <p className="color-grey">
-            Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.
+            Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une
+            subvention.
           </p>
           <hr />
           {besoins
@@ -107,9 +149,7 @@ export function FormulaireAction({
               </p>
             ))}
         </div>
-        <div
-          className="white-background fr-p-4w fr-mb-2w"
-        >
+        <div className="white-background fr-p-4w fr-mb-2w">
           <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
             Informations sur l‘action
           </p>
@@ -126,9 +166,7 @@ export function FormulaireAction({
               *
             </span>
           </TextInput>
-          <label
-            className="fr-label"
-          >
+          <label className="fr-label">
             Contexte de l‘action
             {' '}
             <span className="color-red">
@@ -136,7 +174,8 @@ export function FormulaireAction({
             </span>
           </label>
           <p className="color-grey fr-mb-1w">
-            Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
+            Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et
+            indicateurs associés.
           </p>
           <TextEditor
             ariaLabel="Éditeur de contexte de l‘action"
@@ -144,9 +183,7 @@ export function FormulaireAction({
             height={150}
             onChange={gererChangementContexte}
           />
-          <label
-            className="fr-label fr-mt-3w"
-          >
+          <label className="fr-label fr-mt-3w">
             Description de l‘action
             {' '}
             <span className="color-red">
@@ -154,7 +191,8 @@ export function FormulaireAction({
             </span>
           </label>
           <p className="color-grey fr-mb-1w">
-            Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et indicateurs associés.
+            Préciser la nature de l‘action, ses objectifs, ses bénéficiaires, son impact et
+            indicateurs associés.
           </p>
           <TextEditor
             ariaLabel="Éditeur de description de l‘action"
@@ -162,11 +200,8 @@ export function FormulaireAction({
             height={350}
             onChange={gererChangementDescription}
           />
-
         </div>
-        <div
-          className="white-background fr-p-4w fr-mb-2w"
-        >
+        <div className="white-background fr-p-4w fr-mb-2w">
           <div
             className={styles['align-items']}
             id="porteurAction"
@@ -177,8 +212,9 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="porteurs"
               drawerId="drawerAjouterDesPorteursId"
+              enregistrer={addPorteurs}
               labelPluriel="porteurs"
-              membres={action.porteurs}
+              preSelectedMembers={porteurs}
               titre="Ajouter le(s) porteur(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
@@ -188,17 +224,17 @@ export function FormulaireAction({
             Indiquez quelle est la structure porteuse de cette action
           </p>
           <hr />
-          {
-            action.porteurs
-              .filter((porteur) => Boolean(porteur.isSelected))
-              .map((porteur) => (
-                <Fragment key={porteur.value}>
-                  <Tag href={porteur.lien}>
-                    {porteur.label}
-                  </Tag>
-                </Fragment>
-              ))
-          }
+          {porteurs
+            .map((porteur: MembresGouvernancesViewModel) => (
+              <Fragment key={porteur.uid + porteur.nom}>
+                <Tag
+                  href={`/gouvernance/${codeDepartement}/membre/${porteur.uid}`}
+                  target="_blank"
+                >
+                  {porteur.nom}
+                </Tag>
+              </Fragment>
+            ))}
         </div>
         <div
           className="white-background fr-p-4w fr-mb-2w"
@@ -211,9 +247,7 @@ export function FormulaireAction({
             Veuillez indiquer si cette action est annuelle ou pluriannuelle
           </p>
           <hr />
-          <div
-            className={`fr-radio-group ${styles['align-items']}`}
-          >
+          <div className={`fr-radio-group ${styles['align-items']}`}>
             <div className={styles['select-width']}>
               <input
                 checked={temporalite === 'annuelle'}
@@ -263,7 +297,6 @@ export function FormulaireAction({
                 name="anneeDeFin"
                 options={years.map(toLabelValue(Number(action.anneeDeFin)))}
                 placeholder="-"
-
               >
                 Année de fin de l‘action
               </Select>
@@ -278,8 +311,8 @@ export function FormulaireAction({
             Information sur le budget et le financement
           </p>
           <p className="color-grey">
-            Détaillez le budget prévisionnel de l‘action incluant les subventions
-            et les co-financements éventuels des membres ou ...
+            Détaillez le budget prévisionnel de l‘action incluant les subventions et les
+            co-financements éventuels des membres ou ...
           </p>
           <hr />
           <div className={styles['horizontal-text-input']}>
@@ -325,19 +358,64 @@ export function FormulaireAction({
           <hr />
           <div className={styles['horizontal-text-input']}>
             <div className={styles['half-width']}>
-              <p
-                className="fr-text--bold fr-mb-0"
-              >
+              <p className="fr-text--bold fr-mb-0">
                 Co-financement
               </p>
             </div>
-            {
-              cofinancements.length === 0 && (
+            {cofinancements.length === 0 && (
+              <button
+                aria-controls={drawerId}
+                className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
+                data-fr-opened="false"
+                disabled={budgetGlobal === 0}
+                onClick={() => {
+                  setIsDrawerOpen(true)
+                }}
+                type="button"
+              >
+                Ajouter un financement
+              </button>
+            )}
+          </div>
+          {cofinancements.length > 0 ? (
+            <>
+              <ul
+                className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}
+              >
+                {cofinancements.map((cofinancement) => (
+                  <li key={cofinancement.coFinanceur}>
+                    <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
+                      <p className="fr-col-10 fr-mb-0">
+                        {cofinancement.coFinanceur}
+                      </p>
+                      <div className={`fr-col-2 ${styles['deletion-section']}`}>
+                        <p className="fr-mb-0 fr-mr-2w">
+                          {cofinancement.montant}
+                        </p>
+                        <button
+                          className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
+                          onClick={() => {
+                            supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
+                          }}
+                          title="Label bouton"
+                          type="button"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div
+                className="fr-mt-3w fr-mb-5w"
+                style={{ display: 'flex', justifyContent: 'flex-end' }}
+              >
+                <hr />
                 <button
                   aria-controls={drawerId}
                   className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
                   data-fr-opened="false"
-                  disabled={budgetGlobal === 0}
                   onClick={() => {
                     setIsDrawerOpen(true)
                   }}
@@ -345,62 +423,9 @@ export function FormulaireAction({
                 >
                   Ajouter un financement
                 </button>
-              )
-            }
-          </div>
-          {
-            cofinancements.length > 0 ?
-              <>
-                <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
-                  {cofinancements.map((cofinancement) => (
-                    <li
-                      key={cofinancement.coFinanceur}
-                    >
-                      <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
-                        <p className="fr-col-10 fr-mb-0">
-                          {cofinancement.coFinanceur}
-                        </p>
-                        <div
-                          className={`fr-col-2 ${styles['deletion-section']}`}
-                        >
-                          <p className="fr-mb-0 fr-mr-2w">
-                            {cofinancement.montant}
-                          </p>
-                          <button
-                            className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
-                            onClick={() => {
-                              supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
-                            }}
-                            title="Label bouton"
-                            type="button"
-                          >
-                            Supprimer
-                          </button>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <div
-                  className="fr-mt-3w fr-mb-5w"
-                  style={{ display: 'flex', justifyContent: 'flex-end' }}
-                >
-                  <hr />
-                  <button
-                    aria-controls={drawerId}
-                    className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setIsDrawerOpen(true)
-                    }}
-                    type="button"
-                  >
-                    Ajouter un financement
-                  </button>
-                </div>
-              </>
-              : null
-          }
+              </div>
+            </>
+          ) : null}
           <hr />
         </div>
         <div
@@ -418,28 +443,27 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
+              enregistrer={addBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
-              membres={action.beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
+              preSelectedMembers={[]}
             />
           </div>
           <p className="color-grey">
             Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.
           </p>
           <div>
-            {
-              action.beneficiaires
-                .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
-                .map((beneficiaire) => (
-                  <Fragment key={beneficiaire.value}>
-                    <Tag href={beneficiaire.lien}>
-                      {beneficiaire.label}
-                    </Tag>
-                  </Fragment>
-                ))
-            }
+            {action.beneficiaires
+              .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
+              .map((beneficiaire) => (
+                <Fragment key={beneficiaire.value}>
+                  <Tag href={beneficiaire.lien}>
+                    {beneficiaire.label}
+                  </Tag>
+                </Fragment>
+              ))}
           </div>
         </div>
       </div>
@@ -456,6 +480,7 @@ export function FormulaireAction({
         fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
           input.checked = false
         })
+        setPorteurs([])
       }
     }
   }
@@ -469,16 +494,27 @@ function toLabelValue(selected: number) {
   })
 }
 
-type Props = PropsWithChildren<Readonly<{
-  action: ActionViewModel
-  cofinancements: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
+type Props = PropsWithChildren<
+  Readonly<{
+    action: ActionViewModel
+    cofinancements: ReadonlyArray<{
+      coFinanceur: string
+      montant: string
+    }>
+    date?: Date
+    drawerId: string
+    label: string
+    setIsDrawerOpen(isDrawerOpen: boolean): void
+    supprimerUnCofinancement(index: number): void
+    validerFormulaire(
+      event: FormEvent<HTMLFormElement>,
+      contexte: string,
+      description: string
+    ): Promise<void>
   }>
-  date?: Date
-  drawerId: string
-  label: string
-  setIsDrawerOpen(isDrawerOpen: boolean): void
-  supprimerUnCofinancement(index: number): void
-  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
-}>>
+>
+
+type MemberSelected ={
+  member : MembresGouvernancesViewModel
+  selected: boolean
+}

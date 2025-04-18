@@ -1,9 +1,18 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import { vi } from 'vitest'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
 import { expectNot } from '@/shared/testHelper'
+
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation')
+  return {
+    ...actual,
+    useParams: () => ({ codeDepartement: '75' }),
+  }
+})
 
 describe('faire une demande de subvention', () => {
   describe('étant donné que je me trouve sur le formulaire d’action', () => {

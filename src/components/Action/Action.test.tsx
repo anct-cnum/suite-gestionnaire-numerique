@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { FormEvent } from 'react'
-import { Mock } from 'vitest'
+import { Mock, vi } from 'vitest'
 
 import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
@@ -12,6 +12,30 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
+import { MembresGouvernancesViewModel } from '@/presenters/membresGouvernancesPresenter'
+
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual('next/navigation')
+  return {
+    ...actual,
+    useParams: () => ({ codeDepartement: '69' }),
+  }
+})
+
+beforeEach(() => {
+  vi.stubGlobal('fetch', vi.fn(async () =>
+    Promise.resolve({
+      json: async () =>
+        Promise.resolve([
+          { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'd0d31e48-812d-48be-b0ce-b2f023a76075' },
+          { nom: 'Bob', roles: [], uid: 'fbcd0003-a87e-4c4b-8512-47b08c8a3832' },
+        ]as Array<MembresGouvernancesViewModel>),
+    })) as any)
+})
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
 
 describe('formulaire d‘ajout d‘une action', () => {
   describe('menu latéral', () => {
@@ -198,8 +222,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonModifierLesBesoins).toBeInTheDocument()
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
       expect(nomDeLAction).toHaveValue('Structurer une filière de reconditionnement locale 1')
-      const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-      expect(porteurAction).toHaveAttribute('href', '/gouvernance/69/membre/membreFooId2')
+      const porteurAction = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
+      expect(porteurAction).toHaveAttribute('href', '/gouvernance/69/membre/membreFooId3')
       const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
       expect(optionAnnuelle).toBeChecked()
       const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })

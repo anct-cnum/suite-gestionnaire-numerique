@@ -51,6 +51,7 @@ export default defineConfig({
         statements: [90, 100],
       },
     },
+    environment: 'jsdom',
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
     reporters: ['verbose'],
