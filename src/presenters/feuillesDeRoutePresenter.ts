@@ -148,6 +148,8 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       ] : [],
     },
     description: action.description,
+    libelleEnveloppe: action.subvention?.enveloppe ?? 'Aucune enveloppe',
+    libellePorteurs: formatlibellePorteurs(action.porteurs),
     lienPourModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
     nom: action.nom,
     porteurs: action.porteurs.map(({ nom, uid }) => ({
@@ -168,6 +170,8 @@ type ActionViewModel = Readonly<{
     subventions: ReadonlyArray<Financement>
   }>
   description: string
+  libelleEnveloppe: string
+  libellePorteurs: string
   lienPourModifier: string
   nom: string
   porteurs: ReadonlyArray<HyperLink>
@@ -179,3 +183,18 @@ type Financement = Readonly<{
   libelle: string
   montant: string
 }>
+
+function formatlibellePorteurs(
+  porteurs: ReadonlyArray<{
+    nom: string
+    uid: string
+  }>
+): string {
+  if (porteurs.length === 0) {
+    return '-'
+  }
+  if (porteurs.length === 1) {
+    return 'Porteur de l’action'
+  }
+  return 'Porteurs de l’action'
+}
