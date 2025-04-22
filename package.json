@@ -43,7 +43,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
     "@gouvfr/dsfr": "^1.13.1",
-    "@next/bundle-analyzer": "^15.3.0",
+    "@next/bundle-analyzer": "^15.3.1",
     "@prisma/client": "^6.6.0",
     "@sentry/nextjs": "^9",
     "@tiptap/core": "^2.11.7",
@@ -51,10 +51,10 @@
     "@tiptap/pm": "^2.11.7",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
-    "chart.js": "^4.4.8",
+    "chart.js": "^4.4.9",
     "mjml": "^4.15.3",
-    "mongodb": "^6.15.0",
-    "next": "^15.3.0",
+    "mongodb": "^6.16.0",
+    "next": "^15.3.1",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "prisma-json-types-generator": "^3.2.3",
@@ -63,8 +63,8 @@
     "react-dom": "^19.1.0",
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
-    "sanitize-html": "^2.15.0",
-    "zod": "^3.24.2"
+    "sanitize-html": "^2.16.0",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -81,8 +81,8 @@
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19",
     "@types/sanitize-html": "^2.15.0",
-    "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/coverage-istanbul": "^3.1.1",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/coverage-istanbul": "^3.1.2",
     "@vitest/eslint-plugin": "^1.1.36",
     "depcheck": "^1.4.7",
     "dotenv-cli": "^8.0.0",
@@ -100,7 +100,7 @@
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
-    "knip": "^5.50.3",
+    "knip": "^5.50.5",
     "prettier": "^3.5.3",
     "prisma": "^6.6.0",
     "react-select-event": "^5.5.1",
@@ -111,7 +111,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.26.0",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.1.1",
+    "vitest": "^3.1.2",
     "vitest-dom": "^0.1.1"
   },
   "engines": {
