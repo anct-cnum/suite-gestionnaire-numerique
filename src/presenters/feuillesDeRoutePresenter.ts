@@ -11,10 +11,6 @@ export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): F
     feuillesDeRoute: readModel.feuillesDeRoute.map(toFeuilleDeRouteViewModel(readModel.uidGouvernance)),
     formulaire: {
       membres: [
-        {
-          label: 'Choisir',
-          value: '',
-        },
         ...readModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions.map(({ nom, uid }) => ({
           label: nom,
           value: uid,

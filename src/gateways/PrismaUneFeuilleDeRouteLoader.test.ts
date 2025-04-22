@@ -105,7 +105,7 @@ describe('récupérer une feuille de route loader', () => {
       montantCofinancements: 0,
       montantFinancementsAccordes: 0,
       nom: 'Feuille de route 1',
-      perimetre: 'Périmètre départemental',
+      perimetre: 'departemental',
       porteur: {
         nom: 'Emmaüs Connect',
         uid: uidPorteur,

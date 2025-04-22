@@ -4,6 +4,7 @@ import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
+import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 import { FeuilleDeRouteReadModel, MembreReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
@@ -11,6 +12,7 @@ import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etab
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   readonly #dataResource = prisma.gouvernanceRecord
   readonly #etablisseurSynthese: EtablisseurSyntheseGouvernance
+  readonly #membreDao = prisma.membreRecord
 
   constructor(etablisseurSynthese: EtablisseurSyntheseGouvernance) {
     this.#etablisseurSynthese = etablisseurSynthese
@@ -24,11 +26,28 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       },
     })
 
-    return this.#transform(gouvernanceRecord)
+    const membreConfirmesGouvernance = await this.#membreDao.findMany({
+      include: membreInclude,
+      where: {
+        AND: [
+          {
+            statut: {
+              equals: 'confirme',
+            },
+          },
+          {
+            gouvernanceDepartementCode: codeDepartement,
+          },
+        ],
+      },
+    })
+
+    return this.#transform(gouvernanceRecord, membreConfirmesGouvernance)
   }
 
   #transform(
-    gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>
+    gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>,
+    membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>
   ): UneGouvernanceReadModel {
     const noteDeContexte =
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -121,6 +140,10 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       noteDeContexte,
       notePrivee,
       peutVoirNotePrivee: false,
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: toMembres(membresConfirmesGouvernance)
+        .toSorted(alphaAsc('id'))
+        .toSorted(alphaAsc('nom'))
+        .map(fromMembreAvecRoles),
       syntheseMembres: {
         candidats: membres.filter(({ statut }) => statut === 'candidat').length,
         coporteurs: membres
@@ -228,6 +251,12 @@ const include = {
   relationDepartement: true,
   relationEditeurNoteDeContexte: true,
   relationEditeurNotePrivee: true,
+}
+
+function fromMembreAvecRoles(
+  { id, nom, roles }: Membre
+): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
+  return { nom, roles, uid: id }
 }
 
 type Totaux = Readonly<{

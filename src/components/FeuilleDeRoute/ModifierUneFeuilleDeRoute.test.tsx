@@ -155,49 +155,23 @@ describe('modifier une feuille de route', () => {
   function afficherUneFeuilleDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>
   ): void {
-    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
-      syntheseMembres: {
-        candidats: 0,
-        coporteurs: [
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'example@mail.com',
-              nom: 'Doe',
-              poste: 'Manager',
-              prenom: 'John',
-            },
-            feuillesDeRoute: [{
-              nom: '',
-              uid: 'feuilleDeRouteFooId2',
-            }],
-            links: {},
-            nom: 'Croix Rouge Française',
-            roles: [],
-            type: '',
-            uid: 'membre1FooId',
-          },
-          {
-            contactReferent: {
-              denomination: 'Contact référent',
-              mailContact: 'example@mail.com',
-              nom: 'Doe',
-              poste: 'Manager',
-              prenom: 'John',
-            },
-            feuillesDeRoute: [{
-              nom: 'Feuille de route 69',
-              uid: 'feuilleDeRouteFooId',
-            }],
-            links: {},
-            nom: 'La Poste',
-            roles: [],
-            type: '',
-            uid: 'membre2FooId',
-          },
-        ],
-        total: 0,
-      },
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory({ porteur:{
+      nom: 'La Poste',
+      uid: 'membre2FooId',
+    },
+    uid: 'feuilleDeRouteFooId' }),gouvernanceReadModelFactory({
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+        {
+          nom: 'Croix Rouge Française',
+          roles: ['porteur'],
+          uid: 'membre1FooId',
+        },
+        {
+          nom: 'La Poste',
+          roles: ['porteur'],
+          uid: 'membre2FooId',
+        },
+      ],
     }))
     renderComponent(<FeuilleDeRoute viewModel={viewModel} />, options)
   }

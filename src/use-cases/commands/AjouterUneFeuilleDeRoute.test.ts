@@ -66,7 +66,7 @@ describe('ajouter une feuille de route à une gouvernance', () => {
       dateDeModification: invalidDate,
       expectedFailure: 'dateDeModificationInvalide',
       intention: 'd’une date de modification invalide',
-      perimetreGeographique: 'départemental' as PerimetreGeographiqueTypes,
+      perimetreGeographique: 'departemental' as PerimetreGeographiqueTypes,
     },
     {
       dateDeModification: epochTime,
