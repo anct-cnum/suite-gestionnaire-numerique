@@ -133,6 +133,7 @@ export function gouvernanceReadModelFactory(
       texte: 'lrutrum metus sodales semper velit habitant dignissim lacus suspendisse magna.',
     },
     peutVoirNotePrivee: true,
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions:[],
     syntheseMembres: {
       candidats: 0,
       coporteurs: [
@@ -465,7 +466,7 @@ export function feuilleDeRouteReadModelFactory(
     montantCofinancements: 90_000,
     montantFinancementsAccordes: 30_000,
     nom: 'Feuille de route FNE',
-    perimetre: 'Périmètre départemental',
+    perimetre: 'departemental',
     porteur: {
       nom: 'Orange',
       uid: 'membreFooId',

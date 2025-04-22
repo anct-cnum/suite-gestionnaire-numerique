@@ -94,7 +94,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
       montantCofinancements: syntheseFeuilleDeRoute.coFinancement,
       montantFinancementsAccordes: syntheseFeuilleDeRoute.financementAccorde,
       nom: feuilleDeRouteRecord.nom,
-      perimetre: 'Périmètre départemental',
+      perimetre: feuilleDeRouteRecord.perimetreGeographique ?? 'departemental',
       porteur: feuilleDeRouteRecord.relationMembre
         ? fromMembre(toMembre(feuilleDeRouteRecord.relationMembre))
         : undefined,

@@ -26,24 +26,24 @@ export function feuilleDeRoutePresenter(
       nom: readModel.document.nom,
     },
     formulaire: {
-      membres: gouvernanceReadModel.syntheseMembres.coporteurs.map((membre) => ({
-        isSelected: membre.feuillesDeRoute.some((feuilleDeRoute) => feuilleDeRoute.uid === readModel.uid),
+      membres: gouvernanceReadModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions.map((membre) => ({
+        isSelected: readModel.porteur?.uid === membre.uid,
         label: membre.nom,
         value: membre.uid,
       })),
       perimetres: [
         {
-          isSelected: false,
+          isSelected: readModel.perimetre === 'regional',
           label: 'Régional',
           value: 'regional',
         },
         {
-          isSelected: true,
+          isSelected: readModel.perimetre === 'departemental',
           label: 'Départemental',
           value: 'departemental',
         },
         {
-          isSelected: false,
+          isSelected: readModel.perimetre === 'groupementsDeCommunes',
           label: 'EPCI ou groupement de communes',
           value: 'groupementsDeCommunes',
         },
