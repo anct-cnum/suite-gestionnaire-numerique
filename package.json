@@ -106,7 +106,7 @@
     "react-select-event": "^5.5.1",
     "stylelint": "^16.18.0",
     "stylelint-config-standard": "^38.0.0",
-    "stylelint-order": "^6.0.4",
+    "stylelint-order": "^7.0.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.26.0",
