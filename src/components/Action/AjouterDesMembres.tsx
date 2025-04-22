@@ -1,11 +1,14 @@
+'use client'
+
 import Link from 'next/link'
-import { ReactElement, RefObject, useId, useRef, useState } from 'react'
+import { ReactElement, RefObject, useContext, useId, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Badge from '../shared/Badge/Badge'
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { Beneficiaires, Porteurs } from '@/presenters/actionPresenter'
 
@@ -22,6 +25,11 @@ export default function AjouterDesMembres({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const labelId = useId()
   const fieldset = useRef<HTMLFieldSetElement>(null)
+
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const coporteursPotentiels = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+
+  console.log('===============>coporteurs', coporteursPotentiels)
   const hasMembres = membres.filter((membre) => Boolean(membre.isSelected)).length > 0
 
   return (
@@ -80,7 +88,7 @@ export default function AjouterDesMembres({
             {labelPluriel}
           </legend>
           {
-            membres.map((membre) => (
+            coporteursPotentiels.map((membre) => (
               <Checkbox
                 id={membre.value}
                 isSelected={membre.isSelected}
