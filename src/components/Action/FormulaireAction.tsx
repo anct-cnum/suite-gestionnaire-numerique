@@ -14,6 +14,7 @@ import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
@@ -47,6 +48,10 @@ export function FormulaireAction({
     ...action.besoins.formationsProfessionnels,
     ...action.besoins.outillages,
   ]
+
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
   function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
@@ -198,6 +203,7 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="porteurs"
               drawerId="drawerAjouterDesPorteursId"
+              enregistrer={enregistrerPorteurs}
               labelPluriel="porteurs"
               membres={action.porteurs}
               titre="Ajouter le(s) porteur(s)"
@@ -439,6 +445,7 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
+              enregistrer={enregistrerBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
               membres={action.beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
@@ -474,10 +481,59 @@ export function FormulaireAction({
     return () => {
       // istanbul ignore next @preserve
       if (fieldset.current) {
+        setPorteurs([])
         fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
           input.checked = false
         })
       }
+    }
+  }
+
+  function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (!fieldset.current) {return}
+
+      const members = Array.from(fieldset.current.querySelectorAll('input')).map(
+        (input: HTMLInputElement) => {
+          return {
+            member : {
+              uid: input.value,
+            },
+            selected: input.checked,
+          }
+        }
+      )
+      const selectedMemberIds = members
+        .filter((member) => member.selected)
+        .map(memberSelected => memberSelected.member.uid)
+      const newPorteurs = membresGouvernanceConfirme
+        .filter(coporteurPotentiel => selectedMemberIds.includes(coporteurPotentiel.id))
+      setPorteurs(newPorteurs)
+    }
+  }
+
+  function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (!fieldset.current) {return}
+
+      const members = Array.from(fieldset.current.querySelectorAll('input')).map(
+        (input: HTMLInputElement) => {
+          return {
+            member : {
+              uid: input.id,
+            },
+            selected: input.checked,
+          }
+        }
+      )
+      const selectedMemberIds = members
+        .filter((member) => member.selected)
+        .map(memberSelected => memberSelected.member.uid)
+      const newBenificiaire = membresGouvernanceConfirme
+        .filter(membreGouvernanceConfirme => selectedMemberIds.includes(membreGouvernanceConfirme.id))
+      setBeneficiaires(newBenificiaire)
     }
   }
 }

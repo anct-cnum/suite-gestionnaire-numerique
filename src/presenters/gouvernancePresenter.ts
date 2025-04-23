@@ -22,12 +22,14 @@ export function gouvernancePresenter(
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
     porteursPotentielsNouvellesFeuillesDeRouteOuActions:
-      gouvernanceReadModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions.map(porteur => ({
-        label: porteur.nom,
-        link: membreLink(gouvernanceReadModel.uid, porteur.uid),
-        roles: porteur.roles,
-        value: porteur.uid,
-      })),
+      gouvernanceReadModel
+        .porteursPotentielsNouvellesFeuillesDeRouteOuActions
+        .map(porteur => ({
+          id: porteur.uid,
+          link: membreLink(gouvernanceReadModel.uid, porteur.uid),
+          nom: porteur.nom,
+          roles: porteur.roles.map( role=> toRoleViewModel(role)),
+        } as PorteurPotentielViewModel)),
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
@@ -55,6 +57,13 @@ export function gouvernancePresenter(
   }
 }
 
+export type  PorteurPotentielViewModel = Readonly<{
+  id:string
+  link: string
+  nom: string
+  roles: Array<RoleViewModel>
+}>
+
 export type GouvernanceViewModel = Readonly<{
   comiteARemplir: ComiteViewModel
   comites?: ReadonlyArray<ComiteResumeViewModel>
@@ -69,7 +78,7 @@ export type GouvernanceViewModel = Readonly<{
     texte: string
   }>
   peutVoirNotePrivee: boolean
-  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<any>
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<PorteurPotentielViewModel>
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>

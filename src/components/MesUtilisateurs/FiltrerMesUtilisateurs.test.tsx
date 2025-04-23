@@ -125,7 +125,7 @@ describe('filtrer mes utilisateurs', () => {
   })
 
   describe('quand je filtre', () => {
-    it('sur les utilisateurs activés alors je n’affiche qu’eux', () => {
+    it('[URL] sur les utilisateurs activés alors je n’affiche qu’eux', () => {
       // GIVEN
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
@@ -150,7 +150,7 @@ describe('filtrer mes utilisateurs', () => {
       expect(drawer).not.toBeVisible()
     })
 
-    it('sur certains rôles alors je n’affiche qu’eux', () => {
+    it('[URL] sur certains rôles alors je n’affiche qu’eux', () => {
       // GIVEN
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
@@ -174,7 +174,7 @@ describe('filtrer mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
     })
 
-    it('sur un département alors je n’affiche qu’eux', async () => {
+    it('[URL] sur un département alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
@@ -197,7 +197,7 @@ describe('filtrer mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeDepartement=978')
     })
 
-    it('sur une région alors je n’affiche qu’eux', async () => {
+    it('[URL] sur une région alors je n’affiche qu’eux', async () => {
       // GIVEN
       const spiedRouterPush = vi.fn<() => void>()
       afficherMesUtilisateurs({
@@ -220,7 +220,7 @@ describe('filtrer mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?codeRegion=93')
     })
 
-    it('sur une structure alors je n’affiche que les utilisateurs liés à cette structure', async () => {
+    it('[URL] sur une structure alors je n’affiche que les utilisateurs liés à cette structure', async () => {
       // GIVEN
       vi.stubGlobal('fetch', vi.fn(structuresFetch))
       const spiedRouterPush = vi.fn<() => void>()
@@ -246,7 +246,7 @@ describe('filtrer mes utilisateurs', () => {
       expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?structure=14')
     })
 
-    describe('sur une zone géographique et une structure', () => {
+    describe('[URL] sur une zone géographique et une structure', () => {
       it.each([
         {
           desc: 'sur une région et une structure de cette région',

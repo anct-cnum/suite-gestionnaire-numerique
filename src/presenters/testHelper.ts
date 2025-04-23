@@ -76,6 +76,7 @@ export function gouvernanceViewModelFactory(
       membres: '/',
     },
     peutVoirNotePrivee: true,
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
     sectionFeuillesDeRoute: {
       budgetTotalCumule: '',
       feuillesDeRoute: [],
@@ -110,24 +111,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
   return {
     anneeDeDebut: '2025',
     anneeDeFin: '2026',
-    beneficiaires: [
-      {
-        color: 'info',
-        isSelected: true,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId3',
-        statut: 'Co-porteur',
-        value: 'membreFooId3',
-      },
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId4',
-        statut: 'Co-porteur',
-        value: 'membreFooId4',
-      },
-    ],
+    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -220,22 +204,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     nom: 'Structurer une filière de reconditionnement locale 1',
     nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId1',
-        statut: 'Co-porteur',
-        value: 'membreFooId1',
-      },
-      {
-        color: 'info',
-        isSelected: true,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId2',
-        statut: 'Co-porteur',
-        value: 'membreFooId2',
-      },
+
     ],
     statut: {
       background: 'pink',

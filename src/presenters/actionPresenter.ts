@@ -1,7 +1,6 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
-import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
@@ -159,22 +158,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
     nom: 'Action test',
     nomFeuilleDeRoute: 'Feuille de route 69',
     porteurs: [
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId1',
-        statut: 'Co-porteur',
-        value: 'membreFooId1',
-      },
-      {
-        color: 'info',
-        isSelected: true,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId2',
-        statut: 'Co-porteur',
-        value: 'membreFooId2',
-      },
+
     ],
     statut: actionStatutViewModelByStatut.deposee,
     temporalite: 'annuelle',
@@ -191,7 +175,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
 export type ActionViewModel = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
-  beneficiaires: Beneficiaires
+  beneficiaires: Array<PorteurPotentielViewModel>
   besoins: Readonly<{
     financements: Besoins
     formations: Besoins
@@ -210,7 +194,7 @@ export type ActionViewModel = Readonly<{
   lienPourModifier: string
   nom: string
   nomFeuilleDeRoute: string
-  porteurs: Porteurs
+  porteurs: Array<PorteurPotentielViewModel>
   statut: ActionStatutViewModel
   temporalite: 'annuelle' | 'pluriannuelle'
   totaux: Readonly<{
@@ -226,24 +210,7 @@ export function actionARemplir(action: UneActionReadModel): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
-    beneficiaires: [
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId3',
-        statut: 'Co-porteur',
-        value: 'membreFooId3',
-      },
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId4',
-        statut: 'Co-porteur',
-        value: 'membreFooId4',
-      },
-    ],
+    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -333,24 +300,7 @@ export function actionARemplir(action: UneActionReadModel): ActionViewModel {
     lienPourModifier: '',
     nom: '',
     nomFeuilleDeRoute: 'Feuille de route 69',
-    porteurs: [
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId1',
-        statut: 'Co-porteur',
-        value: 'membreFooId1',
-      },
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId2',
-        statut: 'Co-porteur',
-        value: 'membreFooId2',
-      },
-    ],
+    porteurs: [],
     statut: {
       background: 'blue',
       icon: '',
@@ -370,6 +320,8 @@ export function actionARemplir(action: UneActionReadModel): ActionViewModel {
 
 export type BesoinsPotentielle = LabelValue<BesoinsPossible>
 
+export type Besoins = ReadonlyArray<LabelValue>
+
 export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
   color: 'error' | 'info' | 'new' | 'success' | 'warning'
   lien: string
@@ -381,8 +333,6 @@ export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
   lien: string
   statut: string
 }>>
-
-export type Besoins = ReadonlyArray<BesoinsPotentielle>
 
 function checkHasBesoins(besoins: {
   financements: Besoins

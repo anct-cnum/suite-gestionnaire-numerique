@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Tag({ children, href }: Props): ReactElement {
+export default function Tag({ children, href, target = '_self' }: Props): ReactElement {
   return (
     <Link
       className="fr-tag"
       href={href}
+      target={target}
     >
       {children}
     </Link>
@@ -14,4 +15,5 @@ export default function Tag({ children, href }: Props): ReactElement {
 
 type Props = PropsWithChildren<Readonly<{
   href: string
+  target?: string
 }>>

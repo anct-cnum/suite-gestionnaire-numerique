@@ -8,9 +8,14 @@ import MenuLateral from './MenuLateral'
 import ModifierUneAction from './ModifierUneAction'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
+import { ActionViewModel } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
+// eslint-disable-next-line import/no-restricted-paths
+import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+// eslint-disable-next-line import/no-restricted-paths
+import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('formulaire d‘ajout d‘une action', () => {
@@ -190,7 +195,17 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque j‘ouvre le formulaire de modification d‘une action, alors je vois le contenu de l‘action', () => {
       // WHEN
-      afficherFormulaireDeModificationAction()
+      afficherFormulaireDeModificationAction(undefined, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  } as MembreAvecRoleDansLaGouvernance,
+          { link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      },{
+        beneficiaires: [
+          { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
+          { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
+        ],
+      })
 
       // THEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
@@ -514,7 +529,9 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
 }
 
 export function afficherFormulaireDeModificationAction(
-  modifierUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>()
+  modifierUneActionAction: Mock = vi.fn<() => Promise<ReadonlyArray<string>>>(),
+  override: Partial<UneGouvernanceReadModel> = {},
+  overrides: Partial<ActionViewModel> = {}
 ): void {
   const gouvernanceViewModel = gouvernancePresenter(
     gouvernanceReadModelFactory({
@@ -540,12 +557,13 @@ export function afficherFormulaireDeModificationAction(
         ],
         total: 1,
       },
+      ...override,
     }),
     epochTime
   )
   renderComponent(
     <ModifierUneAction
-      action={actionViewModelFactory()}
+      action={actionViewModelFactory(overrides)}
     />,
     { modifierUneActionAction },
     gouvernanceViewModel

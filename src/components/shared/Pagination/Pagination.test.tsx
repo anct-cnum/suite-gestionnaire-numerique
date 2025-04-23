@@ -3,8 +3,8 @@ import { screen, within } from '@testing-library/react'
 import Pagination from './Pagination'
 import { renderComponent } from '@/components/testHelper'
 
-describe('pagination', () => {
-  it('quand je suis sur la première page d’une page (< ① >)', () => {
+describe('[URL] pagination', () => {
+  it('[URL] quand je suis sur la première page d’une page (< ① >)', () => {
     // WHEN
     renderComponent(
       <Pagination
@@ -26,7 +26,7 @@ describe('pagination', () => {
     expect(dernierePage).toHaveAttribute('href', 'http://example.com/mes-utilisateurs?page=0')
   })
 
-  it('quand je suis sur la première page de six pages (< ① 2 3 4 5 >)', () => {
+  it('[URL] quand je suis sur la première page de six pages (< ① 2 3 4 5 >)', () => {
     // WHEN
     renderComponent(
       <Pagination
@@ -56,7 +56,7 @@ describe('pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 5')
   })
 
-  it('quand je suis sur la deuxième page de six pages (< 1 ② 3 4 5 >)', () => {
+  it('[URL] quand je suis sur la deuxième page de six pages (< 1 ② 3 4 5 >)', () => {
     // GIVEN
     const searchParams = new URLSearchParams({ page: '1' })
 
@@ -90,7 +90,7 @@ describe('pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 5')
   })
 
-  it('quand je suis sur la quatrième page de huit pages (< 2 3 ④ 5 6 >)', () => {
+  it('[URL] quand je suis sur la quatrième page de huit pages (< 2 3 ④ 5 6 >)', () => {
     // GIVEN
     const searchParams = new URLSearchParams({ page: '3' })
 
@@ -124,7 +124,7 @@ describe('pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 6')
   })
 
-  it('quand je suis sur la cinquième page de six pages (< 2 3 4 ⑤ 6 >)', () => {
+  it('[URL] quand je suis sur la cinquième page de six pages (< 2 3 4 ⑤ 6 >)', () => {
     // GIVEN
     const searchParams = new URLSearchParams({ page: '4' })
 
@@ -158,7 +158,7 @@ describe('pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 6')
   })
 
-  it('quand je suis sur la 320 page de 323 pages (< 318 319 ③②⓪ 321 322 >)', () => {
+  it('[URL] quand je suis sur la 320 page de 323 pages (< 318 319 ③②⓪ 321 322 >)', () => {
     // GIVEN
     const searchParams = new URLSearchParams({ page: '319' })
 
@@ -192,7 +192,7 @@ describe('pagination', () => {
     expect(page5).toHaveAttribute('title', 'Page 322')
   })
 
-  it('quand je suis sur une page quelconque et avec un autre paramètre dans l’url', () => {
+  it('[URL] quand je suis sur une page quelconque et avec un autre paramètre dans l’url', () => {
     // GIVEN
     const searchParams = new URLSearchParams({ fakeParam: 'fakeValue', page: '3' })
 
