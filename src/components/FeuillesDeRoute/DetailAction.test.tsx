@@ -51,8 +51,8 @@ describe('détail d’une action', () => {
       expect(budgetLigne1Gauche).toBeInTheDocument()
       const budgetLigne1Droite = within(budgetDefinitions[0]).getByText('70 000 €')
       expect(budgetLigne1Droite).toBeInTheDocument()
-      const nomDeLenveloppeDeFinancementAction1 = screen.getAllByText('Financement : Ingénierie France Numérique Ensemble')[0]
-      expect(nomDeLenveloppeDeFinancementAction1).toBeInTheDocument()
+      const nomDeLEnveloppeDeFinancementAction1 = screen.getAllByText('Financement : Ingénierie France Numérique Ensemble')[0]
+      expect(nomDeLEnveloppeDeFinancementAction1).toBeInTheDocument()
       const budgetLigne2Gauche = within(budgetTerms[1]).getByText('Subvention de prestation')
       expect(budgetLigne2Gauche).toBeInTheDocument()
       const budgetLigne2Droite = within(budgetDefinitions[1]).getByText('20 000 €')
