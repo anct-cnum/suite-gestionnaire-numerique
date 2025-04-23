@@ -92,7 +92,10 @@ export default function AjouterDesBesoins({
             <button
               aria-controls={drawerId}
               className="fr-btn"
-              onClick={enregistrerBesoins(fieldset)}
+              onClick={() => {
+                enregistrerBesoins(fieldset)
+                setIsDrawerOpen(false)
+              }}
               type="button"
             >
               Enregistrer
@@ -138,7 +141,7 @@ function Fieldset(
 }
 
 type Props = Readonly<{
-  enregistrerBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
+  enregistrerBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void
   financements: ActionViewModel['besoins']['financements']
   formations: ActionViewModel['besoins']['formations']
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']

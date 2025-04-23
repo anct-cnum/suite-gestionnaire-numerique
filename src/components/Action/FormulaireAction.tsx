@@ -49,25 +49,22 @@ export function FormulaireAction({
   ]
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
-  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return () => {
-      let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
-
-      // istanbul ignore next @preserve
-      if (fieldset.current) {
-        fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
-          if (input.checked) {
-            besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
-          }
-        })
-        const action = actionARemplir({ besoins: besoinsSelectionner })
-        setBesoinsSelected([
-          ...action.besoins.financements,
-          ...action.besoins.formations,
-          ...action.besoins.formationsProfessionnels,
-          ...action.besoins.outillages,
-        ])
-      }
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
+    let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
+    // istanbul ignore next @preserve
+    if (fieldset.current) {
+      fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+        if (input.checked) {
+          besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
+        }
+      })
+      const action = actionARemplir({ besoins: besoinsSelectionner })
+      setBesoinsSelected([
+        ...action.besoins.financements,
+        ...action.besoins.formations,
+        ...action.besoins.formationsProfessionnels,
+        ...action.besoins.outillages,
+      ])
     }
   }
 

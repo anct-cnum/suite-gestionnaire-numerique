@@ -260,10 +260,21 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     anneeDeDebut: '2025',
     beneficiaires: [],
     besoins: {
-      financements: [],
+      financements: [
+        {
+          isSelected: false,
+          label: 'Structurer un fond local pour l’inclusion numérique',
+          value: 'structurer_fond_local',
+        },
+        {
+          isSelected: false,
+          label: 'Monter des dossiers de subvention complexes',
+          value: 'monter_dossier_subvention',
+        },
+      ],
       formations: [
         {
-          isSelected: true,
+          isSelected: false,
           label: 'Établir un diagnostic territorial',
           value: 'etablir_diagnostic_territorial',
         },
