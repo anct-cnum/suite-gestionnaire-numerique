@@ -42,7 +42,6 @@ describe('détail d’une action', () => {
       const lirePlus = screen.getByRole('button', { name: 'Lire plus' })
       expect(lirePlus).toHaveAttribute('type', 'button')
       expect(lirePlus).toHaveClass('fr-icon-arrow-down-s-line')
-
       const budget = within(drawer).getByRole('list', { name: 'Budget prévisionnel' })
       const budgetTerms = within(budget).getAllByRole('term')
       const budgetDefinitions = within(budget).getAllByRole('definition')
@@ -52,6 +51,8 @@ describe('détail d’une action', () => {
       expect(budgetLigne1Gauche).toBeInTheDocument()
       const budgetLigne1Droite = within(budgetDefinitions[0]).getByText('70 000 €')
       expect(budgetLigne1Droite).toBeInTheDocument()
+      const nomDeLEnveloppeDeFinancementAction1 = screen.getAllByText('Financement : Ingénierie France Numérique Ensemble')[0]
+      expect(nomDeLEnveloppeDeFinancementAction1).toBeInTheDocument()
       const budgetLigne2Gauche = within(budgetTerms[1]).getByText('Subvention de prestation')
       expect(budgetLigne2Gauche).toBeInTheDocument()
       const budgetLigne2Droite = within(budgetDefinitions[1]).getByText('20 000 €')
@@ -100,10 +101,29 @@ describe('détail d’une action', () => {
       expect(fermer).toHaveAttribute('aria-controls', 'drawerActionIdfeuilleDeRouteFooId1')
       expect(drawer).not.toBeVisible()
     })
+
+    it('si l‘action n’a pas de porteurs, alors un tiret est affiché à la place du texte "porteurs de l‘action"', () => {
+      // GIVEN
+      afficherUneFeuilleDeRouteActionSansPorteur()
+
+      // WHEN
+      jOuvreUneActionSansPorteurs()
+
+      // THEN
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 7' })
+      const porteurLabel = within(drawer).queryByText('Porteur de l’action')
+      expect(porteurLabel).not.toBeInTheDocument()
+      const tiret = within(drawer).getByText('-')
+      expect(tiret).toBeInTheDocument()
+    })
   })
 
   function jOuvreUneAction(): void {
     presserLeBouton('Structurer une filière de reconditionnement locale 1')
+  }
+
+  function jOuvreUneActionSansPorteurs(): void {
+    presserLeBouton('Structurer une filière de reconditionnement locale 7')
   }
 
   function jeFermeLAction(): HTMLElement {
@@ -119,6 +139,24 @@ describe('détail d’une action', () => {
   function afficherLesFeuillesDeRoute(
     options?: Partial<Parameters<typeof renderComponent>[1]>,
     feuillesDeRouteReadModel = feuillesDeRouteReadModelFactory()
+  ): void {
+    const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
+    renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)
+  }
+
+  function afficherUneFeuilleDeRouteActionSansPorteur(
+    options?: Partial<Parameters<typeof renderComponent>[1]>,
+    feuillesDeRouteReadModel = feuillesDeRouteReadModelFactory({
+      feuillesDeRoute: [{
+        ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0],
+        actions: [{
+          ...feuillesDeRouteReadModelFactory().feuillesDeRoute[0]?.actions[0],
+          nom: 'Structurer une filière de reconditionnement locale 7',
+          porteurs: [],
+        }],
+        uid: 'feuilleDeRouteFooId1',
+      }],
+    })
   ): void {
     const feuillesDeRouteViewModel = feuillesDeRoutePresenter(feuillesDeRouteReadModel)
     renderComponent(<FeuillesDeRoute feuillesDeRouteViewModel={feuillesDeRouteViewModel} />, options)

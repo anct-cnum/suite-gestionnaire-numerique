@@ -37,7 +37,7 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
         ))}
       </ul>
       <div className="color-grey fr-mt-2w">
-        Porteur de l’action
+        {action.libellePorteurs}
       </div>
       {
         action.porteurs.map((porteur) => (
@@ -66,31 +66,39 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
             {action.budgetPrevisionnel.global.montant}
           </dd>
         </div>
-        {action.budgetPrevisionnel.subventions.map((subvention) => (
-          <div
-            className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w`}
-            key={subvention.libelle}
-          >
-            <dt>
-              {subvention.libelle}
-            </dt>
-            <dd>
-              {subvention.montant}
-            </dd>
-          </div>))}
-        {action.budgetPrevisionnel.coFinancements.map((coFinancement) => (
-          <div
-            className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-            key={coFinancement.libelle}
-          >
-            <dt>
-              {coFinancement.libelle}
-            </dt>
-            <dd>
-              {coFinancement.montant}
-            </dd>
-          </div>
-        ))}
+        <div>
+          <p className="fr-mb-1w">
+            Financement :
+            {' '}
+            {action.libelleEnveloppe}
+          </p>
+          {action.budgetPrevisionnel.subventions.map((subvention) => (
+            <div
+              className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w`}
+              key={subvention.libelle}
+            >
+              <dt>
+                {subvention.libelle}
+              </dt>
+              <dd>
+                {subvention.montant}
+              </dd>
+            </div>
+          ))}
+          {action.budgetPrevisionnel.coFinancements.map((coFinancement) => (
+            <div
+              className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
+              key={coFinancement.libelle}
+            >
+              <dt>
+                {coFinancement.libelle}
+              </dt>
+              <dd>
+                {coFinancement.montant}
+              </dd>
+            </div>
+          ))}
+        </div>
       </dl>
       <div className="color-grey fr-mt-2w">
         Bénéficiaires des subventions
