@@ -465,7 +465,10 @@ export function FormulaireAction({
               beneficiaires
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
-                    <Tag href={beneficiaire.link}>
+                    <Tag
+                      href={beneficiaire.link} 
+                      target="_blank"
+                    >
                       {beneficiaire.nom}
                     </Tag>
                   </Fragment>
@@ -525,7 +528,7 @@ export function FormulaireAction({
         (input: HTMLInputElement) => {
           return {
             member : {
-              uid: input.id,
+              uid: input.value,
             },
             selected: input.checked,
           }

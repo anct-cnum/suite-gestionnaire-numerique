@@ -23,6 +23,49 @@ describe('ajout des bénéficiaires', () => {
     expect(bouton).toHaveAttribute('type', 'button')
   })
 
+  it('quand il y un bénéficiaire alors tag du bénéficiaire s’affiche sur l action', () => {
+    // GIVEN
+    afficherLeFormulaireAction({
+      beneficiaires: [
+      ],
+    }, {
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+        { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
+        { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
+      ],
+    })
+  
+    // WHEN
+    presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
+  
+    // THEN
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
+    expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
+    const titre = screen.getByRole('heading', { level: 1, name: 'Ajouter le(s) bénéficiaire(s)' })
+    expect(titre).toBeInTheDocument()
+    const sousTitre = screen.getByText(matchWithoutMarkup('Sélectionnez un ou plusieurs bénéficiaires des fonds pour cette action. Si vous ne trouvez pas la structure dans cette liste, invitez-la à rejoindre la gouvernance en cliquant ici.'), { selector: 'p' })
+    expect(sousTitre).toBeInTheDocument()
+    const lien = screen.getByRole('link', { name: 'cliquant ici' })
+    expect(lien).toHaveAttribute('href', '/gouvernance/11')
+  
+    const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
+  
+    const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
+    expect(membre1).not.toBeRequired()
+    const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
+    expect(membre2).not.toBeRequired()
+  
+    fireEvent.click(membre1)
+    const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
+    expect(enregistrer).toBeEnabled()
+    expect(enregistrer).toHaveAttribute('aria-controls', 'drawerAjouterDesBeneficiairesId')
+    expect(enregistrer).toHaveAttribute('type', 'button')
+    fireEvent.click(enregistrer)
+    const beneficiaireTag = screen.getByRole('link', { name: 'Rhône (69) Co-porteur' })
+    expect(beneficiaireTag).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/rhone_69_id')
+    expect(beneficiaireTag).toHaveAttribute('target', '_blank')
+  })
+
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
       // GIVEN
