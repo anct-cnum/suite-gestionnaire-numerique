@@ -1,4 +1,5 @@
 // Stryker disable all
+import { Action } from './Action'
 import { Comite } from './Comite'
 import { Departement, DepartementState } from './Departement'
 import { FeuilleDeRoute } from './FeuilleDeRoute'
@@ -84,6 +85,32 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
     uidPorteur: 'porteurFooId',
     ...override,
   }) as FeuilleDeRoute
+}
+
+export function actionFactory(override?: Partial<Parameters<typeof Action.create>[0]>): Action {
+  return Action.create({
+    besoins: ['besoin 1'],
+    budgetGlobal: '10000',
+    contexte: 'Un contexte',
+    dateDeCreation: epochTime,
+    dateDeDebut: epochTime,
+    dateDeFin: epochTime,
+    dateDeModification: epochTime,
+    description: 'Description de test',
+    nom: 'Feuille de route 69',
+    uid: {
+      value: 'feuilleDeRouteFooId',
+    },
+    uidEditeur: {
+      email: 'martin.tartempion@example.net',
+      value: 'userFooId',
+    },
+    uidFeuilleDeRoute: {
+      value: 'feuilleDeRouteFooId',
+    },
+    uidPorteur: 'porteurFooId',
+    ...override,
+  }) as Action
 }
 
 export function membrePotentielFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {
