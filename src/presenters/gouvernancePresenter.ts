@@ -2,6 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { HyperLink } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
+import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullishOrEmpty } from '@/shared/lang'
@@ -21,6 +22,15 @@ export function gouvernancePresenter(
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
     peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
+    porteursPotentielsNouvellesFeuillesDeRouteOuActions:
+      gouvernanceReadModel
+        .porteursPotentielsNouvellesFeuillesDeRouteOuActions
+        .map(porteur => ({
+          id: porteur.uid,
+          link: membreLink(gouvernanceReadModel.uid, porteur.uid),
+          nom: porteur.nom,
+          roles: porteur.roles.map( role=> toRoleViewModel(role)),
+        } as PorteurPotentielViewModel)),
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),
       ...{
@@ -62,6 +72,7 @@ export type GouvernanceViewModel = Readonly<{
     texte: string
   }>
   peutVoirNotePrivee: boolean
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<PorteurPotentielViewModel>
   sectionFeuillesDeRoute: Readonly<{
     budgetTotalCumule: string
     feuillesDeRoute: ReadonlyArray<FeuilleDeRouteViewModel>

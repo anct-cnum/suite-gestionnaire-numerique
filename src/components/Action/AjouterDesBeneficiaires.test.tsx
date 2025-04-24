@@ -3,7 +3,14 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { ActionViewModel } from '@/presenters/actionPresenter'
+import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionViewModelFactory } from '@/presenters/testHelper'
+import { epochTime } from '@/shared/testHelper'
+// eslint-disable-next-line import/no-restricted-paths
+import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+// eslint-disable-next-line import/no-restricted-paths
+import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('ajout des bénéficiaires', () => {
   it('quand il n’y a pas de bénéficiaire alors le bouton ajouter un bénéficiaire s’affiche', () => {
@@ -11,7 +18,7 @@ describe('ajout des bénéficiaires', () => {
     afficherLeFormulaireAction({ beneficiaires: [] })
 
     // THEN
-    const bouton = screen.getByRole('button', { name: 'Ajouter' })
+    const bouton = screen.getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
     expect(bouton).toBeEnabled()
     expect(bouton).toHaveAttribute('type', 'button')
   })
@@ -19,7 +26,16 @@ describe('ajout des bénéficiaires', () => {
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        beneficiaires: [
+          { id: 'rhone_69_id', link: '', nom: 'Rhône (69) Co-porteur', roles: [] },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'Rhône (69) Co-porteur', roles: [], uid: 'rhone_69_id' } as MembreAvecRoleDansLaGouvernance,
+          { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
@@ -52,7 +68,15 @@ describe('ajout des bénéficiaires', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        beneficiaires: [
+          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
@@ -66,7 +90,15 @@ describe('ajout des bénéficiaires', () => {
 
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        beneficiaires: [
+          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
@@ -87,7 +119,13 @@ describe('ajout des bénéficiaires', () => {
     return button
   }
 
-  function afficherLeFormulaireAction(overrides: Partial<ActionViewModel> = {}): void {
+  function afficherLeFormulaireAction(
+    overrides: Partial<ActionViewModel> = {}, override?: Partial<UneGouvernanceReadModel>
+  ): void {
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory(override),
+      epochTime
+    )
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory(overrides)}
@@ -99,7 +137,9 @@ describe('ajout des bénéficiaires', () => {
         validerFormulaire={vi.fn<() => Promise<void>>()}
       >
         vide
-      </FormulaireAction>
+      </FormulaireAction>,
+      undefined,
+      gouvernanceViewModel
     )
   }
 })

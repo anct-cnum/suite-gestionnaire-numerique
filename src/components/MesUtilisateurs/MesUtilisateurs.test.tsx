@@ -52,7 +52,7 @@ describe('mes utilisateurs', () => {
     expect(exporter).toHaveAttribute('type', 'button')
   })
 
-  it('étant du groupe admin quand je recherche un utilisateur par son nom alors il s’affiche dans la liste', () => {
+  it('[URL] étant du groupe admin quand je recherche un utilisateur par son nom alors il s’affiche dans la liste', () => {
     // GIVEN
     const spiedRouterPush = vi.fn<() => void>()
     afficherMesUtilisateurs(
@@ -72,7 +72,7 @@ describe('mes utilisateurs', () => {
     expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?prenomOuNomOuEmail=martin')
   })
 
-  it('étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
+  it('[URL] étant du groupe admin quand je réinitialise la recherche par nom ou adresse électronique alors les données affichées sont réinitialisées', () => {
     // GIVEN
     const spiedRouterPush = vi.fn<() => void>()
     afficherMesUtilisateurs(

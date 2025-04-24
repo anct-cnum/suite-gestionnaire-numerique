@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId, useState } from 'react'
+import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useContext, useId, useState } from 'react'
 
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
@@ -14,6 +14,7 @@ import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
@@ -30,6 +31,8 @@ export function FormulaireAction({
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
+  const [porteurs, setPorteurs] = useState(action.porteurs)
+  const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
@@ -47,6 +50,10 @@ export function FormulaireAction({
     ...action.besoins.formationsProfessionnels,
     ...action.besoins.outillages,
   ]
+
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
   function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
@@ -198,8 +205,9 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="porteurs"
               drawerId="drawerAjouterDesPorteursId"
+              enregistrer={enregistrerPorteurs}
               labelPluriel="porteurs"
-              membres={action.porteurs}
+              membres={porteurs}
               titre="Ajouter le(s) porteur(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
@@ -210,12 +218,14 @@ export function FormulaireAction({
           </p>
           <hr />
           {
-            action.porteurs
-              .filter((porteur) => Boolean(porteur.isSelected))
+            porteurs
               .map((porteur) => (
-                <Fragment key={porteur.value}>
-                  <Tag href={porteur.lien}>
-                    {porteur.label}
+                <Fragment key={porteur.id}>
+                  <Tag
+                    href={porteur.link}
+                    target="_blank"
+                  >
+                    {porteur.nom}
                   </Tag>
                 </Fragment>
               ))
@@ -439,8 +449,9 @@ export function FormulaireAction({
             <AjouterDesMembres
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
+              enregistrer={enregistrerBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
-              membres={action.beneficiaires}
+              membres={beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
@@ -451,12 +462,11 @@ export function FormulaireAction({
           </p>
           <div>
             {
-              action.beneficiaires
-                .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
+              beneficiaires
                 .map((beneficiaire) => (
-                  <Fragment key={beneficiaire.value}>
-                    <Tag href={beneficiaire.lien}>
-                      {beneficiaire.label}
+                  <Fragment key={beneficiaire.id}>
+                    <Tag href={beneficiaire.link}>
+                      {beneficiaire.nom}
                     </Tag>
                   </Fragment>
                 ))
@@ -474,10 +484,59 @@ export function FormulaireAction({
     return () => {
       // istanbul ignore next @preserve
       if (fieldset.current) {
+        setPorteurs([])
         fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
           input.checked = false
         })
       }
+    }
+  }
+
+  function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (!fieldset.current) {return}
+
+      const members = Array.from(fieldset.current.querySelectorAll('input')).map(
+        (input: HTMLInputElement) => {
+          return {
+            member : {
+              uid: input.value,
+            },
+            selected: input.checked,
+          }
+        }
+      )
+      const selectedMemberIds = members
+        .filter((member) => member.selected)
+        .map(memberSelected => memberSelected.member.uid)
+      const newPorteurs = membresGouvernanceConfirme
+        .filter(coporteurPotentiel => selectedMemberIds.includes(coporteurPotentiel.id))
+      setPorteurs(newPorteurs)
+    }
+  }
+
+  function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
+    return () => {
+      // istanbul ignore next @preserve
+      if (!fieldset.current) {return}
+
+      const members = Array.from(fieldset.current.querySelectorAll('input')).map(
+        (input: HTMLInputElement) => {
+          return {
+            member : {
+              uid: input.id,
+            },
+            selected: input.checked,
+          }
+        }
+      )
+      const selectedMemberIds = members
+        .filter((member) => member.selected)
+        .map(memberSelected => memberSelected.member.uid)
+      const newBenificiaire = membresGouvernanceConfirme
+        .filter(membreGouvernanceConfirme => selectedMemberIds.includes(membreGouvernanceConfirme.id))
+      setBeneficiaires(newBenificiaire)
     }
   }
 }

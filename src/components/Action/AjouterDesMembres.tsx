@@ -1,17 +1,22 @@
+'use client'
+
 import Link from 'next/link'
-import { ReactElement, RefObject, useId, useRef, useState } from 'react'
+import { ReactElement, RefObject, useContext, useId, useRef, useState } from 'react'
 
 import styles from './Action.module.css'
 import Badge from '../shared/Badge/Badge'
 import Checkbox from '../shared/Checkbox/Checkbox'
 import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { Beneficiaires, Porteurs } from '@/presenters/actionPresenter'
+import { RoleViewModel } from '@/presenters/shared/role'
+import { PorteurPotentielViewModel } from '@/presenters/shared/PorteurPotentiel'
 
 export default function AjouterDesMembres({
   checkboxName,
   drawerId,
+  enregistrer,
   labelPluriel,
   membres,
   titre,
@@ -22,7 +27,10 @@ export default function AjouterDesMembres({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const labelId = useId()
   const fieldset = useRef<HTMLFieldSetElement>(null)
-  const hasMembres = membres.filter((membre) => Boolean(membre.isSelected)).length > 0
+
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+  const hasMembres = membres.length > 0
 
   return (
     <>
@@ -80,20 +88,25 @@ export default function AjouterDesMembres({
             {labelPluriel}
           </legend>
           {
-            membres.map((membre) => (
+            membresGouvernanceConfirme.map((membre) => (
               <Checkbox
-                id={membre.value}
-                isSelected={membre.isSelected}
-                key={membre.value}
+                id={checkboxName+membre.id}
+                isSelected={membres.some( preSelectedMember => preSelectedMember.id === membre.id)}
+                key={checkboxName+membre.id}
                 label={checkboxName}
-                value={membre.value}
+                value={membre.id}
               >
-                <span>
-                  {membre.label}
-                </span>
-                <Badge color={membre.color}>
-                  {membre.statut}
-                </Badge>
+                {membre.nom}
+                {
+                  membre.roles.map((role: RoleViewModel) => (
+                    <Badge
+                      color={role.color}
+                      key={membre.id+ role.nom+role.color}
+                    >
+                      {role.nom}
+                    </Badge>
+                  ))
+                }
               </Checkbox>
             ))
           }
@@ -101,6 +114,7 @@ export default function AjouterDesMembres({
             <button
               aria-controls={drawerId}
               className="fr-btn"
+              onClick={enregistrer(fieldset)}
               type="button"
             >
               Enregistrer
@@ -122,8 +136,9 @@ export default function AjouterDesMembres({
 type Props = Readonly<{
   checkboxName: string
   drawerId: string
+  enregistrer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   labelPluriel: string
-  membres: Beneficiaires | Porteurs
+  membres: Array<PorteurPotentielViewModel>
   titre: string
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   urlGouvernance: string

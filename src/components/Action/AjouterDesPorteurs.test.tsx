@@ -3,15 +3,23 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { ActionViewModel } from '@/presenters/actionPresenter'
+import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionViewModelFactory } from '@/presenters/testHelper'
+import { epochTime } from '@/shared/testHelper'
+// eslint-disable-next-line import/no-restricted-paths
+import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+// eslint-disable-next-line import/no-restricted-paths
+import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 describe('ajout des porteurs', () => {
   it('quand il n’y a pas de porteur alors le bouton ajouter un porteur s’affiche', () => {
     // WHEN
-    afficherLeFormulaireAction({ porteurs: [] })
+    afficherLeFormulaireAction()
 
     // THEN
-    const bouton = screen.getByRole('button', { name: 'Ajouter' })
+    //const fieldset = screen.getByRole('group', { name: 'Les différents porteurs' })
+    const bouton = screen.getByRole('button', { description: 'Ajouter des porteurs', name: 'Ajouter' })
     expect(bouton).toBeEnabled()
     expect(bouton).toHaveAttribute('type', 'button')
   })
@@ -19,7 +27,16 @@ describe('ajout des porteurs', () => {
   describe('quand je clique sur modifier,', () => {
     it('alors le formulaire pour ajouter des porteurs s’affiche', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        porteurs: [
+          { id: 'id_Lyonnais', link: '', nom: 'CC des Monts du Lyonnais', roles: []  },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'CC des Monts du Lyonnais', roles: [], uid: 'id_Lyonnais'  },
+          { nom: 'Rhône (69)', roles: [], uid: 'id_Rhône' },
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
@@ -33,12 +50,11 @@ describe('ajout des porteurs', () => {
       expect(sousTitre).toBeInTheDocument()
       const lien = screen.getByRole('link', { name: 'cliquant ici' })
       expect(lien).toHaveAttribute('href', '/gouvernance/11')
-
       const fieldset = screen.getByRole('group', { name: 'Les différents porteurs' })
 
-      const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
+      const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69)' })
       expect(membre1).not.toBeRequired()
-      const membre2 = within(fieldset).getByRole('checkbox', { checked: true, name: 'CC des Monts du Lyonnais Co-porteur' })
+      const membre2 = within(fieldset).getByRole('checkbox', { checked: true, name: 'CC des Monts du Lyonnais' })
       expect(membre2).not.toBeRequired()
 
       const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
@@ -52,7 +68,15 @@ describe('ajout des porteurs', () => {
 
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        porteurs: [
+          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
@@ -66,7 +90,15 @@ describe('ajout des porteurs', () => {
 
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
-      afficherLeFormulaireAction()
+      afficherLeFormulaireAction({
+        porteurs: [
+          { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
+        ],
+      }, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
+        ],
+      })
 
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
@@ -87,7 +119,14 @@ describe('ajout des porteurs', () => {
     return button
   }
 
-  function afficherLeFormulaireAction(overrides: Partial<ActionViewModel> = {}): void {
+  function afficherLeFormulaireAction(
+    overrides: Partial<ActionViewModel> = {}, override?: Partial<UneGouvernanceReadModel>
+  ): void {
+    const gouvernanceViewModel = gouvernancePresenter(
+      gouvernanceReadModelFactory(override),
+      epochTime
+    )
+
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory(overrides)}
@@ -99,7 +138,9 @@ describe('ajout des porteurs', () => {
         validerFormulaire={vi.fn<() => Promise<void>>()}
       >
         vide
-      </FormulaireAction>
+      </FormulaireAction>,
+      undefined,
+      gouvernanceViewModel
     )
   }
 })
