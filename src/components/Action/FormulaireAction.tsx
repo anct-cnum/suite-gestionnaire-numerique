@@ -75,6 +75,24 @@ export function FormulaireAction({
     }
   }
 
+  function createToutEffacer<T>(setState: (value: Array<T>) => void) {
+    return (fieldset: RefObject<HTMLFieldSetElement | null>) => {
+      return () => {
+        // istanbul ignore next @preserve
+        if (fieldset.current) {
+          setState([])
+          fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+            input.checked = false
+          })
+        }
+      }
+    }
+  }
+
+  const toutEffacerBeneficiaires = createToutEffacer(setBeneficiaires)
+  const toutEffacerBesoins = createToutEffacer(setBesoinsSelected)
+  const toutEffacerPorteurs = createToutEffacer(setPorteurs)
+
   return (
     <form
       aria-label={label}
@@ -117,7 +135,7 @@ export function FormulaireAction({
               formationsProfesionnels={action.besoins.formationsProfessionnels}
               hasBesoins={action.hasBesoins}
               outillages={action.besoins.outillages}
-              toutEffacer={toutEffacer}
+              toutEffacer={toutEffacerBesoins}
             />
           </div>
           <p className="color-grey">
@@ -209,7 +227,7 @@ export function FormulaireAction({
               labelPluriel="porteurs"
               membres={porteurs}
               titre="Ajouter le(s) porteur(s)"
-              toutEffacer={toutEffacer}
+              toutEffacer={toutEffacerPorteurs}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -453,7 +471,7 @@ export function FormulaireAction({
               labelPluriel="bénéficiaires des fonds"
               membres={beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
-              toutEffacer={toutEffacer}
+              toutEffacer={toutEffacerBeneficiaires}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -465,7 +483,10 @@ export function FormulaireAction({
               beneficiaires
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
-                    <Tag href={beneficiaire.link}>
+                    <Tag
+                      href={beneficiaire.link} 
+                      target="_blank"
+                    >
                       {beneficiaire.nom}
                     </Tag>
                   </Fragment>
@@ -479,18 +500,6 @@ export function FormulaireAction({
       </div>
     </form>
   )
-
-  function toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>) {
-    return () => {
-      // istanbul ignore next @preserve
-      if (fieldset.current) {
-        setPorteurs([])
-        fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
-          input.checked = false
-        })
-      }
-    }
-  }
 
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
@@ -525,7 +534,7 @@ export function FormulaireAction({
         (input: HTMLInputElement) => {
           return {
             member : {
-              uid: input.id,
+              uid: input.value,
             },
             selected: input.checked,
           }
