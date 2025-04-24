@@ -18,7 +18,7 @@ export default function ActionAjouterController(): ReactElement {
         <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <AjouterUneAction
-            action={actionARemplir}
+            action={actionARemplir({})}
             date={date}
           />
         </div>

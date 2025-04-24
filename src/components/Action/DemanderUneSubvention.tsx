@@ -46,7 +46,7 @@ export default function DemanderUneSubvention({
     <>
       <button
         aria-controls={drawerId}
-        className="fr-btn fr-btn--icon-left fr-fi-add-line"
+        className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
         data-fr-opened="false"
         disabled={!isBudgetAction}
         onClick={() => {

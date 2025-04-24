@@ -8,6 +8,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ActionViewModel, Besoins } from '@/presenters/actionPresenter'
 
 export default function AjouterDesBesoins({
+  enregistrerBesoins,
   financements,
   formations,
   formationsProfesionnels,
@@ -91,6 +92,10 @@ export default function AjouterDesBesoins({
             <button
               aria-controls={drawerId}
               className="fr-btn"
+              onClick={() => {
+                enregistrerBesoins(fieldset)
+                setIsDrawerOpen(false)
+              }}
               type="button"
             >
               Enregistrer
@@ -136,6 +141,7 @@ function Fieldset(
 }
 
 type Props = Readonly<{
+  enregistrerBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void
   financements: ActionViewModel['besoins']['financements']
   formations: ActionViewModel['besoins']['formations']
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']

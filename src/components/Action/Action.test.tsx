@@ -86,7 +86,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(badgeEnConstruction).toBeInTheDocument()
       const titreIndicationDuBesoin = within(formulaire).getByText(matchWithoutMarkup('Besoins liés à l‘action *'), { selector: 'p' })
       expect(titreIndicationDuBesoin).toBeInTheDocument()
-      const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des besoins',name: 'Ajouter'  })
+      const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des besoins', name: 'Ajouter' })
       expect(boutonAjouter).toBeInTheDocument()
       const texteIndicationDuBesoin = within(formulaire).getByText('Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.', { selector: 'p' })
       expect(texteIndicationDuBesoin).toBeInTheDocument()
@@ -310,10 +310,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       afficherFormulaireDeCreationAction()
 
       // WHEN
-      fireEvent.click(screen.getByRole('radio', { name: 'Annuelle' }))
+      fireEvent.click(screen.getByRole('radio', { name: 'Pluriannuelle' }))
 
       // THEN
-      const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
+      const optionAnnuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
       expect(optionAnnuelle).toBeChecked()
     })
 
@@ -411,6 +411,34 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonDemanderUneSubvention).toBeEnabled()
       const boutonAjouterUnFinancement = screen.getByRole('button', { name: 'Ajouter un financement' })
       expect(boutonAjouterUnFinancement).toBeEnabled()
+    })
+
+    it('étant un utilisateur, quand je renseigne un besoin et que je enregistre alors le drawer se ferme et le(s) besoin(s) s’affiche', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction()
+
+      // WHEN
+      jOuvreLeFormulairePourAjouterDesBesoins()
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) besoin(s)' })
+      jeSelectionneUnBesoin('Établir un diagnostic territorial')
+      jeSelectionneUnBesoin('Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique')
+      jeSelectionneUnBesoin('Structurer une filière de reconditionnement locale')
+      jeSelectionneUnBesoin('Monter des dossiers de subvention complexes')
+      jEnregistre()
+
+      // THEN
+      expect(drawer).not.toBeVisible()
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const premierBesoin = within(formulaire).getByText('Établir un diagnostic territorial', { selector: 'p' })
+      expect(premierBesoin).toBeInTheDocument()
+      const deuxiemeBesoin = within(formulaire).getByText('Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique', { selector: 'p' })
+      expect(deuxiemeBesoin).toBeInTheDocument()
+      const troisiemeBesoin = within(formulaire).getByText('Structurer une filière de reconditionnement locale', { selector: 'p' })
+      expect(troisiemeBesoin).toBeInTheDocument()
+      const quatriemebesoin = within(formulaire).getByText('Monter des dossiers de subvention complexes', { selector: 'p' })
+      expect(quatriemebesoin).toBeInTheDocument()
+      const besoinNonSelectionnerOne = within(formulaire).queryByText('Structurer un fond local pour l’inclusion numérique', { selector: 'p' })
+      expect(besoinNonSelectionnerOne).not.toBeInTheDocument()
     })
   })
 })
@@ -627,4 +655,22 @@ function jeTapeLeNomDeLAction(formulaire: HTMLElement): void {
 function jeTapeLaDescriptionDeLaction(formulaire: HTMLElement): void {
   const description = within(formulaire).getByRole('textarea', { name: 'Éditeur de description de l‘action' })
   fireEvent.input(description, { target: { innerHTML: '<p>Mes notes de description de l‘action</p>' } })
+}
+
+function jOuvreLeFormulairePourAjouterDesBesoins(): void {
+  presserLeBouton('Ajouter', 'Ajouter des besoins')
+}
+
+function jEnregistre(): void {
+  presserLeBouton('Enregistrer')
+}
+
+function presserLeBouton(name: string, description?: string): HTMLElement {
+  const button = screen.getByRole('button', { description, name })
+  fireEvent.click(button)
+  return button
+}
+
+function jeSelectionneUnBesoin(name: string): void {
+  fireEvent.click(screen.getByRole('checkbox', { name }))
 }

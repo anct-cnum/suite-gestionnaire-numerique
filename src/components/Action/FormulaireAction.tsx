@@ -14,7 +14,7 @@ import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
-import { ActionViewModel } from '@/presenters/actionPresenter'
+import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -47,6 +47,26 @@ export function FormulaireAction({
     ...action.besoins.formationsProfessionnels,
     ...action.besoins.outillages,
   ]
+  const [besoinsSelected, setBesoinsSelected] = useState(besoins)
+
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
+    let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
+    // istanbul ignore next @preserve
+    if (fieldset.current) {
+      fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+        if (input.checked) {
+          besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
+        }
+      })
+      const action = actionARemplir({ besoins: besoinsSelectionner })
+      setBesoinsSelected([
+        ...action.besoins.financements,
+        ...action.besoins.formations,
+        ...action.besoins.formationsProfessionnels,
+        ...action.besoins.outillages,
+      ])
+    }
+  }
 
   return (
     <form
@@ -84,6 +104,7 @@ export function FormulaireAction({
               </span>
             </p>
             <AjouterDesBesoins
+              enregistrerBesoins={enregistrerLeOuLesBesoins}
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
@@ -96,7 +117,7 @@ export function FormulaireAction({
             Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.
           </p>
           <hr />
-          {besoins
+          {besoinsSelected
             .filter((besoin) => Boolean(besoin.isSelected))
             .map((besoin) => (
               <p
