@@ -99,7 +99,7 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     description: 'Description de test',
     nom: 'Feuille de route 69',
     uid: {
-      value: 'feuilleDeRouteFooId',
+      value: 'actionFooId',
     },
     uidEditeur: {
       email: 'martin.tartempion@example.net',

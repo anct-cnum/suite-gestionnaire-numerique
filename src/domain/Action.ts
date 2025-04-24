@@ -3,7 +3,7 @@ import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
-import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
+import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class Action extends Entity<State> {
@@ -93,12 +93,12 @@ export class Action extends Entity<State> {
       return new Action(
         new ActionUid(uid.value),
         besoins,
+        new UtilisateurUid(uidEditeur).state.value,
         nom,
         contexte,
         description,
         budgetGlobal,
-        uidFeuilleDeRoute.value,
-        new UtilisateurUid(uidEditeur),
+        new FeuilleDeRouteUid(uidFeuilleDeRoute.value),
         new MembreUid(uidPorteur),
         dateDeDebutValidee,
         dateDeFinValidee,
@@ -110,11 +110,15 @@ export class Action extends Entity<State> {
       return (error as Exception<ActionFailure>).message as ActionFailure
     }
   }
+
+  peutEtreGereePar(utilisateur: Utilisateur): boolean {
+    return utilisateur.isAdmin || utilisateur.state.role.rolesGerables.includes('Gestionnaire département')
+  }
 }
 
 export type ActionFailure = 'dateDeModificationInvalide'
 
-class ActionUid extends Uid<UidState> {
+export class ActionUid extends Uid<UidState> {
   constructor(value: string) {
     super({ value })
   }
