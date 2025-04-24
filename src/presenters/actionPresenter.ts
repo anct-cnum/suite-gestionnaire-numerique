@@ -1,8 +1,8 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
-import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
+import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
@@ -305,7 +305,7 @@ export function actionARemplir(action: UneActionReadModel): ActionViewModel {
 
 export type BesoinsPotentielle = LabelValue<BesoinsPossible>
 
-export type Besoins = ReadonlyArray<LabelValue>
+export type Besoins = ReadonlyArray<BesoinsPotentielle>
 
 function checkHasBesoins(besoins: {
   financements: Besoins
