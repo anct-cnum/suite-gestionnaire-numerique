@@ -12,7 +12,8 @@
       ],
       "scripts": {
         "install-dependencies": [
-          "curl -O https://cli-dl.scalingo.com/install && bash install --install-dir ${DEVBOX_PACKAGES_DIR}/bin"
+          "curl -O https://cli-dl.scalingo.com/install && bash install --install-dir ${DEVBOX_PACKAGES_DIR}/bin",
+          "curl -sL install.mob.sh | sh"
         ]
       }
     }
