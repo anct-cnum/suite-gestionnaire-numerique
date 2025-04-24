@@ -2,6 +2,7 @@ import { formaterEnDateFrancaise, formatForInputDate } from './shared/date'
 import { HyperLink } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
+import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { RoleViewModel, toRoleViewModel } from './shared/role'
 import { formatPluriel } from './shared/text'
 import { isNullishOrEmpty } from '@/shared/lang'
@@ -56,13 +57,6 @@ export function gouvernancePresenter(
     uid: gouvernanceReadModel.uid,
   }
 }
-
-export type  PorteurPotentielViewModel = Readonly<{
-  id:string
-  link: string
-  nom: string
-  roles: Array<RoleViewModel>
-}>
 
 export type GouvernanceViewModel = Readonly<{
   comiteARemplir: ComiteViewModel

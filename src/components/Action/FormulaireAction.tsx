@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 'use client'
 
-import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useId, useState } from 'react'
+import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useContext, useId, useState } from 'react'
 
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
@@ -31,6 +31,8 @@ export function FormulaireAction({
   const nomDeLActionId = useId()
   const [temporalite, setTemporalite] = useState('annuelle')
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
+  const [porteurs, setPorteurs] = useState(action.porteurs)
+  const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
@@ -205,7 +207,7 @@ export function FormulaireAction({
               drawerId="drawerAjouterDesPorteursId"
               enregistrer={enregistrerPorteurs}
               labelPluriel="porteurs"
-              membres={action.porteurs}
+              membres={porteurs}
               titre="Ajouter le(s) porteur(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
@@ -216,12 +218,14 @@ export function FormulaireAction({
           </p>
           <hr />
           {
-            action.porteurs
-              .filter((porteur) => Boolean(porteur.isSelected))
+            porteurs
               .map((porteur) => (
-                <Fragment key={porteur.value}>
-                  <Tag href={porteur.lien}>
-                    {porteur.label}
+                <Fragment key={porteur.id}>
+                  <Tag
+                    href={porteur.link}
+                    target="_blank"
+                  >
+                    {porteur.nom}
                   </Tag>
                 </Fragment>
               ))
@@ -447,7 +451,7 @@ export function FormulaireAction({
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={enregistrerBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
-              membres={action.beneficiaires}
+              membres={beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
@@ -458,12 +462,11 @@ export function FormulaireAction({
           </p>
           <div>
             {
-              action.beneficiaires
-                .filter((beneficiaire) => Boolean(beneficiaire.isSelected))
+              beneficiaires
                 .map((beneficiaire) => (
-                  <Fragment key={beneficiaire.value}>
-                    <Tag href={beneficiaire.lien}>
-                      {beneficiaire.label}
+                  <Fragment key={beneficiaire.id}>
+                    <Tag href={beneficiaire.link}>
+                      {beneficiaire.nom}
                     </Tag>
                   </Fragment>
                 ))

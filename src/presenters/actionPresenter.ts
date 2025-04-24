@@ -1,6 +1,8 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
+import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
+import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
@@ -33,24 +35,7 @@ export function actionPresenter(codeDepartement: string): ActionViewModel {
   return {
     anneeDeDebut: '2025',
     anneeDeFin: undefined,
-    beneficiaires: [
-      {
-        color: 'info',
-        isSelected: true,
-        label: 'Rhône (69)',
-        lien: '/gouvernance/69/membre/membreFooId3',
-        statut: 'Co-porteur',
-        value: 'membreFooId3',
-      },
-      {
-        color: 'info',
-        isSelected: false,
-        label: 'CC des Monts du Lyonnais',
-        lien: '/gouvernance/69/membre/membreFooId4',
-        statut: 'Co-porteur',
-        value: 'membreFooId4',
-      },
-    ],
+    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -321,18 +306,6 @@ export function actionARemplir(action: UneActionReadModel): ActionViewModel {
 export type BesoinsPotentielle = LabelValue<BesoinsPossible>
 
 export type Besoins = ReadonlyArray<LabelValue>
-
-export type Porteurs = ReadonlyArray<LabelValue & Readonly<{
-  color: 'error' | 'info' | 'new' | 'success' | 'warning'
-  lien: string
-  statut: string
-}>>
-
-export type Beneficiaires = ReadonlyArray<LabelValue & Readonly<{
-  color: 'error' | 'info' | 'new' | 'success' | 'warning'
-  lien: string
-  statut: string
-}>>
 
 function checkHasBesoins(besoins: {
   financements: Besoins

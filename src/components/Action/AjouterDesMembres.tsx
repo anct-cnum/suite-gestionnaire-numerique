@@ -10,8 +10,8 @@ import Drawer from '../shared/Drawer/Drawer'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { PorteurPotentielViewModel } from '@/presenters/gouvernancePresenter'
 import { RoleViewModel } from '@/presenters/shared/role'
+import { PorteurPotentielViewModel } from '@/presenters/shared/PorteurPotentiel'
 
 export default function AjouterDesMembres({
   checkboxName,
