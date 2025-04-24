@@ -1,12 +1,16 @@
+import { Prisma } from '@prisma/client'
+
 import prisma from '../../prisma/prismaClient'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
-  readonly #dataResource = prisma.feuilleDeRouteRecord
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async add(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx ?? prisma
+    const feuilleDeRouteResource = client.feuilleDeRouteRecord
 
-  async add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean> {
-    await this.#dataResource.create({
+    await feuilleDeRouteResource.create({
       data: {
         creation: feuilleDeRoute.state.dateDeCreation,
         derniereEdition: feuilleDeRoute.state.dateDeModification,
@@ -20,8 +24,9 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
-    const record = await this.#dataResource.findUniqueOrThrow({
+    const record = await  prisma.feuilleDeRouteRecord.findUniqueOrThrow({
       include: {
         relationUtilisateur: true,
       },
@@ -50,8 +55,12 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return feuilleDeRoute
   }
 
-  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
-    await this.#dataResource.update({
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async update(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<void> {
+    const client = tx ?? prisma
+    const feuilleDeRouteResource = client.feuilleDeRouteRecord
+
+    await feuilleDeRouteResource.update({
       data: {
         derniereEdition: feuilleDeRoute.state.dateDeModification,
         editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,

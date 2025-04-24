@@ -11,8 +11,8 @@ import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 
-export default function AjouterUneAction({ action, date }: Props): ReactElement {
-  const { ajouterUneActionAction } = useContext(clientContext)
+export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
+  const { ajouterUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
@@ -73,19 +73,24 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
     const messages = await ajouterUneActionAction({
       anneeDeDebut: form.get('anneeDeDebut') as string,
       anneeDeFin: form.get('anneeDeFin') as string,
+      besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
       budgetPrevisionnel: cofinancements,
       contexte: contexteContenu,
       description: descriptionContenu,
-      destinataires: [],
+      destinataires: form.getAll('porteurs') as Array<string>,
+      feuilleDeRoute: uidFeuilleDeRoute,
+      gouvernance : gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
-      porteur: '',
+      path: pathname,
+      porteurs: form.getAll('beneficiaires') as Array<string>,
       temporalite: form.get('radio-pluriannuelle') as string,
     })
-    if (messages.includes('OK')) {
+    
+    if ((messages as Array<string>).includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
     } else {
-      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+      Notification('error', { description: (messages as Array<string>).join(', '), title: 'Erreur : ' })
     }
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
@@ -105,4 +110,5 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
 type Props = Readonly<{
   action: ActionViewModel
   date: Date
+  uidFeuilleDeRoute: string
 }>

@@ -78,7 +78,8 @@ export function FormulaireAction({
     }
   }
 
-  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void {
+
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
     // istanbul ignore next @preserve
     if (fieldset.current) {
@@ -87,12 +88,12 @@ export function FormulaireAction({
           besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
         }
       })
-      const action = actionARemplir({ besoins: besoinsSelectionner })
+      const besoinsTransformes = transformBesoins(besoinsSelectionner)
       setBesoinsSelected([
-        ...action.besoins.financements,
-        ...action.besoins.formations,
-        ...action.besoins.formationsProfessionnels,
-        ...action.besoins.outillages,
+        ...besoinsTransformes.financements,
+        ...besoinsTransformes.formations,
+        ...besoinsTransformes.formationsProfessionnels,
+        ...besoinsTransformes.outillages,
       ])
     }
   }
@@ -537,12 +538,12 @@ export function FormulaireAction({
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) { return }
+      if (!fieldset.current) {return}
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member: {
+            member : {
               uid: input.value,
             },
             selected: input.checked,
@@ -561,12 +562,12 @@ export function FormulaireAction({
   function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) { return }
+      if (!fieldset.current) {return}
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member: {
+            member : {
               uid: input.value,
             },
             selected: input.checked,
