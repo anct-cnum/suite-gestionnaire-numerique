@@ -455,6 +455,38 @@ describe('formulaire d‘ajout d‘une action', () => {
       const besoinNonSelectionnerOne = within(formulaire).queryByText('Structurer un fond local pour l’inclusion numérique', { selector: 'p' })
       expect(besoinNonSelectionnerOne).not.toBeInTheDocument()
     })
+
+    it('étant un utilisateur et ayant enregistrer des besoins au préalable, quand j’efface les besoins sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction({
+
+      })
+
+      // WHEN
+      jOuvreLeFormulairePourAjouterDesBesoins()
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) besoin(s)' })
+      jeSelectionneUnBesoin('Établir un diagnostic territorial')
+      jeSelectionneUnBesoin('Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique')
+      jeSelectionneUnBesoin('Structurer une filière de reconditionnement locale')
+      jeSelectionneUnBesoin('Monter des dossiers de subvention complexes')
+      jEnregistre()
+      jOuvreLeFormulairePourAjouterDesBesoins()
+      jEfface()
+
+      // THEN
+      expect(drawer).toBeVisible()
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const premierBesoin = within(formulaire).getByText('Établir un diagnostic territorial', { selector: 'p' })
+      expect(premierBesoin).toBeInTheDocument()
+      const deuxiemeBesoin = within(formulaire).getByText('Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique', { selector: 'p' })
+      expect(deuxiemeBesoin).toBeInTheDocument()
+      const troisiemeBesoin = within(formulaire).getByText('Structurer une filière de reconditionnement locale', { selector: 'p' })
+      expect(troisiemeBesoin).toBeInTheDocument()
+      const quatriemebesoin = within(formulaire).getByText('Monter des dossiers de subvention complexes', { selector: 'p' })
+      expect(quatriemebesoin).toBeInTheDocument()
+      const besoinNonSelectionnerOne = within(formulaire).queryByText('Structurer un fond local pour l’inclusion numérique', { selector: 'p' })
+      expect(besoinNonSelectionnerOne).not.toBeInTheDocument()
+    })
   })
 })
 
@@ -681,6 +713,10 @@ function jOuvreLeFormulairePourAjouterDesBesoins(): void {
 
 function jEnregistre(): void {
   presserLeBouton('Enregistrer')
+}
+
+function jEfface(): void {
+  presserLeBouton('Tout effacer')
 }
 
 function presserLeBouton(name: string, description?: string): HTMLElement {
