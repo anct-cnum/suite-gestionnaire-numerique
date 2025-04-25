@@ -100,9 +100,7 @@ export function FormulaireAction({
     }
   }
 
-  const toutEffacerBeneficiaires = createToutEffacer()
   const toutEffacerBesoins = createToutEffacer()
-  const toutEffacerPorteurs = createToutEffacer()
 
   return (
     <form
@@ -239,7 +237,7 @@ export function FormulaireAction({
               labelPluriel="porteurs"
               membres={porteurs}
               titre="Ajouter le(s) porteur(s)"
-              toutEffacer={toutEffacerPorteurs}
+              toutEffacer={createToutEffacer()}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -483,7 +481,7 @@ export function FormulaireAction({
               labelPluriel="bénéficiaires des fonds"
               membres={beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
-              toutEffacer={toutEffacerBeneficiaires}
+              toutEffacer={createToutEffacer()}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
