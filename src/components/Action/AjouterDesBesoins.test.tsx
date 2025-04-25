@@ -107,8 +107,9 @@ describe('ajouter des besoins', () => {
       const fieldset = screen.getByRole('group', { name: 'Les différents besoins' })
       const checkboxes = within(fieldset).getAllByRole('checkbox')
       checkboxes.forEach((checkbox) => {
-        const label = fieldset.querySelector(`label[for="${checkbox.id}"]`);
-        if (besoins.includes(label?.textContent ?? '')) {
+        const input = checkbox as HTMLInputElement
+        const besoin = input.labels?.[0]?.textContent ?? ''
+        if (besoins.includes(besoin)) {
           expect(checkbox).toBeChecked()
         } else {
           expect(checkbox).not.toBeChecked()

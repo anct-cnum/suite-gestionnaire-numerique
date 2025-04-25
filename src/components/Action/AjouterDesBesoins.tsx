@@ -14,8 +14,8 @@ export default function AjouterDesBesoins({
   formationsProfesionnels,
   hasBesoins,
   outillages,
-  toutEffacer,
   resetToutEffacer,
+  toutEffacer,
 }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)

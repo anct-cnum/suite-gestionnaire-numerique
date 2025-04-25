@@ -458,9 +458,7 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur et ayant enregistrer des besoins au préalable, quand j’efface les besoins sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
       // GIVEN
-      afficherFormulaireDeCreationAction({
-
-      })
+      afficherFormulaireDeCreationAction()
 
       // WHEN
       jOuvreLeFormulairePourAjouterDesBesoins()
@@ -470,12 +468,14 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeSelectionneUnBesoin('Structurer une filière de reconditionnement locale')
       jeSelectionneUnBesoin('Monter des dossiers de subvention complexes')
       jEnregistre()
-      jOuvreLeFormulairePourAjouterDesBesoins()
+      jOuvreLeFormulairePourModifierDesBesoins()
       jEfface()
 
       // THEN
       expect(drawer).toBeVisible()
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const boutonAjouter = within(formulaire).getByRole('button', { description: 'Modifier les besoins', name: 'Modifier' })
+      expect(boutonAjouter).toBeInTheDocument()
       const premierBesoin = within(formulaire).getByText('Établir un diagnostic territorial', { selector: 'p' })
       expect(premierBesoin).toBeInTheDocument()
       const deuxiemeBesoin = within(formulaire).getByText('Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique', { selector: 'p' })
@@ -709,6 +709,10 @@ function jeTapeLaDescriptionDeLaction(formulaire: HTMLElement): void {
 
 function jOuvreLeFormulairePourAjouterDesBesoins(): void {
   presserLeBouton('Ajouter', 'Ajouter des besoins')
+}
+
+function jOuvreLeFormulairePourModifierDesBesoins(): void {
+  presserLeBouton('Modifier', 'Modifier les besoins')
 }
 
 function jEnregistre(): void {

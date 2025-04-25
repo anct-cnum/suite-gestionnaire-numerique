@@ -15,7 +15,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
+import { actionARemplir, ActionViewModel, Besoins, BesoinsPotentielle } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -91,12 +91,13 @@ export function FormulaireAction({
   function resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     // istanbul ignore next @preserve
     if (fieldset.current) {
-      const besoins: Array<BesoinsPotentielle['value']> = besoinsSelected.filter(i => i.isSelected).map(i => i.value)
+      const besoins: Array<BesoinsPotentielle['value']> = besoinsSelected
+        .filter(besoin => Boolean(besoin.isSelected))
+        .map(besoin => besoin.value)
       fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
         input.checked = besoins.includes(input.value as BesoinsPotentielle['value'])
       })
     }
-
   }
 
   const toutEffacerBeneficiaires = createToutEffacer()
@@ -143,10 +144,10 @@ export function FormulaireAction({
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
-              hasBesoins={action.hasBesoins}
+              hasBesoins={action.hasBesoins || checkHasBesoinsSelected(besoinsSelected)}
               outillages={action.besoins.outillages}
-              toutEffacer={toutEffacerBesoins}
               resetToutEffacer={resetToutEffacer}
+              toutEffacer={toutEffacerBesoins}
             />
           </div>
           <p className="color-grey">
@@ -567,6 +568,12 @@ function toLabelValue(selected: number) {
     label: `${year}`,
     value: year,
   })
+}
+
+function checkHasBesoinsSelected(besoins: Besoins): boolean {
+  return Object.values(besoins)
+    .flat()
+    .some(besoin => Boolean(besoin.isSelected))
 }
 
 type Props = PropsWithChildren<Readonly<{
