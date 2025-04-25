@@ -138,7 +138,7 @@ export function FormulaireAction({
             .filter((besoin) => Boolean(besoin.isSelected))
             .map((besoin) => (
               <p
-                className="fr-tag fr-mr-1w"
+                className="fr-tag fr-m-1v"
                 key={besoin.value}
               >
                 {besoin.label}
