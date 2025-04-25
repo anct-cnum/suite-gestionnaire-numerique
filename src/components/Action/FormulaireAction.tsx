@@ -56,7 +56,7 @@ export function FormulaireAction({
 
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
-  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
     // istanbul ignore next @preserve
     if (fieldset.current) {
@@ -75,23 +75,15 @@ export function FormulaireAction({
     }
   }
 
-  function createToutEffacer<T>(setState: (value: Array<T>) => void) {
-    return (fieldset: RefObject<HTMLFieldSetElement | null>) => {
-      return () => {
-        // istanbul ignore next @preserve
-        if (fieldset.current) {
-          setState([])
-          fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
-            input.checked = false
-          })
-        }
+  function toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void {
+    return () => {// istanbul ignore next @preserve
+      if (fieldset.current) {
+        fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+          input.checked = false
+        })
       }
     }
   }
-
-  const toutEffacerBeneficiaires = createToutEffacer(setBeneficiaires)
-  const toutEffacerBesoins = createToutEffacer(setBesoinsSelected)
-  const toutEffacerPorteurs = createToutEffacer(setPorteurs)
 
   return (
     <form
@@ -135,7 +127,7 @@ export function FormulaireAction({
               formationsProfesionnels={action.besoins.formationsProfessionnels}
               hasBesoins={action.hasBesoins}
               outillages={action.besoins.outillages}
-              toutEffacer={toutEffacerBesoins}
+              toutEffacer={toutEffacer}
             />
           </div>
           <p className="color-grey">
@@ -227,7 +219,7 @@ export function FormulaireAction({
               labelPluriel="porteurs"
               membres={porteurs}
               titre="Ajouter le(s) porteur(s)"
-              toutEffacer={toutEffacerPorteurs}
+              toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -471,7 +463,7 @@ export function FormulaireAction({
               labelPluriel="bénéficiaires des fonds"
               membres={beneficiaires}
               titre="Ajouter le(s) bénéficiaire(s)"
-              toutEffacer={toutEffacerBeneficiaires}
+              toutEffacer={toutEffacer}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -484,7 +476,7 @@ export function FormulaireAction({
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
                     <Tag
-                      href={beneficiaire.link} 
+                      href={beneficiaire.link}
                       target="_blank"
                     >
                       {beneficiaire.nom}
@@ -503,13 +495,15 @@ export function FormulaireAction({
 
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
-      // istanbul ignore next @preserve
-      if (!fieldset.current) {return}
+    // istanbul ignore next @preserve
+      if (!fieldset.current) {
+        return
+      }
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member : {
+            member: {
               uid: input.value,
             },
             selected: input.checked,
@@ -527,13 +521,15 @@ export function FormulaireAction({
 
   function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
-      // istanbul ignore next @preserve
-      if (!fieldset.current) {return}
+    // istanbul ignore next @preserve
+      if (!fieldset.current) {
+        return
+      }
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member : {
+            member: {
               uid: input.value,
             },
             selected: input.checked,
