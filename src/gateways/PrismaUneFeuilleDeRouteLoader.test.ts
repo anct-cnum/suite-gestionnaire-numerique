@@ -12,7 +12,7 @@ describe('récupérer une feuille de route loader', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('quand une feuille de route est demandée par son identifiant unique existant, alors elle est renvoyée', async () => {
+  it('quand une feuille de route est demandée par son identifiant unique sans modification, alors elle est renvoyée', async () => {
     // GIVEN
     await creerUneRegion({ code: '11' })
     await creerUnDepartement({ code: codeDepartement })
@@ -22,6 +22,7 @@ describe('récupérer une feuille de route loader', () => {
     await creerMembre(uidPorteur, 'Emmaüs Connect')
     await creerUneFeuilleDeRoute({
       creation: epochTimeMinusTwoDays,
+      derniereEdition: null,
       gouvernanceDepartementCode: codeDepartement,
       id: Number(uidFeuilleDeRoute),
       nom: 'Feuille de route 1',
@@ -101,6 +102,110 @@ describe('récupérer une feuille de route loader', () => {
         date: epochTimeMinusTwoDays,
         nom: '~',
         prenom: '~',
+      },
+      montantCofinancements: 0,
+      montantFinancementsAccordes: 0,
+      nom: 'Feuille de route 1',
+      perimetre: 'departemental',
+      porteur: {
+        nom: 'Emmaüs Connect',
+        uid: uidPorteur,
+      },
+      uid: uidFeuilleDeRoute,
+      uidGouvernance: codeDepartement,
+    })
+  })
+
+  it('quand une feuille de route est demandée par son identifiant unique avec modification, alors elle est renvoyée', async () => {
+    // GIVEN
+    await creerUneRegion({ code: '11' })
+    await creerUnDepartement({ code: codeDepartement })
+    await creerUneGouvernance({ departementCode: codeDepartement })
+    await creerUnUtilisateur({ id: uidUtilisateur })
+
+    await creerMembre(uidPorteur, 'Emmaüs Connect')
+    await creerUneFeuilleDeRoute({
+      derniereEdition: epochTimeMinusTwoDays,
+      editeurUtilisateurId: 'userFooId',
+      gouvernanceDepartementCode: codeDepartement,
+      id: Number(uidFeuilleDeRoute),
+      nom: 'Feuille de route 1',
+      noteDeContextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      pieceJointe: 'user/fooId/feuille-de-route-fake.pdf',
+      porteurId: uidPorteur,
+    })
+    await creerAction(uidAction1, true)
+    await creerAction(uidAction2, false)
+
+    await creerUneFeuilleDeRoute({
+      gouvernanceDepartementCode: codeDepartement,
+      id: 2,
+      nom: 'Feuille de route 2',
+    })
+
+    // WHEN
+    const readModel = await new PrismaUneFeuilleDeRouteLoader(dummyEtablisseurSyntheseGouvernance)
+      .get(uidFeuilleDeRoute)
+
+    // THEN
+    expect(readModel).toStrictEqual<UneFeuilleDeRouteReadModel>({
+      actions: [
+        {
+          beneficiaire: 0,
+          besoins: ['besoin 1', 'besoin 2'],
+          budgetPrevisionnel: 70_000,
+          coFinancement: {
+            financeur: 0,
+            montant: 0,
+          },
+          enveloppe: {
+            libelle: 'Formation Aidant Numérique/Aidants Connect',
+            montant: 0,
+          },
+          isEditable: false,
+          isEnveloppeFormation: true,
+          nom: 'Structurer une filière de reconditionnement locale 1',
+          porteurs: [
+            {
+              nom: 'La Poste',
+              uid: 'epci-2419272011-93',
+            },
+          ],
+          statut: 'acceptee',
+          uid: String(uidAction1),
+        },
+        {
+          beneficiaire: 0,
+          besoins: ['besoin 1', 'besoin 2'],
+          budgetPrevisionnel: 70_000,
+          coFinancement: {
+            financeur: 0,
+            montant: 0,
+          },
+          enveloppe: {
+            libelle: 'Aucune enveloppe',
+            montant: 0,
+          },
+          isEditable: true,
+          isEnveloppeFormation: false,
+          nom: 'Structurer une filière de reconditionnement locale 1',
+          porteurs: [],
+          statut: 'enCours',
+          uid: String(uidAction2),
+        },
+      ],
+      beneficiaire: 0,
+      budgetTotalActions: 0,
+      coFinanceur: 0,
+      contextualisation: '<p>un paragraphe avec du <b>bold</b>.</p><p>un paragraphe avec du <b>bold</b>.</p>',
+      document: {
+        chemin: 'user/fooId/feuille-de-route-fake.pdf',
+        nom: 'feuille-de-route-fake.pdf',
+      },
+      edition: {
+        date: epochTimeMinusTwoDays,
+        nom: 'Tartempion',
+        prenom: 'Martin'
       },
       montantCofinancements: 0,
       montantFinancementsAccordes: 0,

@@ -87,9 +87,9 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
         nom: feuilleDeRouteRecord.pieceJointe.split('/').reverse()[0],
       },
       edition: {
-        date: feuilleDeRouteRecord.creation,
-        nom: '~',
-        prenom: '~',
+        date: feuilleDeRouteRecord.derniereEdition ?? feuilleDeRouteRecord.creation,
+        nom: feuilleDeRouteRecord.relationUtilisateur?.nom ?? '~',
+        prenom: feuilleDeRouteRecord.relationUtilisateur?.prenom ?? '~',
       },
       montantCofinancements: syntheseFeuilleDeRoute.coFinancement,
       montantFinancementsAccordes: syntheseFeuilleDeRoute.financementAccorde,
@@ -147,4 +147,5 @@ const include = {
   relationMembre: {
     include: membreInclude,
   },
+  relationUtilisateur: true
 }
