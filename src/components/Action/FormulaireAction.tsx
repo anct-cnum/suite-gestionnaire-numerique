@@ -87,7 +87,6 @@ export function FormulaireAction({
       }
     }
   }
-
   function resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     // istanbul ignore next @preserve
     if (fieldset.current) {
