@@ -56,7 +56,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     const action = Action.create({
       beneficiaires: command.beneficiaires,
       besoins: command.besoins,
-      budgetGlobal: Number(command.budgetGlobal),
+      budgetGlobal: command.budgetGlobal,
       contexte: command.contexte,
       dateDeCreation: this.#date,
       dateDeDebut: new Date(command.dateDeDebut),
@@ -82,11 +82,9 @@ export class AjouterUneAction implements CommandHandler<Command> {
           dateDeCreation: this.#date,
           derniereModification: this.#date,
           statut: demande.statut,
-          subventionDemandee: Number(demande.subventionDemandee),
-          subventionEtp: demande.subventionEtp ? Number(demande.subventionEtp) : null,
-          subventionPrestation: demande.subventionPrestation
-            ? Number(demande.subventionPrestation)
-            : null,
+          subventionDemandee: demande.subventionDemandee,
+          subventionEtp: demande.subventionEtp ?? null,
+          subventionPrestation: demande.subventionPrestation ?? null,
           uid: {
             value: 'identifiantDemandeDeSubventionPourLaCreation',
           },
@@ -181,20 +179,20 @@ type DemandeDeSubventionCommand = Readonly<{
   beneficiaires: Array<string>
   enveloppeFinancementId: string
   statut: string
-  subventionDemandee: string
-  subventionEtp?: string
-  subventionPrestation?: string
+  subventionDemandee: number
+  subventionEtp?: number
+  subventionPrestation?: number
 }>
 
 type CoFinancementCommand = Readonly<{
   membreId: string
-  montant: string
+  montant: number
 }>
 
 type Command = Readonly<{
   beneficiaires: Array<string>
   besoins: Array<string>
-  budgetGlobal: string
+  budgetGlobal: number
   coFinancements?: Array<CoFinancementCommand>
   contexte: string
   dateDeDebut: string
