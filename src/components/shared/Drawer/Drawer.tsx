@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement, Ref } from 'react'
+import { PropsWithChildren, ReactElement, useEffect, useRef } from 'react'
 
 import styles from './Drawer.module.css'
 
@@ -10,8 +10,24 @@ export default function Drawer({
   isFixedWidth,
   isOpen,
   labelId,
-  ref,
 }: Props): ReactElement {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+
+  useEffect(() => {
+    const dialog = dialogRef.current
+    if (!dialog) {return}
+
+    const handleClick = (e: MouseEvent) => {
+      if (e.target === dialog) {
+        e.stopPropagation()
+      }
+    }
+    dialog.addEventListener('click', handleClick, true)
+    return () => {
+      dialog.removeEventListener('click', handleClick, true)
+    }
+  }, [])
+
   // istanbul ignore next @preserve
   const boxSize = isFixedWidth ? styles['modal-box--fixed-width'] : ''
 
@@ -21,7 +37,7 @@ export default function Drawer({
       className={`fr-modal ${styles['fr-modal']}`}
       id={id}
       open={isOpen}
-      ref={ref}
+      ref={dialogRef}
     >
       <div className={`fr-container ${styles['fr-container']}`}>
         <div className="fr-grid-row fr-grid-row--right">
@@ -52,5 +68,4 @@ type Props = PropsWithChildren<Readonly<{
   isFixedWidth: boolean
   isOpen: boolean
   labelId: string
-  ref?: Ref<HTMLDialogElement>
 }>>
