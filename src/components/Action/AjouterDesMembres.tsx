@@ -19,6 +19,7 @@ export default function AjouterDesMembres({
   enregistrer,
   labelPluriel,
   membres,
+  resetToutEffacer,
   titre,
   toutEffacer,
   urlGouvernance,
@@ -39,6 +40,7 @@ export default function AjouterDesMembres({
         className={hasMembres ? 'fr-btn fr-btn--tertiary' : 'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'}
         data-fr-opened="false"
         onClick={() => {
+          resetToutEffacer(fieldset)
           setIsDrawerOpen(true)
         }}
         title={`Ajouter des ${labelPluriel}`}
@@ -142,6 +144,7 @@ type Props = Readonly<{
   enregistrer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   labelPluriel: string
   membres: Array<PorteurPotentielViewModel>
+  resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void
   titre: string
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
   urlGouvernance: string
