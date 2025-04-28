@@ -3,61 +3,57 @@ import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
-import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class Action extends Entity<State> {
   override get state(): State {
     return {
+      beneficiaires: this.#beneficiaires.map((beneficiaire) => beneficiaire.state.value),
       besoins: this.#besoins,
       budgetGlobal: this.#budgetGlobal,
       contexte: this.#contexte,
       dateDeCreation: this.#dateDeCreation.toJSON(),
       dateDeDebut: this.#dateDeDebut.toJSON(),
       dateDeFin: this.#dateDeFin.toJSON(),
-      dateDeModification: this.#dateDeModification.toJSON(),
       description: this.#description,
       nom: this.#nom,
       uid: this.#uid.state,
-      uidEditeur: this.#uidEditeur,
       uidFeuilleDeRoute: this.#uidFeuilleDeRoute.state.value,
       uidPorteur: this.#uidPorteur.state.value,
     }
   }
 
+  readonly #beneficiaires: Array<MembreUid>
   readonly #besoins: Array<string>
-  readonly #budgetGlobal: string
+  readonly #budgetGlobal: number
   readonly #contexte: string
-  readonly #dateDeCreation: Date
-  readonly #dateDeDebut: Date
-  readonly #dateDeFin: Date
-  readonly #dateDeModification: Date
+  readonly #dateDeCreation: ValidDate<ActionFailure>
+  readonly #dateDeDebut: ValidDate<ActionFailure>
+  readonly #dateDeFin: ValidDate<ActionFailure>
   readonly #description: string
   readonly #nom: string
   readonly #uid: ActionUid
-  readonly #uidEditeur: string
   readonly #uidFeuilleDeRoute: FeuilleDeRouteUid
   readonly #uidPorteur: MembreUid
 
   private constructor(
     uid: ActionUid,
     besoins: Array<string>,
-    uidEditeur: string,
+    beneficiaires: Array<MembreUid>,
     nom: string,
     contexte: string,
     description: string,
-    budgetGlobal: string,
+    budgetGlobal: number,
     uidFeuilleDeRoute: FeuilleDeRouteUid,
     uidPorteur: MembreUid,
-    dateDeDebut: Date,
-    dateDeFin: Date,
-    dateDeCreation: Date,
-    dateDeModification: Date
+    dateDeDebut: ValidDate<ActionFailure>,
+    dateDeFin: ValidDate<ActionFailure>,
+    dateDeCreation: ValidDate<ActionFailure>
   ) {
     super(uid)
     this.#uid = uid
     this.#besoins = besoins
-    this.#uidEditeur = uidEditeur
+    this.#beneficiaires = beneficiaires
     this.#nom = nom
     this.#contexte = contexte
     this.#description = description
@@ -67,43 +63,39 @@ export class Action extends Entity<State> {
     this.#dateDeDebut = dateDeDebut
     this.#dateDeFin = dateDeFin
     this.#dateDeCreation = dateDeCreation
-    this.#dateDeModification = dateDeModification
   }
 
   static create({
+    beneficiaires,
     besoins,
     budgetGlobal,
     contexte,
     dateDeCreation,
     dateDeDebut,
     dateDeFin,
-    dateDeModification,
     description,
     nom,
     uid,
-    uidEditeur,
     uidFeuilleDeRoute,
     uidPorteur,
   }: FactoryParams): Result<ActionFailure, Action> {
     try {
-      const dateDeModificationValidee = new ValidDate(dateDeModification, 'dateDeModificationInvalide')
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const dateDeDebutValidee = new ValidDate(dateDeDebut, 'dateDeDebutInvalide')
       const dateDeFinValidee = new ValidDate(dateDeFin, 'dateDeFinInvalide')
       return new Action(
         new ActionUid(uid.value),
         besoins,
+        beneficiaires.map((beneficiaire) => new MembreUid(beneficiaire)),
         nom,
         contexte,
         description,
         budgetGlobal,
-        uidFeuilleDeRoute.value,
-        new UtilisateurUid(uidEditeur),
+        new  FeuilleDeRouteUid(uidFeuilleDeRoute.value),
         new MembreUid(uidPorteur),
         dateDeDebutValidee,
         dateDeFinValidee,
-        dateDeCreationValidee,
-        dateDeModificationValidee
+        dateDeCreationValidee
       )
     }
     catch (error) {
@@ -112,42 +104,40 @@ export class Action extends Entity<State> {
   }
 }
 
-export type ActionFailure = 'dateDeModificationInvalide'
+export type ActionFailure = 'dateDeCreationInvalide' | 'dateDeDebutInvalide' | 'dateDeFinInvalide'
 
-class ActionUid extends Uid<UidState> {
+export class ActionUid extends Uid<UidState> {
   constructor(value: string) {
     super({ value })
   }
 }
 
 type FactoryParams = Readonly<{
+  beneficiaires: Array<string>
   besoins: Array<string>
-  budgetGlobal: string
+  budgetGlobal: number
   contexte: string
   dateDeCreation: Date
   dateDeDebut: Date
   dateDeFin: Date
-  dateDeModification: Date
   description: string
   nom: string
   uid: UidState
-  uidEditeur: UtilisateurUidState
   uidFeuilleDeRoute: UidState
   uidPorteur: string
 }>
 
 type State = Readonly<{
+  beneficiaires: Array<string>
   besoins: Array<string>
-  budgetGlobal: string
+  budgetGlobal: number
   contexte: string
   dateDeCreation: string
   dateDeDebut: string
   dateDeFin: string
-  dateDeModification: string
   description: string
   nom: string
   uid: UidState
-  uidEditeur: string
   uidFeuilleDeRoute: string
   uidPorteur: string
 }>
