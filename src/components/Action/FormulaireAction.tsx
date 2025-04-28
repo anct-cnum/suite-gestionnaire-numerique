@@ -15,7 +15,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
+import { actionARemplir, ActionViewModel, Besoins, BesoinsPotentielle } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -56,7 +56,7 @@ export function FormulaireAction({
 
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
-  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
     // istanbul ignore next @preserve
     if (fieldset.current) {
@@ -75,12 +75,11 @@ export function FormulaireAction({
     }
   }
 
-  function createToutEffacer<T>(setState: (value: Array<T>) => void) {
+  function createToutEffacer() {
     return (fieldset: RefObject<HTMLFieldSetElement | null>) => {
       return () => {
         // istanbul ignore next @preserve
         if (fieldset.current) {
-          setState([])
           fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
             input.checked = false
           })
@@ -89,9 +88,21 @@ export function FormulaireAction({
     }
   }
 
-  const toutEffacerBeneficiaires = createToutEffacer(setBeneficiaires)
-  const toutEffacerBesoins = createToutEffacer(setBesoinsSelected)
-  const toutEffacerPorteurs = createToutEffacer(setPorteurs)
+  function resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
+    // istanbul ignore next @preserve
+    if (fieldset.current) {
+      const besoins: Array<BesoinsPotentielle['value']> = besoinsSelected
+        .filter(besoin => Boolean(besoin.isSelected))
+        .map(besoin => besoin.value)
+      fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+        input.checked = besoins.includes(input.value as BesoinsPotentielle['value'])
+      })
+    }
+  }
+
+  const toutEffacerBeneficiaires = createToutEffacer()
+  const toutEffacerBesoins = createToutEffacer()
+  const toutEffacerPorteurs = createToutEffacer()
 
   return (
     <form
@@ -133,8 +144,9 @@ export function FormulaireAction({
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
-              hasBesoins={action.hasBesoins}
+              hasBesoins={action.hasBesoins || checkHasBesoinsSelected(besoinsSelected)}
               outillages={action.besoins.outillages}
+              resetToutEffacer={resetToutEffacer}
               toutEffacer={toutEffacerBesoins}
             />
           </div>
@@ -146,7 +158,7 @@ export function FormulaireAction({
             .filter((besoin) => Boolean(besoin.isSelected))
             .map((besoin) => (
               <p
-                className="fr-tag fr-mr-1w"
+                className="fr-tag fr-mr-1w fr-mb-1w"
                 key={besoin.value}
               >
                 {besoin.label}
@@ -484,7 +496,7 @@ export function FormulaireAction({
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
                     <Tag
-                      href={beneficiaire.link} 
+                      href={beneficiaire.link}
                       target="_blank"
                     >
                       {beneficiaire.nom}
@@ -504,12 +516,12 @@ export function FormulaireAction({
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) {return}
+      if (!fieldset.current) { return }
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member : {
+            member: {
               uid: input.value,
             },
             selected: input.checked,
@@ -528,12 +540,12 @@ export function FormulaireAction({
   function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) {return}
+      if (!fieldset.current) { return }
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member : {
+            member: {
               uid: input.value,
             },
             selected: input.checked,
@@ -556,6 +568,12 @@ function toLabelValue(selected: number) {
     label: `${year}`,
     value: year,
   })
+}
+
+function checkHasBesoinsSelected(besoins: Besoins): boolean {
+  return Object.values(besoins)
+    .flat()
+    .some(besoin => Boolean(besoin.isSelected))
 }
 
 type Props = PropsWithChildren<Readonly<{

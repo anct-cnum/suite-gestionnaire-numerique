@@ -192,96 +192,82 @@ export type ActionViewModel = Readonly<{
 }>
 
 export function actionARemplir(action: UneActionReadModel): ActionViewModel {
+  const besoins: ActionViewModel['besoins'] = {
+    financements: [
+      {
+        isSelected: action.besoins?.includes('structurer_fond_local'),
+        label: 'Structurer un fond local pour l’inclusion numérique',
+        value: 'structurer_fond_local',
+      },
+      {
+        isSelected: action.besoins?.includes('monter_dossier_subvention'),
+        label: 'Monter des dossiers de subvention complexes',
+        value: 'monter_dossier_subvention',
+      },
+      {
+        isSelected: action.besoins?.includes('animer_et_mettre_en_oeuvre_gouvernance'),
+        label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
+        value: 'animer_et_mettre_en_oeuvre_gouvernance',
+      },
+    ],
+    formations: [
+      {
+        isSelected: action.besoins?.includes('etablir_diagnostic_territorial'),
+        label: 'Établir un diagnostic territorial',
+        value: 'etablir_diagnostic_territorial',
+      },
+      {
+        isSelected: action.besoins?.includes('coconstruire_feuille_avec_membres'),
+        label: 'Co-construire la feuille de route avec les membres',
+        value: 'coconstruire_feuille_avec_membres',
+      },
+      {
+        isSelected: action.besoins?.includes('rediger_feuille'),
+        label: 'Rédiger la feuille de route',
+        value: 'rediger_feuille',
+      },
+      {
+        isSelected: action.besoins?.includes('appui_juridique_dedie_gouvernance'),
+        label: 'Appui juridique dédié à la gouvernance',
+        value: 'appui_juridique_dedie_gouvernance',
+      },
+    ],
+    formationsProfessionnels: [
+      {
+        isSelected: action.besoins?.includes('appuyer_certification_qualiopi'),
+        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+        value: 'appuyer_certification_qualiopi',
+      },
+    ],
+    outillages: [
+      {
+        isSelected: action.besoins?.includes('structurer_filiere_reconditionnement_locale'),
+        label: 'Structurer une filière de reconditionnement locale',
+        value: 'structurer_filiere_reconditionnement_locale',
+      },
+      {
+        isSelected: action.besoins?.includes('collecter_donnees_territoriales'),
+        label: 'Collecter des données territoriales pour alimenter un hub national',
+        value: 'collecter_donnees_territoriales',
+      },
+      {
+        isSelected: action.besoins?.includes('sensibiliser_acteurs'),
+        label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
+        value: 'sensibiliser_acteurs',
+      },
+    ],
+  }
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
     beneficiaires: [],
-    besoins: {
-      financements: [
-        {
-          isSelected: action.besoins?.includes('structurer_fond_local'),
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
-        },
-        {
-          isSelected: action.besoins?.includes('monter_dossier_subvention'),
-          label: 'Monter des dossiers de subvention complexes',
-          value: 'monter_dossier_subvention',
-        },
-        {
-          isSelected: action.besoins?.includes('animer_et_mettre_en_oeuvre_gouvernance'),
-          label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-          value: 'animer_et_mettre_en_oeuvre_gouvernance',
-        },
-      ],
-      formations: [
-        {
-          isSelected: action.besoins?.includes('etablir_diagnostic_territorial'),
-          label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
-        },
-        {
-          isSelected: action.besoins?.includes('coconstruire_feuille_avec_membres'),
-          label: 'Co-construire la feuille de route avec les membres',
-          value: 'coconstruire_feuille_avec_membres',
-        },
-        {
-          isSelected: action.besoins?.includes('rediger_feuille'),
-          label: 'Rédiger la feuille de route',
-          value: 'rediger_feuille',
-        },
-        {
-          isSelected: action.besoins?.includes('appui_juridique_dedie_gouvernance'),
-          label: 'Appui juridique dédié à la gouvernance',
-          value: 'appui_juridique_dedie_gouvernance',
-        },
-      ],
-      formationsProfessionnels: [
-        {
-          isSelected: action.besoins?.includes('appuyer_certification_qualiopi'),
-          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-          value: 'appuyer_certification_qualiopi',
-        },
-      ],
-      outillages: [
-        {
-          isSelected: action.besoins?.includes('structurer_filiere_reconditionnement_locale'),
-          label: 'Structurer une filière de reconditionnement locale',
-          value: 'structurer_filiere_reconditionnement_locale',
-        },
-        {
-          isSelected: action.besoins?.includes('collecter_donnees_territoriales'),
-          label: 'Collecter des données territoriales pour alimenter un hub national',
-          value: 'collecter_donnees_territoriales',
-        },
-        {
-          isSelected: action.besoins?.includes('sensibiliser_acteurs'),
-          label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-          value: 'sensibiliser_acteurs',
-        },
-      ],
-    },
+    besoins,
     budgetGlobal: 0,
     budgetPrevisionnel: [],
     contexte: '',
     description: '',
     enveloppes,
-    hasBesoins: checkHasBesoins({
-      financements: [
-        {
-          isSelected: false,
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
-        }],
-      formations: [
-        {
-          isSelected: false,
-          label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
-        }],
-      formationsProfessionnels: [],
-      outillages: [],
-    }),
+    hasBesoins: checkHasBesoins(besoins),
     lienPourModifier: '',
     nom: '',
     nomFeuilleDeRoute: 'Feuille de route 69',

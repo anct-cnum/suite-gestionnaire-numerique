@@ -14,6 +14,7 @@ export default function AjouterDesBesoins({
   formationsProfesionnels,
   hasBesoins,
   outillages,
+  resetToutEffacer,
   toutEffacer,
 }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
@@ -43,6 +44,7 @@ export default function AjouterDesBesoins({
       <Drawer
         boutonFermeture={hasBesoins ? 'Fermer la modification des besoins' : 'Fermer l‘ajout des besoins'}
         closeDrawer={() => {
+          resetToutEffacer(fieldset)
           setIsDrawerOpen(false)
         }}
         id={drawerId}
@@ -147,5 +149,6 @@ type Props = Readonly<{
   formationsProfesionnels: ActionViewModel['besoins']['formationsProfessionnels']
   hasBesoins: boolean
   outillages: ActionViewModel['besoins']['outillages']
+  resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
 }>

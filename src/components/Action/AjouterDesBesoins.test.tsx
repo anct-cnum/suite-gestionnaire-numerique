@@ -91,10 +91,39 @@ describe('ajouter des besoins', () => {
         expect(checkbox).not.toBeChecked()
       })
     })
+
+    it('puis que je clique sur tout effacer sans enregistrer puis je ferme et réouvre le drawer alors les besoins initiaux s’affiche', () => {
+      // GIVEN
+      afficherLeFormulaireDeModificationAction()
+      const besoins = ['Co-construire la feuille de route avec les membres', 'Monter des dossiers de subvention complexes']
+
+      // WHEN
+      jOuvreLeFormulairePourAjouterDesBesoins()
+      jEffaceLeFormulaire()
+      jeFermeLeDrawer()
+      jOuvreLeFormulairePourAjouterDesBesoins()
+
+      // THEN
+      const fieldset = screen.getByRole('group', { name: 'Les différents besoins' })
+      const checkboxes = within(fieldset).getAllByRole('checkbox')
+      checkboxes.forEach((checkbox) => {
+        const input = checkbox as HTMLInputElement
+        const besoin = input.labels?.[0]?.textContent ?? ''
+        if (besoins.includes(besoin)) {
+          expect(checkbox).toBeChecked()
+        } else {
+          expect(checkbox).not.toBeChecked()
+        }
+      })
+    })
   })
 
   function jOuvreLeFormulairePourAjouterDesBesoins(): void {
     presserLeBouton('Modifier', 'Modifier les besoins')
+  }
+
+  function jeFermeLeDrawer(): void {
+    presserLeBouton('Fermer la modification des besoins')
   }
 
   function jEffaceLeFormulaire(): void {
