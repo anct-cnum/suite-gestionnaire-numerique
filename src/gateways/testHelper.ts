@@ -409,6 +409,25 @@ export function feuilleDeRouteRecordFactory(
   }
 }
 
+export function actionRecordFactory(
+  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
+): Prisma.ActionRecordUncheckedCreateInput {
+  return {
+    besoins: ['besoin_1', 'besoin_2'],
+    budgetGlobal: 0,
+    contexte: "Contexte de l'action",
+    createurId: 1,
+    creation: epochTime,
+    dateDeDebut: epochTime,
+    dateDeFin: epochTimePlusOneDay,
+    derniereModification: epochTime,
+    description: "Description détaillée de l'action",
+    feuilleDeRouteId: 1,
+    nom: 'Action test',
+    ...override,
+  }
+}
+
 function regionRecordFactory(
   override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
 ): Prisma.RegionRecordUncheckedCreateInput {
@@ -461,25 +480,6 @@ function structureRecordFactory(
     nom: 'Solidarnum',
     statut: 'VALIDATION_COSELEC',
     type: 'COMMUNE',
-    ...override,
-  }
-}
-
-function actionRecordFactory(
-  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
-): Prisma.ActionRecordUncheckedCreateInput {
-  return {
-    besoins: ['besoin_1', 'besoin_2'],
-    budgetGlobal: 0,
-    contexte: "Contexte de l'action",
-    createurId: 1,
-    creation: epochTime,
-    dateDeDebut: epochTime,
-    dateDeFin: epochTimePlusOneDay,
-    derniereModification: epochTime,
-    description: "Description détaillée de l'action",
-    feuilleDeRouteId: 1,
-    nom: 'Action test',
     ...override,
   }
 }

@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import prisma from '../../prisma/prismaClient'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
@@ -5,8 +7,10 @@ import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeR
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
   readonly #dataResource = prisma.feuilleDeRouteRecord
 
-  async add(feuilleDeRoute: FeuilleDeRoute): Promise<boolean> {
-    await this.#dataResource.create({
+  async add(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx ?? this.#dataResource
+
+    await client.create({
       data: {
         creation: feuilleDeRoute.state.dateDeCreation,
         derniereEdition: feuilleDeRoute.state.dateDeModification,
@@ -50,8 +54,10 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return feuilleDeRoute
   }
 
-  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
-    await this.#dataResource.update({
+  async update(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<void> {
+    const client = tx ?? this.#dataResource
+
+    await client.update({
       data: {
         derniereEdition: feuilleDeRoute.state.dateDeModification,
         editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,

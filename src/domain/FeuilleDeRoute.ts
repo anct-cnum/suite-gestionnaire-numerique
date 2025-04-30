@@ -113,6 +113,15 @@ export class FeuilleDeRoute extends Entity<State> {
     return 'OK'
   }
 
+  mettreAjourLaDateDeModificationEtLEditeur(
+    date: Date,
+    editeur: Utilisateur
+  ): this {
+    this.#dateDeModification = new ValidDate(date, 'dateDeModificationInvalide')
+    this.#uidEditeur = new UtilisateurUid(editeur.state.uid)
+    return this
+  }
+
   modifierUneNoteDeContextualisation(
     noteDeContextualisation: string,
     date: Date,
