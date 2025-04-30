@@ -1,7 +1,10 @@
 // Stryker disable all
 import { Action } from './Action'
+import { CoFinancement } from './CoFinancement'
 import { Comite } from './Comite'
+import { DemandeDeSubvention } from './DemandeDeSubvention'
 import { Departement, DepartementState } from './Departement'
+import { EnveloppeFinancement } from './EnveloppeFinancement'
 import { FeuilleDeRoute } from './FeuilleDeRoute'
 import { Gouvernance } from './Gouvernance'
 import { Membre } from './Membre'
@@ -89,23 +92,19 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
 
 export function actionFactory(override?: Partial<Parameters<typeof Action.create>[0]>): Action {
   return Action.create({
+    beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
     besoins: ['besoin 1'],
-    budgetGlobal: '10000',
+    budgetGlobal: 10_000,
     contexte: 'Un contexte',
     dateDeCreation: epochTime,
     dateDeDebut: epochTime,
     dateDeFin: epochTime,
-    dateDeModification: epochTime,
-    demandesSubventionClos: false,
     description: 'Description de test',
     nom: 'Feuille de route 69',
     uid: {
       value: 'actionFooId',
     },
-    uidEditeur: {
-      email: 'martin.tartempion@example.net',
-      value: 'userFooId',
-    },
+    uidCreateur: 'userFooId',
     uidFeuilleDeRoute: {
       value: 'feuilleDeRouteFooId',
     },
@@ -151,4 +150,54 @@ export function departementFactory(override?: Partial<DepartementState>): Depart
     nom: 'Paris',
     ...override,
   })
+}
+
+export function demandeDeSubventionFactory(override?: Partial<Parameters<typeof DemandeDeSubvention.create>[0]>): DemandeDeSubvention {
+  return DemandeDeSubvention.create({
+    beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
+    dateDeCreation: epochTime,
+    derniereModification: epochTime,
+    statut: 'en_cours',
+    subventionDemandee: 5000,
+    subventionEtp: 2000,
+    subventionPrestation: 3000,
+    uid: {
+      value: 'demandeDeSubventionFooId',
+    },
+    uidAction: {
+      value: 'actionFooId',
+    },
+    uidCreateur: 'uidCreateurFooId',
+    uidEnveloppeFinancement: {
+      value: 'enveloppeFinancementFooId',
+    },
+    ...override,
+  }) as DemandeDeSubvention
+}
+
+export function coFinancementFactory(override?: Partial<Parameters<typeof CoFinancement.create>[0]>): CoFinancement {
+  return CoFinancement.create({
+    montant: 2000,
+    uid: {
+      value: 'coFinancementFooId',
+    },
+    uidAction: {
+      value: 'actionFooId',
+    },
+    uidMembre: 'membreFooId',
+    ...override,
+  }) as CoFinancement
+}
+
+export function enveloppeFinancementFactory(override?: Partial<Parameters<typeof EnveloppeFinancement.create>[0]>): EnveloppeFinancement {
+  return EnveloppeFinancement.create({
+    dateDeDebut: epochTime,
+    dateDeFin: epochTime,
+    libelle: 'Enveloppe 2025',
+    montant: 100000,
+    uid: {
+      value: 'enveloppeFinancementFooId',
+    },
+    ...override,
+  }) as EnveloppeFinancement
 }
