@@ -487,10 +487,72 @@ describe('formulaire d‘ajout d‘une action', () => {
       const besoinNonSelectionnerOne = within(formulaire).queryByText('Structurer un fond local pour l’inclusion numérique', { selector: 'p' })
       expect(besoinNonSelectionnerOne).not.toBeInTheDocument()
     })
+
+    it('étant un utilisateur et ayant enregistrer des porteurs au préalable, quand j’efface les porteurs sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
+      // GIVEN
+      afficherFormulaireDeCreationAction(undefined, {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+          { nom : 'porteur1', roles: [], uid: '88438c43-e143-4792-b968-07875ebc96b0' },
+          { nom : 'porteur2', roles: [], uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
+        ],
+      })
+
+      // WHEN
+      jOuvreLeFormulairePourAjouterDesPorteurs()
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) porteur(s)' })
+      jeCoche('porteur1')
+      jeCoche('porteur2')
+      jEnregistre()
+      jOuvreLeFormulairePourModifierDesPorteurs()
+      jEfface()
+
+      // THEN
+      expect(drawer).toBeVisible()
+      const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+      const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des porteurs', name: 'Modifier' })
+      expect(boutonAjouter).toBeInTheDocument()
+      const premierBesoin = within(formulaire).getByText('porteur1', { selector: 'a' })
+      expect(premierBesoin).toBeInTheDocument()
+      const deuxiemeBesoin = within(formulaire).getByText('porteur2', { selector: 'a' })
+      expect(deuxiemeBesoin).toBeInTheDocument()
+    })
+  })
+
+  it('étant un utilisateur et ayant enregistrer des beneficiaires au préalable, quand j’efface les beneficiaires sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
+    // GIVEN
+    afficherFormulaireDeCreationAction(undefined, {
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+        { nom : 'beneficiaire1', roles: [], uid: '88438c43-e143-4792-b968-07875ebc96b0' },
+        { nom : 'beneficiaire2', roles: [], uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
+      ],
+    })
+
+    // WHEN
+    jOuvreLeFormulairePourAjouterDesBeneficiaires()
+    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
+    jeCoche('beneficiaire1')
+    jeCoche('beneficiaire2')
+    jEnregistre()
+    jOuvreLeFormulairePourModifierDesBeneficiaires()
+    jEfface()
+
+    // THEN
+    expect(drawer).toBeVisible()
+    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+    const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Modifier' })
+    expect(boutonAjouter).toBeInTheDocument()
+    const premierBesoin = within(formulaire).getByText('beneficiaire1', { selector: 'a' })
+    expect(premierBesoin).toBeInTheDocument()
+    const deuxiemeBesoin = within(formulaire).getByText('beneficiaire2', { selector: 'a' })
+    expect(deuxiemeBesoin).toBeInTheDocument()
   })
 })
 
-export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
+export function afficherFormulaireDeCreationAction(
+  options?: Partial<Parameters<typeof renderComponent>[1]>,
+  gouvernanceOveride: Partial<UneGouvernanceReadModel> = {}
+): void
+{
   const gouvernanceViewModel = gouvernancePresenter(
     gouvernanceReadModelFactory({
       syntheseMembres: {
@@ -547,6 +609,7 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
         ],
         total: 1,
       },
+      ...gouvernanceOveride,
     }),
     epochTime
   )
@@ -710,9 +773,20 @@ function jeTapeLaDescriptionDeLaction(formulaire: HTMLElement): void {
 function jOuvreLeFormulairePourAjouterDesBesoins(): void {
   presserLeBouton('Ajouter', 'Ajouter des besoins')
 }
-
+function jOuvreLeFormulairePourAjouterDesPorteurs(): void {
+  presserLeBouton('Ajouter', 'Ajouter des porteurs')
+}
+function jOuvreLeFormulairePourAjouterDesBeneficiaires(): void {
+  presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
+}
 function jOuvreLeFormulairePourModifierDesBesoins(): void {
   presserLeBouton('Modifier', 'Modifier les besoins')
+}
+function jOuvreLeFormulairePourModifierDesPorteurs(): void {
+  presserLeBouton('Modifier', 'Ajouter des porteurs')
+}
+function jOuvreLeFormulairePourModifierDesBeneficiaires(): void {
+  presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
 }
 
 function jEnregistre(): void {
@@ -730,5 +804,9 @@ function presserLeBouton(name: string, description?: string): HTMLElement {
 }
 
 function jeSelectionneUnBesoin(name: string): void {
+  fireEvent.click(screen.getByRole('checkbox', { name }))
+}
+
+function jeCoche(name: string): void {
   fireEvent.click(screen.getByRole('checkbox', { name }))
 }

@@ -56,6 +56,28 @@ export function FormulaireAction({
 
   const [besoinsSelected, setBesoinsSelected] = useState(besoins)
 
+  function resetPorteurToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
+    // istanbul ignore next @preserve
+    if (fieldset.current) {
+      const porteurIds = porteurs.map(porteur => porteur.id)
+
+      fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+        input.checked = porteurIds.includes(input.value)
+      })
+    }
+  }
+
+  function resetBeneficiaireToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
+    // istanbul ignore next @preserve
+    if (fieldset.current) {
+      const beneficiaireIds = beneficiaires.map(beneficiare => beneficiare.id)
+
+      fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
+        input.checked = beneficiaireIds.includes(input.value)
+      })
+    }
+  }
+
   function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
     // istanbul ignore next @preserve
@@ -87,7 +109,6 @@ export function FormulaireAction({
       }
     }
   }
-
   function resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     // istanbul ignore next @preserve
     if (fieldset.current) {
@@ -100,9 +121,7 @@ export function FormulaireAction({
     }
   }
 
-  const toutEffacerBeneficiaires = createToutEffacer()
   const toutEffacerBesoins = createToutEffacer()
-  const toutEffacerPorteurs = createToutEffacer()
 
   return (
     <form
@@ -238,8 +257,9 @@ export function FormulaireAction({
               enregistrer={enregistrerPorteurs}
               labelPluriel="porteurs"
               membres={porteurs}
+              resetToutEffacer={resetPorteurToutEffacer}
               titre="Ajouter le(s) porteur(s)"
-              toutEffacer={toutEffacerPorteurs}
+              toutEffacer={createToutEffacer()}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
@@ -482,8 +502,9 @@ export function FormulaireAction({
               enregistrer={enregistrerBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
               membres={beneficiaires}
+              resetToutEffacer={resetBeneficiaireToutEffacer}
               titre="Ajouter le(s) bénéficiaire(s)"
-              toutEffacer={toutEffacerBeneficiaires}
+              toutEffacer={createToutEffacer()}
               urlGouvernance={action.urlGouvernance}
             />
           </div>
