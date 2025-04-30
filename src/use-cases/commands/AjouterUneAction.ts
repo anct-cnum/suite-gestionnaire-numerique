@@ -96,6 +96,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
           uidAction: {
             value: action.state.uid.value,
           },
+          uidCreateur: editeur.state.uid.value,
           uidEnveloppeFinancement: {
             value: demande.enveloppeFinancementId,
           },
