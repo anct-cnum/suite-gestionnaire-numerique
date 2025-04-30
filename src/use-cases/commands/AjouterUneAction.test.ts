@@ -1,5 +1,8 @@
+import { Prisma } from '@prisma/client'
+
 import { AjouterUneAction } from './AjouterUneAction'
 import { AddActionRepository } from './shared/ActionRepository'
+import { BeneficiaireSubventionRepository } from './shared/BeneficiaireSubventionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import {
@@ -8,6 +11,7 @@ import {
 } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { MembreDepartementRepository } from './shared/MembreDepartementRepository'
+import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action } from '@/domain/Action'
 import { CoFinancement } from '@/domain/CoFinancement'
@@ -41,6 +45,7 @@ describe('ajouter une action à une feuille de route', () => {
     spiedMembreToAdd = null
     spiedDepartementCode = null
     spiedRole = null
+    spiedBeneficiaireSubventionToAdd = null
   })
 
   it('étant donné une gouvernance, quand une action est créée par son gestionnaire, alors elle est ajoutée à cette feuille de route avec demandes de subvention et cofinancements', async () => {
@@ -54,6 +59,8 @@ describe('ajouter une action à une feuille de route', () => {
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
       new MembreDepartementRepositorySpy(),
+      new BeneficiaireSubventionRepositorySpy(),
+      new TransactionRepositorySpy(),
       epochTime
     )
 
@@ -181,6 +188,8 @@ describe('ajouter une action à une feuille de route', () => {
         new DemandeDeSubventionRepositorySpy(),
         new CoFinancementRepositorySpy(),
         new MembreDepartementRepositorySpy(),
+        new BeneficiaireSubventionRepositorySpy(),
+        new TransactionRepositorySpy(),
         date
       )
 
@@ -218,6 +227,8 @@ describe('ajouter une action à une feuille de route', () => {
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
       new MembreDepartementRepositorySpy(),
+      new BeneficiaireSubventionRepositorySpy(),
+      new TransactionRepositorySpy(),
       epochTime
     )
 
@@ -261,6 +272,7 @@ let spiedMembreId: null | string = null
 let spiedMembreToAdd: { departementCode: string; membreId: string; role: string } | null = null
 let spiedDepartementCode: null | string = null
 let spiedRole: null | string = null
+let spiedBeneficiaireSubventionToAdd: { demandeDeSubventionId: string; membreId: string } | null = null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
@@ -379,5 +391,18 @@ class MembreDepartementRepositorySpy implements MembreDepartementRepository {
 
   async update(): Promise<void> {
     return Promise.resolve()
+  }
+}
+
+class BeneficiaireSubventionRepositorySpy implements BeneficiaireSubventionRepository {
+  async add(demandeDeSubventionId: string, membreId: string): Promise<boolean> {
+    spiedBeneficiaireSubventionToAdd = { demandeDeSubventionId, membreId }
+    return Promise.resolve(true)
+  }
+}
+
+class TransactionRepositorySpy implements TransactionRepository {
+  async transaction<T>(fn: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+    return fn({} as Prisma.TransactionClient)
   }
 }
