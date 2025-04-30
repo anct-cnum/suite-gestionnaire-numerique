@@ -3,7 +3,7 @@ import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
-import { Utilisateur, UtilisateurUid, UtilisateurUidState } from './Utilisateur'
+import { UtilisateurUid, UtilisateurUidState } from './Utilisateur'
 import { Result } from '@/shared/lang'
 
 export class Action extends Entity<State> {
@@ -16,6 +16,7 @@ export class Action extends Entity<State> {
       dateDeDebut: this.#dateDeDebut.toJSON(),
       dateDeFin: this.#dateDeFin.toJSON(),
       dateDeModification: this.#dateDeModification.toJSON(),
+      demandesSubventionClos: this.#demandesSubventionClos,
       description: this.#description,
       nom: this.#nom,
       uid: this.#uid.state,
@@ -32,6 +33,7 @@ export class Action extends Entity<State> {
   readonly #dateDeDebut: Date
   readonly #dateDeFin: Date
   readonly #dateDeModification: Date
+  readonly #demandesSubventionClos: boolean
   readonly #description: string
   readonly #nom: string
   readonly #uid: ActionUid
@@ -52,7 +54,8 @@ export class Action extends Entity<State> {
     dateDeDebut: Date,
     dateDeFin: Date,
     dateDeCreation: Date,
-    dateDeModification: Date
+    dateDeModification: Date,
+    demandesSubventionClos: boolean
   ) {
     super(uid)
     this.#uid = uid
@@ -68,6 +71,7 @@ export class Action extends Entity<State> {
     this.#dateDeFin = dateDeFin
     this.#dateDeCreation = dateDeCreation
     this.#dateDeModification = dateDeModification
+    this.#demandesSubventionClos = demandesSubventionClos
   }
 
   static create({
@@ -78,6 +82,7 @@ export class Action extends Entity<State> {
     dateDeDebut,
     dateDeFin,
     dateDeModification,
+    demandesSubventionClos,
     description,
     nom,
     uid,
@@ -103,7 +108,8 @@ export class Action extends Entity<State> {
         dateDeDebutValidee,
         dateDeFinValidee,
         dateDeCreationValidee,
-        dateDeModificationValidee
+        dateDeModificationValidee,
+        demandesSubventionClos
       )
     }
     catch (error) {
@@ -111,8 +117,8 @@ export class Action extends Entity<State> {
     }
   }
 
-  peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isAdmin || utilisateur.state.role.rolesGerables.includes('Gestionnaire département')
+  existeDemandeSubventionClos(): boolean {
+    return this.#demandesSubventionClos
   }
 }
 
@@ -132,6 +138,7 @@ type FactoryParams = Readonly<{
   dateDeDebut: Date
   dateDeFin: Date
   dateDeModification: Date
+  demandesSubventionClos: boolean
   description: string
   nom: string
   uid: UidState
@@ -148,6 +155,7 @@ type State = Readonly<{
   dateDeDebut: string
   dateDeFin: string
   dateDeModification: string
+  demandesSubventionClos: boolean
   description: string
   nom: string
   uid: UidState

@@ -43,6 +43,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       dateDeDebut: new Date(command.dateDeDebut),
       dateDeFin: new Date(command.dateDeFin),
       dateDeModification: this.#date,
+      demandesSubventionClos: false,
       description: command.description,
       nom: command.nom,
       uid: {

@@ -96,6 +96,7 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     dateDeDebut: epochTime,
     dateDeFin: epochTime,
     dateDeModification: epochTime,
+    demandesSubventionClos: false,
     description: 'Description de test',
     nom: 'Feuille de route 69',
     uid: {

@@ -1,22 +1,22 @@
-import { ActionUid } from '@/domain/Action'
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { DropActionRepository, GetActionRepository } from './shared/ActionRepository'
-import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { GetFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
+import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import { ActionUid } from '@/domain/Action'
 
 export class SupprimerUneAction implements CommandHandler<Command> {
-  readonly #utilisateurRepository: UtilisateurRepository
-  readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #actionRepository: ActionRepository
+  readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
+  readonly #utilisateurRepository: UtilisateurRepository
   // Ajouter les autres repository
 
   constructor(
     utilisateurRepository: UtilisateurRepository,
     feuilleDeRouteRepository: FeuilleDeRouteRepository,
-    actionRepository: ActionRepository,
+    actionRepository: ActionRepository
   ) {
-    this.#utilisateurRepository = utilisateurRepository,
-    this.#feuilleDeRouteRepository = feuilleDeRouteRepository,
+    this.#utilisateurRepository = utilisateurRepository
+    this.#feuilleDeRouteRepository = feuilleDeRouteRepository
     this.#actionRepository = actionRepository
   }
 
@@ -27,11 +27,9 @@ export class SupprimerUneAction implements CommandHandler<Command> {
     if (!feuilleDeRoute.peutEtreGereePar(gestionnaire)) {
       return 'suppressionActionNonAutorisee'
     }
-    // Todo: A vérifier si correcte pour un le membre co-porteur
-    if (!action.peutEtreGereePar(gestionnaire)) {
-      return 'ActionNonEligibleALaSuppression'
+    if (action.existeDemandeSubventionClos()) {
+      return 'conflitExisteSubventionClos'
     }
-    // Todo gérer le statut si une subvention est en demande deposee
 
     await this.#actionRepository.drop(action)
 
@@ -39,7 +37,7 @@ export class SupprimerUneAction implements CommandHandler<Command> {
   }
 }
 
-type Failure = 'suppressionActionNonAutorisee' | 'ActionNonEligibleALaSuppression'
+type Failure = 'conflitExisteSubventionClos' | 'suppressionActionNonAutorisee'
 type Command = Readonly<{
   uidAction: string
   uidGestionnaire: string
