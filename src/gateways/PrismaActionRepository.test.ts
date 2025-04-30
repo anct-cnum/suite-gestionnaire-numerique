@@ -1,6 +1,6 @@
 
 import { PrismaActionRepository } from './PrismaActionRepository'
-import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement } from './testHelper'
+import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { actionFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -16,7 +16,7 @@ describe('action repository', () => {
     const uidEditeur = 'userFooId'
     const uidPorteur = 'porteurId'
     const feuilleDeRouteId = 1
-    const actionId = 1
+    const utilisateurId = 1
 
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
@@ -36,6 +36,10 @@ describe('action repository', () => {
       departementCode,
       membreId: uidPorteur,
     })
+    await creerUnUtilisateur({
+      id: utilisateurId,
+      ssoId: uidEditeur,
+    })
 
     await creerUneFeuilleDeRoute({
       creation: new Date(epochTime),
@@ -46,7 +50,7 @@ describe('action repository', () => {
     })
 
     const action = actionFactory({
-      besoins: ['Besoin 1', 'Besoin 2'],
+      besoins: ['besoin_1', 'besoin_2'],
       budgetGlobal: 50_000,
       contexte: 'Contexte de test',
       dateDeCreation: epochTime,
@@ -57,20 +61,21 @@ describe('action repository', () => {
       uid: {
         value: 'actionId',
       },
+      uidCreateur: String(utilisateurId),
       uidFeuilleDeRoute: { value: feuilleDeRouteId.toString() },
       uidPorteur,
     })
 
     // WHEN
     const actionCree = await new PrismaActionRepository().add(action)
-
     // THEN
     expect(actionCree).toBe(true)
     const actionRecord = await prisma.actionRecord.findFirst({
       where: {
-        id: actionId,
+        feuilleDeRouteId,
       },
     })
+
     expect(actionRecord).toMatchObject(actionRecordFactory({
       budgetGlobal: 50000,
       contexte: 'Contexte de test',
