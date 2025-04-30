@@ -189,7 +189,7 @@ export function coFinancementFactory(override?: Partial<Parameters<typeof CoFina
   }) as CoFinancement
 }
 
-export function enveloppeFinancementFactory(override?: Partial<Parameters<typeof EnveloppeFinancement.create>[0]>): EnveloppeFinancement {
+function enveloppeFinancementFactory(override?: Partial<Parameters<typeof EnveloppeFinancement.create>[0]>): EnveloppeFinancement {
   return EnveloppeFinancement.create({
     dateDeDebut: epochTime,
     dateDeFin: epochTime,

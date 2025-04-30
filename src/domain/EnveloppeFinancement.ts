@@ -64,7 +64,7 @@ export class EnveloppeFinancement extends Entity<State> {
   }
 }
 
-export type EnveloppeFinancementFailure = 'dateDeDebutInvalide' | 'dateDeFinInvalide' | 'montantInvalide'
+type EnveloppeFinancementFailure = 'dateDeDebutInvalide' | 'dateDeFinInvalide' | 'montantInvalide'
 
 export class EnveloppeFinancementUid extends Uid<UidState> {
   constructor(value: string) {
