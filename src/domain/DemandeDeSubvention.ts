@@ -17,6 +17,8 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation,
       uid: this.#uid.state,
       uidAction: this.#uidAction.state.value,
+      uidCreateur: this.#uidCreateur.state.value,
+
       uidEnveloppeFinancement: this.#uidEnveloppeFinancement.state.value,
     }
   }
@@ -30,6 +32,7 @@ export class DemandeDeSubvention extends Entity<State> {
   readonly #subventionPrestation: null | number
   readonly #uid: DemandeDeSubventionUid
   readonly #uidAction: ActionUid
+  readonly #uidCreateur: MembreUid
   readonly #uidEnveloppeFinancement: EnveloppeFinancementUid
 
   private constructor(
@@ -42,7 +45,8 @@ export class DemandeDeSubvention extends Entity<State> {
     subventionEtp: null | number,
     subventionPrestation: null | number,
     uidAction: ActionUid,
-    uidEnveloppeFinancement: EnveloppeFinancementUid
+    uidEnveloppeFinancement: EnveloppeFinancementUid,
+    uidCreateur: MembreUid
   ) {
     super(uid)
     this.#uid = uid
@@ -54,6 +58,7 @@ export class DemandeDeSubvention extends Entity<State> {
     this.#subventionEtp = subventionEtp
     this.#subventionPrestation = subventionPrestation
     this.#uidAction = uidAction
+    this.#uidCreateur = uidCreateur
     this.#uidEnveloppeFinancement = uidEnveloppeFinancement
   }
 
@@ -67,6 +72,7 @@ export class DemandeDeSubvention extends Entity<State> {
     subventionPrestation,
     uid,
     uidAction,
+    uidCreateur,
     uidEnveloppeFinancement,
   }: FactoryParams): Result<DemandeDeSubventionFailure, DemandeDeSubvention> {
     try {
@@ -83,7 +89,8 @@ export class DemandeDeSubvention extends Entity<State> {
         subventionEtp,
         subventionPrestation,
         new ActionUid(uidAction.value),
-        new EnveloppeFinancementUid(uidEnveloppeFinancement.value)
+        new EnveloppeFinancementUid(uidEnveloppeFinancement.value),
+        new MembreUid(uidCreateur)
       )
     }
     catch (error) {
@@ -102,6 +109,7 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation,
       uid: this.#uid.state,
       uidAction: { value: uidAction },
+      uidCreateur :this.#uidCreateur.state.value,
       uidEnveloppeFinancement: { value: this.#uidEnveloppeFinancement.state.value },
     }) as DemandeDeSubvention
   }
@@ -131,6 +139,7 @@ type FactoryParams = Readonly<{
   subventionPrestation: null | number
   uid: UidState
   uidAction: UidState
+  uidCreateur: string
   uidEnveloppeFinancement: UidState
 }>
 
@@ -144,6 +153,7 @@ type State = Readonly<{
   subventionPrestation: null | number
   uid: UidState
   uidAction: string
+  uidCreateur: string
   uidEnveloppeFinancement: string
 }>
 
