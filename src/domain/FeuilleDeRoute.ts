@@ -129,9 +129,9 @@ export class FeuilleDeRoute extends Entity<State> {
   }
 
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isAdmin || (this.#uidGouvernance.state.value === utilisateur.state.departement?.code
-      || this.#uidGouvernance.state.value === utilisateur.state.region?.code)
-      && utilisateur.state.role.rolesGerables.includes('Gestionnaire département')
+    return utilisateur.isAdmin
+      || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
+      || this.#uidGouvernance.state.value === utilisateur.state.region?.code
   }
 
   supprimerNoteDeContextextualisation(): void {

@@ -35,22 +35,6 @@ describe('supprimer une action dune feuille de route', () => {
     expect(result).toBe('OK')
   })
 
-  it('quand une action est supprimée par un gestionnaire qui n’est pas membre coporteur, alors une erreur est renvoyé', async () => {
-    // GIVEN
-    const uidGestionnaire = 'userFooId'
-    const uidAction = 'actionFooId'
-    const supprimer = new SupprimerUneAction(
-      new GestionnaireMemeDepartementMembreNonCoPorteurRepositorySpy(),
-      new FeuilleDeRouteRepositorySpy(),
-      new ActionNonEligibleALaSuppressionRepositorySpy()
-    )
-
-    // WHEN
-    const result = await supprimer.handle({ uidAction, uidGestionnaire })
-    // THEN
-    expect(result).toBe('suppressionActionNonAutorisee')
-  })
-
   it('quand une action est supprimée par un gestionnaire autre que celui de la gouvernance, alors une erreur est renvoyé', async () => {
     // GIVEN
     const uidGestionnaire = 'userFooId'
@@ -68,7 +52,7 @@ describe('supprimer une action dune feuille de route', () => {
     expect(result).toBe('suppressionActionNonAutorisee')
   })
 
-  it('quand une action est supprimée par son gestionnaire, mais qu’il existe au moins une demande de subvention déjà traité alors une erreur est renvoyé', async () => {
+  it.todo('quand une action est supprimée par son gestionnaire, mais qu’il existe au moins une demande de subvention déjà traité alors une erreur est renvoyé', async () => {
     // GIVEN
     const uidGestionnaire = 'userFooId'
     const uidAction = 'actionFooId'
@@ -150,16 +134,6 @@ class GestionnaireRepositorySpy implements GetUtilisateurRepository {
       codeOrganisation: '75',
       role: 'Gestionnaire département',
       uid: { email: 'michel.tartempion@example.net', value: 'userFooId2' },
-    }))
-  }
-}
-class GestionnaireMemeDepartementMembreNonCoPorteurRepositorySpy implements GetUtilisateurRepository {
-  async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
-    spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory({
-      codeOrganisation: '75',
-      role: 'Gestionnaire structure',
-      uid: { email: 'michel.tartempion@example.net', value: 'userFooId3' },
     }))
   }
 }

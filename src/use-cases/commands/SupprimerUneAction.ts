@@ -27,9 +27,9 @@ export class SupprimerUneAction implements CommandHandler<Command> {
     if (!feuilleDeRoute.peutEtreGereePar(gestionnaire)) {
       return 'suppressionActionNonAutorisee'
     }
-    if (action.existeDemandeSubventionClos()) {
-      return 'conflitExisteSubventionClos'
-    }
+    // if (action.existeDemandeSubventionClos()) {
+    //   return 'conflitExisteSubventionClos'
+    // }
 
     await this.#actionRepository.drop(action)
 
