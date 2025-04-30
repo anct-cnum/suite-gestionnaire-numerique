@@ -10,28 +10,15 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
 
     const demande = await client.demandeDeSubventionRecord.create({
       data: {
-        action: {
-          connect: {
-            id: Number(demandeDeSubvention.state.uidAction),
-          },
-        },
-        
+        actionId: Number(demandeDeSubvention.state.uidAction),
+        createurId: Number(demandeDeSubvention.state.uidCreateur),
         creation: new Date(demandeDeSubvention.state.dateDeCreation),
         derniereModification: new Date(demandeDeSubvention.state.derniereModification),
-        enveloppe: {
-          connect: {
-            id: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
-          },
-        },
+        enveloppeFinancementId: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
         statut: demandeDeSubvention.state.statut,
         subventionDemandee: demandeDeSubvention.state.subventionDemandee,
         subventionEtp: demandeDeSubvention.state.subventionEtp,
         subventionPrestation: demandeDeSubvention.state.subventionPrestation,
-        utilisateur: {
-          connect: {
-            id:   Number(demandeDeSubvention.state.uidCreateur),
-          },
-        },
       },
     })
 
