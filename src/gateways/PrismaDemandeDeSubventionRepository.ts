@@ -29,7 +29,7 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
         subventionPrestation: demandeDeSubvention.state.subventionPrestation,
         utilisateur: {
           connect: {
-            id:  Number(1),
+            id:   Number(demandeDeSubvention.state.uidCreateur),
           },
         },
       },

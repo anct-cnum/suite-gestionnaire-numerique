@@ -10,6 +10,7 @@ import {
   creerUneRegion,
   creerUnMembre,
   creerUnMembreDepartement,
+  creerUnUtilisateur,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { demandeDeSubventionFactory } from '@/domain/testHelper'
@@ -27,8 +28,8 @@ describe('demande de subvention repository', () => {
     const enveloppeFinancementId = 1
     const demandeDeSubventionId = 1
     const uidPorteur = 'porteurId'
-    const createurId = 1
-
+    const utilisateurId = 1
+    const createurId = 2
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUneGouvernance({ departementCode })
@@ -38,7 +39,7 @@ describe('demande de subvention repository', () => {
         dateDeCreation: new Date(epochTime),
         derniereConnexion: new Date(epochTime),
         emailDeContact: 'user@example.com',
-        id: createurId,
+        id: utilisateurId,
         inviteLe: new Date(epochTime),
         isSuperAdmin: false,
         isSupprime: false,
@@ -49,6 +50,11 @@ describe('demande de subvention repository', () => {
         ssoId: 'user1',
         telephone: '0102030405',
       },
+    })
+
+    await creerUnUtilisateur({
+      id: createurId,
+      ssoId: 'createurSSOId',
     })
 
     await creerUnContact({
@@ -110,6 +116,7 @@ describe('demande de subvention repository', () => {
       subventionPrestation: 15000,
       uid: { value: demandeDeSubventionId.toString() },
       uidAction: { value: actionId.toString() },
+      uidCreateur: createurId.toString(),
       uidEnveloppeFinancement: { value: enveloppeFinancementId.toString() },
     })
 
