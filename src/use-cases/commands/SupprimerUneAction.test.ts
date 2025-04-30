@@ -1,10 +1,14 @@
 import { DropActionRepository, GetActionRepository } from './shared/ActionRepository'
+import { DropCoFinancementRepository } from './shared/CoFinancementRepository'
+import { GetDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import { GetFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { SupprimerUneAction } from './SupprimerUneAction'
 import { Action } from '@/domain/Action'
+import { CoFinancement } from '@/domain/CoFinancement'
+import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
-import { actionFactory, feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
+import { actionFactory, demandeDeSubventionFactory, feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
 
 describe('supprimer une action dune feuille de route', () => {
@@ -12,17 +16,23 @@ describe('supprimer une action dune feuille de route', () => {
     spiedUtilisateurUidToFind = null
     spiedFeuilleDeRouteUidToFind = null
     spiedActionToDrop = null
+    spiedDemandeDeSubventionToFind = null
+    spiedCoFinancementToDrop = null
+    spiedDemandeDeSubventionToDrop = null
   })
 
   it('quand une action est supprimée par son gestionnaire, alors elle est supprimée', async () => {
     // GIVEN
     const uidAction = 'actionFooId'
     const uidGestionnaire = 'userFooId'
-    const uidFeuilleDeRoute = 'feuilleDeRouteFooIdcoucou'
+    const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
+    const uidDemandeSubvention = 'demandeDeSubventionFooId'
     const supprimer = new SupprimerUneAction(
       new GestionnaireRepositorySpy(),
       new FeuilleDeRouteRepositorySpy(),
-      new ActionRepositorySpy()
+      new ActionRepositorySpy(),
+      new DemandeDeSubventionDeposeeRepositorySpy(),
+      new CoFinancementRepositorySpy()
     )
 
     // WHEN
@@ -32,6 +42,9 @@ describe('supprimer une action dune feuille de route', () => {
     expect(spiedActionToDrop?.state.uid.value).toBe(uidAction)
     expect(spiedUtilisateurUidToFind).toBe(uidGestionnaire)
     expect(spiedFeuilleDeRouteUidToFind).toBe(uidFeuilleDeRoute)
+    expect(spiedDemandeDeSubventionToFind).toBe(uidAction)
+    expect(spiedDemandeDeSubventionToDrop).toBe(uidDemandeSubvention)
+    expect(spiedCoFinancementToDrop).toBe(uidAction)
     expect(result).toBe('OK')
   })
 
@@ -42,7 +55,9 @@ describe('supprimer une action dune feuille de route', () => {
     const supprimer = new SupprimerUneAction(
       new GestionnaireAutreRepositorySpy(),
       new FeuilleDeRouteRepositorySpy(),
-      new ActionRepositorySpy()
+      new ActionRepositorySpy(),
+      new DemandeDeSubventionDeposeeRepositorySpy(),
+      new CoFinancementRepositorySpy()
     )
 
     // WHEN
@@ -52,14 +67,16 @@ describe('supprimer une action dune feuille de route', () => {
     expect(result).toBe('suppressionActionNonAutorisee')
   })
 
-  it.todo('quand une action est supprimée par son gestionnaire, mais qu’il existe au moins une demande de subvention déjà traité alors une erreur est renvoyé', async () => {
+  it('quand une action est supprimée par son gestionnaire, mais qu’il existe au moins une demande de subvention déjà traité alors une erreur est renvoyé', async () => {
     // GIVEN
     const uidGestionnaire = 'userFooId'
     const uidAction = 'actionFooId'
     const supprimer = new SupprimerUneAction(
       new GestionnaireRepositorySpy(),
       new FeuilleDeRouteRepositorySpy(),
-      new ActionAvecSubventionClosRepositorySpy()
+      new ActionAvecSubventionClosRepositorySpy(),
+      new DemandeDeSubventionEnCoursOuClosRepositorySpy(),
+      new CoFinancementRepositorySpy()
     )
 
     // WHEN
@@ -74,6 +91,9 @@ let spiedUtilisateurUidToFind: null | string
 let spiedFeuilleDeRouteUidToFind: null | string
 const uidFeuilleDeRoute = 'feuilleDeRouteFooId'
 let spiedActionToDrop: Action | null
+let spiedDemandeDeSubventionToFind: DemandeDeSubvention['uid']['state']['value'] | null
+let spiedCoFinancementToDrop: CoFinancement['uid']['state']['value'] | null
+let spiedDemandeDeSubventionToDrop: DemandeDeSubvention['state']['uidAction'] | null
 
 class ActionRepositorySpy implements DropActionRepository, GetActionRepository {
   async drop(action: Action): Promise<boolean> {
@@ -81,28 +101,13 @@ class ActionRepositorySpy implements DropActionRepository, GetActionRepository {
     return Promise.resolve(true)
   }
 
-  async get(action: Action['uid']): Promise<Action> {
+  async get(action: Action['uid']['state']['value']): Promise<Action> {
     return Promise.resolve(actionFactory({
       uid: {
-        value: action.state.value,
+        value: action,
       },
       uidFeuilleDeRoute: {
-        value: 'feuilleDeRouteFooIdcoucou',
-      },
-    }))
-  }
-}
-
-class ActionNonEligibleALaSuppressionRepositorySpy implements DropActionRepository, GetActionRepository {
-  async drop(action: Action): Promise<boolean> {
-    spiedActionToDrop = action
-    return Promise.resolve(true)
-  }
-
-  async get(action: Action['uid']): Promise<Action> {
-    return Promise.resolve(actionFactory({
-      uid: {
-        value: action.state.value,
+        value: 'feuilleDeRouteFooId',
       },
     }))
   }
@@ -114,14 +119,13 @@ class ActionAvecSubventionClosRepositorySpy implements DropActionRepository, Get
     return Promise.resolve(true)
   }
 
-  async get(action: Action['uid']): Promise<Action> {
+  async get(action: Action['uid']['state']['value']): Promise<Action> {
     return Promise.resolve(actionFactory({
-      demandesSubventionClos: true,
       uid: {
-        value: action.state.value,
+        value: action,
       },
       uidFeuilleDeRoute: {
-        value: 'feuilleDeRouteFooIdcoucou',
+        value: 'feuilleDeRouteFooId',
       },
     }))
   }
@@ -160,5 +164,40 @@ class FeuilleDeRouteRepositorySpy implements GetFeuilleDeRouteRepository {
         },
       })
     )
+  }
+}
+
+class DemandeDeSubventionDeposeeRepositorySpy implements GetDemandeDeSubventionRepository {
+  async drop(uidAction: DemandeDeSubvention['state']['uidAction']): Promise<boolean> {
+    spiedDemandeDeSubventionToDrop = uidAction
+    return Promise.resolve(true)
+  }
+
+  async get(uid: DemandeDeSubvention['uid']['state']['value']): Promise<DemandeDeSubvention> {
+    spiedDemandeDeSubventionToFind = uid
+    return Promise.resolve(
+      demandeDeSubventionFactory({ statut: 'deposee' })
+    )
+  }
+}
+
+class DemandeDeSubventionEnCoursOuClosRepositorySpy implements GetDemandeDeSubventionRepository {
+  async drop(uidAction: DemandeDeSubvention['state']['uidAction']): Promise<boolean> {
+    spiedDemandeDeSubventionToDrop = uidAction
+    return Promise.resolve(true)
+  }
+
+  async get(uid: DemandeDeSubvention['uid']['state']['value']): Promise<DemandeDeSubvention> {
+    spiedDemandeDeSubventionToFind = uid
+    return Promise.resolve(
+      demandeDeSubventionFactory({ statut: 'en_cours' })
+    )
+  }
+}
+
+class CoFinancementRepositorySpy implements DropCoFinancementRepository {
+  async drop(uidAction: CoFinancement['uid']['state']['value']): Promise<boolean> {
+    spiedCoFinancementToDrop = uidAction
+    return Promise.resolve(true)
   }
 }

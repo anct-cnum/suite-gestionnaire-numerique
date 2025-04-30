@@ -109,9 +109,13 @@ export class DemandeDeSubvention extends Entity<State> {
       subventionPrestation: this.#subventionPrestation,
       uid: this.#uid.state,
       uidAction: { value: uidAction },
-      uidCreateur :this.#uidCreateur.state.value,
+      uidCreateur: this.#uidCreateur.state.value,
       uidEnveloppeFinancement: { value: this.#uidEnveloppeFinancement.state.value },
     }) as DemandeDeSubvention
+  }
+
+  estUneDemandeSubventionEnCoursOuClos(): boolean {
+    return this.#statut !== 'deposee'
   }
 }
 
