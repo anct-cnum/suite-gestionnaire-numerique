@@ -21,7 +21,7 @@ describe('demande de subvention repository', () => {
 
   afterEach(async () => prisma.$queryRaw`ROLLBACK TRANSACTION`)
 
-  it('ajouter une demande de subvention à une action', async () => {
+  it('ajouter une demande de subvention à une action avec des bénéficiaires', async () => {
     // GIVEN
     const departementCode = '69'
     const actionId = 1
@@ -30,49 +30,45 @@ describe('demande de subvention repository', () => {
     const uidPorteur = 'porteurId'
     const utilisateurId = 1
     const createurId = 2
+
+    // Configuration initiale
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUneGouvernance({ departementCode })
 
-    await prisma.utilisateurRecord.create({
-      data: {
-        dateDeCreation: new Date(epochTime),
-        derniereConnexion: new Date(epochTime),
-        emailDeContact: 'user@example.com',
-        id: utilisateurId,
-        inviteLe: new Date(epochTime),
-        isSuperAdmin: false,
-        isSupprime: false,
-        nom: 'Utilisateur',
-        prenom: 'Test',
-        role: 'gestionnaire_departement',
-        ssoEmail: 'user@example.com',
-        ssoId: 'user1',
-        telephone: '0102030405',
-      },
+    // Création des utilisateurs
+    await creerUnUtilisateur({
+      id: utilisateurId,
+      ssoEmail: 'utilisateur@example.com',
+      ssoId: 'utilisateurSSOId',
     })
 
     await creerUnUtilisateur({
       id: createurId,
+      ssoEmail: 'createur@example.com',
       ssoId: 'createurSSOId',
     })
 
+    // Création du contact et du porteur
     await creerUnContact({
       email: 'structure@example.com',
       fonction: 'Directeur',
       nom: 'Tartempion',
       prenom: 'Michel',
     })
+
     await creerUnMembre({
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
+
     await creerUnMembreDepartement({
       departementCode,
       membreId: uidPorteur,
     })
 
+    // Création de la feuille de route et de l'action
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       gouvernanceDepartementCode: departementCode,
@@ -83,31 +79,50 @@ describe('demande de subvention repository', () => {
     await creerUneAction({
       ...actionRecordFactory(),
       budgetGlobal: 50000,
-      createurId: 1,
+      createurId,
       feuilleDeRouteId: 1,
       id: actionId,
     })
 
+    // Création de l'enveloppe de financement
     await creerUneEnveloppeFinancement({
       id: enveloppeFinancementId,
       libelle: 'Enveloppe test',
       montant: 100000,
     })
 
-    await creerUnMembre({
-      contact: 'structure@example.com',
-      gouvernanceDepartementCode: departementCode,
-      id: 'beneficiaire1',
+    // Création des bénéficiaires
+    const beneficiaire1Id = 'beneficiaire1'
+    const beneficiaire2Id = 'beneficiaire2'
+
+    await creerUnContact({
+      email: 'beneficiaire1@example.com',
+      fonction: 'Responsable',
+      nom: 'Dupont',
+      prenom: 'Jean',
     })
 
     await creerUnMembre({
-      contact: 'structure@example.com',
+      contact: 'beneficiaire1@example.com',
       gouvernanceDepartementCode: departementCode,
-      id: 'beneficiaire2',
+      id: beneficiaire1Id,
+    })
+
+    await creerUnContact({
+      email: 'beneficiaire2@example.com',
+      fonction: 'Directeur',
+      nom: 'Martin',
+      prenom: 'Sophie',
+    })
+
+    await creerUnMembre({
+      contact: 'beneficiaire2@example.com',
+      gouvernanceDepartementCode: departementCode,
+      id: beneficiaire2Id,
     })
 
     const demandeDeSubvention = demandeDeSubventionFactory({
-      beneficiaires: ['beneficiaire1', 'beneficiaire2'],
+      beneficiaires: [beneficiaire1Id, beneficiaire2Id],
       dateDeCreation: epochTime,
       derniereModification: epochTime,
       statut: 'en_cours',
@@ -145,12 +160,6 @@ describe('demande de subvention repository', () => {
       subventionEtp: 10000,
       subventionPrestation: 15000,
     })
-    expect(demandeDeSubventionRecord?.actionId).toBe(actionId)
-    expect(demandeDeSubventionRecord?.enveloppeFinancementId).toBe(enveloppeFinancementId)
-    expect(demandeDeSubventionRecord?.statut).toBe('en_cours')
-    expect(demandeDeSubventionRecord?.subventionDemandee).toBe(25000)
-    expect(demandeDeSubventionRecord?.subventionEtp).toBe(10000)
-    expect(demandeDeSubventionRecord?.subventionPrestation).toBe(15000)
 
     const actualDemandeId = demandeDeSubventionRecord!.id
     const beneficiaires = await prisma.beneficiaireSubventionRecord.findMany({
@@ -160,5 +169,15 @@ describe('demande de subvention repository', () => {
     })
 
     expect(beneficiaires).toHaveLength(2)
+    expect(beneficiaires).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        demandeDeSubventionId: actualDemandeId,
+        membreId: beneficiaire1Id,
+      }),
+      expect.objectContaining({
+        demandeDeSubventionId: actualDemandeId,
+        membreId: beneficiaire2Id,
+      }),
+    ]))
   })
 })

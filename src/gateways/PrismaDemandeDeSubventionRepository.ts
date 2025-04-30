@@ -22,11 +22,12 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
       },
     })
 
-    for (const beneficiaire of demandeDeSubvention.state.beneficiaires) {
+    // Création des associations avec les bénéficiaires
+    for (const beneficiaireId of demandeDeSubvention.state.beneficiaires) {
       await client.beneficiaireSubventionRecord.create({
         data: {
           demandeDeSubventionId: demande.id,
-          membreId: beneficiaire,
+          membreId: beneficiaireId,
         },
       })
     }

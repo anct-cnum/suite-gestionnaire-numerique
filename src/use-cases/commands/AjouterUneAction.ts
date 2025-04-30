@@ -1,6 +1,6 @@
-
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
+import { BeneficiaireSubventionRepository } from './shared/BeneficiaireSubventionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import {
@@ -9,8 +9,8 @@ import {
 } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { MembreDepartementRepository } from './shared/MembreDepartementRepository'
+import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
-import prisma from '../../../prisma/prismaClient'
 import { Action, ActionFailure } from '@/domain/Action'
 import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
 import { DemandeDeSubvention, DemandeDeSubventionFailure } from '@/domain/DemandeDeSubvention'
@@ -19,12 +19,14 @@ import { isOk } from '@/shared/lang'
 
 export class AjouterUneAction implements CommandHandler<Command> {
   readonly #actionRepository: ActionRepository
+  readonly #beneficiaireSubventionRepository: BeneficiaireSubventionRepository
   readonly #coFinancementRepository: CoFinancementRepository
   readonly #date: Date
   readonly #demandeDeSubventionRepository: DemandeDeSubventionRepository
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #membreRepository: MembreDepartementRepository
+  readonly #transactionRepository: TransactionRepository
   readonly #utilisateurRepository: GetUtilisateurRepository
 
   constructor(
@@ -35,6 +37,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
     demandeDeSubventionRepository: DemandeDeSubventionRepository,
     coFinancementRepository: CoFinancementRepository,
     membreRepository: MembreDepartementRepository,
+    beneficiaireSubventionRepository: BeneficiaireSubventionRepository,
+    transactionRepository: TransactionRepository,
     date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
@@ -44,6 +48,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#demandeDeSubventionRepository = demandeDeSubventionRepository
     this.#coFinancementRepository = coFinancementRepository
     this.#membreRepository = membreRepository
+    this.#beneficiaireSubventionRepository = beneficiaireSubventionRepository
+    this.#transactionRepository = transactionRepository
     this.#date = date
   }
 
@@ -132,11 +138,10 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
     }
 
-    await prisma.$transaction(async (tx) => {
+    await this.#transactionRepository.transaction(async (tx) => {
       await this.#actionRepository.add(action, tx)
 
       const actionCree = await this.#actionRepository.get(action.state.uid.value)
-
       const actionId = actionCree.state.uid.value
 
       for (const demandeDeSubvention of demandesDeSubvention) {
