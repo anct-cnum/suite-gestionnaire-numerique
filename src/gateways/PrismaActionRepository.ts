@@ -15,7 +15,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         besoins: action.state.besoins,
         budgetGlobal: Number(action.state.budgetGlobal),
         contexte: action.state.contexte,
-        createurId: action.state.uidEditeur.value,
+        createurId: Number(action.state.uidCreateur),
         creation: new Date(action.state.dateDeCreation),
         dateDeDebut: new Date(action.state.dateDeDebut),
         dateDeFin: new Date(action.state.dateDeFin),
@@ -23,7 +23,6 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         description: action.state.description,
         feuilleDeRouteId: Number(action.state.uidFeuilleDeRoute),
         nom: action.state.nom,
-
       },
     })
 
@@ -32,12 +31,26 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
 
   async get(uid: Action['uid']['state']['value']): Promise<Action> {
     const record = await this.#dataResource.findUniqueOrThrow({
+      include: {
+        demandesDeSubvention: {
+          include: {
+            beneficiaire: {
+              include: {
+                membre: true,
+              },
+            },
+          },
+        },
+        utilisateur: true,
+      },
       where: {
         id: Number(uid),
       },
     })
-
+    const beneficiaires = record.demandesDeSubvention.flatMap((demande) =>
+      demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
     const action = Action.create({
+      beneficiaires,
       besoins: record.besoins,
       budgetGlobal: record.budgetGlobal,
       contexte: record.contexte,
@@ -46,9 +59,10 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
       dateDeFin: record.dateDeFin,
       description: record.description,
       nom: record.nom,
-      uid: { value: record.id },
-      uidFeuilleDeRoute: { value: record.feuilleDeRouteId },
-      uidPorteur: record.derniereModification,
+      uid: { value: String(record.id) },
+      uidCreateur: record.utilisateur.ssoId,
+      uidFeuilleDeRoute: { value: String(record.feuilleDeRouteId) },
+      uidPorteur: String(record.createurId),
     })
 
     if (!(action instanceof Action)) {

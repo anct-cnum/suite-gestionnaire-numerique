@@ -7,12 +7,15 @@ import {
   UpdateFeuilleDeRouteRepository,
 } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { MembreDepartementRepository } from './shared/MembreDepartementRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action } from '@/domain/Action'
 import { CoFinancement } from '@/domain/CoFinancement'
 import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
+import { MembreConfirme } from '@/domain/MembreConfirme'
+import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
 import {
   actionFactory,
   coFinancementFactory,
@@ -34,6 +37,10 @@ describe('ajouter une action à une feuille de route', () => {
     spiedActionToAdd = null
     spiedDemandeDeSubventionToAdd = null
     spiedCoFinancementToAdd = null
+    spiedMembreId = null
+    spiedMembreToAdd = null
+    spiedDepartementCode = null
+    spiedRole = null
   })
 
   it('étant donné une gouvernance, quand une action est créée par son gestionnaire, alors elle est ajoutée à cette feuille de route avec demandes de subvention et cofinancements', async () => {
@@ -46,6 +53,7 @@ describe('ajouter une action à une feuille de route', () => {
       new ActionRepositorySpy(),
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
+      new MembreDepartementRepositorySpy(),
       epochTime
     )
 
@@ -107,7 +115,7 @@ describe('ajouter une action à une feuille de route', () => {
     )
 
     expect(spiedDemandeDeSubventionToAdd).not.toBeNull()
-    expect(spiedDemandeDeSubventionToAdd?.state).toMatchObject(
+    expect(spiedDemandeDeSubventionToAdd?.state).toStrictEqual(
       demandeDeSubventionFactory({
         beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         statut: 'en_cours',
@@ -121,7 +129,7 @@ describe('ajouter une action à une feuille de route', () => {
     )
 
     expect(spiedCoFinancementToAdd).not.toBeNull()
-    expect(spiedCoFinancementToAdd?.state).toMatchObject(
+    expect(spiedCoFinancementToAdd?.state).toStrictEqual(
       coFinancementFactory({
         montant: 2000,
         uid: { value: 'identifiantCoFinancementPourLaCreation' },
@@ -129,6 +137,12 @@ describe('ajouter une action à une feuille de route', () => {
         uidMembre: 'membreFooId',
       }).state
     )
+
+    expect(spiedMembreToAdd).toStrictEqual({
+      departementCode: 'gouvernanceFooId',
+      membreId: 'membreFooId',
+      role: 'Financeur',
+    })
 
     expect(result).toBe('OK')
   })
@@ -166,6 +180,7 @@ describe('ajouter une action à une feuille de route', () => {
         new ActionRepositorySpy(),
         new DemandeDeSubventionRepositorySpy(),
         new CoFinancementRepositorySpy(),
+        new MembreDepartementRepositorySpy(),
         date
       )
 
@@ -202,6 +217,7 @@ describe('ajouter une action à une feuille de route', () => {
       new ActionRepositorySpy(),
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
+      new MembreDepartementRepositorySpy(),
       epochTime
     )
 
@@ -241,6 +257,10 @@ let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
 let spiedActionToAdd: Action | null
 let spiedDemandeDeSubventionToAdd: DemandeDeSubvention | null
 let spiedCoFinancementToAdd: CoFinancement | null
+let spiedMembreId: null | string = null
+let spiedMembreToAdd: { departementCode: string; membreId: string; role: string } | null = null
+let spiedDepartementCode: null | string = null
+let spiedRole: null | string = null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
@@ -331,5 +351,33 @@ class CoFinancementRepositorySpy implements AddCoFinancementRepository {
   async add(coFinancement: CoFinancement): Promise<boolean> {
     spiedCoFinancementToAdd = coFinancement
     return Promise.resolve(true)
+  }
+}
+
+class MembreDepartementRepositorySpy implements MembreDepartementRepository {
+  async add(membreId: string, departementCode: string, role: string): Promise<boolean> {
+    spiedMembreToAdd = { departementCode, membreId, role }
+    return Promise.resolve(true)
+  }
+
+  async get(membreId: string, departementCode: string): Promise<MembreConfirme> {
+    spiedMembreId = membreId
+    spiedDepartementCode = departementCode
+    const membre = membreFactory({
+      nom: 'nom du membre',
+      roles: ['Financeur'],
+      statut: 'Actif' as StatutFactory,
+      uid: {
+        value: membreId,
+      },
+      uidGouvernance: {
+        value: departementCode,
+      },
+    })
+    return Promise.resolve(membre as MembreConfirme)
+  }
+
+  async update(): Promise<void> {
+    return Promise.resolve()
   }
 }

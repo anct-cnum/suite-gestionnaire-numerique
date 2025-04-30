@@ -8,6 +8,7 @@ import {
   UpdateFeuilleDeRouteRepository,
 } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
+import { MembreDepartementRepository } from './shared/MembreDepartementRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import prisma from '../../../prisma/prismaClient'
 import { Action, ActionFailure } from '@/domain/Action'
@@ -23,6 +24,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
   readonly #demandeDeSubventionRepository: DemandeDeSubventionRepository
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
+  readonly #membreRepository: MembreDepartementRepository
   readonly #utilisateurRepository: GetUtilisateurRepository
 
   constructor(
@@ -32,6 +34,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     actionRepository: ActionRepository,
     demandeDeSubventionRepository: DemandeDeSubventionRepository,
     coFinancementRepository: CoFinancementRepository,
+    membreRepository: MembreDepartementRepository,
     date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
@@ -40,6 +43,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#actionRepository = actionRepository
     this.#demandeDeSubventionRepository = demandeDeSubventionRepository
     this.#coFinancementRepository = coFinancementRepository
+    this.#membreRepository = membreRepository
     this.#date = date
   }
 
@@ -66,6 +70,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       uid: {
         value: 'identifiantPourLaCreation',
       },
+      uidCreateur: editeur.state.uid.value,
       uidFeuilleDeRoute: feuilleDeRoute.state.uid,
       uidPorteur: command.uidPorteur,
     })
@@ -134,11 +139,10 @@ export class AjouterUneAction implements CommandHandler<Command> {
       const actionId = actionCree.state.uid.value
 
       for (const demandeDeSubvention of demandesDeSubvention) {
-        // Update uidAction with real action ID
         const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
 
         if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
-          throw new Error('Erreur lors de la mise à jour de l\'identifiant de l\'action pour la demande de subvention')
+          return updatedDemandeDeSubvention
         }
 
         await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
@@ -147,10 +151,25 @@ export class AjouterUneAction implements CommandHandler<Command> {
         const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
 
         if (!(updatedCoFinancement instanceof CoFinancement)) {
-          throw new Error('Erreur lors de la mise à jour de l\'identifiant de l\'action pour le co-financement')
+          return updatedCoFinancement
         }
 
         await this.#coFinancementRepository.add(updatedCoFinancement, tx)
+
+        const membreExistant = await this.#membreRepository.get(
+          updatedCoFinancement.state.uidMembre,
+          command.uidGouvernance,
+          tx
+        )
+
+        if (!membreExistant?.state.roles.includes('Financeur')) {
+          await this.#membreRepository.add(
+            updatedCoFinancement.state.uidMembre,
+            command.uidGouvernance,
+            'Financeur',
+            tx
+          )
+        }
       }
 
       const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(

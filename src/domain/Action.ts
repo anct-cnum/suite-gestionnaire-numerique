@@ -18,6 +18,7 @@ export class Action extends Entity<State> {
       description: this.#description,
       nom: this.#nom,
       uid: this.#uid.state,
+      uidCreateur: this.#uidCreateur.state.value,
       uidFeuilleDeRoute: this.#uidFeuilleDeRoute.state.value,
       uidPorteur: this.#uidPorteur.state.value,
     }
@@ -33,6 +34,7 @@ export class Action extends Entity<State> {
   readonly #description: string
   readonly #nom: string
   readonly #uid: ActionUid
+  readonly #uidCreateur: MembreUid
   readonly #uidFeuilleDeRoute: FeuilleDeRouteUid
   readonly #uidPorteur: MembreUid
 
@@ -46,6 +48,7 @@ export class Action extends Entity<State> {
     budgetGlobal: number,
     uidFeuilleDeRoute: FeuilleDeRouteUid,
     uidPorteur: MembreUid,
+    uidCreateur: MembreUid,
     dateDeDebut: ValidDate<ActionFailure>,
     dateDeFin: ValidDate<ActionFailure>,
     dateDeCreation: ValidDate<ActionFailure>
@@ -60,6 +63,7 @@ export class Action extends Entity<State> {
     this.#budgetGlobal = budgetGlobal
     this.#uidFeuilleDeRoute = uidFeuilleDeRoute
     this.#uidPorteur = uidPorteur
+    this.#uidCreateur = uidCreateur
     this.#dateDeDebut = dateDeDebut
     this.#dateDeFin = dateDeFin
     this.#dateDeCreation = dateDeCreation
@@ -76,6 +80,7 @@ export class Action extends Entity<State> {
     description,
     nom,
     uid,
+    uidCreateur,
     uidFeuilleDeRoute,
     uidPorteur,
   }: FactoryParams): Result<ActionFailure, Action> {
@@ -93,6 +98,7 @@ export class Action extends Entity<State> {
         budgetGlobal,
         new  FeuilleDeRouteUid(uidFeuilleDeRoute.value),
         new MembreUid(uidPorteur),
+        new MembreUid(uidCreateur),
         dateDeDebutValidee,
         dateDeFinValidee,
         dateDeCreationValidee
@@ -123,6 +129,7 @@ type FactoryParams = Readonly<{
   description: string
   nom: string
   uid: UidState
+  uidCreateur: string
   uidFeuilleDeRoute: UidState
   uidPorteur: string
 }>
@@ -138,6 +145,7 @@ type State = Readonly<{
   description: string
   nom: string
   uid: UidState
+  uidCreateur: string
   uidFeuilleDeRoute: string
   uidPorteur: string
 }>
