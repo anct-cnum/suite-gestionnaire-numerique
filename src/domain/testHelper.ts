@@ -167,6 +167,7 @@ export function demandeDeSubventionFactory(override?: Partial<Parameters<typeof 
     uidAction: {
       value: 'actionFooId',
     },
+    uidCreateur: 'uidCreateurFooId',
     uidEnveloppeFinancement: {
       value: 'enveloppeFinancementFooId',
     },

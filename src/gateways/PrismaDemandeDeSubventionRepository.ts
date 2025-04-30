@@ -5,22 +5,33 @@ import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
 import { AddDemandeDeSubventionRepository } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventionRepository {
-  readonly #dataResource = prisma.demandeDeSubventionRecord
-
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
     const demande = await client.demandeDeSubventionRecord.create({
       data: {
-        actionId: Number(demandeDeSubvention.state.uidAction),
-        createurId: 1, // Default for testing, should be replaced in production
+        action: {
+          connect: {
+            id: Number(demandeDeSubvention.state.uidAction),
+          },
+        },
+        
         creation: new Date(demandeDeSubvention.state.dateDeCreation),
         derniereModification: new Date(demandeDeSubvention.state.derniereModification),
-        enveloppeFinancementId: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
+        enveloppe: {
+          connect: {
+            id: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
+          },
+        },
         statut: demandeDeSubvention.state.statut,
         subventionDemandee: demandeDeSubvention.state.subventionDemandee,
         subventionEtp: demandeDeSubvention.state.subventionEtp,
         subventionPrestation: demandeDeSubvention.state.subventionPrestation,
+        utilisateur: {
+          connect: {
+            id:  Number(1),
+          },
+        },
       },
     })
 
