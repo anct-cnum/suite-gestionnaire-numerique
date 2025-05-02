@@ -11,8 +11,8 @@ import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel } from '@/presenters/actionPresenter'
 
-export default function AjouterUneAction({ action, date }: Props): ReactElement {
-  const { ajouterUneActionAction } = useContext(clientContext)
+export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
+  const { ajouterUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
@@ -77,11 +77,15 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
       budgetPrevisionnel: cofinancements,
       contexte: contexteContenu,
       description: descriptionContenu,
-      destinataires: [],
+      destinataires: form.getAll('porteurs') as Array<string>,
+      feuilleDeRoute: uidFeuilleDeRoute,
+      gouvernance : gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
-      porteur: '',
+      path: pathname,
+      porteurs: form.getAll('porteurs') as Array<string>,
       temporalite: form.get('radio-pluriannuelle') as string,
     })
+    
     if (messages.includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
     } else {
@@ -105,4 +109,5 @@ export default function AjouterUneAction({ action, date }: Props): ReactElement 
 type Props = Readonly<{
   action: ActionViewModel
   date: Date
+  uidFeuilleDeRoute: string
 }>

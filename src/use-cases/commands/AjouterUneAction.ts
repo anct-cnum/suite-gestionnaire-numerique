@@ -139,10 +139,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     }
 
     await this.#transactionRepository.transaction(async (tx) => {
-      await this.#actionRepository.add(action, tx)
-
-      const actionCree = await this.#actionRepository.get(action.state.uid.value)
-      const actionId = actionCree.state.uid.value
+      const actionId =await this.#actionRepository.add(action, tx)
 
       for (const demandeDeSubvention of demandesDeSubvention) {
         const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())

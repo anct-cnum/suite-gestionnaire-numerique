@@ -3,19 +3,26 @@ import { Prisma } from '@prisma/client'
 import prisma from '../../prisma/prismaClient'
 import { Action } from '@/domain/Action'
 import { AddActionRepository, GetActionRepository } from '@/use-cases/commands/shared/ActionRepository'
+import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 export class PrismaActionRepository implements AddActionRepository, GetActionRepository {
   readonly #dataResource = prisma.actionRecord
+  readonly #utilisateurResource = prisma.utilisateurRecord
 
-  async add(action: Action, tx?: Prisma.TransactionClient): Promise<boolean> {
+  async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
-
-    await client.actionRecord.create({
+    const user = await this.#utilisateurResource.findUniqueOrThrow({
+      where: {
+        ssoId: action.state.uidCreateur,
+      },
+    })
+    console.log('ACTION BLIIII', action.state)
+    const actionRecord = await client.actionRecord.create({
       data: {
         besoins: action.state.besoins,
         budgetGlobal: Number(action.state.budgetGlobal),
         contexte: action.state.contexte,
-        createurId: Number(action.state.uidCreateur),
+        createurId: user.id,
         creation: new Date(action.state.dateDeCreation),
         dateDeDebut: new Date(action.state.dateDeDebut),
         dateDeFin: new Date(action.state.dateDeFin),
@@ -25,8 +32,8 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         nom: action.state.nom,
       },
     })
-
-    return true
+    
+    return actionRecord.id
   }
 
   async get(uid: Action['uid']['state']['value']): Promise<Action> {
