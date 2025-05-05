@@ -6,7 +6,6 @@ import { z } from 'zod'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
-import { PrismaBeneficiaireSubventionRepository } from '@/gateways/PrismaBeneficiaireSubventionRepository'
 import { PrismaCoFinancementRepository } from '@/gateways/PrismaCoFinancementRepository'
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
@@ -47,9 +46,9 @@ export async function ajouterUneActionAction(
     budgetGlobal: actionCommand.budgetGlobal,
     coFinancements: [],
     contexte: actionCommand.contexte,
-    dateDeDebut: new Date().toISOString(),
-    dateDeFin: new Date().toISOString(),
-    description: actionCommand.description,
+    dateDeDebut: actionCommand.anneeDeDebut,
+    dateDeFin: actionCommand.anneeDeFin ?? '',
+    description: actionCommand.description, 
     nom: actionCommand.nom,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
@@ -65,7 +64,6 @@ export async function ajouterUneActionAction(
     new PrismaDemandeDeSubventionRepository(),
     new PrismaCoFinancementRepository(),
     new PrismaMembreDepartementRepository(),
-    new PrismaBeneficiaireSubventionRepository(),
     new PrismaTransactionRepository(),
     new Date()
   ).handle(command)

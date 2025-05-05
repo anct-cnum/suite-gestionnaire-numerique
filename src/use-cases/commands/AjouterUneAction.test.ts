@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from '@prisma/client'
 
 import { AjouterUneAction } from './AjouterUneAction'
 import { AddActionRepository } from './shared/ActionRepository'
-import { BeneficiaireSubventionRepository } from './shared/BeneficiaireSubventionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import {
@@ -29,7 +29,7 @@ import {
   utilisateurFactory,
 } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
-import { epochTime, epochTimePlusOneDay, invalidDate } from '@/shared/testHelper'
+import { epochTime, invalidDate } from '@/shared/testHelper'
 
 describe('ajouter une action à une feuille de route', () => {
   beforeEach(() => {
@@ -37,15 +37,12 @@ describe('ajouter une action à une feuille de route', () => {
     spiedGouvernanceToUpdate = null
     spiedUtilisateurUidToFind = null
     spiedFeuilleDeRouteUidToFind = null
-    spiedFeuilleDeRouteToUpdate = null
     spiedActionToAdd = null
     spiedDemandeDeSubventionToAdd = null
     spiedCoFinancementToAdd = null
     spiedMembreId = null
     spiedMembreToAdd = null
     spiedDepartementCode = null
-    spiedRole = null
-    spiedBeneficiaireSubventionToAdd = null
   })
 
   it('étant donné une gouvernance, quand une action est créée par son gestionnaire, alors elle est ajoutée à cette feuille de route avec demandes de subvention et cofinancements', async () => {
@@ -59,7 +56,6 @@ describe('ajouter une action à une feuille de route', () => {
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
       new MembreDepartementRepositorySpy(),
-      new BeneficiaireSubventionRepositorySpy(),
       new TransactionRepositorySpy(),
       epochTime
     )
@@ -76,8 +72,8 @@ describe('ajouter une action à une feuille de route', () => {
         },
       ],
       contexte: 'Un contexte de test',
-      dateDeDebut: new Date(epochTime).toISOString(),
-      dateDeFin: new Date(epochTime).toISOString(),
+      dateDeDebut: '2024',
+      dateDeFin: '2025',
       demandesDeSubvention: [
         {
           beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
@@ -107,8 +103,8 @@ describe('ajouter une action à une feuille de route', () => {
         budgetGlobal: 10_000,
         contexte: 'Un contexte de test',
         dateDeCreation: epochTime,
-        dateDeDebut: epochTime,
-        dateDeFin: epochTime,
+        dateDeDebut: '2024',
+        dateDeFin: '2025',
         description: 'Description de test',
         nom,
         uid: {
@@ -130,7 +126,7 @@ describe('ajouter une action à une feuille de route', () => {
         subventionEtp: 2000,
         subventionPrestation: 3000,
         uid: { value: 'identifiantDemandeDeSubventionPourLaCreation' },
-        uidAction: { value: 'identifiantPourLaCreation' },
+        uidAction: { value: '1' },
         uidEnveloppeFinancement: { value: uidEnveloppeFinancement },
       }).state
     )
@@ -140,7 +136,7 @@ describe('ajouter une action à une feuille de route', () => {
       coFinancementFactory({
         montant: 2000,
         uid: { value: 'identifiantCoFinancementPourLaCreation' },
-        uidAction: { value: 'identifiantPourLaCreation' },
+        uidAction: { value: '1' },
         uidMembre: 'membreFooId',
       }).state
     )
@@ -157,22 +153,22 @@ describe('ajouter une action à une feuille de route', () => {
   it.each([
     {
       date: invalidDate,
-      dateDeDebut: epochTime,
-      dateDeFin: epochTime,
+      dateDeDebut: '2024',
+      dateDeFin: '2025',
       expectedFailure: 'dateDeCreationInvalide',
       intention: 'd‘une date de modification invalide',
     },
     {
       date: epochTime,
-      dateDeDebut: invalidDate,
-      dateDeFin: epochTime,
+      dateDeDebut: 'BLABLA',
+      dateDeFin: '2025',
       expectedFailure: 'dateDeDebutInvalide',
       intention: 'd‘une date de début invalide',
     },
     {
       date: epochTime,
-      dateDeDebut: epochTime,
-      dateDeFin: invalidDate,
+      dateDeDebut: '2024',
+      dateDeFin: 'BLABLA',
       expectedFailure: 'dateDeFinInvalide',
       intention: 'd‘une date de fin invalide',
     },
@@ -188,7 +184,6 @@ describe('ajouter une action à une feuille de route', () => {
         new DemandeDeSubventionRepositorySpy(),
         new CoFinancementRepositorySpy(),
         new MembreDepartementRepositorySpy(),
-        new BeneficiaireSubventionRepositorySpy(),
         new TransactionRepositorySpy(),
         date
       )
@@ -198,8 +193,8 @@ describe('ajouter une action à une feuille de route', () => {
         besoins: ['besoin 1'],
         budgetGlobal: 10000,
         contexte: 'Un contexte',
-        dateDeDebut : dateDeDebut.toDateString(),
-        dateDeFin : dateDeFin.toDateString(),
+        dateDeDebut: dateDeDebut.toString(),
+        dateDeFin: dateDeFin.toString(),
         description: 'Description',
         nom,
         uidEditeur,
@@ -227,7 +222,6 @@ describe('ajouter une action à une feuille de route', () => {
       new DemandeDeSubventionRepositorySpy(),
       new CoFinancementRepositorySpy(),
       new MembreDepartementRepositorySpy(),
-      new BeneficiaireSubventionRepositorySpy(),
       new TransactionRepositorySpy(),
       epochTime
     )
@@ -264,15 +258,12 @@ let spiedGouvernanceUidToFind: GouvernanceUid | null
 let spiedGouvernanceToUpdate: Gouvernance | null
 let spiedUtilisateurUidToFind: null | string
 let spiedFeuilleDeRouteUidToFind: null | string
-let spiedFeuilleDeRouteToUpdate: FeuilleDeRoute | null
 let spiedActionToAdd: Action | null
 let spiedDemandeDeSubventionToAdd: DemandeDeSubvention | null
 let spiedCoFinancementToAdd: CoFinancement | null
 let spiedMembreId: null | string = null
 let spiedMembreToAdd: { departementCode: string; membreId: string; role: string } | null = null
 let spiedDepartementCode: null | string = null
-let spiedRole: null | string = null
-let spiedBeneficiaireSubventionToAdd: { demandeDeSubventionId: string; membreId: string } | null = null
 
 class GouvernanceRepositorySpy implements GetGouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
@@ -302,8 +293,7 @@ implements GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository
     )
   }
 
-  async update(feuilleDeRoute: FeuilleDeRoute): Promise<void> {
-    spiedFeuilleDeRouteToUpdate = feuilleDeRoute
+  async update(_feuilleDeRoute: FeuilleDeRoute): Promise<void> {
     return Promise.resolve()
   }
 }
@@ -327,9 +317,9 @@ class GestionnaireAutreRepositorySpy implements GetUtilisateurRepository {
 }
 
 class ActionRepositorySpy implements AddActionRepository {
-  async add(action: Action): Promise<boolean> {
+  async add(action: Action): Promise<number> {
     spiedActionToAdd = action
-    return Promise.resolve(true)
+    return Promise.resolve(1)
   }
 
   async get(uid: string): Promise<Action> {
@@ -340,8 +330,8 @@ class ActionRepositorySpy implements AddActionRepository {
         budgetGlobal: 1000,
         contexte: 'contexte de l‘action',
         dateDeCreation: epochTime,
-        dateDeDebut: epochTime,
-        dateDeFin: epochTimePlusOneDay,
+        dateDeDebut: '2024',
+        dateDeFin: '2025',
         description: 'description de l‘action',
         nom: 'Structurer une association',
         uid: { value: uid },
@@ -380,10 +370,10 @@ class MembreDepartementRepositorySpy implements MembreDepartementRepository {
       roles: ['Financeur'],
       statut: 'Actif' as StatutFactory,
       uid: {
-        value: membreId,
+        value: spiedMembreId,
       },
       uidGouvernance: {
-        value: departementCode,
+        value: spiedDepartementCode,
       },
     })
     return Promise.resolve(membre as MembreConfirme)
@@ -391,13 +381,6 @@ class MembreDepartementRepositorySpy implements MembreDepartementRepository {
 
   async update(): Promise<void> {
     return Promise.resolve()
-  }
-}
-
-class BeneficiaireSubventionRepositorySpy implements BeneficiaireSubventionRepository {
-  async add(demandeDeSubventionId: string, membreId: string): Promise<boolean> {
-    spiedBeneficiaireSubventionToAdd = { demandeDeSubventionId, membreId }
-    return Promise.resolve(true)
   }
 }
 

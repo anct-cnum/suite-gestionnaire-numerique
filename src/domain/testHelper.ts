@@ -4,7 +4,6 @@ import { CoFinancement } from './CoFinancement'
 import { Comite } from './Comite'
 import { DemandeDeSubvention } from './DemandeDeSubvention'
 import { Departement, DepartementState } from './Departement'
-import { EnveloppeFinancement } from './EnveloppeFinancement'
 import { FeuilleDeRoute } from './FeuilleDeRoute'
 import { Gouvernance } from './Gouvernance'
 import { Membre } from './Membre'
@@ -97,8 +96,8 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     budgetGlobal: 10_000,
     contexte: 'Un contexte',
     dateDeCreation: epochTime,
-    dateDeDebut: epochTime,
-    dateDeFin: epochTime,
+    dateDeDebut: '2024',
+    dateDeFin: '2025',
     description: 'Description de test',
     nom: 'Feuille de route 69',
     uid: {
@@ -152,7 +151,9 @@ export function departementFactory(override?: Partial<DepartementState>): Depart
   })
 }
 
-export function demandeDeSubventionFactory(override?: Partial<Parameters<typeof DemandeDeSubvention.create>[0]>): DemandeDeSubvention {
+export function demandeDeSubventionFactory(
+  override?: Partial<Parameters<typeof DemandeDeSubvention.create>[0]>
+): DemandeDeSubvention {
   return DemandeDeSubvention.create({
     beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
     dateDeCreation: epochTime,
@@ -189,15 +190,3 @@ export function coFinancementFactory(override?: Partial<Parameters<typeof CoFina
   }) as CoFinancement
 }
 
-export function enveloppeFinancementFactory(override?: Partial<Parameters<typeof EnveloppeFinancement.create>[0]>): EnveloppeFinancement {
-  return EnveloppeFinancement.create({
-    dateDeDebut: epochTime,
-    dateDeFin: epochTime,
-    libelle: 'Enveloppe 2025',
-    montant: 100000,
-    uid: {
-      value: 'enveloppeFinancementFooId',
-    },
-    ...override,
-  }) as EnveloppeFinancement
-}

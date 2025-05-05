@@ -13,12 +13,11 @@ export class DemandeDeSubvention extends Entity<State> {
       derniereModification: this.#derniereModification.toJSON(),
       statut: this.#statut,
       subventionDemandee: this.#subventionDemandee,
-      subventionEtp: this.#subventionEtp,
-      subventionPrestation: this.#subventionPrestation,
+      subventionEtp: this.#subventionEtp ?? undefined,
+      subventionPrestation: this.#subventionPrestation ?? undefined,
       uid: this.#uid.state,
       uidAction: this.#uidAction.state.value,
       uidCreateur: this.#uidCreateur.state.value,
-
       uidEnveloppeFinancement: this.#uidEnveloppeFinancement.state.value,
     }
   }
@@ -149,8 +148,8 @@ type State = Readonly<{
   derniereModification: string
   statut: string
   subventionDemandee: number
-  subventionEtp: null | number
-  subventionPrestation: null | number
+  subventionEtp?: number
+  subventionPrestation?: number
   uid: UidState
   uidAction: string
   uidCreateur: string

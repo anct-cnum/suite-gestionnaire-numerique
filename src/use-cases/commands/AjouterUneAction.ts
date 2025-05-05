@@ -1,6 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
-import { BeneficiaireSubventionRepository } from './shared/BeneficiaireSubventionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import {
@@ -19,7 +18,6 @@ import { isOk } from '@/shared/lang'
 
 export class AjouterUneAction implements CommandHandler<Command> {
   readonly #actionRepository: ActionRepository
-  readonly #beneficiaireSubventionRepository: BeneficiaireSubventionRepository
   readonly #coFinancementRepository: CoFinancementRepository
   readonly #date: Date
   readonly #demandeDeSubventionRepository: DemandeDeSubventionRepository
@@ -37,7 +35,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
     demandeDeSubventionRepository: DemandeDeSubventionRepository,
     coFinancementRepository: CoFinancementRepository,
     membreRepository: MembreDepartementRepository,
-    beneficiaireSubventionRepository: BeneficiaireSubventionRepository,
     transactionRepository: TransactionRepository,
     date: Date
   ) {
@@ -48,7 +45,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#demandeDeSubventionRepository = demandeDeSubventionRepository
     this.#coFinancementRepository = coFinancementRepository
     this.#membreRepository = membreRepository
-    this.#beneficiaireSubventionRepository = beneficiaireSubventionRepository
     this.#transactionRepository = transactionRepository
     this.#date = date
   }
@@ -69,8 +65,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
       budgetGlobal: command.budgetGlobal,
       contexte: command.contexte,
       dateDeCreation: this.#date,
-      dateDeDebut: new Date(command.dateDeDebut),
-      dateDeFin: new Date(command.dateDeFin),
+      dateDeDebut: command.dateDeDebut,
+      dateDeFin: command.dateDeFin,
       description: command.description,
       nom: command.nom,
       uid: {
@@ -141,16 +137,17 @@ export class AjouterUneAction implements CommandHandler<Command> {
     await this.#transactionRepository.transaction(async (tx) => {
       const actionId =await this.#actionRepository.add(action, tx)
 
-      for (const demandeDeSubvention of demandesDeSubvention) {
-        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
+      await Promise.all(
+        demandesDeSubvention.map(async demandeDeSubvention => {
+          const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
+          if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
+            return updatedDemandeDeSubvention
+          }
+          await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
+        })
+      )
 
-        if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
-          return updatedDemandeDeSubvention
-        }
-
-        await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
-      }
-      for (const coFinancement of coFinancements) {
+      await Promise.all(coFinancements.map(async coFinancement => {
         const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
 
         if (!(updatedCoFinancement instanceof CoFinancement)) {
@@ -164,8 +161,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
           command.uidGouvernance,
           tx
         )
-
-        if (!membreExistant?.state.roles.includes('Financeur')) {
+        const estDejaFinanceur = membreExistant ? membreExistant.state.roles.includes('Financeur') : false
+        if (!estDejaFinanceur) {
           await this.#membreRepository.add(
             updatedCoFinancement.state.uidMembre,
             command.uidGouvernance,
@@ -173,7 +170,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
             tx
           )
         }
-      }
+      }))
 
       const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(
         this.#date,
@@ -185,7 +182,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
 
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
-    })
+      return feuilleDeRouteAJour
+    })  
     return 'OK'
   }
 }

@@ -2,7 +2,7 @@ import { FeuilleDeRouteUid } from './FeuilleDeRoute'
 import { MembreUid } from './Membre'
 import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
-import { ValidDate } from './shared/ValidDate'
+import { ValidDate, ValidDateFromYearString } from './shared/ValidDate'
 import { Result } from '@/shared/lang'
 
 export class Action extends Entity<State> {
@@ -13,8 +13,8 @@ export class Action extends Entity<State> {
       budgetGlobal: this.#budgetGlobal,
       contexte: this.#contexte,
       dateDeCreation: this.#dateDeCreation.toJSON(),
-      dateDeDebut: this.#dateDeDebut.toJSON(),
-      dateDeFin: this.#dateDeFin.toJSON(),
+      dateDeDebut: this.#dateDeDebut.getFullYear().toString(),
+      dateDeFin: this.#dateDeFin.getFullYear().toString(),
       description: this.#description,
       nom: this.#nom,
       uid: this.#uid.state,
@@ -49,8 +49,8 @@ export class Action extends Entity<State> {
     uidFeuilleDeRoute: FeuilleDeRouteUid,
     uidPorteur: MembreUid,
     uidCreateur: MembreUid,
-    dateDeDebut: ValidDate<ActionFailure>,
-    dateDeFin: ValidDate<ActionFailure>,
+    dateDeDebut: ValidDateFromYearString<ActionFailure>,
+    dateDeFin: null | ValidDateFromYearString<ActionFailure>,
     dateDeCreation: ValidDate<ActionFailure>
   ) {
     super(uid)
@@ -65,7 +65,7 @@ export class Action extends Entity<State> {
     this.#uidPorteur = uidPorteur
     this.#uidCreateur = uidCreateur
     this.#dateDeDebut = dateDeDebut
-    this.#dateDeFin = dateDeFin
+    this.#dateDeFin =  dateDeFin ?? dateDeDebut
     this.#dateDeCreation = dateDeCreation
   }
 
@@ -86,8 +86,8 @@ export class Action extends Entity<State> {
   }: FactoryParams): Result<ActionFailure, Action> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
-      const dateDeDebutValidee = new ValidDate(dateDeDebut, 'dateDeDebutInvalide')
-      const dateDeFinValidee = new ValidDate(dateDeFin, 'dateDeFinInvalide')
+      const dateDeDebutValidee = new ValidDateFromYearString(dateDeDebut, 'dateDeDebutInvalide')
+      const dateDeFinValidee = new ValidDateFromYearString(dateDeFin, 'dateDeFinInvalide')
       return new Action(
         new ActionUid(uid.value),
         besoins,
@@ -124,8 +124,8 @@ type FactoryParams = Readonly<{
   budgetGlobal: number
   contexte: string
   dateDeCreation: Date
-  dateDeDebut: Date
-  dateDeFin: Date
+  dateDeDebut: string
+  dateDeFin: string
   description: string
   nom: string
   uid: UidState

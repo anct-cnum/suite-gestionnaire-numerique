@@ -86,10 +86,10 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       temporalite: form.get('radio-pluriannuelle') as string,
     })
     
-    if (messages.includes('OK')) {
+    if ((messages as Array<string>).includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
     } else {
-      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+      Notification('error', { description: (messages as Array<string>).join(', '), title: 'Erreur : ' })
     }
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)

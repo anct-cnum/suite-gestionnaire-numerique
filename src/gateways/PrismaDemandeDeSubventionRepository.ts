@@ -23,14 +23,15 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
     })
 
     // Création des associations avec les bénéficiaires
-    for (const beneficiaireId of demandeDeSubvention.state.beneficiaires) {
-      await client.beneficiaireSubventionRecord.create({
-        data: {
-          demandeDeSubventionId: demande.id,
-          membreId: beneficiaireId,
-        },
-      })
-    }
+    await Promise.all(
+      demandeDeSubvention.state.beneficiaires.map(async beneficiaireId =>
+        client.beneficiaireSubventionRecord.create({
+          data: {
+            demandeDeSubventionId: demande.id,
+            membreId: beneficiaireId,
+          },
+        }))
+    )
 
     return true
   }

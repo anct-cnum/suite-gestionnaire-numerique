@@ -54,14 +54,14 @@ describe('action repository', () => {
       budgetGlobal: 50_000,
       contexte: 'Contexte de test',
       dateDeCreation: epochTime,
-      dateDeDebut: new Date('2024-01-01'),
-      dateDeFin: new Date('2024-12-31'),
+      dateDeDebut: '2024',
+      dateDeFin: '2025',
       description: 'Description détaillée de l\'action',
       nom: 'Action test',
       uid: {
         value: 'actionId',
       },
-      uidCreateur: String(utilisateurId),
+      uidCreateur: uidEditeur,
       uidFeuilleDeRoute: { value: feuilleDeRouteId.toString() },
       uidPorteur,
     })
@@ -69,7 +69,7 @@ describe('action repository', () => {
     // WHEN
     const actionCree = await new PrismaActionRepository().add(action)
     // THEN
-    expect(actionCree).toBe(true)
+    expect(Number.isInteger(actionCree)).toBe(true)
     const actionRecord = await prisma.actionRecord.findFirst({
       where: {
         feuilleDeRouteId,
@@ -80,7 +80,7 @@ describe('action repository', () => {
       budgetGlobal: 50000,
       contexte: 'Contexte de test',
       dateDeDebut: new Date('2024-01-01'),
-      dateDeFin: new Date('2024-12-31'),
+      dateDeFin: new Date('2025-01-01'),
       description: 'Description détaillée de l\'action',
       feuilleDeRouteId: Number(feuilleDeRouteId),
       nom: 'Action test',

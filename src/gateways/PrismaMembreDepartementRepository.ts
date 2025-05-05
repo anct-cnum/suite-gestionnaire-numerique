@@ -6,8 +6,7 @@ import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
 import { MembreDepartementRepository } from '@/use-cases/commands/shared/MembreDepartementRepository'
 
 export class PrismaMembreDepartementRepository implements MembreDepartementRepository {
-  readonly #dataResource = prisma.membreGouvernanceDepartementRecord
-
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(membreId: string, departementCode: string, role: string, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
@@ -22,6 +21,7 @@ export class PrismaMembreDepartementRepository implements MembreDepartementRepos
     return true
   }
 
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(membreId: string, departementCode: string, tx?: Prisma.TransactionClient): Promise<MembreConfirme | null> {
     const client = tx ?? prisma
 

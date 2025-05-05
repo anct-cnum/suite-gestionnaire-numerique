@@ -7,11 +7,11 @@ import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 export class PrismaActionRepository implements AddActionRepository, GetActionRepository {
   readonly #dataResource = prisma.actionRecord
-  readonly #utilisateurResource = prisma.utilisateurRecord
 
   async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
-    const user = await this.#utilisateurResource.findUniqueOrThrow({
+    const utilisateurResource = client.utilisateurRecord
+    const user = await utilisateurResource.findUniqueOrThrow({
       where: {
         ssoId: action.state.uidCreateur,
       },
@@ -25,7 +25,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         createurId: user.id,
         creation: new Date(action.state.dateDeCreation),
         dateDeDebut: new Date(action.state.dateDeDebut),
-        dateDeFin: new Date(action.state.dateDeFin),
+        dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
         derniereModification: new Date(action.state.dateDeCreation),
         description: action.state.description,
         feuilleDeRouteId: Number(action.state.uidFeuilleDeRoute),
@@ -37,7 +37,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
   }
 
   async get(uid: Action['uid']['state']['value']): Promise<Action> {
-    const record = await this.#dataResource.findUniqueOrThrow({
+    const actionRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         demandesDeSubvention: {
           include: {
@@ -54,22 +54,22 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         id: Number(uid),
       },
     })
-    const beneficiaires = record.demandesDeSubvention.flatMap((demande) =>
+    const beneficiaires = actionRecord.demandesDeSubvention.flatMap((demande) =>
       demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
     const action = Action.create({
       beneficiaires,
-      besoins: record.besoins,
-      budgetGlobal: record.budgetGlobal,
-      contexte: record.contexte,
-      dateDeCreation: record.creation,
-      dateDeDebut: record.dateDeDebut,
-      dateDeFin: record.dateDeFin,
-      description: record.description,
-      nom: record.nom,
-      uid: { value: String(record.id) },
-      uidCreateur: record.utilisateur.ssoId,
-      uidFeuilleDeRoute: { value: String(record.feuilleDeRouteId) },
-      uidPorteur: String(record.createurId),
+      besoins: actionRecord.besoins,
+      budgetGlobal: actionRecord.budgetGlobal,
+      contexte: actionRecord.contexte,
+      dateDeCreation: actionRecord.creation,
+      dateDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
+      dateDeFin: actionRecord.dateDeFin.getFullYear().toString(),
+      description: actionRecord.description,
+      nom: actionRecord.nom,
+      uid: { value: String(actionRecord.id) },
+      uidCreateur: actionRecord.utilisateur.ssoId,
+      uidFeuilleDeRoute: { value: String(actionRecord.feuilleDeRouteId) },
+      uidPorteur: String(actionRecord.createurId),
     })
 
     if (!(action instanceof Action)) {

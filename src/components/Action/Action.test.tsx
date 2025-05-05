@@ -339,6 +339,7 @@ describe('formulaire d‘ajout d‘une action', () => {
         <AjouterUneAction
           action={actionViewModelFactory()}
           date={epochTime}
+          uidFeuilleDeRoute="uidFeuilleDeRoute"
         />,
         { ajouterUneActionAction }
       )
@@ -358,6 +359,7 @@ describe('formulaire d‘ajout d‘une action', () => {
         <AjouterUneAction
           action={actionVideViewModelFactory()}
           date={epochTime}
+          uidFeuilleDeRoute="uidFeuilleDeRoute"
         />,
         { ajouterUneActionAction }
       )
@@ -522,6 +524,7 @@ export function afficherFormulaireDeCreationAction(options?: Partial<Parameters<
     <AjouterUneAction
       action={actionVideViewModelFactory()}
       date={epochTime}
+      uidFeuilleDeRoute="uidFeuilleDeRoute"
     />,
     options,
     gouvernanceViewModel

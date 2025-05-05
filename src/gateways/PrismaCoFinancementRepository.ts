@@ -5,8 +5,6 @@ import { CoFinancement } from '@/domain/CoFinancement'
 import { AddCoFinancementRepository } from '@/use-cases/commands/shared/CoFinancementRepository'
 
 export class PrismaCoFinancementRepository implements AddCoFinancementRepository {
-  readonly #dataResource = prisma.coFinancementRecord
-
   async add(coFinancement: CoFinancement, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
