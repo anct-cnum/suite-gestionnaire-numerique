@@ -7,7 +7,8 @@ import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 export class PrismaActionRepository implements AddActionRepository, GetActionRepository {
   readonly #dataResource = prisma.actionRecord
-
+  
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
     const utilisateurResource = client.utilisateurRecord
@@ -16,7 +17,6 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         ssoId: action.state.uidCreateur,
       },
     })
-    console.log('ACTION BLIIII', action.state)
     const actionRecord = await client.actionRecord.create({
       data: {
         besoins: action.state.besoins,

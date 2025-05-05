@@ -5,6 +5,7 @@ import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
 import { AddDemandeDeSubventionRepository } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventionRepository {
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 

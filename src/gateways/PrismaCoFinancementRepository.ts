@@ -5,6 +5,7 @@ import { CoFinancement } from '@/domain/CoFinancement'
 import { AddCoFinancementRepository } from '@/use-cases/commands/shared/CoFinancementRepository'
 
 export class PrismaCoFinancementRepository implements AddCoFinancementRepository {
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(coFinancement: CoFinancement, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 

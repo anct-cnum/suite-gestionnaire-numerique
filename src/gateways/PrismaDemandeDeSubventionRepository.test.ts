@@ -161,7 +161,7 @@ describe('demande de subvention repository', () => {
       subventionPrestation: 15000,
     })
 
-    const actualDemandeId = demandeDeSubventionRecord!.id
+    const actualDemandeId = demandeDeSubventionRecord ? demandeDeSubventionRecord.id : -1
     const beneficiaires = await prisma.beneficiaireSubventionRecord.findMany({
       where: {
         demandeDeSubventionId: actualDemandeId,
@@ -169,7 +169,7 @@ describe('demande de subvention repository', () => {
     })
 
     expect(beneficiaires).toHaveLength(2)
-    expect(beneficiaires).toEqual(expect.arrayContaining([
+    expect(beneficiaires).toStrictEqual(expect.arrayContaining([
       expect.objectContaining({
         demandeDeSubventionId: actualDemandeId,
         membreId: beneficiaire1Id,

@@ -81,35 +81,14 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return action
     }
 
-    const demandesDeSubvention: Array<DemandeDeSubvention> = []
-    if (command.demandesDeSubvention && command.demandesDeSubvention.length > 0) {
-      for (const demande of command.demandesDeSubvention) {
-        const demandeDeSubvention = DemandeDeSubvention.create({
-          beneficiaires: demande.beneficiaires,
-          dateDeCreation: this.#date,
-          derniereModification: this.#date,
-          statut: demande.statut,
-          subventionDemandee: demande.subventionDemandee,
-          subventionEtp: demande.subventionEtp ?? null,
-          subventionPrestation: demande.subventionPrestation ?? null,
-          uid: {
-            value: 'identifiantDemandeDeSubventionPourLaCreation',
-          },
-          uidAction: {
-            value: action.state.uid.value,
-          },
-          uidCreateur: editeur.state.uid.value,
-          uidEnveloppeFinancement: {
-            value: demande.enveloppeFinancementId,
-          },
-        })
-
-        if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
-          return demandeDeSubvention
-        }
-
-        demandesDeSubvention.push(demandeDeSubvention)
-      }
+    const demandesDeSubvention: Array<DemandeDeSubvention> | DemandeDeSubventionFailure =
+     this.creationDesDemandesDeSubvention(
+       command.demandesDeSubvention ?? [],
+       action.state.uid.value,
+       editeur.state.uid.value
+     )
+    if (!(demandesDeSubvention instanceof Array)) {
+      return demandesDeSubvention
     }
 
     const coFinancements: Array<CoFinancement> = []
@@ -178,13 +157,54 @@ export class AjouterUneAction implements CommandHandler<Command> {
       )
 
       if (!isOk(feuilleDeRouteAJour)) {
-        return feuilleDeRouteAJour
+        //Stop transaction
+        throw new Error(`Feuille de route non mise à jour : ${  typeof   feuilleDeRouteAJour}`)
       }
 
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
       return feuilleDeRouteAJour
     })  
     return 'OK'
+  }
+
+  private creationDesDemandesDeSubvention(
+    demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
+    uidAction: string,
+    uidCreateur: string
+  ): Array<DemandeDeSubvention>|DemandeDeSubventionFailure {
+    const demandesDeSubventionResult: Array<DemandeDeSubvention> = []
+
+    //action.state.uid.value,
+    if (demandesDeSubventionCommand.length > 0) {
+      for (const demande of demandesDeSubventionCommand) {
+        const demandeDeSubvention = DemandeDeSubvention.create({
+          beneficiaires: demande.beneficiaires,
+          dateDeCreation: this.#date,
+          derniereModification: this.#date,
+          statut: demande.statut,
+          subventionDemandee: demande.subventionDemandee,
+          subventionEtp: demande.subventionEtp ?? null,
+          subventionPrestation: demande.subventionPrestation ?? null,
+          uid: {
+            value: 'identifiantDemandeDeSubventionPourLaCreation',
+          },
+          uidAction: {
+            value: uidAction, 
+          },
+          uidCreateur,
+          uidEnveloppeFinancement: {
+            value: demande.enveloppeFinancementId,
+          },
+        })
+
+        if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
+          return demandeDeSubvention
+        }
+
+        demandesDeSubventionResult.push(demandeDeSubvention)
+      }
+    }
+    return demandesDeSubventionResult
   }
 }
 
