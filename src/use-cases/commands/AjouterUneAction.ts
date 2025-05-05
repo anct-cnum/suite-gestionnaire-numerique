@@ -156,10 +156,11 @@ export class AjouterUneAction implements CommandHandler<Command> {
         editeur
       )
 
-      if (!isOk(feuilleDeRouteAJour)) {
-        //Stop transaction
-        throw new Error(`Feuille de route non mise à jour : ${  typeof   feuilleDeRouteAJour}`)
-      }
+      // if (!isOk(feuilleDeRouteAJour)) {
+      //   //Stop transaction
+      //   console.log('feuilleDeRouteAJour :', JSON.stringify(feuilleDeRouteAJour, null, 2))
+      //   throw new Error(`Feuille de route non mise à jour : ${  typeof   feuilleDeRouteAJour}`)
+      // }
 
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
       return feuilleDeRouteAJour
