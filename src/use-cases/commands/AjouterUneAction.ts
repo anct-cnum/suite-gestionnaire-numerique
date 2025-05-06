@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
@@ -13,8 +14,8 @@ import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
 import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
 import { DemandeDeSubvention, DemandeDeSubventionFailure } from '@/domain/DemandeDeSubvention'
+import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
-import { isOk } from '@/shared/lang'
 
 export class AjouterUneAction implements CommandHandler<Command> {
   readonly #actionRepository: ActionRepository
@@ -49,6 +50,35 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#date = date
   }
 
+  private static creationDesCoFinancements(
+    coFinancementsCommand: Array<CoFinancementCommand>,
+    uidAction: string
+  ): Array<CoFinancement>|CoFinancementFailure {
+    const coFinancements: Array<CoFinancement> = []
+    
+    if (coFinancementsCommand.length > 0) {
+      for (const financement of coFinancementsCommand) {
+        const coFinancement = CoFinancement.create({
+          montant: Number(financement.montant),
+          uid: {
+            value: 'identifiantCoFinancementPourLaCreation',
+          },
+          uidAction: {
+            value: uidAction,
+          },
+          uidMembre: financement.membreId,
+        })
+
+        if (!(coFinancement instanceof CoFinancement)) {
+          return coFinancement
+        }
+
+        coFinancements.push(coFinancement)
+      }
+    }
+    return coFinancements
+  }
+
   async handle(command: Command): ResultAsync<Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(
@@ -58,7 +88,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return 'utilisateurNePeutPasAjouterAction'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
-
+    
     const action = Action.create({
       beneficiaires: command.beneficiaires,
       besoins: command.besoins,
@@ -87,47 +117,34 @@ export class AjouterUneAction implements CommandHandler<Command> {
        action.state.uid.value,
        editeur.state.uid.value
      )
-    if (!(demandesDeSubvention instanceof Array)) {
+    if (!Array.isArray(demandesDeSubvention)) {
       return demandesDeSubvention
     }
 
-    const coFinancements: Array<CoFinancement> = []
-    if (command.coFinancements && command.coFinancements.length > 0) {
-      for (const financement of command.coFinancements) {
-        const coFinancement = CoFinancement.create({
-          montant: Number(financement.montant),
-          uid: {
-            value: 'identifiantCoFinancementPourLaCreation',
-          },
-          uidAction: {
-            value: action.state.uid.value,
-          },
-          uidMembre: financement.membreId,
-        })
-
-        if (!(coFinancement instanceof CoFinancement)) {
-          return coFinancement
-        }
-
-        coFinancements.push(coFinancement)
-      }
+    const coFinancements: Array<CoFinancement> | CoFinancementFailure =
+    AjouterUneAction.creationDesCoFinancements(
+      command.coFinancements ?? [],
+      action.state.uid.value
+    )
+    
+    if (!Array.isArray(coFinancements)) {
+      return coFinancements
     }
 
     await this.#transactionRepository.transaction(async (tx) => {
       const actionId =await this.#actionRepository.add(action, tx)
 
-      await Promise.all(
-        demandesDeSubvention.map(async demandeDeSubvention => {
-          const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
-          if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
-            return updatedDemandeDeSubvention
-          }
-          await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
-        })
-      )
+      for (const demandeDeSubvention of demandesDeSubvention) {
+        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
+        if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
+          return updatedDemandeDeSubvention
+        }
+        await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
+      }
 
-      await Promise.all(coFinancements.map(async coFinancement => {
-        const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
+      for (const coFinancement of coFinancements) { 
+        const updatedCoFinancement: CoFinancement| CoFinancementFailure =
+           coFinancement.avecNouvelleUidAction(actionId.toString())
 
         if (!(updatedCoFinancement instanceof CoFinancement)) {
           return updatedCoFinancement
@@ -149,21 +166,18 @@ export class AjouterUneAction implements CommandHandler<Command> {
             tx
           )
         }
-      }))
+      }
 
       const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(
         this.#date,
         editeur
       )
 
-      // if (!isOk(feuilleDeRouteAJour)) {
-      //   //Stop transaction
-      //   console.log('feuilleDeRouteAJour :', JSON.stringify(feuilleDeRouteAJour, null, 2))
-      //   throw new Error(`Feuille de route non mise à jour : ${  typeof   feuilleDeRouteAJour}`)
-      // }
+      if (!(feuilleDeRouteAJour instanceof FeuilleDeRoute)) {
+        return feuilleDeRouteAJour
+      }
 
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
-      return feuilleDeRouteAJour
     })  
     return 'OK'
   }
