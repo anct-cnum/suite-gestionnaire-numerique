@@ -131,8 +131,56 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return coFinancements
     }
 
+    return  this.persistAction(action, demandesDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
+  }
+
+  private creationDesDemandesDeSubvention(
+    demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
+    uidAction: string,
+    uidCreateur: string
+  ): Array<DemandeDeSubvention>|DemandeDeSubventionFailure {
+    const demandesDeSubventionResult: Array<DemandeDeSubvention> = []
+
+    if (demandesDeSubventionCommand.length > 0) {
+      for (const demande of demandesDeSubventionCommand) {
+        const demandeDeSubvention = DemandeDeSubvention.create({
+          beneficiaires: demande.beneficiaires,
+          dateDeCreation: this.#date,
+          derniereModification: this.#date,
+          statut: demande.statut,
+          subventionDemandee: demande.subventionDemandee,
+          subventionEtp: demande.subventionEtp ?? null,
+          subventionPrestation: demande.subventionPrestation ?? null,
+          uid: {
+            value: 'identifiantDemandeDeSubventionPourLaCreation',
+          },
+          uidAction: {
+            value: uidAction, 
+          },
+          uidCreateur,
+          uidEnveloppeFinancement: {
+            value: demande.enveloppeFinancementId,
+          },
+        })
+
+        if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
+          return demandeDeSubvention
+        }
+
+        demandesDeSubventionResult.push(demandeDeSubvention)
+      }
+    }
+    return demandesDeSubventionResult
+  }
+
+  private async persistAction(
+    action: Action, demandesDeSubvention: Array<DemandeDeSubvention>,
+    coFinancements: Array<CoFinancement>, 
+    command : Command,
+    feuilleDeRoute: FeuilleDeRoute, editeur: Utilisateur
+  ): Promise<'OK' | Failure> {
     await this.#transactionRepository.transaction(async (tx) => {
-      const actionId =await this.#actionRepository.add(action, tx)
+      const actionId = await this.#actionRepository.add(action, tx)
 
       for (const demandeDeSubvention of demandesDeSubvention) {
         const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
@@ -142,9 +190,8 @@ export class AjouterUneAction implements CommandHandler<Command> {
         await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
       }
 
-      for (const coFinancement of coFinancements) { 
-        const updatedCoFinancement: CoFinancement| CoFinancementFailure =
-           coFinancement.avecNouvelleUidAction(actionId.toString())
+      for (const coFinancement of coFinancements) {
+        const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
 
         if (!(updatedCoFinancement instanceof CoFinancement)) {
           return updatedCoFinancement
@@ -178,48 +225,9 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
 
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
-    })  
+      return 'OK'
+    })
     return 'OK'
-  }
-
-  private creationDesDemandesDeSubvention(
-    demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
-    uidAction: string,
-    uidCreateur: string
-  ): Array<DemandeDeSubvention>|DemandeDeSubventionFailure {
-    const demandesDeSubventionResult: Array<DemandeDeSubvention> = []
-
-    //action.state.uid.value,
-    if (demandesDeSubventionCommand.length > 0) {
-      for (const demande of demandesDeSubventionCommand) {
-        const demandeDeSubvention = DemandeDeSubvention.create({
-          beneficiaires: demande.beneficiaires,
-          dateDeCreation: this.#date,
-          derniereModification: this.#date,
-          statut: demande.statut,
-          subventionDemandee: demande.subventionDemandee,
-          subventionEtp: demande.subventionEtp ?? null,
-          subventionPrestation: demande.subventionPrestation ?? null,
-          uid: {
-            value: 'identifiantDemandeDeSubventionPourLaCreation',
-          },
-          uidAction: {
-            value: uidAction, 
-          },
-          uidCreateur,
-          uidEnveloppeFinancement: {
-            value: demande.enveloppeFinancementId,
-          },
-        })
-
-        if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
-          return demandeDeSubvention
-        }
-
-        demandesDeSubventionResult.push(demandeDeSubvention)
-      }
-    }
-    return demandesDeSubventionResult
   }
 }
 
