@@ -1,12 +1,10 @@
-
 import { Prisma } from '@prisma/client'
 
-import {  membreInclude, toMembre } from './shared/MembresGouvernance'
+import {  membreInclude } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
-import {  UneActionLoader, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
-export class PrismaUneActionLoader implements UneActionLoader {
+export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
 
   async get(uidAction: string): Promise<UneActionReadModel> {
@@ -21,26 +19,48 @@ export class PrismaUneActionLoader implements UneActionLoader {
   }
 
   #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>): UneActionReadModel {
-    const demandeDeSubvention = actionRecord.demandesDeSubvention[0]
-    const isEditable = !(demandeDeSubvention.statut === 'acceptee' || demandeDeSubvention.statut === 'refusee')
+    const coFinancement = actionRecord.coFinancement[0]
+      ? {
+        financeur: actionRecord.coFinancement[0].membre.relationContact.nom ?? 'Inconnu',
+        montant: actionRecord.coFinancement[0].montant,
+      }
+      : { financeur: '', montant: 0 }
+
+    const enveloppe = actionRecord.demandesDeSubvention[0]?.enveloppe
+      ? {
+        montant: actionRecord.demandesDeSubvention[0].enveloppe.montant,
+      }
+      : { montant: 0 }
+
+    const porteurs = (actionRecord.porteurAction ?? []).map(pa => ({
+      id: pa.membre.id,
+      nom: pa.membre.relationContact.nom ?? '',
+    }))
+
+    const beneficiaires = actionRecord.demandesDeSubvention.flatMap(ds =>
+      ds.beneficiaire.map(b => ({
+        id: b.membre.id,
+        nom: b.membre.relationContact.nom ?? '',
+      }))) ?? []
+
     return {
-      beneficiaire: actionRecord.beneficiaires,
-      besoins: actionRecord.besoins.map(besoin => besoin.split('_').join(' ')),
-      budgetPrevisionnel: actionRecord.budgetGlobal,
-      coFinancement: {
-        financeur: actionRecord.coFinanceurs,
-        montant: actionRecord.coFinancement,
-      },
-      enveloppe: {
-        libelle: demandeDeSubvention.enveloppe.libelle ?? 'Aucune enveloppe',
-        montant: actionRecord.financementDemande,
-      },
-      isEditable,
-      isEnveloppeFormation: isSubventionFormation(action),
-      nom: action.nom,
-      porteurs: action.porteurAction.map((porteur) => fromMembre(toMembre(porteur.membre))),
-      statut: (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) ?? 'enCours',
-      uid: String(action.id),
+      anneeDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
+      anneeDeFin: actionRecord.dateDeFin.getFullYear().toString(),
+      beneficiaires,
+      besoins: actionRecord.besoins,
+      budgetGlobal: actionRecord.budgetGlobal,
+      budgetPrevisionnel: actionRecord.coFinancement.map(cf => ({
+        coFinanceur: cf.membre.relationContact.nom,
+        montant: cf.montant,
+      })),
+      coFinancement,
+      contexte: actionRecord.contexte,
+      description: actionRecord.description,
+      enveloppe,
+      nom: actionRecord.nom,
+      porteurs,
+      statut: actionRecord.statut as StatusSubvention,
+      uid: String(actionRecord.id),
     }
   }
 }
@@ -73,38 +93,3 @@ const include = {
     },
   },
 }
-// const include = {
-//   action: {
-//     include: {
-//       coFinancement: {
-//         include: {
-//           membre: {
-//             include: membreInclude,
-//           },
-//         },
-//       },
-//       demandesDeSubvention: {
-//         include: {
-//           beneficiaire: {
-//             include: {
-//               membre: {
-//                 include: membreInclude,
-//               },
-//             },
-//           },
-//           enveloppe: true,
-//         },
-//       },
-//       porteurAction: {
-//         include: {
-//           membre: {
-//             include: membreInclude,
-//           },
-//         },
-//       },
-//     },
-//   },
-//   relationMembre: {
-//     include: membreInclude,
-//   },
-// }

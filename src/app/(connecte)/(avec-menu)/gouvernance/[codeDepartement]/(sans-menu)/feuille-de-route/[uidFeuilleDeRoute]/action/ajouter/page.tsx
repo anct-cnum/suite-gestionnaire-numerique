@@ -6,12 +6,11 @@ import MenuLateral from '@/components/Action/MenuLateral'
 import Notice from '@/components/shared/Notice/Notice'
 import { actionARemplir } from '@/presenters/actionPresenter'
 
-export default function ActionAjouterController({
-  params,
+export default async function ActionAjouterController({  params,
 }: Readonly<{
   params: { uidFeuilleDeRoute: string }
-}>): ReactElement {
-  const { uidFeuilleDeRoute } = params
+}>): Promise<ReactElement> {
+  const { uidFeuilleDeRoute } = await params
   const date = new Date()
 
   try {
@@ -23,7 +22,7 @@ export default function ActionAjouterController({
         <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <AjouterUneAction
-            action={actionARemplir({})}
+            action={actionARemplir(undefined)}
             date={date}
             uidFeuilleDeRoute={uidFeuilleDeRoute}
           />

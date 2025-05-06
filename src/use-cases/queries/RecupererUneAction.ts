@@ -1,6 +1,41 @@
-export type UneActionReadModel = Readonly<{
-  besoins?: Array<BesoinsPossible>
-}>
+import { StatusSubvention } from './shared/StatusSubvention'
+
+export interface CoFinancementReadModel {
+  financeur: string
+  montant: number
+}
+
+export interface EnveloppeReadModel {
+  montant: number
+  // autres champs si besoin
+}
+
+export interface PorteurPotentielReadModel {
+  // adapte selon la structure attendue
+  id: string
+  nom: string
+}
+
+export interface UneActionReadModel {
+  anneeDeDebut?: string
+  anneeDeFin?: string
+  beneficiaires?: Array<PorteurPotentielReadModel>
+  besoins: Array<string>
+  budgetGlobal?: number
+  budgetPrevisionnel?: Array<{
+    coFinanceur: string
+    montant: number
+  }>
+  coFinancement: CoFinancementReadModel
+  contexte?: string
+  description?: string
+  enveloppe: EnveloppeReadModel
+  nom: string
+  porteurs?: Array<PorteurPotentielReadModel>
+  statut: StatusSubvention
+  uid: string
+  // ajoute ici tous les champs nécessaires pour le presenter
+}
 
 export type BesoinsPossible = 'animer_et_mettre_en_oeuvre_gouvernance' | 'appui_juridique_dedie_gouvernance' |
   'appuyer_certification_qualiopi' | 'coconstruire_feuille_avec_membres' |
