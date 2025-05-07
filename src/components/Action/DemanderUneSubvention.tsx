@@ -25,8 +25,6 @@ export default function DemanderUneSubvention({
   const inputMontantPrestaRef = useRef<HTMLInputElement>(null)
   const inputMontantRhRef = useRef<HTMLInputElement>(null)
 
-  const drawer = useRef<HTMLDialogElement>(null)
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [budgetEnveloppe, setBudgetEnveloppe] = useState(0)
   // Stryker disable next-line BooleanLiteral
@@ -67,7 +65,6 @@ export default function DemanderUneSubvention({
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId={labelId}
-        ref={drawer}
       >
         <DrawerTitle id={labelId}>
           <TitleIcon icon="money-euro-circle-line" />
@@ -222,12 +219,14 @@ export default function DemanderUneSubvention({
   }
 
   function isSaisieValide(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const montantInputs = [inputMontantPrestaRef.current!, inputMontantRhRef.current!]
-    return (
-      montantInputs.some(({ value }) => Boolean(value)) &&
-      montantInputs.every(({ validity: { valid } }) => valid)
-    )
+    if(inputMontantPrestaRef.current  && inputMontantRhRef.current ) {
+      const montantInputs = [inputMontantPrestaRef.current, inputMontantRhRef.current]
+      return (
+        montantInputs.some(({ value }) => Boolean(value)) &&
+        montantInputs.every(({ validity: { valid } }) => valid)
+      )
+    }
+    return false
   }
 
   function montantMaximal(autreMontant = 0): number {

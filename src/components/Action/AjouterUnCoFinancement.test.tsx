@@ -1,17 +1,27 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import { afterEach, vi } from 'vitest'
 
 import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jeTapeLeBudgetGlobalDeLAction, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
 
 describe('drawer d‘ajout d‘un co-financement', () => {
+  afterEach(() => {
+    vi.clearAllTimers()
+  })
+
   it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {
     // GIVEN
-    afficherFormulaireDeCreationAction()
+    afficherFormulaireDeCreationAction(undefined, {
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
+        { nom: 'CC des Monts du Lyonnais',roles : [], uid: 'CC_des_monts_id' },
+        { nom: 'Croix Rouge Française',roles : [], uid: 'croix_rouge_id' },
+        { nom: 'La Poste',roles : [], uid: 'la_poste_id' },
+      ],
+    })
 
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
     jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourAjouterUnCoFinancement()
-
+    jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire)
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
     expect(drawer).toBeInTheDocument()
@@ -29,39 +39,30 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(option3).toBeInTheDocument()
     const option4 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'La Poste', selected: false })
     expect(option4).toBeInTheDocument()
-    const labelRechercheStructure = within(drawer).getByLabelText('Ou rechercher une autre structure')
-    expect(labelRechercheStructure).toBeInTheDocument()
-    const champRechercheStructure = within(drawer).getByRole('textbox', { name: 'Ou rechercher une autre structure' })
-    expect(champRechercheStructure).not.toBeRequired()
-    expect(champRechercheStructure).toHaveAttribute('type', 'text')
-    expect(champRechercheStructure).toHaveAttribute('placeholder', 'Numéro SIRET/RIDET, Nom, ...')
-    const boutonRechercher = within(drawer).getByRole('button', { name: 'Rechercher' })
-    expect(boutonRechercher).toBeEnabled()
-    expect(boutonRechercher).toHaveAttribute('type', 'submit')
-    const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: 'Montant du financement *' })
+    const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement */i })
     expect(montantDuFinancement).toBeRequired()
-    expect(montantDuFinancement).toHaveAttribute('type', 'number')
-    expect(montantDuFinancement).toHaveAttribute('min', '0')
-    expect(montantDuFinancement).toHaveAttribute('placeholder', '5 000')
+    expect(montantDuFinancement).toHaveAttribute('type', 'text')
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeDisabled()
   })
 
-  it('étant un utilisateur, lorsque je remplis correctement le formulaire d‘ajout d‘un co-financement, alors il est ajouté', async () => {
+  it('étant un utilisateur, lorsque je remplis correctement le formulaire d‘ajout d‘un co-financement, alors il est ajouté', () => {
     // GIVEN
-    afficherFormulaireDeCreationAction()
+    afficherFormulaireDeCreationAction(undefined, {
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [{ nom: 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' }],
+    })
 
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
     jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourAjouterUnCoFinancement()
+    jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire)
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer)
+    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
-    fireEvent.submit(boutonEnregistrer)
+    fireEvent.click(boutonEnregistrer)
 
     // THEN
-    const listeCofinancements = await within(formulaire).findAllByRole('listitem')
+    const listeCofinancements = within(formulaire).getAllByRole('listitem')
     expect(listeCofinancements).toHaveLength(1)
     const premierCofinancement = within(listeCofinancements[0]).getByText('CC des Monts du Lyonnais')
     expect(premierCofinancement).toBeInTheDocument()
@@ -69,21 +70,27 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(montantPremierCofinancement).toBeInTheDocument()
   })
 
-  it('étant un utilisateur, lorsque je remplis correctement le formulaire de modification d‘un co-financement, alors il est ajouté', async () => {
+  it('étant un utilisateur, lorsque je remplis correctement le formulaire de modification d‘un co-financement, alors il est ajouté', () => {
     // GIVEN
-    afficherFormulaireDeModificationAction()
+    afficherFormulaireDeModificationAction(undefined, {
+      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+        { nom : 'CC des Monts du Lyonnais',roles: [], uid : 'cc-id' },
+      ],
+    } )
 
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
     jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourModifierUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer)
+    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc-id')
+
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
-    fireEvent.submit(boutonEnregistrer)
+    expect(boutonEnregistrer).toBeEnabled()
+    fireEvent.click(boutonEnregistrer)
 
     // THEN
-    const listeCofinancements = await within(formulaire).findAllByRole('listitem')
+    const listeCofinancements = within(formulaire).getAllByRole('listitem')
     expect(listeCofinancements).toHaveLength(5)
     const cinquiemeCofinancement = within(listeCofinancements[4]).getByText('CC des Monts du Lyonnais')
     expect(cinquiemeCofinancement).toBeInTheDocument()
@@ -98,11 +105,10 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
     jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourAjouterUnCoFinancement()
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
+    jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire)
+    const drawer = screen.getByRole('dialog', { name: 'Ajouter un co-financement' })
     const boutonFermer = within(drawer).getByRole('button', { name: 'Fermer' })
     fireEvent.click(boutonFermer)
-
     // THEN
     expect(drawer).not.toBeVisible()
   })

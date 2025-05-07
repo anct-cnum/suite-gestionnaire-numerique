@@ -34,10 +34,10 @@ describe('ajout des bénéficiaires', () => {
         { nom: 'CC des Monts du Lyonnais Co-porteur', roles: [], uid: 'cc_mont_du_lyonnais_id' } as MembreAvecRoleDansLaGouvernance,
       ],
     })
-  
+
     // WHEN
     presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
-  
+
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
     expect(drawer).toHaveAttribute('id', 'drawerAjouterDesBeneficiairesId')
@@ -47,14 +47,14 @@ describe('ajout des bénéficiaires', () => {
     expect(sousTitre).toBeInTheDocument()
     const lien = screen.getByRole('link', { name: 'cliquant ici' })
     expect(lien).toHaveAttribute('href', '/gouvernance/11')
-  
+
     const fieldset = screen.getByRole('group', { name: 'Les différents bénéficiaires des fonds' })
-  
+
     const membre1 = within(fieldset).getByRole('checkbox', { checked: false, name: 'Rhône (69) Co-porteur' })
     expect(membre1).not.toBeRequired()
     const membre2 = within(fieldset).getByRole('checkbox', { checked: false, name: 'CC des Monts du Lyonnais Co-porteur' })
     expect(membre2).not.toBeRequired()
-  
+
     fireEvent.click(membre1)
     const enregistrer = within(fieldset).getByRole('button', { name: 'Enregistrer' })
     expect(enregistrer).toBeEnabled()
@@ -172,11 +172,7 @@ describe('ajout des bénéficiaires', () => {
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory(overrides)}
-        cofinancements={[]}
-        drawerId=""
         label="Ajouter une action"
-        setIsDrawerOpen={vi.fn<() => void>()}
-        supprimerUnCofinancement={vi.fn<() => void>()}
         validerFormulaire={vi.fn<() => Promise<void>>()}
       >
         vide

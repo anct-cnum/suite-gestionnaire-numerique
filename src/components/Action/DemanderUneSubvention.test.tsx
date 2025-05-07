@@ -448,11 +448,7 @@ function jAfficheLeFormulaireAction(budgetGlobal: number): void {
   renderComponent(
     <FormulaireAction
       action={actionViewModelFactory({ budgetGlobal })}
-      cofinancements={[]}
-      drawerId="drawerId"
       label="label"
-      setIsDrawerOpen={vi.fn<() => void>()}
-      supprimerUnCofinancement={vi.fn<() => void>()}
       validerFormulaire={vi.fn<() => Promise<void>>()}
     />
   )
