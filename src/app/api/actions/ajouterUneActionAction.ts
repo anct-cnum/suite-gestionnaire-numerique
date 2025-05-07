@@ -28,6 +28,7 @@ export async function ajouterUneActionAction(
   const actionCommand = {
     anneeDeDebut: actionParams.anneeDeDebut,
     anneeDeFin: actionParams.anneeDeFin,
+    besoins: actionParams.besoins,
     budgetGlobal: actionParams.budgetGlobal,
     budgetPrevisionnel: actionParams.budgetPrevisionnel,
     contexte: actionParams.contexte,
@@ -42,7 +43,7 @@ export async function ajouterUneActionAction(
 
   const command = {
     beneficiaires: actionCommand.destinataires.map((destinataire) => destinataire),
-    besoins: ['etablir_diagnostic_territorial'], 
+    besoins: actionCommand.besoins.map((besoin) => besoin),
     budgetGlobal: actionCommand.budgetGlobal,
     coFinancements: [],
     contexte: actionCommand.contexte,
@@ -76,6 +77,7 @@ export async function ajouterUneActionAction(
 type ActionParams = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
+  besoins: ReadonlyArray<string>
   budgetGlobal: number
   budgetPrevisionnel: ReadonlyArray<{
     coFinanceur: string

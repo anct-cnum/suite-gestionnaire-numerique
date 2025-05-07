@@ -15,6 +15,7 @@ describe('ajouter une action action', () => {
     const messages = await ajouterUneActionAction({
       anneeDeDebut: '2026',
       anneeDeFin: '2027',
+      besoins: ['etablir_diagnostic_territorial'],
       budgetGlobal: 1000,
       budgetPrevisionnel: [],
       contexte: 'Un contexte',

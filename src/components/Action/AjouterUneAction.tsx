@@ -73,6 +73,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     const messages = await ajouterUneActionAction({
       anneeDeDebut: form.get('anneeDeDebut') as string,
       anneeDeFin: form.get('anneeDeFin') as string,
+      besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
       budgetPrevisionnel: cofinancements,
       contexte: contexteContenu,
