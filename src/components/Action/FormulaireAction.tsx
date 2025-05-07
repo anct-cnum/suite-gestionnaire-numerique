@@ -15,7 +15,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { actionARemplir, ActionViewModel, BesoinsPotentielle } from '@/presenters/actionPresenter'
+import { ActionViewModel, BesoinsPotentielle, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -58,19 +58,18 @@ export function FormulaireAction({
 
   function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
-    // istanbul ignore next @preserve
     if (fieldset.current) {
       fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
         if (input.checked) {
           besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
         }
       })
-      const action = actionARemplir({ besoins: besoinsSelectionner })
+      const besoinsTransformes = transformBesoins(besoinsSelectionner)
       setBesoinsSelected([
-        ...action.besoins.financements,
-        ...action.besoins.formations,
-        ...action.besoins.formationsProfessionnels,
-        ...action.besoins.outillages,
+        ...besoinsTransformes.financements,
+        ...besoinsTransformes.formations,
+        ...besoinsTransformes.formationsProfessionnels,
+        ...besoinsTransformes.outillages,
       ])
     }
   }

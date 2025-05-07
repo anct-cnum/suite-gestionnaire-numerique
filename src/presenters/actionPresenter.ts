@@ -37,66 +37,7 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
     return actionARemplir(undefined)
   }
 
-  // Répartition des besoins dans les catégories attendues
-  const besoinsFinancements = [
-    'structurer_fond_local',
-    'monter_dossier_subvention',
-    'animer_et_mettre_en_oeuvre_gouvernance',
-  ]
-  const besoinsFormations = [
-    'etablir_diagnostic_territorial',
-    'coconstruire_feuille_avec_membres',
-    'rediger_feuille',
-    'appui_juridique_dedie_gouvernance',
-  ]
-  const besoinsFormationsProfessionnels = [
-    'appuyer_certification_qualiopi',
-  ]
-  const besoinsOutillages = [
-    'structurer_filiere_reconditionnement_locale',
-    'collecter_donnees_territoriales',
-    'sensibiliser_acteurs',
-  ]
-
-  function besoinToLabelValue(besoin: string): BesoinsPotentielle {
-    switch (besoin) {
-      case 'animer_et_mettre_en_oeuvre_gouvernance':
-        return { isSelected: true, label: 'Animer et mettre en œuvre la gouvernance et la feuille de route', value: besoin }
-      case 'appui_juridique_dedie_gouvernance':
-        return { isSelected: true, label: 'Appui juridique dédié à la gouvernance', value: besoin }
-      case 'appuyer_certification_qualiopi':
-        return { isSelected: true, label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique', value: besoin }
-      case 'coconstruire_feuille_avec_membres':
-        return { isSelected: true, label: 'Co-construire la feuille de route avec les membres', value: besoin }
-      case 'collecter_donnees_territoriales':
-        return { isSelected: true, label: 'Collecter des données territoriales pour alimenter un hub national', value: besoin }
-      case 'etablir_diagnostic_territorial':
-        return { isSelected: true, label: 'Établir un diagnostic territorial', value: besoin }
-      case 'monter_dossier_subvention':
-        return { isSelected: true, label: 'Monter des dossiers de subvention complexes', value: besoin }
-      case 'rediger_feuille':
-        return { isSelected: true, label: 'Rédiger la feuille de route', value: besoin }
-      case 'sensibiliser_acteurs':
-        return { isSelected: true, label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants', value: besoin }
-      case 'structurer_filiere_reconditionnement_locale':
-        return { isSelected: true, label: 'Structurer une filière de reconditionnement locale', value: besoin }
-      case 'structurer_fond_local':
-        return { isSelected: true, label: 'Structurer un fond local pour l’inclusion numérique', value: besoin }
-      default:
-        return { isSelected: true, label: besoin, value: besoin as BesoinsPossible }
-    }
-  }
-
-  const besoins = {
-    financements: besoinsFinancements
-      .map(b => action.besoins.includes(b) ? besoinToLabelValue(b) : { ...besoinToLabelValue(b), isSelected: false }),
-    formations: besoinsFormations
-      .map(b => action.besoins.includes(b) ? besoinToLabelValue(b) : { ...besoinToLabelValue(b), isSelected: false }),
-    formationsProfessionnels: besoinsFormationsProfessionnels
-      .map(b => action.besoins.includes(b) ? besoinToLabelValue(b) : { ...besoinToLabelValue(b), isSelected: false }),
-    outillages: besoinsOutillages
-      .map(b => action.besoins.includes(b) ? besoinToLabelValue(b) : { ...besoinToLabelValue(b), isSelected: false }),
-  }
+  const besoins = transformBesoins(action.besoins)
 
   return {
     anneeDeDebut: action.anneeDeDebut ?? '',
@@ -133,132 +74,6 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
   }
 }
 
-export function actionPresenter(codeDepartement: string): ActionViewModel {
-  return {
-    anneeDeDebut: '2025',
-    anneeDeFin: undefined,
-    beneficiaires: [],
-    besoins: {
-      financements: [
-        {
-          isSelected: false,
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
-        },
-        {
-          isSelected: false,
-          label: 'Monter des dossiers de subvention complexes',
-          value: 'monter_dossier_subvention',
-        },
-        {
-          isSelected: true,
-          label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-          value: 'animer_et_mettre_en_oeuvre_gouvernance',
-        },
-      ],
-      formations: [
-        {
-          isSelected: true,
-          label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
-        },
-        {
-          isSelected: false,
-          label: 'Co-construire la feuille de route avec les membres',
-          value: 'coconstruire_feuille_avec_membres',
-        },
-        {
-          isSelected: false,
-          label: 'Rédiger la feuille de route',
-          value: 'rediger_feuille',
-        },
-        {
-          isSelected: false,
-          label: 'Appui juridique dédié à la gouvernance',
-          value: 'appui_juridique_dedie_gouvernance',
-        },
-      ],
-      formationsProfessionnels: [
-        {
-          isSelected: false,
-          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-          value: 'appuyer_certification_qualiopi',
-        },
-      ],
-      outillages: [
-        {
-          isSelected: false,
-          label: 'Structurer une filière de reconditionnement locale',
-          value: 'structurer_filiere_reconditionnement_locale',
-        },
-        {
-          isSelected: false,
-          label: 'Collecter des données territoriales pour alimenter un hub national',
-          value: 'collecter_donnees_territoriales',
-        },
-        {
-          isSelected: false,
-          label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-          value: 'sensibiliser_acteurs',
-        },
-      ],
-    },
-    budgetGlobal: 40_000,
-    budgetPrevisionnel: [
-      {
-        coFinanceur: 'Conseil departemental',
-        montant: formatMontant(20_000),
-      },
-      {
-        coFinanceur: 'Subvention de prestation',
-        montant: formatMontant(10_000),
-      },
-      {
-        coFinanceur: 'CC des Monts du Lyonnais',
-        montant: formatMontant(5_000),
-      },
-      {
-        coFinanceur: 'Croix Rouge Française',
-        montant: formatMontant(5_000),
-      },
-    ],
-    contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-    description: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
-    enveloppes,
-    hasBesoins: checkHasBesoins({
-      financements: [
-        {
-          isSelected: true,
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
-        }],
-      formations: [
-        {
-          isSelected: true,
-          label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
-        }],
-      formationsProfessionnels: [],
-      outillages: [],
-    }),
-    lienPourModifier: `/gouvernance/${codeDepartement}/feuille-de-route/uid-feuille/action/uid-action/modifier`,
-    nom: 'Action test',
-    nomFeuilleDeRoute: 'Feuille de route 69',
-    porteurs: [
-
-    ],
-    statut: actionStatutViewModelByStatut.deposee,
-    temporalite: 'annuelle',
-    totaux: {
-      coFinancement: formatMontant(20_000),
-      financementAccorde: formatMontant(20_000),
-    },
-    uid: 'uid-action',
-    urlFeuilleDeRoute: `/gouvernance/${codeDepartement}/feuille-de-route/116`,
-    urlGouvernance: `/gouvernance/${codeDepartement}`,
-  }
-}
-
 export type ActionViewModel = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
@@ -292,78 +107,13 @@ export type ActionViewModel = Readonly<{
   urlFeuilleDeRoute: string
   urlGouvernance: string
 }>
-
-// eslint-disable-next-line complexity
+ 
 export function actionARemplir(action: undefined | UneActionReadModel): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
     beneficiaires: [],
-    besoins: {
-      financements: [
-        {
-          isSelected: action?.besoins.includes('structurer_fond_local') ?? false,
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
-        },
-        {
-          isSelected: action?.besoins.includes('monter_dossier_subvention') ?? false,
-          label: 'Monter des dossiers de subvention complexes',
-          value: 'monter_dossier_subvention',
-        },
-        {
-          isSelected: action?.besoins.includes('animer_et_mettre_en_oeuvre_gouvernance') ?? false,
-          label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-          value: 'animer_et_mettre_en_oeuvre_gouvernance',
-        },
-      ],
-      formations: [
-        {
-          isSelected: action?.besoins.includes('etablir_diagnostic_territorial') ?? false,
-          label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
-        },
-        {
-          isSelected: action?.besoins.includes('coconstruire_feuille_avec_membres') ?? false,
-          label: 'Co-construire la feuille de route avec les membres',
-          value: 'coconstruire_feuille_avec_membres',
-        },
-        {
-          isSelected: action?.besoins.includes('rediger_feuille') ?? false,
-          label: 'Rédiger la feuille de route',
-          value: 'rediger_feuille',
-        },
-        {
-          isSelected: action?.besoins.includes('appui_juridique_dedie_gouvernance') ?? false,
-          label: 'Appui juridique dédié à la gouvernance',
-          value: 'appui_juridique_dedie_gouvernance',
-        },
-      ],
-      formationsProfessionnels: [
-        {
-          isSelected: action?.besoins.includes('appuyer_certification_qualiopi') ?? false,
-          label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-          value: 'appuyer_certification_qualiopi',
-        },
-      ],
-      outillages: [
-        {
-          isSelected: action?.besoins.includes('structurer_filiere_reconditionnement_locale') ?? false,
-          label: 'Structurer une filière de reconditionnement locale',
-          value: 'structurer_filiere_reconditionnement_locale',
-        },
-        {
-          isSelected: action?.besoins.includes('collecter_donnees_territoriales') ?? false,
-          label: 'Collecter des données territoriales pour alimenter un hub national',
-          value: 'collecter_donnees_territoriales',
-        },
-        {
-          isSelected: action?.besoins.includes('sensibiliser_acteurs') ?? false ,
-          label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-          value: 'sensibiliser_acteurs',
-        },
-      ],
-    },
+    besoins: transformBesoins(action?.besoins),
     budgetGlobal: 0,
     budgetPrevisionnel: [],
     contexte: '',
@@ -409,6 +159,79 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
 export type BesoinsPotentielle = LabelValue<BesoinsPossible>
 
 export type Besoins = ReadonlyArray<BesoinsPotentielle>
+
+export function transformBesoins(actionBesoins: Array<string> = []): {
+  financements: Besoins
+  formations: Besoins
+  formationsProfessionnels: Besoins
+  outillages: Besoins
+} {
+  return {
+    financements: [
+      {
+        isSelected: actionBesoins.includes('structurer_fond_local'),
+        label: 'Structurer un fond local pour l’inclusion numérique',
+        value: 'structurer_fond_local',
+      },
+      {
+        isSelected: actionBesoins.includes('monter_dossier_subvention'),
+        label: 'Monter des dossiers de subvention complexes',
+        value: 'monter_dossier_subvention',
+      },
+      {
+        isSelected: actionBesoins.includes('animer_et_mettre_en_oeuvre_gouvernance'),
+        label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
+        value: 'animer_et_mettre_en_oeuvre_gouvernance',
+      },
+    ],
+    formations: [
+      {
+        isSelected: actionBesoins.includes('etablir_diagnostic_territorial'),
+        label: 'Établir un diagnostic territorial',
+        value: 'etablir_diagnostic_territorial',
+      },
+      {
+        isSelected: actionBesoins.includes('coconstruire_feuille_avec_membres'),
+        label: 'Co-construire la feuille de route avec les membres',
+        value: 'coconstruire_feuille_avec_membres',
+      },
+      {
+        isSelected: actionBesoins.includes('rediger_feuille'),
+        label: 'Rédiger la feuille de route',
+        value: 'rediger_feuille',
+      },
+      {
+        isSelected: actionBesoins.includes('appui_juridique_dedie_gouvernance'),
+        label: 'Appui juridique dédié à la gouvernance',
+        value: 'appui_juridique_dedie_gouvernance',
+      },
+    ],
+    formationsProfessionnels: [
+      {
+        isSelected: actionBesoins.includes('appuyer_certification_qualiopi'),
+        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
+        value: 'appuyer_certification_qualiopi',
+      },
+    ],
+    outillages: [
+      {
+        isSelected: actionBesoins.includes('structurer_filiere_reconditionnement_locale'),
+        label: 'Structurer une filière de reconditionnement locale',
+        value: 'structurer_filiere_reconditionnement_locale',
+      },
+      {
+        isSelected: actionBesoins.includes('collecter_donnees_territoriales'),
+        label: 'Collecter des données territoriales pour alimenter un hub national',
+        value: 'collecter_donnees_territoriales',
+      },
+      {
+        isSelected: actionBesoins.includes('sensibiliser_acteurs'),
+        label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
+        value: 'sensibiliser_acteurs',
+      },
+    ],
+  }
+}
 
 function toPorteurPotentielViewModel(
   porteur: { id: string; nom: string }

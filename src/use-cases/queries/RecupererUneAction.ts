@@ -1,21 +1,5 @@
 import { StatusSubvention } from './shared/StatusSubvention'
 
-export interface CoFinancementReadModel {
-  financeur: string
-  montant: number
-}
-
-export interface EnveloppeReadModel {
-  montant: number
-  // autres champs si besoin
-}
-
-export interface PorteurPotentielReadModel {
-  // adapte selon la structure attendue
-  id: string
-  nom: string
-}
-
 export interface UneActionReadModel {
   anneeDeDebut?: string
   anneeDeFin?: string
@@ -42,3 +26,19 @@ export type BesoinsPossible = 'animer_et_mettre_en_oeuvre_gouvernance' | 'appui_
   'collecter_donnees_territoriales' | 'etablir_diagnostic_territorial' | 'monter_dossier_subvention' |
   'rediger_feuille' | 'sensibiliser_acteurs' |
   'structurer_filiere_reconditionnement_locale' | 'structurer_fond_local'
+
+interface CoFinancementReadModel {
+  financeur: string
+  montant: number
+}
+
+interface EnveloppeReadModel {
+  montant: number
+  // autres champs si besoin
+}
+
+interface PorteurPotentielReadModel {
+  // adapte selon la structure attendue
+  id: string
+  nom: string
+}
