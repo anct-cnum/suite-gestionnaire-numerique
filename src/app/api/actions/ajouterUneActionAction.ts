@@ -1,3 +1,5 @@
+import { Enveloppe } from '@/presenters/actionPresenter'
+
 export async function ajouterUneActionAction(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _actionParams: ActionParams
@@ -14,6 +16,12 @@ type ActionParams = Readonly<{
     montant: string
   }>
   contexte: string
+  demandeDeSubvention?: Readonly<{
+    enveloppe: Enveloppe
+    montantPrestation: number
+    montantRh: number
+    total: number
+  }>
   description: string
   destinataires: ReadonlyArray<string>
   nom: string
