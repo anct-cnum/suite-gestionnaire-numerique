@@ -9,13 +9,14 @@ import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
-import { ActionViewModel } from '@/presenters/actionPresenter'
+import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
 
 export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
   const { ajouterUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
+  const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
 
@@ -26,14 +27,16 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       </title>
       <FormulaireAction
         action={action}
+        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
         cofinancements={cofinancements}
         date={date}
+        demandeDeSubvention={demandeDeSubvention}
         drawerId="ajouter-un-cofinancement"
         label="Ajouter une action à la feuille de route"
         setIsDrawerOpen={setIsDrawerOpen}
         supprimerUnCofinancement={supprimerUnCofinancement}
+        supprimerUneDemandeDeSubvention={supprimerDemandeDeSubvention}
         validerFormulaire={creerUneAction}
-
       >
         <SubmitButton
           className="fr-col-11 fr-mb-5w d-block"
@@ -77,6 +80,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       budgetGlobal: Number(form.get('budgetGlobal')),
       budgetPrevisionnel: cofinancements,
       contexte: contexteContenu,
+      demandeDeSubvention,
       description: descriptionContenu,
       destinataires: form.getAll('porteurs') as Array<string>,
       feuilleDeRoute: uidFeuilleDeRoute,
@@ -103,6 +107,14 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
   function supprimerUnCofinancement(index: number): void {
     const filteredCofinancements = cofinancements.filter((_, indexToRemove) => indexToRemove !== index)
     setCofinancements(filteredCofinancements)
+  }
+
+  function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {
+    setDemandeDeSubvention(demandeDeSubvention)
+  }
+
+  function supprimerDemandeDeSubvention(): void {
+    setDemandeDeSubvention(undefined)
   }
 }
 

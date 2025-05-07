@@ -48,14 +48,14 @@ export async function ajouterUneActionAction(
     contexte: actionCommand.contexte,
     dateDeDebut: actionCommand.anneeDeDebut,
     dateDeFin: actionCommand.anneeDeFin ?? '',
-    description: actionCommand.description, 
+    description: actionCommand.description,
     nom: actionCommand.nom,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
-    uidPorteur: actionParams.porteurs[0], 
+    uidPorteur: actionParams.porteurs[0],
   }
-  
+
   const result = await new AjouterUneAction(
     new PrismaGouvernanceRepository(),
     new PrismaFeuilleDeRouteRepository(),
@@ -67,7 +67,7 @@ export async function ajouterUneActionAction(
     new PrismaTransactionRepository(),
     new Date()
   ).handle(command)
-  
+
   revalidatePath(validationResult.data.path)
 
   return [result]
@@ -83,6 +83,12 @@ type ActionParams = Readonly<{
     montant: string
   }>
   contexte: string
+  demandeDeSubvention?: Readonly<{
+    enveloppe: Enveloppe
+    montantPrestation: number
+    montantRh: number
+    total: number
+  }>
   description: string
   destinataires: ReadonlyArray<string>
   feuilleDeRoute: string

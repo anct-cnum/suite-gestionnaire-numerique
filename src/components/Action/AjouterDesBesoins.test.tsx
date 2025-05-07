@@ -144,6 +144,7 @@ describe('ajouter des besoins', () => {
     renderComponent(
       <FormulaireAction
         action={actionViewModelFactory()}
+        ajouterDemandeDeSubvention={vi.fn<() => void>()}
         cofinancements={[]}
         drawerId="drawerId"
         label="label"

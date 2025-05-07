@@ -9,7 +9,7 @@ import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
-import { ActionViewModel } from '@/presenters/actionPresenter'
+import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
 
 export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)
@@ -18,6 +18,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
+  const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
 
   return (
     <>
@@ -26,7 +27,9 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       </title>
       <FormulaireAction
         action={action}
+        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
         cofinancements={cofinancements}
+        demandeDeSubvention={demandeDeSubvention}
         drawerId="ajouter-un-cofinancement"
         label="Modifier une action"
         setIsDrawerOpen={setIsDrawerOpen}
@@ -96,6 +99,10 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   function supprimerUnCofinancement(index: number): void {
     const filteredCofinancements = cofinancements.filter((_, indexValue) => indexValue !== index)
     setCofinancements(filteredCofinancements)
+  }
+
+  function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {
+    setDemandeDeSubvention(demandeDeSubvention)
   }
 }
 
