@@ -83,7 +83,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       gouvernance : gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
       path: pathname,
-      porteurs: form.getAll('porteurs') as Array<string>,
+      porteurs: form.getAll('beneficiaires') as Array<string>,
       temporalite: form.get('radio-pluriannuelle') as string,
     })
     
