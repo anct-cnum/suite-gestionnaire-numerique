@@ -15,17 +15,20 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import {  ActionViewModel, Besoins, BesoinsPotentielle, transformBesoins } from '@/presenters/actionPresenter'
+import {  ActionViewModel, Besoins, BesoinsPotentielle, DemandeDeSubvention, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
   action,
+  ajouterDemandeDeSubvention,
   children,
   cofinancements,
+  demandeDeSubvention,
   drawerId,
   label,
   setIsDrawerOpen,
   supprimerUnCofinancement,
+  supprimerUneDemandeDeSubvention,
   validerFormulaire,
 }: Props): ReactElement {
   const nomDeLActionId = useId()
@@ -34,6 +37,11 @@ export function FormulaireAction({
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
   const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
+  const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
+
+  const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
+    setLocalDemandeDeSubvention(undefined)
+  })
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
@@ -393,17 +401,13 @@ export function FormulaireAction({
             </div>
           </div>
           <hr />
-          <div className={styles['horizontal-text-input']}>
-            <div className={styles['half-width']}>
-              <p className="fr-text--bold fr-mb-0">
-                Subvention demandée à l‘état
-              </p>
-            </div>
-            <DemanderUneSubvention
-              enveloppes={action.enveloppes}
-              montantMaxAction={budgetGlobal}
-            />
-          </div>
+          <DemanderUneSubvention
+            ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
+            demandeDeSubvention={localDemandeDeSubvention ?? demandeDeSubvention}
+            enveloppes={action.enveloppes}
+            montantMaxAction={budgetGlobal}
+            supprimerUneDemandeDeSubvention={supprimerUneDemandeDeSubventionFn}
+          />
           <hr />
           <div className={styles['horizontal-text-input']}>
             <div className={styles['half-width']}>
@@ -600,14 +604,17 @@ function checkHasBesoinsSelected(besoins: Besoins): boolean {
 
 type Props = PropsWithChildren<Readonly<{
   action: ActionViewModel
+  ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void
   cofinancements: ReadonlyArray<{
     coFinanceur: string
     montant: string
   }>
   date?: Date
+  demandeDeSubvention?: DemandeDeSubvention
   drawerId: string
   label: string
   setIsDrawerOpen(isDrawerOpen: boolean): void
   supprimerUnCofinancement(index: number): void
+  supprimerUneDemandeDeSubvention?(): void
   validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
 }>>

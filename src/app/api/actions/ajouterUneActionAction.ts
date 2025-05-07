@@ -53,7 +53,7 @@ export async function ajouterUneActionAction(
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
-    uidPorteur: actionParams.porteurs[0], 
+    uidPorteur: actionParams.porteurs[0],
   }
   
   const result = await new AjouterUneAction(
@@ -83,6 +83,12 @@ type ActionParams = Readonly<{
     montant: string
   }>
   contexte: string
+  demandeDeSubvention?: Readonly<{
+    enveloppe: Enveloppe
+    montantPrestation: number
+    montantRh: number
+    total: number
+  }>
   description: string
   destinataires: ReadonlyArray<string>
   feuilleDeRoute: string

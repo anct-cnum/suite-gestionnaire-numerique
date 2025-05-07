@@ -69,6 +69,13 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
   }
 }
 
+export type DemandeDeSubvention = Readonly<{
+  enveloppe: Enveloppe
+  montantPrestation: number
+  montantRh: number
+  total: number
+}>
+
 export type ActionViewModel = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
@@ -85,6 +92,7 @@ export type ActionViewModel = Readonly<{
     montant: string
   }>
   contexte: string
+  demandeDeSubvention?: DemandeDeSubvention
   description: string
   enveloppes: ReadonlyArray<Enveloppe>
   hasBesoins: boolean
@@ -102,7 +110,7 @@ export type ActionViewModel = Readonly<{
   urlFeuilleDeRoute: string
   urlGouvernance: string
 }>
- 
+
 export function actionARemplir(action: undefined | UneActionReadModel): ActionViewModel {
   return {
     anneeDeDebut: '',
@@ -112,6 +120,7 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
     budgetGlobal: 0,
     budgetPrevisionnel: [],
     contexte: '',
+    demandeDeSubvention: undefined,
     description: '',
     enveloppes,
     hasBesoins: checkHasBesoins({
@@ -228,6 +237,7 @@ export function transformBesoins(actionBesoins: Array<string> = []): {
   }
 }
 
+export type Enveloppe = LabelValue & Readonly<{ budget: number }>
 function toPorteurPotentielViewModel(
   porteur: { id: string; nom: string }
 ): PorteurPotentielViewModel {
@@ -249,5 +259,3 @@ function checkHasBesoins(besoins: {
     .flat()
     .some(besoin => Boolean(besoin.isSelected))
 }
-
-type Enveloppe = LabelValue & Readonly<{ budget: number }>

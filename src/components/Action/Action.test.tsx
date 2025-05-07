@@ -712,6 +712,7 @@ function afficherFormulaireDeCreationValidation(
   renderComponent(
     <FormulaireAction
       action={actionViewModelFactory()}
+      ajouterDemandeDeSubvention={vi.fn<() => void>()}
       cofinancements={[]}
       date={epochTime}
       drawerId=""
