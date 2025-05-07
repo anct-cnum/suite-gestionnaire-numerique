@@ -38,7 +38,6 @@ export async function ajouterUneActionAction(
     gouvernance: actionParams.gouvernance,
     nom: actionParams.nom,
     porteurs: actionParams.porteurs,
-    temporalite: actionParams.temporalite,
   }
 
   const command = {
@@ -91,7 +90,6 @@ type ActionParams = Readonly<{
   nom: string
   path: string
   porteurs: ReadonlyArray<string>
-  temporalite: string
 }>
 
 const validator = z.object({

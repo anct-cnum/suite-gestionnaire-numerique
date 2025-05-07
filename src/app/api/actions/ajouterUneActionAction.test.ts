@@ -26,7 +26,6 @@ describe('ajouter une action action', () => {
       nom: 'Structurer une filière de reconditionnement locale 1',
       path: '/some/path',
       porteurs: ['userFooId'],
-      temporalite: 'annuelle',
     })
 
     // THEN

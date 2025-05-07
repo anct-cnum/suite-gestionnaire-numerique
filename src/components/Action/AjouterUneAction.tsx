@@ -84,7 +84,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       nom: form.get('nom') as string,
       path: pathname,
       porteurs: form.getAll('beneficiaires') as Array<string>,
-      temporalite: form.get('radio-pluriannuelle') as string,
     })
     
     if ((messages as Array<string>).includes('OK')) {

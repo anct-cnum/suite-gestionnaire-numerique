@@ -29,7 +29,8 @@ export function FormulaireAction({
   validerFormulaire,
 }: Props): ReactElement {
   const nomDeLActionId = useId()
-  const [temporalite, setTemporalite] = useState('annuelle')
+  const [temporalite, setTemporalite] = useState(action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined ? 'annuelle' : 'pluriannuelle')
+
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
   const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
