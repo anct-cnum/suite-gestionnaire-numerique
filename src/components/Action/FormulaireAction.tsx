@@ -15,7 +15,7 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { actionARemplir, ActionViewModel, Besoins, BesoinsPotentielle } from '@/presenters/actionPresenter'
+import {  ActionViewModel, Besoins, BesoinsPotentielle, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
 export function FormulaireAction({
@@ -77,7 +77,6 @@ export function FormulaireAction({
       })
     }
   }
-
 
   function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []

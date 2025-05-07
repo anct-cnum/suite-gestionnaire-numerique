@@ -147,5 +147,5 @@ const include = {
   relationMembre: {
     include: membreInclude,
   },
-  relationUtilisateur: true
+  relationUtilisateur: true,
 }
