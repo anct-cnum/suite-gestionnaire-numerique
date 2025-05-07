@@ -56,143 +56,181 @@ export function comiteRecordFactory(
 }
 
 export async function creerUneRegion(
-  override?: Partial<Prisma.RegionRecordUncheckedCreateInput>
+  override?: Partial<Prisma.RegionRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.regionRecord.create({
+  const client = tx ?? prisma
+  await client.regionRecord.create({
     data: regionRecordFactory(override),
   })
 }
 
 export async function creerUnDepartement(
-  override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>
+  override?: Partial<Prisma.DepartementRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.departementRecord.create({
+  const client = tx ?? prisma
+  await client.departementRecord.create({
     data: departementRecordFactory(override),
   })
 }
 
 export async function creerUneStructure(
-  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
+  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.structureRecord.create({
+  const client = tx ?? prisma
+  await client.structureRecord.create({
     data: structureRecordFactory(override),
   })
 }
 
 export async function creerUnGroupement(
-  override?: Partial<Prisma.GroupementRecordUncheckedCreateInput>
+  override?: Partial<Prisma.GroupementRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.groupementRecord.create({
+  const client = tx ?? prisma
+  await client.groupementRecord.create({
     data: groupementRecordFactory(override),
   })
 }
 
 export async function creerUnUtilisateur(
-  override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
+  override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.utilisateurRecord.create({
+  const client = tx ?? prisma
+  await client.utilisateurRecord.create({
     data: utilisateurRecordFactory(override),
   })
 }
 
 export async function creerUneGouvernance(
-  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>
+  override?: Partial<Prisma.GouvernanceRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.gouvernanceRecord.create({
+  const client = tx ?? prisma
+  await client.gouvernanceRecord.create({
     data: gouvernanceRecordFactory(override),
   })
 }
 
 export async function creerUnComite(
-  override?: Partial<Prisma.ComiteRecordUncheckedCreateInput>
+  override?: Partial<Prisma.ComiteRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.comiteRecord.create({
+  const client = tx ?? prisma
+  await client.comiteRecord.create({
     data: comiteRecordFactory(override),
   })
 }
 
 export async function creerUneFeuilleDeRoute(
-  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>
+  override?: Partial<Prisma.FeuilleDeRouteRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.feuilleDeRouteRecord.create({
+  const client = tx ?? prisma
+  await client.feuilleDeRouteRecord.create({
     data: feuilleDeRouteRecordFactory(override),
   })
 }
 
 export async function creerUneAction(
-  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
+  override?: Partial<Prisma.ActionRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.actionRecord.create({
+  const client = tx ?? prisma
+  await client.actionRecord.create({
     data: actionRecordFactory(override),
   })
 }
 
 export async function creerUneDemandeDeSubvention(
-  override?: Partial<Prisma.DemandeDeSubventionRecordUncheckedCreateInput>
+  override?: Partial<Prisma.DemandeDeSubventionRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.demandeDeSubventionRecord.create({
+  const client = tx ?? prisma
+  await client.demandeDeSubventionRecord.create({
     data: demandeDeSubventionRecordFactory(override),
   })
 }
 
 export async function creerUnBeneficiaireSubvention(
-  override?: Partial<Prisma.BeneficiaireSubventionRecordUncheckedCreateInput>
+  override?: Partial<Prisma.BeneficiaireSubventionRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.beneficiaireSubventionRecord.create({
+  const client = tx ?? prisma
+  await client.beneficiaireSubventionRecord.create({
     data: beneficiaireSubventionRecordFactory(override),
   })
 }
 
-export async function creerUnMembre(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-  await prisma.membreRecord.create({
+export async function creerUnMembre(
+  override?: Partial<Prisma.MembreRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
+): Promise<void> {
+  const client = tx ?? prisma
+  await client.membreRecord.create({
     data: membreRecordFactory(override),
   })
 }
 
 export async function creerUnMembreDepartement(
-  override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>
+  override?: Partial<Prisma.MembreGouvernanceDepartementRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.membreGouvernanceDepartementRecord.create({
+  const client = tx ?? prisma
+  await client.membreGouvernanceDepartementRecord.create({
     data: membreDepartementRecordFactory(override),
   })
 }
 
 export async function creerUnMembreStructure(
-  override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>
+  override?: Partial<Prisma.MembreGouvernanceStructureRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.membreGouvernanceStructureRecord.create({
+  const client = tx ?? prisma
+  await client.membreGouvernanceStructureRecord.create({
     data: membreStructureRecordFactory(override),
   })
 }
 
 export async function creerUnMembreCommune(
-  override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>
+  override?: Partial<Prisma.MembreGouvernanceCommuneRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.membreGouvernanceCommuneRecord.create({
+  const client = tx ?? prisma
+  await client.membreGouvernanceCommuneRecord.create({
     data: membreCommuneRecordFactory(override),
   })
 }
 
 export async function creerUnMembreEpci(
-  override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>
+  override?: Partial<Prisma.MembreGouvernanceEpciRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.membreGouvernanceEpciRecord.create({
+  const client = tx ?? prisma
+  await client.membreGouvernanceEpciRecord.create({
     data: membreEpciRecordFactory(override),
   })
 }
 
 export async function creerUnMembreSgar(
-  override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>
+  override?: Partial<Prisma.MembreGouvernanceSgarRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.membreGouvernanceSgarRecord.create({
+  const client = tx ?? prisma
+  await client.membreGouvernanceSgarRecord.create({
     data: membreSgarRecordFactory(override),
   })
 }
 
 export async function creerUnContact(
-  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>
+  override?: Partial<Prisma.ContactMembreGouvernanceRecordUncheckedCreateInput>,
+  tx?: Prisma.TransactionClient
 ): Promise<void> {
-  await prisma.contactMembreGouvernanceRecord.create({
+  const client = tx ?? prisma
+  await client.contactMembreGouvernanceRecord.create({
     data: contactRecordFactory(override),
   })
 }
