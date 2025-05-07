@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor , within } from '@testing-library/react'
+import { act, fireEvent, screen,  within } from '@testing-library/react'
 import { FormEvent } from 'react'
 import { afterEach, Mock, vi } from 'vitest'
 
@@ -165,7 +165,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonDeValidation).toBeEnabled()
     })
 
-    it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux le valider', async () => {
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux le valider', () => {
       // GIVEN
       const ajouterUneActionAction = stubbedServerAction(['OK'])
       afficherFormulaireDeCreationValidation(ajouterUneActionAction)
@@ -179,19 +179,16 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
 
-      // THEN
-      await waitFor(() => {
-        expect(ajouterUneActionAction).toHaveBeenCalledWith({
-          anneeDeDebut: '2026',
-          anneeDeFin: undefined,
-          budgetGlobal: 1000,
-          contexte: '<p>Contexte de l‘action</p>',
-          description: '<p><strong>Description de l‘action.</strong></p>',
-          destinataires: [],
-          nom: 'Structurer une filière de reconditionnement locale 1',
-          porteur: '',
-          temporalite: 'annuelle',
-        })
+      expect(ajouterUneActionAction).toHaveBeenCalledWith({
+        anneeDeDebut: '2026',
+        anneeDeFin: undefined,
+        budgetGlobal: 1000,
+        contexte: '<p>Contexte de l‘action</p>',
+        description: '<p><strong>Description de l‘action.</strong></p>',
+        destinataires: [],
+        nom: 'Structurer une filière de reconditionnement locale 1',
+        porteur: '',
+        temporalite: 'annuelle',
       })
     })
 
@@ -300,7 +297,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(listeCofinancementsApresSuppression).toHaveLength(3)
     })
 
-    it('étant un utilisateur, lorsque je modifie une action, alors je peux la valider', async () => {
+    it('étant un utilisateur, lorsque je modifie une action, alors je peux la valider', () => {
       // GIVEN
       const modifierUneActionAction = stubbedServerAction(['OK'])
       afficherFormulaireDeModificationAction(modifierUneActionAction)
@@ -317,21 +314,18 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       const boutonDeValidation = screen.getByRole('button', { name: 'Valider et envoyer' })
       fireEvent.click(boutonDeValidation)
-
       // THEN
-      await waitFor(() => {
-        expect(modifierUneActionAction).toHaveBeenCalledWith({
-          anneeDeDebut: '2026',
-          anneeDeFin: '2028',
-          budgetGlobal: 1000,
-          contexte: '<p>Contexte de l‘action</p>',
-          description: '<p><strong>Description de l‘action.</strong></p>',
-          destinataires: [],
-          nom: 'Structurer une filière de reconditionnement locale 2',
-          porteur: '',
-          temporalite: 'pluriannuelle',
-          uid: '',
-        })
+      expect(modifierUneActionAction).toHaveBeenCalledWith({
+        anneeDeDebut: '2026',
+        anneeDeFin: '2028',
+        budgetGlobal: 1000,
+        contexte: '<p>Contexte de l‘action</p>',
+        description: '<p><strong>Description de l‘action.</strong></p>',
+        destinataires: [],
+        nom: 'Structurer une filière de reconditionnement locale 2',
+        porteur: '',
+        temporalite: 'pluriannuelle',
+        uid: '',
       })
     })
 
@@ -384,7 +378,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDAjout()
-
       // THEN
       const notification = screen.getByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
@@ -402,12 +395,11 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
+      const nomDeLAction = within(formulaire).getByRole('textbox', { name: /nom de l‘action \*/i })
       fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jeSelectionneLAnneeDeDebut('2026')
       jeValideLeFormulaireDeModification()
-
       // THEN
       const notification = screen.getByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
@@ -696,9 +688,13 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire: HTMLEle
 
 export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement, value: string): void {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { id: value } })
+  fireEvent.change(selecteurOrigineDuFinancement, { target: { value } })
+  vi.useFakeTimers()
   const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
+  act(() => {
+    vi.advanceTimersByTime(100)
+  })
 }
 
 function afficherFormulaireDeCreationValidation(

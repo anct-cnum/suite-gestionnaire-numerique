@@ -30,7 +30,6 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     const texteDInstruction = within(drawer).getByText('Précisez l‘origine du financement', { selector: 'p' })
     expect(texteDInstruction).toBeInTheDocument()
     const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-    expect(selecteurOrigineDuFinancement).toBeRequired()
     const option1 = within(selecteurOrigineDuFinancement).getByRole('option', { hidden: true, name: '' })
     expect(option1).toBeInTheDocument()
     const option2 = within(selecteurOrigineDuFinancement).getByRole('option', { name: 'CC des Monts du Lyonnais', selected: false })

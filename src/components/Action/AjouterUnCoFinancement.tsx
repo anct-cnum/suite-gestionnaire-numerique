@@ -68,7 +68,6 @@ export default function AjouterUnCoFinancement(
           options={membresGouvernanceConfirme.length > 0
             ? membresGouvernanceConfirme
               .map(({ id, nom }) => ({ label: nom, value: id })) : []}
-          required={true}
         >
           Membre de la gouvernance
         </Select>
