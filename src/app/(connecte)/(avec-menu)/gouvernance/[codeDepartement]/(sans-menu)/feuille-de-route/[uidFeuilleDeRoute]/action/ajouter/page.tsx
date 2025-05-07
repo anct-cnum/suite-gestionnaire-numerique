@@ -7,9 +7,7 @@ import Notice from '@/components/shared/Notice/Notice'
 import { actionARemplir } from '@/presenters/actionPresenter'
 
 export default async function ActionAjouterController({  params,
-}: Readonly<{
-  params: { uidFeuilleDeRoute: string }
-}>): Promise<ReactElement> {
+}: Props): Promise<ReactElement> {
   const { uidFeuilleDeRoute } = await params
   const date = new Date()
 
@@ -33,3 +31,9 @@ export default async function ActionAjouterController({  params,
     notFound()
   }
 }
+
+type Props = Readonly<{
+  params: Promise<Readonly<{
+    uidFeuilleDeRoute: string
+  }>>
+}>

@@ -4,6 +4,7 @@ import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { Result } from '@/shared/lang'
 
+// istanbul ignore next @preserve
 export class CoFinancement extends Entity<State> {
   override get state(): State {
     return {

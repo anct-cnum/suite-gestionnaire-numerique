@@ -4,7 +4,7 @@ import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
-
+// istanbul ignore next @preserve
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
     budget: 50_000,
@@ -57,16 +57,11 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
     nom: action.nom,
     nomFeuilleDeRoute: 'BLABLA', // à compléter si besoin
     porteurs: (action.porteurs ?? []).map(toPorteurPotentielViewModel),
-    statut: actionStatutViewModelByStatut[action.statut as StatutSubvention] ?? {
-      background: 'blue',
-      icon: '',
-      libelle: action.statut,
-      variant: 'new',
-    },
+    statut: actionStatutViewModelByStatut[action.statut as StatutSubvention],
     temporalite: 'annuelle',
     totaux: {
-      coFinancement: formatMontant(action.coFinancement.montant ?? 0),
-      financementAccorde: formatMontant(action.enveloppe.montant ?? 0),
+      coFinancement: formatMontant(action.coFinancement.montant),
+      financementAccorde: formatMontant(action.enveloppe.montant),
     },
     uid: action.uid,
     urlFeuilleDeRoute: '', // à compléter si besoin

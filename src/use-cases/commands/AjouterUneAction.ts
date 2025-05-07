@@ -16,6 +16,7 @@ import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
 import { DemandeDeSubvention, DemandeDeSubventionFailure } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
+import { Utilisateur } from '@/domain/Utilisateur'
 
 export class AjouterUneAction implements CommandHandler<Command> {
   readonly #actionRepository: ActionRepository

@@ -5,6 +5,7 @@ import { Action } from '@/domain/Action'
 import { AddActionRepository, GetActionRepository } from '@/use-cases/commands/shared/ActionRepository'
 import { RecordId } from '@/use-cases/commands/shared/Repository'
 
+// istanbul ignore next @preserve
 export class PrismaActionRepository implements AddActionRepository, GetActionRepository {
   readonly #dataResource = prisma.actionRecord
   
