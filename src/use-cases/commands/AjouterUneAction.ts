@@ -175,6 +175,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       }
       return demandeDeSubvention
     }
+    const enveloppeFinancementArbitraireId = '1'
     return DemandeDeSubvention.create({
       beneficiaires,
       dateDeCreation: this.#date,
@@ -191,7 +192,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       },
       uidCreateur,
       uidEnveloppeFinancement: {
-        value: demandesDeSubventionCommand[0].enveloppeFinancementId,
+        value: enveloppeFinancementArbitraireId,
       },
     })
   }

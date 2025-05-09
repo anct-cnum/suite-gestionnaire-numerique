@@ -9,10 +9,17 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
+    const utilisateurResource = client.utilisateurRecord
+
+    const user = await utilisateurResource.findUniqueOrThrow({
+      where: {
+        ssoId: demandeDeSubvention.state.uidCreateur,
+      },
+    })
     const demande = await client.demandeDeSubventionRecord.create({
       data: {
         actionId: Number(demandeDeSubvention.state.uidAction),
-        createurId: Number(demandeDeSubvention.state.uidCreateur),
+        createurId: user.id,
         creation: new Date(demandeDeSubvention.state.dateDeCreation),
         derniereModification: new Date(demandeDeSubvention.state.derniereModification),
         enveloppeFinancementId: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
