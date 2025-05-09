@@ -3,7 +3,6 @@
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react'
 
 import { Montant } from './Montant'
-import { useDebouncedEffect } from './useDebouncedEffect'
 import { Optional } from '@/shared/Optional'
 
 export default function MontantInput({
@@ -17,9 +16,9 @@ export default function MontantInput({
     setInputValue(montantInitial)
   }, [montantInitial])
 
-  useDebouncedEffect<Optional<Montant>>(() => {
+  useEffect(() => {
     onChange(inputValue)
-  }, [inputValue], 100)
+  }, [inputValue, onChange])
 
   function onChangeEvent() {
     return (event: ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +32,7 @@ export default function MontantInput({
       id={id}
       name={id}
       onChange={onChangeEvent()}
-      required={true}
+      required
       type="text"
       value={inputValue.orElse(Montant.Zero).format()}
     />

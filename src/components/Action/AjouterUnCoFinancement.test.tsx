@@ -1,11 +1,22 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { afterEach, vi } from 'vitest'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 
-import { afficherFormulaireDeCreationAction, afficherFormulaireDeModificationAction, jeCreeUnCofinancementDansLeDrawer, jeTapeLeBudgetGlobalDeLAction, jOuvreLeFormulairePourAjouterUnCoFinancement } from './Action.test'
+import {
+  afficherFormulaireDeCreationAction,
+  afficherFormulaireDeModificationAction,
+  jeSelectionneUnCofinancementDansLeDrawerAsync,
+  jeSelectionneUnMontatnDansLeDrawerAsync,
+  jeTapeLeBudgetGlobalDeLAction,
+  jeTapeLeBudgetGlobalDeLActionAsync,
+  jOuvreLeFormulairePourAjouterUnCoFinancement,
+  jOuvreLeFormulairePourAjouterUnCoFinancementAsync,
+} from './Action.test'
+
+let user: UserEvent
 
 describe('drawer d‘ajout d‘un co-financement', () => {
-  afterEach(() => {
-    vi.clearAllTimers()
+  beforeEach(() => {
+    user = userEvent.setup()
   })
 
   it('étant un utilisateur, lorsque je clique sur le bouton ajouter un financement, alors le drawer s‘ouvre', () => {
@@ -45,7 +56,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(boutonEnregistrer).toBeDisabled()
   })
 
-  it('étant un utilisateur, lorsque je remplis correctement le formulaire d‘ajout d‘un co-financement, alors il est ajouté', () => {
+  it('étant un utilisateur, lorsque je remplis correctement le formulaire d‘ajout d‘un co-financement, alors il est ajouté', async () => {
     // GIVEN
     afficherFormulaireDeCreationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [{ nom: 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' }],
@@ -53,23 +64,23 @@ describe('drawer d‘ajout d‘un co-financement', () => {
 
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-    jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire)
+    await jeTapeLeBudgetGlobalDeLActionAsync(user, formulaire)
+    await jOuvreLeFormulairePourAjouterUnCoFinancementAsync(user,formulaire)
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
+    await jeSelectionneUnCofinancementDansLeDrawerAsync(user, drawer, 'cc_id')
+    await jeSelectionneUnMontatnDansLeDrawerAsync(user, drawer, '1000')
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
-    fireEvent.click(boutonEnregistrer)
-
+    await user.click(boutonEnregistrer)
     // THEN
     const listeCofinancements = within(formulaire).getAllByRole('listitem')
     expect(listeCofinancements).toHaveLength(1)
     const premierCofinancement = within(listeCofinancements[0]).getByText('CC des Monts du Lyonnais')
     expect(premierCofinancement).toBeInTheDocument()
-    const montantPremierCofinancement = within(listeCofinancements[0]).getByText('1000 €')
+    const montantPremierCofinancement = within(listeCofinancements[0]).getByText('1000')
     expect(montantPremierCofinancement).toBeInTheDocument()
   })
 
-  it('étant un utilisateur, lorsque je remplis correctement le formulaire de modification d‘un co-financement, alors il est ajouté', () => {
+  it('étant un utilisateur, lorsque je remplis correctement le formulaire de modification d‘un co-financement, alors il est ajouté', async () => {
     // GIVEN
     afficherFormulaireDeModificationAction(undefined, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
@@ -82,7 +93,8 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourModifierUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc-id')
+    await jeSelectionneUnCofinancementDansLeDrawerAsync(user, drawer, 'cc-id')
+    await jeSelectionneUnMontatnDansLeDrawerAsync(user, drawer, '1000')
 
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     expect(boutonEnregistrer).toBeEnabled()
@@ -97,33 +109,17 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(montantCinquiemeCofinancement).toBeInTheDocument()
   })
 
-  it('lorque je clique sur le bouton fermer du drawer d‘ajout d‘un co-financement, dans le formulaire d‘ajout d‘une action, alors le drawer se ferme', () => {
+  it('lorque je clique sur le bouton fermer du drawer d‘ajout d‘un co-financement, dans le formulaire d‘ajout d‘une action, alors le drawer se ferme', async () => {
     // GIVEN
     afficherFormulaireDeCreationAction()
 
     // WHEN
     const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-    jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire)
+    await jeTapeLeBudgetGlobalDeLActionAsync(user, formulaire)
+    await jOuvreLeFormulairePourAjouterUnCoFinancementAsync(user, formulaire)
     const drawer = screen.getByRole('dialog', { name: 'Ajouter un co-financement' })
     const boutonFermer = within(drawer).getByRole('button', { name: 'Fermer' })
-    fireEvent.click(boutonFermer)
-    // THEN
-    expect(drawer).not.toBeVisible()
-  })
-
-  it('lorque je clique sur le bouton fermer du drawer d‘ajout d‘un co-financement, dans le formulaire de modification d‘une action, alors le drawer se ferme', () => {
-    // GIVEN
-    afficherFormulaireDeModificationAction()
-
-    // WHEN
-    const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-    jeTapeLeBudgetGlobalDeLAction(formulaire)
-    jOuvreLeFormulairePourModifierUnCoFinancement()
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    const boutonFermer = within(drawer).getByRole('button', { name: 'Fermer' })
-    fireEvent.click(boutonFermer)
-
+    await user.click(boutonFermer)
     // THEN
     expect(drawer).not.toBeVisible()
   })

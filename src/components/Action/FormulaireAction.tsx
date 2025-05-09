@@ -407,7 +407,7 @@ export function FormulaireAction({
             </div>
             <DemanderUneSubvention
               enveloppes={action.enveloppes}
-              montantMaxAction={budgetGlobal.isEmpty() ? 0 : budgetGlobal.orElseThrow(() => new Error('TODO: Utiliser un montant')).get}
+              montantMaxAction={budgetGlobal.orElse(Montant.Zero).get}
             />
           </div>
           <hr />

@@ -28,6 +28,10 @@ export class Montant {
     return Optional.of(new Montant(safeVal))
   }
 
+  static ofZero(): Optional<Montant> {
+    return Optional.of(new Montant(0))
+  }
+
   add(autre: Optional<Montant>): Optional<Montant> {
     return Optional.of(new Montant(this.valeur + autre.orElse(Montant.Zero).valeur))
   }

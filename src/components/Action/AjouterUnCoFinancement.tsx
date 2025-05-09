@@ -32,7 +32,7 @@ export default function AjouterUnCoFinancement(
         aria-controls="ajouter-un-cofinancement"
         className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
         data-fr-opened={isDrawerOpen}
-        disabled={budgetGlobal.isEmpty()}
+        disabled={budgetGlobal.orElse(Montant.Zero).lessThan(Montant.of('1'))}
         onClick={() => {
           setIsDrawerOpen(true)
         }}
@@ -115,7 +115,7 @@ export default function AjouterUnCoFinancement(
         <div className="fr-btns-group fr-mt-2w">
           <button
             className="fr-btn"
-            disabled={montant.isEmpty() || coFinanceur === ''}
+            disabled={montant.orElse(Montant.Zero).lessThan(Montant.of('1')) || coFinanceur === ''}
             onClick={handleSubmit}
             type="button"
           >

@@ -1,6 +1,7 @@
-import { act, fireEvent, screen,  within } from '@testing-library/react'
+import { fireEvent, screen,  within } from '@testing-library/react'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { FormEvent } from 'react'
-import { afterEach, Mock, vi } from 'vitest'
+import { Mock, vi } from 'vitest'
 
 import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'
@@ -18,9 +19,11 @@ import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLe
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
+let user: UserEvent
+
 describe('formulaire d‘ajout d‘une action', () => {
-  afterEach(() => {
-    vi.clearAllTimers()
+  beforeEach(() => {
+    user = userEvent.setup()
   })
 
   describe('menu latéral', () => {
@@ -342,7 +345,7 @@ describe('formulaire d‘ajout d‘une action', () => {
     })
 
     // test inutile pour le moment
-    it.todo('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux voir les différents états du bouton', () => {
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire, alors je peux voir les différents états du bouton', () => {
       // GIVEN
       const ajouterUneActionAction = stubbedServerAction(['OK'])
       renderComponent(
@@ -360,7 +363,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonDeValidation).toBeDisabled()
     })
 
-    it('étant un utilisateur, lorsque je remplis correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', () => {
+    it('étant un utilisateur, lorsque je remplis correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
       // GIVEN
       const ajouterUneActionAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       renderComponent(
@@ -374,16 +377,16 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: 'Nom de l‘action *' })
-      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      jeTapeLeBudgetGlobalDeLAction(formulaire)
-      jeSelectionneLAnneeDeDebut('2026')
-      jeValideLeFormulaireDAjout()
+      await user.type(nomDeLAction, 'Structurer une filière de reconditionnement locale 1')
+      await jeTapeLeBudgetGlobalDeLActionAsync(user, formulaire)
+      await jeSelectionneLAnneeDeDebutAsync(user, '2026')
+      await jeValideLeFormulaireDAjoutAsync(user)
       // THEN
       const notification = screen.getByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
     })
 
-    it('étant un utilisateur, lorsque je modifie correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', () => {
+    it('étant un utilisateur, lorsque je modifie correctement le formulaire mais qu‘une erreur intervient, alors une notification s‘affiche', async () => {
       // GIVEN
       const modifierUneActionAction = stubbedServerAction(['Le format est incorrect', 'autre erreur'])
       renderComponent(
@@ -396,10 +399,10 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
       const nomDeLAction = within(formulaire).getByRole('textbox', { name: /nom de l‘action \*/i })
-      fireEvent.change(nomDeLAction, { target: { value: 'Structurer une filière de reconditionnement locale 1' } })
-      jeTapeLeBudgetGlobalDeLAction(formulaire)
-      jeSelectionneLAnneeDeDebut('2026')
-      jeValideLeFormulaireDeModification()
+      await user.type(nomDeLAction, 'Structurer une filière de reconditionnement locale 1')
+      await jeTapeLeBudgetGlobalDeLActionAsync(user, formulaire)
+      await jeSelectionneLAnneeDeDebutAsync(user, '2026')
+      await jeValideLeFormulaireDeModificationAsync(user)
       // THEN
       const notification = screen.getByRole('alert')
       expect(notification.textContent).toBe('Erreur : Le format est incorrect, autre erreur')
@@ -673,28 +676,45 @@ export function afficherFormulaireDeModificationAction(
 }
 
 export function jeTapeLeBudgetGlobalDeLAction(formulaire: HTMLElement): void {
-  vi.useFakeTimers()
   const budgetGlobal = within(formulaire).getByRole('textbox', { name: 'Budget global de l‘action *' })
   fireEvent.change(budgetGlobal, { target: { value: 1000 } })
-  act(() => {
-    vi.advanceTimersByTime(100)
-  })
+}
+
+export async function jeTapeLeBudgetGlobalDeLActionAsync(user: UserEvent, formulaire: HTMLElement): Promise<void> {
+  const budgetGlobal = within(formulaire).getByRole('textbox', { name: 'Budget global de l‘action *' })
+  await user.type(budgetGlobal, '1000')
 }
 
 export function jOuvreLeFormulairePourAjouterUnCoFinancement(formulaire: HTMLElement): void  {
   const boutonAjouterUnCoFinanacement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
   fireEvent.click(boutonAjouterUnCoFinanacement)
 }
+export async function jOuvreLeFormulairePourAjouterUnCoFinancementAsync(
+  user: UserEvent,formulaire: HTMLElement
+): Promise<void>  {
+  const boutonAjouterUnCoFinanacement =
+    within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
+  await user.click(boutonAjouterUnCoFinanacement)
+}
 
 export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement, value: string): void {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
   fireEvent.change(selecteurOrigineDuFinancement, { target: { value } })
-  vi.useFakeTimers()
   const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
-  fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
-  act(() => {
-    vi.advanceTimersByTime(100)
-  })
+  fireEvent.change(montantDuFinancement, { target: { value: '1000' } })
+}
+
+export async function jeSelectionneUnCofinancementDansLeDrawerAsync(
+  user:UserEvent, drawer: HTMLElement, value: string
+): Promise<void> {
+  const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: /membre de la gouvernance/i })
+  await user.selectOptions(selecteurOrigineDuFinancement, value)
+}
+export async function jeSelectionneUnMontatnDansLeDrawerAsync(
+  user:UserEvent, drawer: HTMLElement, value: string
+): Promise<void> {
+  const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
+  await user.type(montantDuFinancement, value)
 }
 
 function afficherFormulaireDeCreationValidation(
@@ -745,6 +765,10 @@ function jeSelectionneLAnneeDeDebut(annee: string): void {
   const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
   fireEvent.change(selectAnneeDebut, { target: { value: annee } })
 }
+async function jeSelectionneLAnneeDeDebutAsync(user: UserEvent, annee: string): Promise<void> {
+  const selectAnneeDebut = screen.getByLabelText('Année de début de l‘action')
+  await user.type(selectAnneeDebut, annee)
+}
 
 function jeSelectionneLAnneeDeFin(annee: string): void {
   const selectAnneeDeFin = screen.getByLabelText('Année de fin de l‘action')
@@ -758,10 +782,17 @@ function jeValideLeFormulaireDAjout(): HTMLElement {
   return button
 }
 
-function jeValideLeFormulaireDeModification(): HTMLElement {
+async function jeValideLeFormulaireDAjoutAsync(user: UserEvent): Promise<HTMLElement> {
+  const form = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
+  const button = within(form).getByRole('button', { name: 'Valider et envoyer' })
+  await user.click(button)
+  return button
+}
+
+async function jeValideLeFormulaireDeModificationAsync(user: UserEvent): Promise<HTMLElement> {
   const form = screen.getByRole('form', { name: 'Modifier une action' })
   const button = within(form).getByRole('button', { name: 'Valider et envoyer' })
-  fireEvent.click(button)
+  await user.click(button)
   return button
 }
 
