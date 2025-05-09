@@ -180,7 +180,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       beneficiaires,
       dateDeCreation: this.#date,
       derniereModification: this.#date,
-      statut: 'En cours',
+      statut: 'enCours',
       subventionDemandee: 0,
       subventionEtp: null,
       subventionPrestation: null,
