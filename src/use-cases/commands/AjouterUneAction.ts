@@ -112,13 +112,14 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return action
     }
 
-    const demandesDeSubvention: Array<DemandeDeSubvention> | DemandeDeSubventionFailure =
+    const demandesDeSubvention: DemandeDeSubvention | DemandeDeSubventionFailure =
      this.creationDesDemandesDeSubvention(
        command.demandesDeSubvention ?? [],
+       action.state.beneficiaires,
        action.state.uid.value,
        editeur.state.uid.value
      )
-    if (!Array.isArray(demandesDeSubvention)) {
+    if (!(demandesDeSubvention instanceof DemandeDeSubvention)) {
       return demandesDeSubvention
     }
 
@@ -135,61 +136,80 @@ export class AjouterUneAction implements CommandHandler<Command> {
     return  this.persistAction(action, demandesDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
   }
 
+  // A FAIRE: Vérifier si on peut avoir 0 ou plusieurs demandes de subvention pour une même action
+  // Pour l'instant : 1 action = 1 demande de subvention. On associe les bénéfiaires à cette demande.
+  // Discussion sens métier :  c'est le récipiendaire qui recoit l'argent. Il y a peut être confusion entre 
+  // bénéficiaire et récipiendaire.
+  // De plus, les beneficaires sont lies à l'action, pas à la demande de subvention => on ne lit pas les 
+  // beneficaires de la  demande de subvention mais on utilise ceux fournis par l'action.
   private creationDesDemandesDeSubvention(
     demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
+    beneficiaires: Array<string>,
     uidAction: string,
     uidCreateur: string
-  ): Array<DemandeDeSubvention>|DemandeDeSubventionFailure {
-    const demandesDeSubventionResult: Array<DemandeDeSubvention> = []
-
+  ):  DemandeDeSubvention | DemandeDeSubventionFailure {
     if (demandesDeSubventionCommand.length > 0) {
-      for (const demande of demandesDeSubventionCommand) {
-        const demandeDeSubvention = DemandeDeSubvention.create({
-          beneficiaires: demande.beneficiaires,
-          dateDeCreation: this.#date,
-          derniereModification: this.#date,
-          statut: demande.statut,
-          subventionDemandee: demande.subventionDemandee,
-          subventionEtp: demande.subventionEtp ?? null,
-          subventionPrestation: demande.subventionPrestation ?? null,
-          uid: {
-            value: 'identifiantDemandeDeSubventionPourLaCreation',
-          },
-          uidAction: {
-            value: uidAction, 
-          },
-          uidCreateur,
-          uidEnveloppeFinancement: {
-            value: demande.enveloppeFinancementId,
-          },
-        })
+      const demande = demandesDeSubventionCommand[0]
+      const demandeDeSubvention = DemandeDeSubvention.create({
+        beneficiaires,
+        dateDeCreation: this.#date,
+        derniereModification: this.#date,
+        statut: demande.statut,
+        subventionDemandee: demande.subventionDemandee,
+        subventionEtp: demande.subventionEtp ?? null,
+        subventionPrestation: demande.subventionPrestation ?? null,
+        uid: {
+          value: 'identifiantDemandeDeSubventionPourLaCreation',
+        },
+        uidAction: {
+          value: uidAction, 
+        },
+        uidCreateur,
+        uidEnveloppeFinancement: {
+          value: demande.enveloppeFinancementId,
+        },
+      })
 
-        if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
-          return demandeDeSubvention
-        }
-
-        demandesDeSubventionResult.push(demandeDeSubvention)
+      if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
+        return demandeDeSubvention
       }
+      return demandeDeSubvention
     }
-    return demandesDeSubventionResult
+    return DemandeDeSubvention.create({
+      beneficiaires,
+      dateDeCreation: this.#date,
+      derniereModification: this.#date,
+      statut: 'En cours',
+      subventionDemandee: 0,
+      subventionEtp: null,
+      subventionPrestation: null,
+      uid: {
+        value: 'identifiantDemandeDeSubventionPourLaCreation',
+      },
+      uidAction: {
+        value: uidAction,
+      },
+      uidCreateur,
+      uidEnveloppeFinancement: {
+        value: demandesDeSubventionCommand[0].enveloppeFinancementId,
+      },
+    })
   }
 
   private async persistAction(
-    action: Action, demandesDeSubvention: Array<DemandeDeSubvention>,
+    action: Action, demandesDeSubvention: DemandeDeSubvention,
     coFinancements: Array<CoFinancement>, 
     command : Command,
     feuilleDeRoute: FeuilleDeRoute, editeur: Utilisateur
   ): Promise<'OK' | Failure> {
     await this.#transactionRepository.transaction(async (tx) => {
       const actionId = await this.#actionRepository.add(action, tx)
-
-      for (const demandeDeSubvention of demandesDeSubvention) {
-        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
-        if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
-          return updatedDemandeDeSubvention
-        }
-        await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
+      
+      const updatedDemandeDeSubvention = demandesDeSubvention.avecNouvelleUidAction(actionId.toString())
+      if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
+        return updatedDemandeDeSubvention
       }
+      await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
 
       for (const coFinancement of coFinancements) {
         const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
