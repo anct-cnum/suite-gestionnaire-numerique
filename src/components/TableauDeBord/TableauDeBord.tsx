@@ -5,7 +5,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
-import carto from './carto.png'
 import styles from './TableauDeBord.module.css'
 import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
@@ -13,6 +12,7 @@ import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
+import Map from '../shared/Map/Map'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
@@ -118,13 +118,11 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Mise à jour le 23/09/2024
               </div>
             </div>
-            <div className="center">
-              <Image
-                alt=""
-                height={510}
-                src={carto}
-                width={560}
-              />
+            <div
+              className="center"
+              style={{ height: '600px' }}
+            >
+              <Map departement="69" />
             </div>
           </div>
           <div className="fr-col-4">
