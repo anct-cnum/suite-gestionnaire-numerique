@@ -87,7 +87,9 @@ export class Action extends Entity<State> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
       const dateDeDebutValidee = new ValidDateFromYearString(dateDeDebut, 'dateDeDebutInvalide')
-      const dateDeFinValidee = new ValidDateFromYearString(dateDeFin, 'dateDeFinInvalide')
+
+      const dateDeFinValidee = dateDeFin ? new ValidDateFromYearString(dateDeFin, 'dateDeFinInvalide') :
+        new ValidDateFromYearString(dateDeDebut, 'dateDeFinInvalide')
       return new Action(
         new ActionUid(uid.value),
         besoins,
