@@ -5,6 +5,7 @@ import { ReactElement, useEffect, useRef } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import styles from './Map.module.css'
+import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 
 const DEPARTEMENTS_CENTERS: Record<string, [number, number]> = {
   11: [2.4012, 43.1832], // Aude
@@ -12,21 +13,36 @@ const DEPARTEMENTS_CENTERS: Record<string, [number, number]> = {
   75: [2.3522, 48.8566], // Paris
 }
 
+// Échelle de couleurs pour l'indice de fragilité (1 à 10)
+const FRAGILITE_COLORS = {
+  1: '#e5f5e0', // Très clair
+  10: '#002d15', // Très foncé
+  2: '#c7e9c0',
+  3: '#a1d99b',
+  4: '#74c476',
+  5: '#41ab5d',
+  6: '#238b45',
+  7: '#006d2c',
+  8: '#00441b',
+  9: '#003d1a',
+}
+
 const EMPTY_STYLE = {
+  glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
   layers: [
     {
       id: 'background',
       paint: {
-        'background-color': '#ffffff',
+        'background-color': '#e8edff',
       },
-      type: 'background',
+      type: 'background' as const,
     },
   ],
   sources: {},
-  version: 8,
+  version: 8 as const,
 }
 
-export default function Map({ departement }: Props): ReactElement {
+export default function Map({ communesFragilite, departement }: Props): ReactElement {
   const mapContainer = useRef<HTMLDivElement>(null)
   const map = useRef<maplibregl.Map | null>(null)
   const popup = useRef<maplibregl.Popup | null>(null)
@@ -39,7 +55,7 @@ export default function Map({ departement }: Props): ReactElement {
       center: DEPARTEMENTS_CENTERS[departement] || [2.3522, 48.8566],
       container: mapContainer.current,
       style: EMPTY_STYLE,
-      zoom: 9,
+      zoom: 6,
     })
 
     // Créer le popup
@@ -52,7 +68,11 @@ export default function Map({ departement }: Props): ReactElement {
     map.current.on('load', () => {
       if (!map.current) {return}
 
+      console.log('Carte chargée, ajout de la source...')
+      
       map.current.addSource('decoupage', {
+        maxzoom: 14,
+        minzoom: 0,
         tiles: [
           'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
         ],
@@ -73,75 +93,151 @@ export default function Map({ departement }: Props): ReactElement {
         type: 'fill',
       })
 
-      // Ajouter une couche pour les communes
-      map.current.addLayer({
-        filter: ['==', 'departement', departement],
-        id: 'communes-layer',
-        paint: {
-          'fill-color': '#ffffff',
-          'fill-opacity': 1,
-          'fill-outline-color': '#000000',
-        },
-        source: 'decoupage',
-        'source-layer': 'communes',
-        type: 'fill',
-      })
-
-      // Ajouter les noms des communes
-      map.current.addLayer({
-        filter: ['==', 'departement', departement],
-        id: 'communes-labels',
-        layout: {
-          'text-allow-overlap': false,
-          'text-field': ['get', 'nom'],
-          'text-size': 12,
-        },
-        paint: {
-          'text-color': '#000000',
-          'text-halo-color': '#ffffff',
-          'text-halo-width': 1,
-        },
-        source: 'decoupage',
-        'source-layer': 'communes',
-        type: 'symbol',
-      })
-
-      // Gérer le mouseover sur les communes
-      map.current.on('mousemove', 'communes-layer', (e) => {
-        if (e.features && e.features.length > 0 && map.current) {
-          const canvas = map.current.getCanvas()
-          if (canvas) {
-            canvas.style.cursor = 'pointer'
-          }
-
-          const feature = e.features[0]
-          const coordinates = e.lngLat
-
-          // Mettre à jour le popup
-          if (popup.current && map.current) {
-            popup.current
-              .setLngLat(coordinates)
-              .setHTML(`<strong>${feature.properties.nom}</strong>`)
-              .addTo(map.current)
-          }
-        }
-      })
-
-      // Gérer le mouseout
-      map.current.on('mouseleave', 'communes-layer', () => {
-        if (map.current) {
-          const canvas = map.current.getCanvas()
-          if (canvas) {
-            canvas.style.cursor = ''
-          }
-        }
-        if (popup.current) {
-          popup.current.remove()
-        }
-      })
-
       // Ajouter les contrôles de navigation
       map.current.addControl(new maplibregl.NavigationControl(), 'top-right')
+
+      // Fonction pour chercher les features
+      const searchFeatures = () => {
+        if (!map.current) {return}
+        
+        console.log('Recherche des features...')
+        console.log('Niveau de zoom actuel:', map.current.getZoom())
+        
+        const allSourceFeatures = map.current.querySourceFeatures('decoupage', {
+          sourceLayer: 'departements',
+        })
+        console.log('Toutes les features disponibles:', allSourceFeatures.map(f => ({
+          code: f.properties?.code,
+          nom: f.properties?.nom,
+        })))
+        
+        const allFeatures = map.current.querySourceFeatures('decoupage', {
+          filter: ['==', 'code', departement],
+          sourceLayer: 'departements',
+        })
+        
+        if (allFeatures.length > 0) {
+          console.log('Features trouvées avec succès:', allFeatures)
+          const bounds = new maplibregl.LngLatBounds()
+          const geometry = allFeatures[0].geometry as GeoJSON.Polygon
+          geometry.coordinates[0].forEach((coord) => {
+            bounds.extend(coord as [number, number])
+          })
+          map.current.fitBounds(bounds, { padding: 50 })
+        } else {
+          console.log('Aucune feature trouvée pour le département:', departement)
+          if (map.current.getZoom() < 8) {
+            console.log('Tentative de zoom plus proche...')
+            map.current.setZoom(8)
+          }
+        }
+      }
+
+      // Fonction pour initialiser les couches
+      const initializeLayers = () => {
+        if (!map.current) {return}
+        console.log('Initialisation des couches...')
+
+        // Ajouter une couche pour les communes avec l'indice de fragilité
+        map.current.addLayer({
+          filter: ['==', 'departement', departement],
+          id: 'communes-layer',
+          paint: {
+            'fill-color': [
+              'match',
+              ['get', 'code'],
+              ...communesFragilite.flatMap((commune) => [
+                commune.code,
+                FRAGILITE_COLORS[commune.fragilite as keyof typeof FRAGILITE_COLORS] || '#ffffff',
+              ]),
+              '#ffffff', // Couleur par défaut
+            ] as any,
+            'fill-opacity': 1,
+            'fill-outline-color': '#000000',
+          },
+          source: 'decoupage',
+          'source-layer': 'communes',
+          type: 'fill',
+        })
+        console.log('Couche communes ajoutée')
+
+        // Ajouter les noms des communes
+        map.current.addLayer({
+          filter: ['==', 'departement', departement],
+          id: 'communes-labels',
+          layout: {
+            'text-allow-overlap': false,
+            'text-field': ['get', 'nom'],
+            'text-size': 12,
+          },
+          paint: {
+            'text-color': '#000000',
+            'text-halo-color': '#ffffff',
+            'text-halo-width': 1,
+          },
+          source: 'decoupage',
+          'source-layer': 'communes',
+          type: 'symbol',
+        })
+        console.log('Couche labels ajoutée')
+
+        // Vérifier que les couches sont bien présentes
+        console.log('Layers après ajout:', map.current.getStyle().layers.map(l => l.id))
+
+        // Chercher les features
+        console.log('Recherche des features du département...')
+        searchFeatures()
+      }
+
+      // Vérifier périodiquement si la source est chargée
+      const checkSourceLoaded = () => {
+        if (!map.current) {return}
+        
+        if (map.current.isSourceLoaded('decoupage')) {
+          console.log('Source decoupage chargée')
+          initializeLayers()
+        } else {
+          console.log('Source pas encore chargée, nouvelle tentative...')
+          setTimeout(checkSourceLoaded, 100)
+        }
+      }
+
+      // Démarrer la vérification
+      checkSourceLoaded()
+    })
+
+    // Gérer le mouseover sur les communes
+    map.current.on('mousemove', 'communes-layer', (e) => {
+      if (e.features && e.features.length > 0 && map.current) {
+        const canvas = map.current.getCanvas()
+        canvas.style.cursor = 'pointer'
+
+        const feature = e.features[0]
+        const coordinates = e.lngLat
+        const commune = communesFragilite.find((c) => c.code === feature.properties.code)
+
+        // Mettre à jour le popup
+        if (popup.current && map.current) {
+          popup.current
+            .setLngLat(coordinates)
+            .setHTML(`
+              <strong>${feature.properties.nom}</strong>
+              ${commune ? `<br/>Indice de fragilité : ${commune.fragilite}/10` : ''}
+            `)
+            .addTo(map.current)
+        }
+      }
+    })
+
+    // Gérer le mouseout
+    map.current.on('mouseleave', 'communes-layer', () => {
+      if (map.current) {
+        const canvas = map.current.getCanvas()
+        canvas.style.cursor = ''
+      }
+      if (popup.current) {
+        popup.current.remove()
+      }
     })
 
     return () => {
@@ -149,7 +245,7 @@ export default function Map({ departement }: Props): ReactElement {
         map.current.remove()
       }
     }
-  }, [departement])
+  }, [departement, communesFragilite])
 
   return (
     <div 
@@ -160,5 +256,6 @@ export default function Map({ departement }: Props): ReactElement {
 }
 
 type Props = Readonly<{
+  communesFragilite: Array<CommuneFragilite>
   departement: string
 }> 

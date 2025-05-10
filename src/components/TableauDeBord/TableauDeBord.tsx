@@ -15,9 +15,10 @@ import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import Map from '../shared/Map/Map'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactElement {
+export default function TableauDeBord({ communeFragilite, tableauDeBordViewModel }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   ChartJS.register(
@@ -118,12 +119,10 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Mise à jour le 23/09/2024
               </div>
             </div>
-            <div
-              className="center"
-              style={{ height: '600px' }}
-            >
-              <Map departement="69" />
-            </div>
+            <Map
+              communesFragilite={communeFragilite}
+              departement="69"
+            />
           </div>
           <div className="fr-col-4">
             <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
@@ -630,5 +629,6 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
 }
 
 type Props = Readonly<{
+  communeFragilite: Array<CommuneFragilite>
   tableauDeBordViewModel: TableauDeBordViewModel
 }>

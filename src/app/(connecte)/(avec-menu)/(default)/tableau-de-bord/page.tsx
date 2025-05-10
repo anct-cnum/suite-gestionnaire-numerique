@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 
 import Notice from '@/components/shared/Notice/Notice'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
+import { indiceFragilitePresenter } from '@/presenters/indiceFragilitePresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
 export const metadata: Metadata = {
@@ -11,11 +12,15 @@ export const metadata: Metadata = {
 
 export default function TableauDeBordController(): ReactElement {
   const tableauDeBordViewModel = tableauDeBordPresenter()
-
+  const communeFragilite = indiceFragilitePresenter('69')
+  console.log(communeFragilite)
   return (
     <>
       <Notice />
-      <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
+      <TableauDeBord
+        communeFragilite={communeFragilite}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
     </>
   )
 }
