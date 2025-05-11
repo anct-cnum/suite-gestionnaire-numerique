@@ -7,12 +7,6 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import styles from './Map.module.css'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 
-const DEPARTEMENTS_CENTERS: Record<string, [number, number]> = {
-  11: [2.4012, 43.1832], // Aude
-  69: [4.8357, 45.7578], // Lyon
-  75: [2.3522, 48.8566], // Paris
-}
-
 // Échelle de couleurs pour l'indice de fragilité (1 à 10)
 const FRAGILITE_COLORS = {
   1: '#e5f5e0', // Très clair
@@ -52,8 +46,10 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
 
     // Initialiser la carte
     map.current = new maplibregl.Map({
-      center: DEPARTEMENTS_CENTERS[departement] || [2.3522, 48.8566],
+      center: [2.3522, 48.8566], // Position par défaut (Paris)
       container: mapContainer.current,
+      maxZoom: 12, 
+      minZoom: 6,
       style: EMPTY_STYLE,
       zoom: 6,
     })
@@ -123,13 +119,15 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
           geometry.coordinates[0].forEach((coord) => {
             bounds.extend(coord as [number, number])
           })
-          map.current.fitBounds(bounds, { padding: 50 })
+          map.current.fitBounds(bounds, { 
+            duration: 1000, // Animation de 1 seconde
+            maxZoom: 10, // Limite le zoom maximum pour garder une vue d'ensemble
+            padding: 50,
+          })
         } else {
           console.log('Aucune feature trouvée pour le département:', departement)
-          if (map.current.getZoom() < 8) {
-            console.log('Tentative de zoom plus proche...')
-            map.current.setZoom(8)
-          }
+          // Si aucune feature n'est trouvée, on reste sur la position par défaut
+          console.log('Utilisation de la position par défaut')
         }
       }
 
