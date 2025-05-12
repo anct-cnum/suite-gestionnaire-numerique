@@ -13,6 +13,7 @@ import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceReposit
 import { PrismaMembreDepartementRepository } from '@/gateways/PrismaMembreDepartementRepository'
 import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { Enveloppe } from '@/presenters/actionPresenter'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUneAction } from '@/use-cases/commands/AjouterUneAction'
 
@@ -20,7 +21,6 @@ export async function ajouterUneActionAction(
   actionParams: ActionParams
 ): ResultAsync<ReadonlyArray<string>> {
   const validationResult = validator.safeParse(actionParams)
-
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }

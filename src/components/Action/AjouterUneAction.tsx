@@ -89,7 +89,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       path: pathname,
       porteurs: form.getAll('beneficiaires') as Array<string>,
     })
-    
+
     if ((messages as Array<string>).includes('OK')) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
     } else {
