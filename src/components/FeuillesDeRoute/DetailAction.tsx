@@ -29,17 +29,21 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
       >
         {action.besoins.map((besoin) => (
           <li
-            className={`color-grey fr-text--sm ${styles.besoin}`}
+            className={`color-grey fr-text--bold fr-text--sm ${styles.besoin}`}
             key={besoin}
           >
             {besoin}
           </li>
         ))}
       </ul>
-      <div className="color-grey fr-mt-2w">
+      <div className="color-grey fr-mt-2w fr-text--bold">
         {action.libellePorteurs}
       </div>
-      {
+      {action.porteurs.length === 0 ? (
+        <span>
+          -
+        </span>
+      ) :
         action.porteurs.map((porteur) => (
           <Tag
             href={porteur.link}
@@ -47,60 +51,64 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
           >
             {porteur.label}
           </Tag>
-        ))
-      }
-      <div className="color-grey fr-mt-2w">
+        ))}
+      <div className="color-grey fr-mt-2w fr-text--bold">
         Description de l’action
       </div>
       <ReadMore texte={action.description} />
-      <dl
+      <ul
         aria-label="Budget prévisionnel"
-        className={`${styles.budget} grey-border fr-p-2w fr-mt-2w`}
-        role="list"
+        className="grey-border"
       >
-        <div className={`${styles.budget__global} fr-grid-row fr-btns-group--space-between fr-mb-1w`}>
-          <dt>
+        <li className={`${styles.budget__global} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-p-2w`}>
+          <span role="term">
             {action.budgetPrevisionnel.global.libelle}
-          </dt>
-          <dd>
+          </span>
+          <span role="definition">
             {action.budgetPrevisionnel.global.montant}
-          </dd>
-        </div>
-        <div>
-          <p className="fr-mb-1w">
+          </span>
+        </li>
+        <li className={`${styles.financement} fr-p-2w background-blue-france`}>
+          <p className="fr-mb-1w color-blue-france fr-text--bold">
             Financement :
             {' '}
             {action.libelleEnveloppe}
           </p>
           {action.budgetPrevisionnel.subventions.map((subvention) => (
-            <div
-              className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w`}
+            <li
+              className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-ml-1w`}
               key={subvention.libelle}
             >
-              <dt>
+              <span role="term">
+                <span className="fr-text--bold">
+                  ·
+                </span>
+                {' '}
                 {subvention.libelle}
-              </dt>
-              <dd>
+              </span>
+              <span role="definition">
                 {subvention.montant}
-              </dd>
-            </div>
+              </span>
+            </li>
           ))}
+        </li>
+        <li className="fr-p-2w fr-text--bold">
           {action.budgetPrevisionnel.coFinancements.map((coFinancement) => (
-            <div
+            <li
               className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
               key={coFinancement.libelle}
             >
-              <dt>
+              <span role="term">
                 {coFinancement.libelle}
-              </dt>
-              <dd>
+              </span>
+              <span role="definition">
                 {coFinancement.montant}
-              </dd>
-            </div>
+              </span>
+            </li>
           ))}
-        </div>
-      </dl>
-      <div className="color-grey fr-mt-2w">
+        </li>
+      </ul>
+      <div className="color-grey  fr-text--bold fr-mt-2w">
         Bénéficiaires des subventions
       </div>
       <ul

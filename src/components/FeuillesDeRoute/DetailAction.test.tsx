@@ -112,7 +112,7 @@ describe('détail d’une action', () => {
       // THEN
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Structurer une filière de reconditionnement locale 7' })
       const porteurLabel = within(drawer).queryByText('Porteur de l’action')
-      expect(porteurLabel).not.toBeInTheDocument()
+      expect(porteurLabel).toBeInTheDocument()
       const tiret = within(drawer).getByText('-')
       expect(tiret).toBeInTheDocument()
     })
