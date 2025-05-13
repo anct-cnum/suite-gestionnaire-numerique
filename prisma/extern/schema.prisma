@@ -7,7 +7,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("EXTERN_DATABASE_URL")
-  schemas  = ["admin", "api", "auth", "cache", "dataviz", "import", "main", "public", "reference"]
+  schemas  = ["admin", "main", "reference"]
 }
 
 model commune {
@@ -130,86 +130,6 @@ model zonage_log_erreur {
 
   @@schema("admin")
 }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model token {
-// @@schema("auth")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ac_aidants {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ac_mandats {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ac_structures {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model carto {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model cn_conseillers {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model cn_cras {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model cn_permanences {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model cn_relations {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model cn_structures {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ign_commune {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ign_departement {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ign_epci {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model ign_region {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model insee_mvt_comm {
-// @@schema("import")
-// }
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model laposte_insee_cp {
-// @@schema("import")
-// }
 
 model activites_coop {
   id                                  Int       @id @default(autoincrement())
@@ -425,22 +345,6 @@ model structure {
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@schema("main")
-}
-
-/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
-// model flyway_schema_history {
-// @@schema("public")
-// }
-
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model spatial_ref_sys {
-  srid      Int     @id
-  auth_name String? @db.VarChar(256)
-  auth_srid Int?
-  srtext    String? @db.VarChar(2048)
-  proj4text String? @db.VarChar(2048)
-
-  @@schema("public")
 }
 
 model categories_juridiques {
