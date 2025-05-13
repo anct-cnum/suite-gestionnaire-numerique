@@ -41,14 +41,14 @@ export async function ajouterUneActionAction(
   }
 
   const command = {
-    beneficiaires: actionCommand.destinataires.map((destinataire) => destinataire),
     besoins: actionCommand.besoins.map((besoin) => besoin),
     budgetGlobal: actionCommand.budgetGlobal,
     coFinancements: [],
     contexte: actionCommand.contexte,
     dateDeDebut: actionCommand.anneeDeDebut,
     dateDeFin: actionCommand.anneeDeFin ?? '',
-    description: actionCommand.description, 
+    description: actionCommand.description,
+    destinataires: actionCommand.destinataires.map((destinataire) => destinataire), 
     nom: actionCommand.nom,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,

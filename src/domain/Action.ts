@@ -8,7 +8,6 @@ import { Result } from '@/shared/lang'
 export class Action extends Entity<State> {
   override get state(): State {
     return {
-      beneficiaires: this.#beneficiaires.map((beneficiaire) => beneficiaire.state.value),
       besoins: this.#besoins,
       budgetGlobal: this.#budgetGlobal,
       contexte: this.#contexte,
@@ -16,6 +15,7 @@ export class Action extends Entity<State> {
       dateDeDebut: this.#dateDeDebut.getFullYear().toString(),
       dateDeFin: this.#dateDeFin.getFullYear().toString(),
       description: this.#description,
+      destinataires: this.#destinataires.map((destinataire) => destinataire.state.value),
       nom: this.#nom,
       uid: this.#uid.state,
       uidCreateur: this.#uidCreateur.state.value,
@@ -24,7 +24,6 @@ export class Action extends Entity<State> {
     }
   }
 
-  readonly #beneficiaires: Array<MembreUid>
   readonly #besoins: Array<string>
   readonly #budgetGlobal: number
   readonly #contexte: string
@@ -32,6 +31,7 @@ export class Action extends Entity<State> {
   readonly #dateDeDebut: ValidDate<ActionFailure>
   readonly #dateDeFin: ValidDate<ActionFailure>
   readonly #description: string
+  readonly #destinataires: Array<MembreUid>
   readonly #nom: string
   readonly #uid: ActionUid
   readonly #uidCreateur: MembreUid
@@ -41,7 +41,7 @@ export class Action extends Entity<State> {
   private constructor(
     uid: ActionUid,
     besoins: Array<string>,
-    beneficiaires: Array<MembreUid>,
+    destinataires: Array<MembreUid>,
     nom: string,
     contexte: string,
     description: string,
@@ -56,7 +56,7 @@ export class Action extends Entity<State> {
     super(uid)
     this.#uid = uid
     this.#besoins = besoins
-    this.#beneficiaires = beneficiaires
+    this.#destinataires = destinataires
     this.#nom = nom
     this.#contexte = contexte
     this.#description = description
@@ -70,7 +70,6 @@ export class Action extends Entity<State> {
   }
 
   static create({
-    beneficiaires,
     besoins,
     budgetGlobal,
     contexte,
@@ -78,6 +77,7 @@ export class Action extends Entity<State> {
     dateDeDebut,
     dateDeFin,
     description,
+    destinataires,
     nom,
     uid,
     uidCreateur,
@@ -93,7 +93,7 @@ export class Action extends Entity<State> {
       return new Action(
         new ActionUid(uid.value),
         besoins,
-        beneficiaires.map((beneficiaire) => new MembreUid(beneficiaire)),
+        destinataires.map((beneficiaire) => new MembreUid(beneficiaire)),
         nom,
         contexte,
         description,
@@ -121,7 +121,6 @@ export class ActionUid extends Uid<UidState> {
 }
 
 type FactoryParams = Readonly<{
-  beneficiaires: Array<string>
   besoins: Array<string>
   budgetGlobal: number
   contexte: string
@@ -129,6 +128,7 @@ type FactoryParams = Readonly<{
   dateDeDebut: string
   dateDeFin: string
   description: string
+  destinataires: Array<string>
   nom: string
   uid: UidState
   uidCreateur: string
@@ -137,7 +137,6 @@ type FactoryParams = Readonly<{
 }>
 
 type State = Readonly<{
-  beneficiaires: Array<string>
   besoins: Array<string>
   budgetGlobal: number
   contexte: string
@@ -145,6 +144,7 @@ type State = Readonly<{
   dateDeDebut: string
   dateDeFin: string
   description: string
+  destinataires: Array<string>
   nom: string
   uid: UidState
   uidCreateur: string

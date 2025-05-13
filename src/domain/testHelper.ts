@@ -91,7 +91,6 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
 
 export function actionFactory(override?: Partial<Parameters<typeof Action.create>[0]>): Action {
   return Action.create({
-    beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
     besoins: ['besoin 1'],
     budgetGlobal: 10_000,
     contexte: 'Un contexte',
@@ -99,6 +98,7 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     dateDeDebut: '2024',
     dateDeFin: '2025',
     description: 'Description de test',
+    destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
     nom: 'Feuille de route 69',
     uid: {
       value: 'feuilleDeRouteFooId',

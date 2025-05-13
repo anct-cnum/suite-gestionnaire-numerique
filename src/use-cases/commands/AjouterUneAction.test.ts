@@ -62,7 +62,6 @@ describe('ajouter une action à une feuille de route', () => {
 
     // WHEN
     const result = await ajouterAction.handle({
-      beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
       besoins: ['besoin 1', 'besoin 2'],
       budgetGlobal: 10000,
       coFinancements: [
@@ -85,6 +84,7 @@ describe('ajouter une action à une feuille de route', () => {
         },
       ],
       description: 'Description de test',
+      destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
       nom,
       uidEditeur,
       uidFeuilleDeRoute,
@@ -98,7 +98,6 @@ describe('ajouter une action à une feuille de route', () => {
     expect(spiedFeuilleDeRouteUidToFind).toBe(uidFeuilleDeRoute)
     expect(spiedActionToAdd?.state).toStrictEqual(
       actionFactory({
-        beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         besoins: ['besoin 1', 'besoin 2'],
         budgetGlobal: 10_000,
         contexte: 'Un contexte de test',
@@ -106,6 +105,7 @@ describe('ajouter une action à une feuille de route', () => {
         dateDeDebut: '2024',
         dateDeFin: '2025',
         description: 'Description de test',
+        destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         nom,
         uid: {
           value: 'identifiantPourLaCreation',
@@ -189,13 +189,13 @@ describe('ajouter une action à une feuille de route', () => {
       )
 
       const command = {
-        beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         besoins: ['besoin 1'],
         budgetGlobal: 10000,
         contexte: 'Un contexte',
         dateDeDebut: dateDeDebut.toString(),
         dateDeFin: dateDeFin.toString(),
         description: 'Description',
+        destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         nom,
         uidEditeur,
         uidFeuilleDeRoute,
@@ -228,13 +228,13 @@ describe('ajouter une action à une feuille de route', () => {
 
     // WHEN
     const result = await ajouterAction.handle({
-      beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
       besoins: ['besoin 1'],
       budgetGlobal: 10000,
       contexte: 'Un contexte',
       dateDeDebut: new Date(epochTime).toISOString(),
       dateDeFin: new Date(epochTime).toISOString(),
       description: 'Description valide',
+      destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
       nom,
       uidEditeur,
       uidFeuilleDeRoute,
@@ -325,7 +325,6 @@ class ActionRepositorySpy implements AddActionRepository {
   async get(uid: string): Promise<Action> {
     return Promise.resolve(
       actionFactory({
-        beneficiaires: [],
         besoins: [],
         budgetGlobal: 1000,
         contexte: 'contexte de l‘action',
@@ -333,6 +332,7 @@ class ActionRepositorySpy implements AddActionRepository {
         dateDeDebut: '2024',
         dateDeFin: '2025',
         description: 'description de l‘action',
+        destinataires: [],
         nom: 'Structurer une association',
         uid: { value: uid },
         uidFeuilleDeRoute: { value: '123' },

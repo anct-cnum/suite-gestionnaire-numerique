@@ -91,7 +91,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
     
     const action = Action.create({
-      beneficiaires: command.beneficiaires,
       besoins: command.besoins,
       budgetGlobal: command.budgetGlobal,
       contexte: command.contexte,
@@ -99,6 +98,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       dateDeDebut: command.dateDeDebut,
       dateDeFin: command.dateDeFin,
       description: command.description,
+      destinataires: command.destinataires,
       nom: command.nom,
       uid: {
         value: 'identifiantPourLaCreation',
@@ -115,7 +115,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     const demandesDeSubvention: DemandeDeSubvention | DemandeDeSubventionFailure =
      this.creationDesDemandesDeSubvention(
        command.demandesDeSubvention ?? [],
-       action.state.beneficiaires,
+       action.state.destinataires,
        action.state.uid.value,
        editeur.state.uid.value
      )
@@ -275,7 +275,6 @@ type CoFinancementCommand = Readonly<{
 }>
 
 type Command = Readonly<{
-  beneficiaires: Array<string>
   besoins: Array<string>
   budgetGlobal: number
   coFinancements?: Array<CoFinancementCommand>
@@ -284,6 +283,7 @@ type Command = Readonly<{
   dateDeFin: string
   demandesDeSubvention?: Array<DemandeDeSubventionCommand>
   description: string
+  destinataires: Array<string>
   nom: string
   uidEditeur: string
   uidFeuilleDeRoute: string
