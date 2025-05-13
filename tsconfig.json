@@ -31,7 +31,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@prisma/client-extern": ["./generated/client-extern"]
     },
     "types": ["vitest/globals"]
   },
