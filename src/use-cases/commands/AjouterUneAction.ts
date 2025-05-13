@@ -111,16 +111,17 @@ export class AjouterUneAction implements CommandHandler<Command> {
     if (!(action instanceof Action)) {
       return action
     }
-
-    const demandesDeSubvention: DemandeDeSubvention | DemandeDeSubventionFailure =
-     this.creationDesDemandesDeSubvention(
-       command.demandesDeSubvention ?? [],
-       action.state.destinataires,
-       action.state.uid.value,
-       editeur.state.uid.value
-     )
-    if (!(demandesDeSubvention instanceof DemandeDeSubvention)) {
-      return demandesDeSubvention
+    let demandeDeSubvention: DemandeDeSubvention | DemandeDeSubventionFailure | null = null
+    if (command.demandesDeSubvention && command.demandesDeSubvention.length > 0) {
+      demandeDeSubvention = this.creationDesDemandesDeSubvention(
+        command.demandesDeSubvention ?? [],
+        action.state.destinataires,
+        action.state.uid.value,
+        editeur.state.uid.value
+      )
+      if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
+        return demandeDeSubvention
+      }
     }
 
     const coFinancements: Array<CoFinancement> | CoFinancementFailure =
@@ -133,72 +134,43 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return coFinancements
     }
 
-    return  this.persistAction(action, demandesDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
+    return  this.persistAction(action, demandeDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
   }
-
-  // A FAIRE: Vérifier si on peut avoir 0 ou plusieurs demandes de subvention pour une même action
-  // Pour l'instant : 1 action = 1 demande de subvention. On associe les bénéfiaires à cette demande.
-  // Discussion sens métier :  c'est le récipiendaire qui recoit l'argent. Il y a peut être confusion entre 
-  // bénéficiaire et récipiendaire.
-  // De plus, les beneficaires sont lies à l'action, pas à la demande de subvention => on ne lit pas les 
-  // beneficaires de la  demande de subvention mais on utilise ceux fournis par l'action.
+  
+  // Pour l'instant : 1 action = 0 ou 1 demande de subvention. On associe les destinataires à cette demande.
+  // => La liste est transformé en une unique demande de subvention.
   private creationDesDemandesDeSubvention(
     demandesDeSubventionCommand: Array<DemandeDeSubventionCommand>,
     beneficiaires: Array<string>,
     uidAction: string,
     uidCreateur: string
   ):  DemandeDeSubvention | DemandeDeSubventionFailure {
-    if (demandesDeSubventionCommand.length > 0) {
-      const demande = demandesDeSubventionCommand[0]
-      const demandeDeSubvention = DemandeDeSubvention.create({
-        beneficiaires,
-        dateDeCreation: this.#date,
-        derniereModification: this.#date,
-        statut: demande.statut,
-        subventionDemandee: demande.subventionDemandee,
-        subventionEtp: demande.subventionEtp ?? null,
-        subventionPrestation: demande.subventionPrestation ?? null,
-        uid: {
-          value: 'identifiantDemandeDeSubventionPourLaCreation',
-        },
-        uidAction: {
-          value: uidAction, 
-        },
-        uidCreateur,
-        uidEnveloppeFinancement: {
-          value: demande.enveloppeFinancementId,
-        },
-      })
-
-      if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
-        return demandeDeSubvention
-      }
-      return demandeDeSubvention
-    }
-    const enveloppeFinancementArbitraireId = '1'
-    return DemandeDeSubvention.create({
+    const demande = demandesDeSubventionCommand[0]
+    const demandeDeSubvention = DemandeDeSubvention.create({
       beneficiaires,
       dateDeCreation: this.#date,
       derniereModification: this.#date,
-      statut: 'enCours',
-      subventionDemandee: 0,
-      subventionEtp: null,
-      subventionPrestation: null,
+      statut: demande.statut,
+      subventionDemandee: demande.subventionDemandee,
+      subventionEtp: demande.subventionEtp ?? null,
+      subventionPrestation: demande.subventionPrestation ?? null,
       uid: {
         value: 'identifiantDemandeDeSubventionPourLaCreation',
       },
       uidAction: {
-        value: uidAction,
+        value: uidAction, 
       },
       uidCreateur,
       uidEnveloppeFinancement: {
-        value: enveloppeFinancementArbitraireId,
+        value: demande.enveloppeFinancementId,
       },
     })
+
+    return demandeDeSubvention
   }
 
   private async persistAction(
-    action: Action, demandesDeSubvention: DemandeDeSubvention,
+    action: Action, demandeDeSubvention: DemandeDeSubvention | null,
     coFinancements: Array<CoFinancement>, 
     command : Command,
     feuilleDeRoute: FeuilleDeRoute, editeur: Utilisateur
@@ -206,11 +178,13 @@ export class AjouterUneAction implements CommandHandler<Command> {
     await this.#transactionRepository.transaction(async (tx) => {
       const actionId = await this.#actionRepository.add(action, tx)
       
-      const updatedDemandeDeSubvention = demandesDeSubvention.avecNouvelleUidAction(actionId.toString())
-      if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
-        return updatedDemandeDeSubvention
+      if (demandeDeSubvention) {
+        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
+        if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
+          return updatedDemandeDeSubvention
+        }
+        await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
       }
-      await this.#demandeDeSubventionRepository.add(updatedDemandeDeSubvention, tx)
 
       for (const coFinancement of coFinancements) {
         const updatedCoFinancement = coFinancement.avecNouvelleUidAction(actionId.toString())
