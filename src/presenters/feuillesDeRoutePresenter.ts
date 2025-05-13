@@ -186,10 +186,7 @@ function formatlibellePorteurs(
     uid: string
   }>
 ): string {
-  if (porteurs.length === 0) {
-    return '-'
-  }
-  if (porteurs.length === 1) {
+  if (porteurs.length === 1 || porteurs.length === 0) {
     return 'Porteur de l’action'
   }
   return 'Porteurs de l’action'

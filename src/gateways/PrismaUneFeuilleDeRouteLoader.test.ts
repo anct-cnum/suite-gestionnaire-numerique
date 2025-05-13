@@ -205,7 +205,7 @@ describe('récupérer une feuille de route loader', () => {
       edition: {
         date: epochTimeMinusTwoDays,
         nom: 'Tartempion',
-        prenom: 'Martin'
+        prenom: 'Martin',
       },
       montantCofinancements: 0,
       montantFinancementsAccordes: 0,
