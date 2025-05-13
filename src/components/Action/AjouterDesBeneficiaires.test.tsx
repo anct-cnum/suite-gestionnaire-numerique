@@ -15,7 +15,7 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 describe('ajout des bénéficiaires', () => {
   it('quand il n’y a pas de bénéficiaire alors le bouton ajouter un bénéficiaire s’affiche', () => {
     // WHEN
-    afficherLeFormulaireAction({ beneficiaires: [] })
+    afficherLeFormulaireAction({ destinataires: [] })
 
     // THEN
     const bouton = screen.getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
@@ -26,7 +26,7 @@ describe('ajout des bénéficiaires', () => {
   it('quand il y un bénéficiaire alors tag du bénéficiaire s’affiche sur l action', () => {
     // GIVEN
     afficherLeFormulaireAction({
-      beneficiaires: [
+      destinataires: [
       ],
     }, {
       porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
@@ -70,7 +70,7 @@ describe('ajout des bénéficiaires', () => {
     it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
       // GIVEN
       afficherLeFormulaireAction({
-        beneficiaires: [
+        destinataires: [
           { id: 'rhone_69_id', link: '', nom: 'Rhône (69) Co-porteur', roles: [] },
         ],
       }, {
@@ -112,7 +112,7 @@ describe('ajout des bénéficiaires', () => {
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
       afficherLeFormulaireAction({
-        beneficiaires: [
+        destinataires: [
           { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
         ],
       }, {
@@ -134,7 +134,7 @@ describe('ajout des bénéficiaires', () => {
     it('puis que je clique sur tout effacer, alors le formulaire se vide', () => {
       // GIVEN
       afficherLeFormulaireAction({
-        beneficiaires: [
+        destinataires: [
           { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
         ],
       }, {

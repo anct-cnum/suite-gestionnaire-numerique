@@ -61,10 +61,9 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         id: Number(uid),
       },
     })
-    const beneficiaires = actionRecord.demandesDeSubvention.flatMap((demande) =>
+    const destinataires = actionRecord.demandesDeSubvention.flatMap((demande) =>
       demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
     const action = Action.create({
-      beneficiaires,
       besoins: actionRecord.besoins,
       budgetGlobal: actionRecord.budgetGlobal,
       contexte: actionRecord.contexte,
@@ -72,6 +71,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
       dateDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
       dateDeFin: actionRecord.dateDeFin.getFullYear().toString(),
       description: actionRecord.description,
+      destinataires,
       nom: actionRecord.nom,
       uid: { value: String(actionRecord.id) },
       uidCreateur: actionRecord.utilisateur.ssoId,

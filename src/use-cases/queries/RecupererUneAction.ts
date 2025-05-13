@@ -3,7 +3,6 @@ import { StatusSubvention } from './shared/StatusSubvention'
 export interface UneActionReadModel {
   anneeDeDebut?: string
   anneeDeFin?: string
-  beneficiaires?: Array<PorteurPotentielReadModel>
   besoins: Array<string>
   budgetGlobal?: number
   budgetPrevisionnel?: Array<{
@@ -12,9 +11,12 @@ export interface UneActionReadModel {
   }>
   coFinancement: CoFinancementReadModel
   contexte?: string
+  demandeDeSubvention : DemandeDeSubventionReadModel
   description?: string
+  destinataires?: Array<PorteurPotentielReadModel>
   enveloppe: EnveloppeReadModel
   nom: string
+  nomFeuilleDeRoute : string
   porteurs?: Array<PorteurPotentielReadModel>
   statut: StatusSubvention
   uid: string
@@ -32,6 +34,14 @@ interface CoFinancementReadModel {
   montant: number
 }
 
+interface DemandeDeSubventionReadModel {
+  beneficiaires: Array<PorteurPotentielReadModel>
+  enveloppeFinancementId: string
+  statut: string
+  subventionDemandee: number
+  subventionEtp: number
+  subventionPrestation: number
+}
 interface EnveloppeReadModel {
   montant: number
   // autres champs si besoin

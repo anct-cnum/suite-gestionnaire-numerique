@@ -7,7 +7,8 @@ import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
 
-  static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>): UneActionReadModel {
+  static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>, 
+    nomFeuilleDeRoute :string): UneActionReadModel {
     const coFinancement = actionRecord.coFinancement.length > 0
       ? {
         financeur: actionRecord.coFinancement[0].membre.relationContact.nom || 'Inconnu',
@@ -26,16 +27,14 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       nom: pa.membre.relationContact.nom || '',
     }))
 
-    const beneficiaires = actionRecord.demandesDeSubvention.flatMap(ds =>
+    const destinataires = actionRecord.demandesDeSubvention.flatMap(ds =>
       ds.beneficiaire.map(beneficiaire => ({
         id: beneficiaire.membre.id,
         nom: beneficiaire.membre.relationContact.nom || '',
       })))
-
     return {
       anneeDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
       anneeDeFin: actionRecord.dateDeFin.getFullYear().toString(),
-      beneficiaires,
       besoins: actionRecord.besoins,
       budgetGlobal: actionRecord.budgetGlobal,
       budgetPrevisionnel: actionRecord.coFinancement.map(cf => ({
@@ -44,9 +43,19 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       })),
       coFinancement,
       contexte: actionRecord.contexte,
+      demandeDeSubvention: {
+        beneficiaires: [],
+        enveloppeFinancementId: String(actionRecord.demandesDeSubvention[0].enveloppe.id),
+        statut: actionRecord.demandesDeSubvention[0].statut,
+        subventionDemandee: actionRecord.demandesDeSubvention[0].enveloppe.montant,
+        subventionEtp: actionRecord.demandesDeSubvention[0].enveloppe.montant,
+        subventionPrestation: actionRecord.demandesDeSubvention[0].enveloppe.montant,
+      },
       description: actionRecord.description,
+      destinataires,
       enveloppe,
       nom: actionRecord.nom,
+      nomFeuilleDeRoute,
       porteurs,
        
       statut: 'nonSubventionnee', //A FAIRE : à compléter => action n'a pas de statut. A priori soucis 
@@ -62,8 +71,13 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(uidAction),
       },
     })
-
-    return PrismaUneActionLoader.#transform(actionRecord)
+    const feuilleDeRoute = await prisma.feuilleDeRouteRecord.findUniqueOrThrow({
+      where: {
+        id: Number(actionRecord.feuilleDeRouteId),
+      },
+    })
+    
+    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom)
   }
 }
 

@@ -19,7 +19,6 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
-
   return (
     <>
       <title>

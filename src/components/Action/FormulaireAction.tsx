@@ -36,7 +36,7 @@ export function FormulaireAction({
 
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
-  const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
+  const [destinataires, setDestinataires] = useState(action.destinataires)
   const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
 
   const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
@@ -79,7 +79,7 @@ export function FormulaireAction({
   function resetBeneficiaireToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     // istanbul ignore next @preserve
     if (fieldset.current) {
-      const beneficiaireIds = beneficiaires.map(beneficiare => beneficiare.id)
+      const beneficiaireIds = destinataires.map(beneficiare => beneficiare.id)
 
       fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
         input.checked = beneficiaireIds.includes(input.value)
@@ -506,7 +506,7 @@ export function FormulaireAction({
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={enregistrerBeneficiaires}
               labelPluriel="bénéficiaires des fonds"
-              membres={beneficiaires}
+              membres={destinataires}
               resetToutEffacer={resetBeneficiaireToutEffacer}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={createToutEffacer()}
@@ -517,8 +517,9 @@ export function FormulaireAction({
             Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.
           </p>
           <div>
+            
             {
-              beneficiaires
+              destinataires
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
                     <Tag
@@ -583,7 +584,7 @@ export function FormulaireAction({
         .map(memberSelected => memberSelected.member.uid)
       const newBenificiaire = membresGouvernanceConfirme
         .filter(membreGouvernanceConfirme => selectedMemberIds.includes(membreGouvernanceConfirme.id))
-      setBeneficiaires(newBenificiaire)
+      setDestinataires(newBenificiaire)
     }
   }
 }

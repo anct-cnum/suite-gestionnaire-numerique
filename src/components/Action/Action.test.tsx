@@ -201,7 +201,7 @@ describe('formulaire d‘ajout d‘une action', () => {
           { link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' } as MembreAvecRoleDansLaGouvernance,
         ],
       },{
-        beneficiaires: [
+        destinataires: [
           { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
           { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
         ],

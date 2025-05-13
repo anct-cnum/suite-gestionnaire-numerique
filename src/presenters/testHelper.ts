@@ -111,7 +111,6 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
   return {
     anneeDeDebut: '2025',
     anneeDeFin: '2026',
-    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -198,6 +197,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     ],
     contexte: '<p>Contexte de l‘action</p>',
     description: '<p><strong>Description de l‘action.</strong></p>',
+    destinataires: [],
     enveloppes,
     hasBesoins: true,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
@@ -227,7 +227,6 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
 export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
   return {
     anneeDeDebut: '2025',
-    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -265,6 +264,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     budgetPrevisionnel: [],
     contexte: '',
     description: '',
+    destinataires: [],
     enveloppes,
     hasBesoins: false,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',

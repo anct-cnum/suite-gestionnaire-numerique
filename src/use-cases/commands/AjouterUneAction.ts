@@ -134,7 +134,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return coFinancements
     }
 
-    return  this.persistAction(action, demandeDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
+    return this.persistAction(action, demandeDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
   }
   
   // Pour l'instant : 1 action = 0 ou 1 demande de subvention. On associe les destinataires à cette demande.

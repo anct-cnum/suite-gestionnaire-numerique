@@ -42,7 +42,6 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
   return {
     anneeDeDebut: action.anneeDeDebut ?? '',
     anneeDeFin: action.anneeDeFin,
-    beneficiaires: (action.beneficiaires ?? []).map(toPorteurPotentielViewModel),
     besoins,
     budgetGlobal: action.budgetGlobal ?? 0,
     budgetPrevisionnel: (action.budgetPrevisionnel ?? []).map(bp => ({
@@ -50,12 +49,19 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
       montant: formatMontant(bp.montant),
     })),
     contexte: action.contexte ?? '',
+    demandeDeSubvention: action.demandeDeSubvention ? {
+      enveloppe: enveloppes.find(e => e.value === action.demandeDeSubvention.enveloppeFinancementId) ?? enveloppes[0],
+      montantPrestation: action.demandeDeSubvention.subventionPrestation ?? 0,
+      montantRh: action.demandeDeSubvention.subventionEtp ?? 0,
+      total: action.demandeDeSubvention.subventionDemandee,
+    } : undefined,
     description: action.description ?? '',
+    destinataires: (action.destinataires ?? []).map(toPorteurPotentielViewModel),
     enveloppes,
     hasBesoins: checkHasBesoins(besoins),
     lienPourModifier: 'LIEN BLABLA', // à compléter si besoin
     nom: action.nom,
-    nomFeuilleDeRoute: 'BLABLA', // à compléter si besoin
+    nomFeuilleDeRoute: action.nomFeuilleDeRoute,
     porteurs: (action.porteurs ?? []).map(toPorteurPotentielViewModel),
     statut: actionStatutViewModelByStatut[action.statut as StatutSubvention],
     temporalite: 'annuelle',
@@ -79,7 +85,6 @@ export type DemandeDeSubvention = Readonly<{
 export type ActionViewModel = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
-  beneficiaires: Array<PorteurPotentielViewModel>
   besoins: Readonly<{
     financements: Besoins
     formations: Besoins
@@ -94,6 +99,7 @@ export type ActionViewModel = Readonly<{
   contexte: string
   demandeDeSubvention?: DemandeDeSubvention
   description: string
+  destinataires: Array<PorteurPotentielViewModel>
   enveloppes: ReadonlyArray<Enveloppe>
   hasBesoins: boolean
   lienPourModifier: string
@@ -115,13 +121,13 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
-    beneficiaires: [],
     besoins: transformBesoins(action?.besoins),
     budgetGlobal: 0,
     budgetPrevisionnel: [],
     contexte: '',
     demandeDeSubvention: undefined,
     description: '',
+    destinataires: [],
     enveloppes,
     hasBesoins: checkHasBesoins({
       financements: [
