@@ -19,7 +19,15 @@ export class Montant {
   }
 
   static of(valeur: string): Optional<Montant> {
-    const val = Number(valeur)
+    const cleaned = valeur
+      .replace(/\s/g, '')
+      .replace(/\u202f/g, '')
+      .replace(/[^\d]/g, '')
+
+    if (!/^\d+$/.test(cleaned)) {
+      return Optional.empty()
+    }
+    const val = Number(cleaned)
     if (!Number.isFinite(val) || !Number.isInteger(val) || val < 0) {
       return Optional.empty()
     }
@@ -43,7 +51,7 @@ export class Montant {
   format(): string {
     return new Intl.NumberFormat('fr-FR', {
       maximumFractionDigits: 0,
-      useGrouping: false,
+      useGrouping: true,
     }).format(this.valeur)
   }
 

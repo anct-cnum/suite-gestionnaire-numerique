@@ -63,7 +63,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(listeCofinancements).toHaveLength(1)
     const premierCofinancement = within(listeCofinancements[0]).getByText('CC des Monts du Lyonnais')
     expect(premierCofinancement).toBeInTheDocument()
-    const montantPremierCofinancement = within(listeCofinancements[0]).getByText('1000 €')
+    const montantPremierCofinancement = within(listeCofinancements[0]).getByText('1 000 €')
     expect(montantPremierCofinancement).toBeInTheDocument()
   })
 
@@ -88,7 +88,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     expect(listeCofinancements).toHaveLength(5)
     const cinquiemeCofinancement = within(listeCofinancements[4]).getByText('CC des Monts du Lyonnais')
     expect(cinquiemeCofinancement).toBeInTheDocument()
-    const montantCinquiemeCofinancement = within(listeCofinancements[4]).getByText('1000 €')
+    const montantCinquiemeCofinancement = within(listeCofinancements[4]).getByText('1 000 €')
     expect(montantCinquiemeCofinancement).toBeInTheDocument()
   })
 
