@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16.6-alpine # Conserver la même version avec celle de Scalingo
+    image: postgis/postgis:16-master # Conserver la même version avec celle de Scalingo
     environment:
       POSTGRES_DB: min
       POSTGRES_USER: min
