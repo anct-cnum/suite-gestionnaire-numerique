@@ -2,9 +2,7 @@
 
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import { FormulaireAction } from './FormulaireAction'
-import Drawer from '../shared/Drawer/Drawer'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -14,11 +12,8 @@ import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresent
 export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
   const { ajouterUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
 
   return (
     <>
@@ -28,13 +23,9 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       <FormulaireAction
         action={action}
         ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
-        cofinancements={cofinancements}
         date={date}
         demandeDeSubvention={demandeDeSubvention}
-        drawerId="ajouter-un-cofinancement"
         label="Ajouter une action à la feuille de route"
-        setIsDrawerOpen={setIsDrawerOpen}
-        supprimerUnCofinancement={supprimerUnCofinancement}
         supprimerUneDemandeDeSubvention={supprimerDemandeDeSubvention}
         validerFormulaire={creerUneAction}
       >
@@ -45,23 +36,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
           {isDisabled ? 'Ajout en cours...' : 'Valider et envoyer'}
         </SubmitButton>
       </FormulaireAction>
-      <Drawer
-        boutonFermeture="Fermer"
-        closeDrawer={() => {
-          setIsDrawerOpen(false)
-        }}
-        id="ajouter-un-cofinancement"
-        isFixedWidth={false}
-        isOpen={isDrawerOpen}
-        labelId="ajouter-un-cofinancement-label"
-      >
-        <AjouterUnCoFinancement
-          coporteurs={coporteurs}
-          label="Ajouter un co-financement"
-          labelId="ajouter-un-cofinancement-label"
-          onSubmit={ajouterCofinancement}
-        />
-      </Drawer>
     </>
   )
 
@@ -78,7 +52,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       anneeDeFin: form.get('anneeDeFin') as string,
       besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
-      budgetPrevisionnel: cofinancements,
+      budgetPrevisionnel: [{ coFinanceur: '', montant: '0' }],
       contexte: contexteContenu,
       demandeDeSubvention,
       description: descriptionContenu,
@@ -97,16 +71,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     }
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
-  }
-
-  function ajouterCofinancement(coFinanceur: string, montant: string): void {
-    setCofinancements([...cofinancements, { coFinanceur, montant: `${montant} €` }])
-    setIsDrawerOpen(false)
-  }
-
-  function supprimerUnCofinancement(index: number): void {
-    const filteredCofinancements = cofinancements.filter((_, indexToRemove) => indexToRemove !== index)
-    setCofinancements(filteredCofinancements)
   }
 
   function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {

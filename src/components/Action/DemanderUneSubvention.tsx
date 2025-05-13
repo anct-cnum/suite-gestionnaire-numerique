@@ -337,12 +337,14 @@ export default function DemanderUneSubvention({
   }
 
   function isSaisieValide(): boolean {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const montantInputs = [inputMontantPrestaRef.current!, inputMontantRhRef.current!]
-    return (
-      montantInputs.some(({ value }) => Boolean(value)) &&
-      montantInputs.every(({ validity: { valid } }) => valid)
-    )
+    if(inputMontantPrestaRef.current  && inputMontantRhRef.current ) {
+      const montantInputs = [inputMontantPrestaRef.current, inputMontantRhRef.current]
+      return (
+        montantInputs.some(({ value }) => Boolean(value)) &&
+        montantInputs.every(({ validity: { valid } }) => valid)
+      )
+    }
+    return false
   }
 
   function montantMaximal(autreMontant = 0): number {

@@ -2,10 +2,8 @@
 
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import { FormulaireAction } from './FormulaireAction'
 import Drawer from '../shared/Drawer/Drawer'
-import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
@@ -15,9 +13,6 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
 
   return (
@@ -28,12 +23,8 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       <FormulaireAction
         action={action}
         ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
-        cofinancements={cofinancements}
         demandeDeSubvention={demandeDeSubvention}
-        drawerId="ajouter-un-cofinancement"
         label="Modifier une action"
-        setIsDrawerOpen={setIsDrawerOpen}
-        supprimerUnCofinancement={supprimerUnCofinancement}
         validerFormulaire={modifierAction}
       >
         <SubmitButton
@@ -52,14 +43,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId="ajouter-un-cofinancement-label"
-      >
-        <AjouterUnCoFinancement
-          coporteurs={coporteurs}
-          label="Ajouter un co-financement"
-          labelId="ajouter-un-cofinancement-label"
-          onSubmit={ajouterCofinancement}
-        />
-      </Drawer>
+      />
     </>
   )
 
@@ -90,15 +74,6 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
     }
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
-  }
-  function ajouterCofinancement(coFinanceur: string, montant: string): void {
-    setCofinancements([...cofinancements, { coFinanceur, montant: `${montant} €` }])
-    setIsDrawerOpen(false)
-  }
-
-  function supprimerUnCofinancement(index: number): void {
-    const filteredCofinancements = cofinancements.filter((_, indexValue) => indexValue !== index)
-    setCofinancements(filteredCofinancements)
   }
 
   function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {

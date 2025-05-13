@@ -1,108 +1,143 @@
-import { FormEvent, ReactElement, useState } from 'react'
+import { ReactElement, useContext, useEffect, useMemo, useState } from 'react'
 
-import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
-import Select from '../shared/Select/Select'
-import SubmitButton from '../shared/SubmitButton/SubmitButton'
-import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
+import styles from './Action.module.css'
+import Drawer from '@/components/shared/Drawer/Drawer'
+import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
+import { Montant } from '@/components/shared/Montant/Montant'
+import MontantInput from '@/components/shared/Montant/MontantInput'
+import Select from '@/components/shared/Select/Select'
+import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
+import { Optional } from '@/shared/Optional'
 
-export default function AjouterUnCoFinancement({ coporteurs, label, labelId, onSubmit }: Props): ReactElement {
+export default function AjouterUnCoFinancement(
+  { ajoutCoFinanceur, budgetGlobal, label, labelId }: Props
+): ReactElement {
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
+  const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
+
   const [coFinanceur, setCoFinanceur] = useState('')
-  const [montant, setMontant] = useState('')
+  const [montant, setMontant] = useState<Optional<Montant>>(() => Optional.empty())
+  const showButton = useMemo(() => false, [])
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    setCoFinanceur('')
+    setMontant(Optional.empty())
+  }, [isDrawerOpen])
+
   return (
-    <form
-      method="dialog"
-      onSubmit={handleSubmit}
-    >
-      <DrawerTitle id={labelId}>
-        <TitleIcon icon="money-euro-circle-line" />
-        <br />
-        {label}
-      </DrawerTitle>
-      <p className="fr-text--sm color-grey">
-        Précisez l‘origine du financement
-      </p>
-      <Select
-        id="cofinanceur"
-        name="cofinanceur"
-        onChange={(event) => {
-          setCoFinanceur(event.target.value)
+    <>
+      <button
+        aria-controls="ajouter-un-cofinancement"
+        className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
+        data-fr-opened={isDrawerOpen}
+        disabled={Montant.of(String(budgetGlobal)).orElse(Montant.Zero).lessThan(Montant.of('1'))}
+        onClick={() => {
+          setIsDrawerOpen(true)
         }}
-        options={coporteurs.length > 0 ? coporteurs.map(({ nom }) => ({ label: nom, value: nom })) : []}
-        required={true}
+        title="Ajouter des cofinancements"
+        type="button"
       >
-        Membre de la gouvernance
-      </Select>
-      <label
-        className="fr-label fr-mb-1w"
-        htmlFor="rechercheStructure"
+        Ajouter un financement
+      </button>
+      <Drawer
+        boutonFermeture="Fermer"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
+        id="ajouter-un-cofinancement"
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId="ajouter-un-cofinancement-label"
       >
-        Ou rechercher une autre structure
-      </label>
-      <div
-        className="fr-search-bar full-width"
-      >
-        <input
-          className="fr-input"
-          id="rechercheStructure"
-          placeholder="Numéro SIRET/RIDET, Nom, ..."
-          type="text"
+        <DrawerTitle id={labelId}>
+          <TitleIcon icon="money-euro-circle-line" />
+          <br />
+          {label}
+        </DrawerTitle>
+        <p className="fr-text--sm color-grey">
+          Précisez l‘origine du financement
+        </p>
+        <Select
+          id="cofinanceur"
+          name="cofinanceur"
+          onChange={(event) => {
+            setCoFinanceur(event.target.value)
+          }}
+          options={membresGouvernanceConfirme.length > 0
+            ? membresGouvernanceConfirme
+              .map(({ id, nom }) => ({ label: nom, value: id })) : []}
+        >
+          Membre de la gouvernance
+        </Select>
+        {showButton ?
+          <div
+            className="fr-search-bar full-width"
+          >
+            <label
+              className="fr-label fr-mb-1w"
+              htmlFor="rechercheStructure"
+            >
+              Ou rechercher une autre structure
+            </label>
+            <input
+              className="fr-input"
+              id="rechercheStructure"
+              placeholder="Numéro SIRET/RIDET, Nom, ..."
+              type="text"
+            />
+            <button
+              className="fr-btn"
+              title="Rechercher"
+              type="button"
+            >
+              Rechercher
+            </button>
+          </div> : null}
+        <div className="fr-mt-3w">
+          <label
+            className="fr-label fr-mb-1w"
+            htmlFor="montantDuFinancement"
+          >
+            Montant du financement
+            {' '}
+            <span className="color-red">
+              *
+            </span>
+          </label>
+        </div>
+        <MontantInput
+          id="montantDuFinancement"
+          montantInitial={montant}
+          onChange={(montant) => { setMontant(montant) }}
         />
-        <button
-          className="fr-btn"
-          title="Rechercher"
-          type="submit"
-        >
-          Rechercher
-        </button>
-      </div>
-      <div className="fr-mt-3w">
-        <label
-          className="fr-label fr-mb-1w"
-          htmlFor="montantDuFinancement"
-        >
-          Montant du financement
-          {' '}
-          <span className="color-red">
-            *
-          </span>
-        </label>
-      </div>
-      <input
-        className="fr-input"
-        id="montantDuFinancement"
-        min={0}
-        name="montantDuFinancement"
-        onChange={(event) => {
-          setMontant(event.target.value)
-        }}
-        placeholder="5 000"
-        required={true}
-        type="number"
-        value={montant}
-      />
-      <div className="fr-btns-group fr-mt-2w">
-        <SubmitButton
-          ariaControls="ajouter-un-cofinancement"
-          isDisabled={!coFinanceur || !montant}
-        >
-          Enregistrer
-        </SubmitButton>
-      </div>
-    </form>
+        <div className="fr-btns-group fr-mt-2w">
+          <button
+            className="fr-btn"
+            disabled={montant.orElse(Montant.Zero).lessThan(Montant.of('1')) || coFinanceur === ''}
+            onClick={handleSubmit}
+            type="button"
+          >
+            Enregistrer
+          </button>
+        </div>
+      </Drawer>
+
+    </>
   )
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
-    event.preventDefault()
-    onSubmit(coFinanceur, montant)
+  function handleSubmit(): void {
+    ajoutCoFinanceur(coFinanceur, montant.orElseThrow(() => new Error('Le montant doit être présent')))
     setCoFinanceur('')
-    setMontant('')
+    setMontant(Optional.empty())
+    setIsDrawerOpen(false)
   }
 }
 
 type Props = Readonly<{
-  coporteurs: NonNullable<GouvernanceViewModel['sectionMembres']['coporteurs']>
+  ajoutCoFinanceur(coFinanceur: string, montant: Montant): void
+  budgetGlobal: number
   label: string
   labelId: string
-  onSubmit(coFinanceur: string, montant: string): void
 }>

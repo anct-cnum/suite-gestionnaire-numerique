@@ -14,7 +14,9 @@ import TextEditor from '../shared/RichTextEditor/TextEditor'
 import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
+import AjouterUnCoFinancement from '@/components/Action/AjouterUnCoFinancement'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
+import { Montant } from '@/components/shared/Montant/Montant'
 import {  ActionViewModel, Besoins, BesoinsPotentielle, DemandeDeSubvention, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 
@@ -22,12 +24,8 @@ export function FormulaireAction({
   action,
   ajouterDemandeDeSubvention,
   children,
-  cofinancements,
   demandeDeSubvention,
-  drawerId,
   label,
-  setIsDrawerOpen,
-  supprimerUnCofinancement,
   supprimerUneDemandeDeSubvention,
   validerFormulaire,
 }: Props): ReactElement {
@@ -38,6 +36,7 @@ export function FormulaireAction({
   const [porteurs, setPorteurs] = useState(action.porteurs)
   const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
   const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
+  const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
 
   const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
     setLocalDemandeDeSubvention(undefined)
@@ -417,22 +416,12 @@ export function FormulaireAction({
                 Co-financement
               </p>
             </div>
-            {
-              cofinancements.length === 0 && (
-                <button
-                  aria-controls={drawerId}
-                  className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-                  data-fr-opened="false"
-                  disabled={budgetGlobal === 0}
-                  onClick={() => {
-                    setIsDrawerOpen(true)
-                  }}
-                  type="button"
-                >
-                  Ajouter un financement
-                </button>
-              )
-            }
+            <AjouterUnCoFinancement
+              ajoutCoFinanceur={ajouterCofinancement}
+              budgetGlobal={budgetGlobal}
+              label="Ajouter un co-financement"
+              labelId="ajouter-un-cofinancement-label"
+            />
           </div>
           {
             cofinancements.length > 0 ?
@@ -440,17 +429,21 @@ export function FormulaireAction({
                 <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
                   {cofinancements.map((cofinancement) => (
                     <li
-                      key={cofinancement.coFinanceur}
+                      key={cofinancement.coFinanceur+cofinancement.montant}
                     >
                       <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
                         <p className="fr-col-10 fr-mb-0">
-                          {cofinancement.coFinanceur}
+                          {membresGouvernanceConfirme
+                            .find(membre => membre.id === cofinancement.coFinanceur)
+                            ?.nom}
                         </p>
                         <div
                           className={`fr-col-2 ${styles['deletion-section']}`}
                         >
                           <p className="fr-mb-0 fr-mr-2w">
                             {cofinancement.montant}
+                            {' '}
+                            €
                           </p>
                           <button
                             className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
@@ -472,17 +465,6 @@ export function FormulaireAction({
                   style={{ display: 'flex', justifyContent: 'flex-end' }}
                 >
                   <hr />
-                  <button
-                    aria-controls={drawerId}
-                    className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setIsDrawerOpen(true)
-                    }}
-                    type="button"
-                  >
-                    Ajouter un financement
-                  </button>
                 </div>
               </>
               : null
@@ -539,6 +521,14 @@ export function FormulaireAction({
     </form>
   )
 
+  function ajouterCofinancement(coFinanceur: string, montant: Montant): void {
+    setCofinancements([...cofinancements, { coFinanceur, montant: montant.format() }])
+  }
+
+  function supprimerUnCofinancement(index: number): void {
+    const filteredCofinancements = cofinancements.filter((_, indexToRemove) => indexToRemove !== index)
+    setCofinancements(filteredCofinancements)
+  }
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
@@ -605,16 +595,9 @@ function checkHasBesoinsSelected(besoins: Besoins): boolean {
 type Props = PropsWithChildren<Readonly<{
   action: ActionViewModel
   ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void
-  cofinancements: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
-  }>
   date?: Date
   demandeDeSubvention?: DemandeDeSubvention
-  drawerId: string
   label: string
-  setIsDrawerOpen(isDrawerOpen: boolean): void
-  supprimerUnCofinancement(index: number): void
   supprimerUneDemandeDeSubvention?(): void
   validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
 }>>

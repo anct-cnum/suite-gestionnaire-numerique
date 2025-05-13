@@ -13,8 +13,6 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 // eslint-disable-next-line import/no-restricted-paths
-import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-// eslint-disable-next-line import/no-restricted-paths
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
@@ -197,13 +195,23 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       afficherFormulaireDeModificationAction(undefined, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  } as MembreAvecRoleDansLaGouvernance,
-          { link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' } as MembreAvecRoleDansLaGouvernance,
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  },
+          { nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' },
+          { nom: 'Budget prévisionnel 2024' , roles: [] , uid: 'budget_id' },
+          { nom: 'Subvention de prestation' , roles: [] , uid: 'subvention_id' },
+          { nom: 'CC des Monts du Lyonnais' , roles: [] , uid: 'cc_id' },
+          { nom: 'Croix Rouge Française' , roles: [] , uid: 'croix_id' },
         ],
       },{
         beneficiaires: [
           { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
           { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
+        ],
+        budgetPrevisionnel: [
+          { coFinanceur : 'budget_id' , montant : '20000' },
+          { coFinanceur : 'subvention_id' , montant : '10000' },
+          { coFinanceur : 'cc_id' , montant : '5000' },
+          { coFinanceur : 'croix_id' , montant : '5000' },
         ],
       })
 
@@ -231,19 +239,19 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(listeCofinancements).toHaveLength(4)
       const premierCofinancement = within(listeCofinancements[0]).getByText('Budget prévisionnel 2024')
       expect(premierCofinancement).toBeInTheDocument()
-      const montantPremierCofinancement = within(listeCofinancements[0]).getByText('20 000 €')
+      const montantPremierCofinancement = within(listeCofinancements[0]).getByText('20000 €')
       expect(montantPremierCofinancement).toBeInTheDocument()
       const deuxiemeCofinancement = within(listeCofinancements[1]).getByText('Subvention de prestation')
-      const montantDeuxiemeCofinancement = within(listeCofinancements[1]).getByText('10 000 €')
+      const montantDeuxiemeCofinancement = within(listeCofinancements[1]).getByText('10000 €')
       expect(montantDeuxiemeCofinancement).toBeInTheDocument()
       expect(deuxiemeCofinancement).toBeInTheDocument()
       const troisiemeCofinancement = within(listeCofinancements[2]).getByText('CC des Monts du Lyonnais')
       expect(troisiemeCofinancement).toBeInTheDocument()
-      const montantTroisiemeCofinancement = within(listeCofinancements[2]).getByText('5 000 €')
+      const montantTroisiemeCofinancement = within(listeCofinancements[2]).getByText('5000 €')
       expect(montantTroisiemeCofinancement).toBeInTheDocument()
       const quatriemeCofinancement = within(listeCofinancements[3]).getByText('Croix Rouge Française')
       expect(quatriemeCofinancement).toBeInTheDocument()
-      const montantQuatriemeCofinancement = within(listeCofinancements[3]).getByText('5 000 €')
+      const montantQuatriemeCofinancement = within(listeCofinancements[3]).getByText('5000 €')
       expect(montantQuatriemeCofinancement).toBeInTheDocument()
       const boutonSupprimerCofinancement = within(listeCofinancements[3]).getByRole('button', { name: 'Supprimer' })
       expect(boutonSupprimerCofinancement).toBeInTheDocument()
@@ -251,14 +259,18 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je clique sur le bouton supprimer un cofinancement dans le formulaire de création, alors le cofinancement est supprimé', async () => {
       // GIVEN
-      afficherFormulaireDeCreationAction()
+      afficherFormulaireDeCreationAction(undefined,  {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+        ],
+      })
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jOuvreLeFormulairePourAjouterUnCoFinancement()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-      jeCreeUnCofinancementDansLeDrawer(drawer)
+      jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
       const listeCofinancements = await within(formulaire).findAllByRole('listitem')
@@ -679,10 +691,10 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
   fireEvent.click(boutonAjouterUnCoFinanacement)
 }
 
-export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
+export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement, cofinanceurId: string): void {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
-  const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
+  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: cofinanceurId } })
+  const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
 }
 
@@ -713,12 +725,8 @@ function afficherFormulaireDeCreationValidation(
     <FormulaireAction
       action={actionViewModelFactory()}
       ajouterDemandeDeSubvention={vi.fn<() => void>()}
-      cofinancements={[]}
       date={epochTime}
-      drawerId=""
       label="Ajouter une action à la feuille de route"
-      setIsDrawerOpen={vi.fn<() => void>()}
-      supprimerUnCofinancement={vi.fn<() => void>()}
       validerFormulaire={validerFormulaire}
     >
       <SubmitButton

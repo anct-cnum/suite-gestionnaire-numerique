@@ -449,12 +449,8 @@ function jAfficheLeFormulaireAction(budgetGlobal: number): void {
     <FormulaireAction
       action={actionViewModelFactory({ budgetGlobal })}
       ajouterDemandeDeSubvention={vi.fn<() => void>()}
-      cofinancements={[]}
       demandeDeSubvention={undefined}
-      drawerId="drawerId"
       label="label"
-      setIsDrawerOpen={vi.fn<() => void>()}
-      supprimerUnCofinancement={vi.fn<() => void>()}
       supprimerUneDemandeDeSubvention={vi.fn<() => void>()}
       validerFormulaire={vi.fn<() => Promise<void>>()}
     />
