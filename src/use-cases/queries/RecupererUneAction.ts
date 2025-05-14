@@ -50,5 +50,6 @@ interface EnveloppeReadModel {
 interface PorteurPotentielReadModel {
   // adapte selon la structure attendue
   id: string
+  lien: string
   nom: string
 }

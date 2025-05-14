@@ -2,13 +2,14 @@ import { Prisma } from '@prisma/client'
 
 import {  membreInclude } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { membreLink } from '@/presenters/shared/link'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
 
   static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>, 
-    nomFeuilleDeRoute :string): UneActionReadModel {
+    nomFeuilleDeRoute :string, uidGouvernance: string): UneActionReadModel {
     const coFinancement = actionRecord.coFinancement.length > 0
       ? {
         financeur: actionRecord.coFinancement[0].membre.relationContact.nom || 'Inconnu',
@@ -24,12 +25,14 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
 
     const porteurs = actionRecord.porteurAction .map(pa => ({
       id: pa.membre.id,
+      lien: membreLink(uidGouvernance, pa.membre.id),
       nom: pa.membre.relationContact.nom || '',
     }))
 
     const destinataires = actionRecord.demandesDeSubvention.flatMap(ds =>
       ds.beneficiaire.map(beneficiaire => ({
         id: beneficiaire.membre.id,
+        lien: membreLink(uidGouvernance, beneficiaire.membre.id),
         nom: beneficiaire.membre.relationContact.nom || '',
       })))
 
@@ -77,7 +80,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(actionRecord.feuilleDeRouteId),
       },
     })
-    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom)
+    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
   }
 }
 

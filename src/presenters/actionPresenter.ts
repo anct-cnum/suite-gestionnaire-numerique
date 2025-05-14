@@ -247,11 +247,11 @@ export function transformBesoins(actionBesoins: Array<string> = []): {
 
 export type Enveloppe = LabelValue & Readonly<{ budget: number }>
 function toPorteurPotentielViewModel(
-  porteur: { id: string; nom: string }
+  porteur: { id: string; lien: string; nom: string }
 ): PorteurPotentielViewModel {
   return {
     id: porteur.id,
-    link: '', // à compléter si besoin
+    link: porteur.lien, 
     nom: porteur.nom,
     roles: [], // à compléter si besoin
   }
