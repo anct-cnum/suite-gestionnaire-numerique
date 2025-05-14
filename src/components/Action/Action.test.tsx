@@ -1,4 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import userEvent from '@testing-library/user-event'
 import { FormEvent } from 'react'
 import { Mock } from 'vitest'
 
@@ -270,7 +272,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jOuvreLeFormulairePourAjouterUnCoFinancement()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-      jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
+      await jeCreeUnCofinancementDansLeDrawer(drawer)
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
       const listeCofinancements = await within(formulaire).findAllByRole('listitem')
@@ -691,9 +693,10 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
   fireEvent.click(boutonAjouterUnCoFinanacement)
 }
 
-export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement, cofinanceurId: string): void {
+export async function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): Promise<void> {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: cofinanceurId } })
+  await userEvent.selectOptions(selecteurOrigineDuFinancement, 'CC des Monts du Lyonnais')
+
   const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
 }

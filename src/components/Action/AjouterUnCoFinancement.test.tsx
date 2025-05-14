@@ -54,7 +54,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourAjouterUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
+    await jeCreeUnCofinancementDansLeDrawer(drawer)
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     fireEvent.click(boutonEnregistrer)
 
@@ -80,7 +80,7 @@ describe('drawer d‘ajout d‘un co-financement', () => {
     jeTapeLeBudgetGlobalDeLAction(formulaire)
     jOuvreLeFormulairePourModifierUnCoFinancement()
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-    jeCreeUnCofinancementDansLeDrawer(drawer, 'cc_id')
+    await jeCreeUnCofinancementDansLeDrawer(drawer)
     const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
     fireEvent.click(boutonEnregistrer)
     // THEN
