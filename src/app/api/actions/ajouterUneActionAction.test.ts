@@ -17,7 +17,7 @@ describe('ajouter une action action', () => {
       anneeDeFin: '2027',
       besoins: ['etablir_diagnostic_territorial'],
       budgetGlobal: 1000,
-      cofinancements: [],
+      coFinancements: [],
       contexte: 'Un contexte',
       description: '',
       destinataires: ['userFooId'],

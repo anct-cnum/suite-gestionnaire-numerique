@@ -9,13 +9,11 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
 
   static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>, 
     nomFeuilleDeRoute :string, uidGouvernance: string): UneActionReadModel {
-    const coFinancement = actionRecord.coFinancement.length > 0
-      ? {
-        financeur: actionRecord.coFinancement[0].membre.relationContact.nom || 'Inconnu',
-        montant: actionRecord.coFinancement[0].montant,
-      }
-      : { financeur: '', montant: 0 }
-
+    const coFinancements = actionRecord.coFinancement.map(cf => ({
+      id: cf.membre.id,
+      montant: cf.montant,
+    }))
+    console.log('BLLEEEEE', coFinancements)
     const enveloppe = actionRecord.demandesDeSubvention.length > 0
       ? {
         montant: actionRecord.demandesDeSubvention[0].enveloppe.montant,
@@ -44,7 +42,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         coFinanceur: cf.membre.relationContact.nom,
         montant: cf.montant,
       })),
-      coFinancement,
+      coFinancements,
       contexte: actionRecord.contexte,
       demandeDeSubvention: actionRecord.demandesDeSubvention.length > 0 ? {
         beneficiaires: [],

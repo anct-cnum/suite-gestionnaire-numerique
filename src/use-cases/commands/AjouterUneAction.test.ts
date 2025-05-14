@@ -45,7 +45,7 @@ describe('ajouter une action à une feuille de route', () => {
     spiedDepartementCode = null
   })
 
-  it('étant donné une gouvernance, quand une action est créée par son gestionnaire, alors elle est ajoutée à cette feuille de route avec demandes de subvention et cofinancements', async () => {
+  it('étant donné une gouvernance, quand une action est créée par son gestionnaire, alors elle est ajoutée à cette feuille de route avec demandes de subvention et coFinancements', async () => {
     // GIVEN
 
     const ajouterAction = new AjouterUneAction(

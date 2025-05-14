@@ -37,7 +37,7 @@ export default function AjouterUnCoFinancement(
         onClick={() => {
           setIsDrawerOpen(true)
         }}
-        title="Ajouter des cofinancements"
+        title="Ajouter des coFinancements"
         type="button"
       >
         Ajouter un financement

@@ -72,7 +72,7 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
     statut: actionStatutViewModelByStatut[action.statut as StatutSubvention],
     temporalite: 'annuelle',
     totaux: {
-      coFinancement: formatMontant(action.coFinancement.montant),
+      coFinancement: formatMontant(233),
       financementAccorde: formatMontant(action.enveloppe.montant),
     },
     uid: action.uid,

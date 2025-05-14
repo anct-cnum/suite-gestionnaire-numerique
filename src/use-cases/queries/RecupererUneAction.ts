@@ -9,7 +9,7 @@ export interface UneActionReadModel {
     coFinanceur: string
     montant: number
   }>
-  coFinancement: CoFinancementReadModel
+  coFinancements: Array<CoFinancementReadModel>
   contexte?: string
   demandeDeSubvention : DemandeDeSubventionReadModel | undefined
   description?: string
@@ -30,7 +30,7 @@ export type BesoinsPossible = 'animer_et_mettre_en_oeuvre_gouvernance' | 'appui_
   'structurer_filiere_reconditionnement_locale' | 'structurer_fond_local'
 
 interface CoFinancementReadModel {
-  financeur: string
+  id: string
   montant: number
 }
 

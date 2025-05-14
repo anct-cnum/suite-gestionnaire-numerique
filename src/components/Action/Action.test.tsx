@@ -712,7 +712,7 @@ function afficherFormulaireDeCreationValidation(
     event: FormEvent<HTMLFormElement>,
     contexte: string,
     description: string,
-    cofinancements: ReadonlyArray<{
+    coFinancements: ReadonlyArray<{
       coFinanceur: string
       montant: string
     }>
@@ -723,7 +723,7 @@ function afficherFormulaireDeCreationValidation(
       anneeDeDebut: formData.get('anneeDeDebut') as string,
       anneeDeFin: undefined,
       budgetGlobal: Number(formData.get('budgetGlobal')),
-      cofinancements,
+      coFinancements,
       contexte,
       description,
       destinataires: [],

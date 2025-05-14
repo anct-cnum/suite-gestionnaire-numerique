@@ -37,7 +37,7 @@ export function FormulaireAction({
   const [porteurs, setPorteurs] = useState(action.porteurs)
   const [destinataires, setDestinataires] = useState(action.destinataires)
   const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
-  const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
+  const [coFinancements, setCofinancements] = useState(action.budgetPrevisionnel)
 
   const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
     setLocalDemandeDeSubvention(undefined)
@@ -142,7 +142,7 @@ export function FormulaireAction({
           event,
           contexteContenu,
           descriptionContenu,
-          cofinancements.map(cofinancement => cofinancement)
+          coFinancements.map(cofinancement => cofinancement)
         )
       }}
     >
@@ -426,10 +426,10 @@ export function FormulaireAction({
             />
           </div>
           {
-            cofinancements.length > 0 ?
+            coFinancements.length > 0 ?
               <>
                 <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
-                  {cofinancements.map((cofinancement) => (
+                  {coFinancements.map((cofinancement) => (
                     <li
                       key={cofinancement.coFinanceur+cofinancement.montant}
                     >
@@ -454,7 +454,7 @@ export function FormulaireAction({
                           <button
                             className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
                             onClick={() => {
-                              supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
+                              supprimerUnCofinancement(coFinancements.indexOf(cofinancement))
                             }}
                             title="Label bouton"
                             type="button"
@@ -528,11 +528,11 @@ export function FormulaireAction({
   )
 
   function ajouterCofinancement(coFinanceur: string, montant: MontantPositif): void {
-    setCofinancements([...cofinancements, { coFinanceur, montant: montant.format() }])
+    setCofinancements([...coFinancements, { coFinanceur, montant: montant.format() }])
   }
 
   function supprimerUnCofinancement(index: number): void {
-    const filteredCofinancements = cofinancements.filter((_, indexToRemove) => indexToRemove !== index)
+    const filteredCofinancements = coFinancements.filter((_, indexToRemove) => indexToRemove !== index)
     setCofinancements(filteredCofinancements)
   }
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {

@@ -45,7 +45,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
-    cofinancements : Array<{
+    coFinancements : Array<{
       coFinanceur: string
       montant: string
     }>
@@ -58,7 +58,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       anneeDeFin: form.get('anneeDeFin') as string,
       besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
-      cofinancements,
+      coFinancements,
       contexte: contexteContenu,
       demandeDeSubvention,
       description: descriptionContenu,

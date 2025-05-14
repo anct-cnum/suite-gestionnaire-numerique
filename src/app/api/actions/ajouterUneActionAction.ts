@@ -30,7 +30,8 @@ export async function ajouterUneActionAction(
     anneeDeFin: actionParams.anneeDeFin,
     besoins: actionParams.besoins,
     budgetGlobal: actionParams.budgetGlobal,
-    budgetPrevisionnel: actionParams.cofinancements,
+    budgetPrevisionnel: actionParams.coFinancements,
+    coFinancements: actionParams.coFinancements,
     contexte: actionParams.contexte,
     demandeDeSubvention: actionParams.demandeDeSubvention,
     description: actionParams.description,
@@ -40,11 +41,13 @@ export async function ajouterUneActionAction(
     nom: actionParams.nom,
     porteurs: actionParams.porteurs,
   }
-
   const command = {
     besoins: actionCommand.besoins.map((besoin) => besoin),
     budgetGlobal: actionCommand.budgetGlobal,
-    coFinancements: [],
+    coFinancements: actionCommand.coFinancements.map((cofinancement) => ({
+      membreId: cofinancement.coFinanceur,
+      montant: Number(cofinancement.montant),
+    })),
     contexte: actionCommand.contexte,
     dateDeDebut: actionCommand.anneeDeDebut,
     dateDeFin: actionCommand.anneeDeFin ?? '',
@@ -87,7 +90,7 @@ type ActionParams = Readonly<{
   anneeDeFin?: string
   besoins: ReadonlyArray<string>
   budgetGlobal: number
-  cofinancements: ReadonlyArray<{
+  coFinancements: ReadonlyArray<{
     coFinanceur: string
     montant: string
   }>

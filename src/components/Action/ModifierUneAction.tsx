@@ -51,7 +51,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
-    cofinancements : Array<{
+    coFinancements : Array<{
       coFinanceur: string
       montant: string
     }>
@@ -63,7 +63,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       anneeDeDebut: form.get('anneeDeDebut') as string,
       anneeDeFin: form.get('anneeDeFin') as string,
       budgetGlobal: Number(form.get('budgetGlobal')),
-      cofinancements,
+      coFinancements,
       contexte: contexteContenu,
       description: descriptionContenu,
       destinataires: [],
