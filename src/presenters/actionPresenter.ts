@@ -32,7 +32,7 @@ const enveloppes: ReadonlyArray<Enveloppe> = [
   },
 ]
 
-export function actionPresenter2(action: undefined | UneActionReadModel): ActionViewModel {
+export function actionPresenter(action: undefined | UneActionReadModel): ActionViewModel {
   if (!action) {
     return actionARemplir(undefined)
   }
@@ -49,12 +49,14 @@ export function actionPresenter2(action: undefined | UneActionReadModel): Action
       montant: formatMontant(bp.montant),
     })),
     contexte: action.contexte ?? '',
-    demandeDeSubvention: action.demandeDeSubvention ? {
-      enveloppe: enveloppes.find(e => e.value === action.demandeDeSubvention.enveloppeFinancementId) ?? enveloppes[0],
-      montantPrestation: action.demandeDeSubvention.subventionPrestation ?? 0,
-      montantRh: action.demandeDeSubvention.subventionEtp ?? 0,
+    demandeDeSubvention: {
+      enveloppe: enveloppes.find(
+        enveloppe => enveloppe.value === action.demandeDeSubvention.enveloppeFinancementId
+      ) ?? enveloppes[0],
+      montantPrestation: action.demandeDeSubvention.subventionPrestation,
+      montantRh: action.demandeDeSubvention.subventionEtp,
       total: action.demandeDeSubvention.subventionDemandee,
-    } : undefined,
+    } ,
     description: action.description ?? '',
     destinataires: (action.destinataires ?? []).map(toPorteurPotentielViewModel),
     enveloppes,

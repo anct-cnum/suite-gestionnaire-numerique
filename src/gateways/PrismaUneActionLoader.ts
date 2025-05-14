@@ -32,6 +32,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: beneficiaire.membre.id,
         nom: beneficiaire.membre.relationContact.nom || '',
       })))
+
     return {
       anneeDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
       anneeDeFin: actionRecord.dateDeFin.getFullYear().toString(),
@@ -47,9 +48,9 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         beneficiaires: [],
         enveloppeFinancementId: String(actionRecord.demandesDeSubvention[0].enveloppe.id),
         statut: actionRecord.demandesDeSubvention[0].statut,
-        subventionDemandee: actionRecord.demandesDeSubvention[0].enveloppe.montant,
-        subventionEtp: actionRecord.demandesDeSubvention[0].enveloppe.montant,
-        subventionPrestation: actionRecord.demandesDeSubvention[0].enveloppe.montant,
+        subventionDemandee: actionRecord.demandesDeSubvention[0].subventionDemandee,
+        subventionEtp: actionRecord.demandesDeSubvention[0].subventionEtp ?? 0,
+        subventionPrestation: actionRecord.demandesDeSubvention[0].subventionPrestation ?? 0,
       },
       description: actionRecord.description,
       destinataires,
@@ -76,7 +77,6 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(actionRecord.feuilleDeRouteId),
       },
     })
-    
     return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom)
   }
 }

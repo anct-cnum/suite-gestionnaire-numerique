@@ -6,7 +6,7 @@ import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
-import { actionPresenter2 } from '@/presenters/actionPresenter'
+import { actionPresenter } from '@/presenters/actionPresenter'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
@@ -27,7 +27,7 @@ export default async function ActionModifierController({ params }: Props): Promi
         <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <ModifierUneAction
-            action={actionPresenter2(actionReadModel)}
+            action={actionPresenter(actionReadModel)}
           />
         </div>
       </div>
