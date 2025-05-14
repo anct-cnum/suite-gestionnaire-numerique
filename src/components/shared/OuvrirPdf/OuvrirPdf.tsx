@@ -2,9 +2,10 @@ import { ReactElement } from 'react'
 
 import DocumentVide from '../DocumentVide/DocumentVide'
 import ExternalLink from '../ExternalLink/ExternalLink'
+import Icon from '../Icon/Icon'
 import { isNullishOrEmpty } from '@/shared/lang'
 
-export default function OuvrirPdf({ href, metadonnee, nom }: Props): ReactElement {
+export default function OuvrirPdf({ href, metadonnee, nom, onDelete }: Props): ReactElement {
   return (
     <div className="fr-grid-row space-between">
       <div>
@@ -22,13 +23,31 @@ export default function OuvrirPdf({ href, metadonnee, nom }: Props): ReactElemen
             </span>}
         </header>
         <div className="fr-upload-group" />
-        <ExternalLink
-          className="fr-btn fr-btn--secondary fr-mt-2w"
-          href={href}
-          title="Ouvrir le pdf"
-        >
-          Ouvrir le pdf
-        </ExternalLink>
+        <ul className="fr-btns-group fr-btns-group--inline-sm fr-mt-2w">
+          <li>
+            <ExternalLink
+              className="fr-btn fr-btn--secondary"
+              href={href}
+              title="Ouvrir le pdf"
+            >
+              Ouvrir le pdf
+            </ExternalLink>
+          </li>
+          {
+            onDelete ?
+              <li>
+                <button
+                  className="fr-btn fr-btn--tertiary color-red fr-ml-0"
+                  onClick={onDelete}
+                  title={`Supprimer ${nom}`}
+                  type="button"
+                >
+                  <Icon icon="delete-line" />
+                </button>
+              </li>
+              : null
+          }
+        </ul>
       </div>
       <div>
         <DocumentVide />
@@ -41,4 +60,5 @@ type Props = Readonly<{
   href: string
   metadonnee?: string
   nom: string
+  onDelete?(): Promise<void>
 }>

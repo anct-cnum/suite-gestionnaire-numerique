@@ -96,9 +96,8 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(informationsLink).toHaveAttribute('href', '/api/document-feuille-de-route/user/1234/feuille-de-route-fake.pdf')
     expect(informationsLink).toHaveAttribute('title', 'Ouvrir le pdf - nouvelle fenêtre')
     expect(informationsLink).toBeInTheDocument()
-    const secondeFeuilleDeRoute = elementsDeLaListeDesFeuillesDeRoute[3]
-    const titreDeLaSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute)
-      .getByRole('heading', { level: 2, name: 'Feuille de route 2' })
+    const secondeFeuilleDeRoute = screen.getAllByRole('region', { name: 'Feuille de route 2' })[0]
+    const titreDeLaSecondeFeuilleDeRoute = within(secondeFeuilleDeRoute).getByRole('heading', { level: 2 })
     expect(titreDeLaSecondeFeuilleDeRoute).toBeInTheDocument()
     expect(within(secondeFeuilleDeRoute)
       .getByRole('link', { name: 'Voir le détail' }))

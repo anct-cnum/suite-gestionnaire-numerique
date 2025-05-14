@@ -9,7 +9,11 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props): ReactElement {
   return (
-    <div className="grey-border border-radius fr-mb-2w fr-p-4w">
+    <div
+      aria-label={feuilleDeRoute.nom}
+      className="grey-border border-radius fr-mb-2w fr-p-4w"
+      role="region"
+    >
       <div className={styles['align-items']}>
         <TitleIcon icon="survey-line" />
         <Link
