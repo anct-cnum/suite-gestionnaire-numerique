@@ -91,8 +91,9 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       path: pathname,
       porteurs: form.getAll('beneficiaires') as Array<string>,
     })
-    const isOk = (messages as Array<string>).includes('OK')
     setIsDisabled(false)
+    
+    const isOk = (messages as Array<string>).includes('OK')
     if (isOk) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
       redirect(feuilleDeRouteLink(gouvernanceViewModel.uid, uidFeuilleDeRoute))
