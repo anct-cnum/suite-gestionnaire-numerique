@@ -122,7 +122,7 @@ export type ActionViewModel = Readonly<{
   urlFeuilleDeRoute: string
   urlGouvernance: string
 }>
-
+ 
 export function actionARemplir(action: undefined | UneActionReadModel): ActionViewModel {
   return {
     anneeDeDebut: '',

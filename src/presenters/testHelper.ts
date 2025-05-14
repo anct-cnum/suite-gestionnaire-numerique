@@ -180,19 +180,19 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     budgetPrevisionnel: [
       {
         coFinanceur: 'Budget prévisionnel 2024',
-        montant: '20 000 €',
+        montant: '20000',
       },
       {
         coFinanceur: 'Subvention de prestation',
-        montant: '10 000 €',
+        montant: '10000',
       },
       {
         coFinanceur: 'CC des Monts du Lyonnais',
-        montant: '5 000 €',
+        montant: '5000',
       },
       {
         coFinanceur: 'Croix Rouge Française',
-        montant: '5 000 €',
+        montant: '5000',
       },
     ],
     contexte: '<p>Contexte de l‘action</p>',
@@ -214,8 +214,8 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     },
     temporalite: 'pluriannuelle',
     totaux: {
-      coFinancement: '30 000 €',
-      financementAccorde: '40 000 €',
+      coFinancement: '30000',
+      financementAccorde: '40000',
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
@@ -279,8 +279,8 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     },
     temporalite: 'annuelle',
     totaux: {
-      coFinancement: '0 €',
-      financementAccorde: '0 €',
+      coFinancement: '0',
+      financementAccorde: '0',
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',

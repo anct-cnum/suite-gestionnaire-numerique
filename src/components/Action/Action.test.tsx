@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { userEvent } from '@testing-library/user-event'
 import { FormEvent } from 'react'
 import { Mock } from 'vitest'
 
@@ -12,8 +13,6 @@ import { ActionViewModel } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
-// eslint-disable-next-line import/no-restricted-paths
-import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 // eslint-disable-next-line import/no-restricted-paths
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
@@ -202,10 +201,20 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       afficherFormulaireDeModificationAction(undefined, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  } as MembreAvecRoleDansLaGouvernance,
-          { link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' } as MembreAvecRoleDansLaGouvernance,
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  },
+          { nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' },
+          { nom: 'Budget prévisionnel 2024' , roles: [] , uid: 'budget_id' },
+          { nom: 'Subvention de prestation' , roles: [] , uid: 'subvention_id' },
+          { nom: 'CC des Monts du Lyonnais' , roles: [] , uid: 'cc_id' },
+          { nom: 'Croix Rouge Française' , roles: [] , uid: 'croix_id' },
         ],
       },{
+        budgetPrevisionnel: [
+          { coFinanceur : 'budget_id' , montant : '20000' },
+          { coFinanceur : 'subvention_id' , montant : '10000' },
+          { coFinanceur : 'cc_id' , montant : '5000' },
+          { coFinanceur : 'croix_id' , montant : '5000' },
+        ],
         destinataires: [
           { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
           { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
@@ -256,14 +265,18 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je clique sur le bouton supprimer un cofinancement dans le formulaire de création, alors le cofinancement est supprimé', async () => {
       // GIVEN
-      afficherFormulaireDeCreationAction()
+      afficherFormulaireDeCreationAction(undefined,  {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+        ],
+      })
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jOuvreLeFormulairePourAjouterUnCoFinancement()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-      jeCreeUnCofinancementDansLeDrawer(drawer)
+      await jeCreeUnCofinancementDansLeDrawer(drawer)
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
       const listeCofinancements = await within(formulaire).findAllByRole('listitem')
@@ -684,10 +697,11 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
   fireEvent.click(boutonAjouterUnCoFinanacement)
 }
 
-export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
+export async function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): Promise<void> {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
-  const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
+  await userEvent.selectOptions(selecteurOrigineDuFinancement, 'CC des Monts du Lyonnais')
+
+  const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
 }
 
@@ -718,12 +732,8 @@ function afficherFormulaireDeCreationValidation(
     <FormulaireAction
       action={actionViewModelFactory()}
       ajouterDemandeDeSubvention={vi.fn<() => void>()}
-      cofinancements={[]}
       date={epochTime}
-      drawerId=""
       label="Ajouter une action à la feuille de route"
-      setIsDrawerOpen={vi.fn<() => void>()}
-      supprimerUnCofinancement={vi.fn<() => void>()}
       validerFormulaire={validerFormulaire}
     >
       <SubmitButton
