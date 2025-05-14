@@ -19,7 +19,7 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 vi.mock('next/navigation', () => ({
   // eslint-disable-next-line vitest/require-mock-type-parameters
-  redirect: vi.fn(), 
+  redirect: vi.fn(),
 }))
 
 describe('formulaire d‘ajout d‘une action', () => {
@@ -711,7 +711,11 @@ function afficherFormulaireDeCreationValidation(
   const validerFormulaire = async (
     event: FormEvent<HTMLFormElement>,
     contexte: string,
-    description: string
+    description: string,
+    cofinancements: ReadonlyArray<{
+      coFinanceur: string
+      montant: string
+    }>
   ): Promise<void> => {
     event.preventDefault()
     const formData = new FormData(event.target as HTMLFormElement)
@@ -719,6 +723,7 @@ function afficherFormulaireDeCreationValidation(
       anneeDeDebut: formData.get('anneeDeDebut') as string,
       anneeDeFin: undefined,
       budgetGlobal: Number(formData.get('budgetGlobal')),
+      cofinancements,
       contexte,
       description,
       destinataires: [],

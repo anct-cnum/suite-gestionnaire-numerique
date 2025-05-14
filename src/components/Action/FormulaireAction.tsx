@@ -141,7 +141,8 @@ export function FormulaireAction({
         await validerFormulaire(
           event,
           contexteContenu,
-          descriptionContenu
+          descriptionContenu,
+          cofinancements.map(cofinancement => cofinancement)
         )
       }}
     >
@@ -604,5 +605,8 @@ type Props = PropsWithChildren<Readonly<{
   demandeDeSubvention?: DemandeDeSubvention
   label: string
   supprimerUneDemandeDeSubvention?(): void
-  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
+  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string, cofinancement : Array<{
+    coFinanceur: string
+    montant: string
+  }>): Promise<void>
 }>>

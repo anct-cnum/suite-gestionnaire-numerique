@@ -44,7 +44,11 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
   async function creerUneAction(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
-    descriptionContenu: string
+    descriptionContenu: string,
+    cofinancements : Array<{
+      coFinanceur: string
+      montant: string
+    }>
   ): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
@@ -54,7 +58,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       anneeDeFin: form.get('anneeDeFin') as string,
       besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
-      budgetPrevisionnel: [{ coFinanceur: '', montant: '0' }],
+      cofinancements,
       contexte: contexteContenu,
       demandeDeSubvention,
       description: descriptionContenu,
@@ -66,7 +70,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       porteurs: form.getAll('beneficiaires') as Array<string>,
     })
     setIsDisabled(false)
-    
+
     const isOk = (messages as Array<string>).includes('OK')
     if (isOk) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })

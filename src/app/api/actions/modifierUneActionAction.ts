@@ -10,6 +10,10 @@ type ActionParams = Readonly<{
   anneeDeDebut: string
   anneeDeFin?: string
   budgetGlobal: number
+  cofinancements: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
   contexte: string
   description: string
   destinataires: ReadonlyArray<string>

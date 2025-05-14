@@ -30,7 +30,7 @@ export async function ajouterUneActionAction(
     anneeDeFin: actionParams.anneeDeFin,
     besoins: actionParams.besoins,
     budgetGlobal: actionParams.budgetGlobal,
-    budgetPrevisionnel: actionParams.budgetPrevisionnel,
+    budgetPrevisionnel: actionParams.cofinancements,
     contexte: actionParams.contexte,
     demandeDeSubvention: actionParams.demandeDeSubvention,
     description: actionParams.description,
@@ -57,14 +57,14 @@ export async function ajouterUneActionAction(
       subventionPrestation: actionCommand.demandeDeSubvention.montantPrestation,
     }] : undefined,
     description: actionCommand.description,
-    destinataires: actionCommand.destinataires.map((destinataire) => destinataire), 
+    destinataires: actionCommand.destinataires.map((destinataire) => destinataire),
     nom: actionCommand.nom,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
     uidPorteurs: [...actionParams.porteurs],
   }
-  
+
   const result = await new AjouterUneAction(
     new PrismaGouvernanceRepository(),
     new PrismaFeuilleDeRouteRepository(),
@@ -76,7 +76,7 @@ export async function ajouterUneActionAction(
     new PrismaTransactionRepository(),
     new Date()
   ).handle(command)
-  
+
   revalidatePath(validationResult.data.path)
 
   return [result]
@@ -87,7 +87,7 @@ type ActionParams = Readonly<{
   anneeDeFin?: string
   besoins: ReadonlyArray<string>
   budgetGlobal: number
-  budgetPrevisionnel: ReadonlyArray<{
+  cofinancements: ReadonlyArray<{
     coFinanceur: string
     montant: string
   }>
