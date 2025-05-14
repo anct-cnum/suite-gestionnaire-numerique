@@ -19,6 +19,7 @@ import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvern
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
 vi.mock('next/navigation', () => ({
+  // eslint-disable-next-line vitest/require-mock-type-parameters
   redirect: vi.fn(), 
 }))
 
