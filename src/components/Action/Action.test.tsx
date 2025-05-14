@@ -114,9 +114,9 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(descriptionDeLAction).toBeInTheDocument()
       const editeurDeTexteDescription = within(formulaire).getAllByRole('textarea')[1]
       expect(editeurDeTexteDescription).toBeInTheDocument()
-      const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur de l‘action', { selector: 'p' })
+      const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur(s) de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
-      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Indiquez quelle est la structure porteuse de cette action', { selector: 'p' })
+      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Précisez le ou les structure(s) porteuse(s) de cette action', { selector: 'p' })
       expect(labelSectionPorteurDeLAaction).toBeInTheDocument()
       const boutonAjouterLePorteurDeLAaction = within(formulaire).getByRole('button', { description: 'Ajouter des porteurs', name: 'Ajouter' })
       expect(boutonAjouterLePorteurDeLAaction).toBeInTheDocument()

@@ -61,7 +61,7 @@ export async function ajouterUneActionAction(
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
-    uidPorteur: actionParams.porteurs[0],
+    uidPorteurs: actionParams.porteurs,
   }
   const result = await new AjouterUneAction(
     new PrismaGouvernanceRepository(),

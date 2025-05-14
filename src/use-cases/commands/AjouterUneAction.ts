@@ -105,7 +105,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       },
       uidCreateur: editeur.state.uid.value,
       uidFeuilleDeRoute: feuilleDeRoute.state.uid,
-      uidPorteur: command.uidPorteur,
+      uidPorteurs: command.uidPorteurs,
     })
 
     if (!(action instanceof Action)) {
@@ -262,7 +262,7 @@ type Command = Readonly<{
   uidEditeur: string
   uidFeuilleDeRoute: string
   uidGouvernance: string
-  uidPorteur: string
+  uidPorteurs: Array<string>
 }>
 
 type GouvernanceRepository = GetGouvernanceRepository

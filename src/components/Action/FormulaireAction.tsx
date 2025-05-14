@@ -258,7 +258,7 @@ export function FormulaireAction({
             id="porteurAction"
           >
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-0">
-              Porteur de l‘action
+              Porteur(s) de l‘action
             </p>
             <AjouterDesMembres
               checkboxName="porteurs"
@@ -273,7 +273,7 @@ export function FormulaireAction({
             />
           </div>
           <p>
-            Indiquez quelle est la structure porteuse de cette action
+            Précisez le ou les structure(s) porteuse(s) de cette action
           </p>
           <hr />
           {

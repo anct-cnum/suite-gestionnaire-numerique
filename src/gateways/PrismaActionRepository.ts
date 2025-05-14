@@ -32,9 +32,9 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         feuilleDeRouteId: Number(action.state.uidFeuilleDeRoute),
         nom: action.state.nom,
         porteurAction: {
-          create: {
-            membreId: action.state.uidPorteur,
-          },
+          create: action.state.uidPorteurs.map((uidPorteur) => ({
+            membreId: uidPorteur,
+          })),
         },
       },
     })
@@ -76,7 +76,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
       uid: { value: String(actionRecord.id) },
       uidCreateur: actionRecord.utilisateur.ssoId,
       uidFeuilleDeRoute: { value: String(actionRecord.feuilleDeRouteId) },
-      uidPorteur: String(actionRecord.porteurAction[0].membreId),
+      uidPorteurs: actionRecord.porteurAction.map((porteur) => porteur.membreId ),
     })
 
     if (!(action instanceof Action)) {

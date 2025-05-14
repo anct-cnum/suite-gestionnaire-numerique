@@ -20,7 +20,7 @@ export class Action extends Entity<State> {
       uid: this.#uid.state,
       uidCreateur: this.#uidCreateur.state.value,
       uidFeuilleDeRoute: this.#uidFeuilleDeRoute.state.value,
-      uidPorteur: this.#uidPorteur.state.value,
+      uidPorteurs: this.#uidPorteurs.map((uidPorteur) => uidPorteur.state.value),
     }
   }
 
@@ -36,7 +36,7 @@ export class Action extends Entity<State> {
   readonly #uid: ActionUid
   readonly #uidCreateur: MembreUid
   readonly #uidFeuilleDeRoute: FeuilleDeRouteUid
-  readonly #uidPorteur: MembreUid
+  readonly #uidPorteurs: Array<MembreUid>
 
   private constructor(
     uid: ActionUid,
@@ -47,7 +47,7 @@ export class Action extends Entity<State> {
     description: string,
     budgetGlobal: number,
     uidFeuilleDeRoute: FeuilleDeRouteUid,
-    uidPorteur: MembreUid,
+    uidPorteurs: Array<MembreUid>,
     uidCreateur: MembreUid,
     dateDeDebut: ValidDateFromYearString<ActionFailure>,
     dateDeFin: null | ValidDateFromYearString<ActionFailure>,
@@ -62,7 +62,7 @@ export class Action extends Entity<State> {
     this.#description = description
     this.#budgetGlobal = budgetGlobal
     this.#uidFeuilleDeRoute = uidFeuilleDeRoute
-    this.#uidPorteur = uidPorteur
+    this.#uidPorteurs = uidPorteurs
     this.#uidCreateur = uidCreateur
     this.#dateDeDebut = dateDeDebut
     this.#dateDeFin =  dateDeFin ?? dateDeDebut
@@ -82,7 +82,7 @@ export class Action extends Entity<State> {
     uid,
     uidCreateur,
     uidFeuilleDeRoute,
-    uidPorteur,
+    uidPorteurs,
   }: FactoryParams): Result<ActionFailure, Action> {
     try {
       const dateDeCreationValidee = new ValidDate(dateDeCreation, 'dateDeCreationInvalide')
@@ -99,7 +99,7 @@ export class Action extends Entity<State> {
         description,
         budgetGlobal,
         new  FeuilleDeRouteUid(uidFeuilleDeRoute.value),
-        new MembreUid(uidPorteur),
+        uidPorteurs.map((uidPorteur) => new MembreUid(uidPorteur)),
         new MembreUid(uidCreateur),
         dateDeDebutValidee,
         dateDeFinValidee,
@@ -133,7 +133,7 @@ type FactoryParams = Readonly<{
   uid: UidState
   uidCreateur: string
   uidFeuilleDeRoute: UidState
-  uidPorteur: string
+  uidPorteurs: Array<string>
 }>
 
 type State = Readonly<{
@@ -149,7 +149,7 @@ type State = Readonly<{
   uid: UidState
   uidCreateur: string
   uidFeuilleDeRoute: string
-  uidPorteur: string
+  uidPorteurs: Array<string>
 }>
 
 type UidState = Readonly<{ value: string }>
