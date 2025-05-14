@@ -2,7 +2,6 @@ import { Prisma } from '@prisma/client'
 
 import {  membreInclude } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
-import { membreLink } from '@/presenters/shared/link'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
@@ -80,15 +79,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(actionRecord.feuilleDeRouteId),
       },
     })
-    console.log('GET ACTION  feuilleDeRoute:: ', feuilleDeRoute)
-    try{
-      const actionReadModel = PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
-      console.log('GET ACTION  actionReadModel:: ', actionReadModel)
-      return actionReadModel
-    } catch (error) {
-      console.log('GET ACTION  error:: ', error)
-      throw error
-    }
+    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
   }
 }
 
@@ -119,4 +110,8 @@ const include = {
       },
     },
   },
+}
+
+function membreLink(uidGouvernance: string, uidMembre: string): string {
+  return `/gouvernance/${uidGouvernance}/membre/${uidMembre}`
 }

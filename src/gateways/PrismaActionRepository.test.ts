@@ -61,7 +61,7 @@ describe('action repository', () => {
           },
           uidCreateur: uidEditeur,
           uidFeuilleDeRoute: { value: feuilleDeRouteId.toString() },
-          uidPorteur,
+          uidPorteurs: [uidPorteur],
         })
 
         // WHEN

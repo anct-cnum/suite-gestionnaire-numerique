@@ -38,7 +38,18 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
   }
 
   const besoins = transformBesoins(action.besoins)
-
+  const demandeDeSubventionAction = action.demandeDeSubvention
+  let demandeDeSubvention : DemandeDeSubvention | undefined
+  if (demandeDeSubventionAction) {
+    demandeDeSubvention = {
+      enveloppe: enveloppes.find(
+        enveloppe => enveloppe.value ===demandeDeSubventionAction.enveloppeFinancementId
+      ) ?? enveloppes[0],
+      montantPrestation: demandeDeSubventionAction.subventionPrestation,
+      montantRh: demandeDeSubventionAction.subventionEtp ,
+      total:demandeDeSubventionAction.subventionDemandee,
+    }
+  }
   return {
     anneeDeDebut: action.anneeDeDebut ?? '',
     anneeDeFin: action.anneeDeFin,
@@ -49,14 +60,7 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
       montant: formatMontant(bp.montant),
     })),
     contexte: action.contexte ?? '',
-    demandeDeSubvention: action.demandeDeSubvention ? {
-      enveloppe: enveloppes.find(
-        enveloppe => enveloppe.value === action.demandeDeSubvention!.enveloppeFinancementId
-      ) ?? enveloppes[0],
-      montantPrestation: action.demandeDeSubvention.subventionPrestation ?? 0,
-      montantRh: action.demandeDeSubvention.subventionEtp ?? 0,
-      total: action.demandeDeSubvention.subventionDemandee,
-    } : undefined,
+    demandeDeSubvention,
     description: action.description ?? '',
     destinataires: (action.destinataires ?? []).map(toPorteurPotentielViewModel),
     enveloppes,

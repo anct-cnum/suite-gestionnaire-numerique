@@ -89,7 +89,7 @@ describe('ajouter une action à une feuille de route', () => {
       uidEditeur,
       uidFeuilleDeRoute,
       uidGouvernance,
-      uidPorteur,
+      uidPorteurs: [uidPorteur],
     })
 
     // THEN
@@ -113,7 +113,7 @@ describe('ajouter une action à une feuille de route', () => {
         uidFeuilleDeRoute: {
           value: uidFeuilleDeRoute,
         },
-        uidPorteur: 'porteurFooId',
+        uidPorteurs: ['porteurFooId'],
       }).state
     )
 
@@ -200,7 +200,7 @@ describe('ajouter une action à une feuille de route', () => {
         uidEditeur,
         uidFeuilleDeRoute,
         uidGouvernance,
-        uidPorteur,
+        uidPorteurs: [uidPorteur],
       }
 
       // WHEN
@@ -239,7 +239,7 @@ describe('ajouter une action à une feuille de route', () => {
       uidEditeur,
       uidFeuilleDeRoute,
       uidGouvernance,
-      uidPorteur,
+      uidPorteurs: [uidPorteur],
     })
 
     // THEN
@@ -336,7 +336,7 @@ class ActionRepositorySpy implements AddActionRepository {
         nom: 'Structurer une association',
         uid: { value: uid },
         uidFeuilleDeRoute: { value: '123' },
-        uidPorteur: 'porteur123',
+        uidPorteurs: ['porteur123'],
       })
     )
   }

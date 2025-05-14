@@ -107,7 +107,7 @@ export function actionFactory(override?: Partial<Parameters<typeof Action.create
     uidFeuilleDeRoute: {
       value: 'feuilleDeRouteFooId',
     },
-    uidPorteur: 'porteurFooId',
+    uidPorteurs: ['porteurFooId'],
     ...override,
   }) as Action
 }

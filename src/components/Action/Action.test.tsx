@@ -18,6 +18,10 @@ import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLe
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn(), 
+}))
+
 describe('formulaire d‘ajout d‘une action', () => {
   describe('menu latéral', () => {
     it.each([
