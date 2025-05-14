@@ -116,7 +116,8 @@ export default function AjouterUnCoFinancement(
         <div className="fr-btns-group fr-mt-2w">
           <button
             className="fr-btn"
-            disabled={coFinanceur === ''}
+            disabled={coFinanceur === '' || 
+              montant.orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
             onClick={handleSubmit}
             type="button"
           >

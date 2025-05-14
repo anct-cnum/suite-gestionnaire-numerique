@@ -74,7 +74,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     } else {
       Notification('error', { description: (messages as Array<string>).join(', '), title: 'Erreur : ' })
     }
-    (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
   }
 
