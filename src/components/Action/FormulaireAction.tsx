@@ -16,9 +16,10 @@ import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import AjouterUnCoFinancement from '@/components/Action/AjouterUnCoFinancement'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { Montant } from '@/components/shared/Montant/Montant'
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import {  ActionViewModel, Besoins, BesoinsPotentielle, DemandeDeSubvention, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
+import { Optional } from '@/shared/Optional'
 
 export function FormulaireAction({
   action,
@@ -441,7 +442,11 @@ export function FormulaireAction({
                           className={`fr-col-2 ${styles['deletion-section']}`}
                         >
                           <p className="fr-mb-0 fr-mr-2w">
-                            {cofinancement.montant}
+                            {Optional
+                              .ofNullable(cofinancement.montant)
+                              .flatMap(MontantPositif.of)
+                              .map((montant) => montant.format())
+                              .orElse(cofinancement.montant)}
                             {' '}
                             €
                           </p>
@@ -521,7 +526,7 @@ export function FormulaireAction({
     </form>
   )
 
-  function ajouterCofinancement(coFinanceur: string, montant: Montant): void {
+  function ajouterCofinancement(coFinanceur: string, montant: MontantPositif): void {
     setCofinancements([...cofinancements, { coFinanceur, montant: montant.format() }])
   }
 

@@ -4,8 +4,9 @@ import styles from './Action.module.css'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { Montant } from '@/components/shared/Montant/Montant'
 import MontantInput from '@/components/shared/Montant/MontantInput'
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
+import { Notification } from '@/components/shared/Notification/Notification'
 import Select from '@/components/shared/Select/Select'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { Optional } from '@/shared/Optional'
@@ -17,7 +18,7 @@ export default function AjouterUnCoFinancement(
   const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
 
   const [coFinanceur, setCoFinanceur] = useState('')
-  const [montant, setMontant] = useState<Optional<Montant>>(() => Optional.empty())
+  const [montant, setMontant] = useState<Optional<MontantPositif>>(() => Optional.empty())
   const showButton = useMemo(() => false, [])
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
 
@@ -32,7 +33,7 @@ export default function AjouterUnCoFinancement(
         aria-controls="ajouter-un-cofinancement"
         className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
         data-fr-opened={isDrawerOpen}
-        disabled={Montant.of(String(budgetGlobal)).orElse(Montant.Zero).lessThan(Montant.of('1'))}
+        disabled={MontantPositif.of(String(budgetGlobal)).orElse(MontantPositif.Zero).lessThan(MontantPositif.of('1'))}
         onClick={() => {
           setIsDrawerOpen(true)
         }}
@@ -115,7 +116,7 @@ export default function AjouterUnCoFinancement(
         <div className="fr-btns-group fr-mt-2w">
           <button
             className="fr-btn"
-            disabled={montant.orElse(Montant.Zero).lessThan(Montant.of('1')) || coFinanceur === ''}
+            disabled={coFinanceur === ''}
             onClick={handleSubmit}
             type="button"
           >
@@ -128,6 +129,11 @@ export default function AjouterUnCoFinancement(
   )
 
   function handleSubmit(): void {
+    if(montant.isEmpty())
+    {
+      Notification('error', { description: 'Le montant doit être présent' , title: 'Erreur : ' })
+      return
+    }
     ajoutCoFinanceur(coFinanceur, montant.orElseThrow(() => new Error('Le montant doit être présent')))
     setCoFinanceur('')
     setMontant(Optional.empty())
@@ -136,7 +142,7 @@ export default function AjouterUnCoFinancement(
 }
 
 type Props = Readonly<{
-  ajoutCoFinanceur(coFinanceur: string, montant: Montant): void
+  ajoutCoFinanceur(coFinanceur: string, montant: MontantPositif): void
   budgetGlobal: number
   label: string
   labelId: string

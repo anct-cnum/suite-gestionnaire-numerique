@@ -2,7 +2,7 @@
 
 import { ChangeEvent, ReactElement, useEffect, useState } from 'react'
 
-import { Montant } from './Montant'
+import { MontantPositif } from './MontantPositif'
 import { Optional } from '@/shared/Optional'
 
 export default function MontantInput({
@@ -10,7 +10,7 @@ export default function MontantInput({
   montantInitial,
   onChange,
 }: Readonly<Props>): ReactElement {
-  const [inputValue, setInputValue] = useState<Optional<Montant>>(montantInitial)
+  const [inputValue, setInputValue] = useState<Optional<MontantPositif>>(montantInitial)
 
   useEffect(() => {
     setInputValue(montantInitial)
@@ -18,7 +18,7 @@ export default function MontantInput({
 
   function onChangeEvent() {
     return (event: ChangeEvent<HTMLInputElement>) => {
-      const value = Montant.of(event.target.value)
+      const value = MontantPositif.of(event.target.value)
       setInputValue(value)
       onChange(value)
     }
@@ -31,14 +31,18 @@ export default function MontantInput({
       name={id}
       onChange={onChangeEvent()}
       required
+      style={{
+        fontVariantNumeric: 'tabular-nums',
+        letterSpacing: '0.1em',
+      }}
       type="text"
-      value={inputValue.orElse(Montant.Zero).format()}
+      value={inputValue.orElse(MontantPositif.Zero).format()}
     />
   )
 }
 
 type Props = {
   readonly id: string
-  readonly montantInitial: Optional<Montant>
-  onChange(amount: Optional<Montant>): void
+  readonly montantInitial: Optional<MontantPositif>
+  onChange(amount: Optional<MontantPositif>): void
 }
