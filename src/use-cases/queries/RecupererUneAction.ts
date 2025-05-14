@@ -11,7 +11,7 @@ export interface UneActionReadModel {
   }>
   coFinancement: CoFinancementReadModel
   contexte?: string
-  demandeDeSubvention : DemandeDeSubventionReadModel
+  demandeDeSubvention : DemandeDeSubventionReadModel | undefined
   description?: string
   destinataires?: Array<PorteurPotentielReadModel>
   enveloppe: EnveloppeReadModel

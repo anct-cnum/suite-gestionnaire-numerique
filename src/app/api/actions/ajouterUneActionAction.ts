@@ -1,6 +1,5 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
@@ -64,7 +63,6 @@ export async function ajouterUneActionAction(
     uidGouvernance: actionParams.gouvernance,
     uidPorteur: actionParams.porteurs[0],
   }
-  
   const result = await new AjouterUneAction(
     new PrismaGouvernanceRepository(),
     new PrismaFeuilleDeRouteRepository(),
@@ -76,9 +74,6 @@ export async function ajouterUneActionAction(
     new PrismaTransactionRepository(),
     new Date()
   ).handle(command)
-  
-  revalidatePath(validationResult.data.path)
-
   return [result]
 }
 

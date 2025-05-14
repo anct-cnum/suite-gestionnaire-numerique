@@ -47,14 +47,14 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       })),
       coFinancement,
       contexte: actionRecord.contexte,
-      demandeDeSubvention: {
+      demandeDeSubvention: actionRecord.demandesDeSubvention.length > 0 ? {
         beneficiaires: [],
         enveloppeFinancementId: String(actionRecord.demandesDeSubvention[0].enveloppe.id),
         statut: actionRecord.demandesDeSubvention[0].statut,
         subventionDemandee: actionRecord.demandesDeSubvention[0].subventionDemandee,
         subventionEtp: actionRecord.demandesDeSubvention[0].subventionEtp ?? 0,
         subventionPrestation: actionRecord.demandesDeSubvention[0].subventionPrestation ?? 0,
-      },
+      } : undefined,
       description: actionRecord.description,
       destinataires,
       enveloppe,
@@ -80,7 +80,15 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         id: Number(actionRecord.feuilleDeRouteId),
       },
     })
-    return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
+    console.log('GET ACTION  feuilleDeRoute:: ', feuilleDeRoute)
+    try{
+      const actionReadModel = PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)
+      console.log('GET ACTION  actionReadModel:: ', actionReadModel)
+      return actionReadModel
+    } catch (error) {
+      console.log('GET ACTION  error:: ', error)
+      throw error
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 'use client'
 
+import { redirect } from 'next/navigation'
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import AjouterUnCoFinancement from './AjouterUnCoFinancement'
@@ -10,6 +11,7 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
+import { feuilleDeRouteLink } from '@/presenters/shared/link'
 
 export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
   const { ajouterUneActionAction, pathname } = useContext(clientContext)
@@ -89,14 +91,14 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       path: pathname,
       porteurs: form.getAll('beneficiaires') as Array<string>,
     })
-
-    if ((messages as Array<string>).includes('OK')) {
+    const isOk = (messages as Array<string>).includes('OK')
+    setIsDisabled(false)
+    if (isOk) {
       Notification('success', { description: 'ajoutée', title: 'Action ' })
+      redirect(feuilleDeRouteLink(gouvernanceViewModel.uid, uidFeuilleDeRoute))
     } else {
       Notification('error', { description: (messages as Array<string>).join(', '), title: 'Erreur : ' })
     }
-    (event.target as HTMLFormElement).reset()
-    setIsDisabled(false)
   }
 
   function ajouterCofinancement(coFinanceur: string, montant: string): void {

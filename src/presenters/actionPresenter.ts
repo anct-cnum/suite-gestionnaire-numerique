@@ -49,14 +49,14 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
       montant: formatMontant(bp.montant),
     })),
     contexte: action.contexte ?? '',
-    demandeDeSubvention: {
+    demandeDeSubvention: action.demandeDeSubvention ? {
       enveloppe: enveloppes.find(
-        enveloppe => enveloppe.value === action.demandeDeSubvention.enveloppeFinancementId
+        enveloppe => enveloppe.value === action.demandeDeSubvention!.enveloppeFinancementId
       ) ?? enveloppes[0],
-      montantPrestation: action.demandeDeSubvention.subventionPrestation,
-      montantRh: action.demandeDeSubvention.subventionEtp,
+      montantPrestation: action.demandeDeSubvention.subventionPrestation ?? 0,
+      montantRh: action.demandeDeSubvention.subventionEtp ?? 0,
       total: action.demandeDeSubvention.subventionDemandee,
-    } ,
+    } : undefined,
     description: action.description ?? '',
     destinataires: (action.destinataires ?? []).map(toPorteurPotentielViewModel),
     enveloppes,
@@ -99,7 +99,7 @@ export type ActionViewModel = Readonly<{
     montant: string
   }>
   contexte: string
-  demandeDeSubvention?: DemandeDeSubvention
+  demandeDeSubvention?: DemandeDeSubvention 
   description: string
   destinataires: Array<PorteurPotentielViewModel>
   enveloppes: ReadonlyArray<Enveloppe>
