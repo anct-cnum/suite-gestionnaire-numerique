@@ -13,6 +13,7 @@ describe('modifier une action action', () => {
     const messages = await modifierUneActionAction({
       anneeDeDebut: '2026',
       budgetGlobal: 1000,
+      coFinancements: [],
       contexte: '',
       description: '',
       destinataires: ['userFooId'],

@@ -5,10 +5,6 @@ export interface UneActionReadModel {
   anneeDeFin?: string
   besoins: Array<string>
   budgetGlobal?: number
-  budgetPrevisionnel?: Array<{
-    coFinanceur: string
-    montant: number
-  }>
   coFinancements: Array<CoFinancementReadModel>
   contexte?: string
   demandeDeSubvention : DemandeDeSubventionReadModel | undefined
@@ -29,7 +25,7 @@ export type BesoinsPossible = 'animer_et_mettre_en_oeuvre_gouvernance' | 'appui_
   'rediger_feuille' | 'sensibiliser_acteurs' |
   'structurer_filiere_reconditionnement_locale' | 'structurer_fond_local'
 
-interface CoFinancementReadModel {
+export interface CoFinancementReadModel {
   id: string
   montant: number
 }

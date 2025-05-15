@@ -7,13 +7,12 @@ import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
 
-  static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>, 
+  static  #transform(actionRecord: Prisma.ActionRecordGetPayload<{ include: typeof include }>,
     nomFeuilleDeRoute :string, uidGouvernance: string): UneActionReadModel {
     const coFinancements = actionRecord.coFinancement.map(cf => ({
       id: cf.membre.id,
       montant: cf.montant,
     }))
-    console.log('BLLEEEEE', coFinancements)
     const enveloppe = actionRecord.demandesDeSubvention.length > 0
       ? {
         montant: actionRecord.demandesDeSubvention[0].enveloppe.montant,
@@ -38,10 +37,6 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       anneeDeFin: actionRecord.dateDeFin.getFullYear().toString(),
       besoins: actionRecord.besoins,
       budgetGlobal: actionRecord.budgetGlobal,
-      budgetPrevisionnel: actionRecord.coFinancement.map(cf => ({
-        coFinanceur: cf.membre.relationContact.nom,
-        montant: cf.montant,
-      })),
       coFinancements,
       contexte: actionRecord.contexte,
       demandeDeSubvention: actionRecord.demandesDeSubvention.length > 0 ? {
@@ -58,8 +53,8 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       nom: actionRecord.nom,
       nomFeuilleDeRoute,
       porteurs,
-       
-      statut: 'nonSubventionnee', //A FAIRE : à compléter => action n'a pas de statut. A priori soucis 
+
+      statut: 'nonSubventionnee', //A FAIRE : à compléter => action n'a pas de statut. A priori soucis
       // comprenhension metier entre le statut de la subvention et le statut de l'action
       uid: String(actionRecord.id),
     }
@@ -81,7 +76,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
   }
 }
 
-const include = {  
+const include = {
   coFinancement: {
     include: {
       membre: {

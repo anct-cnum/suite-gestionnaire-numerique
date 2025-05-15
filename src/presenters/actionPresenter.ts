@@ -2,7 +2,7 @@ import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/a
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
-import { BesoinsPossible, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
+import { BesoinsPossible, CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 // istanbul ignore next @preserve
 const enveloppes: ReadonlyArray<Enveloppe> = [
@@ -55,10 +55,13 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
     anneeDeFin: action.anneeDeFin,
     besoins,
     budgetGlobal: action.budgetGlobal ?? 0,
-    budgetPrevisionnel: (action.budgetPrevisionnel ?? []).map(bp => ({
-      coFinanceur: bp.coFinanceur,
-      montant: formatMontant(bp.montant),
-    })),
+    cofinancements: action.coFinancements.map(
+      (coFinancement: CoFinancementReadModel) => {
+        return {
+          coFinanceur : coFinancement.id,
+          montant: String(coFinancement.montant),
+        } as CofinamencemenViewModel}
+    ),
     contexte: action.contexte ?? '',
     demandeDeSubvention,
     description: action.description ?? '',
@@ -98,12 +101,9 @@ export type ActionViewModel = Readonly<{
     outillages: Besoins
   }>
   budgetGlobal: number
-  budgetPrevisionnel: ReadonlyArray<{
-    coFinanceur: string
-    montant: string
-  }>
+  cofinancements: ReadonlyArray<CofinamencemenViewModel>
   contexte: string
-  demandeDeSubvention?: DemandeDeSubvention 
+  demandeDeSubvention?: DemandeDeSubvention
   description: string
   destinataires: Array<PorteurPotentielViewModel>
   enveloppes: ReadonlyArray<Enveloppe>
@@ -122,14 +122,14 @@ export type ActionViewModel = Readonly<{
   urlFeuilleDeRoute: string
   urlGouvernance: string
 }>
- 
+
 export function actionARemplir(action: undefined | UneActionReadModel): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
     besoins: transformBesoins(action?.besoins),
     budgetGlobal: 0,
-    budgetPrevisionnel: [],
+    cofinancements: [],
     contexte: '',
     demandeDeSubvention: undefined,
     description: '',
@@ -250,12 +250,17 @@ export function transformBesoins(actionBesoins: Array<string> = []): {
 }
 
 export type Enveloppe = LabelValue & Readonly<{ budget: number }>
+
+interface CofinamencemenViewModel {
+  coFinanceur: string
+  montant: string
+}
 function toPorteurPotentielViewModel(
   porteur: { id: string; lien: string; nom: string }
 ): PorteurPotentielViewModel {
   return {
     id: porteur.id,
-    link: porteur.lien, 
+    link: porteur.lien,
     nom: porteur.nom,
     roles: [], // à compléter si besoin
   }

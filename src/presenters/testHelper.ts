@@ -177,21 +177,21 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       ],
     },
     budgetGlobal: 50000,
-    budgetPrevisionnel: [
+    cofinancements: [
       {
-        coFinanceur: 'Budget prévisionnel 2024',
+        coFinanceur: 'Cofinanceur 1',
         montant: '20000',
       },
       {
-        coFinanceur: 'Subvention de prestation',
+        coFinanceur: 'Cofinanceur 2',
         montant: '10000',
       },
       {
-        coFinanceur: 'CC des Monts du Lyonnais',
+        coFinanceur: 'Cofinanceur 3',
         montant: '5000',
       },
       {
-        coFinanceur: 'Croix Rouge Française',
+        coFinanceur: 'Cofinanceur 4',
         montant: '5000',
       },
     ],
@@ -261,7 +261,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       ],
     },
     budgetGlobal: 0,
-    budgetPrevisionnel: [],
+    cofinancements: [],
     contexte: '',
     description: '',
     destinataires: [],

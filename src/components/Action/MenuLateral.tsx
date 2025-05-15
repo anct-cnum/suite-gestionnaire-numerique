@@ -61,7 +61,7 @@ const menuItems = [
     titre: 'Information sur le budget et le financement',
   },
   {
-    id: 'destinatairesFonds',
-    titre: 'Destinataire(s) des fonds',
+    id: 'destinatairesSubvention',
+    titre: 'Destinataire(s) de la subvention',
   },
 ] as const

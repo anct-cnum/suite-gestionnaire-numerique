@@ -30,7 +30,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       { lien: 'porteurAction', titre: 'Porteur de l‘action' },
       { lien: 'temporaliteAction', titre: 'Temporalité de l‘action' },
       { lien: 'budgetAction', titre: 'Information sur le budget et le financement' },
-      { lien: 'destinatairesFonds', titre: 'Destinataire(s) des fonds' },
+      { lien: 'destinatairesSubvention', titre: 'Destinataire(s) de la subvention' },
     ])('étant un utilisateur, lorsque je veux ajouter une action, alors je vois le menu latéral avec le lien %s', ({ lien, titre }) => {
       // WHEN
       afficherMenuLateral()
@@ -49,7 +49,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       { lien: 'porteurAction', titre: 'Porteur de l‘action' },
       { lien: 'temporaliteAction', titre: 'Temporalité de l‘action' },
       { lien: 'budgetAction', titre: 'Information sur le budget et le financement' },
-      { lien: 'destinatairesFonds', titre: 'Destinataire(s) des fonds' },
+      { lien: 'destinatairesSubvention', titre: 'Destinataire(s) de la subvention' },
     ])('étant un utilisateur, lorsque je clique sur le lien $titre, alors ce lien devient actif', ({ titre }) => {
       // GIVEN
       afficherMenuLateral()
@@ -157,11 +157,11 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(coFinancement).toBeInTheDocument()
       const boutonAjouterUnFinancement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
       expect(boutonAjouterUnFinancement).toBeDisabled()
-      const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) des fonds *'), { selector: 'p' })
+      const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) de la subvention *'), { selector: 'p' })
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
       const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
       expect(boutonAjouterUnDestinataire).toBeInTheDocument()
-      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.', { selector: 'p' })
+      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
       const boutonDeValidation = within(formulaire).getByRole('button', { name: 'Valider et envoyer' })
       expect(boutonDeValidation).toBeEnabled()
@@ -187,6 +187,24 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: undefined,
           budgetGlobal: 1000,
+          coFinancements: [
+            {
+              coFinanceur: 'Cofinanceur 1',
+              montant: '20000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 2',
+              montant: '10000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 3',
+              montant: '5000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 4',
+              montant: '5000',
+            },
+          ],
           contexte: '<p>Contexte de l‘action</p>',
           description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
@@ -209,7 +227,7 @@ describe('formulaire d‘ajout d‘une action', () => {
           { nom: 'Croix Rouge Française' , roles: [] , uid: 'croix_id' },
         ],
       },{
-        budgetPrevisionnel: [
+        cofinancements: [
           { coFinanceur : 'budget_id' , montant : '20000' },
           { coFinanceur : 'subvention_id' , montant : '10000' },
           { coFinanceur : 'cc_id' , montant : '5000' },
@@ -327,6 +345,24 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: '2028',
           budgetGlobal: 1000,
+          coFinancements: [
+            {
+              coFinanceur: 'Cofinanceur 1',
+              montant: '20000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 2',
+              montant: '10000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 3',
+              montant: '5000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 4',
+              montant: '5000',
+            },
+          ],
           contexte: '<p>Contexte de l‘action</p>',
           description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],

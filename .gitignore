@@ -48,3 +48,4 @@ client-fne
 # IDE
 *.code-workspace
 .cursor/
+.idea
