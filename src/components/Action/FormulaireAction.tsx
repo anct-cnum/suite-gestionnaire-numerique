@@ -428,7 +428,10 @@ export function FormulaireAction({
           {
             cofinancements.length > 0 ?
               <>
-                <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
+                <ul
+                  className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}
+                  data-testid="liste-cofinanceurs"
+                >
                   {cofinancements.map((cofinancement) => (
                     <li
                       key={cofinancement.coFinanceur+cofinancement.montant}
@@ -477,7 +480,7 @@ export function FormulaireAction({
           }
           <hr />
         </div>
-        {localDemandeDeSubvention ?? demandeDeSubvention ? <div
+        <div
           className="white-background fr-p-4w"
           id="destinatairesSubvention"
         >
@@ -493,7 +496,7 @@ export function FormulaireAction({
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={enregistrerBeneficiaires}
-              labelPluriel="bénéficiaires des fonds"
+              labelPluriel="bénéficiaires de la subvention"
               membres={destinataires}
               resetToutEffacer={resetBeneficiaireToutEffacer}
               titre="Ajouter le(s) bénéficiaire(s)"
@@ -519,7 +522,7 @@ export function FormulaireAction({
                 ))
             }
           </div>
-        </div> : null}
+        </div> 
       </div>
       <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
         {children}

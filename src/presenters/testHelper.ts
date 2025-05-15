@@ -196,6 +196,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       },
     ],
     contexte: '<p>Contexte de l‘action</p>',
+
     description: '<p><strong>Description de l‘action.</strong></p>',
     destinataires: [],
     enveloppes,

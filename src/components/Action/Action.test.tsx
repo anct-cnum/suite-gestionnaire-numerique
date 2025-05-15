@@ -159,7 +159,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(boutonAjouterUnFinancement).toBeDisabled()
       const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) de la subvention *'), { selector: 'p' })
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
-      const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
+      const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires de la subvention', name: 'Ajouter' })
       expect(boutonAjouterUnDestinataire).toBeInTheDocument()
       const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
@@ -233,6 +233,17 @@ describe('formulaire d‘ajout d‘une action', () => {
           { coFinanceur : 'cc_id' , montant : '5000' },
           { coFinanceur : 'croix_id' , montant : '5000' },
         ],
+        demandeDeSubvention: {
+          enveloppe: {
+            budget: 50_000,
+            isSelected: false,
+            label: 'Conseiller Numérique - 2024',
+            value: '1',
+          },
+          montantPrestation: 10,
+          montantRh: 10,
+          total: 20,
+        },
         destinataires: [
           { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
           { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
@@ -259,7 +270,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(budgetGlobalDeLAction).toHaveValue(50000)
       const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
       expect(premierBeneficiaire).toHaveAttribute('href', '/gouvernance/69/membre/membreFooId3')
-      const listeCofinancements = within(formulaire).getAllByRole('listitem')
+      const ulCofinanceurs = within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       expect(listeCofinancements).toHaveLength(4)
       const premierCofinancement = within(listeCofinancements[0]).getByText('Budget prévisionnel 2024')
       expect(premierCofinancement).toBeInTheDocument()
@@ -297,7 +309,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       await jeCreeUnCofinancementDansLeDrawer(drawer)
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
-      const listeCofinancements = await within(formulaire).findAllByRole('listitem')
+      const ulCofinanceurs = within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       const boutonSupprimerCofinancement = within(listeCofinancements[0]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(boutonSupprimerCofinancement)
 
@@ -312,7 +325,8 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const listeCofinancements = within(formulaire).getAllByRole('listitem')
+      const ulCofinanceurs =within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       const boutonSupprimerCofinancement = within(listeCofinancements[3]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(boutonSupprimerCofinancement)
 
@@ -573,35 +587,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(deuxiemeBesoin).toBeInTheDocument()
     })
   })
-
-  it('étant un utilisateur et ayant enregistrer des beneficiaires au préalable, quand j’efface les beneficiaires sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
-    // GIVEN
-    afficherFormulaireDeCreationAction(undefined, {
-      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-        { nom : 'beneficiaire1', roles: [], uid: '88438c43-e143-4792-b968-07875ebc96b0' },
-        { nom : 'beneficiaire2', roles: [], uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
-      ],
-    })
-
-    // WHEN
-    jOuvreLeFormulairePourAjouterDesBeneficiaires()
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
-    jeCoche('beneficiaire1')
-    jeCoche('beneficiaire2')
-    jEnregistre()
-    jOuvreLeFormulairePourModifierDesBeneficiaires()
-    jEfface()
-
-    // THEN
-    expect(drawer).toBeVisible()
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-    const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Modifier' })
-    expect(boutonAjouter).toBeInTheDocument()
-    const premierBesoin = within(formulaire).getByText('beneficiaire1', { selector: 'a' })
-    expect(premierBesoin).toBeInTheDocument()
-    const deuxiemeBesoin = within(formulaire).getByText('beneficiaire2', { selector: 'a' })
-    expect(deuxiemeBesoin).toBeInTheDocument()
-  })
 })
 
 export function afficherFormulaireDeCreationAction(
@@ -836,17 +821,12 @@ function jOuvreLeFormulairePourAjouterDesBesoins(): void {
 function jOuvreLeFormulairePourAjouterDesPorteurs(): void {
   presserLeBouton('Ajouter', 'Ajouter des porteurs')
 }
-function jOuvreLeFormulairePourAjouterDesBeneficiaires(): void {
-  presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
-}
+
 function jOuvreLeFormulairePourModifierDesBesoins(): void {
   presserLeBouton('Modifier', 'Modifier les besoins')
 }
 function jOuvreLeFormulairePourModifierDesPorteurs(): void {
   presserLeBouton('Modifier', 'Ajouter des porteurs')
-}
-function jOuvreLeFormulairePourModifierDesBeneficiaires(): void {
-  presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
 }
 
 function jEnregistre(): void {
