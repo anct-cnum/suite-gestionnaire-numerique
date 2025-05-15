@@ -75,6 +75,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
           nom: action.nom,
           porteurs: action.porteurAction.map((porteur) => fromMembre(toMembre(porteur.membre))),
           statut: (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) ?? 'enCours',
+          subventionDemandee: demandeDeSubvention?.subventionDemandee ?? 0,
           uid: String(action.id),
         }
       }),

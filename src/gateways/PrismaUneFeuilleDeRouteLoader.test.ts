@@ -68,6 +68,7 @@ describe('récupérer une feuille de route loader', () => {
             },
           ],
           statut: 'acceptee',
+          subventionDemandee: 0,
           uid: String(uidAction1),
         },
         {
@@ -87,6 +88,7 @@ describe('récupérer une feuille de route loader', () => {
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
           statut: 'enCours',
+          subventionDemandee: 0,
           uid: String(uidAction2),
         },
       ],
@@ -172,6 +174,7 @@ describe('récupérer une feuille de route loader', () => {
             },
           ],
           statut: 'acceptee',
+          subventionDemandee: 0,
           uid: String(uidAction1),
         },
         {
@@ -191,6 +194,7 @@ describe('récupérer une feuille de route loader', () => {
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
           statut: 'enCours',
+          subventionDemandee: 0,
           uid: String(uidAction2),
         },
       ],
