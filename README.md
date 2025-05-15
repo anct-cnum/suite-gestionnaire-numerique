@@ -109,6 +109,17 @@ yarn prisma:reset
 
 Ne pas oublier de copier/coller le fichier JS et les pictos dans `/public`.
 
+## ⬆️ Mise à jour du schema du dataspace
+
+cette commande permet de mettre à jour le fichier : prisma/extern/schema.prisma.
+```bash
+npx prisma db pull --schema=prisma/extern/schema.prisma
+```
+cette commande permet la génération du client pour le dataspace dans le dossier generated/client-extern 
+```bash
+npx prisma generate --schema=prisma/extern/schema.prisma
+```
+
 ## ⬆️ Mise à jour Matomo
 
 Ne pas oublier de changer la version du fichier `/public/matomo-vX.js` s'il vient à être modifié.
