@@ -6,8 +6,10 @@ import { FormEvent, Fragment, PropsWithChildren, ReactElement, RefObject, useCon
 import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
+import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import DemanderUneSubvention from './DemanderUneSubvention'
 import Badge from '../shared/Badge/Badge'
+import { MontantPositif } from '../shared/Montant/MontantPositif'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
@@ -15,24 +17,31 @@ import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-import { actionARemplir, ActionViewModel, Besoins, BesoinsPotentielle } from '@/presenters/actionPresenter'
+import {  ActionViewModel, Besoins, BesoinsPotentielle, DemandeDeSubvention, transformBesoins } from '@/presenters/actionPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
+import { Optional } from '@/shared/Optional'
 
 export function FormulaireAction({
   action,
+  ajouterDemandeDeSubvention,
   children,
-  cofinancements,
-  drawerId,
+  demandeDeSubvention,
   label,
-  setIsDrawerOpen,
-  supprimerUnCofinancement,
+  supprimerUneDemandeDeSubvention,
   validerFormulaire,
 }: Props): ReactElement {
   const nomDeLActionId = useId()
-  const [temporalite, setTemporalite] = useState('annuelle')
+  const [temporalite, setTemporalite] = useState(action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined ? 'annuelle' : 'pluriannuelle')
+
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
-  const [beneficiaires, setBeneficiaires] = useState(action.beneficiaires)
+  const [destinataires, setDestinataires] = useState(action.destinataires)
+  const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
+  const [cofinancements, setCofinancements] = useState(action.cofinancements)
+
+  const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
+    setLocalDemandeDeSubvention(undefined)
+  })
   const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
@@ -70,7 +79,7 @@ export function FormulaireAction({
   function resetBeneficiaireToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void {
     // istanbul ignore next @preserve
     if (fieldset.current) {
-      const beneficiaireIds = beneficiaires.map(beneficiare => beneficiare.id)
+      const beneficiaireIds = destinataires.map(beneficiare => beneficiare.id)
 
       fieldset.current.querySelectorAll('input').forEach((input: HTMLInputElement) => {
         input.checked = beneficiaireIds.includes(input.value)
@@ -78,7 +87,7 @@ export function FormulaireAction({
     }
   }
 
-  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>): void {
+  function enregistrerLeOuLesBesoins(fieldset: RefObject<HTMLFieldSetElement | null>) : void {
     let besoinsSelectionner: Array<BesoinsPotentielle['value']> = []
     // istanbul ignore next @preserve
     if (fieldset.current) {
@@ -87,12 +96,12 @@ export function FormulaireAction({
           besoinsSelectionner = [...besoinsSelectionner, input.value as BesoinsPotentielle['value']]
         }
       })
-      const action = actionARemplir({ besoins: besoinsSelectionner })
+      const besoinsTransformes = transformBesoins(besoinsSelectionner)
       setBesoinsSelected([
-        ...action.besoins.financements,
-        ...action.besoins.formations,
-        ...action.besoins.formationsProfessionnels,
-        ...action.besoins.outillages,
+        ...besoinsTransformes.financements,
+        ...besoinsTransformes.formations,
+        ...besoinsTransformes.formationsProfessionnels,
+        ...besoinsTransformes.outillages,
       ])
     }
   }
@@ -132,7 +141,8 @@ export function FormulaireAction({
         await validerFormulaire(
           event,
           contexteContenu,
-          descriptionContenu
+          descriptionContenu,
+          cofinancements.map(cofinancement => cofinancement)
         )
       }}
     >
@@ -249,7 +259,7 @@ export function FormulaireAction({
             id="porteurAction"
           >
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-0">
-              Porteur de l‘action
+              Porteur(s) de l‘action
             </p>
             <AjouterDesMembres
               checkboxName="porteurs"
@@ -264,7 +274,7 @@ export function FormulaireAction({
             />
           </div>
           <p>
-            Indiquez quelle est la structure porteuse de cette action
+            Précisez le ou les structure(s) porteuse(s) de cette action
           </p>
           <hr />
           {
@@ -392,17 +402,13 @@ export function FormulaireAction({
             </div>
           </div>
           <hr />
-          <div className={styles['horizontal-text-input']}>
-            <div className={styles['half-width']}>
-              <p className="fr-text--bold fr-mb-0">
-                Subvention demandée à l‘état
-              </p>
-            </div>
-            <DemanderUneSubvention
-              enveloppes={action.enveloppes}
-              montantMaxAction={budgetGlobal}
-            />
-          </div>
+          <DemanderUneSubvention
+            ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
+            demandeDeSubvention={localDemandeDeSubvention ?? demandeDeSubvention}
+            enveloppes={action.enveloppes}
+            montantMaxAction={budgetGlobal}
+            supprimerUneDemandeDeSubvention={supprimerUneDemandeDeSubventionFn}
+          />
           <hr />
           <div className={styles['horizontal-text-input']}>
             <div className={styles['half-width']}>
@@ -412,40 +418,41 @@ export function FormulaireAction({
                 Co-financement
               </p>
             </div>
-            {
-              cofinancements.length === 0 && (
-                <button
-                  aria-controls={drawerId}
-                  className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-                  data-fr-opened="false"
-                  disabled={budgetGlobal === 0}
-                  onClick={() => {
-                    setIsDrawerOpen(true)
-                  }}
-                  type="button"
-                >
-                  Ajouter un financement
-                </button>
-              )
-            }
+            <AjouterUnCoFinancement
+              ajoutCoFinanceur={ajouterCofinancement}
+              budgetGlobal={budgetGlobal}
+              label="Ajouter un co-financement"
+              labelId="ajouter-un-cofinancement-label"
+            />
           </div>
           {
             cofinancements.length > 0 ?
               <>
-                <ul className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}>
+                <ul
+                  className={`color-blue-france fr-text--bold fr-mt-1w fr-pl-0 fr-pt-1w ${styles['no-style-list']}`}
+                  data-testid="liste-cofinanceurs"
+                >
                   {cofinancements.map((cofinancement) => (
                     <li
-                      key={cofinancement.coFinanceur}
+                      key={cofinancement.coFinanceur+cofinancement.montant}
                     >
                       <div className={`fr-p-2w background-blue-france ${styles['align-items']}`}>
                         <p className="fr-col-10 fr-mb-0">
-                          {cofinancement.coFinanceur}
+                          {membresGouvernanceConfirme
+                            .find(membre => membre.id === cofinancement.coFinanceur)
+                            ?.nom}
                         </p>
                         <div
                           className={`fr-col-2 ${styles['deletion-section']}`}
                         >
                           <p className="fr-mb-0 fr-mr-2w">
-                            {cofinancement.montant}
+                            {Optional
+                              .ofNullable(cofinancement.montant)
+                              .flatMap(MontantPositif.of)
+                              .map((montant) => montant.format())
+                              .orElse(cofinancement.montant)}
+                            {' '}
+                            €
                           </p>
                           <button
                             className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
@@ -467,17 +474,6 @@ export function FormulaireAction({
                   style={{ display: 'flex', justifyContent: 'flex-end' }}
                 >
                   <hr />
-                  <button
-                    aria-controls={drawerId}
-                    className={`fr-btn fr-btn--icon-left fr-fi-add-line ${styles['third-width']}`}
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setIsDrawerOpen(true)
-                    }}
-                    type="button"
-                  >
-                    Ajouter un financement
-                  </button>
                 </div>
               </>
               : null
@@ -486,11 +482,11 @@ export function FormulaireAction({
         </div>
         <div
           className="white-background fr-p-4w"
-          id="destinatairesFonds"
+          id="destinatairesSubvention"
         >
           <div className={styles['align-items']}>
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
-              Destinataire(s) des fonds
+              Destinataire(s) de la subvention
               {' '}
               <span className="color-red">
                 *
@@ -500,8 +496,8 @@ export function FormulaireAction({
               checkboxName="beneficiaires"
               drawerId="drawerAjouterDesBeneficiairesId"
               enregistrer={enregistrerBeneficiaires}
-              labelPluriel="bénéficiaires des fonds"
-              membres={beneficiaires}
+              labelPluriel="bénéficiaires de la subvention"
+              membres={destinataires}
               resetToutEffacer={resetBeneficiaireToutEffacer}
               titre="Ajouter le(s) bénéficiaire(s)"
               toutEffacer={createToutEffacer()}
@@ -509,11 +505,11 @@ export function FormulaireAction({
             />
           </div>
           <p className="color-grey">
-            Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.
+            Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.
           </p>
           <div>
             {
-              beneficiaires
+              destinataires
                 .map((beneficiaire) => (
                   <Fragment key={beneficiaire.id}>
                     <Tag
@@ -526,7 +522,7 @@ export function FormulaireAction({
                 ))
             }
           </div>
-        </div>
+        </div> 
       </div>
       <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
         {children}
@@ -534,15 +530,23 @@ export function FormulaireAction({
     </form>
   )
 
+  function ajouterCofinancement(coFinanceur: string, montant: MontantPositif): void {
+    setCofinancements([...cofinancements, { coFinanceur, montant: montant.format() }])
+  }
+
+  function supprimerUnCofinancement(index: number): void {
+    const filteredCofinancements = cofinancements.filter((_, indexToRemove) => indexToRemove !== index)
+    setCofinancements(filteredCofinancements)
+  }
   function enregistrerPorteurs(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) { return }
+      if (!fieldset.current) {return}
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member: {
+            member : {
               uid: input.value,
             },
             selected: input.checked,
@@ -561,12 +565,12 @@ export function FormulaireAction({
   function enregistrerBeneficiaires(fieldset: RefObject<HTMLFieldSetElement | null>) {
     return () => {
       // istanbul ignore next @preserve
-      if (!fieldset.current) { return }
+      if (!fieldset.current) {return}
 
       const members = Array.from(fieldset.current.querySelectorAll('input')).map(
         (input: HTMLInputElement) => {
           return {
-            member: {
+            member : {
               uid: input.value,
             },
             selected: input.checked,
@@ -578,7 +582,7 @@ export function FormulaireAction({
         .map(memberSelected => memberSelected.member.uid)
       const newBenificiaire = membresGouvernanceConfirme
         .filter(membreGouvernanceConfirme => selectedMemberIds.includes(membreGouvernanceConfirme.id))
-      setBeneficiaires(newBenificiaire)
+      setDestinataires(newBenificiaire)
     }
   }
 }
@@ -599,14 +603,13 @@ function checkHasBesoinsSelected(besoins: Besoins): boolean {
 
 type Props = PropsWithChildren<Readonly<{
   action: ActionViewModel
-  cofinancements: ReadonlyArray<{
+  ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void
+  date?: Date
+  demandeDeSubvention?: DemandeDeSubvention
+  label: string
+  supprimerUneDemandeDeSubvention?(): void
+  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string, cofinancement : Array<{
     coFinanceur: string
     montant: string
-  }>
-  date?: Date
-  drawerId: string
-  label: string
-  setIsDrawerOpen(isDrawerOpen: boolean): void
-  supprimerUnCofinancement(index: number): void
-  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string): Promise<void>
+  }>): Promise<void>
 }>>

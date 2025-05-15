@@ -1,5 +1,8 @@
 // Stryker disable all
+import { Action } from './Action'
+import { CoFinancement } from './CoFinancement'
 import { Comite } from './Comite'
+import { DemandeDeSubvention } from './DemandeDeSubvention'
 import { Departement, DepartementState } from './Departement'
 import { FeuilleDeRoute } from './FeuilleDeRoute'
 import { Gouvernance } from './Gouvernance'
@@ -86,6 +89,29 @@ export function feuilleDeRouteFactory(override?: Partial<Parameters<typeof Feuil
   }) as FeuilleDeRoute
 }
 
+export function actionFactory(override?: Partial<Parameters<typeof Action.create>[0]>): Action {
+  return Action.create({
+    besoins: ['besoin 1'],
+    budgetGlobal: 10_000,
+    contexte: 'Un contexte',
+    dateDeCreation: epochTime,
+    dateDeDebut: '2024',
+    dateDeFin: '2025',
+    description: 'Description de test',
+    destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
+    nom: 'Feuille de route 69',
+    uid: {
+      value: 'feuilleDeRouteFooId',
+    },
+    uidCreateur: 'userFooId',
+    uidFeuilleDeRoute: {
+      value: 'feuilleDeRouteFooId',
+    },
+    uidPorteurs: ['porteurFooId'],
+    ...override,
+  }) as Action
+}
+
 export function membrePotentielFactory(override?: Partial<Parameters<typeof membreFactory>[0]>): Membre {
   return membreFactory({
     nom: 'La Poste',
@@ -124,3 +150,43 @@ export function departementFactory(override?: Partial<DepartementState>): Depart
     ...override,
   })
 }
+
+export function demandeDeSubventionFactory(
+  override?: Partial<Parameters<typeof DemandeDeSubvention.create>[0]>
+): DemandeDeSubvention {
+  return DemandeDeSubvention.create({
+    beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
+    dateDeCreation: epochTime,
+    derniereModification: epochTime,
+    statut: 'en_cours',
+    subventionDemandee: 5000,
+    subventionEtp: 2000,
+    subventionPrestation: 3000,
+    uid: {
+      value: 'demandeDeSubventionFooId',
+    },
+    uidAction: {
+      value: 'actionFooId',
+    },
+    uidCreateur: 'userFooId',
+    uidEnveloppeFinancement: {
+      value: 'enveloppeFinancementFooId',
+    },
+    ...override,
+  }) as DemandeDeSubvention
+}
+
+export function coFinancementFactory(override?: Partial<Parameters<typeof CoFinancement.create>[0]>): CoFinancement {
+  return CoFinancement.create({
+    montant: 2000,
+    uid: {
+      value: 'coFinancementFooId',
+    },
+    uidAction: {
+      value: 'actionFooId',
+    },
+    uidMembre: 'membreFooId',
+    ...override,
+  }) as CoFinancement
+}
+

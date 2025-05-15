@@ -1,15 +1,23 @@
-import { notFound } from 'next/navigation'
+import { notFound , redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
-    const codeDepartement = (await params).codeDepartement
-    const actionViewModel = actionPresenter(codeDepartement)
+    const { uidAction } = await params
+    const session = await getSession()
+
+    if (!session) {
+      redirect('/connexion')
+    }
+    const actionReadModel = await new PrismaUneActionLoader(
+    ).get(uidAction)
 
     return (
       <div className="fr-grid-row">
@@ -19,7 +27,7 @@ export default async function ActionModifierController({ params }: Props): Promi
         <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <ModifierUneAction
-            action={actionViewModel}
+            action={actionPresenter(actionReadModel)}
           />
         </div>
       </div>
@@ -32,5 +40,7 @@ export default async function ActionModifierController({ params }: Props): Promi
 type Props = Readonly<{
   params: Promise<Readonly<{
     codeDepartement: string
+    uidAction: string
+    uidFeuilleDeRoute: string
   }>>
 }>

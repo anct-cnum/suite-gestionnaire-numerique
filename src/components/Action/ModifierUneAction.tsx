@@ -2,22 +2,18 @@
 
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import { FormulaireAction } from './FormulaireAction'
 import Drawer from '../shared/Drawer/Drawer'
-import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
-import { ActionViewModel } from '@/presenters/actionPresenter'
+import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
 
 export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [cofinancements, setCofinancements] = useState(action.budgetPrevisionnel)
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  const coporteurs = gouvernanceViewModel.sectionMembres.coporteurs
+  const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
 
   return (
     <>
@@ -26,11 +22,9 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       </title>
       <FormulaireAction
         action={action}
-        cofinancements={cofinancements}
-        drawerId="ajouter-un-cofinancement"
+        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
+        demandeDeSubvention={demandeDeSubvention}
         label="Modifier une action"
-        setIsDrawerOpen={setIsDrawerOpen}
-        supprimerUnCofinancement={supprimerUnCofinancement}
         validerFormulaire={modifierAction}
       >
         <SubmitButton
@@ -49,21 +43,18 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
         isFixedWidth={false}
         isOpen={isDrawerOpen}
         labelId="ajouter-un-cofinancement-label"
-      >
-        <AjouterUnCoFinancement
-          coporteurs={coporteurs}
-          label="Ajouter un co-financement"
-          labelId="ajouter-un-cofinancement-label"
-          onSubmit={ajouterCofinancement}
-        />
-      </Drawer>
+      />
     </>
   )
 
   async function modifierAction(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
-    descriptionContenu: string
+    descriptionContenu: string,
+    coFinancements : Array<{
+      coFinanceur: string
+      montant: string
+    }>
   ): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
@@ -72,6 +63,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       anneeDeDebut: form.get('anneeDeDebut') as string,
       anneeDeFin: form.get('anneeDeFin') as string,
       budgetGlobal: Number(form.get('budgetGlobal')),
+      coFinancements,
       contexte: contexteContenu,
       description: descriptionContenu,
       destinataires: [],
@@ -88,14 +80,9 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)
   }
-  function ajouterCofinancement(coFinanceur: string, montant: string): void {
-    setCofinancements([...cofinancements, { coFinanceur, montant: `${montant} €` }])
-    setIsDrawerOpen(false)
-  }
 
-  function supprimerUnCofinancement(index: number): void {
-    const filteredCofinancements = cofinancements.filter((_, indexValue) => indexValue !== index)
-    setCofinancements(filteredCofinancements)
+  function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {
+    setDemandeDeSubvention(demandeDeSubvention)
   }
 }
 

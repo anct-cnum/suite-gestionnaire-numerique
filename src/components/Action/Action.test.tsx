@@ -1,4 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
+import { userEvent } from '@testing-library/user-event'
 import { FormEvent } from 'react'
 import { Mock } from 'vitest'
 
@@ -13,10 +14,13 @@ import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
 // eslint-disable-next-line import/no-restricted-paths
-import { MembreAvecRoleDansLaGouvernance } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-// eslint-disable-next-line import/no-restricted-paths
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
+
+vi.mock('next/navigation', () => ({
+  // eslint-disable-next-line vitest/require-mock-type-parameters
+  redirect: vi.fn(),
+}))
 
 describe('formulaire d‘ajout d‘une action', () => {
   describe('menu latéral', () => {
@@ -26,7 +30,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       { lien: 'porteurAction', titre: 'Porteur de l‘action' },
       { lien: 'temporaliteAction', titre: 'Temporalité de l‘action' },
       { lien: 'budgetAction', titre: 'Information sur le budget et le financement' },
-      { lien: 'destinatairesFonds', titre: 'Destinataire(s) des fonds' },
+      { lien: 'destinatairesSubvention', titre: 'Destinataire(s) de la subvention' },
     ])('étant un utilisateur, lorsque je veux ajouter une action, alors je vois le menu latéral avec le lien %s', ({ lien, titre }) => {
       // WHEN
       afficherMenuLateral()
@@ -45,7 +49,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       { lien: 'porteurAction', titre: 'Porteur de l‘action' },
       { lien: 'temporaliteAction', titre: 'Temporalité de l‘action' },
       { lien: 'budgetAction', titre: 'Information sur le budget et le financement' },
-      { lien: 'destinatairesFonds', titre: 'Destinataire(s) des fonds' },
+      { lien: 'destinatairesSubvention', titre: 'Destinataire(s) de la subvention' },
     ])('étant un utilisateur, lorsque je clique sur le lien $titre, alors ce lien devient actif', ({ titre }) => {
       // GIVEN
       afficherMenuLateral()
@@ -114,9 +118,9 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(descriptionDeLAction).toBeInTheDocument()
       const editeurDeTexteDescription = within(formulaire).getAllByRole('textarea')[1]
       expect(editeurDeTexteDescription).toBeInTheDocument()
-      const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur de l‘action', { selector: 'p' })
+      const titreSectionPorteurDeLAaction = within(formulaire).getByText('Porteur(s) de l‘action', { selector: 'p' })
       expect(titreSectionPorteurDeLAaction).toBeInTheDocument()
-      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Indiquez quelle est la structure porteuse de cette action', { selector: 'p' })
+      const labelSectionPorteurDeLAaction = within(formulaire).getByText('Précisez le ou les structure(s) porteuse(s) de cette action', { selector: 'p' })
       expect(labelSectionPorteurDeLAaction).toBeInTheDocument()
       const boutonAjouterLePorteurDeLAaction = within(formulaire).getByRole('button', { description: 'Ajouter des porteurs', name: 'Ajouter' })
       expect(boutonAjouterLePorteurDeLAaction).toBeInTheDocument()
@@ -153,11 +157,11 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(coFinancement).toBeInTheDocument()
       const boutonAjouterUnFinancement = within(formulaire).getByRole('button', { name: 'Ajouter un financement' })
       expect(boutonAjouterUnFinancement).toBeDisabled()
-      const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) des fonds *'), { selector: 'p' })
+      const titreSectionDestinattairesDesFonds = within(formulaire).getByText(matchWithoutMarkup('Destinataire(s) de la subvention *'), { selector: 'p' })
       expect(titreSectionDestinattairesDesFonds).toBeInTheDocument()
-      const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Ajouter' })
+      const boutonAjouterUnDestinataire = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires de la subvention', name: 'Ajouter' })
       expect(boutonAjouterUnDestinataire).toBeInTheDocument()
-      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires des fonds.', { selector: 'p' })
+      const instructionsAjoutDestinaire = within(formulaire).getByText('Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.', { selector: 'p' })
       expect(instructionsAjoutDestinaire).toBeInTheDocument()
       const boutonDeValidation = within(formulaire).getByRole('button', { name: 'Valider et envoyer' })
       expect(boutonDeValidation).toBeEnabled()
@@ -183,6 +187,24 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: undefined,
           budgetGlobal: 1000,
+          coFinancements: [
+            {
+              coFinanceur: 'Cofinanceur 1',
+              montant: '20000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 2',
+              montant: '10000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 3',
+              montant: '5000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 4',
+              montant: '5000',
+            },
+          ],
           contexte: '<p>Contexte de l‘action</p>',
           description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
@@ -197,11 +219,32 @@ describe('formulaire d‘ajout d‘une action', () => {
       // WHEN
       afficherFormulaireDeModificationAction(undefined, {
         porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  } as MembreAvecRoleDansLaGouvernance,
-          { link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' } as MembreAvecRoleDansLaGouvernance,
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'membreFooId2'  },
+          { nom: 'Rhône (69)', roles : [], uid: 'id_rhone69' },
+          { nom: 'Budget prévisionnel 2024' , roles: [] , uid: 'budget_id' },
+          { nom: 'Subvention de prestation' , roles: [] , uid: 'subvention_id' },
+          { nom: 'CC des Monts du Lyonnais' , roles: [] , uid: 'cc_id' },
+          { nom: 'Croix Rouge Française' , roles: [] , uid: 'croix_id' },
         ],
       },{
-        beneficiaires: [
+        cofinancements: [
+          { coFinanceur : 'budget_id' , montant : '20000' },
+          { coFinanceur : 'subvention_id' , montant : '10000' },
+          { coFinanceur : 'cc_id' , montant : '5000' },
+          { coFinanceur : 'croix_id' , montant : '5000' },
+        ],
+        demandeDeSubvention: {
+          enveloppe: {
+            budget: 50_000,
+            isSelected: false,
+            label: 'Conseiller Numérique - 2024',
+            value: '1',
+          },
+          montantPrestation: 10,
+          montantRh: 10,
+          total: 20,
+        },
+        destinataires: [
           { id: 'id_rhone69', link: '/gouvernance/69/membre/membreFooId3', nom: 'Rhône (69)', roles : [] },
           { id: 'membreFooId2', link: '/gouvernance/69/membre/membreFooId2', nom : 'CC des Monts du Lyonnais' , roles: [] },
         ],
@@ -216,9 +259,9 @@ describe('formulaire d‘ajout d‘une action', () => {
       const porteurAction = within(formulaire).getByRole('link', { name: 'CC des Monts du Lyonnais' })
       expect(porteurAction).toHaveAttribute('href', '/gouvernance/69/membre/membreFooId2')
       const optionAnnuelle = screen.getByRole('radio', { name: 'Annuelle' })
-      expect(optionAnnuelle).toBeChecked()
+      expect(optionAnnuelle).not.toBeChecked()
       const optionPluriannuelle = screen.getByRole('radio', { name: 'Pluriannuelle' })
-      expect(optionPluriannuelle).not.toBeChecked()
+      expect(optionPluriannuelle).toBeChecked()
       const selecteurAnneeDeDebut = within(formulaire).getByLabelText('Année de début de l‘action')
       expect(selecteurAnneeDeDebut).toHaveValue('2025')
       const selecteurAnneeDeFin = within(formulaire).getByLabelText('Année de fin de l‘action')
@@ -227,7 +270,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(budgetGlobalDeLAction).toHaveValue(50000)
       const premierBeneficiaire = within(formulaire).getByRole('link', { name: 'Rhône (69)' })
       expect(premierBeneficiaire).toHaveAttribute('href', '/gouvernance/69/membre/membreFooId3')
-      const listeCofinancements = within(formulaire).getAllByRole('listitem')
+      const ulCofinanceurs = within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       expect(listeCofinancements).toHaveLength(4)
       const premierCofinancement = within(listeCofinancements[0]).getByText('Budget prévisionnel 2024')
       expect(premierCofinancement).toBeInTheDocument()
@@ -251,17 +295,22 @@ describe('formulaire d‘ajout d‘une action', () => {
 
     it('étant un utilisateur, lorsque je clique sur le bouton supprimer un cofinancement dans le formulaire de création, alors le cofinancement est supprimé', async () => {
       // GIVEN
-      afficherFormulaireDeCreationAction()
+      afficherFormulaireDeCreationAction(undefined,  {
+        porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
+          { nom : 'CC des Monts du Lyonnais', roles: [], uid: 'cc_id' },
+        ],
+      })
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
       jeTapeLeBudgetGlobalDeLAction(formulaire)
       jOuvreLeFormulairePourAjouterUnCoFinancement()
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter un co-financement' })
-      jeCreeUnCofinancementDansLeDrawer(drawer)
+      await jeCreeUnCofinancementDansLeDrawer(drawer)
       const boutonEnregistrer = within(drawer).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(boutonEnregistrer)
-      const listeCofinancements = await within(formulaire).findAllByRole('listitem')
+      const ulCofinanceurs = within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       const boutonSupprimerCofinancement = within(listeCofinancements[0]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(boutonSupprimerCofinancement)
 
@@ -276,7 +325,8 @@ describe('formulaire d‘ajout d‘une action', () => {
 
       // WHEN
       const formulaire = screen.getByRole('form', { name: 'Modifier une action' })
-      const listeCofinancements = within(formulaire).getAllByRole('listitem')
+      const ulCofinanceurs =within(formulaire).getByTestId('liste-cofinanceurs')
+      const listeCofinancements = within(ulCofinanceurs).getAllByRole('listitem')
       const boutonSupprimerCofinancement = within(listeCofinancements[3]).getByRole('button', { name: 'Supprimer' })
       fireEvent.click(boutonSupprimerCofinancement)
 
@@ -309,6 +359,24 @@ describe('formulaire d‘ajout d‘une action', () => {
           anneeDeDebut: '2026',
           anneeDeFin: '2028',
           budgetGlobal: 1000,
+          coFinancements: [
+            {
+              coFinanceur: 'Cofinanceur 1',
+              montant: '20000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 2',
+              montant: '10000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 3',
+              montant: '5000',
+            },
+            {
+              coFinanceur: 'Cofinanceur 4',
+              montant: '5000',
+            },
+          ],
           contexte: '<p>Contexte de l‘action</p>',
           description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
@@ -339,6 +407,7 @@ describe('formulaire d‘ajout d‘une action', () => {
         <AjouterUneAction
           action={actionViewModelFactory()}
           date={epochTime}
+          uidFeuilleDeRoute="uidFeuilleDeRoute"
         />,
         { ajouterUneActionAction }
       )
@@ -358,6 +427,7 @@ describe('formulaire d‘ajout d‘une action', () => {
         <AjouterUneAction
           action={actionVideViewModelFactory()}
           date={epochTime}
+          uidFeuilleDeRoute="uidFeuilleDeRoute"
         />,
         { ajouterUneActionAction }
       )
@@ -517,35 +587,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(deuxiemeBesoin).toBeInTheDocument()
     })
   })
-
-  it('étant un utilisateur et ayant enregistrer des beneficiaires au préalable, quand j’efface les beneficiaires sans enregistrer puis que je ferme le drawer et le(s) besoin(s) sont toujours afficher', () => {
-    // GIVEN
-    afficherFormulaireDeCreationAction(undefined, {
-      porteursPotentielsNouvellesFeuillesDeRouteOuActions : [
-        { nom : 'beneficiaire1', roles: [], uid: '88438c43-e143-4792-b968-07875ebc96b0' },
-        { nom : 'beneficiaire2', roles: [], uid: '1e85b91c-51bd-4f74-b3e1-3c70f6ca7251' },
-      ],
-    })
-
-    // WHEN
-    jOuvreLeFormulairePourAjouterDesBeneficiaires()
-    const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
-    jeCoche('beneficiaire1')
-    jeCoche('beneficiaire2')
-    jEnregistre()
-    jOuvreLeFormulairePourModifierDesBeneficiaires()
-    jEfface()
-
-    // THEN
-    expect(drawer).toBeVisible()
-    const formulaire = screen.getByRole('form', { name: 'Ajouter une action à la feuille de route' })
-    const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des bénéficiaires des fonds', name: 'Modifier' })
-    expect(boutonAjouter).toBeInTheDocument()
-    const premierBesoin = within(formulaire).getByText('beneficiaire1', { selector: 'a' })
-    expect(premierBesoin).toBeInTheDocument()
-    const deuxiemeBesoin = within(formulaire).getByText('beneficiaire2', { selector: 'a' })
-    expect(deuxiemeBesoin).toBeInTheDocument()
-  })
 })
 
 export function afficherFormulaireDeCreationAction(
@@ -617,6 +658,7 @@ export function afficherFormulaireDeCreationAction(
     <AjouterUneAction
       action={actionVideViewModelFactory()}
       date={epochTime}
+      uidFeuilleDeRoute="uidFeuilleDeRoute"
     />,
     options,
     gouvernanceViewModel
@@ -676,10 +718,11 @@ export function jOuvreLeFormulairePourAjouterUnCoFinancement(): void {
   fireEvent.click(boutonAjouterUnCoFinanacement)
 }
 
-export function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): void {
+export async function jeCreeUnCofinancementDansLeDrawer(drawer: HTMLElement): Promise<void> {
   const selecteurOrigineDuFinancement = within(drawer).getByRole('combobox', { name: 'Membre de la gouvernance' })
-  fireEvent.change(selecteurOrigineDuFinancement, { target: { value: 'CC des Monts du Lyonnais' } })
-  const montantDuFinancement = within(drawer).getByRole('spinbutton', { name: /Montant du financement \*/ })
+  await userEvent.selectOptions(selecteurOrigineDuFinancement, 'CC des Monts du Lyonnais')
+
+  const montantDuFinancement = within(drawer).getByRole('textbox', { name: /Montant du financement \*/ })
   fireEvent.change(montantDuFinancement, { target: { value: 1000 } })
 }
 
@@ -689,7 +732,11 @@ function afficherFormulaireDeCreationValidation(
   const validerFormulaire = async (
     event: FormEvent<HTMLFormElement>,
     contexte: string,
-    description: string
+    description: string,
+    coFinancements: ReadonlyArray<{
+      coFinanceur: string
+      montant: string
+    }>
   ): Promise<void> => {
     event.preventDefault()
     const formData = new FormData(event.target as HTMLFormElement)
@@ -697,6 +744,7 @@ function afficherFormulaireDeCreationValidation(
       anneeDeDebut: formData.get('anneeDeDebut') as string,
       anneeDeFin: undefined,
       budgetGlobal: Number(formData.get('budgetGlobal')),
+      coFinancements,
       contexte,
       description,
       destinataires: [],
@@ -709,12 +757,9 @@ function afficherFormulaireDeCreationValidation(
   renderComponent(
     <FormulaireAction
       action={actionViewModelFactory()}
-      cofinancements={[]}
+      ajouterDemandeDeSubvention={vi.fn<() => void>()}
       date={epochTime}
-      drawerId=""
       label="Ajouter une action à la feuille de route"
-      setIsDrawerOpen={vi.fn<() => void>()}
-      supprimerUnCofinancement={vi.fn<() => void>()}
       validerFormulaire={validerFormulaire}
     >
       <SubmitButton
@@ -776,17 +821,12 @@ function jOuvreLeFormulairePourAjouterDesBesoins(): void {
 function jOuvreLeFormulairePourAjouterDesPorteurs(): void {
   presserLeBouton('Ajouter', 'Ajouter des porteurs')
 }
-function jOuvreLeFormulairePourAjouterDesBeneficiaires(): void {
-  presserLeBouton('Ajouter', 'Ajouter des bénéficiaires des fonds')
-}
+
 function jOuvreLeFormulairePourModifierDesBesoins(): void {
   presserLeBouton('Modifier', 'Modifier les besoins')
 }
 function jOuvreLeFormulairePourModifierDesPorteurs(): void {
   presserLeBouton('Modifier', 'Ajouter des porteurs')
-}
-function jOuvreLeFormulairePourModifierDesBeneficiaires(): void {
-  presserLeBouton('Modifier', 'Ajouter des bénéficiaires des fonds')
 }
 
 function jEnregistre(): void {

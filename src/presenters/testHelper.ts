@@ -111,7 +111,6 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
   return {
     anneeDeDebut: '2025',
     anneeDeFin: '2026',
-    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -178,26 +177,28 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
       ],
     },
     budgetGlobal: 50000,
-    budgetPrevisionnel: [
+    cofinancements: [
       {
-        coFinanceur: 'Budget prévisionnel 2024',
-        montant: '20 000 €',
+        coFinanceur: 'Cofinanceur 1',
+        montant: '20000',
       },
       {
-        coFinanceur: 'Subvention de prestation',
-        montant: '10 000 €',
+        coFinanceur: 'Cofinanceur 2',
+        montant: '10000',
       },
       {
-        coFinanceur: 'CC des Monts du Lyonnais',
-        montant: '5 000 €',
+        coFinanceur: 'Cofinanceur 3',
+        montant: '5000',
       },
       {
-        coFinanceur: 'Croix Rouge Française',
-        montant: '5 000 €',
+        coFinanceur: 'Cofinanceur 4',
+        montant: '5000',
       },
     ],
     contexte: '<p>Contexte de l‘action</p>',
+
     description: '<p><strong>Description de l‘action.</strong></p>',
+    destinataires: [],
     enveloppes,
     hasBesoins: true,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
@@ -214,8 +215,8 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     },
     temporalite: 'pluriannuelle',
     totaux: {
-      coFinancement: '30 000 €',
-      financementAccorde: '40 000 €',
+      coFinancement: '30000',
+      financementAccorde: '40000',
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
@@ -227,7 +228,6 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
 export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> = {}): ActionViewModel {
   return {
     anneeDeDebut: '2025',
-    beneficiaires: [],
     besoins: {
       financements: [
         {
@@ -262,9 +262,10 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
       ],
     },
     budgetGlobal: 0,
-    budgetPrevisionnel: [],
+    cofinancements: [],
     contexte: '',
     description: '',
+    destinataires: [],
     enveloppes,
     hasBesoins: false,
     lienPourModifier: '/gouvernance/11/feuille-de-route/116/action/actionFooId1/modifier',
@@ -279,8 +280,8 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     },
     temporalite: 'annuelle',
     totaux: {
-      coFinancement: '0 €',
-      financementAccorde: '0 €',
+      coFinancement: '0',
+      financementAccorde: '0',
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
