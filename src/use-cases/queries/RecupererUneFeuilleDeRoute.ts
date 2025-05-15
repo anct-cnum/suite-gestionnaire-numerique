@@ -25,6 +25,7 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
       uid: string
     }>
     statut: StatutSubvention
+    subventionDemandee: number
     uid: string
   }>
   beneficiaire: number

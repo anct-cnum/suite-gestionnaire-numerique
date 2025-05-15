@@ -428,6 +428,7 @@ export function feuilleDeRouteReadModelFactory(
           },
         ],
         statut: 'acceptee',
+        subventionDemandee: 40_000,
         uid: 'actionFooId1',
       },
       {
@@ -447,6 +448,7 @@ export function feuilleDeRouteReadModelFactory(
         nom: 'Structurer une filière de reconditionnement locale 2',
         porteurs: [],
         statut: 'acceptee',
+        subventionDemandee: 40_000,
         uid: 'actionFooId2',
       },
     ],

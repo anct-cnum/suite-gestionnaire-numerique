@@ -136,7 +136,9 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         coFinanceur: `${action.coFinancement.financeur} co-financeur${formatPluriel(action.coFinancement.financeur)}`,
         enveloppe: action.enveloppe.libelle,
         montant: formatMontant(action.enveloppe.montant),
-        total: formatMontant(action.budgetPrevisionnel),
+        total: action.isEnveloppeFormation
+          ? formatMontant(action.subventionDemandee)
+          : formatMontant(action.budgetPrevisionnel),
       },
       icone,
       nom: action.nom,
