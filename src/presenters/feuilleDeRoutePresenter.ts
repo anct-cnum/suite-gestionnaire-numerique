@@ -135,10 +135,10 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         coFinancement: formatMontant(action.coFinancement.montant),
         coFinanceur: `${action.coFinancement.financeur} co-financeur${formatPluriel(action.coFinancement.financeur)}`,
         enveloppe: action.enveloppe.libelle,
-        montant: formatMontant(action.enveloppe.montant),
-        total: action.isEnveloppeFormation
+        montant: action.isEnveloppeFormation
           ? formatMontant(action.subventionDemandee)
-          : formatMontant(action.budgetPrevisionnel),
+          : formatMontant(action.enveloppe.montant),
+        total: formatMontant(action.budgetPrevisionnel),
       },
       icone,
       nom: action.nom,
