@@ -45,7 +45,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </PageTitle>
       <section
         aria-labelledby="taches"
-        className="fr-mb-4w"
+        className={`fr-mb-4w ${styles.hidden}`}
       >
         <h2
           className="fr-h4 color-blue-france fr-m-0"
@@ -275,7 +275,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </section>
       <section
         aria-labelledby="conventionnements"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
+        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
@@ -368,7 +368,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </section>
       <section
         aria-labelledby="beneficiaires"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
+        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
       >
         <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
           <div className="fr-grid-row fr-grid-row--middle">
