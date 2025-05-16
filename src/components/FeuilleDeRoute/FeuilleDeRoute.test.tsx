@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 
 import FeuilleDeRoute from './FeuilleDeRoute'
-import { matchWithoutMarkup } from '../testHelper'
+import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
 import { feuilleDeRoutePresenter } from '@/presenters/feuilleDeRoutePresenter'
 import { feuilleDeRouteReadModelFactory, gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
@@ -49,6 +49,9 @@ describe('feuille de route', () => {
     const ouvrirPdf = screen.getByRole('link', { name: 'Ouvrir le pdf' })
     expect(ouvrirPdf).toHaveAttribute('href', '/api/document-feuille-de-route/user/fooId/feuille-de-route-fake.pdf')
     expect(ouvrirPdf).toOpenInNewTab('Ouvrir le pdf')
+    const supprimerDocument = screen.getByRole('button', { name: 'Supprimer feuille-de-route-fake.pdf' })
+    expect(supprimerDocument).toBeEnabled()
+    expect(supprimerDocument).toHaveAttribute('type', 'button')
 
     const sectionActions = screen.getByRole('region', { name: '2 actions pour cette feuille de route' })
     const enTeteActions = within(sectionActions).getAllByRole('banner')
@@ -168,5 +171,45 @@ describe('feuille de route', () => {
     // THEN
     const porteur = screen.getByTitle('Aucun responsable de la feuille de route')
     expect(porteur).toBeInTheDocument()
+  })
+
+  it('quand je clique sur le bouton supprimer le document, alors le document est supprimé', async () => {
+    // GIVEN
+    const supprimerDocumentAction = stubbedServerAction(['OK'])
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(), gouvernanceReadModelFactory())
+
+    // WHEN
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, { supprimerDocumentAction })
+
+    const supprimerDocument = screen.getByRole('button', { name: 'Supprimer feuille-de-route-fake.pdf' })
+    fireEvent.click(supprimerDocument)
+
+    // THEN
+    expect(supprimerDocumentAction).toHaveBeenCalledWith({
+      path: '/',
+      uidFeuilleDeRoute: viewModel.uidFeuilleDeRoute,
+    })
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Document supprimé')
+  })
+
+  it('quand je clique sur le bouton supprimer le document mais qu‘une erreur intervient, alors une notification d‘erreur s‘affiche', async () => {
+    // GIVEN
+    const supprimerDocumentAction = stubbedServerAction(['Le document est introuvable', 'Erreur de permission'])
+    const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(), gouvernanceReadModelFactory())
+
+    // WHEN
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />, { supprimerDocumentAction })
+
+    const supprimerDocument = screen.getByRole('button', { name: 'Supprimer feuille-de-route-fake.pdf' })
+    fireEvent.click(supprimerDocument)
+
+    // THEN
+    expect(supprimerDocumentAction).toHaveBeenCalledWith({
+      path: '/',
+      uidFeuilleDeRoute: viewModel.uidFeuilleDeRoute,
+    })
+    const notification = await screen.findByRole('alert')
+    expect(notification.textContent).toBe('Erreur : Le document est introuvable, Erreur de permission')
   })
 })

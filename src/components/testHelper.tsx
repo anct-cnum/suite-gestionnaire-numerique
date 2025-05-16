@@ -53,6 +53,7 @@ export function renderComponent(
     },
     searchParams: new URLSearchParams(),
     sessionUtilisateurViewModel: sessionUtilisateurViewModelFactory(),
+    supprimerDocumentAction: vi.fn(),
     supprimerMonCompteAction: vi.fn(),
     supprimerUnComiteAction: vi.fn(),
     supprimerUneNoteDeContexteAction: vi.fn(),

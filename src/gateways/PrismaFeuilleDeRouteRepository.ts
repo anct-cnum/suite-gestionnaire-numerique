@@ -67,6 +67,7 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
         nom: feuilleDeRoute.state.nom,
         noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation ?? null,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
+        pieceJointe: feuilleDeRoute.state.document?.chemin ?? null,
         porteurId: feuilleDeRoute.state.uidPorteur,
       },
       where: {

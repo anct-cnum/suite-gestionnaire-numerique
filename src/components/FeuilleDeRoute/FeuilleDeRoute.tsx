@@ -1,16 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useContext } from 'react'
 
 import AjouterUneNoteDeContextualisation from './AjouterUneNoteDeContextualisation'
 import styles from './FeuilleDeRoute.module.css'
 import ModifierUneFeuilleDeRoute from './ModifierUneFeuilleDeRoute'
 import ModifierUneNoteDeContextualisation from './ModifierUneNoteDeContextualisation'
 import Badge from '../shared/Badge/Badge'
+import { clientContext } from '../shared/ClientContext'
 import DocumentVide from '../shared/DocumentVide/DocumentVide'
 import Historique from '../shared/Historique/Historique'
 import Icon from '../shared/Icon/Icon'
+import { Notification } from '../shared/Notification/Notification'
 import OuvrirPdf from '../shared/OuvrirPdf/OuvrirPdf'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
@@ -20,6 +22,8 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 import { isNullish } from '@/shared/lang'
 
 export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
+  const { pathname, supprimerDocumentAction } = useContext(clientContext)
+
   return (
     <div className="fr-grid-row fr-grid-row--center">
       <div>
@@ -101,6 +105,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
               <OuvrirPdf
                 href={viewModel.document.href}
                 nom={viewModel.document.nom}
+                onDelete={async () => handleSupprimerDocument()}
               />
             ) : (
               <div className="fr-grid-row space-between">
@@ -301,6 +306,18 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
       </div>
     </div>
   )
+  async function handleSupprimerDocument(): Promise<void> {
+    const messages = await supprimerDocumentAction({
+      path: pathname,
+      uidFeuilleDeRoute: viewModel.uidFeuilleDeRoute,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'supprimé', title: 'Document ' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
 }
 
 type Props = Readonly<{

@@ -23,6 +23,7 @@ import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNo
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
+import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
 import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
@@ -65,6 +66,7 @@ export default function ClientContext({
       router,
       searchParams,
       sessionUtilisateurViewModel,
+      supprimerDocumentAction,
       supprimerMonCompteAction,
       supprimerUnComiteAction,
       supprimerUneNoteDeContexteAction,
@@ -108,6 +110,7 @@ export type ClientContextProviderValue = Readonly<{
   router: AppRouterInstance
   searchParams: URLSearchParams
   sessionUtilisateurViewModel: SessionUtilisateurViewModel
+  supprimerDocumentAction: typeof supprimerDocumentAction
   supprimerMonCompteAction: typeof supprimerMonCompteAction
   supprimerUnComiteAction: typeof supprimerUnComiteAction
   supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction

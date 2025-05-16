@@ -134,11 +134,11 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       },
       subventions: action.subvention ? [
         {
-          libelle: 'Subvention de prestation',
+          libelle: 'Prestation de service',
           montant: formatMontant(action.subvention.montants.prestation),
         },
         {
-          libelle: 'Subvention en ressource humaines',
+          libelle: 'Ressources humaine',
           montant: formatMontant(action.subvention.montants.ressourcesHumaines),
         },
       ] : [],
