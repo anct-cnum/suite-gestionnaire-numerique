@@ -19,7 +19,7 @@ describe('ajouter une action action', () => {
       budgetGlobal: 1000,
       coFinancements: [],
       contexte: 'Un contexte',
-      description: '',
+      description: 'Une description qui est obligatoire',
       destinataires: ['userFooId'],
       feuilleDeRoute: 'uidFeuilleDeRoute',
       gouvernance: 'gouvernanceFooId',

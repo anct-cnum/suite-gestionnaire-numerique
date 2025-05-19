@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client'
 
-import {  membreInclude } from './shared/MembresGouvernance'
+import {  membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 
@@ -18,19 +18,22 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
         montant: actionRecord.demandesDeSubvention[0].enveloppe.montant,
       }
       : { montant: 0 }
-
-    const porteurs = actionRecord.porteurAction .map(pa => ({
-      id: pa.membre.id,
-      lien: membreLink(uidGouvernance, pa.membre.id),
-      nom: pa.membre.relationContact.nom || '',
+    const porteursAvecNom = actionRecord.porteurAction.map(pa => toMembre(pa.membre))
+    
+    const porteurs = porteursAvecNom.map(pa => ({
+      id: pa.id,
+      lien: membreLink(uidGouvernance, pa.id),
+      nom: pa.nom,
     }))
 
-    const destinataires = actionRecord.demandesDeSubvention.flatMap(ds =>
-      ds.beneficiaire.map(beneficiaire => ({
-        id: beneficiaire.membre.id,
-        lien: membreLink(uidGouvernance, beneficiaire.membre.id),
-        nom: beneficiaire.membre.relationContact.nom || '',
-      })))
+    const destinatairesAvecNom = actionRecord.demandesDeSubvention.flatMap(ds =>
+      ds.beneficiaire.map(beneficiaire => toMembre(beneficiaire.membre)))
+      
+    const destinataires = destinatairesAvecNom.map(pa => ({
+      id: pa.id,
+      lien: membreLink(uidGouvernance, pa.id),
+      nom: pa.nom,
+    }))
 
     return {
       anneeDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
