@@ -37,7 +37,7 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
     return actionARemplir(undefined)
   }
 
-  const besoins = transformBesoins(action.besoins)
+  const besoins = transformBesoins(action.besoins as Array<BesoinsPossible>)
   const demandeDeSubventionAction = action.demandeDeSubvention
   let demandeDeSubvention : DemandeDeSubvention | undefined
   if (demandeDeSubventionAction) {
@@ -127,7 +127,7 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
-    besoins: transformBesoins(action?.besoins),
+    besoins: transformBesoins(action?.besoins as Array<BesoinsPossible>),
     budgetGlobal: 0,
     cofinancements: [],
     contexte: '',
@@ -140,13 +140,13 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
         {
           isSelected: false,
           label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
+          value: BesoinsPossible.STRUCTURER_UN_FONDS,
         }],
       formations: [
         {
           isSelected: false,
           label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
+          value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
         }],
       formationsProfessionnels: [],
       outillages: [],
@@ -176,7 +176,7 @@ export type BesoinsPotentielle = LabelValue<BesoinsPossible>
 
 export type Besoins = ReadonlyArray<BesoinsPotentielle>
 
-export function transformBesoins(actionBesoins: Array<string> = []): {
+export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
   financements: Besoins
   formations: Besoins
   formationsProfessionnels: Besoins
@@ -185,65 +185,65 @@ export function transformBesoins(actionBesoins: Array<string> = []): {
   return {
     financements: [
       {
-        isSelected: actionBesoins.includes('structurer_fond_local'),
+        isSelected: actionBesoins.includes(BesoinsPossible.STRUCTURER_UN_FONDS),
         label: 'Structurer un fond local pour l’inclusion numérique',
-        value: 'structurer_fond_local',
+        value: BesoinsPossible.STRUCTURER_UN_FONDS,
       },
       {
-        isSelected: actionBesoins.includes('monter_dossier_subvention'),
+        isSelected: actionBesoins.includes(BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION),
         label: 'Monter des dossiers de subvention complexes',
-        value: 'monter_dossier_subvention',
+        value: BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION,
       },
       {
-        isSelected: actionBesoins.includes('animer_et_mettre_en_oeuvre_gouvernance'),
+        isSelected: actionBesoins.includes(BesoinsPossible.ANIMER_LA_GOUVERNANCE),
         label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-        value: 'animer_et_mettre_en_oeuvre_gouvernance',
+        value: BesoinsPossible.ANIMER_LA_GOUVERNANCE,
       },
     ],
     formations: [
       {
-        isSelected: actionBesoins.includes('etablir_diagnostic_territorial'),
+        isSelected: actionBesoins.includes(BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL),
         label: 'Établir un diagnostic territorial',
-        value: 'etablir_diagnostic_territorial',
+        value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
       },
       {
-        isSelected: actionBesoins.includes('coconstruire_feuille_avec_membres'),
+        isSelected: actionBesoins.includes(BesoinsPossible.CO_CONSTRUIRE_LA_FEUILLE_DE_ROUTE),
         label: 'Co-construire la feuille de route avec les membres',
-        value: 'coconstruire_feuille_avec_membres',
+        value: BesoinsPossible.CO_CONSTRUIRE_LA_FEUILLE_DE_ROUTE,
       },
       {
-        isSelected: actionBesoins.includes('rediger_feuille'),
+        isSelected: actionBesoins.includes(BesoinsPossible.REDIGER_LA_FEUILLE_DE_ROUTE),
         label: 'Rédiger la feuille de route',
-        value: 'rediger_feuille',
+        value: BesoinsPossible.REDIGER_LA_FEUILLE_DE_ROUTE,
       },
-      {
-        isSelected: actionBesoins.includes('appui_juridique_dedie_gouvernance'),
+      { 
+        isSelected: actionBesoins.includes(BesoinsPossible.APPUI_JURIDIQUE),
         label: 'Appui juridique dédié à la gouvernance',
-        value: 'appui_juridique_dedie_gouvernance',
+        value: BesoinsPossible.APPUI_JURIDIQUE,
       },
     ],
     formationsProfessionnels: [
       {
-        isSelected: actionBesoins.includes('appuyer_certification_qualiopi'),
+        isSelected: actionBesoins.includes(BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI),
         label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-        value: 'appuyer_certification_qualiopi',
+        value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
       },
     ],
     outillages: [
       {
-        isSelected: actionBesoins.includes('structurer_filiere_reconditionnement_locale'),
+        isSelected: actionBesoins.includes(BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT),
         label: 'Structurer une filière de reconditionnement locale',
-        value: 'structurer_filiere_reconditionnement_locale',
+        value: BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT,
       },
-      {
-        isSelected: actionBesoins.includes('collecter_donnees_territoriales'),
+      { 
+        isSelected: actionBesoins.includes(BesoinsPossible.COLLECTER_DES_DONNEES_TERRITORIALES),
         label: 'Collecter des données territoriales pour alimenter un hub national',
-        value: 'collecter_donnees_territoriales',
+        value: BesoinsPossible.COLLECTER_DES_DONNEES_TERRITORIALES,
       },
       {
-        isSelected: actionBesoins.includes('sensibiliser_acteurs'),
+        isSelected: actionBesoins.includes(BesoinsPossible.SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS),
         label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-        value: 'sensibiliser_acteurs',
+        value: BesoinsPossible.SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS,
       },
     ],
   }
