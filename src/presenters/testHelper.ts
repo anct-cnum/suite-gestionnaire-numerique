@@ -6,6 +6,7 @@ import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
+import { BesoinsPossible } from '@/use-cases/queries/RecupererUneAction'
 
 const enveloppes: ActionViewModel['enveloppes'] = [
   {
@@ -116,63 +117,63 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
         {
           isSelected: false,
           label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
+          value: BesoinsPossible.STRUCTURER_UN_FONDS,
         },
         {
           isSelected: true,
           label: 'Monter des dossiers de subvention complexes',
-          value: 'monter_dossier_subvention',
+          value: BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION,
         },
         {
           isSelected: false,
           label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-          value: 'animer_et_mettre_en_oeuvre_gouvernance',
+          value: BesoinsPossible.ANIMER_LA_GOUVERNANCE,
         },
       ],
       formations: [
         {
           isSelected: false,
           label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
+          value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
         },
         {
           isSelected: true,
           label: 'Co-construire la feuille de route avec les membres',
-          value: 'coconstruire_feuille_avec_membres',
+          value: BesoinsPossible.CO_CONSTRUIRE_LA_FEUILLE_DE_ROUTE,
         },
         {
           isSelected: false,
           label: 'Rédiger la feuille de route',
-          value: 'rediger_feuille',
+          value: BesoinsPossible.REDIGER_LA_FEUILLE_DE_ROUTE,
         },
         {
           isSelected: false,
           label: 'Appui juridique dédié à la gouvernance',
-          value: 'appui_juridique_dedie_gouvernance',
+          value: BesoinsPossible.APPUI_JURIDIQUE,
         },
       ],
       formationsProfessionnels: [
         {
           isSelected: false,
           label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-          value: 'appuyer_certification_qualiopi',
+          value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
         },
       ],
       outillages: [
         {
           isSelected: false,
           label: 'Structurer une filière de reconditionnement locale',
-          value: 'structurer_filiere_reconditionnement_locale',
+          value: BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT,
         },
         {
           isSelected: false,
           label: 'Collecter des données territoriales pour alimenter un hub national',
-          value: 'collecter_donnees_territoriales',
+          value: BesoinsPossible.COLLECTER_DES_DONNEES_TERRITORIALES,
         },
         {
           isSelected: false,
           label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-          value: 'sensibiliser_acteurs',
+          value: BesoinsPossible.SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS,
         },
       ],
     },
@@ -233,31 +234,31 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
         {
           isSelected: false,
           label: 'Structurer un fond local pour l’inclusion numérique',
-          value: 'structurer_fond_local',
+          value: BesoinsPossible.STRUCTURER_UN_FONDS,
         },
         {
           isSelected: false,
           label: 'Monter des dossiers de subvention complexes',
-          value: 'monter_dossier_subvention',
+          value: BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION,
         },
       ],
       formations: [
         {
           isSelected: false,
           label: 'Établir un diagnostic territorial',
-          value: 'etablir_diagnostic_territorial',
+          value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
         },
       ],
       formationsProfessionnels: [{
         isSelected: false,
         label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-        value: 'appuyer_certification_qualiopi',
+        value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
       }],
       outillages: [
         {
           isSelected: false,
           label: 'Structurer une filière de reconditionnement locale',
-          value: 'structurer_filiere_reconditionnement_locale',
+          value: BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT,
         },
       ],
     },
