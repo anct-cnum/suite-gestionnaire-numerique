@@ -262,6 +262,7 @@ describe('récupérer les feuilles de route loader', () => {
         {
           nom: 'Emmaüs Connect',
           roles: [
+            'cofinanceur',
             'formation',
           ],
           uid: 'structure-79227291600034-93',

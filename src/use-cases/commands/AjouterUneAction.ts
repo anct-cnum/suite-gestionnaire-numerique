@@ -8,7 +8,6 @@ import {
   UpdateFeuilleDeRouteRepository,
 } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
-import { MembreDepartementRepository } from './shared/MembreDepartementRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
@@ -25,7 +24,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
   readonly #demandeDeSubventionRepository: DemandeDeSubventionRepository
   readonly #feuilleDeRouteRepository: FeuilleDeRouteRepository
   readonly #gouvernanceRepository: GouvernanceRepository
-  readonly #membreRepository: MembreDepartementRepository
   readonly #transactionRepository: TransactionRepository
   readonly #utilisateurRepository: GetUtilisateurRepository
 
@@ -36,7 +34,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
     actionRepository: ActionRepository,
     demandeDeSubventionRepository: DemandeDeSubventionRepository,
     coFinancementRepository: CoFinancementRepository,
-    membreRepository: MembreDepartementRepository,
     transactionRepository: TransactionRepository,
     date: Date
   ) {
@@ -46,7 +43,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#actionRepository = actionRepository
     this.#demandeDeSubventionRepository = demandeDeSubventionRepository
     this.#coFinancementRepository = coFinancementRepository
-    this.#membreRepository = membreRepository
     this.#transactionRepository = transactionRepository
     this.#date = date
   }
@@ -134,7 +130,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return coFinancements
     }
 
-    return this.persistAction(action, demandeDeSubvention, coFinancements, command, feuilleDeRoute, editeur)
+    return this.persistAction(action, demandeDeSubvention, coFinancements, feuilleDeRoute, editeur)
   }
   
   // Pour l'instant : 1 action = 0 ou 1 demande de subvention. On associe les destinataires à cette demande.
@@ -172,7 +168,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
   private async persistAction(
     action: Action, demandeDeSubvention: DemandeDeSubvention | null,
     coFinancements: Array<CoFinancement>, 
-    command : Command,
     feuilleDeRoute: FeuilleDeRoute, editeur: Utilisateur
   ): Promise<'OK' | Failure> {
     await this.#transactionRepository.transaction(async (tx) => {
@@ -194,21 +189,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
         }
 
         await this.#coFinancementRepository.add(updatedCoFinancement, tx)
-
-        const membreExistant = await this.#membreRepository.get(
-          updatedCoFinancement.state.uidMembre,
-          command.uidGouvernance,
-          tx
-        )
-        const estDejaFinanceur = membreExistant ? membreExistant.state.roles.includes('Financeur') : false
-        if (!estDejaFinanceur) {
-          await this.#membreRepository.add(
-            updatedCoFinancement.state.uidMembre,
-            command.uidGouvernance,
-            'Financeur',
-            tx
-          )
-        }
       }
 
       const feuilleDeRouteAJour = feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(

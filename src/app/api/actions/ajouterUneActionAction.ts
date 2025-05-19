@@ -10,7 +10,6 @@ import { PrismaCoFinancementRepository } from '@/gateways/PrismaCoFinancementRep
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
-import { PrismaMembreDepartementRepository } from '@/gateways/PrismaMembreDepartementRepository'
 import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { Enveloppe } from '@/presenters/actionPresenter'
@@ -75,7 +74,6 @@ export async function ajouterUneActionAction(
     new PrismaActionRepository(),
     new PrismaDemandeDeSubventionRepository(),
     new PrismaCoFinancementRepository(),
-    new PrismaMembreDepartementRepository(),
     new PrismaTransactionRepository(),
     new Date()
   ).handle(command)
