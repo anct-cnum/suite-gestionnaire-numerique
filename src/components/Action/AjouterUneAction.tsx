@@ -62,12 +62,12 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       contexte: contexteContenu,
       demandeDeSubvention,
       description: descriptionContenu,
-      destinataires: form.getAll('porteurs') as Array<string>,
+      destinataires: form.getAll('beneficiaires') as Array<string>,
       feuilleDeRoute: uidFeuilleDeRoute,
       gouvernance : gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
       path: pathname,
-      porteurs: form.getAll('beneficiaires') as Array<string>,
+      porteurs: form.getAll('porteurs') as Array<string>,
     })
     setIsDisabled(false)
 
