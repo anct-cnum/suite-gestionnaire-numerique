@@ -10,7 +10,9 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         membres: {
-          include: membreInclude,
+          include: {
+            ...membreInclude,
+          },
           orderBy: {
             id: 'asc',
           },
@@ -33,7 +35,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
         .toSorted(alphaAsc('nom'))
         .toSorted(byPredicate(isCoporteur))
         .toSorted(byPredicate(isPrefectureDepartementale))
-        .map(toMesMembresReadModel),
+        .map(membre => toMesMembresReadModel(membre)),
       roles: [],
       typologies: [],
       uidGouvernance: codeDepartementGouvernance,

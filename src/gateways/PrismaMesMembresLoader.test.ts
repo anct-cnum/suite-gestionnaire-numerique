@@ -1,7 +1,16 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'
-import { creerMembres, creerUnDepartement, creerUneGouvernance, creerUneRegion } from './testHelper'
+import {
+  creerMembres,
+  creerUnCoFinancement,
+  creerUnDepartement,
+  creerUneAction,
+  creerUneFeuilleDeRoute,
+  creerUneGouvernance,
+  creerUneRegion,
+  creerUnUtilisateur,
+} from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MesMembresReadModel } from '@/use-cases/queries/RecupererMesMembres'
 
@@ -18,6 +27,28 @@ describe('mes membres loader', () => {
     await creerUnDepartement({ code: '69', nom: 'Rhône', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerMembres('69')
+    await creerUnUtilisateur({ id: 1 })
+
+    // Création d'une feuille de route et d'un cofinancement
+    await creerUneFeuilleDeRoute({
+      gouvernanceDepartementCode: '69',
+      id: 1,
+      nom: 'Feuille de route test',
+    })
+
+    await creerUneAction({
+      budgetGlobal: 50000,
+      createurId: 1,
+      feuilleDeRouteId: 1,
+      id: 1,
+      nom: 'Action test',
+    })
+
+    await creerUnCoFinancement({
+      actionId: 1,
+      memberId: 'commune-35345-69',
+      montant: 15000,
+    })
 
     // WHEN
     const mesMembresReadModel = await new PrismaMesMembresLoader().get('69')
@@ -128,6 +159,7 @@ describe('mes membres loader', () => {
           nom: 'Trévérien',
           roles: [
             'beneficiaire',
+            'cofinanceur',
             'coporteur',
             'recipiendaire',
           ],
