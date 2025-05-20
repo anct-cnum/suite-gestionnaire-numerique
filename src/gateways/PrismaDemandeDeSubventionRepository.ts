@@ -2,11 +2,19 @@ import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
-import { AddDemandeDeSubventionRepository } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
+import {
+  AddDemandeDeSubventionRepository,
+  //GetDemandeDeSubventionRepository,
+} from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
-export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventionRepository {
+export class PrismaDemandeDeSubventionRepository
+implements AddDemandeDeSubventionRepository
+{
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
+  async add(
+    demandeDeSubvention: DemandeDeSubvention,
+    tx?: Prisma.TransactionClient
+  ): Promise<boolean> {
     const client = tx ?? prisma
 
     const utilisateurResource = client.utilisateurRecord
@@ -32,7 +40,7 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
 
     // Création des associations avec les bénéficiaires
     await Promise.all(
-      demandeDeSubvention.state.beneficiaires.map(async beneficiaireId =>
+      demandeDeSubvention.state.beneficiaires.map(async (beneficiaireId) =>
         client.beneficiaireSubventionRecord.create({
           data: {
             demandeDeSubventionId: demande.id,
@@ -43,4 +51,31 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
 
     return true
   }
+
+  // async get(
+  //   actionUid: ActionUid,
+  //   tx?: Prisma.TransactionClient
+  // ): Promise<DemandeDeSubvention> {
+  //   const client = tx ?? prisma
+  //   const demandeDeSubvention = client.demandeDeSubventionRecord
+  //   const demande = await demandeDeSubvention.findUniqueOrThrow({
+  //     where: {
+  //       actionId: actionUid.state.value,
+  //     },
+  //   })
+
+  // return DemandeDeSubvention.create(
+  //   "beneficiaires",
+  //   demande.dateDeCreation,
+  //   derniereModification,
+  //   demande.st,
+  //   subventionDemandee,
+  //   subventionEtp,
+  //   subventionPrestation,
+  //   uid,
+  //   uidAction,
+  //   uidCreateur,
+  //   uidEnveloppeFinancement,
+  // )
+  //}
 }

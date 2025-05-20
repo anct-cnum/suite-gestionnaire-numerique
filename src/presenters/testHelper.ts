@@ -309,6 +309,7 @@ export function feuilleDeRouteViewModelFactory(
           montant: formatMontant(20_000),
           total: formatMontant(100_000),
         },
+        estSupprimable: true,
         icone: actionStatutViewModelByStatut.enCours,
         nom: 'Structurer une filière de reconditionnement locale',
         porteurs: [{
@@ -328,6 +329,7 @@ export function feuilleDeRouteViewModelFactory(
           montant: formatMontant(20_000),
           total: formatMontant(20_000),
         },
+        estSupprimable: true,
         icone: actionStatutViewModelByStatut.enCours,
         nom: 'Formation Aidants Connect',
         porteurs: [{

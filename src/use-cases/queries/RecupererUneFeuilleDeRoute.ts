@@ -4,30 +4,32 @@ export interface UneFeuilleDeRouteLoader {
   get(codeDepartement: string, uidFeuilleDeRoute: string): Promise<UneFeuilleDeRouteReadModel>
 }
 
-export type UneFeuilleDeRouteReadModel = Readonly<{
-  actions: ReadonlyArray<{
-    beneficiaire: number
-    besoins: ReadonlyArray<string>
-    budgetPrevisionnel: number
-    coFinancement: Readonly<{
-      financeur: number
-      montant: number
-    }>
-    enveloppe: Readonly<{
-      libelle: string
-      montant: number
-    }>
-    isEditable: boolean
-    isEnveloppeFormation: boolean
+export interface ActionFeuilleDeRouteReadModel {
+  beneficiaire: number
+  besoins: ReadonlyArray<string>
+  budgetPrevisionnel: number
+  coFinancement: Readonly<{
+    financeur: number
+    montant: number
+  }>
+  enveloppe: Readonly<{
+    libelle: string
+    montant: number
+  }>
+  isEditable: boolean
+  isEnveloppeFormation: boolean
+  nom: string
+  porteurs: ReadonlyArray<{
     nom: string
-    porteurs: ReadonlyArray<{
-      nom: string
-      uid: string
-    }>
-    statut: StatutSubvention
-    subventionDemandee: number
     uid: string
   }>
+  statut: StatutSubvention
+  subventionDemandee: number
+  uid: string
+}
+
+export type UneFeuilleDeRouteReadModel = Readonly<{
+  actions: ReadonlyArray<ActionFeuilleDeRouteReadModel>
   beneficiaire: number
   budgetTotalActions: number
   coFinanceur: number

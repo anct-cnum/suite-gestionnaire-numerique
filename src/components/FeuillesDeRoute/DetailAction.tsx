@@ -75,21 +75,23 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
             {action.libelleEnveloppe}
           </p>
           {action.budgetPrevisionnel.subventions.map((subvention) => (
-            <li
-              className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-ml-1w`}
-              key={subvention.libelle}
-            >
-              <span role="term">
-                <span className="fr-text--bold">
-                  ·
+            <ul key={action.uid+subvention.libelle}>
+              <li
+                className={`${styles.budget__subvention} fr-grid-row fr-btns-group--space-between fr-mb-1w fr-ml-1w`}
+                key={action.uid+subvention.libelle+ subvention.montant}
+              >
+                <span role="term">
+                  <span className="fr-text--bold">
+                    ·
+                  </span>
+                  {' '}
+                  {subvention.libelle}
                 </span>
-                {' '}
-                {subvention.libelle}
-              </span>
-              <span role="definition">
-                {subvention.montant}
-              </span>
-            </li>
+                <span role="definition">
+                  {subvention.montant}
+                </span>
+              </li>
+            </ul>
           ))}
         </li>
         <li className="fr-p-2w fr-text--bold">

@@ -11,13 +11,13 @@ import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DocumentVide from '../shared/DocumentVide/DocumentVide'
 import Historique from '../shared/Historique/Historique'
-import Icon from '../shared/Icon/Icon'
 import { Notification } from '../shared/Notification/Notification'
 import OuvrirPdf from '../shared/OuvrirPdf/OuvrirPdf'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import SupprimerUneAction from '@/components/Action/SupprimerUneAction'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 import { isNullish } from '@/shared/lang'
 
@@ -212,13 +212,14 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                       >
                         Modifier
                       </Link>
-                      <button
-                        className="fr-btn fr-btn--tertiary color-red"
-                        title={`Supprimer ${action.nom}`}
-                        type="button"
-                      >
-                        <Icon icon="delete-line" />
-                      </button>
+                      <SupprimerUneAction
+                        actionASupprimer={{
+                          estSupprimable: action.estSupprimable,
+                          nom : action.nom,
+                          uid : action.uid,
+                        }}
+                        id="supprimer-une-action"
+                      />
                     </div>
                   </div>
                   <h3

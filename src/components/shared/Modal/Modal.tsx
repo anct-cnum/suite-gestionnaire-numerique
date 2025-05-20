@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactElement } from 'react'
+import { PropsWithChildren, ReactElement, useEffect, useRef } from 'react'
 
 export default function Modal({
   children,
@@ -7,6 +7,33 @@ export default function Modal({
   isOpen,
   labelId,
 }: Props): ReactElement {
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const dialog = dialogRef.current
+
+    if (!dialog) {return}
+    console.log('ref dialog', dialog)
+    console.log(isOpen)
+    try{
+      if (isOpen) {
+        if (!dialog.open) {
+          console.log('Modal open')
+          dialog.showModal()
+        }else if (dialog.open){
+          dialog.close()
+          dialog.showModal()
+          console.log('qu es que tu fou là ?')
+        }
+      } else if (dialog.open) {
+        console.log('Modal close')
+        dialog.close()
+      }
+    } catch (e) {
+      console.error('Erreur ouverture modal :', e)
+    }
+    console.log('----fin --')
+  }, [isOpen])
+
   return (
     <dialog
       aria-labelledby={labelId}
@@ -14,6 +41,7 @@ export default function Modal({
       className="fr-modal"
       id={id}
       open={isOpen}
+      ref={dialogRef}
     >
       <div className="fr-container fr-container--fluid fr-container-md">
         <div className="fr-grid-row fr-grid-row--center">

@@ -5,7 +5,9 @@ import { HyperLink, LabelValue } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
-import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
+import {
+  UneFeuilleDeRouteReadModel,
+} from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
 export function feuilleDeRoutePresenter(
@@ -91,6 +93,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
       montant: string
       total: string
     }>
+    estSupprimable: boolean
     icone: ActionStatutViewModel
     nom: string
     porteurs: ReadonlyArray<HyperLink>
@@ -140,6 +143,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
           : formatMontant(action.enveloppe.montant),
         total: formatMontant(action.budgetPrevisionnel),
       },
+      estSupprimable: action.statut === 'deposee',
       icone,
       nom: action.nom,
       porteurs: action.porteurs.map((porteur) => ({
