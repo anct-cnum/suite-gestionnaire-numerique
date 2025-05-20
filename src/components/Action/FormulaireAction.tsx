@@ -7,6 +7,7 @@ import styles from './Action.module.css'
 import AjouterDesBesoins from './AjouterDesBesoins'
 import AjouterDesMembres from './AjouterDesMembres'
 import AjouterUnCoFinancement from './AjouterUnCoFinancement'
+import { AlertePrevisionnel } from './AlertePrevisionnel'
 import DemanderUneSubvention from './DemanderUneSubvention'
 import Badge from '../shared/Badge/Badge'
 import { MontantPositif } from '../shared/Montant/MontantPositif'
@@ -133,9 +134,15 @@ export function FormulaireAction({
   const toutEffacerBesoins = createToutEffacer()
 
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <form
       aria-label={label}
       className="fr-mt-5w"
+      onKeyDown={(event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault()
+        }
+      }}
       onSubmit={async (event) => {
         event.preventDefault()
         await validerFormulaire(
@@ -479,7 +486,13 @@ export function FormulaireAction({
               : null
           }
           <hr />
+          <AlertePrevisionnel 
+            budgetGlobal={budgetGlobal}
+            cofinancements={cofinancements}
+            demandeDeSubvention={localDemandeDeSubvention}
+          />
         </div>
+  
         <div
           className="white-background fr-p-4w"
           id="destinatairesSubvention"
@@ -531,7 +544,7 @@ export function FormulaireAction({
   )
 
   function ajouterCofinancement(coFinanceur: string, montant: MontantPositif): void {
-    setCofinancements([...cofinancements, { coFinanceur, montant: montant.format() }])
+    setCofinancements([...cofinancements, { coFinanceur, montant: montant.get.toString() }])
   }
 
   function supprimerUnCofinancement(index: number): void {
