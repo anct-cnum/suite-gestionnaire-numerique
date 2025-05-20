@@ -71,18 +71,6 @@ export default function DemanderUneSubvention({
               </p>
               <div className={`fr-grid-row ${styles['align-items']}`}>
                 <button
-                  aria-controls={drawerId}
-                  className="fr-btn fr-btn--tertiary"
-                  data-fr-opened="false"
-                  onClick={() => {
-                    setIsDrawerOpen(true)
-                  }}
-                  title="Modifier la demande de subvention"
-                  type="button"
-                >
-                  Modifier
-                </button>
-                <button
                   className="fr-btn fr-btn--tertiary fr-icon-delete-line color-red fr-ml-1w"
                   onClick={() => {
                     supprimerUneDemandeDeSubvention?.()
