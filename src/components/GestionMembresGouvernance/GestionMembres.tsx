@@ -167,6 +167,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         </div>
         <button
           className="fr-mb-2w fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
+          style={{ display: 'none' }}
           type="button"
         >
           Exporter
