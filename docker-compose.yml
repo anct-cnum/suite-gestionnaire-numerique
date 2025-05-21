@@ -11,6 +11,10 @@ services:
       - type: volume
         source: postgres_data
         target: /var/lib/postgresql/data
+      - type: bind
+        source: ./dbs
+        target: /dbs
+        
 
   postgres-test:
     extends:
