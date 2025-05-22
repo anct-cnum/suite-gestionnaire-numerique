@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useContext } from 'react'
+import { ReactElement, useContext, useState } from 'react'
 
 import AjouterUneNoteDeContextualisation from './AjouterUneNoteDeContextualisation'
 import styles from './FeuilleDeRoute.module.css'
@@ -18,11 +18,15 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import ReadMore from '../shared/ReadMore/ReadMore'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
+import SupprimerUneAction from '@/components/FeuilleDeRoute/SupprimerUneAction'
+import {  FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 import { isNullish } from '@/shared/lang'
 
 export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
   const { pathname, supprimerDocumentAction } = useContext(clientContext)
+  const [isModaleActionSuppressionOpen, setIsModaleActionSuppressionOpen] = useState(false)
+  const modalId = 'supprimer-une-action'
+  const [actionASupprimer, setActionASupprimer] = useState({ nom: '', uid : '' })
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
@@ -213,8 +217,15 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                         Modifier
                       </Link>
                       <button
+                        aria-controls={modalId}
                         className="fr-btn fr-btn--tertiary color-red"
-                        title={`Supprimer ${action.nom}`}
+                        data-fr-opened="false"
+                        disabled={!action.supprimable}
+                        onClick={() => {
+                          setActionASupprimer(action)
+                          setIsModaleActionSuppressionOpen(true)
+                        }}
+                        title="Supprimer"
                         type="button"
                       >
                         <Icon icon="delete-line" />
@@ -293,6 +304,14 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             ))
           }
         </section>
+        <SupprimerUneAction
+          actionASupprimer={actionASupprimer}
+          closeModal={() => {
+            setIsModaleActionSuppressionOpen(false)
+          }}
+          id={modalId}
+          isOpen={isModaleActionSuppressionOpen}
+        />
         <section
           aria-labelledby="historique"
           className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles['no-margin']} fr-sr-only`}

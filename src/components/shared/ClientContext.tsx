@@ -26,6 +26,7 @@ import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtili
 import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
+import { supprimerUneActionAction } from '@/app/api/actions/supprimerUneActionAction'
 import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
 import { supprimerUneNoteDeContextualisationAction } from '@/app/api/actions/supprimerUneNoteDeContextualisationAction'
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
@@ -69,6 +70,7 @@ export default function ClientContext({
       supprimerDocumentAction,
       supprimerMonCompteAction,
       supprimerUnComiteAction,
+      supprimerUneActionAction,
       supprimerUneNoteDeContexteAction,
       supprimerUneNoteDeContextualisationAction,
       supprimerUneNotePriveeAction,
@@ -113,6 +115,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerDocumentAction: typeof supprimerDocumentAction
   supprimerMonCompteAction: typeof supprimerMonCompteAction
   supprimerUnComiteAction: typeof supprimerUnComiteAction
+  supprimerUneActionAction: typeof supprimerUneActionAction
   supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
   supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction

@@ -14,6 +14,7 @@ export class Action extends Entity<State> {
       dateDeCreation: this.#dateDeCreation.toJSON(),
       dateDeDebut: this.#dateDeDebut.getFullYear().toString(),
       dateDeFin: this.#dateDeFin.getFullYear().toString(),
+      demandeDeSubventionUid: this.#demandeDeSubventionUid ,
       description: this.#description,
       destinataires: this.#destinataires.map((destinataire) => destinataire.state.value),
       nom: this.#nom,
@@ -30,6 +31,7 @@ export class Action extends Entity<State> {
   readonly #dateDeCreation: ValidDate<ActionFailure>
   readonly #dateDeDebut: ValidDate<ActionFailure>
   readonly #dateDeFin: ValidDate<ActionFailure>
+  readonly #demandeDeSubventionUid: string
   readonly #description: string
   readonly #destinataires: Array<MembreUid>
   readonly #nom: string
@@ -44,6 +46,7 @@ export class Action extends Entity<State> {
     destinataires: Array<MembreUid>,
     nom: string,
     contexte: string,
+    demandeDeSubventionUid: string,
     description: string,
     budgetGlobal: number,
     uidFeuilleDeRoute: FeuilleDeRouteUid,
@@ -60,6 +63,7 @@ export class Action extends Entity<State> {
     this.#nom = nom
     this.#contexte = contexte
     this.#description = description
+    this.#demandeDeSubventionUid = demandeDeSubventionUid
     this.#budgetGlobal = budgetGlobal
     this.#uidFeuilleDeRoute = uidFeuilleDeRoute
     this.#uidPorteurs = uidPorteurs
@@ -76,6 +80,7 @@ export class Action extends Entity<State> {
     dateDeCreation,
     dateDeDebut,
     dateDeFin,
+    demandeDeSubventionUid,
     description,
     destinataires,
     nom,
@@ -96,6 +101,7 @@ export class Action extends Entity<State> {
         destinataires.map((beneficiaire) => new MembreUid(beneficiaire)),
         nom,
         contexte,
+        demandeDeSubventionUid,
         description,
         budgetGlobal,
         new  FeuilleDeRouteUid(uidFeuilleDeRoute.value),
@@ -127,6 +133,7 @@ type FactoryParams = Readonly<{
   dateDeCreation: Date
   dateDeDebut: string
   dateDeFin: string
+  demandeDeSubventionUid: string
   description: string
   destinataires: Array<string>
   nom: string
@@ -143,6 +150,7 @@ type State = Readonly<{
   dateDeCreation: string
   dateDeDebut: string
   dateDeFin: string
+  demandeDeSubventionUid: string
   description: string
   destinataires: Array<string>
   nom: string
