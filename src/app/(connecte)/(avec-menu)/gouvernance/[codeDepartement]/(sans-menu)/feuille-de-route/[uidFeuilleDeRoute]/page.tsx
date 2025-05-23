@@ -28,7 +28,8 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
-      new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+      new Date()
     ).handle({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,

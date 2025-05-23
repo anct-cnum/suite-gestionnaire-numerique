@@ -489,49 +489,51 @@ export function FormulaireAction({
           />
         </div>
   
-        {demandeDeSubvention || localDemandeDeSubvention ? <div
-          className="white-background fr-p-4w"
-          id="destinatairesSubvention"
-        >
-          <div className={styles['align-items']}>
-            <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
-              Destinataire(s) de la subvention
-              {' '}
-              <span className="color-red">
-                *
-              </span>
+        {demandeDeSubvention || localDemandeDeSubvention ? (
+          <div
+            className="white-background fr-p-4w"
+            id="destinatairesSubvention"
+          >
+            <div className={styles['align-items']}>
+              <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
+                Destinataire(s) de la subvention
+                {' '}
+                <span className="color-red">
+                  *
+                </span>
+              </p>
+              <AjouterDesMembres
+                checkboxName="beneficiaires"
+                drawerId="drawerAjouterDesBeneficiairesId"
+                enregistrer={enregistrerBeneficiaires}
+                labelPluriel="bénéficiaires de la subvention"
+                membres={destinataires}
+                resetToutEffacer={resetBeneficiaireToutEffacer}
+                titre="Ajouter le(s) bénéficiaire(s)"
+                toutEffacer={createToutEffacer()}
+                urlGouvernance={action.urlGouvernance}
+              />
+            </div>
+            <p className="color-grey">
+              Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.
             </p>
-            <AjouterDesMembres
-              checkboxName="beneficiaires"
-              drawerId="drawerAjouterDesBeneficiairesId"
-              enregistrer={enregistrerBeneficiaires}
-              labelPluriel="bénéficiaires de la subvention"
-              membres={destinataires}
-              resetToutEffacer={resetBeneficiaireToutEffacer}
-              titre="Ajouter le(s) bénéficiaire(s)"
-              toutEffacer={createToutEffacer()}
-              urlGouvernance={action.urlGouvernance}
-            />
+            <div>
+              {
+                destinataires
+                  .map((beneficiaire) => (
+                    <Fragment key={beneficiaire.id}>
+                      <Tag
+                        href={beneficiaire.link}
+                        target="_blank"
+                      >
+                        {beneficiaire.nom}
+                      </Tag>
+                    </Fragment>
+                  ))
+              }
+            </div>
           </div>
-          <p className="color-grey">
-            Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.
-          </p>
-          <div>
-            {
-              destinataires
-                .map((beneficiaire) => (
-                  <Fragment key={beneficiaire.id}>
-                    <Tag
-                      href={beneficiaire.link}
-                      target="_blank"
-                    >
-                      {beneficiaire.nom}
-                    </Tag>
-                  </Fragment>
-                ))
-            }
-          </div>
-        </div> : null}
+        ) : null}
       </div>
       <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
         {children}
