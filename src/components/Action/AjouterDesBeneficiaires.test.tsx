@@ -15,7 +15,20 @@ import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 describe('ajout des bénéficiaires', () => {
   it('quand il n’y a pas de bénéficiaire alors le bouton ajouter un bénéficiaire s’affiche', () => {
     // WHEN
-    afficherLeFormulaireAction({ destinataires: [] })
+    afficherLeFormulaireAction({
+      demandeDeSubvention: {
+        enveloppe: {
+          budget: 50_000,
+          isSelected: false,
+          label: 'Conseiller Numérique - 2024',
+          value: '1',
+        },
+        montantPrestation: 10,
+        montantRh: 10,
+        total: 20,
+      },
+      destinataires: [],
+    })
 
     // THEN
     const bouton = screen.getByRole('button', { description: 'Ajouter des bénéficiaires de la subvention', name: 'Ajouter' })
@@ -26,6 +39,17 @@ describe('ajout des bénéficiaires', () => {
   it('quand il y un bénéficiaire alors tag du bénéficiaire s’affiche sur l action', () => {
     // GIVEN
     afficherLeFormulaireAction({
+      demandeDeSubvention: {
+        enveloppe: {
+          budget: 50_000,
+          isSelected: false,
+          label: 'Conseiller Numérique - 2024',
+          value: '1',
+        },
+        montantPrestation: 10,
+        montantRh: 10,
+        total: 20,
+      },
       destinataires: [
       ],
     }, {
@@ -70,6 +94,17 @@ describe('ajout des bénéficiaires', () => {
     it('alors le formulaire pour ajouter des bénéficiaires s’affiche', () => {
       // GIVEN
       afficherLeFormulaireAction({
+        demandeDeSubvention: {
+          enveloppe: {
+            budget: 50_000,
+            isSelected: false,
+            label: 'Conseiller Numérique - 2024',
+            value: '1',
+          },
+          montantPrestation: 10,
+          montantRh: 10,
+          total: 20,
+        },
         destinataires: [
           { id: 'rhone_69_id', link: '', nom: 'Rhône (69) Co-porteur', roles: [] },
         ],
@@ -112,6 +147,17 @@ describe('ajout des bénéficiaires', () => {
     it('puis que je clique sur fermer, alors le drawer se ferme', () => {
       // GIVEN
       afficherLeFormulaireAction({
+        demandeDeSubvention: {
+          enveloppe: {
+            budget: 50_000,
+            isSelected: false,
+            label: 'Conseiller Numérique - 2024',
+            value: '1',
+          },
+          montantPrestation: 10,
+          montantRh: 10,
+          total: 20,
+        },
         destinataires: [
           { id: 'testUID', link: '', nom: 'monFakeNon', roles: [] },
         ],
@@ -154,7 +200,6 @@ describe('ajout des bénéficiaires', () => {
           { nom: 'monFakeNon', roles: [], uid: 'testUID' } as MembreAvecRoleDansLaGouvernance,
         ],
       })
-
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires de la subvention')
       presserLeBouton('Tout effacer')
@@ -185,6 +230,7 @@ describe('ajout des bénéficiaires', () => {
       <FormulaireAction
         action={actionViewModelFactory(overrides)}
         ajouterDemandeDeSubvention={vi.fn<() => void>()}
+        demandeDeSubvention={overrides.demandeDeSubvention}
         label="Ajouter une action"
         validerFormulaire={vi.fn<() => Promise<void>>()}
       >
