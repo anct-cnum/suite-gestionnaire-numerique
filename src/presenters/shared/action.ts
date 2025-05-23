@@ -1,6 +1,6 @@
 import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
-export const actionStatutViewModelByStatut: Record<'nonSubventionnee' | StatutSubvention, ActionStatutViewModel> = {
+export const actionStatutViewModelByStatut: Record<StatutSubvention, ActionStatutViewModel> = {
   acceptee: {
     background: 'purple',
     display : true,

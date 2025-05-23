@@ -5,6 +5,7 @@ import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, cr
 import prisma from '../../prisma/prismaClient'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
@@ -67,7 +68,7 @@ describe('récupérer une feuille de route loader', () => {
               uid: 'epci-2419272011-93',
             },
           ],
-          statut: 'acceptee',
+          statut: StatutSubvention.ACCEPTEE,
           subventionDemandee: 0,
           uid: String(uidAction1),
         },
@@ -87,7 +88,7 @@ describe('récupérer une feuille de route loader', () => {
           isEnveloppeFormation: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
-          statut: 'nonSubventionnee',
+          statut: StatutSubvention.NON_SUBVENTIONNEE,
           subventionDemandee: 0,
           uid: String(uidAction2),
         },
@@ -173,7 +174,7 @@ describe('récupérer une feuille de route loader', () => {
               uid: 'epci-2419272011-93',
             },
           ],
-          statut: 'acceptee',
+          statut: StatutSubvention.ACCEPTEE,
           subventionDemandee: 0,
           uid: String(uidAction1),
         },
@@ -193,7 +194,7 @@ describe('récupérer une feuille de route loader', () => {
           isEnveloppeFormation: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
-          statut: 'nonSubventionnee',
+          statut: StatutSubvention.NON_SUBVENTIONNEE,
           subventionDemandee: 0,
           uid: String(uidAction2),
         },
@@ -322,7 +323,7 @@ async function creerAction(uidAction: number, withSubvention: boolean): Promise<
       createurId: uidUtilisateur,
       enveloppeFinancementId: uidEnveloppeFinancement,
       id: uidDemandeSubvention,
-      statut: 'acceptee',
+      statut: StatutSubvention.ACCEPTEE,
     })
 
     const uidPorteurAction = `epci-241927201${uidAction}-93`

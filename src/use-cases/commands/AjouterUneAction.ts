@@ -3,10 +3,7 @@ import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
-import {
-  GetFeuilleDeRouteRepository,
-  UpdateFeuilleDeRouteRepository,
-} from './shared/FeuilleDeRouteRepository'
+import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
@@ -47,12 +44,16 @@ export class AjouterUneAction implements CommandHandler<Command> {
     this.#date = date
   }
 
+  static #aUneDemandeDeSubvention(command: Command): boolean | undefined {
+    return command.demandesDeSubvention && command.demandesDeSubvention.length > 0
+  }
+
   private static creationDesCoFinancements(
     coFinancementsCommand: Array<CoFinancementCommand>,
     uidAction: string
-  ): Array<CoFinancement>|CoFinancementFailure {
+  ): Array<CoFinancement> | CoFinancementFailure {
     const coFinancements: Array<CoFinancement> = []
-    
+
     if (coFinancementsCommand.length > 0) {
       for (const financement of coFinancementsCommand) {
         const coFinancement = CoFinancement.create({
@@ -85,7 +86,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return 'utilisateurNePeutPasAjouterAction'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
-    
+
     const action = Action.create({
       besoins: command.besoins,
       budgetGlobal: command.budgetGlobal,
@@ -93,6 +94,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       dateDeCreation: this.#date,
       dateDeDebut: command.dateDeDebut,
       dateDeFin: command.dateDeFin,
+      demandeDeSubventionUid: 'DemandeDeSubventionACreer',
       description: command.description,
       destinataires: command.destinataires,
       nom: command.nom,
@@ -108,7 +110,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       return action
     }
     let demandeDeSubvention: DemandeDeSubvention | DemandeDeSubventionFailure | null = null
-    if (command.demandesDeSubvention && command.demandesDeSubvention.length > 0) {
+    if (AjouterUneAction.#aUneDemandeDeSubvention(command) === true) {
       demandeDeSubvention = this.creationDesDemandesDeSubvention(
         command.demandesDeSubvention ?? [],
         action.state.destinataires,
@@ -121,18 +123,18 @@ export class AjouterUneAction implements CommandHandler<Command> {
     }
 
     const coFinancements: Array<CoFinancement> | CoFinancementFailure =
-    AjouterUneAction.creationDesCoFinancements(
-      command.coFinancements ?? [],
-      action.state.uid.value
-    )
-    
+      AjouterUneAction.creationDesCoFinancements(
+        command.coFinancements ?? [],
+        action.state.uid.value
+      )
+
     if (!Array.isArray(coFinancements)) {
       return coFinancements
     }
 
     return this.persistAction(action, demandeDeSubvention, coFinancements, feuilleDeRoute, editeur)
   }
-  
+
   // Pour l'instant : 1 action = 0 ou 1 demande de subvention. On associe les destinataires à cette demande.
   // => La liste est transformé en une unique demande de subvention.
   private creationDesDemandesDeSubvention(
@@ -140,9 +142,9 @@ export class AjouterUneAction implements CommandHandler<Command> {
     beneficiaires: Array<string>,
     uidAction: string,
     uidCreateur: string
-  ):  DemandeDeSubvention | DemandeDeSubventionFailure {
+  ): DemandeDeSubvention | DemandeDeSubventionFailure {
     const demande = demandesDeSubventionCommand[0]
-    const demandeDeSubvention = DemandeDeSubvention.create({
+    return DemandeDeSubvention.create({
       beneficiaires,
       dateDeCreation: this.#date,
       derniereModification: this.#date,
@@ -154,27 +156,29 @@ export class AjouterUneAction implements CommandHandler<Command> {
         value: 'identifiantDemandeDeSubventionPourLaCreation',
       },
       uidAction: {
-        value: uidAction, 
+        value: uidAction,
       },
       uidCreateur,
       uidEnveloppeFinancement: {
         value: demande.enveloppeFinancementId,
       },
     })
-
-    return demandeDeSubvention
   }
 
   private async persistAction(
-    action: Action, demandeDeSubvention: DemandeDeSubvention | null,
-    coFinancements: Array<CoFinancement>, 
-    feuilleDeRoute: FeuilleDeRoute, editeur: Utilisateur
+    action: Action,
+    demandeDeSubvention: DemandeDeSubvention | null,
+    coFinancements: Array<CoFinancement>,
+    feuilleDeRoute: FeuilleDeRoute,
+    editeur: Utilisateur
   ): Promise<'OK' | Failure> {
     await this.#transactionRepository.transaction(async (tx) => {
       const actionId = await this.#actionRepository.add(action, tx)
-      
+
       if (demandeDeSubvention) {
-        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(actionId.toString())
+        const updatedDemandeDeSubvention = demandeDeSubvention.avecNouvelleUidAction(
+          actionId.toString()
+        )
         if (!(updatedDemandeDeSubvention instanceof DemandeDeSubvention)) {
           return updatedDemandeDeSubvention
         }

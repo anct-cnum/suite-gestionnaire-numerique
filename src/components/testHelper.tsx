@@ -56,6 +56,7 @@ export function renderComponent(
     supprimerDocumentAction: vi.fn(),
     supprimerMonCompteAction: vi.fn(),
     supprimerUnComiteAction: vi.fn(),
+    supprimerUneActionAction: vi.fn(),
     supprimerUneNoteDeContexteAction: vi.fn(),
     supprimerUneNoteDeContextualisationAction: vi.fn(),
     supprimerUneNotePriveeAction: vi.fn(),

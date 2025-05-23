@@ -3,6 +3,7 @@ import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, cree
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer les feuilles de route loader', () => {
@@ -138,7 +139,7 @@ describe('récupérer les feuilles de route loader', () => {
                   prestation: 0,
                   ressourcesHumaines: 9_000,
                 },
-                statut: 'deposee',
+                statut: StatutSubvention.DEPOSEE,
               },
               totaux: {
                 coFinancement: 0,
@@ -214,7 +215,7 @@ describe('récupérer les feuilles de route loader', () => {
                   prestation: 0,
                   ressourcesHumaines: 0,
                 },
-                statut: 'deposee',
+                statut: StatutSubvention.DEPOSEE,
               },
               totaux: {
                 coFinancement: 0,

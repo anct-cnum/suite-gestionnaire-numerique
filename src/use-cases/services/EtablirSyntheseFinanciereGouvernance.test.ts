@@ -147,15 +147,15 @@ describe('établir la synthèse financière d’une gouvernance', () => {
         it.each([
           {
             libelle: 'déposées',
-            statut: 'deposee' as const,
+            statut: StatutSubvention.DEPOSEE,
           },
           {
             libelle: 'en cours',
-            statut: 'enCours' as const,
+            statut: StatutSubvention.EN_COURS,
           },
           {
             libelle: 'refusées',
-            statut: 'refusee' as const,
+            statut: StatutSubvention.REFUSEE,
           },
         ])('à zéro pour les demandes de subvention $libelle', ({ statut }) => {
           // GIVEN
@@ -227,15 +227,15 @@ describe('établir la synthèse financière d’une gouvernance', () => {
         it.each([
           {
             libelle: 'déposées',
-            statut: 'deposee' as const,
+            statut: StatutSubvention.DEPOSEE,
           },
           {
             libelle: 'en cours',
-            statut: 'enCours' as const,
+            statut: StatutSubvention.EN_COURS,
           },
           {
             libelle: 'refusées',
-            statut: 'refusee' as const,
+            statut: StatutSubvention.REFUSEE,
           },
         ])('à zéro pour les demandes de subvention $libelle', ({ statut }) => {
           // GIVEN
@@ -583,7 +583,9 @@ function feuilleDeRoute(uid: string, ...actions: ReadonlyArray<Action>): Feuille
   return { actions, uid }
 }
 
-function actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(statut: StatutSubvention = 'acceptee'): Action {
+function actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(
+  statut: StatutSubvention = StatutSubvention.ACCEPTEE
+): Action {
   return {
     beneficiaires: [{ uid: '1' }, { uid: '2' }, { uid: '3' }],
     budgetGlobal: 70_000,
@@ -613,7 +615,9 @@ function actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(statut: Stat
   }
 }
 
-function actionAvecSubventionEtCoFinancementSansBeneficiaire(statut: StatutSubvention = 'acceptee'): Action {
+function actionAvecSubventionEtCoFinancementSansBeneficiaire(
+  statut: StatutSubvention = StatutSubvention.ACCEPTEE
+): Action {
   return {
     beneficiaires: [],
     budgetGlobal: 13_000,
@@ -635,7 +639,9 @@ function actionAvecSubventionEtCoFinancementSansBeneficiaire(statut: StatutSubve
   }
 }
 
-function actionAvecSubventionFormationCoFinancementsEtBeneficiaires(statut: StatutSubvention = 'acceptee'): Action {
+function actionAvecSubventionFormationCoFinancementsEtBeneficiaires(
+  statut: StatutSubvention = StatutSubvention.ACCEPTEE
+): Action {
   return {
     beneficiaires: [{ uid: '1' }, { uid: '5' }],
     budgetGlobal: 200_000,

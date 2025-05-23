@@ -1,14 +1,21 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
-import { Action } from '@/domain/Action'
-import { AddActionRepository, GetActionRepository } from '@/use-cases/commands/shared/ActionRepository'
+import { Action, ActionUid } from '@/domain/Action'
+import { DemandeDeSubventionUid } from '@/domain/DemandeDeSubvention'
+import {
+  AddActionRepository,
+  GetActionRepository,
+  SupprimerActionRepository,
+} from '@/use-cases/commands/shared/ActionRepository'
 import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 // istanbul ignore next @preserve
-export class PrismaActionRepository implements AddActionRepository, GetActionRepository {
+export class PrismaActionRepository
+implements AddActionRepository, GetActionRepository, SupprimerActionRepository
+{
   readonly #dataResource = prisma.actionRecord
-  
+
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
@@ -38,7 +45,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
         },
       },
     })
-    
+
     return actionRecord.id
   }
 
@@ -63,6 +70,7 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
     })
     const destinataires = actionRecord.demandesDeSubvention.flatMap((demande) =>
       demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
+
     const action = Action.create({
       besoins: actionRecord.besoins,
       budgetGlobal: actionRecord.budgetGlobal,
@@ -70,13 +78,14 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
       dateDeCreation: actionRecord.creation,
       dateDeDebut: actionRecord.dateDeDebut.getFullYear().toString(),
       dateDeFin: actionRecord.dateDeFin.getFullYear().toString(),
+      demandeDeSubventionUid: actionRecord.demandesDeSubvention.length > 0 ? actionRecord.demandesDeSubvention[0].id.toString() : '',
       description: actionRecord.description,
       destinataires,
       nom: actionRecord.nom,
       uid: { value: String(actionRecord.id) },
       uidCreateur: actionRecord.utilisateur.ssoId,
       uidFeuilleDeRoute: { value: String(actionRecord.feuilleDeRouteId) },
-      uidPorteurs: actionRecord.porteurAction.map((porteur) => porteur.membreId ),
+      uidPorteurs: actionRecord.porteurAction.map((porteur) => porteur.membreId),
     })
 
     if (!(action instanceof Action)) {
@@ -84,5 +93,21 @@ export class PrismaActionRepository implements AddActionRepository, GetActionRep
     }
 
     return action
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid): Promise<boolean> {
+    const result = await prisma.$transaction([
+      prisma.beneficiaireSubventionRecord.deleteMany(
+        { where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) } }
+      ),
+      prisma.demandeDeSubventionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
+      prisma.coFinancementRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
+      prisma.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
+      prisma.actionRecord.deleteMany({ where: { id: Number(actionId.state.value) } }),
+    ])
+      
+    // On vérifie uniquement que l'action a bien été supprimée
+    return result[result.length - 1].count === 1
   }
 }

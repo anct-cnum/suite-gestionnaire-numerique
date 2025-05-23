@@ -5,6 +5,7 @@ import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInfo
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
+import { StatutSubvention } from './queries/shared/ActionReadModel'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
@@ -233,7 +234,7 @@ export function feuillesDeRouteReadModelFactory(
                 prestation: 20_000,
                 ressourcesHumaines: 10_000,
               },
-              statut: 'acceptee',
+              statut: StatutSubvention.ACCEPTEE,
             },
             totaux: {
               coFinancement: 0,
@@ -353,7 +354,7 @@ export function feuillesDeRouteReadModelFactory(
                 prestation: 4_000,
                 ressourcesHumaines: 3_000,
               },
-              statut: 'refusee',
+              statut: StatutSubvention.REFUSEE,
             },
             totaux: {
               coFinancement: 0,
@@ -427,7 +428,7 @@ export function feuilleDeRouteReadModelFactory(
             uid: 'membreFooId',
           },
         ],
-        statut: 'acceptee',
+        statut: StatutSubvention.DEPOSEE,
         subventionDemandee: 40_000,
         uid: 'actionFooId1',
       },
@@ -447,7 +448,7 @@ export function feuilleDeRouteReadModelFactory(
         isEnveloppeFormation: true,
         nom: 'Structurer une filière de reconditionnement locale 2',
         porteurs: [],
-        statut: 'acceptee',
+        statut: StatutSubvention.ACCEPTEE,
         subventionDemandee: 40_000,
         uid: 'actionFooId2',
       },

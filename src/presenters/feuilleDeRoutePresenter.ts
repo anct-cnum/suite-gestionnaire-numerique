@@ -5,6 +5,7 @@ import { HyperLink, LabelValue } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
+import { StatutSubvention } from '../use-cases/queries/shared/ActionReadModel'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -82,22 +83,7 @@ export function feuilleDeRoutePresenter(
 
 export type FeuilleDeRouteViewModel = Readonly<{
   action: string
-  actions: ReadonlyArray<{
-    besoins: string
-    budgetPrevisionnel: Readonly<{
-      coFinancement: string
-      coFinanceur: string
-      enveloppe: string
-      montant: string
-      total: string
-    }>
-    icone: ActionStatutViewModel
-    nom: string
-    porteurs: ReadonlyArray<HyperLink>
-    statut: ActionStatutViewModel
-    uid: string
-    urlModifier: string
-  }>
+  actions: ReadonlyArray<FeuilleDeRouteActionViewModel>
   budgets: Readonly<{
     cofinancement: string
     etat: string
@@ -123,6 +109,24 @@ export type FeuilleDeRouteViewModel = Readonly<{
   urlAjouterUneAction: string
 }>
 
+interface FeuilleDeRouteActionViewModel {
+  besoins: string
+  budgetPrevisionnel: Readonly<{
+    coFinancement: string
+    coFinanceur: string
+    enveloppe: string
+    montant: string
+    total: string
+  }>
+  icone: ActionStatutViewModel
+  nom: string
+  porteurs: ReadonlyArray<HyperLink>
+  statut: ActionStatutViewModel
+  supprimable : boolean
+  uid: string
+  urlModifier: string
+}
+
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: UneFeuilleDeRouteReadModel['actions'][number]): FeuilleDeRouteViewModel['actions'][number] => {
     // istanbul ignore next @preserve
@@ -147,6 +151,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         link: membreLink(uidGouvernance, porteur.uid),
       })),
       statut: actionStatutViewModelByStatut[action.statut],
+      supprimable : action.statut === StatutSubvention.DEPOSEE || action.statut === StatutSubvention.NON_SUBVENTIONNEE,
       uid: action.uid,
       urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
     }
