@@ -16,7 +16,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
       new UtilisateurRepositoryStub(),
-      new Date(eepochTime)
+      new Date(epochTime)
     )
 
     // WHEN
@@ -40,7 +40,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
       new UtilisateurRepositoryStub(),
-      new Date(eepochTime)
+      new Date(epochTime)
     )
 
     // WHEN
@@ -82,7 +82,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
       new UtilisateurRepositoryStub(),
-      new Date(eepochTime)
+      new Date(epochTime)
     )
 
     // WHEN
@@ -146,7 +146,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
       new UtilisateurRepositoryStub(),
-      new Date(eepochTime)
+      new Date(epochTime)
     )
 
     // WHEN
@@ -217,7 +217,7 @@ describe('recupérer une gouvernance', () => {
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
       new UtilisateurNonGestionnaireDepartementRepositoryStub(),
-      new Date(eepochTime)
+      new Date(epochTime)
     )
 
     // WHEN
