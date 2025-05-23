@@ -174,7 +174,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         </button>
       </div>
       <Table
-        enTetes={['Structure', 'Contact référent', 'Rôles', 'Action']}
+        enTetes={['Structure', 'Contact référent', 'Rôles']} //, 'Action'
         titre="Membres"
       >
         {membresView.membres.map((membre, index) => (
@@ -204,7 +204,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                 </Fragment>
               ))}
             </td>
-            <td className="fr-cell--center">
+            <td
+              className="fr-cell--center"
+              style={{ display : 'none' }}
+            >
               <button
                 className="fr-btn fr-btn--tertiary color-red"
                 disabled={!membre.isDeletable}
