@@ -102,8 +102,12 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository
         { where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) } }
       ),
       prisma.demandeDeSubventionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
+      prisma.coFinancementRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
+      prisma.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
       prisma.actionRecord.deleteMany({ where: { id: Number(actionId.state.value) } }),
     ])
-    return result[0].count <= 1 && result[1].count === 1
+      
+    // On vérifie uniquement que l'action a bien été supprimée
+    return result[result.length - 1].count === 1
   }
 }
