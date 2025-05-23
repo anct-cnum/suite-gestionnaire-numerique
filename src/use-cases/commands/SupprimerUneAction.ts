@@ -9,7 +9,7 @@ export class SupprimerUneAction implements CommandHandler<Command> {
   private readonly prismaActionRepository: PrismaActionRepository
   private readonly prismaDemandeDeSubventionRepository: PrismaDemandeDeSubventionRepository
 
-  constructor(prismaActionRepository: PrismaActionRepository, 
+  constructor(prismaActionRepository: PrismaActionRepository,
     prismaDemandeDeSubventionRepository: PrismaDemandeDeSubventionRepository) {
     this.prismaActionRepository = prismaActionRepository
     this.prismaDemandeDeSubventionRepository = prismaDemandeDeSubventionRepository
@@ -20,25 +20,20 @@ export class SupprimerUneAction implements CommandHandler<Command> {
     if (!(actionASupprimer instanceof Action)) {
       return 'supprimerActionErreurInconnue'
     }
-    
+
     if (actionASupprimer.state.demandeDeSubventionUid)
     {
-      console.log('actionASupprimer.state.demandeDeSubventionUid', actionASupprimer.state.demandeDeSubventionUid)
-      console.log('BLAAAAZZZ actionASupprimer', command.uidActionASupprimer)
       const demandeDeSubventionResult = await this.prismaDemandeDeSubventionRepository
         .get(actionASupprimer.state.demandeDeSubventionUid)
-        
+
       if (!(demandeDeSubventionResult instanceof DemandeDeSubvention)) {
         return 'supprimerActionErreurInconnue'
       }
-      const demandeDeSubvention = demandeDeSubventionResult
-      const estSupprimable = demandeDeSubvention.state.statut === StatutSubvention.DEPOSEE
-        
-      if (!estSupprimable)
+      if (demandeDeSubventionResult.state.statut !== StatutSubvention.DEPOSEE.toString())
       {return 'existeSubventionNonSupprimable'}
     }
 
-    const result  = await this.prismaActionRepository.supprimer(new ActionUid(command.uidActionASupprimer), 
+    const result  = await this.prismaActionRepository.supprimer(new ActionUid(command.uidActionASupprimer),
       new DemandeDeSubventionUid(actionASupprimer.state.demandeDeSubventionUid))
     if(result)
     {

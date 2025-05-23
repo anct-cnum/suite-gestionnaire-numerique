@@ -70,7 +70,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository
     })
     const destinataires = actionRecord.demandesDeSubvention.flatMap((demande) =>
       demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId))
-    
+
     const action = Action.create({
       besoins: actionRecord.besoins,
       budgetGlobal: actionRecord.budgetGlobal,
@@ -97,7 +97,6 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository
 
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid): Promise<boolean> {
-    console.log('BLAAAA AactionId', actionId.state.value)
     const result = await prisma.$transaction([
       prisma.beneficiaireSubventionRecord.deleteMany(
         { where: { demandeDeSubventionId: Number(demandeDeSubventionId.state.value) } }

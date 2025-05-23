@@ -109,7 +109,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   urlAjouterUneAction: string
 }>
 
-export interface FeuilleDeRouteActionViewModel {
+interface FeuilleDeRouteActionViewModel {
   besoins: string
   budgetPrevisionnel: Readonly<{
     coFinancement: string

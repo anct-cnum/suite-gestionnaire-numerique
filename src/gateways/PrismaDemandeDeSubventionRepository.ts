@@ -2,9 +2,13 @@ import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
-import { AddDemandeDeSubventionRepository } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
+import {
+  AddDemandeDeSubventionRepository,
+  GetDemandeDeSubventionRepository,
+} from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
-export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventionRepository {
+export class PrismaDemandeDeSubventionRepository
+implements AddDemandeDeSubventionRepository, GetDemandeDeSubventionRepository {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
@@ -70,7 +74,7 @@ export class PrismaDemandeDeSubventionRepository implements AddDemandeDeSubventi
       uidAction: { value: String(demande.actionId) },
       uidCreateur: String(demande.createurId),
       uidEnveloppeFinancement: { value: String(demande.enveloppeFinancementId) },
-    })  
+    })
 
     if (!(demandeDeSubvention instanceof DemandeDeSubvention)) {
       throw new Error(demandeDeSubvention)
