@@ -489,7 +489,7 @@ export function FormulaireAction({
           />
         </div>
   
-        <div
+        {demandeDeSubvention || localDemandeDeSubvention ? <div
           className="white-background fr-p-4w"
           id="destinatairesSubvention"
         >
@@ -531,7 +531,7 @@ export function FormulaireAction({
                 ))
             }
           </div>
-        </div> 
+        </div> : null}
       </div>
       <div className="fr-grid-row fr-grid-row--center fr-mt-4w">
         {children}
