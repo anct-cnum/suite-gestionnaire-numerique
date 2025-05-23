@@ -5,11 +5,13 @@ import { Gouvernance } from '@/domain/Gouvernance'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
+  readonly #now: Date
   readonly #repository: GetUtilisateurRepository
 
-  constructor(loader: UneGouvernanceLoader, repository: GetUtilisateurRepository) {
+  constructor(loader: UneGouvernanceLoader, repository: GetUtilisateurRepository, now: Date) {
     this.#loader = loader
     this.#repository = repository
+    this.#now = now
   }
 
   async handle(query: Query): Promise<UneGouvernanceReadModel> {
@@ -24,8 +26,18 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
       }))
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    return {
+    // Met les dates des comites à undefined si elles sont dans le passé
+    const comites = readModel.comites?.map((comite) => ({
+      ...comite,
+      date: comite.date !== undefined && comite.date < this.#now ? undefined : comite.date,
+    }))
+    //Met à j our le readmodel avec les comites
+    const readModelAvecComites = {
       ...readModel,
+      comites,
+    }
+    return {
+      ...readModelAvecComites,
       peutVoirNotePrivee,
     }
   }
