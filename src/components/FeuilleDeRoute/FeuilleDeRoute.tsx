@@ -227,9 +227,10 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                   >
                     {action.nom}
                   </h3>
-                  <Badge color={action.statut.variant}>
-                    {action.statut.libelle}
-                  </Badge>
+                  {action.statut.display ? 
+                    <Badge color={action.statut.variant}>
+                      {action.statut.libelle}
+                    </Badge> : null}
                   <div className="fr-grid-row space-between fr-grid-row--middle fr-mt-4w">
                     <p>
                       {action.besoins}

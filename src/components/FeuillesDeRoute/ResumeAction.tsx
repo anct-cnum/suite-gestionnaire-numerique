@@ -54,9 +54,10 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
                 </div>
               </div>
               <div className="fr-col-4 right">
-                <Badge color={action.statut.variant}>
-                  {action.statut.libelle}
-                </Badge>
+                {action.statut.display ? 
+                  <Badge color={action.statut.variant}>
+                    {action.statut.libelle}
+                  </Badge> : null}
               </div>
             </div>
             <hr className="fr-mt-3w" />

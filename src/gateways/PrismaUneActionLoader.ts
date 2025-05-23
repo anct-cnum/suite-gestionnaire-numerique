@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 import {  membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord
@@ -57,7 +58,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       nomFeuilleDeRoute,
       porteurs,
 
-      statut: 'nonSubventionnee', //A FAIRE : à compléter => action n'a pas de statut. A priori soucis
+      statut: 'nonSubventionnee' as StatutSubvention, //A FAIRE : à compléter => action n'a pas de statut. A priori soucis
       // comprenhension metier entre le statut de la subvention et le statut de l'action
       uid: String(actionRecord.id),
     }

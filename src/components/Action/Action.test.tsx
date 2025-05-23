@@ -91,8 +91,6 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(lienVersLaFeuilleDeRoute).toBeInTheDocument()
       const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Ajouter une action à la feuille de route' })
       expect(titre).toBeInTheDocument()
-      const badgeEnConstruction = within(formulaire).getByText('En construction', { selector: 'p' })
-      expect(badgeEnConstruction).toBeInTheDocument()
       const titreIndicationDuBesoin = within(formulaire).getByText(matchWithoutMarkup('Besoins liés à l‘action *'), { selector: 'p' })
       expect(titreIndicationDuBesoin).toBeInTheDocument()
       const boutonAjouter = within(formulaire).getByRole('button', { description: 'Ajouter des besoins', name: 'Ajouter' })

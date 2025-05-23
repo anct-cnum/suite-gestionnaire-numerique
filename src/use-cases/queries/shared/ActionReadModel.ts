@@ -1,1 +1,1 @@
-export type StatutSubvention = 'acceptee' | 'deposee' | 'enCours' | 'refusee'
+export type StatutSubvention = 'acceptee' | 'deposee' | 'enCours' | 'nonSubventionnee' | 'refusee'
