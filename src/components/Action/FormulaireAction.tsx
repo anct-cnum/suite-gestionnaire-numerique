@@ -9,7 +9,6 @@ import AjouterDesMembres from './AjouterDesMembres'
 import AjouterUnCoFinancement from './AjouterUnCoFinancement'
 import { AlertePrevisionnel } from './AlertePrevisionnel'
 import DemanderUneSubvention from './DemanderUneSubvention'
-import Badge from '../shared/Badge/Badge'
 import { MontantPositif } from '../shared/Montant/MontantPositif'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
@@ -159,9 +158,6 @@ export function FormulaireAction({
       <PageTitle>
         {label}
       </PageTitle>
-      <Badge color="grey-main">
-        En construction
-      </Badge>
       <div className="glycine-background fr-p-4w fr-mt-4w">
         <div className="white-background fr-p-4w fr-mb-2w">
           <div

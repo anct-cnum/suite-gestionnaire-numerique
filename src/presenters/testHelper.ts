@@ -210,6 +210,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     ],
     statut: {
       background: 'pink',
+      display: true,
       icon: 'fr-icon-flashlight-line',
       libelle: 'Demande déposée',
       variant: 'new',
@@ -275,6 +276,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     porteurs: [],
     statut: {
       background: 'pink',
+      display: true,
       icon: 'fr-icon-flashlight-line',
       libelle: 'Demande déposée',
       variant: 'new',

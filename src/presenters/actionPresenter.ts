@@ -157,6 +157,7 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
     porteurs: [],
     statut: {
       background: 'blue',
+      display: true,
       icon: '',
       libelle: '',
       variant: 'new',
