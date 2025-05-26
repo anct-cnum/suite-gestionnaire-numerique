@@ -22,7 +22,7 @@ export default function AjouterDesMembres({
   resetToutEffacer,
   titre,
   toutEffacer,
-  urlGouvernance,
+  urlGestionMembresGouvernance,
 }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -74,7 +74,7 @@ export default function AjouterDesMembres({
           {' '}
           <Link
             className="color-blue-france"
-            href={urlGouvernance}
+            href={urlGestionMembresGouvernance}
           >
             cliquant ici
           </Link>
@@ -147,5 +147,5 @@ type Props = Readonly<{
   resetToutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): void
   titre: string
   toutEffacer(fieldset: RefObject<HTMLFieldSetElement | null>): () => void
-  urlGouvernance: string
+  urlGestionMembresGouvernance: string
 }>

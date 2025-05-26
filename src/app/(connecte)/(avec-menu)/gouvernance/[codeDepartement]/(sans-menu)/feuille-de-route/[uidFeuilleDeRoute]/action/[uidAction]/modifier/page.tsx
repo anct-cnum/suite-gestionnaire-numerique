@@ -5,12 +5,14 @@ import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
+import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
   try {
-    const { uidAction } = await params
+    const { uidAction, uidFeuilleDeRoute } = await params
     const session = await getSession()
 
     if (!session) {
@@ -18,7 +20,9 @@ export default async function ActionModifierController({ params }: Props): Promi
     }
     const actionReadModel = await new PrismaUneActionLoader(
     ).get(uidAction)
-
+    const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
+    const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
+    const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
     return (
       <div className="fr-grid-row">
         <div className="fr-col-2">
@@ -27,7 +31,11 @@ export default async function ActionModifierController({ params }: Props): Promi
         <div className="fr-col-10 fr-pl-7w">
           <Notice />
           <ModifierUneAction
-            action={actionPresenter(actionReadModel)}
+            action={actionPresenter(actionReadModel, {
+              nomFeuilleDeRoute: actionReadModel.nomFeuilleDeRoute,
+              urlFeuilleDeRoute,
+              urlGestionMembresGouvernance,
+            })}
           />
         </div>
       </div>

@@ -222,7 +222,7 @@ export function actionViewModelFactory(overrides: Partial<ActionViewModel> = {})
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
-    urlGouvernance: '/gouvernance/11',
+    urlGestionMembresGouvernance: '/gouvernance/11',
     ...overrides,
   }
 }
@@ -288,7 +288,7 @@ export function actionVideViewModelFactory(overrides: Partial<ActionViewModel> =
     },
     uid: 'actionFooId1',
     urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
-    urlGouvernance: '/gouvernance/11',
+    urlGestionMembresGouvernance: '/gouvernance/11',
     ...overrides,
   }
 }
