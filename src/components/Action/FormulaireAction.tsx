@@ -413,7 +413,7 @@ export function FormulaireAction({
           <AlertePrevisionnel
             budgetGlobal={budgetGlobal}
             cofinancements={cofinancements}
-            demandeDeSubvention={localDemandeDeSubvention}
+            demandeDeSubvention={demandeDeSubvention}
           />
         </div>
 
