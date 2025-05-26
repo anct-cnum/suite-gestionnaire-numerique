@@ -270,7 +270,7 @@ export function FormulaireAction({
               resetToutEffacer={resetPorteurToutEffacer}
               titre="Ajouter le(s) porteur(s)"
               toutEffacer={createToutEffacer()}
-              urlGouvernance={action.urlGouvernance}
+              urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
             />
           </div>
           <p>
@@ -439,7 +439,7 @@ export function FormulaireAction({
                 resetToutEffacer={resetBeneficiaireToutEffacer}
                 titre="Ajouter le(s) bénéficiaire(s)"
                 toutEffacer={createToutEffacer()}
-                urlGouvernance={action.urlGouvernance}
+                urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
               />
             </div>
             <p className="color-grey">

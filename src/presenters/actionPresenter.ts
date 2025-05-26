@@ -32,9 +32,11 @@ const enveloppes: ReadonlyArray<Enveloppe> = [
   },
 ]
 
-export function actionPresenter(action: undefined | UneActionReadModel): ActionViewModel {
+export function actionPresenter(action: undefined | UneActionReadModel,
+  { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
+  { nomFeuilleDeRoute: string; urlFeuilleDeRoute: string; urlGestionMembresGouvernance: string }): ActionViewModel {
   if (!action) {
-    return actionARemplir(undefined)
+    return actionARemplir(undefined, { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })
   }
 
   const besoins = transformBesoins(action.besoins as Array<BesoinsPossible>)
@@ -79,8 +81,8 @@ export function actionPresenter(action: undefined | UneActionReadModel): ActionV
       financementAccorde: formatMontant(action.enveloppe.montant),
     },
     uid: action.uid,
-    urlFeuilleDeRoute: '', // à compléter si besoin
-    urlGouvernance: '', // à compléter si besoin
+    urlFeuilleDeRoute,
+    urlGestionMembresGouvernance,
   }
 }
 
@@ -120,10 +122,12 @@ export type ActionViewModel = Readonly<{
   }>
   uid: string
   urlFeuilleDeRoute: string
-  urlGouvernance: string
+  urlGestionMembresGouvernance: string
 }>
 
-export function actionARemplir(action: undefined | UneActionReadModel): ActionViewModel {
+export function actionARemplir(action: undefined | UneActionReadModel, 
+  { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
+  { nomFeuilleDeRoute: string; urlFeuilleDeRoute: string; urlGestionMembresGouvernance: string }): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
@@ -153,7 +157,7 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
     }),
     lienPourModifier: '',
     nom: '',
-    nomFeuilleDeRoute: 'Feuille de route 69',
+    nomFeuilleDeRoute,
     porteurs: [],
     statut: {
       background: 'blue',
@@ -168,8 +172,8 @@ export function actionARemplir(action: undefined | UneActionReadModel): ActionVi
       financementAccorde: '',
     },
     uid: '',
-    urlFeuilleDeRoute: '/gouvernance/11/feuille-de-route/116',
-    urlGouvernance: '/gouvernance/11',
+    urlFeuilleDeRoute,
+    urlGestionMembresGouvernance,
   }
 }
 
