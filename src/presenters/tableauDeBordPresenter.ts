@@ -1,6 +1,6 @@
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 
-export function tableauDeBordPresenter(): TableauDeBordViewModel {
+export function tableauDeBordPresenter(departementCode: string): TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -81,7 +81,7 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
         },
       ],
     },
-    departement: 'Rhône',
+    departement: departementCode,
     etatDesLieux: {
       accompagnementRealise: formaterEnNombreFrancais(48_476),
       graphique: {
@@ -105,6 +105,11 @@ export function tableauDeBordPresenter(): TableauDeBordViewModel {
         coporteur: 3,
         total: 9,
       },
+    },
+    liens: {
+      beneficiaires: `/gouvernance/${departementCode}/beneficiaires`,
+      financements: `/gouvernance/${departementCode}/financements`,
+      gouvernance: `/gouvernance/${departementCode}`,
     },
     mediateur: {
       details: [
@@ -222,6 +227,11 @@ export type TableauDeBordViewModel = Readonly<{
       coporteur: number
       total: number
     }>
+  }>
+  liens: Readonly<{
+    beneficiaires: string
+    financements: string
+    gouvernance: string
   }>
   mediateur: Readonly<{
     details: ReadonlyArray<{

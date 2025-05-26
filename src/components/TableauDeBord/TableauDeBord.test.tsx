@@ -10,7 +10,7 @@ describe('tableau de bord', () => {
     afficherMonTableauDeBord()
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: '👋 Bonjour Martin Bienvenue sur l’outil de pilotage de l’Inclusion Numérique · Rhône' })
+    const titre = screen.getByRole('heading', { level: 1, name: '👋 Bonjour Martin Bienvenue sur l’outil de pilotage de l’Inclusion Numérique · 69' })
     expect(titre).toBeInTheDocument()
 
     const tachesSection = screen.getByRole('region', { name: 'Tâches à réaliser' })
@@ -76,7 +76,7 @@ describe('tableau de bord', () => {
     const gouvernancesSousTitre = within(gouvernancesSection).getByText('Acteurs de l’inclusion numérique', { selector: 'p' })
     expect(gouvernancesSousTitre).toBeInTheDocument()
     const gouvernancesLien = within(gouvernancesSection).getByRole('link', { name: 'La gouvernance' })
-    expect(gouvernancesLien).toHaveAttribute('href', '/gouvernance/11')
+    expect(gouvernancesLien).toHaveAttribute('href', '/gouvernance/69')
     const membresNombre = within(gouvernancesSection).getByText('9')
     expect(membresNombre).toBeInTheDocument()
     const membresTitre = within(gouvernancesSection).getByText('Membres de la gouvernance')
@@ -102,7 +102,7 @@ describe('tableau de bord', () => {
     const conventionnementSousTitre = within(conventionnementSection).getByText('Chiffres clés des budgets et financements', { selector: 'p' })
     expect(conventionnementSousTitre).toBeInTheDocument()
     const conventionnementLien = within(conventionnementSection).getByRole('link', { name: 'Les demandes' })
-    expect(conventionnementLien).toHaveAttribute('href', '/gouvernance/11/financements')
+    expect(conventionnementLien).toHaveAttribute('href', '/gouvernance/69/financements')
     const budgetNombre = within(conventionnementSection).getByText('225 000 €')
     expect(budgetNombre).toBeInTheDocument()
     const budgetTitre = within(conventionnementSection).getByText('Budget global renseigné')
@@ -143,7 +143,7 @@ describe('tableau de bord', () => {
     const beneficiairesSousTitre = within(beneficiairesSection).getByText('Chiffres clés sur les bénéficiaires de financement(s)', { selector: 'p' })
     expect(beneficiairesSousTitre).toBeInTheDocument()
     const beneficiairesLien = within(beneficiairesSection).getByRole('link', { name: 'Les conventions' })
-    expect(beneficiairesLien).toHaveAttribute('href', '/gouvernance/11/beneficiaires')
+    expect(beneficiairesLien).toHaveAttribute('href', '/gouvernance/69/beneficiaires')
     const beneficiaireNombre = within(beneficiairesSection).getByText('66')
     expect(beneficiaireNombre).toBeInTheDocument()
     const beneficiaireTitre = within(beneficiairesSection).getByText('Bénéficiaires')
@@ -237,7 +237,7 @@ describe('tableau de bord', () => {
   })
 
   function afficherMonTableauDeBord(): void {
-    const tableauDeBordViewModel = tableauDeBordPresenter()
+    const tableauDeBordViewModel = tableauDeBordPresenter('69')
     renderComponent(<TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />)
   }
 })

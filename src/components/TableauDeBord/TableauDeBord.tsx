@@ -202,7 +202,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <Link
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/gouvernance/11"
+            href={tableauDeBordViewModel.liens.gouvernance}
           >
             La gouvernance
           </Link>
@@ -294,7 +294,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <Link
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/gouvernance/11/financements"
+            href={tableauDeBordViewModel.liens.financements}
           >
             Les demandes
           </Link>
@@ -388,7 +388,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
           <Link
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/gouvernance/11/beneficiaires"
+            href={tableauDeBordViewModel.liens.beneficiaires}
           >
             Les conventions
           </Link>
