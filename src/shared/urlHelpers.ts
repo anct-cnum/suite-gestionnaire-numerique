@@ -5,6 +5,6 @@ export function gestionMembresGouvernanceUrl(uidGouvernance: string): string {
 
 //retourne l'url de la feuille de route par son uid et l'id de la gouvernance
 export function feuilleDeRouteUrl(uidGouvernance: string, uidFeuilleDeRoute: string): string {
-  return `/gouvernance/${uidGouvernance}/feuilles-de-route/${uidFeuilleDeRoute}`
+  return `/gouvernance/${uidGouvernance}/feuille-de-route/${uidFeuilleDeRoute}`
 }
 
