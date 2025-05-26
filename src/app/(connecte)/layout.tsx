@@ -31,14 +31,16 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
     >
       <LienEvitement />
       <ToastContainer style={{ width: '30rem' }} />
-      <EnTete />
-      <main
-        className="fr-container--fluid fr-mx-5w"
-        id="content"
-      >
-        {children}
-      </main>
-      <PiedDePage />
+      <div className="page-container">
+        <EnTete />
+        <main
+          className="fr-container--fluid main-content"
+          id="content"
+        >
+          {children}
+        </main>
+        <PiedDePage />
+      </div>
     </ClientContext>
   )
 }

@@ -84,7 +84,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       <hr />
       <section
         aria-labelledby="etatDesLieux"
-        className="fr-mb-4w"
+        className={`fr-mb-4w  ${styles.hidden}`}
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
@@ -183,7 +183,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </section>
       <section
         aria-labelledby="gouvernance"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
+        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
@@ -449,7 +449,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </section>
       <section
         aria-labelledby="aidantsMediateurs"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
+        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
           <div className="fr-grid-row fr-grid-row--middle">
@@ -560,7 +560,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
       </section>
       <section
         aria-labelledby="sources"
-        className="background-blue-france fr-mb-4w fr-py-4w fr-px-16w"
+        className={`background-blue-france fr-mb-4w fr-py-4w fr-px-16w ${styles.hidden}`}
       >
         <h2
           className="fr-grid-row fr-grid-row--center fr-h4 color-blue-france fr-mb-2w"

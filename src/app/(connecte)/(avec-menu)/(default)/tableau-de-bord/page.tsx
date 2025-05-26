@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import Notice from '@/components/shared/Notice/Notice'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -21,13 +20,10 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
 
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
-  
+
   const tableauDeBordViewModel = tableauDeBordPresenter(utilisateur.departementCode ?? '')
 
   return (
-    <>
-      <Notice />
-      <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
-    </>
+    <TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />
   )
 }
