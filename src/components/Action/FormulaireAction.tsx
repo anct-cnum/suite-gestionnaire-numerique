@@ -13,12 +13,11 @@ import { MontantPositif } from '../shared/Montant/MontantPositif'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { useRichTextEditor } from '../shared/RichTextEditor/hooks/useRichTextEditor'
 import TextEditor from '../shared/RichTextEditor/TextEditor'
-import Select from '../shared/Select/Select'
 import Tag from '../shared/Tag/Tag'
 import TextInput from '../shared/TextInput/TextInput'
+import TemporaliteAction from '@/components/Action/TemporaliteAction'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import {  ActionViewModel, Besoins, BesoinsPotentielle, DemandeDeSubvention, transformBesoins } from '@/presenters/actionPresenter'
-import { LabelValue } from '@/presenters/shared/labels'
 import { Optional } from '@/shared/Optional'
 
 export function FormulaireAction({
@@ -31,7 +30,6 @@ export function FormulaireAction({
   validerFormulaire,
 }: Props): ReactElement {
   const nomDeLActionId = useId()
-  const [temporalite, setTemporalite] = useState(action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined ? 'annuelle' : 'pluriannuelle')
 
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
@@ -42,7 +40,6 @@ export function FormulaireAction({
   const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
     setLocalDemandeDeSubvention(undefined)
   })
-  const years = Array.from({ length: 6 }, (_, index) => 2025 + index)
   const {
     contenu: contexteContenu,
     gererLeChangementDeContenu: gererChangementContexte,
@@ -294,76 +291,7 @@ export function FormulaireAction({
               ))
           }
         </div>
-        <div
-          className="white-background fr-p-4w fr-mb-2w"
-          id="temporaliteAction"
-        >
-          <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
-            Temporalité de l‘action
-          </p>
-          <p className="color-grey">
-            Veuillez indiquer si cette action est annuelle ou pluriannuelle
-          </p>
-          <hr />
-          <div
-            className={`fr-radio-group ${styles['align-items']}`}
-          >
-            <div className={styles['select-width']}>
-              <input
-                checked={temporalite === 'annuelle'}
-                id="radio-annuelle"
-                name="radio-inline"
-                onChange={() => {
-                  setTemporalite('annuelle')
-                }}
-                type="radio"
-                value="annuelle"
-              />
-              <label
-                className="fr-label fr-mb-2w"
-                htmlFor="radio-annuelle"
-              >
-                Annuelle
-              </label>
-              <Select
-                id="anneeDeDebut"
-                name="anneeDeDebut"
-                options={years.map(toLabelValue(Number(action.anneeDeDebut)))}
-                placeholder={action.anneeDeDebut}
-              >
-                Année de début de l‘action
-              </Select>
-            </div>
-            <div className={styles['select-width']}>
-              <input
-                checked={temporalite === 'pluriannuelle'}
-                id="radio-pluriannuelle"
-                name="radio-pluriannuelle"
-                onChange={() => {
-                  setTemporalite('pluriannuelle')
-                }}
-                type="radio"
-                value="pluriannuelle"
-              />
-              <label
-                className="fr-label fr-mb-2w"
-                htmlFor="radio-pluriannuelle"
-              >
-                Pluriannuelle
-              </label>
-              <Select
-                disabled={temporalite !== 'pluriannuelle'}
-                id="anneeDeFin"
-                name="anneeDeFin"
-                options={years.map(toLabelValue(Number(action.anneeDeFin)))}
-                placeholder="-"
-
-              >
-                Année de fin de l‘action
-              </Select>
-            </div>
-          </div>
-        </div>
+        <TemporaliteAction action={{ anneeDeDebut: action.anneeDeDebut, anneeDeFin:action.anneeDeFin }} />
         <div
           className="white-background fr-p-4w fr-mb-2w"
           id="budgetAction"
@@ -482,13 +410,13 @@ export function FormulaireAction({
               : null
           }
           <hr />
-          <AlertePrevisionnel 
+          <AlertePrevisionnel
             budgetGlobal={budgetGlobal}
             cofinancements={cofinancements}
             demandeDeSubvention={localDemandeDeSubvention}
           />
         </div>
-  
+
         {demandeDeSubvention || localDemandeDeSubvention ? (
           <div
             className="white-background fr-p-4w"
@@ -596,14 +524,6 @@ export function FormulaireAction({
       setDestinataires(newBenificiaire)
     }
   }
-}
-
-function toLabelValue(selected: number) {
-  return (year: number): LabelValue<number> => ({
-    isSelected: selected === year,
-    label: `${year}`,
-    value: year,
-  })
 }
 
 function checkHasBesoinsSelected(besoins: Besoins): boolean {
