@@ -25,7 +25,7 @@ export default function MesParametres(): ReactElement {
         </p>
         <section
           aria-labelledby={communicationEtNotificationsHeadingId}
-          className="grey-border fr-p-4w fr-mb-4w"
+          className={`grey-border fr-p-4w fr-mb-4w ${styles.hidden}`}
         >
           <h2
             className="fr-h6"

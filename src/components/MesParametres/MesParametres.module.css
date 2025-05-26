@@ -13,3 +13,7 @@
 .fr-segmented {
   display: flex;
 }
+
+.hidden {
+  display: none;
+}
