@@ -31,7 +31,7 @@ export default function SupprimerUneAction({
           de la feuille de route ?
         </ModalTitle>
         <p>
-          En cliquant sur confirmer, l’action sera définitivement supprimé de votre feuille de route
+          En cliquant sur confirmer, l’action sera définitivement supprimée de votre feuille de route
         </p>
       </div>
       <div className="fr-modal__footer">
