@@ -82,6 +82,12 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </ul>
       </section>
       <hr />
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '40vh',
+      }}
+      />
       <section
         aria-labelledby="etatDesLieux"
         className={`fr-mb-4w  ${styles.hidden}`}
