@@ -28,7 +28,7 @@ const enveloppes: ReadonlyArray<Enveloppe> = [
     value: '3',
   },
   {
-    budget: 10_000,
+    budget: 120_000,
     enabled: true,
     isSelected: false,
     label: 'Ingénierie France Numérique Ensemble - 2024',
