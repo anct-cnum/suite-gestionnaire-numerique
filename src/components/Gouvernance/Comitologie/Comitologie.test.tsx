@@ -52,7 +52,7 @@ describe('comitologie', () => {
       expect(date).toHaveAttribute('type', 'date')
       expect(date).toHaveAttribute('min', '1970-01-02')
 
-      const commentaire = within(formulaire).getByRole('textbox', { name: 'Laissez ici un commentaire général sur le comité' })
+      const commentaire = within(formulaire).getByRole('textbox', { name: 'Description' })
       expect(commentaire).not.toBeRequired()
       expect(commentaire).toHaveAttribute('maxLength', '500')
 
@@ -201,7 +201,7 @@ describe('comitologie', () => {
       expect(date).toHaveAttribute('min', '1970-01-02')
       expect(date).toHaveValue('1970-01-01')
 
-      const commentaire = within(formulaire).getByRole('textbox', { name: 'Laissez ici un commentaire général sur le comité' })
+      const commentaire = within(formulaire).getByRole('textbox', { name: 'Description' })
       expect(commentaire).not.toBeRequired()
       expect(commentaire).toHaveAttribute('maxLength', '500')
       expect(commentaire).toHaveValue('commentaire')
@@ -382,7 +382,7 @@ describe('comitologie', () => {
   }
 
   function jeTapeUnCommentaire(container: HTMLElement, value: string): HTMLElement {
-    const input = within(container).getByRole('textbox', { name: 'Laissez ici un commentaire général sur le comité' })
+    const input = within(container).getByRole('textbox', { name: 'Description' })
     fireEvent.change(input, { target: { value } })
     return input
   }
