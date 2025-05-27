@@ -1,5 +1,6 @@
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
+import style from './GestionMembres.module.css'
 import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
@@ -86,7 +87,7 @@ export default function AjouterUnMembre({
                 <Badge color="new">
                   {informationsMembre.statut}
                 </Badge>
-                <div className="color-grey fr-mt-1w">
+                <div className={`color-grey fr-mt-1w ${style.hidden}`}>
                   Numéro
                   {' '}
                   <abbr title="Système d’Identification du Répertoire des ÉTablissements">
@@ -99,7 +100,7 @@ export default function AjouterUnMembre({
                     RIDET
                   </abbr>
                 </div>
-                <div>
+                <div className={style.hidden}>
                   <ExternalLink
                     href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${informationsMembre.siret}`}
                     title={`Fiche ${informationsMembre.nom}`}
@@ -113,10 +114,10 @@ export default function AjouterUnMembre({
                 <div>
                   {informationsMembre.typologie.elaboree.label}
                 </div>
-                <div className="color-grey fr-mt-1w">
+                <div className={`color-grey fr-mt-1w ${style.hidden}`}>
                   Adresse
                 </div>
-                <div>
+                <div className={style.hidden}>
                   {informationsMembre.adresse}
                 </div>
                 <div className="color-grey fr-mt-1w">
