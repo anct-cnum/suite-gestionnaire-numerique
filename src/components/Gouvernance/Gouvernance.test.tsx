@@ -194,7 +194,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '2 membres' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 2 membres, 0 candidat', { selector: 'p' })
+    const sousTitreMembre = within(enTeteMembre).getByText('2 co-porteurs, 0 candidat', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
     const gerer = within(sectionMembre).getByRole('link', { name: 'Gérer' })
     expect(gerer).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membres')
@@ -274,7 +274,7 @@ describe('gouvernance', () => {
     const enTeteMembre = within(sectionMembre).getByRole('banner')
     const titreMembre = within(enTeteMembre).getByRole('heading', { level: 2, name: '1 membre' })
     expect(titreMembre).toBeInTheDocument()
-    const sousTitreMembre = within(enTeteMembre).getByText('1 co-porteur, 1 membre, 0 candidat', { selector: 'p' })
+    const sousTitreMembre = within(enTeteMembre).getByText('1 co-porteur, 0 candidat', { selector: 'p' })
     expect(sousTitreMembre).toBeInTheDocument()
   })
 

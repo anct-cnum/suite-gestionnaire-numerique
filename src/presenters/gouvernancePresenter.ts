@@ -326,7 +326,6 @@ function toNotePriveeViewModel(notePrivee: UneGouvernanceReadModel['notePrivee']
 function wordingMembres(syntheseMembres: UneGouvernanceReadModel['syntheseMembres']): string {
   return [
     [syntheseMembres.coporteurs.length, 'co-porteur'] as const,
-    [syntheseMembres.total, 'membre'] as const,
     [syntheseMembres.candidats, 'candidat'] as const,
   ]
     .map(([nombre, categorie]) => `${nombre} ${categorie}${formatPluriel(nombre)}`)
