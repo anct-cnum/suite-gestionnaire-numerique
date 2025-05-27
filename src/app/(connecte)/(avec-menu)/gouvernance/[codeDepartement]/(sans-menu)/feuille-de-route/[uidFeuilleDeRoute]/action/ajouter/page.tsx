@@ -3,7 +3,6 @@ import { ReactElement } from 'react'
 
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
-import Notice from '@/components/shared/Notice/Notice'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { actionARemplir } from '@/presenters/actionPresenter'
 import { feuilleDeRouteUrl , gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
@@ -23,7 +22,6 @@ export default async function ActionAjouterController({  params,
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w">
-          <Notice />
           <AjouterUneAction
             action={actionARemplir(undefined, { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })}
             date={date}
