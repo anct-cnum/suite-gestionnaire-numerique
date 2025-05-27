@@ -83,7 +83,7 @@ export default function ModifierMonCompte({
           </span>
           {' '}
           <span className="fr-hint-text">
-            Seuls les gestionnaires verront votre adresse électronique.
+            Seuls les administateurs et les préfectures verront votre adresse électronique.
           </span>
         </TextInput>
         <TextInput
@@ -97,7 +97,7 @@ export default function ModifierMonCompte({
           Téléphone professionnel
           {' '}
           <span className="fr-hint-text">
-            Seuls les gestionnaires verront votre numéro de téléphone.
+            Seuls les administrateurs et les préfectures verront votre numéro de téléphone. 
             Formats attendus : 0122334455 ou +33122334455
           </span>
         </TextInput>

@@ -344,13 +344,13 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       expect(prenom).toHaveAttribute('name', 'prenom')
       expect(prenom).toHaveAttribute('type', 'text')
       expect(prenom).toHaveValue('Julien')
-      const email = within(formulaire).getByRole('textbox', { name: 'Adresse électronique * Seuls les gestionnaires verront votre adresse électronique.' })
+      const email = within(formulaire).getByRole('textbox', { name: 'Adresse électronique * Seuls les administateurs et les préfectures verront votre adresse électronique.' })
       expect(email).toBeRequired()
       expect(email).toHaveAttribute('name', 'email')
       expect(email).toHaveAttribute('pattern', '^\\S+@\\S+\\.\\S+$')
       expect(email).toHaveAttribute('type', 'email')
       expect(email).toHaveValue('julien.deschamps@example.com')
-      const telephone = within(formulaire).getByRole('textbox', { name: 'Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
+      const telephone = within(formulaire).getByRole('textbox', { name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
       expect(telephone).toHaveAttribute('name', 'telephone')
       expect(telephone).toHaveAttribute('pattern', '^(\\+\\d{11,12}|\\d{10})$')
       expect(telephone).toHaveAttribute('type', 'tel')
@@ -375,7 +375,7 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
       jOuvreMesInformationsPersonnelles()
 
       // THEN
-      const telephone = screen.getByRole('textbox', { name: 'Téléphone professionnel Seuls les gestionnaires verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
+      const telephone = screen.getByRole('textbox', { name: 'Téléphone professionnel Seuls les administrateurs et les préfectures verront votre numéro de téléphone. Formats attendus : 0122334455 ou +33122334455' })
       expect(telephone).toHaveValue('')
     })
 
