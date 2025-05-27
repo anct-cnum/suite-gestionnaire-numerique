@@ -345,13 +345,13 @@ function buildTitresFeuillesDeRoute(gouvernance: UneGouvernanceReadModel): Gouve
       wording: 'feuille de route',
     }
   }
-
+  const url = `/gouvernance/${gouvernance.uid}/feuilles-de-route`
   const lien = gouvernance.feuillesDeRoute.length === 1 ? {
     label: 'Voir la feuille de route',
-    url: feuilleDeRouteLink(gouvernance.uid, gouvernance.feuillesDeRoute[0].uid),
+    url,
   } : {
     label: 'Voir les feuilles de route',
-    url: `/gouvernance/${gouvernance.uid}/feuilles-de-route`,
+    url,
   }
 
   const nombreDeFeuillesDeRoute = gouvernance.feuillesDeRoute.length
