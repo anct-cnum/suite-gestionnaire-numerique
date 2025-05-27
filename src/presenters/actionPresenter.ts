@@ -8,24 +8,28 @@ import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
     budget: 50_000,
+    enabled: false,
     isSelected: false,
     label: 'Conseiller Numérique - 2024',
     value: '1',
   },
   {
     budget: 100_000,
+    enabled: false,
     isSelected: false,
     label: 'Conseiller Numérique - Plan France Relance',
     value: '2',
   },
   {
     budget: 30_000,
+    enabled: false,
     isSelected: false,
     label: 'Formation Aidant Numérique/Aidants Connect - 2024',
     value: '3',
   },
   {
     budget: 10_000,
+    enabled: true,
     isSelected: false,
     label: 'Ingénierie France Numérique Ensemble - 2024',
     value: '4',
@@ -254,7 +258,7 @@ export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
   }
 }
 
-export type Enveloppe = LabelValue & Readonly<{ budget: number }>
+export type Enveloppe = LabelValue & Readonly<{ budget: number; enabled: boolean }>
 
 interface CofinamencemenViewModel {
   coFinanceur: string
