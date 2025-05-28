@@ -20,9 +20,11 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
         <br />
         {action.nom}
       </DrawerTitle>
-      <Badge color={action.statut.variant}>
-        {action.statut.libelle}
-      </Badge>
+      { action.statut.display ?
+        <Badge color={action.statut.variant}>
+          {action.statut.libelle}
+        </Badge>
+        : null }
       <ul
         aria-label="Besoins"
         className="fr-ml-1w"
@@ -94,8 +96,11 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
             </ul>
           ))}
         </li>
-        <li className="fr-p-2w fr-text--bold">
-          {action.budgetPrevisionnel.coFinancements.map((coFinancement) => (
+        <ul className="fr-p-2w fr-text--bold">
+          {(action.budgetPrevisionnel.coFinancements.length > 0
+            ? action.budgetPrevisionnel.coFinancements
+            : [{ libelle: 'Co-financement', montant: '0€' }]
+          ).map((coFinancement) => (
             <li
               className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
               key={coFinancement.libelle}
@@ -108,7 +113,7 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
               </span>
             </li>
           ))}
-        </li>
+        </ul>
       </ul>
       <div className="color-grey  fr-text--bold fr-mt-2w">
         Bénéficiaires des subventions
