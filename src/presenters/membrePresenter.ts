@@ -70,7 +70,7 @@ export function membrePresenter(codeDepartement: string): MembreViewModel {
             },
           ],
           expiration: formaterEnDateFrancaise(new Date('2027-11-23')),
-          libelle: 'Convention CC des Monts du Lyonnais',
+          libelle: 'En cours',
           statut: {
             libelle: 'En cours',
             variant: 'success',
@@ -134,7 +134,7 @@ export function membrePresenter(codeDepartement: string): MembreViewModel {
       editeur: 'Lucie Bruno',
       edition: formaterEnDateFrancaise(new Date('2024-11-23')),
       identifiant: '#7889',
-      nom: 'CC des Monts du Lyonnais',
+      nom: 'En cours ...',
       region: 'Auvergne Rhône-Alpes',
       siret: '79227291600034',
       typologie: 'Collectivité, EPCI',
