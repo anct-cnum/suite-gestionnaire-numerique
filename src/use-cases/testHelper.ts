@@ -91,6 +91,12 @@ export function gouvernanceReadModelFactory(
             uid: '1',
           },
         ],
+        beneficiairesSubventionAccordee: [
+          {
+            nom: 'Structure 1',
+            uid: '0',
+          },
+        ],  
         beneficiairesSubventionFormation: [
           {
             nom: 'Structure 1',
@@ -99,6 +105,12 @@ export function gouvernanceReadModelFactory(
           {
             nom: 'Structure 2',
             uid: '3',
+          },
+        ],
+        beneficiairesSubventionFormationAccordee: [
+          {
+            nom: 'Structure 1',
+            uid: '0',
           },
         ],
         budgetGlobal: 145_000,

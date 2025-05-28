@@ -12,11 +12,13 @@ describe('feuille de route', () => {
     afficherUneGouvernance({
       feuillesDeRoute: [
         {
-          beneficiairesSubvention: [
+          beneficiairesSubvention: [],
+          beneficiairesSubventionAccordee: [
             { nom: 'Préfecture du Rhône', uid: '0' },
             { nom: 'CC des Monts du Lyonnais', uid: '1' },
           ],
-          beneficiairesSubventionFormation: [
+          beneficiairesSubventionFormation: [],
+          beneficiairesSubventionFormationAccordee: [
             { nom: 'Préfecture du Rhône', uid: '0'  },
             { nom: 'CC des Monts du Lyonnais', uid: '1' }],
           budgetGlobal: 145_000,
@@ -64,7 +66,7 @@ describe('feuille de route', () => {
     expect(montantDeLaSubventionAccordeeLabel).toBeInTheDocument()
     const montantDeLaSubventionAccordee = within(drawer).getByText('100 000 €')
     expect(montantDeLaSubventionAccordee).toBeInTheDocument()
-    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaires des subventions')
+    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions accordées')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
     const beneficiairesList = within(drawer).getAllByRole('list')[0]
     const beneficiairesListItems = within(beneficiairesList).getAllByRole('listitem')
@@ -76,7 +78,7 @@ describe('feuille de route', () => {
     expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
     const montantDeLaSubventionFormationAccordee = within(drawer).getByText('5 000 €')
     expect(montantDeLaSubventionFormationAccordee).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaires des subventions formation')
+    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation accordées')
     expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
     const beneficiairesSubventionFormationList = within(drawer).getAllByRole('list')[1]
     const beneficiairesSubventionFormationListItems = within(beneficiairesSubventionFormationList).getAllByRole('listitem')
@@ -106,6 +108,7 @@ describe('feuille de route', () => {
             nom: 'CC des Monts du Lyonnais',
             uid: '1',
           }],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [{
             nom: 'Préfecture du Rhône',
             uid: '0',
@@ -114,11 +117,13 @@ describe('feuille de route', () => {
             nom: 'CC des Monts du Lyonnais',
             uid: '1',
           }],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,
           montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
+          porteur: undefined,
           totalActions: 1,
           uid: 'feuilleDeRouteFooId',
         },
@@ -130,8 +135,8 @@ describe('feuille de route', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
-    const tiret = within(drawer).getByText('-')
-    expect(tiret).toHaveAttribute('title', 'Aucun responsable')
+    const divResposable = within(drawer).getByTitle('Aucun responsable')
+    expect(divResposable).toBeInTheDocument()
   })
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de bénéficiaire de subvention alors un tiret est affiché à la place de la liste des bénéficiaires et les labels sont au singulier', () => {
@@ -140,7 +145,9 @@ describe('feuille de route', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,
@@ -158,9 +165,9 @@ describe('feuille de route', () => {
 
     // THEN
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
-    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions')
+    const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions accordées')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation')
+    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation accordées')
     expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
     const tirets = within(drawer).getAllByText('-')
     expect(tirets).toHaveLength(2)
@@ -172,7 +179,9 @@ describe('feuille de route', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,

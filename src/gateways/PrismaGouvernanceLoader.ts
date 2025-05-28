@@ -105,34 +105,44 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         uid: String(feuilleDeRoute.id),
       })),
     })
-    const feuillesDeRoute = gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute, index) => ({
-      beneficiairesSubvention: beneficiairesSubvention(
-        feuilleDeRoute.action,
-        enveloppe => !isEnveloppeDeFormation(enveloppe)
-      ),
-      beneficiairesSubventionFormation: beneficiairesSubvention(
-        feuilleDeRoute.action,
-        isEnveloppeDeFormation
-      ),
-      ...Boolean(feuilleDeRoute.pieceJointe) && {
-        pieceJointe: {
-          apercu: '',
-          emplacement: '',
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          nom: feuilleDeRoute.pieceJointe!,
+    const feuillesDeRoute = gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute, index) => {
+      return {
+        beneficiairesSubvention: beneficiairesSubvention(
+          feuilleDeRoute.action,
+          enveloppe => !isEnveloppeDeFormation(enveloppe)
+        ),
+        beneficiairesSubventionAccordee: beneficiairesSubventionAccordee(
+          feuilleDeRoute.action,
+          enveloppe => !isEnveloppeDeFormation(enveloppe)
+        ),
+        beneficiairesSubventionFormation: beneficiairesSubvention(
+          feuilleDeRoute.action,
+          isEnveloppeDeFormation
+        ),
+        beneficiairesSubventionFormationAccordee: beneficiairesSubventionAccordee(
+          feuilleDeRoute.action,
+          isEnveloppeDeFormation
+        ),
+        ...Boolean(feuilleDeRoute.pieceJointe) && {
+          pieceJointe: {
+            apercu: '',
+            emplacement: '',
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            nom: feuilleDeRoute.pieceJointe!,
+          },
         },
-      },
-      budgetGlobal: synthese.feuillesDeRoute[index].budget,
-      montantSubventionAccordee: synthese.feuillesDeRoute[index].financementAccorde,
-      montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
-      montantSubventionFormationAccordee: synthese.feuillesDeRoute[index].financementFormationAccorde,
-      nom: feuilleDeRoute.nom,
-      porteur: feuilleDeRoute.relationMembre
-        ? toMembres([feuilleDeRoute.relationMembre]).map(fromMembre)[0]
-        : undefined,
-      totalActions: feuilleDeRoute.action.length,
-      uid: String(feuilleDeRoute.id),
-    }))
+        budgetGlobal: synthese.feuillesDeRoute[index].budget,
+        montantSubventionAccordee: synthese.feuillesDeRoute[index].financementAccorde,
+        montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
+        montantSubventionFormationAccordee: synthese.feuillesDeRoute[index].financementFormationAccorde,
+        nom: feuilleDeRoute.nom,
+        porteur: feuilleDeRoute.relationMembre
+          ? toMembres([feuilleDeRoute.relationMembre]).map(fromMembre)[0]
+          : undefined,
+        totalActions: feuilleDeRoute.action.length,
+        uid: String(feuilleDeRoute.id),
+      }
+    })
     return {
       comites,
       departement: gouvernanceRecord.relationDepartement.nom,
@@ -189,6 +199,22 @@ function beneficiairesSubvention(
       .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
       .filter(Boolean)
       .filter(({ enveloppe }) => predicate(enveloppe))
+      .flatMap(({ beneficiaire }) => beneficiaire)
+      .map(({ membre }) => membre)
+  )
+    .map(fromMembre)
+    .toSorted(alphaAsc('nom'))
+}
+
+function beneficiairesSubventionAccordee(
+  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action'],
+  predicate: (enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>) => boolean
+): ReadonlyArray<MembreReadModel> {
+  return toMembres(
+    actions
+      .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
+      .filter(Boolean)
+      .filter(({ enveloppe, statut }) => predicate(enveloppe) && statut === StatutSubvention.ACCEPTEE.toString())
       .flatMap(({ beneficiaire }) => beneficiaire)
       .map(({ membre }) => membre)
   )
