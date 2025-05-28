@@ -30,7 +30,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
-      <div>
+      <div className="fr-col-12 fr-col-md-10 fr-col-lg-8">
         <title>
           {viewModel.nom}
         </title>
@@ -238,7 +238,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                   >
                     {action.nom}
                   </h3>
-                  {action.statut.display ? 
+                  {action.statut.display ?
                     <Badge color={action.statut.variant}>
                       {action.statut.libelle}
                     </Badge> : null}

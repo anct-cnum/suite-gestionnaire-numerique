@@ -21,46 +21,51 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
       <ul aria-label="actions">
         {actions.map((action) => (
           <li key={action.uid}>
-            <div className="fr-grid-row fr-grid-row--middle space-between">
-              <div className="fr-grid-row">
-                <TitleIcon
-                  background={action.statut.background}
-                  icon={action.statut.icon}
-                />
-                <div>
-                  <button
-                    aria-controls={drawerId}
-                    className="fr-text--bold color-blue-france fr-mb-1w"
-                    data-fr-opened="false"
-                    onClick={() => {
-                      setAction(action)
-                      setIsDrawerOpen(true)
-                    }}
-                    type="button"
-                  >
-                    {action.nom}
-                  </button>
-                  <br />
-                  {
-                    action.porteurs.map((porteur) => (
-                      <Tag
-                        href={porteur.link}
-                        key={porteur.link}
-                      >
-                        {porteur.label}
-                      </Tag>
-                    ))
-                  }
+            <div
+              className="fr-grid-row fr-grid-row--middle space-between"
+              style={{ alignItems: 'flex-start' }}
+            >
+              <div className="fr-col-auto">
+                <div style={{ alignItems: 'flex-start', display: 'flex', minHeight: '100%' }}>
+                  <TitleIcon
+                    background={action.statut.background}
+                    icon={action.statut.icon}
+                  />
                 </div>
               </div>
-              <div className="fr-col-4 right">
-                {action.statut.display ? 
+              <div className="fr-col">
+                <button
+                  aria-controls={drawerId}
+                  className="fr-text--bold color-blue-france fr-mb-1w fr-text--justify"
+                  data-fr-opened="false"
+                  onClick={() => {
+                    setAction(action)
+                    setIsDrawerOpen(true)
+                  }}
+                  style={{ textAlign: 'justify' }}
+                  type="button"
+                >
+                  {action.nom}
+                </button>
+                {
+                  action.porteurs.map((porteur) => (
+                    <Tag
+                      href={porteur.link}
+                      key={porteur.link}
+                    >
+                      {porteur.label}
+                    </Tag>
+                  ))
+                }
+              </div>
+              <div className="fr-col-auto" >
+                {action.statut.display ?
                   <Badge color={action.statut.variant}>
                     {action.statut.libelle}
                   </Badge> : null}
               </div>
             </div>
-            <hr className="fr-mt-3w" />
+            <hr className="fr-mt-2w" />
           </li>
         ))}
       </ul>
