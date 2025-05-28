@@ -123,7 +123,9 @@ export type ComiteViewModel = Readonly<{
 
 export type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<HyperLink>
+  beneficiairesSubventionAccordee: ReadonlyArray<HyperLink>
   beneficiairesSubventionFormation: ReadonlyArray<HyperLink>
+  beneficiairesSubventionFormationAccordee: ReadonlyArray<HyperLink>
   budgetGlobal: string
   lien: string
   montantSubventionAccordee: string
@@ -140,7 +142,9 @@ export type FeuilleDeRouteViewModel = Readonly<{
   porteur?: HyperLink
   totalActions: string
   wordingBeneficiairesSubvention: string
+  wordingBeneficiairesSubventionAccordee: string
   wordingBeneficiairesSubventionFormation: string
+  wordingBeneficiairesSubventionFormationAccordee: string
 }>
 
 export type MembreDetailsViewModel = Readonly<{
@@ -199,13 +203,20 @@ function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeVie
 function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel => {
     const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
+    const nombreDeBeneficiairesSubventionAccordee = feuilleDeRoute.beneficiairesSubventionAccordee.length
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
+    const nombreDeBeneficiairesSubventionFormationAccordee = 
+            feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel(uidGouvernance)),
+      beneficiairesSubventionAccordee:
+             feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel(uidGouvernance)),
       beneficiairesSubventionFormation:
         feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel(uidGouvernance)),
+      beneficiairesSubventionFormationAccordee:
+        feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel(uidGouvernance)),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
       lien: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
       montantSubventionAccordee: formatMontant(feuilleDeRoute.montantSubventionAccordee),
@@ -224,7 +235,9 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       } : undefined,
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
+      wordingBeneficiairesSubventionAccordee: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionAccordee)}`,
       wordingBeneficiairesSubventionFormation: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormation)}`,
+      wordingBeneficiairesSubventionFormationAccordee: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormationAccordee)}`,
     }
   }
 }

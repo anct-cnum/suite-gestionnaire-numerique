@@ -308,7 +308,9 @@ describe('gouvernance', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', uid: '0' }],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', uid: '1' }],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 145_000,
           montantSubventionAccordee: 105_000,
           montantSubventionDemandee: 120_000,
@@ -320,7 +322,9 @@ describe('gouvernance', () => {
         },
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', uid: '2' }],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', uid: '3' }],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 88_030,
           montantSubventionAccordee: 38_030,
           montantSubventionDemandee: 50_000,
@@ -383,7 +387,9 @@ describe('gouvernance', () => {
       feuillesDeRoute: [
         {
           beneficiairesSubvention: [{ nom: 'Préfecture du Rhône', uid: '0' }],
+          beneficiairesSubventionAccordee: [],
           beneficiairesSubventionFormation: [{ nom: 'Préfecture du Rhône', uid: '1' }],
+          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 145_000,
           montantSubventionAccordee: 100_000,
           montantSubventionDemandee: 115_000,

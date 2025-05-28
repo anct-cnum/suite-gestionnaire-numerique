@@ -69,7 +69,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       path: pathname,
       porteurs: form.getAll('porteurs') as Array<string>,
     })
-    setIsDisabled(false)
 
     const isOk = (messages as Array<string>).includes('OK')
     if (isOk) {

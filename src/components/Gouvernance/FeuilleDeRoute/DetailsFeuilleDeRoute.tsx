@@ -56,13 +56,13 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey fr-mb-1w">
-          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions`}
+          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions accordées`}
         </div>
         {
-          feuilleDeRoute.beneficiairesSubvention.length > 0 ?
+          feuilleDeRoute.beneficiairesSubventionAccordee.length > 0 ?
             <ul className="fr-tags-group">
               {
-                feuilleDeRoute.beneficiairesSubvention.map((beneficiaire) => (
+                feuilleDeRoute.beneficiairesSubventionAccordee.map((beneficiaire) => (
                   <li key={beneficiaire.label}>
                     <Tag href={beneficiaire.link}>
                       {beneficiaire.label}
@@ -84,13 +84,13 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey fr-mb-1w">
-          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation`}
+          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation accordées`}
         </div>
         {
-          feuilleDeRoute.beneficiairesSubventionFormation.length > 0 ?
+          feuilleDeRoute.beneficiairesSubventionFormationAccordee.length > 0 ?
             <ul className="fr-tags-group">
               {
-                feuilleDeRoute.beneficiairesSubventionFormation.map((beneficiaire) => (
+                feuilleDeRoute.beneficiairesSubventionFormationAccordee.map((beneficiaire) => (
                   <li key={beneficiaire.label}>
                     <Tag href={beneficiaire.link}>
                       {beneficiaire.label}
