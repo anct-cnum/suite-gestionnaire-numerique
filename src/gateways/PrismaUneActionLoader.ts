@@ -14,11 +14,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       id: cf.membre.id,
       montant: cf.montant,
     }))
-    const enveloppe = actionRecord.demandesDeSubvention.length > 0
-      ? {
-        montant: actionRecord.demandesDeSubvention[0].enveloppe.montant,
-      }
-      : { montant: 0 }
+    
     const porteursAvecNom = actionRecord.porteurAction.map(pa => toMembre(pa.membre))
     
     const porteurs = porteursAvecNom.map(pa => ({
@@ -53,7 +49,6 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
       } : undefined,
       description: actionRecord.description,
       destinataires,
-      enveloppe,
       nom: actionRecord.nom,
       nomFeuilleDeRoute,
       porteurs,

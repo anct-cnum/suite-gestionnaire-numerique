@@ -10,7 +10,6 @@ export interface UneActionReadModel {
   demandeDeSubvention : DemandeDeSubventionReadModel | undefined
   description?: string
   destinataires?: Array<PorteurPotentielReadModel>
-  enveloppe: EnveloppeReadModel
   nom: string
   nomFeuilleDeRoute : string
   porteurs?: Array<PorteurPotentielReadModel>
@@ -45,10 +44,6 @@ interface DemandeDeSubventionReadModel {
   subventionDemandee: number
   subventionEtp: number
   subventionPrestation: number
-}
-interface EnveloppeReadModel {
-  montant: number
-  // autres champs si besoin
 }
 
 interface PorteurPotentielReadModel {
