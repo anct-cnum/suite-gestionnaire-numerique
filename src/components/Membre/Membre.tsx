@@ -25,15 +25,18 @@ export default function Membre({ viewModel }: Props): ReactElement {
 
   return (
     <div>
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '40vh',
-      }}
+      <div
+        className="fr-container"
+        style={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          minHeight: '64vh',
+        }}
       >
-        Cette page sera bientôt disponible
-        {' '}
-        
+        <h1 className="fr-h1">
+          Cette page sera bientôt disponible
+        </h1>
       </div>
       <div
         className="fr-grid-row"
@@ -47,7 +50,7 @@ export default function Membre({ viewModel }: Props): ReactElement {
           <title>
             {viewModel.identite.nom}
           </title>
-          
+
           <div className="fr-grid-row space-between">
             <div>
               {viewModel.role.roles.map((role) => (
