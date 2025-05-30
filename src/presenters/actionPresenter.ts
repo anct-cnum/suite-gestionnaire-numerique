@@ -1,50 +1,19 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { Enveloppe } from './shared/enveloppe'
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { BesoinsPossible, CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
 import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
-// istanbul ignore next @preserve
-const enveloppes: ReadonlyArray<Enveloppe> = [
-  {
-    budgetPartage: false,
-    enabled: false,
-    isSelected: false,
-    label: 'Conseiller Numérique - 2024',
-    value: '1',
-  },
-  {
-    
-    budgetPartage: false,
-    enabled: true,
-    isSelected: false,
-    label: 'Conseiller Numérique - Plan France Relance',
-    value: '2',
-  },
-  {
-    budget: 30_000,
-    budgetPartage: true,
-    enabled: false,
-    isSelected: false,
-    label: 'Formation Aidant Numérique/Aidants Connect - 2024',
-    value: '3',
-  },
-  {
-    
-    budget: 120_000,
-    budgetPartage: true,
-    enabled: true,
-    isSelected: false,
-    label: 'Ingénierie France Numérique Ensemble - 2024',
-    value: '4',
-  },
-]
 
 export function actionPresenter(action: undefined | UneActionReadModel,
-  { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
-  { nomFeuilleDeRoute: string; urlFeuilleDeRoute: string; urlGestionMembresGouvernance: string }): ActionViewModel {
+  { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
+  { enveloppes: ReadonlyArray<Enveloppe>
+    nomFeuilleDeRoute: string
+    urlFeuilleDeRoute: string
+    urlGestionMembresGouvernance: string }): ActionViewModel {
   if (!action) {
-    return actionARemplir(undefined, { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })
+    return actionARemplir(undefined, { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })
   }
 
   const besoins = transformBesoins(action.besoins as Array<BesoinsPossible>)
@@ -134,8 +103,11 @@ export type ActionViewModel = Readonly<{
 }>
 
 export function actionARemplir(action: undefined | UneActionReadModel, 
-  { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
-  { nomFeuilleDeRoute: string; urlFeuilleDeRoute: string; urlGestionMembresGouvernance: string }): ActionViewModel {
+  { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
+  { enveloppes: ReadonlyArray<Enveloppe>
+    nomFeuilleDeRoute: string 
+    urlFeuilleDeRoute: string 
+    urlGestionMembresGouvernance: string }): ActionViewModel {
   return {
     anneeDeDebut: '',
     anneeDeFin: '',
@@ -261,11 +233,6 @@ export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
     ],
   }
 }
-
-export type Enveloppe = (
-  | (LabelValue & Readonly<{ budget: number; budgetPartage: true; enabled: boolean }>)
-  | (LabelValue & Readonly<{ budgetPartage: false; enabled: boolean }>)
-)
 
 interface CofinamencemenViewModel {
   coFinanceur: string

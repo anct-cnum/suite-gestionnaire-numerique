@@ -3,8 +3,10 @@ import { ReactElement } from 'react'
 
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
+import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { actionARemplir } from '@/presenters/actionPresenter'
+import { enveloppePresenter } from '@/presenters/enveloppePresenter'
 import { feuilleDeRouteUrl , gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
 
 export default async function ActionAjouterController({  params,
@@ -15,6 +17,7 @@ export default async function ActionAjouterController({  params,
   const nomFeuilleDeRoute = feuilleDeRoute.state.nom
   const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
   const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
+  const enveloppesDisponibles = await new PrismaEnveloppesLoader().get(feuilleDeRoute.state.uidGouvernance)
   try {
     return (
       <div className="fr-grid-row">
@@ -23,7 +26,11 @@ export default async function ActionAjouterController({  params,
         </div>
         <div className="fr-col-10 fr-pl-7w">
           <AjouterUneAction
-            action={actionARemplir(undefined, { nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance })}
+            action={actionARemplir(undefined, 
+              { enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe => enveloppePresenter(date, enveloppe)),
+                nomFeuilleDeRoute,
+                urlFeuilleDeRoute,
+                urlGestionMembresGouvernance })}
             date={date}
             uidFeuilleDeRoute={uidFeuilleDeRoute}
           />

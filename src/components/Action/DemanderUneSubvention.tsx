@@ -183,7 +183,7 @@ export default function DemanderUneSubvention({
               setBudgetEnveloppe(0)
             }
           }}
-          options={enveloppes.filter((enveloppe) => enveloppe.enabled).map((enveloppe) => ({
+          options={enveloppes.filter((enveloppe) => enveloppe.available).map((enveloppe) => ({
             ...enveloppe,
             isSelected: enveloppe.value === selectedEnveloppeId,
           }))}
@@ -268,9 +268,9 @@ export default function DemanderUneSubvention({
             onClick={() => {
               const nouvelleDemandeDeSubvention = {
                 enveloppe: {
+                  available: enveloppeById[selectedEnveloppeId].available,
                   budget: budgetEnveloppe,
                   budgetPartage: enveloppeById[selectedEnveloppeId].budgetPartage,
-                  enabled: enveloppeById[selectedEnveloppeId].enabled,
                   isSelected: true,
                   label: enveloppeById[selectedEnveloppeId].label,
                   value: selectedEnveloppeId,

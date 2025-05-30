@@ -227,8 +227,9 @@ describe('formulaire d‘ajout d‘une action', () => {
         ],
         demandeDeSubvention: {
           enveloppe: {
+            available: true,
             budget: 50_000,
-            enabled: true,
+            budgetPartage: true,
             isSelected: false,
             label: 'Conseiller Numérique - 2024',
             value: '1',
