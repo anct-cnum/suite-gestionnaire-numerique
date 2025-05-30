@@ -21,9 +21,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
   let demandeDeSubvention : DemandeDeSubvention | undefined
   if (demandeDeSubventionAction) {
     demandeDeSubvention = {
-      enveloppe: enveloppes.find(
-        enveloppe => enveloppe.value ===demandeDeSubventionAction.enveloppeFinancementId
-      ) ?? enveloppes[0],
+      enveloppeId: demandeDeSubventionAction.enveloppeFinancementId,
       montantPrestation: demandeDeSubventionAction.subventionPrestation,
       montantRh: demandeDeSubventionAction.subventionEtp ,
       total:demandeDeSubventionAction.subventionDemandee,
@@ -64,7 +62,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
 }
 
 export type DemandeDeSubvention = Readonly<{
-  enveloppe: Enveloppe
+  enveloppeId : string
   montantPrestation: number
   montantRh: number
   total: number

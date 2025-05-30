@@ -7,9 +7,20 @@ export type EnveloppesReadModel = Readonly<{
 }>
 
 export type EnveloppeReadModel = Readonly<{
+  budget: EnveloppeBudget
   dateDeDebut: Date
   dateDeFin: Date
   id: number
   libelle: string
-  montant: number
-}> 
+}>
+
+type EnveloppeBudget = 
+  | Readonly<{
+    total: number
+    type: 'nonVentile'
+  }>
+  | Readonly<{
+    total: number
+    type: 'ventile'
+    ventile: number
+  }>

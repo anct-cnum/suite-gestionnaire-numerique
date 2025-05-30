@@ -17,14 +17,7 @@ describe('ajout des bénéficiaires', () => {
     // WHEN
     afficherLeFormulaireAction({
       demandeDeSubvention: {
-        enveloppe: {
-          available: true,
-          budget: 50_000,
-          budgetPartage: true,
-          isSelected: false,
-          label: 'Conseiller Numérique - 2024',
-          value: '1',
-        },
+        enveloppeId: '1',
         montantPrestation: 10,
         montantRh: 10,
         total: 20,
@@ -42,14 +35,7 @@ describe('ajout des bénéficiaires', () => {
     // GIVEN
     afficherLeFormulaireAction({
       demandeDeSubvention: {
-        enveloppe: {
-          available: true,
-          budget: 50_000,
-          budgetPartage: true,
-          isSelected: false,
-          label: 'Conseiller Numérique - 2024',
-          value: '1',
-        },
+        enveloppeId: '1',
         montantPrestation: 10,
         montantRh: 10,
         total: 20,
@@ -99,14 +85,7 @@ describe('ajout des bénéficiaires', () => {
       // GIVEN
       afficherLeFormulaireAction({
         demandeDeSubvention: {
-          enveloppe: {
-            available: true,
-            budget: 50_000,
-            budgetPartage: true,
-            isSelected: false,
-            label: 'Conseiller Numérique - 2024',
-            value: '1',
-          },
+          enveloppeId: '1',
           montantPrestation: 10,
           montantRh: 10,
           total: 20,
@@ -154,14 +133,7 @@ describe('ajout des bénéficiaires', () => {
       // GIVEN
       afficherLeFormulaireAction({
         demandeDeSubvention: {
-          enveloppe: {
-            available: true,
-            budget: 50_000,
-            budgetPartage: true,
-            isSelected: false,
-            label: 'Conseiller Numérique - 2024',
-            value: '1',
-          },
+          enveloppeId: '1',
           montantPrestation: 10,
           montantRh: 10,
           total: 20,
@@ -189,14 +161,7 @@ describe('ajout des bénéficiaires', () => {
       // GIVEN
       afficherLeFormulaireAction({
         demandeDeSubvention: {
-          enveloppe: {
-            available: true,
-            budget: 50_000,
-            budgetPartage: true,
-            isSelected: false,
-            label: 'Conseiller Numérique - 2024',
-            value: '1',
-          },
+          enveloppeId: '1',
           montantPrestation: 10,
           montantRh: 10,
           total: 20,

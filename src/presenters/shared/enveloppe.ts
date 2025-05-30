@@ -1,7 +1,7 @@
 import { LabelValue } from './labels'
 
 export type Enveloppe = (
-    | (LabelValue & Readonly<{ available: boolean; budget: number; budgetPartage: true }>)
-    | (LabelValue & Readonly<{ available: boolean; budgetPartage: false }>)
+    | (LabelValue & Readonly<{ available: boolean; budget: number; limiteLaDemandeSubvention: true }>)
+    | (LabelValue & Readonly<{ available: boolean; limiteLaDemandeSubvention: false }>)
   )
   

@@ -12,7 +12,6 @@ import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteR
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
-import { Enveloppe } from '@/presenters/shared/enveloppe'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { AjouterUneAction } from '@/use-cases/commands/AjouterUneAction'
 
@@ -52,7 +51,7 @@ export async function ajouterUneActionAction(
     dateDeFin: actionCommand.anneeDeFin ?? '',
     demandesDeSubvention: actionCommand.demandeDeSubvention ? [{
       beneficiaires: [],
-      enveloppeFinancementId: actionCommand.demandeDeSubvention.enveloppe.value,
+      enveloppeFinancementId: actionCommand.demandeDeSubvention.enveloppeId,
       statut: 'deposee',
       subventionDemandee: actionCommand.demandeDeSubvention.total,
       subventionEtp: actionCommand.demandeDeSubvention.montantRh,
@@ -94,7 +93,7 @@ type ActionParams = Readonly<{
   }>
   contexte: string
   demandeDeSubvention?: Readonly<{
-    enveloppe: Enveloppe
+    enveloppeId: string
     montantPrestation: number
     montantRh: number
     total: number
