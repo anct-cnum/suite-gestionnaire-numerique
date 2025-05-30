@@ -82,7 +82,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
     temporalite: 'annuelle',
     totaux: {
       coFinancement: formatMontant(233),
-      financementAccorde: formatMontant(action.enveloppe.montant),
+      financementAccorde: formatMontant(action.demandeDeSubvention?.subventionDemandee ?? 0),
     },
     uid: action.uid,
     urlFeuilleDeRoute,
