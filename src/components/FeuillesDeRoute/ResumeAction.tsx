@@ -34,29 +34,33 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
                 </div>
               </div>
               <div className="fr-col">
-                <button
-                  aria-controls={drawerId}
-                  className="fr-text--bold color-blue-france fr-mb-1w fr-text--justify"
-                  data-fr-opened="false"
-                  onClick={() => {
-                    setAction(action)
-                    setIsDrawerOpen(true)
-                  }}
-                  style={{ textAlign: 'justify' }}
-                  type="button"
-                >
-                  {action.nom}
-                </button>
-                {
-                  action.porteurs.map((porteur) => (
-                    <Tag
-                      href={porteur.link}
-                      key={porteur.link}
-                    >
-                      {porteur.label}
-                    </Tag>
-                  ))
-                }
+                <div>
+                  <button
+                    aria-controls={drawerId}
+                    className="fr-text--bold color-blue-france fr-mb-1w fr-text--justify"
+                    data-fr-opened="false"
+                    onClick={() => {
+                      setAction(action)
+                      setIsDrawerOpen(true)
+                    }}
+                    style={{ textAlign: 'justify' }}
+                    type="button"
+                  >
+                    {action.nom}
+                  </button>
+                </div>
+                <div>
+                  {
+                    action.porteurs.map((porteur) => (
+                      <Tag
+                        href={porteur.link}
+                        key={porteur.link}
+                      >
+                        {porteur.label}
+                      </Tag>
+                    ))
+                  }
+                </div>
               </div>
               <div className="fr-col-auto" >
                 {action.statut.display ?
