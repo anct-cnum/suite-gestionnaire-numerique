@@ -7,28 +7,32 @@ import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 // istanbul ignore next @preserve
 const enveloppes: ReadonlyArray<Enveloppe> = [
   {
-    budget: 50_000,
+    budgetPartage: false,
     enabled: false,
     isSelected: false,
     label: 'Conseiller Numérique - 2024',
     value: '1',
   },
   {
-    budget: 100_000,
-    enabled: false,
+    
+    budgetPartage: false,
+    enabled: true,
     isSelected: false,
     label: 'Conseiller Numérique - Plan France Relance',
     value: '2',
   },
   {
     budget: 30_000,
+    budgetPartage: true,
     enabled: false,
     isSelected: false,
     label: 'Formation Aidant Numérique/Aidants Connect - 2024',
     value: '3',
   },
   {
+    
     budget: 120_000,
+    budgetPartage: true,
     enabled: true,
     isSelected: false,
     label: 'Ingénierie France Numérique Ensemble - 2024',
@@ -82,7 +86,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
     temporalite: 'annuelle',
     totaux: {
       coFinancement: formatMontant(233),
-      financementAccorde: formatMontant(action.enveloppe.montant),
+      financementAccorde: formatMontant(action.demandeDeSubvention?.subventionDemandee ?? 0),
     },
     uid: action.uid,
     urlFeuilleDeRoute,
@@ -258,7 +262,10 @@ export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
   }
 }
 
-export type Enveloppe = LabelValue & Readonly<{ budget: number; enabled: boolean }>
+export type Enveloppe = (
+  | (LabelValue & Readonly<{ budget: number; budgetPartage: true; enabled: boolean }>)
+  | (LabelValue & Readonly<{ budgetPartage: false; enabled: boolean }>)
+)
 
 interface CofinamencemenViewModel {
   coFinanceur: string

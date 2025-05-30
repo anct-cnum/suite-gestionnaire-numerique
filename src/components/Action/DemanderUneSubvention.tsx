@@ -37,7 +37,7 @@ export default function DemanderUneSubvention({
   const [montantPresta, setMontantPresta] = useState(demandeDeSubvention?.montantPrestation)
   const [montantRh, setMontantRh] = useState(demandeDeSubvention?.montantRh)
   const [selectedEnveloppeId, setSelectedEnveloppeId] = useState<string>(demandeDeSubvention?.enveloppe.value ?? '')
-
+  const [isEnveloppeSelectionnee, setIsEnveloppeSelectionnee] = useState(false)
   const isBudgetEnveloppe = useMemo(() => budgetEnveloppe > 0, [budgetEnveloppe])
   const isBudgetAction = useMemo(() => montantMaxAction > 0, [montantMaxAction])
   const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
@@ -49,7 +49,11 @@ export default function DemanderUneSubvention({
   useEffect(() => {
     if (isDrawerOpen && demandeDeSubvention) {
       if (demandeDeSubvention.enveloppe.value) {
-        setBudgetEnveloppe(demandeDeSubvention.enveloppe.budget)
+        if (demandeDeSubvention.enveloppe.budgetPartage) {
+          setBudgetEnveloppe(demandeDeSubvention.enveloppe.budget)
+        } else {
+          setBudgetEnveloppe(0)
+        }
       }
 
       if (inputMontantPrestaRef.current && demandeDeSubvention.montantPrestation) {
@@ -172,7 +176,12 @@ export default function DemanderUneSubvention({
           onChange={(event) => {
             const enveloppeId = event.target.value
             setSelectedEnveloppeId(enveloppeId)
-            setBudgetEnveloppe(enveloppeById[enveloppeId].budget)
+            setIsEnveloppeSelectionnee(true)
+            if (enveloppeById[enveloppeId].budgetPartage) {
+              setBudgetEnveloppe(enveloppeById[enveloppeId].budget)
+            } else {
+              setBudgetEnveloppe(0)
+            }
           }}
           options={enveloppes.filter((enveloppe) => enveloppe.enabled).map((enveloppe) => ({
             ...enveloppe,
@@ -260,6 +269,7 @@ export default function DemanderUneSubvention({
               const nouvelleDemandeDeSubvention = {
                 enveloppe: {
                   budget: budgetEnveloppe,
+                  budgetPartage: enveloppeById[selectedEnveloppeId].budgetPartage,
                   enabled: enveloppeById[selectedEnveloppeId].enabled,
                   isSelected: true,
                   label: enveloppeById[selectedEnveloppeId].label,
@@ -285,7 +295,7 @@ export default function DemanderUneSubvention({
     const input = ref.current
     const isInput = input !== null
     const isInvalid = isInput && !input.validity.valid
-    const inputGroupDisabledStyle = isBudgetEnveloppe ? '' : 'fr-input-group--disabled'
+    const inputGroupDisabledStyle = isEnveloppeSelectionnee ? '' : 'fr-input-group--disabled'
     const [displayErrorText, inputGroupErrorStyle] = isInvalid
       ? [Number(input.max) > 0, 'fr-input-group--error']
       : [false, '']
@@ -301,7 +311,7 @@ export default function DemanderUneSubvention({
         <input
           aria-describedby={displayErrorText ? errorTextId : undefined}
           className="fr-input"
-          disabled={!isBudgetEnveloppe}
+          disabled={!isEnveloppeSelectionnee}
           id={id}
           max={max}
           min="0"
