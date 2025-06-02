@@ -12,6 +12,7 @@ import { LabelValue } from '@/presenters/shared/labels'
 export default function ModifierUneFeuilleDeRoute({
   membres,
   nom,
+  perimetre,
   perimetres,
   uidFeuilleDeRoute,
   uidGouvernance,
@@ -55,6 +56,7 @@ export default function ModifierUneFeuilleDeRoute({
           labelId={labelId}
           membres={membres}
           nom={nom}
+          perimetreActuel={perimetre}
           perimetres={perimetres}
           validerFormulaire={modifierUneFeuilleDeRoute}
         >
@@ -94,6 +96,7 @@ export default function ModifierUneFeuilleDeRoute({
 type Props = Readonly<{
   membres: ReadonlyArray<LabelValue>
   nom: string
+  perimetre: string
   perimetres: ReadonlyArray<LabelValue>
   uidFeuilleDeRoute: string
   uidGouvernance: string

@@ -108,6 +108,7 @@ export default function InviterUnUtilisateur({
                   setOrganisation('')
                 }}
                 options={rolesGerables}
+                value={roleSelectionne}
               />
             </fieldset>
             :

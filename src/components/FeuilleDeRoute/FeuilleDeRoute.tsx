@@ -41,6 +41,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
           <ModifierUneFeuilleDeRoute
             membres={viewModel.formulaire.membres}
             nom={viewModel.nom}
+            perimetre={viewModel.perimetre}
             perimetres={viewModel.formulaire.perimetres}
             uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
             uidGouvernance={viewModel.uidGouvernance}

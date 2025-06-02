@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, PropsWithChildren, ReactElement, useId } from 'react'
+import { FormEvent, PropsWithChildren, ReactElement, useId, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import RadioGroup from '../shared/Radio/RadioGroup'
@@ -15,10 +15,17 @@ export default function FormulaireFeuilleDeRoute({
   labelId,
   membres,
   nom,
+  perimetreActuel,
   perimetres,
   validerFormulaire,
 }: Props): ReactElement {
   const nomId = useId()
+  const [perimetreSelectionne, setPerimetreSelectionne] = useState(perimetreActuel ?? '')
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>): void {
+    validerFormulaire(event)
+    setPerimetreSelectionne('')
+  }
   return (
     <>
       <DrawerTitle id={labelId}>
@@ -38,7 +45,7 @@ export default function FormulaireFeuilleDeRoute({
       <form
         aria-label={label}
         method="dialog"
-        onSubmit={validerFormulaire}
+        onSubmit={handleSubmit}
       >
         <TextInput
           defaultValue={nom}
@@ -75,7 +82,9 @@ export default function FormulaireFeuilleDeRoute({
           </legend>
           <RadioGroup
             nomGroupe="perimetre"
+            onChange={(event) => { setPerimetreSelectionne(event.target.value) }}
             options={perimetres}
+            value={perimetreSelectionne}
           />
         </fieldset>
         <div className="fr-btns-group">
@@ -91,6 +100,7 @@ type Props = PropsWithChildren<Readonly<{
   labelId: string
   membres: ReadonlyArray<LabelValue>
   nom: string
+  perimetreActuel?: string
   perimetres: ReadonlyArray<LabelValue>
   validerFormulaire(event: FormEvent<HTMLFormElement>): void
 }>>

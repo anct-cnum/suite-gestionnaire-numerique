@@ -7,7 +7,7 @@ export default function Radio({ children, id, isChecked, nomGroupe, onChange }: 
     <div className="fr-fieldset__element">
       <div className="fr-radio-group">
         <input
-          defaultChecked={isChecked}
+          checked={isChecked}
           id={id}
           name={nomGroupe}
           onChange={
