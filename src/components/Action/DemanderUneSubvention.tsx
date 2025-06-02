@@ -15,7 +15,9 @@ export default function DemanderUneSubvention({
   montantMaxAction,
   supprimerUneDemandeDeSubvention,
 }: Props): ReactElement {
-  const enveloppeById = enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {})
+  const enveloppeById = enveloppes.length > 0 
+    ? enveloppes.reduce<EnveloppeById>(enveloppeByIdReducer, {})
+    : {}
 
   const labelId = useId()
   const selectEnveloppeId = useId()
@@ -31,14 +33,13 @@ export default function DemanderUneSubvention({
   const drawer = useRef<HTMLDialogElement>(null)
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [budgetEnveloppe, setBudgetEnveloppe] = useState(0)
+  const [budgetEnveloppe, setBudgetEnveloppe] = useState<number | undefined>(undefined)
   // Stryker disable next-line BooleanLiteral
   const [isValid, setIsValid] = useState(false)
   const [montantPresta, setMontantPresta] = useState(demandeDeSubvention?.montantPrestation)
   const [montantRh, setMontantRh] = useState(demandeDeSubvention?.montantRh)
-  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState<string>(demandeDeSubvention?.enveloppe.value ?? '')
-
-  const isBudgetEnveloppe = useMemo(() => budgetEnveloppe > 0, [budgetEnveloppe])
+  const [selectedEnveloppeId, setSelectedEnveloppeId] = useState<string>(demandeDeSubvention?.enveloppeId ?? '')
+  const [isEnveloppeSelectionnee, setIsEnveloppeSelectionnee] = useState(false)
   const isBudgetAction = useMemo(() => montantMaxAction > 0, [montantMaxAction])
   const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
 
@@ -48,8 +49,13 @@ export default function DemanderUneSubvention({
 
   useEffect(() => {
     if (isDrawerOpen && demandeDeSubvention) {
-      if (demandeDeSubvention.enveloppe.value) {
-        setBudgetEnveloppe(demandeDeSubvention.enveloppe.budget)
+      if (demandeDeSubvention.enveloppeId) {
+        const selectedEnveloppe = enveloppeById[demandeDeSubvention.enveloppeId]
+        if (selectedEnveloppe.limiteLaDemandeSubvention) {
+          setBudgetEnveloppe(selectedEnveloppe.budget)
+        } else {
+          setBudgetEnveloppe(undefined)
+        }
       }
 
       if (inputMontantPrestaRef.current && demandeDeSubvention.montantPrestation) {
@@ -85,7 +91,7 @@ export default function DemanderUneSubvention({
             <div className="fr-p-2w background-blue-france">
               <div className="fr-grid-row space-between">
                 <p className="fr-col-10 fr-mb-0 color-blue-france fr-text--bold">
-                  {demandeDeSubvention.enveloppe.label}
+                  {enveloppeById[demandeDeSubvention.enveloppeId].label}
                 </p>
                 <p className="fr-mb-0 fr-mr-2w color-blue-france fr-text--bold">
                   {formatMontant(demandeDeSubvention.total)}
@@ -172,9 +178,14 @@ export default function DemanderUneSubvention({
           onChange={(event) => {
             const enveloppeId = event.target.value
             setSelectedEnveloppeId(enveloppeId)
-            setBudgetEnveloppe(enveloppeById[enveloppeId].budget)
+            setIsEnveloppeSelectionnee(true)
+            if (enveloppeById[enveloppeId].limiteLaDemandeSubvention) {
+              setBudgetEnveloppe(enveloppeById[enveloppeId].budget)
+            } else {
+              setBudgetEnveloppe(undefined)
+            }
           }}
-          options={enveloppes.filter((enveloppe) => enveloppe.enabled).map((enveloppe) => ({
+          options={enveloppes.filter((enveloppe) => enveloppe.available).map((enveloppe) => ({
             ...enveloppe,
             isSelected: enveloppe.value === selectedEnveloppeId,
           }))}
@@ -225,12 +236,12 @@ export default function DemanderUneSubvention({
         <ul
           className={`background-blue-france color-blue-france fr-my-4w fr-py-2w fr-pr-2w ${styles['no-style-list']}`}
         >
-          {isBudgetEnveloppe ? (
+          {selectedEnveloppeId && enveloppeById[selectedEnveloppeId].limiteLaDemandeSubvention ? (
             <li className="fr-grid-row space-between fr-mb-1w">
               Vos droits de subvention
               {' '}
               <span>
-                {formatMontant(budgetEnveloppe)}
+                {formatMontant(budgetEnveloppe ?? 0)}
               </span>
             </li>
           ) : null}
@@ -258,13 +269,8 @@ export default function DemanderUneSubvention({
             disabled={!isValid}
             onClick={() => {
               const nouvelleDemandeDeSubvention = {
-                enveloppe: {
-                  budget: budgetEnveloppe,
-                  enabled: enveloppeById[selectedEnveloppeId].enabled,
-                  isSelected: true,
-                  label: enveloppeById[selectedEnveloppeId].label,
-                  value: selectedEnveloppeId,
-                },
+                enveloppeId:  selectedEnveloppeId,
+              
                 montantPrestation: montantPresta ?? 0,
                 montantRh: montantRh ?? 0,
                 total: subventionsDemandees,
@@ -285,7 +291,7 @@ export default function DemanderUneSubvention({
     const input = ref.current
     const isInput = input !== null
     const isInvalid = isInput && !input.validity.valid
-    const inputGroupDisabledStyle = isBudgetEnveloppe ? '' : 'fr-input-group--disabled'
+    const inputGroupDisabledStyle = isEnveloppeSelectionnee ? '' : 'fr-input-group--disabled'
     const [displayErrorText, inputGroupErrorStyle] = isInvalid
       ? [Number(input.max) > 0, 'fr-input-group--error']
       : [false, '']
@@ -301,7 +307,7 @@ export default function DemanderUneSubvention({
         <input
           aria-describedby={displayErrorText ? errorTextId : undefined}
           className="fr-input"
-          disabled={!isBudgetEnveloppe}
+          disabled={!isEnveloppeSelectionnee}
           id={id}
           max={max}
           min="0"
@@ -337,9 +343,9 @@ export default function DemanderUneSubvention({
   }
 
   function montantMaximal(autreMontant = 0): number {
-    return isBudgetEnveloppe
-      ? Math.min(budgetEnveloppe - autreMontant, montantMaxAction - autreMontant)
-      : montantMaxAction
+    return budgetEnveloppe === undefined
+      ? montantMaxAction
+      : Math.min(budgetEnveloppe - autreMontant, montantMaxAction - autreMontant)
   }
 }
 

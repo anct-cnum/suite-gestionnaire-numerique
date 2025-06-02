@@ -5,9 +5,11 @@ import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
 import Notice from '@/components/shared/Notice/Notice'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
+import { enveloppePresenter } from '@/presenters/enveloppePresenter'
 import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
 
 export default async function ActionModifierController({ params }: Props): Promise<ReactElement> {
@@ -21,6 +23,7 @@ export default async function ActionModifierController({ params }: Props): Promi
     const actionReadModel = await new PrismaUneActionLoader(
     ).get(uidAction)
     const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
+    const enveloppesDisponibles = await new PrismaEnveloppesLoader().get(feuilleDeRoute.state.uidGouvernance)
     const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
     const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
     return (
@@ -32,6 +35,7 @@ export default async function ActionModifierController({ params }: Props): Promi
           <Notice />
           <ModifierUneAction
             action={actionPresenter(actionReadModel, {
+              enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe => enveloppePresenter(new Date(), enveloppe)),
               nomFeuilleDeRoute: actionReadModel.nomFeuilleDeRoute,
               urlFeuilleDeRoute,
               urlGestionMembresGouvernance,

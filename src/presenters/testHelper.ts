@@ -10,31 +10,35 @@ import { BesoinsPossible } from '@/use-cases/queries/RecupererUneAction'
 
 const enveloppes: ActionViewModel['enveloppes'] = [
   {
+    available: true,
     budget: 50_000,
-    enabled: true,
     isSelected: false,
     label: 'Conseiller Numérique - 2024',
+    limiteLaDemandeSubvention: true,
     value: '1',
   },
   {
+    available: true,
     budget: 100_000,
-    enabled: true,
     isSelected: false,
     label: 'Conseiller Numérique - Plan France Relance',
+    limiteLaDemandeSubvention: true,
     value: '2',
   },
   {
+    available: true,
     budget: 30_000,
-    enabled: true,
     isSelected: false,
     label: 'Formation Aidant Numérique/Aidants Connect - 2024',
+    limiteLaDemandeSubvention: true,
     value: '3',
   },
   {
+    available: true,
     budget: 10_000,
-    enabled: true,
     isSelected: false,
     label: 'Ingénierie France Numérique Ensemble - 2024',
+    limiteLaDemandeSubvention: true,
     value: '4',
   },
 ]

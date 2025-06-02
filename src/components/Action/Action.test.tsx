@@ -226,13 +226,7 @@ describe('formulaire d‘ajout d‘une action', () => {
           { coFinanceur : 'croix_id' , montant : '5000' },
         ],
         demandeDeSubvention: {
-          enveloppe: {
-            budget: 50_000,
-            enabled: true,
-            isSelected: false,
-            label: 'Conseiller Numérique - 2024',
-            value: '1',
-          },
+          enveloppeId: '1',
           montantPrestation: 10,
           montantRh: 10,
           total: 20,
