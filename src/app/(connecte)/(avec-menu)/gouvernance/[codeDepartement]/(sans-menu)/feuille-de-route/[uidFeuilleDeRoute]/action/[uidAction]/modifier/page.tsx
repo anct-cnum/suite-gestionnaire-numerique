@@ -7,6 +7,7 @@ import Notice from '@/components/shared/Notice/Notice'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
+import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaRepartitionSubventionGouvernanceLoader'
 import { PrismaUneActionLoader } from '@/gateways/PrismaUneActionLoader'
 import { actionPresenter } from '@/presenters/actionPresenter'
 import { enveloppePresenter } from '@/presenters/enveloppePresenter'
@@ -26,6 +27,8 @@ export default async function ActionModifierController({ params }: Props): Promi
     const enveloppesDisponibles = await new PrismaEnveloppesLoader().get(feuilleDeRoute.state.uidGouvernance)
     const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
     const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
+    const repartitionSubventionGouvernance = await new PrismaRepartitionSubventionGouvernanceLoader()
+      .get(feuilleDeRoute.state.uidGouvernance)
     return (
       <div className="fr-grid-row">
         <div className="fr-col-2">
@@ -35,7 +38,8 @@ export default async function ActionModifierController({ params }: Props): Promi
           <Notice />
           <ModifierUneAction
             action={actionPresenter(actionReadModel, {
-              enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe => enveloppePresenter(new Date(), enveloppe)),
+              enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe =>
+                enveloppePresenter(new Date(), enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))),
               nomFeuilleDeRoute: actionReadModel.nomFeuilleDeRoute,
               urlFeuilleDeRoute,
               urlGestionMembresGouvernance,
