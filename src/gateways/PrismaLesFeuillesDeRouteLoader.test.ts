@@ -3,7 +3,7 @@ import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, cree
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible, StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer les feuilles de route loader', () => {
@@ -118,7 +118,7 @@ describe('récupérer les feuilles de route loader', () => {
           actions: [
             {
               beneficiaires: [],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
               budgetGlobal: 70_000,
               coFinancements: [
                 {
@@ -149,7 +149,7 @@ describe('récupérer les feuilles de route loader', () => {
             },
             {
               beneficiaires: [],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
               budgetGlobal: 70_000,
               coFinancements: [],
               contexte: "Contexte de l'action",
@@ -189,7 +189,7 @@ describe('récupérer les feuilles de route loader', () => {
                   uid: 'commune-35345-93',
                 },
               ],
-              besoins: ['besoin 1', 'besoin 2'],
+              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
               budgetGlobal: 70_000,
               coFinancements: [
                 {

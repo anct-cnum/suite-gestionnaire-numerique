@@ -215,7 +215,7 @@ export function feuillesDeRouteReadModelFactory(
                 uid: '3',
               },
             ],
-            besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+            besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.APPUI_JURIDIQUE],
             budgetGlobal: 70_000,
             coFinancements: [
               {
@@ -265,7 +265,7 @@ export function feuillesDeRouteReadModelFactory(
                 uid: '5',
               },
             ],
-            besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+            besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.APPUI_JURIDIQUE],
             budgetGlobal: 100_000,
             coFinancements: [],
             contexte: '<p><strong>Aliquam maecenas augue morbi risus sed odio. Sapien imperdiet feugiat at nibh dui amet. Leo euismod sit ultrices nulla lacus aliquet tellus.</strong></p>',
@@ -302,7 +302,7 @@ export function feuillesDeRouteReadModelFactory(
                 uid: '1',
               },
             ],
-            besoins: ['Établir un diagnostic territorial', 'Appui juridique dédié à la gouvernance'],
+            besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.APPUI_JURIDIQUE],
             budgetGlobal: 60_000,
             coFinancements: [
               {
@@ -348,7 +348,7 @@ export function feuillesDeRouteReadModelFactory(
         actions: [
           {
             beneficiaires: [],
-            besoins: ['Établir un diagnostic territorial'],
+            besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
             budgetGlobal: 13_000,
             coFinancements: [
               {

@@ -4,6 +4,7 @@ import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuill
 import prisma from '../../prisma/prismaClient'
 import { actionFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
 describe('action repository', () => {
   it('ajouter une action à une feuille de route', async () => {
@@ -48,7 +49,7 @@ describe('action repository', () => {
         }, tx)
 
         const action = actionFactory({
-          besoins: ['besoin_1', 'besoin_2'],
+          besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
           budgetGlobal: 50_000,
           contexte: 'Contexte de test',
           dateDeCreation: epochTime,

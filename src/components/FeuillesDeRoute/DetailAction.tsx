@@ -29,12 +29,12 @@ export default function DetailAction({ action, labelId }: Props): ReactElement {
         aria-label="Besoins"
         className="fr-ml-1w"
       >
-        {action.besoins.map((besoin) => (
+        {Object.entries(action.besoins).map(([besoin, label]) => (
           <li
             className={`color-grey fr-text--bold fr-text--sm ${styles.besoin}`}
             key={besoin}
           >
-            {besoin}
+            {label}
           </li>
         ))}
       </ul>

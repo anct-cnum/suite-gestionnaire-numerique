@@ -1,10 +1,12 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { BESOINS_LABELS } from './shared/besoins'
 import { formaterEnDateFrancaise } from './shared/date'
 import { HyperLink, LabelValue } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
 export function feuillesDeRoutePresenter(readModel: FeuillesDeRouteReadModel): FeuillesDeRouteViewModel {
   return {
@@ -122,7 +124,10 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       label: nom,
       link: membreLink(uidGouvernance, uid),
     })),
-    besoins: action.besoins,
+    besoins: action.besoins.reduce((acc, besoin) => ({
+      ...acc,
+      [besoin]: BESOINS_LABELS[besoin],
+    }), {} as Record<BesoinsPossible, string>),
     budgetPrevisionnel: {
       coFinancements: action.coFinancements.map(({ coFinanceur, montant }) => ({
         libelle: coFinanceur.nom,
@@ -159,7 +164,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
 
 type ActionViewModel = Readonly<{
   beneficiaires: ReadonlyArray<HyperLink>
-  besoins: ReadonlyArray<string>
+  besoins: Record<BesoinsPossible, string>
   budgetPrevisionnel: Readonly<{
     coFinancements: ReadonlyArray<Financement>
     global: Financement

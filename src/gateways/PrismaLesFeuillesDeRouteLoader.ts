@@ -5,7 +5,7 @@ import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouv
 import prisma from '../../prisma/prismaClient'
 import { alphaAsc } from '@/shared/lang'
 import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible, StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
@@ -84,7 +84,7 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
           const syntheseAction = synthese.feuillesDeRoute[indexDeuilleDeRoute].actions[indexAction]
           return {
             beneficiaires: demandeDeSubvention?.beneficiaire.map(({ membre }) => fromMembre(toMembre(membre))) ?? [],
-            besoins: action.besoins.map(besoin => besoin.split('_').join(' ')),
+            besoins: action.besoins.map(besoin => besoin as BesoinsPossible),
             budgetGlobal: action.budgetGlobal,
             coFinancements: action.coFinancement.map(({ membre, montant }) => ({
               coFinanceur: fromMembre(toMembre(membre)),

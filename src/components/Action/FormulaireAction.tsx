@@ -173,7 +173,7 @@ export function FormulaireAction({
               financements={action.besoins.financements}
               formations={action.besoins.formations}
               formationsProfesionnels={action.besoins.formationsProfessionnels}
-              hasBesoins={action.hasBesoins || checkHasBesoinsSelected(besoinsSelected)}
+              hasBesoins={checkHasBesoinsSelected(besoinsSelected)}
               outillages={action.besoins.outillages}
               resetToutEffacer={resetToutEffacer}
               toutEffacer={toutEffacerBesoins}

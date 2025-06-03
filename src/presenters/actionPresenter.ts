@@ -45,7 +45,6 @@ export function actionPresenter(action: undefined | UneActionReadModel,
     description: action.description ?? '',
     destinataires: (action.destinataires ?? []).map(toPorteurPotentielViewModel),
     enveloppes,
-    hasBesoins: checkHasBesoins(besoins),
     lienPourModifier: 'LIEN BLABLA', // à compléter si besoin
     nom: action.nom,
     nomFeuilleDeRoute: action.nomFeuilleDeRoute,
@@ -85,7 +84,6 @@ export type ActionViewModel = Readonly<{
   description: string
   destinataires: Array<PorteurPotentielViewModel>
   enveloppes: ReadonlyArray<Enveloppe>
-  hasBesoins: boolean
   lienPourModifier: string
   nom: string
   nomFeuilleDeRoute: string
@@ -118,22 +116,6 @@ export function actionARemplir(action: undefined | UneActionReadModel,
     description: '',
     destinataires: [],
     enveloppes,
-    hasBesoins: checkHasBesoins({
-      financements: [
-        {
-          isSelected: false,
-          label: 'Structurer un fond local pour l’inclusion numérique',
-          value: BesoinsPossible.STRUCTURER_UN_FONDS,
-        }],
-      formations: [
-        {
-          isSelected: false,
-          label: 'Établir un diagnostic territorial',
-          value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
-        }],
-      formationsProfessionnels: [],
-      outillages: [],
-    }),
     lienPourModifier: '',
     nom: '',
     nomFeuilleDeRoute,
@@ -191,15 +173,4 @@ function toPorteurPotentielViewModel(
     nom: porteur.nom,
     roles: [], // à compléter si besoin
   }
-}
-
-function checkHasBesoins(besoins: {
-  financements: Besoins
-  formations: Besoins
-  formationsProfessionnels: Besoins
-  outillages: Besoins
-}): boolean {
-  return Object.values(besoins)
-    .flat()
-    .some(besoin => Boolean(besoin.isSelected))
 }

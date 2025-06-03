@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimePlusOneDay } from '@/shared/testHelper'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
 export function utilisateurRecordFactory(
   override?: Partial<Prisma.UtilisateurRecordUncheckedCreateInput>
@@ -451,7 +452,7 @@ export function actionRecordFactory(
   override?: Partial<Prisma.ActionRecordUncheckedCreateInput>
 ): Prisma.ActionRecordUncheckedCreateInput {
   return {
-    besoins: ['besoin_1', 'besoin_2'],
+    besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
     budgetGlobal: 0,
     contexte: "Contexte de l'action",
     createurId: 1,
