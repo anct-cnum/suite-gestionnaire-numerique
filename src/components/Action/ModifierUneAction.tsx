@@ -8,6 +8,7 @@ import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
+import { isOk } from '@/shared/lang'
 
 export default function ModifierUneAction({ action }: Props): ReactElement {
   const { modifierUneActionAction } = useContext(clientContext)
@@ -18,7 +19,7 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   return (
     <>
       <title>
-        {`Modifier l’action ${action.nom}`}
+        {`Modifier l'action ${action.nom}`}
       </title>
       <FormulaireAction
         action={action}
@@ -58,24 +59,28 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
   ): Promise<void> {
     event.preventDefault()
     setIsDisabled(true)
+    console.log('BLUUUUUUUUUUUUUUUUUUUuu')
     const form = new FormData(event.currentTarget)
-    const messages = await modifierUneActionAction({
+    console.log(form.getAll('besoins'))
+    const result = await modifierUneActionAction({
       anneeDeDebut: form.get('anneeDeDebut') as string,
       anneeDeFin: form.get('anneeDeFin') as string,
+      besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
-      coFinancements,
       contexte: contexteContenu,
       description: descriptionContenu,
-      destinataires: [],
+      feuilleDeRoute: action.urlFeuilleDeRoute.split('/').pop() ?? '',
+      gouvernance: action.urlGestionMembresGouvernance.split('/').pop() ?? '',
       nom: form.get('nom') as string,
-      porteur: '',
-      temporalite: form.get('radio-pluriannuelle') as string,
-      uid: '',
+      path: window.location.pathname,
+      porteurs: action.porteurs.map((porteur) => porteur.id),
+      uid: action.uid,
     })
-    if (messages.includes('OK')) {
+    if (isOk(result)) {
       Notification('success', { description: 'modifiée', title: 'Action ' })
     } else {
-      Notification('error', { description: messages.join(', '), title: 'Erreur : ' })
+      const errorMessage = (result as ReadonlyArray<string>).join(', ')
+      Notification('error', { description: errorMessage, title: 'Erreur : ' })
     }
     (event.target as HTMLFormElement).reset()
     setIsDisabled(false)

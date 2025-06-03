@@ -7,12 +7,13 @@ import {
   AddActionRepository,
   GetActionRepository,
   SupprimerActionRepository,
+  UpdateActionRepository,
 } from '@/use-cases/commands/shared/ActionRepository'
 import { RecordId } from '@/use-cases/commands/shared/Repository'
 
 // istanbul ignore next @preserve
 export class PrismaActionRepository
-implements AddActionRepository, GetActionRepository, SupprimerActionRepository
+implements AddActionRepository, GetActionRepository, SupprimerActionRepository, UpdateActionRepository
 {
   readonly #dataResource = prisma.actionRecord
 
@@ -109,5 +110,36 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository
       
     // On vérifie uniquement que l'action a bien été supprimée
     return result[result.length - 1].count === 1
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx ?? prisma
+    
+    await client.porteurActionRecord.deleteMany({
+      where: { actionId: Number(action.state.uid.value) },
+    })
+    await client.actionRecord.update({
+      data: {
+        besoins: action.state.besoins,
+        budgetGlobal: Number(action.state.budgetGlobal),
+        contexte: action.state.contexte,
+        dateDeDebut: new Date(action.state.dateDeDebut),
+        dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
+        derniereModification: new Date(),
+        description: action.state.description,
+        nom: action.state.nom,
+        porteurAction: {
+          create: action.state.uidPorteurs.map((uidPorteur) => ({
+            membreId: uidPorteur,
+          })),
+        },
+      },
+      where: {
+        id: Number(action.state.uid.value),
+      },
+    })
+
+    return true
   }
 }
