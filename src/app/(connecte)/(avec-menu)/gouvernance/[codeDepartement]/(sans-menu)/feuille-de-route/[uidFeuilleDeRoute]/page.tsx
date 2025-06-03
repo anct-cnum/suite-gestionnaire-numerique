@@ -14,16 +14,21 @@ import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/Etabl
 
 export default async function FeuilleDeRouteController({ params }: Props): Promise<ReactElement> {
   try {
-    const { uidFeuilleDeRoute } = await params
+    const { codeDepartement, uidFeuilleDeRoute } = await params
     const session = await getSession()
 
     if (!session) {
       redirect('/connexion')
     }
-    const readModel = await new PrismaUneFeuilleDeRouteLoader(
+
+    const feuilleDeRouteReadModel = await new PrismaUneFeuilleDeRouteLoader(
       etablirSyntheseFinanciereGouvernance
     ).get(uidFeuilleDeRoute)
-    const codeDepartement = (await params).codeDepartement
+
+    if (feuilleDeRouteReadModel.uidGouvernance !== codeDepartement) {
+      notFound()
+    }
+  
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
@@ -36,7 +41,7 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
     })
 
     return (
-      <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(readModel, gouvernanceReadModel)} />
+      <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
     )
   } catch{
     notFound()
