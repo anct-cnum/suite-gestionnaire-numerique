@@ -8,13 +8,18 @@ import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteR
 import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaRepartitionSubventionGouvernanceLoader'
 import { actionARemplir } from '@/presenters/actionPresenter'
 import { enveloppePresenter } from '@/presenters/enveloppePresenter'
-import { feuilleDeRouteUrl , gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
+import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHelpers'
 
-export default async function ActionAjouterController({  params,
-}: Props): Promise<ReactElement> {
-  const { uidFeuilleDeRoute } = await params
+export default async function ActionAjouterController({ params }: Props): Promise<ReactElement> {
+  const { codeDepartement, uidFeuilleDeRoute } = await params
   const date = new Date()
+
   const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
+
+  if (feuilleDeRoute.state.uidGouvernance !== codeDepartement) {
+    notFound()
+  }
+
   const nomFeuilleDeRoute = feuilleDeRoute.state.nom
   const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
   const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)
@@ -49,6 +54,7 @@ export default async function ActionAjouterController({  params,
 
 type Props = Readonly<{
   params: Promise<Readonly<{
+    codeDepartement: string
     uidFeuilleDeRoute: string
   }>>
 }>
