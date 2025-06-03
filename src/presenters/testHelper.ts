@@ -6,7 +6,7 @@ import { GouvernanceViewModel } from './gouvernancePresenter'
 import { SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { actionStatutViewModelByStatut } from './shared/action'
 import { formatMontant } from './shared/number'
-import { BesoinsPossible } from '@/use-cases/queries/RecupererUneAction'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
 const enveloppes: ActionViewModel['enveloppes'] = [
   {

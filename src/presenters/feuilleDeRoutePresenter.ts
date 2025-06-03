@@ -1,11 +1,12 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { BESOINS_LABELS } from './shared/besoins'
 import { formaterEnDateFrancaise } from './shared/date'
 import { HistoriqueViewModel } from './shared/historique'
 import { HyperLink, LabelValue } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
-import { StatutSubvention } from '../use-cases/queries/shared/ActionReadModel'
+import {  StatutSubvention } from '../use-cases/queries/shared/ActionReadModel'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -133,8 +134,12 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
     const icone = action.isEnveloppeFormation ?
       actionStatutViewModelByStatut.enCours : actionStatutViewModelByStatut.acceptee
 
+    const besoinsLabels = action.besoins.map(besoin => BESOINS_LABELS[besoin])
+    
+    const besoinsText = besoinsLabels.length > 0 ? besoinsLabels.join(', ') : '-'
+
     return {
-      besoins: `${action.besoins.join(', ') || '-'}, ${action.beneficiaire} bénéficiaire${formatPluriel(action.beneficiaire)}`,
+      besoins: `${besoinsText}, ${action.beneficiaire} bénéficiaire${formatPluriel(action.beneficiaire)}`,
       budgetPrevisionnel: {
         coFinancement: formatMontant(action.coFinancement.montant),
         coFinanceur: `${action.coFinancement.financeur} co-financeur${formatPluriel(action.coFinancement.financeur)}`,

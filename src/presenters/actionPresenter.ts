@@ -1,10 +1,11 @@
 import { ActionStatutViewModel, actionStatutViewModelByStatut } from './shared/action'
+import { BESOINS_CATEGORIES, createBesoinsLabelValue } from './shared/besoins'
 import { Enveloppe } from './shared/enveloppe'
 import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
-import { BesoinsPossible, CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
+import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export function actionPresenter(action: undefined | UneActionReadModel,
   { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
@@ -166,69 +167,14 @@ export function transformBesoins(actionBesoins: Array<BesoinsPossible> = []): {
   outillages: Besoins
 } {
   return {
-    financements: [
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.STRUCTURER_UN_FONDS),
-        label: 'Structurer un fond local pour l’inclusion numérique',
-        value: BesoinsPossible.STRUCTURER_UN_FONDS,
-      },
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION),
-        label: 'Monter des dossiers de subvention complexes',
-        value: BesoinsPossible.MONTER_DOSSIERS_DE_SUBVENSION,
-      },
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.ANIMER_LA_GOUVERNANCE),
-        label: 'Animer et mettre en œuvre la gouvernance et la feuille de route',
-        value: BesoinsPossible.ANIMER_LA_GOUVERNANCE,
-      },
-    ],
-    formations: [
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL),
-        label: 'Établir un diagnostic territorial',
-        value: BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL,
-      },
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.CO_CONSTRUIRE_LA_FEUILLE_DE_ROUTE),
-        label: 'Co-construire la feuille de route avec les membres',
-        value: BesoinsPossible.CO_CONSTRUIRE_LA_FEUILLE_DE_ROUTE,
-      },
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.REDIGER_LA_FEUILLE_DE_ROUTE),
-        label: 'Rédiger la feuille de route',
-        value: BesoinsPossible.REDIGER_LA_FEUILLE_DE_ROUTE,
-      },
-      { 
-        isSelected: actionBesoins.includes(BesoinsPossible.APPUI_JURIDIQUE),
-        label: 'Appui juridique dédié à la gouvernance',
-        value: BesoinsPossible.APPUI_JURIDIQUE,
-      },
-    ],
-    formationsProfessionnels: [
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI),
-        label: 'Appuyer la certification Qualiopi de structures privées portant des formations à l’inclusion numérique',
-        value: BesoinsPossible.APPUYER_LA_CERTIFICATION_QUALIOPI,
-      },
-    ],
-    outillages: [
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT),
-        label: 'Structurer une filière de reconditionnement locale',
-        value: BesoinsPossible.STRUCTURER_UNE_FILIERE_DE_RECONDITIONNEMENT,
-      },
-      { 
-        isSelected: actionBesoins.includes(BesoinsPossible.COLLECTER_DES_DONNEES_TERRITORIALES),
-        label: 'Collecter des données territoriales pour alimenter un hub national',
-        value: BesoinsPossible.COLLECTER_DES_DONNEES_TERRITORIALES,
-      },
-      {
-        isSelected: actionBesoins.includes(BesoinsPossible.SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS),
-        label: 'Sensibiliser les acteur de l’inclusion numérique aux outils existants',
-        value: BesoinsPossible.SENSIBILISER_LES_ACTEURS_AUX_OUTILS_EXISTANTS,
-      },
-    ],
+    financements: BESOINS_CATEGORIES.financements.map(besoin => 
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
+    formations: BESOINS_CATEGORIES.formations.map(besoin => 
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
+    formationsProfessionnels: BESOINS_CATEGORIES.formationsProfessionnels.map(besoin => 
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
+    outillages: BESOINS_CATEGORIES.outillages.map(besoin => 
+      createBesoinsLabelValue(besoin, actionBesoins.includes(besoin))),
   }
 }
 
