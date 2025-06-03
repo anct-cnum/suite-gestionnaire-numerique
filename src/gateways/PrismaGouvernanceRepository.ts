@@ -17,7 +17,7 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         departementCode: uid.state.value,
       },
     })
-
+    console.log('record', record)
     const notePrivee = record.notePrivee && record.relationEditeurNotePrivee ? {
       contenu: record.notePrivee.contenu,
       dateDeModification: new Date(record.notePrivee.derniereEdition),

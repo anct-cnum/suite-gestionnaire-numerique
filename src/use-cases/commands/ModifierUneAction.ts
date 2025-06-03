@@ -7,7 +7,6 @@ import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
-import { Utilisateur } from '@/domain/Utilisateur'
 
 export class ModifierUneAction implements CommandHandler<Command> {
   readonly #actionRepository: GetActionRepository & UpdateActionRepository
@@ -33,32 +32,28 @@ export class ModifierUneAction implements CommandHandler<Command> {
     this.#date = date
   }
 
-  async handle(command: Command): ResultAsync<Failure> {
-    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
-    if (!(gouvernance instanceof GouvernanceUid)) {
-      return 'modifierActionErreurInconnue'
-    }
+  async handle(command: Command): ResultAsync<'OK' | Failure> {
+    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
 
+    const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
+    if (!gouvernance.peutEtreGereePar(editeur)) {
+      return 'utilisateurNePeutPasAjouterAction'
+    }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
-      return 'modifierActionErreurInconnue'
-    }
-
-    const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    if (!(editeur instanceof Utilisateur)) {
-      return 'modifierActionErreurInconnue'
+      return 'modifierActionErreurFeuilleDeRouteInconnue'
     }
 
     const actionAModifier = await this.#actionRepository.get(command.uid)
     if (!(actionAModifier instanceof Action)) {
-      return 'modifierActionErreurInconnue'
+      return 'modifierActionErreurActionInconnue'
     }
 
     const actionModifiee = Action.create({
       besoins: command.besoins,
       budgetGlobal: command.budgetGlobal,
       contexte: command.contexte,
-      dateDeCreation: actionAModifier.state.dateDeCreation,
+      dateDeCreation: new Date(actionAModifier.state.dateDeCreation),
       dateDeDebut: command.anneeDeDebut,
       dateDeFin: command.anneeDeFin,
       demandeDeSubventionUid: actionAModifier.state.demandeDeSubventionUid,
@@ -75,7 +70,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       return actionModifiee
     }
 
-    const result = await this.#transactionRepository.transaction(async (tx) => {
+    await this.#transactionRepository.transaction(async (tx) => {
       const actionModifieeResult = await this.#actionRepository.update(actionModifiee, tx)
       if (!actionModifieeResult) {
         return 'modifierActionErreurInconnue'
@@ -93,8 +88,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
       return 'OK'
     })
-
-    return result
+    return 'OK'
   }
 }
 
@@ -103,14 +97,19 @@ type Command = Readonly<{
   anneeDeFin: string
   besoins: Array<string>
   budgetGlobal: number
+  coFinancements: Array<{
+    membreId: string
+    montant: number
+  }>
   contexte: string
   description: string
+  destinataires: Array<string>
   nom: string
   uid: string
   uidEditeur: string
   uidFeuilleDeRoute: string
   uidGouvernance: string
-  uidPorteurs: ReadonlyArray<string>
+  uidPorteurs: Array<string>
 }>
 
-type Failure = 'modifierActionErreurInconnue' | ActionFailure 
+type Failure = 'modifierActionErreurActionInconnue' | 'modifierActionErreurEditeurInconnue' | 'modifierActionErreurFeuilleDeRouteInconnue' | 'modifierActionErreurGouvernanceInconnue' | 'utilisateurNePeutPasAjouterAction' | ActionFailure

@@ -4,6 +4,7 @@ import { FormEvent, ReactElement, useContext, useState } from 'react'
 
 import { FormulaireAction } from './FormulaireAction'
 import Drawer from '../shared/Drawer/Drawer'
+import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
@@ -11,10 +12,11 @@ import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresent
 import { isOk } from '@/shared/lang'
 
 export default function ModifierUneAction({ action }: Props): ReactElement {
-  const { modifierUneActionAction } = useContext(clientContext)
+  const { modifierUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
     <>
@@ -67,12 +69,15 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       anneeDeFin: form.get('anneeDeFin') as string,
       besoins: form.getAll('besoins') as Array<string>,
       budgetGlobal: Number(form.get('budgetGlobal')),
+      coFinancements,
       contexte: contexteContenu,
+      demandeDeSubvention,
       description: descriptionContenu,
+      destinataires: form.getAll('beneficiaires') as Array<string>,
       feuilleDeRoute: action.urlFeuilleDeRoute.split('/').pop() ?? '',
-      gouvernance: action.urlGestionMembresGouvernance.split('/').pop() ?? '',
+      gouvernance: gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
-      path: window.location.pathname,
+      path: pathname,
       porteurs: action.porteurs.map((porteur) => porteur.id),
       uid: action.uid,
     })

@@ -31,17 +31,24 @@ export async function modifierUneActionAction(
     new Date()
   ).handle({
     anneeDeDebut: actionParams.anneeDeDebut,
-    anneeDeFin: actionParams.anneeDeFin,
-    besoins: actionParams.besoins,
+    anneeDeFin: actionParams.anneeDeFin ?? '',
+    besoins: actionParams.besoins.map((besoin) => besoin),
     budgetGlobal: actionParams.budgetGlobal,
+    coFinancements: actionParams.coFinancements.map((cofinancement) => ({
+      membreId: cofinancement.coFinanceur,
+      montant: Number(cofinancement.montant),
+    })),
     contexte: actionParams.contexte,
     description: actionParams.description,
+    destinataires: actionParams.destinataires.map((destinataire) => destinataire),
     nom: actionParams.nom,
+    path: actionParams.path,
+    porteurs: actionParams.porteurs,
     uid: actionParams.uid,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
-    uidPorteurs: actionParams.porteurs,
+    uidPorteurs: [...actionParams.porteurs],
   })
 
   revalidatePath(validationResult.data.path)
@@ -54,8 +61,19 @@ type ActionParams = Readonly<{
   anneeDeFin?: string
   besoins: ReadonlyArray<string>
   budgetGlobal: number
+  coFinancements: ReadonlyArray<{
+    coFinanceur: string
+    montant: string
+  }>
   contexte: string
+  demandeDeSubvention?: Readonly<{
+    enveloppeId: string
+    montantPrestation: number
+    montantRh: number
+    total: number
+  }>
   description: string
+  destinataires: ReadonlyArray<string>
   feuilleDeRoute: string
   gouvernance: string
   nom: string
