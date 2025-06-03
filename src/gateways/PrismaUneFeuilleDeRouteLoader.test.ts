@@ -5,7 +5,7 @@ import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, cr
 import prisma from '../../prisma/prismaClient'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
@@ -49,7 +49,7 @@ describe('récupérer une feuille de route loader', () => {
       actions: [
         {
           beneficiaire: 0,
-          besoins: ['besoin 1', 'besoin 2'],
+          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -74,7 +74,7 @@ describe('récupérer une feuille de route loader', () => {
         },
         {
           beneficiaire: 0,
-          besoins: ['besoin 1', 'besoin 2'],
+          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -155,7 +155,7 @@ describe('récupérer une feuille de route loader', () => {
       actions: [
         {
           beneficiaire: 0,
-          besoins: ['besoin 1', 'besoin 2'],
+          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -180,7 +180,7 @@ describe('récupérer une feuille de route loader', () => {
         },
         {
           beneficiaire: 0,
-          besoins: ['besoin 1', 'besoin 2'],
+          besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
           budgetPrevisionnel: 70_000,
           coFinancement: {
             financeur: 0,
@@ -304,7 +304,7 @@ async function creerAction(uidAction: number, withSubvention: boolean): Promise<
   const uidDemandeSubvention = uidAction + 2
 
   await creerUneAction({
-    besoins: ['besoin_1', 'besoin_2'],
+    besoins: [BesoinsPossible.STRUCTURER_UN_FONDS, BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
     budgetGlobal: 70_000,
     createurId: uidUtilisateur,
     feuilleDeRouteId: Number(uidFeuilleDeRoute),

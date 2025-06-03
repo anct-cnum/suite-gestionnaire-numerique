@@ -1,4 +1,4 @@
-import { StatutSubvention } from './shared/ActionReadModel'
+import { BesoinsPossible , StatutSubvention } from './shared/ActionReadModel'
 
 export interface UneFeuilleDeRouteLoader {
   get(codeDepartement: string, uidFeuilleDeRoute: string): Promise<UneFeuilleDeRouteReadModel>
@@ -7,7 +7,7 @@ export interface UneFeuilleDeRouteLoader {
 export type UneFeuilleDeRouteReadModel = Readonly<{
   actions: ReadonlyArray<{
     beneficiaire: number
-    besoins: ReadonlyArray<string>
+    besoins: ReadonlyArray<BesoinsPossible>
     budgetPrevisionnel: number
     coFinancement: Readonly<{
       financeur: number

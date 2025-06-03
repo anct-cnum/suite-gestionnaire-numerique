@@ -5,7 +5,7 @@ import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInfo
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
-import { StatutSubvention } from './queries/shared/ActionReadModel'
+import { BesoinsPossible , StatutSubvention } from './queries/shared/ActionReadModel'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
@@ -421,7 +421,7 @@ export function feuilleDeRouteReadModelFactory(
     actions: [
       {
         beneficiaire: 2,
-        besoins: ['Établir un diagnostic territorial'],
+        besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL],
         budgetPrevisionnel: 100_000,
         coFinancement: {
           financeur: 1,

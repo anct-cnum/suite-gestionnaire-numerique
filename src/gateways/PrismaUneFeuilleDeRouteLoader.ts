@@ -4,7 +4,7 @@ import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { UneFeuilleDeRouteLoader, UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
@@ -60,7 +60,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
         const isEditable = !(demandeDeSubvention?.statut === 'acceptee' || demandeDeSubvention?.statut === 'refusee')
         return {
           beneficiaire: syntheseFeuilleDeRoute.actions[index].beneficiaires,
-          besoins: action.besoins.map(besoin => besoin.split('_').join(' ')),
+          besoins: action.besoins.map(besoin => besoin as BesoinsPossible),
           budgetPrevisionnel: action.budgetGlobal,
           coFinancement: {
             financeur: syntheseFeuilleDeRoute.actions[index].coFinanceurs,
