@@ -22,14 +22,7 @@ export async function modifierUneActionAction(
     return validationResult.error.issues.map(({ message }) => message)
   }
 
-  const result = await new ModifierUneAction(
-    new PrismaGouvernanceRepository(),
-    new PrismaFeuilleDeRouteRepository(),
-    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaActionRepository(),
-    new PrismaTransactionRepository(),
-    new Date()
-  ).handle({
+  const actionCommand = {
     anneeDeDebut: actionParams.anneeDeDebut,
     anneeDeFin: actionParams.anneeDeFin ?? '',
     besoins: actionParams.besoins.map((besoin) => besoin),
@@ -42,14 +35,22 @@ export async function modifierUneActionAction(
     description: actionParams.description,
     destinataires: actionParams.destinataires.map((destinataire) => destinataire),
     nom: actionParams.nom,
-    path: actionParams.path,
     porteurs: actionParams.porteurs,
     uid: actionParams.uid,
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParams.feuilleDeRoute,
     uidGouvernance: actionParams.gouvernance,
     uidPorteurs: [...actionParams.porteurs],
-  })
+  }
+  
+  const result = await new ModifierUneAction(
+    new PrismaGouvernanceRepository(),
+    new PrismaFeuilleDeRouteRepository(),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    new PrismaActionRepository(),
+    new PrismaTransactionRepository(),
+    new Date()
+  ).handle(actionCommand)
 
   revalidatePath(validationResult.data.path)
 

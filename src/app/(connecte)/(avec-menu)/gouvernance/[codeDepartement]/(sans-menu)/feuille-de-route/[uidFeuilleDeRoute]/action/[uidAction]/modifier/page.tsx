@@ -3,7 +3,6 @@ import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/Action/MenuLateral'
 import ModifierUneAction from '@/components/Action/ModifierUneAction'
-import Notice from '@/components/shared/Notice/Notice'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
@@ -17,6 +16,7 @@ export default async function ActionModifierController({ params }: Props): Promi
   try {
     const { codeDepartement, uidAction, uidFeuilleDeRoute } = await params
     const session = await getSession()
+    const date = new Date()
 
     if (!session) {
       redirect('/connexion')
@@ -40,7 +40,6 @@ export default async function ActionModifierController({ params }: Props): Promi
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w">
-          <Notice />
           <ModifierUneAction
             action={actionPresenter(actionReadModel, {
               enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe =>
@@ -49,6 +48,8 @@ export default async function ActionModifierController({ params }: Props): Promi
               urlFeuilleDeRoute,
               urlGestionMembresGouvernance,
             })}
+            date={date}
+            uidFeuilleDeRoute={uidFeuilleDeRoute}
           />
         </div>
       </div>
@@ -60,7 +61,6 @@ export default async function ActionModifierController({ params }: Props): Promi
 
 type Props = Readonly<{
   params: Promise<Readonly<{
-    codeDepartement: string
     uidAction: string
     uidFeuilleDeRoute: string
   }>>

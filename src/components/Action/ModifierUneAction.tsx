@@ -11,7 +11,7 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
 import { isOk } from '@/shared/lang'
 
-export default function ModifierUneAction({ action }: Props): ReactElement {
+export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
   const { modifierUneActionAction, pathname } = useContext(clientContext)
   const [isDisabled, setIsDisabled] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -25,7 +25,8 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       </title>
       <FormulaireAction
         action={action}
-        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
+        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention} 
+        date={date}
         demandeDeSubvention={demandeDeSubvention}
         label="Modifier une action"
         validerFormulaire={modifierAction}
@@ -74,11 +75,11 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
       demandeDeSubvention,
       description: descriptionContenu,
       destinataires: form.getAll('beneficiaires') as Array<string>,
-      feuilleDeRoute: action.urlFeuilleDeRoute.split('/').pop() ?? '',
+      feuilleDeRoute:uidFeuilleDeRoute,
       gouvernance: gouvernanceViewModel.uid,
       nom: form.get('nom') as string,
       path: pathname,
-      porteurs: action.porteurs.map((porteur) => porteur.id),
+      porteurs: form.getAll('porteurs') as Array<string>,
       uid: action.uid,
     })
     if (isOk(result)) {
@@ -98,4 +99,6 @@ export default function ModifierUneAction({ action }: Props): ReactElement {
 
 type Props = Readonly<{
   action: ActionViewModel
+  date: Date
+  uidFeuilleDeRoute: string
 }>

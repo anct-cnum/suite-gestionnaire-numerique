@@ -49,6 +49,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       return 'modifierActionErreurActionInconnue'
     }
 
+    console.log('command', command)
     const actionModifiee = Action.create({
       besoins: command.besoins,
       budgetGlobal: command.budgetGlobal,
