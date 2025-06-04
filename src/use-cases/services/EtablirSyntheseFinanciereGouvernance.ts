@@ -1,4 +1,5 @@
 import { Finances, Gouvernance, SyntheseGouvernance } from './shared/etablisseur-synthese-gouvernance'
+import { StatutSubvention } from '../queries/shared/ActionReadModel'
 
 export function etablirSyntheseFinanciereGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
   const bilanGouvernance = gouvernance.feuillesDeRoute.reduce(
@@ -75,7 +76,7 @@ function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions
       }
     )
   const financementDemande = (subvention?.montants.prestation ?? 0) + (subvention?.montants.ressourcesHumaines ?? 0)
-  const accorde = subvention?.statut === 'acceptee' ? financementDemande : 0
+  const accorde = subvention?.statut === StatutSubvention.ACCEPTEE ? financementDemande : 0
   const [financementAccorde, financementFormationAccorde] = isFormation
     ? [0, accorde]
     : [accorde, 0]
