@@ -61,6 +61,7 @@ export default async function ActionModifierController({ params }: Props): Promi
 
 type Props = Readonly<{
   params: Promise<Readonly<{
+    codeDepartement: string
     uidAction: string
     uidFeuilleDeRoute: string
   }>>

@@ -1,11 +1,12 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
 
+import { ActionValidator } from './shared/action'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
+import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaTransactionRepository } from '@/gateways/PrismaTransactionRepository'
@@ -32,6 +33,13 @@ export async function modifierUneActionAction(
       montant: Number(cofinancement.montant),
     })),
     contexte: actionParams.contexte,
+    demandeDeSubvention: actionParams.demandeDeSubvention ? {
+      beneficiaires: [],
+      enveloppeFinancementId: actionParams.demandeDeSubvention.enveloppeId,
+      subventionDemandee: actionParams.demandeDeSubvention.total,
+      subventionEtp: actionParams.demandeDeSubvention.montantRh,
+      subventionPrestation: actionParams.demandeDeSubvention.montantPrestation,
+    } : undefined,
     description: actionParams.description,
     destinataires: actionParams.destinataires.map((destinataire) => destinataire),
     nom: actionParams.nom,
@@ -49,6 +57,7 @@ export async function modifierUneActionAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
     new PrismaActionRepository(),
     new PrismaTransactionRepository(),
+    new PrismaDemandeDeSubventionRepository(),
     new Date()
   ).handle(actionCommand)
 
@@ -83,16 +92,4 @@ type ActionParams = Readonly<{
   uid: string
 }>
 
-const validator = z.object({
-  anneeDeDebut: z.string().min(1, { message: 'La date de début est obligatoire' }),
-  anneeDeFin: z.string().nullish(),
-  besoins: z.array(z.string()).min(1, { message: 'Au moins un besoin est obligatoire' }),
-  contexte: z.string().min(1, { message: 'Le contexte est obligatoire' }),
-  description: z.string().min(1, { message: 'La description est obligatoire' }),
-  path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
-}).refine((data) => {
-  if (data.anneeDeFin === undefined || data.anneeDeFin === '' || data.anneeDeFin === null) {return true}
-  const dateDeDebut = new Date(data.anneeDeDebut)
-  const dateDeFin = new Date(data.anneeDeFin)
-  return dateDeFin > dateDeDebut
-}, { message: 'La date de fin doit être supérieure à la date de début' })
+const validator = ActionValidator

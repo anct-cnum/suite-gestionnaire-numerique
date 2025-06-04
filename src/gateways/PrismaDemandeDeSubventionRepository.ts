@@ -5,10 +5,12 @@ import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
 import {
   AddDemandeDeSubventionRepository,
   GetDemandeDeSubventionRepository,
+  SupprimerDemandeDeSubventionRepository,
+  UpdateDemandeDeSubventionRepository,
 } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository
-implements AddDemandeDeSubventionRepository, GetDemandeDeSubventionRepository {
+implements AddDemandeDeSubventionRepository, GetDemandeDeSubventionRepository, SupprimerDemandeDeSubventionRepository, UpdateDemandeDeSubventionRepository {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
@@ -81,5 +83,66 @@ implements AddDemandeDeSubventionRepository, GetDemandeDeSubventionRepository {
     }
 
     return demandeDeSubvention
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async supprimer(uid: DemandeDeSubvention['uid']['state']['value'], tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx ?? prisma
+
+    // Suppression des bénéficiaires
+    await client.beneficiaireSubventionRecord.deleteMany({
+      where: {
+        demandeDeSubventionId: Number(uid),
+      },
+    })
+
+    // Suppression de la demande
+    await client.demandeDeSubventionRecord.delete({
+      where: {
+        id: Number(uid),
+      },
+    })
+
+    return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
+  async update(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx ?? prisma
+
+    // Mise à jour de la demande
+    await client.demandeDeSubventionRecord.update({
+      data: {
+        derniereModification: new Date(demandeDeSubvention.state.derniereModification),
+        enveloppeFinancementId: Number(demandeDeSubvention.state.uidEnveloppeFinancement),
+        statut: demandeDeSubvention.state.statut,
+        subventionDemandee: demandeDeSubvention.state.subventionDemandee,
+        subventionEtp: demandeDeSubvention.state.subventionEtp,
+        subventionPrestation: demandeDeSubvention.state.subventionPrestation,
+      },
+      where: {
+        id: Number(demandeDeSubvention.state.uid.value),
+      },
+    })
+
+    // Suppression des anciens bénéficiaires
+    await client.beneficiaireSubventionRecord.deleteMany({
+      where: {
+        demandeDeSubventionId: Number(demandeDeSubvention.state.uid.value),
+      },
+    })
+
+    // Création des nouvelles associations avec les bénéficiaires
+    await Promise.all(
+      demandeDeSubvention.state.beneficiaires.map(async beneficiaireId =>
+        client.beneficiaireSubventionRecord.create({
+          data: {
+            demandeDeSubventionId: Number(demandeDeSubvention.state.uid.value),
+            membreId: beneficiaireId,
+          },
+        }))
+    )
+
+    return true
   }
 }
