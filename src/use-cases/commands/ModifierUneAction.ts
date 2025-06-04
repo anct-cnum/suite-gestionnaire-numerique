@@ -18,7 +18,11 @@ import { GouvernanceUid } from '@/domain/Gouvernance'
 export class ModifierUneAction implements CommandHandler<Command> {
   readonly #actionRepository: GetActionRepository & UpdateActionRepository
   readonly #date: Date
-  readonly #demandeDeSubventionRepository: AddDemandeDeSubventionRepository & GetDemandeDeSubventionRepository & SupprimerDemandeDeSubventionRepository & UpdateDemandeDeSubventionRepository
+  readonly #demandeDeSubventionRepository: 
+      AddDemandeDeSubventionRepository
+      & GetDemandeDeSubventionRepository
+      & SupprimerDemandeDeSubventionRepository
+      & UpdateDemandeDeSubventionRepository
   readonly #feuilleDeRouteRepository: GetFeuilleDeRouteRepository & UpdateFeuilleDeRouteRepository
   readonly #gouvernanceRepository: GetGouvernanceRepository
   readonly #transactionRepository: TransactionRepository
@@ -30,7 +34,11 @@ export class ModifierUneAction implements CommandHandler<Command> {
     utilisateurRepository: GetUtilisateurRepository,
     actionRepository: GetActionRepository & UpdateActionRepository,
     transactionRepository: TransactionRepository,
-    demandeDeSubventionRepository: AddDemandeDeSubventionRepository & GetDemandeDeSubventionRepository & SupprimerDemandeDeSubventionRepository & UpdateDemandeDeSubventionRepository,
+    demandeDeSubventionRepository: 
+      AddDemandeDeSubventionRepository
+      & GetDemandeDeSubventionRepository
+      & SupprimerDemandeDeSubventionRepository
+      & UpdateDemandeDeSubventionRepository,
     date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository

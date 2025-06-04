@@ -34,12 +34,8 @@ export function FormulaireAction({
   const [budgetGlobal, setBudgetGlobal] = useState(action.budgetGlobal)
   const [porteurs, setPorteurs] = useState(action.porteurs)
   const [destinataires, setDestinataires] = useState(action.destinataires)
-  const [localDemandeDeSubvention, setLocalDemandeDeSubvention] = useState(demandeDeSubvention)
   const [cofinancements, setCofinancements] = useState(action.cofinancements)
 
-  const supprimerUneDemandeDeSubventionFn = supprimerUneDemandeDeSubvention ?? (() : void => {
-    setLocalDemandeDeSubvention(undefined)
-  })
   const {
     contenu: contexteContenu,
     gererLeChangementDeContenu: gererChangementContexte,
@@ -335,10 +331,10 @@ export function FormulaireAction({
           <hr />
           <DemanderUneSubvention
             ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
-            demandeDeSubvention={localDemandeDeSubvention ?? demandeDeSubvention}
+            demandeDeSubvention={demandeDeSubvention}
             enveloppes={action.enveloppes}
             montantMaxAction={budgetGlobal}
-            supprimerUneDemandeDeSubvention={supprimerUneDemandeDeSubventionFn}
+            supprimerUneDemandeDeSubvention={supprimerUneDemandeDeSubvention}
           />
           <hr />
           <div className={styles['horizontal-text-input']}>
@@ -417,7 +413,7 @@ export function FormulaireAction({
           />
         </div>
 
-        {demandeDeSubvention || localDemandeDeSubvention ? (
+        {demandeDeSubvention ? (
           <div
             className="white-background fr-p-4w"
             id="destinatairesSubvention"

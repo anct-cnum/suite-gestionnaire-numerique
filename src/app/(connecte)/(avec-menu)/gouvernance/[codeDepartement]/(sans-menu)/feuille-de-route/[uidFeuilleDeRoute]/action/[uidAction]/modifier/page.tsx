@@ -1,4 +1,4 @@
-import { notFound , redirect } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/Action/MenuLateral'
@@ -27,8 +27,7 @@ export default async function ActionModifierController({ params }: Props): Promi
       notFound()
     }
 
-    const actionReadModel = await new PrismaUneActionLoader(
-    ).get(uidAction)
+    const actionReadModel = await new PrismaUneActionLoader().get(uidAction)
     const enveloppesDisponibles = await new PrismaEnveloppesLoader().get(feuilleDeRoute.state.uidGouvernance)
     const urlFeuilleDeRoute = feuilleDeRouteUrl(feuilleDeRoute.state.uidGouvernance, uidFeuilleDeRoute)
     const urlGestionMembresGouvernance = gestionMembresGouvernanceUrl(feuilleDeRoute.state.uidGouvernance)

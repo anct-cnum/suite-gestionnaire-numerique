@@ -1,8 +1,9 @@
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import AjouterUneAction from '@/components/Action/AjouterUneAction'
 import MenuLateral from '@/components/Action/MenuLateral'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaRepartitionSubventionGouvernanceLoader } from '@/gateways/PrismaRepartitionSubventionGouvernanceLoader'
@@ -12,7 +13,12 @@ import { feuilleDeRouteUrl, gestionMembresGouvernanceUrl } from '@/shared/urlHel
 
 export default async function ActionAjouterController({ params }: Props): Promise<ReactElement> {
   const { codeDepartement, uidFeuilleDeRoute } = await params
+  const session = await getSession()
   const date = new Date()
+
+  if (!session) {
+    redirect('/connexion')
+  }
 
   const feuilleDeRoute = await new PrismaFeuilleDeRouteRepository().get(uidFeuilleDeRoute)
 
