@@ -77,7 +77,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     return coFinancements
   }
 
-  async handle(command: Command): ResultAsync<Failure> {
+  async handle(command: Command): ResultAsync<'OK' | Failure> {
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
     const gouvernance = await this.#gouvernanceRepository.get(
       new GouvernanceUid(command.uidGouvernance)
