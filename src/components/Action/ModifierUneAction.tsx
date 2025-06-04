@@ -2,7 +2,7 @@
 
 import { FormEvent, ReactElement, useContext } from 'react'
 
-import { handleActionResponse, handleActionSubmit } from './actionUtils'
+import { ActionDataWithUid, handleActionResponse, handleActionSubmit } from './actionUtils'
 import { BaseActionForm } from './BaseActionForm'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -21,7 +21,6 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
       submitButtonLoadingText="Modification en cours..."
       submitButtonText="Valider et envoyer"
       title={`Modifier l'action ${action.nom}`}
-      uidFeuilleDeRoute={uidFeuilleDeRoute}
     />
   )
 
@@ -36,7 +35,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
     demandeDeSubvention: DemandeDeSubvention | undefined
   ): Promise<void> {
     const form = new FormData(event.currentTarget)
-    const data = await handleActionSubmit(
+    const data = handleActionSubmit(
       event,
       contexteContenu,
       descriptionContenu,
@@ -49,7 +48,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
         path: pathname,
       },
       action.uid
-    )
+    ) as ActionDataWithUid
     
     const messages = await modifierUneActionAction(data)
     handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, true)

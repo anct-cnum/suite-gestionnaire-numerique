@@ -1,9 +1,8 @@
 'use client'
 
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { FormEvent, ReactElement, useState } from 'react'
 
 import { FormulaireAction } from './FormulaireAction'
-import { gouvernanceContext } from '../shared/GouvernanceContext'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
 
@@ -16,11 +15,9 @@ export function BaseActionForm({
   submitButtonLoadingText,
   submitButtonText,
   title,
-  uidFeuilleDeRoute,
 }: BaseActionFormProps): ReactElement {
   const [isDisabled, setIsDisabled] = useState(false)
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
-  const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
     <>
@@ -92,5 +89,4 @@ type BaseActionFormProps = Readonly<{
   submitButtonLoadingText: string
   submitButtonText: string
   title: string
-  uidFeuilleDeRoute: string
 }> 

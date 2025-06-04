@@ -21,7 +21,6 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       submitButtonLoadingText="Ajout en cours..."
       submitButtonText="Valider et envoyer"
       title="Ajouter une action à la feuille de route"
-      uidFeuilleDeRoute={uidFeuilleDeRoute}
     />
   )
 
@@ -36,7 +35,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     demandeDeSubvention: DemandeDeSubvention | undefined
   ): Promise<void> {
     const form = new FormData(event.currentTarget)
-    const data = await handleActionSubmit(
+    const data = handleActionSubmit(
       event,
       contexteContenu,
       descriptionContenu,

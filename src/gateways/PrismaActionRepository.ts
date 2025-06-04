@@ -113,9 +113,11 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
   }
 
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean> {
+  async update(action: Action,  tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
     
+    // eslint-disable-next-line no-restricted-syntax
+    const now = new Date()
     await client.porteurActionRecord.deleteMany({
       where: { actionId: Number(action.state.uid.value) },
     })
@@ -126,7 +128,7 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
         contexte: action.state.contexte,
         dateDeDebut: new Date(action.state.dateDeDebut),
         dateDeFin: action.state.dateDeFin ? new Date(action.state.dateDeFin) : '',
-        derniereModification: new Date(),
+        derniereModification: now,
         description: action.state.description,
         nom: action.state.nom,
         porteurAction: {

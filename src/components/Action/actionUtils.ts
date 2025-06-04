@@ -5,7 +5,7 @@ import { Notification } from '@/components/shared/Notification/Notification'
 import { DemandeDeSubvention } from '@/presenters/actionPresenter'
 import { feuilleDeRouteLink } from '@/presenters/shared/link'
 
-export async function handleActionSubmit(
+export function handleActionSubmit(
   event: FormEvent<HTMLFormElement>,
   contexteContenu: string,
   descriptionContenu: string,
@@ -17,7 +17,7 @@ export async function handleActionSubmit(
   form: FormData,
   baseData: ActionBaseData,
   uid?: string
-): Promise<ActionData> {
+): ActionData | ActionDataWithUid {
   event.preventDefault()
   
   const data: ActionData = {
@@ -35,9 +35,12 @@ export async function handleActionSubmit(
     nom: form.get('nom') as string,
     path: baseData.path,
     porteurs: form.getAll('porteurs') as Array<string>,
-    ...uid && { uid },
+    
   }
 
+  if(uid !== undefined) {
+    return { ...data, uid }
+  }
   return data
 }
 
@@ -47,7 +50,7 @@ export function handleActionResponse(
   uidFeuilleDeRoute: string,
   isModification: boolean
 ): void {
-  const isOk = messages.includes('OK')
+  const isOk = Array.isArray(messages) ? messages.includes('OK') : messages === 'OK'
   if (isOk) {
     Notification('success', { 
       description: isModification ? 'modifiée' : 'ajoutée', 
@@ -55,12 +58,15 @@ export function handleActionResponse(
     })
     redirect(feuilleDeRouteLink(gouvernanceUid, uidFeuilleDeRoute))
   } else {
+    const errorMessage = Array.isArray(messages) ? messages.join(', ') : String(messages)
     Notification('error', { 
-      description: messages.join(', '), 
+      description: errorMessage, 
       title: 'Erreur : ', 
     })
   }
 }
+
+export type ActionDataWithUid = { uid: string } & ActionData
 
 type ActionData = {
   anneeDeDebut: string
