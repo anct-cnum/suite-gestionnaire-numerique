@@ -33,7 +33,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
       montant: string
     }>,
     demandeDeSubvention: DemandeDeSubvention | undefined
-  ): Promise<void> {
+  ): Promise<boolean> {
     const form = new FormData(event.currentTarget)
     const data = handleActionSubmit(
       event,
@@ -51,7 +51,7 @@ export default function ModifierUneAction({ action, date, uidFeuilleDeRoute }: P
     ) as ActionDataWithUid
     
     const messages = await modifierUneActionAction(data)
-    handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, true)
+    return handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, true)
   }
 }
 

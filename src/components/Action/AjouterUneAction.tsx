@@ -33,7 +33,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
       montant: string
     }>,
     demandeDeSubvention: DemandeDeSubvention | undefined
-  ): Promise<void> {
+  ): Promise<boolean> {
     const form = new FormData(event.currentTarget)
     const data = handleActionSubmit(
       event,
@@ -50,7 +50,7 @@ export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Pr
     )
     
     const messages = await ajouterUneActionAction(data)
-    handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, false)
+    return handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, false)
   }
 }
 

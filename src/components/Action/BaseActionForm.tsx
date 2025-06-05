@@ -11,7 +11,6 @@ export function BaseActionForm({
   date,
   formLabel,
   onSubmit,
-  onSuccess,
   submitButtonLoadingText,
   submitButtonText,
   title,
@@ -60,10 +59,8 @@ export function BaseActionForm({
   ): Promise<void> {
     if (!onSubmit) {return}
     setIsDisabled(true)
-    try {
-      await onSubmit(event, contexteContenu, descriptionContenu, coFinancements, demandeDeSubvention)
-      onSuccess?.()
-    } finally {
+    const success = await onSubmit(event, contexteContenu, descriptionContenu, coFinancements, demandeDeSubvention)
+    if (!success) {
       setIsDisabled(false)
     }
   }
@@ -90,7 +87,7 @@ type BaseActionFormProps = Readonly<{
       montant: string
     }>,
     demandeDeSubvention: DemandeDeSubvention | undefined
-  ): Promise<void> | undefined
+  ): Promise<boolean>
   onSuccess?(): void
   submitButtonLoadingText?: string
   submitButtonText?: string

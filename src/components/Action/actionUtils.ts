@@ -49,7 +49,7 @@ export function handleActionResponse(
   gouvernanceUid: string,
   uidFeuilleDeRoute: string,
   isModification: boolean
-): void {
+): boolean {
   const isOk = Array.isArray(messages) ? messages.includes('OK') : messages === 'OK'
   if (isOk) {
     Notification('success', { 
@@ -57,13 +57,14 @@ export function handleActionResponse(
       title: 'Action ', 
     })
     redirect(feuilleDeRouteLink(gouvernanceUid, uidFeuilleDeRoute))
-  } else {
-    const errorMessage = Array.isArray(messages) ? messages.join(', ') : String(messages)
-    Notification('error', { 
-      description: errorMessage, 
-      title: 'Erreur : ', 
-    })
-  }
+    return true
+  } 
+  const errorMessage = Array.isArray(messages) ? messages.join(', ') : String(messages)
+  Notification('error', { 
+    description: errorMessage, 
+    title: 'Erreur : ', 
+  })
+  return false
 }
 
 export type ActionDataWithUid = { uid: string } & ActionData
