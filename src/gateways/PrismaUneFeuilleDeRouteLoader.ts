@@ -4,7 +4,8 @@ import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { UneFeuilleDeRouteLoader, UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {

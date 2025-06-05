@@ -1,5 +1,5 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { StatutSubvention } from '../queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { Action, ActionUid } from '@/domain/Action'
 import { DemandeDeSubvention, DemandeDeSubventionUid } from '@/domain/DemandeDeSubvention'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'

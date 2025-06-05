@@ -1,5 +1,5 @@
 import { etablirSyntheseFinanciereGouvernance } from './EtablirSyntheseFinanciereGouvernance'
-import { StatutSubvention } from '../queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 describe('établir la synthèse financière d’une gouvernance', () => {
   describe('pour une gouvernance ne comportant ni demande de financement ni co-financement, quand la synthèse'

@@ -5,7 +5,8 @@ import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, cr
 import prisma from '../../prisma/prismaClient'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {

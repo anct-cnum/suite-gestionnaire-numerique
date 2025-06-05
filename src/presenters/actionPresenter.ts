@@ -5,7 +5,8 @@ import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 export function actionPresenter(action: undefined | UneActionReadModel,
   { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 

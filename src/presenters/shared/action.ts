@@ -1,4 +1,4 @@
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 export const actionStatutViewModelByStatut: Record<StatutSubvention, ActionStatutViewModel> = {
   acceptee: {

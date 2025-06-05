@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client'
 import {  membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import {   UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 export class PrismaUneActionLoader implements PrismaUneActionLoader {
   readonly #actionDao = prisma.actionRecord

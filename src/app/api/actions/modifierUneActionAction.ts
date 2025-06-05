@@ -62,7 +62,6 @@ export async function modifierUneActionAction(
     new PrismaCoFinancementRepository(),
     new Date()
   ).handle(actionCommand)
-  console.log('BLAAAAA',result)
 
   revalidatePath(validationResult.data.path)
 

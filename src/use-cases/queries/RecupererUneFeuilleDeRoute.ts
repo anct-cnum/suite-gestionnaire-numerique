@@ -1,4 +1,5 @@
-import { BesoinsPossible , StatutSubvention } from './shared/ActionReadModel'
+import { BesoinsPossible } from './shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 export interface UneFeuilleDeRouteLoader {
   get(codeDepartement: string, uidFeuilleDeRoute: string): Promise<UneFeuilleDeRouteReadModel>

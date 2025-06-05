@@ -5,7 +5,8 @@ import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInfo
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
-import { BesoinsPossible , StatutSubvention } from './queries/shared/ActionReadModel'
+import { BesoinsPossible } from './queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
 import { Roles } from '@/domain/Role'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'

@@ -1,6 +1,6 @@
 import prisma from '../../prisma/prismaClient'
 import { RepartitionSubventionGouvernanceLoader } from '@/use-cases/queries/RecupererRepartitionSubventionGouvernance'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 
 export class PrismaRepartitionSubventionGouvernanceLoader implements RepartitionSubventionGouvernanceLoader {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this

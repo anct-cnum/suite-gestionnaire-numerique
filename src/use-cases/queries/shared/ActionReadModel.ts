@@ -1,10 +1,3 @@
-export enum StatutSubvention {
-  ACCEPTEE = 'acceptee',
-  DEPOSEE = 'deposee',
-  EN_COURS = 'enCours',
-  NON_SUBVENTIONNEE = 'nonSubventionnee',
-  REFUSEE = 'refusee'
-}
 export enum BesoinsPossible {
   ANIMER_LA_GOUVERNANCE = 'animer_la_gouvernance',
   APPUI_JURIDIQUE = 'appui_juridique',

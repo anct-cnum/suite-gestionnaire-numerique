@@ -4,7 +4,6 @@ import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
 import { Result } from '@/shared/lang'
-import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export class DemandeDeSubvention extends Entity<State> {
   override get state(): State {
@@ -129,6 +128,14 @@ export class EnveloppeFinancementUid extends Uid<UidState> {
   }
 }
 
+export enum StatutSubvention {
+  ACCEPTEE = 'acceptee',
+  DEPOSEE = 'deposee',
+  EN_COURS = 'enCours',
+  NON_SUBVENTIONNEE = 'nonSubventionnee',
+  REFUSEE = 'refusee'
+}
+
 type FactoryParams = Readonly<{
   beneficiaires: Array<string>
   dateDeCreation: Date
@@ -158,3 +165,4 @@ type State = Readonly<{
 }>
 
 type UidState = Readonly<{ value: string }>
+
