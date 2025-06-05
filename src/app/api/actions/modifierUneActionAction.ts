@@ -6,6 +6,7 @@ import { ActionValidator } from './shared/action'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
+import { PrismaCoFinancementRepository } from '@/gateways/PrismaCoFinancementRepository'
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -58,8 +59,10 @@ export async function modifierUneActionAction(
     new PrismaActionRepository(),
     new PrismaTransactionRepository(),
     new PrismaDemandeDeSubventionRepository(),
+    new PrismaCoFinancementRepository(),
     new Date()
   ).handle(actionCommand)
+  console.log('BLAAAAA',result)
 
   revalidatePath(validationResult.data.path)
 

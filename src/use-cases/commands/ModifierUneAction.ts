@@ -1,5 +1,13 @@
+/* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { GetActionRepository, UpdateActionRepository } from './shared/ActionRepository'
+import { creationDesCoFinancements } from './shared/ActionUtils'
+import { 
+  AddCoFinancementRepository,
+  GetCoFinancementRepository,
+  SupprimerCoFinancementRepository,
+  UpdateCoFinancementRepository, 
+} from './shared/CoFinancementRepository'
 import {
   AddDemandeDeSubventionRepository,
   GetDemandeDeSubventionRepository,
@@ -10,13 +18,19 @@ import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './s
 import { GetGouvernanceRepository } from './shared/GouvernanceRepository'
 import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
+import { StatutSubvention } from '../queries/shared/ActionReadModel'
 import { Action, ActionFailure } from '@/domain/Action'
-import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, DemandeDeSubventionFailure } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 
 export class ModifierUneAction implements CommandHandler<Command> {
   readonly #actionRepository: GetActionRepository & UpdateActionRepository
+  readonly #coFinancementRepository: 
+      AddCoFinancementRepository
+      & GetCoFinancementRepository
+      & SupprimerCoFinancementRepository
+      & UpdateCoFinancementRepository
   readonly #date: Date
   readonly #demandeDeSubventionRepository: 
       AddDemandeDeSubventionRepository
@@ -39,6 +53,11 @@ export class ModifierUneAction implements CommandHandler<Command> {
       & GetDemandeDeSubventionRepository
       & SupprimerDemandeDeSubventionRepository
       & UpdateDemandeDeSubventionRepository,
+    coFinancementRepository:
+      AddCoFinancementRepository
+      & GetCoFinancementRepository
+      & SupprimerCoFinancementRepository
+      & UpdateCoFinancementRepository,
     date: Date
   ) {
     this.#gouvernanceRepository = gouvernanceRepository
@@ -47,59 +66,73 @@ export class ModifierUneAction implements CommandHandler<Command> {
     this.#actionRepository = actionRepository
     this.#transactionRepository = transactionRepository
     this.#demandeDeSubventionRepository = demandeDeSubventionRepository
+    this.#coFinancementRepository = coFinancementRepository
     this.#date = date
   }
 
-  async handle(command: Command): ResultAsync<'OK' | Failure> {
+  async handle(command: Command):ResultAsync<Failure> {
+    console.log('command',command)
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-
+    console.log('editeur',editeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
+    console.log('gouvernance',gouvernance)
     if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterAction'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
+    console.log('feuilleDeRoute',feuilleDeRoute)
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       return 'modifierActionErreurFeuilleDeRouteInconnue'
     }
 
     const actionAModifier = await this.#actionRepository.get(command.uid)
+    console.log('actionAModifier',actionAModifier)
     if (!(actionAModifier instanceof Action)) {
       return 'modifierActionErreurActionInconnue'
     }
-
-    let demandeDeSubventionUid = actionAModifier.state.demandeDeSubventionUid
-
-    await this.#transactionRepository.transaction(async (tx) => {
-      // Gestion de la demande de subvention
+    console.log('actionAModifier',actionAModifier)
+    const result = await this.#transactionRepository.transaction(async (tx) => {
+      let demandeDeSubventionUid = actionAModifier.state.demandeDeSubventionUid
+      let demandeDeSubventionExistante: DemandeDeSubvention | DemandeDeSubventionFailure | undefined
+      console.log('demandeDeSubventionUid',demandeDeSubventionUid)
+      if (demandeDeSubventionUid) {
+        demandeDeSubventionExistante = await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
+        
+        if (!(demandeDeSubventionExistante instanceof DemandeDeSubvention)) {
+          return 'modifierActionErreurDemandeDeSubventionInconnue'
+        }
+        console.log('demandeDeSubventionExistante',demandeDeSubventionExistante.state)
+        if (demandeDeSubventionExistante.state.statut !== StatutSubvention.DEPOSEE) {
+          console.log('demandeDeSubventionExistanteBBMABMA')
+          return 'modifierActionErreurDemandeDeSubventionStatutInvalide'
+        }
+      }
       if (command.demandeDeSubvention) {
-        if (demandeDeSubventionUid) {
-          // Mise à jour de la demande existante
-          const demandeExistante = await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
-          if (demandeExistante instanceof DemandeDeSubvention) {
-            const demandeModifiee = DemandeDeSubvention.create({
-              beneficiaires: command.demandeDeSubvention.beneficiaires,
-              dateDeCreation: new Date(demandeExistante.state.dateDeCreation),
-              derniereModification: this.#date,
-              statut: demandeExistante.state.statut,
-              subventionDemandee: command.demandeDeSubvention.subventionDemandee,
-              subventionEtp: command.demandeDeSubvention.subventionEtp,
-              subventionPrestation: command.demandeDeSubvention.subventionPrestation,
-              uid: { value: demandeDeSubventionUid },
-              uidAction: { value: command.uid },
-              uidCreateur: demandeExistante.state.uidCreateur,
-              uidEnveloppeFinancement: { value: command.demandeDeSubvention.enveloppeFinancementId },
-            })
-            if (demandeModifiee instanceof DemandeDeSubvention) {
-              await this.#demandeDeSubventionRepository.update(demandeModifiee, tx)
-            }
+        if (demandeDeSubventionExistante instanceof DemandeDeSubvention) {
+          // Mise à jour de la demande existante so elle est dans un état qui permet de la modifier
+          const demandeModifiee = DemandeDeSubvention.create({
+            beneficiaires: command.destinataires,
+            dateDeCreation: new Date(demandeDeSubventionExistante.state.dateDeCreation),
+            derniereModification: this.#date,
+            statut: demandeDeSubventionExistante.state.statut,
+            subventionDemandee: command.demandeDeSubvention.subventionDemandee,
+            subventionEtp: command.demandeDeSubvention.subventionEtp,
+            subventionPrestation: command.demandeDeSubvention.subventionPrestation,
+            uid: { value: demandeDeSubventionUid },
+            uidAction: { value: command.uid },
+            uidCreateur: demandeDeSubventionExistante.state.uidCreateur,
+            uidEnveloppeFinancement: { value: command.demandeDeSubvention.enveloppeFinancementId },
+          })
+          if (demandeModifiee instanceof DemandeDeSubvention) {
+            await this.#demandeDeSubventionRepository.update(demandeModifiee, tx)
           }
         } else {
           // Création d'une nouvelle demande
           const nouvelleDemande = DemandeDeSubvention.create({
-            beneficiaires: command.demandeDeSubvention.beneficiaires,
+            beneficiaires: command.destinataires,
             dateDeCreation: this.#date,
             derniereModification: this.#date,
-            statut: 'deposee',
+            statut: StatutSubvention.DEPOSEE,
             subventionDemandee: command.demandeDeSubvention.subventionDemandee,
             subventionEtp: command.demandeDeSubvention.subventionEtp,
             subventionPrestation: command.demandeDeSubvention.subventionPrestation,
@@ -116,9 +149,29 @@ export class ModifierUneAction implements CommandHandler<Command> {
           }
         }
       } else if (demandeDeSubventionUid) {
-        // Suppression de la demande existante
+        // Suppression de la demande existante si elle est dans un état qui permet de la supprimer
+
         await this.#demandeDeSubventionRepository.supprimer(demandeDeSubventionUid, tx)
         demandeDeSubventionUid = ''
+      }
+
+      // Gestion des cofinancements
+      if (command.coFinancements.length > 0) {
+        // Suppression des cofinancements existants
+        await this.#coFinancementRepository.supprimer(actionAModifier.state.uid.value, tx)
+        
+        // Création des nouveaux cofinancements
+        const coFinancements = creationDesCoFinancements(command.coFinancements, actionAModifier.state.uid.value)
+        if (Array.isArray(coFinancements)) {
+          for (const coFinancement of coFinancements) {
+            await this.#coFinancementRepository.add(coFinancement, tx)
+          }
+        } else {
+          return coFinancements
+        }
+      } else {
+        // Si aucun cofinancement n'est fourni, on supprime tous les cofinancements existants
+        await this.#coFinancementRepository.supprimer(actionAModifier.state.uid.value, tx)
       }
 
       const actionModifiee = Action.create({
@@ -159,7 +212,7 @@ export class ModifierUneAction implements CommandHandler<Command> {
       await this.#feuilleDeRouteRepository.update(feuilleDeRouteAJour, tx)
       return 'OK'
     })
-    return 'OK'
+    return result
   }
 }
 
@@ -190,4 +243,13 @@ type Command = Readonly<{
   uidPorteurs: Array<string>
 }>
 
-type Failure = 'modifierActionErreurActionInconnue' | 'modifierActionErreurEditeurInconnue' | 'modifierActionErreurFeuilleDeRouteInconnue' | 'modifierActionErreurGouvernanceInconnue' | 'utilisateurNePeutPasAjouterAction' | ActionFailure
+type Failure = 'modifierActionErreurDemandeDeSubventionInconnue' 
+| 'modifierActionErreurDemandeDeSubventionStatutInvalide'
+| 'modifierActionErreurEditeurInconnue' 
+| 'modifierActionErreurFeuilleDeRouteInconnue'
+| 'modifierActionErreurGouvernanceInconnue'
+| 'modifierActionErreurInconnue'
+| 'montantInvalide'
+| 'utilisateurNePeutPasAjouterAction'
+| ActionFailure
+| DemandeDeSubventionFailure

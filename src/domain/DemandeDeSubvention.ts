@@ -4,6 +4,7 @@ import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
 import { Result } from '@/shared/lang'
+import { StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
 
 export class DemandeDeSubvention extends Entity<State> {
   override get state(): State {
@@ -11,7 +12,7 @@ export class DemandeDeSubvention extends Entity<State> {
       beneficiaires: this.#beneficiaires.map((beneficiaire) => beneficiaire.state.value),
       dateDeCreation: this.#dateDeCreation.toJSON(),
       derniereModification: this.#derniereModification.toJSON(),
-      statut: this.#statut,
+      statut: this.#statut as StatutSubvention,
       subventionDemandee: this.#subventionDemandee,
       subventionEtp: this.#subventionEtp ?? undefined,
       subventionPrestation: this.#subventionPrestation ?? undefined,
@@ -39,7 +40,7 @@ export class DemandeDeSubvention extends Entity<State> {
     beneficiaires: Array<MembreUid>,
     dateDeCreation: ValidDate<DemandeDeSubventionFailure>,
     derniereModification: ValidDate<DemandeDeSubventionFailure>,
-    statut: string,
+    statut: StatutSubvention,
     subventionDemandee: number,
     subventionEtp: null | number,
     subventionPrestation: null | number,
@@ -102,7 +103,7 @@ export class DemandeDeSubvention extends Entity<State> {
       beneficiaires: this.#beneficiaires.map((beneficiaire) => beneficiaire.state.value),
       dateDeCreation: this.#dateDeCreation,
       derniereModification: this.#derniereModification,
-      statut: this.#statut,
+      statut: this.#statut as StatutSubvention,
       subventionDemandee: this.#subventionDemandee,
       subventionEtp: this.#subventionEtp,
       subventionPrestation: this.#subventionPrestation,
@@ -132,7 +133,7 @@ type FactoryParams = Readonly<{
   beneficiaires: Array<string>
   dateDeCreation: Date
   derniereModification: Date
-  statut: string
+  statut: StatutSubvention
   subventionDemandee: number
   subventionEtp: null | number
   subventionPrestation: null | number
@@ -146,7 +147,7 @@ type State = Readonly<{
   beneficiaires: Array<string>
   dateDeCreation: string
   derniereModification: string
-  statut: string
+  statut: StatutSubvention
   subventionDemandee: number
   subventionEtp?: number
   subventionPrestation?: number
