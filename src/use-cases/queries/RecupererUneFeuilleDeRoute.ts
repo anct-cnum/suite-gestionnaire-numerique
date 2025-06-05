@@ -1,5 +1,5 @@
 import { BesoinsPossible } from './shared/ActionReadModel'
-import { StatutSubvention } from "@/domain/DemandeDeSubvention"
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 
 export interface UneFeuilleDeRouteLoader {
   get(codeDepartement: string, uidFeuilleDeRoute: string): Promise<UneFeuilleDeRouteReadModel>
@@ -14,18 +14,19 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
       financeur: number
       montant: number
     }>
+    demandeDeSubventionStatut: 'nonSubventionne' | StatutSubvention
     enveloppe: Readonly<{
       libelle: string
       montant: number
     }>
     isEditable: boolean
     isEnveloppeFormation: boolean
+    modifiable: boolean
     nom: string
     porteurs: ReadonlyArray<{
       nom: string
       uid: string
     }>
-    statut: StatutSubvention
     subventionDemandee: number
     uid: string
   }>

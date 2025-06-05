@@ -3,10 +3,10 @@ import { Prisma } from '@prisma/client'
 import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
 import { FeuilleDeRouteReadModel, MembreReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
-import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {

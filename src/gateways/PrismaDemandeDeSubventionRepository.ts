@@ -10,7 +10,10 @@ import {
 } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository
-implements AddDemandeDeSubventionRepository, GetDemandeDeSubventionRepository, SupprimerDemandeDeSubventionRepository, UpdateDemandeDeSubventionRepository {
+implements AddDemandeDeSubventionRepository, 
+GetDemandeDeSubventionRepository, 
+SupprimerDemandeDeSubventionRepository, 
+UpdateDemandeDeSubventionRepository {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma

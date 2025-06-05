@@ -1,5 +1,5 @@
 import { Finances, Gouvernance, SyntheseGouvernance } from './shared/etablisseur-synthese-gouvernance'
-import { StatutSubvention } from "@/domain/DemandeDeSubvention"
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 
 export function etablirSyntheseFinanciereGouvernance(gouvernance: Gouvernance): SyntheseGouvernance {
   const bilanGouvernance = gouvernance.feuillesDeRoute.reduce(

@@ -1,4 +1,4 @@
-import { StatutSubvention } from "@/domain/DemandeDeSubvention"
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 
 export type EtablisseurSyntheseGouvernance = (gouvernance: Gouvernance) => SyntheseGouvernance
 

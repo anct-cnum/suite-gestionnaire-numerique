@@ -70,39 +70,31 @@ export class ModifierUneAction implements CommandHandler<Command> {
   }
 
   async handle(command: Command):ResultAsync<Failure> {
-    console.log('command',command)
     const editeur = await this.#utilisateurRepository.get(command.uidEditeur)
-    console.log('editeur',editeur)
     const gouvernance = await this.#gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
-    console.log('gouvernance',gouvernance)
     if (!gouvernance.peutEtreGereePar(editeur)) {
       return 'utilisateurNePeutPasAjouterAction'
     }
     const feuilleDeRoute = await this.#feuilleDeRouteRepository.get(command.uidFeuilleDeRoute)
-    console.log('feuilleDeRoute',feuilleDeRoute)
     if (!(feuilleDeRoute instanceof FeuilleDeRoute)) {
       return 'modifierActionErreurFeuilleDeRouteInconnue'
     }
 
     const actionAModifier = await this.#actionRepository.get(command.uid)
-    console.log('actionAModifier',actionAModifier)
     if (!(actionAModifier instanceof Action)) {
-      return 'modifierActionErreurActionInconnue'
+      return 'modifierActionErreurInconnue'
     }
-    console.log('actionAModifier',actionAModifier)
+    // eslint-disable-next-line sonarjs/cognitive-complexity
     const result = await this.#transactionRepository.transaction(async (tx) => {
       let demandeDeSubventionUid = actionAModifier.state.demandeDeSubventionUid
       let demandeDeSubventionExistante: DemandeDeSubvention | DemandeDeSubventionFailure | undefined
-      console.log('demandeDeSubventionUid',demandeDeSubventionUid)
       if (demandeDeSubventionUid) {
         demandeDeSubventionExistante = await this.#demandeDeSubventionRepository.get(demandeDeSubventionUid)
         
         if (!(demandeDeSubventionExistante instanceof DemandeDeSubvention)) {
           return 'modifierActionErreurDemandeDeSubventionInconnue'
         }
-        console.log('demandeDeSubventionExistante',demandeDeSubventionExistante.state)
         if (demandeDeSubventionExistante.state.statut !== StatutSubvention.DEPOSEE) {
-          console.log('demandeDeSubventionExistanteBBMABMA')
           return 'modifierActionErreurDemandeDeSubventionStatutInvalide'
         }
       }

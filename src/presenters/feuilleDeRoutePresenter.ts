@@ -6,7 +6,6 @@ import { HyperLink, LabelValue } from './shared/labels'
 import { documentfeuilleDeRouteLink, feuilleDeRouteLink, membreLink } from './shared/link'
 import { formatMontant } from './shared/number'
 import { formatPluriel } from './shared/text'
-import { StatutSubvention } from "@/domain/DemandeDeSubvention"
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 
@@ -155,8 +154,8 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         label: porteur.nom,
         link: membreLink(uidGouvernance, porteur.uid),
       })),
-      statut: actionStatutViewModelByStatut[action.statut],
-      supprimable : action.statut === StatutSubvention.DEPOSEE || action.statut === StatutSubvention.NON_SUBVENTIONNEE,
+      statut: actionStatutViewModelByStatut[action.demandeDeSubventionStatut],
+      supprimable : action.modifiable,
       uid: action.uid,
       urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
     }
