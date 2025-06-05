@@ -119,12 +119,14 @@ interface FeuilleDeRouteActionViewModel {
     total: string
   }>
   icone: ActionStatutViewModel
+  modifiable : boolean
   nom: string
   porteurs: ReadonlyArray<HyperLink>
   statut: ActionStatutViewModel
   supprimable : boolean
   uid: string
   urlModifier: string
+  urlVisualiser: string
 }
 
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
@@ -149,6 +151,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         total: formatMontant(action.budgetPrevisionnel),
       },
       icone,
+      modifiable : action.modifiable,
       nom: action.nom,
       porteurs: action.porteurs.map((porteur) => ({
         label: porteur.nom,
@@ -158,6 +161,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
       supprimable : action.modifiable,
       uid: action.uid,
       urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,
+      urlVisualiser: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/visualiser`,
     }
   }
 }

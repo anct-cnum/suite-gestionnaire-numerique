@@ -318,6 +318,7 @@ export function feuilleDeRouteViewModelFactory(
           total: formatMontant(100_000),
         },
         icone: actionStatutViewModelByStatut.enCours,
+        modifiable: false,
         nom: 'Structurer une filière de reconditionnement locale',
         porteurs: [{
           label: 'CC des Monts du Lyonnais',
@@ -327,6 +328,7 @@ export function feuilleDeRouteViewModelFactory(
         supprimable: false,
         uid: 'actionFooId1',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId1/modifier`,
+        urlVisualiser: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId1/visualiser`,
       },
       {
         besoins: 'Établir un diagnostic territorial, 2 bénéficiaires',
@@ -338,6 +340,7 @@ export function feuilleDeRouteViewModelFactory(
           total: formatMontant(20_000),
         },
         icone: actionStatutViewModelByStatut.enCours,
+        modifiable: false,
         nom: 'Formation Aidants Connect',
         porteurs: [{
           label: 'CC des Monts du Lyonnais',
@@ -347,6 +350,7 @@ export function feuilleDeRouteViewModelFactory(
         supprimable: false,
         uid: 'actionFooId2',
         urlModifier: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId2/modifier`,
+        urlVisualiser: `/gouvernance/${codeDepartement}/feuille-de-route/${uidFeuilleDeRoute}/action/actionFooId2/visualiser`,
       },
     ],
     budgets: {

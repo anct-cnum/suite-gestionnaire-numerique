@@ -18,6 +18,7 @@ export function BaseActionForm({
 }: BaseActionFormProps): ReactElement {
   const [isDisabled, setIsDisabled] = useState(false)
   const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
+  const isReadOnly = !onSubmit
 
   return (
     <>
@@ -26,20 +27,24 @@ export function BaseActionForm({
       </title>
       <FormulaireAction
         action={action}
-        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
+        ajouterDemandeDeSubvention={isReadOnly ? undefined : ajouterDemandeDeSubvention}
         date={date}
         demandeDeSubvention={demandeDeSubvention}
+        isReadOnly={isReadOnly}
         label={formLabel}
-        supprimerUneDemandeDeSubvention={supprimerDemandeDeSubvention}
-        validerFormulaire={async (event, contexte, description, coFinancements) => 
-          handleSubmit(event, contexte, description, coFinancements)}
+        supprimerUneDemandeDeSubvention={isReadOnly ? undefined : supprimerDemandeDeSubvention}
+        validerFormulaire={isReadOnly ? undefined : 
+          async (event, contexte, description, coFinancements): Promise<void> => 
+            handleSubmit(event, contexte, description, coFinancements)}
       >
-        <SubmitButton
-          className="fr-col-11 fr-mb-5w d-block"
-          isDisabled={isDisabled}
-        >
-          {isDisabled ? submitButtonLoadingText : submitButtonText}
-        </SubmitButton>
+        {!isReadOnly && (
+          <SubmitButton
+            className="fr-col-11 fr-mb-5w d-block"
+            isDisabled={isDisabled}
+          >
+            {isDisabled ? submitButtonLoadingText : submitButtonText}
+          </SubmitButton>
+        )}
       </FormulaireAction>
     </>
   )
@@ -53,6 +58,7 @@ export function BaseActionForm({
       montant: string
     }>
   ): Promise<void> {
+    if (!onSubmit) {return}
     setIsDisabled(true)
     try {
       await onSubmit(event, contexteContenu, descriptionContenu, coFinancements, demandeDeSubvention)
@@ -75,7 +81,7 @@ type BaseActionFormProps = Readonly<{
   action: ActionViewModel
   date: Date
   formLabel: string
-  onSubmit(
+  onSubmit?(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
@@ -84,9 +90,9 @@ type BaseActionFormProps = Readonly<{
       montant: string
     }>,
     demandeDeSubvention: DemandeDeSubvention | undefined
-  ): Promise<void>
+  ): Promise<void> | undefined
   onSuccess?(): void
-  submitButtonLoadingText: string
-  submitButtonText: string
+  submitButtonLoadingText?: string
+  submitButtonText?: string
   title: string
 }> 

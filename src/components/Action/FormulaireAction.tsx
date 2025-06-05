@@ -25,6 +25,7 @@ export function FormulaireAction({
   ajouterDemandeDeSubvention,
   children,
   demandeDeSubvention,
+  isReadOnly = false,
   label,
   supprimerUneDemandeDeSubvention,
   validerFormulaire,
@@ -137,7 +138,11 @@ export function FormulaireAction({
       }}
       onSubmit={async (event) => {
         event.preventDefault()
-        await validerFormulaire(
+
+        if (isReadOnly) {
+          return
+        }
+        await validerFormulaire?.(
           event,
           contexteContenu,
           descriptionContenu,
@@ -160,20 +165,24 @@ export function FormulaireAction({
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-0">
               Besoins liés à l‘action
               {' '}
-              <span className="color-red">
-                *
-              </span>
+              {!isReadOnly && (
+                <span className="color-red">
+                  *
+                </span>
+              )}
             </p>
-            <AjouterDesBesoins
-              enregistrerBesoins={enregistrerLeOuLesBesoins}
-              financements={action.besoins.financements}
-              formations={action.besoins.formations}
-              formationsProfesionnels={action.besoins.formationsProfessionnels}
-              hasBesoins={checkHasBesoinsSelected(besoinsSelected)}
-              outillages={action.besoins.outillages}
-              resetToutEffacer={resetToutEffacer}
-              toutEffacer={toutEffacerBesoins}
-            />
+            {!isReadOnly && (
+              <AjouterDesBesoins
+                enregistrerBesoins={enregistrerLeOuLesBesoins}
+                financements={action.besoins.financements}
+                formations={action.besoins.formations}
+                formationsProfesionnels={action.besoins.formationsProfessionnels}
+                hasBesoins={checkHasBesoinsSelected(besoinsSelected)}
+                outillages={action.besoins.outillages}
+                resetToutEffacer={resetToutEffacer}
+                toutEffacer={toutEffacerBesoins}
+              />
+            )}
           </div>
           <p className="color-grey">
             Indiquez à quels besoins se rapporte l’action pour laquelle vous demandez une subvention.
@@ -199,9 +208,10 @@ export function FormulaireAction({
           <hr />
           <TextInput
             defaultValue={action.nom}
+            disabled={isReadOnly}
             id={nomDeLActionId}
             name="nom"
-            required={true}
+            required={!isReadOnly}
           >
             Nom de l‘action
             {' '}
@@ -226,6 +236,7 @@ export function FormulaireAction({
             contenu={contexteContenu}
             height={150}
             onChange={gererChangementContexte}
+            readOnly={isReadOnly}
           />
           <label
             className="fr-label fr-mt-3w"
@@ -244,6 +255,7 @@ export function FormulaireAction({
             contenu={descriptionContenu}
             height={350}
             onChange={gererChangementDescription}
+            readOnly={isReadOnly}
           />
 
         </div>
@@ -257,17 +269,19 @@ export function FormulaireAction({
             <p className="fr-h6 fr-text--bold color-blue-france fr-mb-0">
               Porteur(s) de l‘action
             </p>
-            <AjouterDesMembres
-              checkboxName="porteurs"
-              drawerId="drawerAjouterDesPorteursId"
-              enregistrer={enregistrerPorteurs}
-              labelPluriel="porteurs"
-              membres={porteurs}
-              resetToutEffacer={resetPorteurToutEffacer}
-              titre="Ajouter le(s) porteur(s)"
-              toutEffacer={createToutEffacer()}
-              urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
-            />
+            {!isReadOnly && (
+              <AjouterDesMembres
+                checkboxName="porteurs"
+                drawerId="drawerAjouterDesPorteursId"
+                enregistrer={enregistrerPorteurs}
+                labelPluriel="porteurs"
+                membres={porteurs}
+                resetToutEffacer={resetPorteurToutEffacer}
+                titre="Ajouter le(s) porteur(s)"
+                toutEffacer={createToutEffacer()}
+                urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
+              />
+            )}
           </div>
           <p>
             Précisez le ou les structure(s) porteuse(s) de cette action
@@ -287,7 +301,10 @@ export function FormulaireAction({
               ))
           }
         </div>
-        <TemporaliteAction action={{ anneeDeDebut: action.anneeDeDebut, anneeDeFin:action.anneeDeFin }} />
+        <TemporaliteAction 
+          action={{ anneeDeDebut: action.anneeDeDebut, anneeDeFin:action.anneeDeFin }} 
+          isReadOnly={isReadOnly}
+        />
         <div
           className="white-background fr-p-4w fr-mb-2w"
           id="budgetAction"
@@ -317,13 +334,16 @@ export function FormulaireAction({
               <input
                 className="fr-input"
                 defaultValue={action.budgetGlobal}
+                disabled={isReadOnly}
                 id="budgetGlobal"
                 min={0}
                 name="budgetGlobal"
                 onChange={(event) => {
-                  setBudgetGlobal(Number(event.target.value))
+                  if (!isReadOnly) {
+                    setBudgetGlobal(Number(event.target.value))
+                  }
                 }}
-                required={true}
+                required={!isReadOnly}
                 type="number"
               />
             </div>
@@ -333,6 +353,7 @@ export function FormulaireAction({
             ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
             demandeDeSubvention={demandeDeSubvention}
             enveloppes={action.enveloppes}
+            isReadOnly={isReadOnly}
             montantMaxAction={budgetGlobal}
             supprimerUneDemandeDeSubvention={supprimerUneDemandeDeSubvention}
           />
@@ -345,12 +366,14 @@ export function FormulaireAction({
                 Co-financement
               </p>
             </div>
-            <AjouterUnCoFinancement
-              ajoutCoFinanceur={ajouterCofinancement}
-              budgetGlobal={budgetGlobal}
-              label="Ajouter un co-financement"
-              labelId="ajouter-un-cofinancement-label"
-            />
+            {!isReadOnly && (
+              <AjouterUnCoFinancement
+                ajoutCoFinanceur={ajouterCofinancement}
+                budgetGlobal={budgetGlobal}
+                label="Ajouter un co-financement"
+                labelId="ajouter-un-cofinancement-label"
+              />
+            )}
           </div>
           {
             cofinancements.length > 0 ?
@@ -381,16 +404,18 @@ export function FormulaireAction({
                             {' '}
                             €
                           </p>
-                          <button
-                            className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
-                            onClick={() => {
-                              supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
-                            }}
-                            title="Label bouton"
-                            type="button"
-                          >
-                            Supprimer
-                          </button>
+                          {!isReadOnly && (
+                            <button
+                              className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-delete-line color-red"
+                              onClick={() => {
+                                supprimerUnCofinancement(cofinancements.indexOf(cofinancement))
+                              }}
+                              title="Label bouton"
+                              type="button"
+                            >
+                              Supprimer
+                            </button>
+                          )}
                         </div>
                       </div>
                     </li>
@@ -422,21 +447,25 @@ export function FormulaireAction({
               <p className="fr-h6 fr-text--bold color-blue-france fr-mb-1w">
                 Destinataire(s) de la subvention
                 {' '}
-                <span className="color-red">
-                  *
-                </span>
+                {!isReadOnly && (
+                  <span className="color-red">
+                    *
+                  </span>
+                )}
               </p>
-              <AjouterDesMembres
-                checkboxName="beneficiaires"
-                drawerId="drawerAjouterDesBeneficiairesId"
-                enregistrer={enregistrerBeneficiaires}
-                labelPluriel="bénéficiaires de la subvention"
-                membres={destinataires}
-                resetToutEffacer={resetBeneficiaireToutEffacer}
-                titre="Ajouter le(s) bénéficiaire(s)"
-                toutEffacer={createToutEffacer()}
-                urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
-              />
+              {!isReadOnly && (
+                <AjouterDesMembres
+                  checkboxName="beneficiaires"
+                  drawerId="drawerAjouterDesBeneficiairesId"
+                  enregistrer={enregistrerBeneficiaires}
+                  labelPluriel="bénéficiaires de la subvention"
+                  membres={destinataires}
+                  resetToutEffacer={resetBeneficiaireToutEffacer}
+                  titre="Ajouter le(s) bénéficiaire(s)"
+                  toutEffacer={createToutEffacer()}
+                  urlGestionMembresGouvernance={action.urlGestionMembresGouvernance}
+                />
+              )}
             </div>
             <p className="color-grey">
               Précisez le ou les membres de votre gouvernance qui seront destinataires de la subvention.
@@ -530,13 +559,14 @@ function checkHasBesoinsSelected(besoins: Besoins): boolean {
 
 type Props = PropsWithChildren<Readonly<{
   action: ActionViewModel
-  ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void
+  ajouterDemandeDeSubvention?(demandeDeSubvention: DemandeDeSubvention): void
   date?: Date
   demandeDeSubvention?: DemandeDeSubvention
+  isReadOnly?: boolean
   label: string
   supprimerUneDemandeDeSubvention?(): void
-  validerFormulaire(event: FormEvent<HTMLFormElement>, contexte: string, description: string, cofinancement : Array<{
+  validerFormulaire?(event: FormEvent<HTMLFormElement>, contexte: string, description: string, cofinancement : Array<{
     coFinanceur: string
     montant: string
-  }>): Promise<void>
+  }>): Promise<void> | undefined
 }>>
