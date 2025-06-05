@@ -14,7 +14,6 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
       financeur: number
       montant: number
     }>
-    demandeDeSubventionStatut: 'nonSubventionne' | StatutSubvention
     enveloppe: Readonly<{
       libelle: string
       montant: number
@@ -27,6 +26,7 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
       nom: string
       uid: string
     }>
+    statut: 'nonSubventionnee' | StatutSubvention
     subventionDemandee: number
     uid: string
   }>

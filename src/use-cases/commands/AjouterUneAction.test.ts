@@ -14,7 +14,7 @@ import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action } from '@/domain/Action'
 import { CoFinancement } from '@/domain/CoFinancement'
-import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import {
@@ -70,7 +70,7 @@ describe('ajouter une action à une feuille de route', () => {
         {
           beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
           enveloppeFinancementId: uidEnveloppeFinancement,
-          statut: 'en_cours',
+          statut: StatutSubvention.EN_COURS,
           subventionDemandee: 5000,
           subventionEtp: 2000,
           subventionPrestation: 3000,
@@ -114,7 +114,7 @@ describe('ajouter une action à une feuille de route', () => {
     expect(spiedDemandeDeSubventionToAdd?.state).toStrictEqual(
       demandeDeSubventionFactory({
         beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
-        statut: 'en_cours',
+        statut: StatutSubvention.EN_COURS,
         subventionDemandee: 5000,
         subventionEtp: 2000,
         subventionPrestation: 3000,

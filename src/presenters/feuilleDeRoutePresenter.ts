@@ -154,7 +154,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         label: porteur.nom,
         link: membreLink(uidGouvernance, porteur.uid),
       })),
-      statut: actionStatutViewModelByStatut[action.demandeDeSubventionStatut],
+      statut: actionStatutViewModelByStatut[action.statut],
       supprimable : action.modifiable,
       uid: action.uid,
       urlModifier: `${feuilleDeRouteLink(uidGouvernance, uidFeuilleDeRoute)}/action/${action.uid}/modifier`,

@@ -56,7 +56,6 @@ describe('récupérer une feuille de route loader', () => {
             financeur: 0,
             montant: 0,
           },
-          demandeDeSubventionStatut: StatutSubvention.ACCEPTEE,
           enveloppe: {
             libelle: 'Formation Aidant Numérique/Aidants Connect',
             montant: 0,
@@ -71,6 +70,7 @@ describe('récupérer une feuille de route loader', () => {
               uid: 'epci-2419272011-93',
             },
           ],
+          statut: StatutSubvention.ACCEPTEE,
           subventionDemandee: 0,
           uid: String(uidAction1),
         },
@@ -82,7 +82,6 @@ describe('récupérer une feuille de route loader', () => {
             financeur: 0,
             montant: 0,
           },
-          demandeDeSubventionStatut: 'nonSubventionne',
           enveloppe: {
             libelle: 'Aucune enveloppe',
             montant: 0,
@@ -92,6 +91,7 @@ describe('récupérer une feuille de route loader', () => {
           modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
+          statut: 'nonSubventionnee',
           subventionDemandee: 0,
           uid: String(uidAction2),
         },
@@ -164,7 +164,6 @@ describe('récupérer une feuille de route loader', () => {
             financeur: 0,
             montant: 0,
           },
-          demandeDeSubventionStatut: StatutSubvention.ACCEPTEE,
           enveloppe: {
             libelle: 'Formation Aidant Numérique/Aidants Connect',
             montant: 0,
@@ -179,6 +178,7 @@ describe('récupérer une feuille de route loader', () => {
               uid: 'epci-2419272011-93',
             },
           ],
+          statut: StatutSubvention.ACCEPTEE,
           subventionDemandee: 0,
           uid: String(uidAction1),
         },
@@ -190,7 +190,6 @@ describe('récupérer une feuille de route loader', () => {
             financeur: 0,
             montant: 0,
           },
-          demandeDeSubventionStatut: 'nonSubventionne',
           enveloppe: {
             libelle: 'Aucune enveloppe',
             montant: 0,
@@ -200,6 +199,7 @@ describe('récupérer une feuille de route loader', () => {
           modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
+          statut: 'nonSubventionnee',
           subventionDemandee: 0,
           uid: String(uidAction2),
         },

@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
-import { DemandeDeSubvention } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import {
   AddDemandeDeSubventionRepository,
   GetDemandeDeSubventionRepository,
@@ -71,7 +71,7 @@ UpdateDemandeDeSubventionRepository {
       beneficiaires: demande.beneficiaire.map((beneficiaire) => beneficiaire.membreId),
       dateDeCreation: demande.creation,
       derniereModification: demande.derniereModification,
-      statut: demande.statut,
+      statut: demande.statut as StatutSubvention,
       subventionDemandee: demande.subventionDemandee,
       subventionEtp: demande.subventionEtp,
       subventionPrestation: demande.subventionPrestation,
