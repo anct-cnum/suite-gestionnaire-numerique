@@ -3,8 +3,9 @@ import { Prisma } from '@prisma/client'
 import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { UneFeuilleDeRouteLoader, UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
@@ -57,7 +58,9 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
     return {
       actions: feuilleDeRouteRecord.action.map((action, index) => {
         const demandeDeSubvention = action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined
-        const isEditable = !(demandeDeSubvention?.statut === 'acceptee' || demandeDeSubvention?.statut === 'refusee')
+        const statut = (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) 
+                  ?? 'nonSubventionnee'
+        const isEditableEtModifiable = statut === StatutSubvention.DEPOSEE || statut === 'nonSubventionnee'
         return {
           beneficiaire: syntheseFeuilleDeRoute.actions[index].beneficiaires,
           besoins: action.besoins.map(besoin => besoin as BesoinsPossible),
@@ -70,12 +73,12 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
             libelle: demandeDeSubvention?.enveloppe.libelle ?? 'Aucune enveloppe',
             montant: syntheseFeuilleDeRoute.actions[index].financementDemande,
           },
-          isEditable,
+          isEditable: isEditableEtModifiable,
           isEnveloppeFormation: isSubventionFormation(action),
+          modifiable: isEditableEtModifiable,
           nom: action.nom,
           porteurs: action.porteurAction.map((porteur) => fromMembre(toMembre(porteur.membre))),
-          statut: (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) 
-                  ?? StatutSubvention.NON_SUBVENTIONNEE,
+          statut,
           subventionDemandee: demandeDeSubvention?.subventionDemandee ?? 0,
           uid: String(action.id),
         }

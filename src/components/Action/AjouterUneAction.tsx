@@ -1,91 +1,56 @@
 'use client'
 
-import { redirect } from 'next/navigation'
-import { FormEvent, ReactElement, useContext, useState } from 'react'
+import { FormEvent, ReactElement, useContext } from 'react'
 
-import { FormulaireAction } from './FormulaireAction'
+import { handleActionResponse, handleActionSubmit } from './actionUtils'
+import { BaseActionForm } from './BaseActionForm'
 import { gouvernanceContext } from '../shared/GouvernanceContext'
-import SubmitButton from '../shared/SubmitButton/SubmitButton'
 import { clientContext } from '@/components/shared/ClientContext'
-import { Notification } from '@/components/shared/Notification/Notification'
 import { ActionViewModel, DemandeDeSubvention } from '@/presenters/actionPresenter'
-import { feuilleDeRouteLink } from '@/presenters/shared/link'
 
 export default function AjouterUneAction({ action, date, uidFeuilleDeRoute }: Props): ReactElement {
   const { ajouterUneActionAction, pathname } = useContext(clientContext)
-  const [isDisabled, setIsDisabled] = useState(false)
-  const [demandeDeSubvention, setDemandeDeSubvention] = useState(action.demandeDeSubvention)
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   return (
-    <>
-      <title>
-        Ajouter une action à la feuille de route
-      </title>
-      <FormulaireAction
-        action={action}
-        ajouterDemandeDeSubvention={ajouterDemandeDeSubvention}
-        date={date}
-        demandeDeSubvention={demandeDeSubvention}
-        label="Ajouter une action à la feuille de route"
-        supprimerUneDemandeDeSubvention={supprimerDemandeDeSubvention}
-        validerFormulaire={creerUneAction}
-      >
-        <SubmitButton
-          className="fr-col-11 fr-mb-5w d-block"
-          isDisabled={isDisabled}
-        >
-          {isDisabled ? 'Ajout en cours...' : 'Valider et envoyer'}
-        </SubmitButton>
-      </FormulaireAction>
-    </>
+    <BaseActionForm
+      action={action}
+      date={date}
+      formLabel="Ajouter une action à la feuille de route"
+      onSubmit={creerUneAction}
+      submitButtonLoadingText="Ajout en cours..."
+      submitButtonText="Valider et envoyer"
+      title="Ajouter une action à la feuille de route"
+    />
   )
 
   async function creerUneAction(
     event: FormEvent<HTMLFormElement>,
     contexteContenu: string,
     descriptionContenu: string,
-    coFinancements : Array<{
+    coFinancements: Array<{
       coFinanceur: string
       montant: string
-    }>
-  ): Promise<void> {
-    event.preventDefault()
-    setIsDisabled(true)
+    }>,
+    demandeDeSubvention: DemandeDeSubvention | undefined
+  ): Promise<boolean> {
     const form = new FormData(event.currentTarget)
-    const messages = await ajouterUneActionAction({
-      anneeDeDebut: form.get('anneeDeDebut') as string,
-      anneeDeFin: form.get('anneeDeFin') as string,
-      besoins: form.getAll('besoins') as Array<string>,
-      budgetGlobal: Number(form.get('budgetGlobal')),
+    const data = handleActionSubmit(
+      event,
+      contexteContenu,
+      descriptionContenu,
       coFinancements,
-      contexte: contexteContenu,
       demandeDeSubvention,
-      description: descriptionContenu,
-      destinataires: form.getAll('beneficiaires') as Array<string>,
-      feuilleDeRoute: uidFeuilleDeRoute,
-      gouvernance : gouvernanceViewModel.uid,
-      nom: form.get('nom') as string,
-      path: pathname,
-      porteurs: form.getAll('porteurs') as Array<string>,
-    })
-
-    const isOk = (messages as Array<string>).includes('OK')
-    if (isOk) {
-      Notification('success', { description: 'ajoutée', title: 'Action ' })
-      redirect(feuilleDeRouteLink(gouvernanceViewModel.uid, uidFeuilleDeRoute))
-    } else {
-      Notification('error', { description: (messages as Array<string>).join(', '), title: 'Erreur : ' })
-    }
-    setIsDisabled(false)
-  }
-
-  function ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void {
-    setDemandeDeSubvention(demandeDeSubvention)
-  }
-
-  function supprimerDemandeDeSubvention(): void {
-    setDemandeDeSubvention(undefined)
+      form,
+      {
+        feuilleDeRoute: uidFeuilleDeRoute,
+        gouvernance: gouvernanceViewModel.uid,
+        path: pathname,
+      }
+    )
+    
+    const messages = await ajouterUneActionAction(data)
+    return handleActionResponse(messages, gouvernanceViewModel.uid, uidFeuilleDeRoute, false)
   }
 }
 

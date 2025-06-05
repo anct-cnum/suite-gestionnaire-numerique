@@ -5,8 +5,9 @@ import { MesInformationsPersonnellesReadModel } from './queries/RecupererMesInfo
 import { MesMembresReadModel } from './queries/RecupererMesMembres'
 import { UneFeuilleDeRouteReadModel } from './queries/RecupererUneFeuilleDeRoute'
 import { UneGouvernanceReadModel } from './queries/RecupererUneGouvernance'
-import { BesoinsPossible , StatutSubvention } from './queries/shared/ActionReadModel'
+import { BesoinsPossible } from './queries/shared/ActionReadModel'
 import { UnUtilisateurReadModel } from './queries/shared/UnUtilisateurReadModel'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { Roles } from '@/domain/Role'
 import { epochTime, epochTimeMinusOneDay } from '@/shared/testHelper'
 
@@ -433,6 +434,7 @@ export function feuilleDeRouteReadModelFactory(
         },
         isEditable: true,
         isEnveloppeFormation: true,
+        modifiable: true,
         nom: 'Structurer une filière de reconditionnement locale 1',
         porteurs: [
           {
@@ -458,6 +460,7 @@ export function feuilleDeRouteReadModelFactory(
         },
         isEditable: true,
         isEnveloppeFormation: true,
+        modifiable: true,
         nom: 'Structurer une filière de reconditionnement locale 2',
         porteurs: [],
         statut: StatutSubvention.ACCEPTEE,

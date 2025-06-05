@@ -2,7 +2,7 @@ import { notFound, redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import MenuLateral from '@/components/Action/MenuLateral'
-import ModifierUneAction from '@/components/Action/ModifierUneAction'
+import VisualiserUneAction from '@/components/Action/VisualiserUneAction'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaEnveloppesLoader } from '@/gateways/PrismaEnveloppesLoader'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
@@ -39,7 +39,7 @@ export default async function ActionModifierController({ params }: Props): Promi
           <MenuLateral />
         </div>
         <div className="fr-col-10 fr-pl-7w">
-          <ModifierUneAction
+          <VisualiserUneAction
             action={actionPresenter(actionReadModel, {
               enveloppes: enveloppesDisponibles.enveloppes.map(enveloppe =>
                 enveloppePresenter(new Date(), enveloppe, repartitionSubventionGouvernance.get(String(enveloppe.id)))),
@@ -48,7 +48,6 @@ export default async function ActionModifierController({ params }: Props): Promi
               urlGestionMembresGouvernance,
             })}
             date={date}
-            uidFeuilleDeRoute={uidFeuilleDeRoute}
           />
         </div>
       </div>

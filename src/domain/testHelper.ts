@@ -2,7 +2,7 @@
 import { Action } from './Action'
 import { CoFinancement } from './CoFinancement'
 import { Comite } from './Comite'
-import { DemandeDeSubvention } from './DemandeDeSubvention'
+import { DemandeDeSubvention, StatutSubvention } from './DemandeDeSubvention'
 import { Departement, DepartementState } from './Departement'
 import { FeuilleDeRoute } from './FeuilleDeRoute'
 import { Gouvernance } from './Gouvernance'
@@ -159,7 +159,7 @@ export function demandeDeSubventionFactory(
     beneficiaires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
     dateDeCreation: epochTime,
     derniereModification: epochTime,
-    statut: 'en_cours',
+    statut: StatutSubvention.EN_COURS,
     subventionDemandee: 5000,
     subventionEtp: 2000,
     subventionPrestation: 3000,

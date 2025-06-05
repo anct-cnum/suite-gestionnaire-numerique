@@ -3,9 +3,10 @@ import { Prisma } from '@prisma/client'
 import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'
 import { FeuillesDeRouteLoader, FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { BesoinsPossible, StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {

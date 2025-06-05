@@ -3,9 +3,10 @@ import { Prisma } from '@prisma/client'
 import { PrismaUneFeuilleDeRouteLoader } from './PrismaUneFeuilleDeRouteLoader'
 import { creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreEpci, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { UneFeuilleDeRouteReadModel } from '@/use-cases/queries/RecupererUneFeuilleDeRoute'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer une feuille de route loader', () => {
@@ -61,6 +62,7 @@ describe('récupérer une feuille de route loader', () => {
           },
           isEditable: false,
           isEnveloppeFormation: true,
+          modifiable: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [
             {
@@ -86,9 +88,10 @@ describe('récupérer une feuille de route loader', () => {
           },
           isEditable: true,
           isEnveloppeFormation: false,
+          modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
-          statut: StatutSubvention.NON_SUBVENTIONNEE,
+          statut: 'nonSubventionnee',
           subventionDemandee: 0,
           uid: String(uidAction2),
         },
@@ -167,6 +170,7 @@ describe('récupérer une feuille de route loader', () => {
           },
           isEditable: false,
           isEnveloppeFormation: true,
+          modifiable: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [
             {
@@ -192,9 +196,10 @@ describe('récupérer une feuille de route loader', () => {
           },
           isEditable: true,
           isEnveloppeFormation: false,
+          modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
-          statut: StatutSubvention.NON_SUBVENTIONNEE,
+          statut: 'nonSubventionnee',
           subventionDemandee: 0,
           uid: String(uidAction2),
         },

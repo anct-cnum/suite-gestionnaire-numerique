@@ -10,6 +10,9 @@ export interface GetActionRepository {
 export interface AddActionRepository {
   add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId>
 }
+export interface UpdateActionRepository {
+  update(action: Action, tx?: Prisma.TransactionClient): Promise<boolean>
+}
 export interface SupprimerActionRepository {
   supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid,
     tx?: Prisma.TransactionClient): Promise<boolean>

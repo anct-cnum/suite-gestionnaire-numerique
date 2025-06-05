@@ -13,6 +13,7 @@ import {
   creerUnUtilisateur,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { demandeDeSubventionFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
 
@@ -125,7 +126,7 @@ describe('demande de subvention repository', () => {
       beneficiaires: [beneficiaire1Id, beneficiaire2Id],
       dateDeCreation: epochTime,
       derniereModification: epochTime,
-      statut: 'en_cours',
+      statut: StatutSubvention.EN_COURS,
       subventionDemandee: 25000,
       subventionEtp: 10000,
       subventionPrestation: 15000,
@@ -145,7 +146,7 @@ describe('demande de subvention repository', () => {
       where: {
         actionId,
         enveloppeFinancementId,
-        statut: 'en_cours',
+        statut: StatutSubvention.EN_COURS,
       },
     })
 
@@ -155,7 +156,7 @@ describe('demande de subvention repository', () => {
       creation: new Date(epochTime),
       derniereModification: new Date(epochTime),
       enveloppeFinancementId,
-      statut: 'en_cours',
+      statut: StatutSubvention.EN_COURS,
       subventionDemandee: 25000,
       subventionEtp: 10000,
       subventionPrestation: 15000,

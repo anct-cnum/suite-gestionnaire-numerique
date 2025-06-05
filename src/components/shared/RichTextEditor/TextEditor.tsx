@@ -7,9 +7,10 @@ import { ReactElement } from 'react'
 
 import { BarreDeMenuEditeurDeTexte } from './MenuBar'
 
-export default function TextEditor({ ariaLabel, contenu, height, onChange }: Props): ReactElement {
+export default function TextEditor({ ariaLabel, contenu, height, onChange, readOnly = false }: Props): ReactElement {
   const editor = useEditor({
     content: contenu,
+    editable: !readOnly,
     editorProps: {
       attributes: {
         'aria-label': ariaLabel,
@@ -39,7 +40,7 @@ export default function TextEditor({ ariaLabel, contenu, height, onChange }: Pro
 
   return (
     <>
-      <BarreDeMenuEditeurDeTexte editor={editor} />
+      {!readOnly && <BarreDeMenuEditeurDeTexte editor={editor} />}
       <EditorContent editor={editor} />
     </>
   )
@@ -50,4 +51,5 @@ type Props = Readonly<{
   contenu: string
   height: number
   onChange(content: string): void
+  readOnly?: boolean
 }>

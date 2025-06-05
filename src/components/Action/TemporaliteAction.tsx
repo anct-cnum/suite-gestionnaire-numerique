@@ -4,7 +4,7 @@ import styles from '@/components/Action/Action.module.css'
 import Select from '@/components/shared/Select/Select'
 import { LabelValue } from '@/presenters/shared/labels'
 
-export default function TemporaliteAction({ action }: Props): ReactElement {
+export default function TemporaliteAction({ action, isReadOnly = false }: Props): ReactElement {
   const [temporalite, setTemporalite] = useState<temporalite>(action.anneeDeDebut === action.anneeDeFin || action.anneeDeFin === undefined ? 'annuelle' : 'pluriannuelle')
 
   let initAnneeDebut: string
@@ -37,10 +37,13 @@ export default function TemporaliteAction({ action }: Props): ReactElement {
         <div className={styles['select-width']}>
           <input
             checked={temporalite === 'annuelle'}
+            disabled={isReadOnly}
             id="radio-annuelle"
             name="radio-inline"
             onChange={() => {
-              setTemporalite('annuelle')
+              if (!isReadOnly) {
+                setTemporalite('annuelle')
+              }
             }}
             type="radio"
             value="annuelle"
@@ -52,9 +55,14 @@ export default function TemporaliteAction({ action }: Props): ReactElement {
             Annuelle
           </label>
           <Select
+            disabled={isReadOnly}
             id="anneeDeDebut"
             name="anneeDeDebut"
-            onChange={(event) => { setSelectedStartDate(event.target.value) }}
+            onChange={(event) => { 
+              if (!isReadOnly) {
+                setSelectedStartDate(event.target.value)
+              }
+            }}
             options={anneeDebut.map(toLabelValue(Number(selectedStartDate)))}
             placeholder="Sélectionnez l'année de début de l'action"
           >
@@ -64,10 +72,13 @@ export default function TemporaliteAction({ action }: Props): ReactElement {
         <div className={styles['select-width']}>
           <input
             checked={temporalite === 'pluriannuelle'}
+            disabled={isReadOnly}
             id="radio-pluriannuelle"
             name="radio-pluriannuelle"
             onChange={() => {
-              setTemporalite('pluriannuelle')
+              if (!isReadOnly) {
+                setTemporalite('pluriannuelle')
+              }
             }}
             type="radio"
             value="pluriannuelle"
@@ -79,7 +90,7 @@ export default function TemporaliteAction({ action }: Props): ReactElement {
             Pluriannuelle
           </label>
           <Select
-            disabled={temporalite !== 'pluriannuelle'}
+            disabled={isReadOnly || temporalite !== 'pluriannuelle'}
             id="anneeDeFin"
             name="anneeDeFin"
             options={anneeFin.map(toLabelValue(Number(action.anneeDeFin)))}
@@ -108,5 +119,6 @@ type Props = Readonly<{
     anneeDeDebut: string
     anneeDeFin: string | undefined
   }>
+  isReadOnly?: boolean
 }>
 

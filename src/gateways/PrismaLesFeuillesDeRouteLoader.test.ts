@@ -1,9 +1,10 @@
 import { PrismaLesFeuillesDeRouteLoader } from './PrismaLesFeuillesDeRouteLoader'
 import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreStructure, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
+import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { BesoinsPossible, StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 describe('récupérer les feuilles de route loader', () => {

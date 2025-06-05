@@ -9,3 +9,11 @@ export interface AddDemandeDeSubventionRepository {
 export interface GetDemandeDeSubventionRepository {
   get(uid: DemandeDeSubvention['uid']['state']['value']): Promise<DemandeDeSubvention>
 }
+
+export interface UpdateDemandeDeSubventionRepository {
+  update(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean>
+}
+
+export interface SupprimerDemandeDeSubventionRepository {
+  supprimer(uid: DemandeDeSubvention['uid']['state']['value'], tx?: Prisma.TransactionClient): Promise<boolean>
+}

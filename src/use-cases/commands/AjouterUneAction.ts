@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { CommandHandler, ResultAsync } from '../CommandHandler'
 import { AddActionRepository, GetActionRepository } from './shared/ActionRepository'
+import { CoFinancementCommand, creationDesCoFinancements } from './shared/ActionUtils'
 import { AddCoFinancementRepository } from './shared/CoFinancementRepository'
 import { AddDemandeDeSubventionRepository } from './shared/DemandeDeSubventionRepository'
 import { GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository } from './shared/FeuilleDeRouteRepository'
@@ -9,7 +10,7 @@ import { TransactionRepository } from './shared/TransactionRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
 import { Action, ActionFailure } from '@/domain/Action'
 import { CoFinancement, CoFinancementFailure } from '@/domain/CoFinancement'
-import { DemandeDeSubvention, DemandeDeSubventionFailure } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention , DemandeDeSubventionFailure, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { Utilisateur } from '@/domain/Utilisateur'
@@ -46,35 +47,6 @@ export class AjouterUneAction implements CommandHandler<Command> {
 
   static #aUneDemandeDeSubvention(command: Command): boolean | undefined {
     return command.demandesDeSubvention && command.demandesDeSubvention.length > 0
-  }
-
-  private static creationDesCoFinancements(
-    coFinancementsCommand: Array<CoFinancementCommand>,
-    uidAction: string
-  ): Array<CoFinancement> | CoFinancementFailure {
-    const coFinancements: Array<CoFinancement> = []
-
-    if (coFinancementsCommand.length > 0) {
-      for (const financement of coFinancementsCommand) {
-        const coFinancement = CoFinancement.create({
-          montant: Number(financement.montant),
-          uid: {
-            value: 'identifiantCoFinancementPourLaCreation',
-          },
-          uidAction: {
-            value: uidAction,
-          },
-          uidMembre: financement.membreId,
-        })
-
-        if (!(coFinancement instanceof CoFinancement)) {
-          return coFinancement
-        }
-
-        coFinancements.push(coFinancement)
-      }
-    }
-    return coFinancements
   }
 
   async handle(command: Command): ResultAsync<Failure> {
@@ -123,7 +95,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
     }
 
     const coFinancements: Array<CoFinancement> | CoFinancementFailure =
-      AjouterUneAction.creationDesCoFinancements(
+      creationDesCoFinancements(
         command.coFinancements ?? [],
         action.state.uid.value
       )
@@ -148,7 +120,7 @@ export class AjouterUneAction implements CommandHandler<Command> {
       beneficiaires,
       dateDeCreation: this.#date,
       derniereModification: this.#date,
-      statut: demande.statut,
+      statut: demande.statut as StatutSubvention,
       subventionDemandee: demande.subventionDemandee,
       subventionEtp: demande.subventionEtp ?? null,
       subventionPrestation: demande.subventionPrestation ?? null,
@@ -225,11 +197,6 @@ type DemandeDeSubventionCommand = Readonly<{
   subventionDemandee: number
   subventionEtp?: number
   subventionPrestation?: number
-}>
-
-type CoFinancementCommand = Readonly<{
-  membreId: string
-  montant: number
 }>
 
 type Command = Readonly<{

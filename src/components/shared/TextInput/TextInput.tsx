@@ -4,6 +4,7 @@ export default function TextInput({
   ariaDescribedById,
   children,
   defaultValue = '',
+  disabled = false,
   erreur = errorDefault,
   id,
   name,
@@ -24,6 +25,7 @@ export default function TextInput({
         aria-required={required}
         className="fr-input"
         defaultValue={defaultValue}
+        disabled={disabled}
         id={id}
         name={name}
         pattern={pattern}
@@ -39,6 +41,7 @@ const errorDefault = { className: '', content: '' }
 type Props = PropsWithChildren<Readonly<{
   ariaDescribedById?: string
   defaultValue?: string
+  disabled?: boolean
   erreur?: Readonly<{
     className: string
     content: ReactNode

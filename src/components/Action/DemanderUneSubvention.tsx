@@ -12,6 +12,7 @@ export default function DemanderUneSubvention({
   ajouterDemandeDeSubvention,
   demandeDeSubvention,
   enveloppes,
+  isReadOnly = false,
   montantMaxAction,
   supprimerUneDemandeDeSubvention,
 }: Props): ReactElement {
@@ -76,16 +77,18 @@ export default function DemanderUneSubvention({
                 Subvention demandée
               </p>
               <div className={`fr-grid-row ${styles['align-items']}`}>
-                <button
-                  className="fr-btn fr-btn--tertiary fr-icon-delete-line color-red fr-ml-1w"
-                  onClick={() => {
-                    supprimerUneDemandeDeSubvention?.()
-                  }}
-                  title="Supprimer la demande de subvention"
-                  type="button"
-                >
-                  Supprimer
-                </button>
+                {!isReadOnly && (
+                  <button
+                    className="fr-btn fr-btn--tertiary fr-icon-delete-line color-red fr-ml-1w"
+                    onClick={() => {
+                      supprimerUneDemandeDeSubvention?.()
+                    }}
+                    title="Supprimer la demande de subvention"
+                    type="button"
+                  >
+                    Supprimer
+                  </button>
+                )}
               </div>
             </div>
             <div className="fr-p-2w background-blue-france">
@@ -275,7 +278,7 @@ export default function DemanderUneSubvention({
                 montantRh: montantRh ?? 0,
                 total: subventionsDemandees,
               }
-              ajouterDemandeDeSubvention(nouvelleDemandeDeSubvention)
+              ajouterDemandeDeSubvention?.(nouvelleDemandeDeSubvention)
               setIsDrawerOpen(false)
             }}
             type="button"
@@ -367,9 +370,10 @@ type MontantInputProps = PropsWithChildren<Readonly<{
 }>>
 
 type Props = Readonly<{
-  ajouterDemandeDeSubvention(demandeDeSubvention: DemandeDeSubvention): void
+  ajouterDemandeDeSubvention?(demandeDeSubvention: DemandeDeSubvention): void
   demandeDeSubvention?: DemandeDeSubvention
   enveloppes: ActionViewModel['enveloppes']
+  isReadOnly?: boolean
   montantMaxAction: number
   supprimerUneDemandeDeSubvention?(): void
 }>

@@ -5,7 +5,7 @@ import { LabelValue } from './shared/labels'
 import { formatMontant } from './shared/number'
 import { PorteurPotentielViewModel } from './shared/PorteurPotentiel'
 import { CoFinancementReadModel, UneActionReadModel } from '@/use-cases/queries/RecupererUneAction'
-import { BesoinsPossible , StatutSubvention } from '@/use-cases/queries/shared/ActionReadModel'
+import { BesoinsPossible } from '@/use-cases/queries/shared/ActionReadModel'
 
 export function actionPresenter(action: undefined | UneActionReadModel,
   { enveloppes, nomFeuilleDeRoute, urlFeuilleDeRoute, urlGestionMembresGouvernance }: 
@@ -49,7 +49,7 @@ export function actionPresenter(action: undefined | UneActionReadModel,
     nom: action.nom,
     nomFeuilleDeRoute: action.nomFeuilleDeRoute,
     porteurs: (action.porteurs ?? []).map(toPorteurPotentielViewModel),
-    statut: actionStatutViewModelByStatut[action.statut as StatutSubvention],
+    statut: actionStatutViewModelByStatut[action.statut],
     temporalite: 'annuelle',
     totaux: {
       coFinancement: formatMontant(233),

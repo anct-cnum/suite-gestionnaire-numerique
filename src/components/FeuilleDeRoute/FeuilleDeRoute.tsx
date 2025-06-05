@@ -210,13 +210,23 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                       icon={action.icone.icon}
                     />
                     <div>
-                      <Link
-                        className="fr-btn fr-btn--tertiary fr-mr-2w"
-                        href={action.urlModifier}
-                        title={`Modifier ${action.nom}`}
-                      >
-                        Modifier
-                      </Link>
+                      {action.modifiable ?
+                        
+                        <Link
+                          className="fr-btn fr-btn--tertiary fr-mr-2w"
+                          href={action.urlModifier}
+                          title={`Modifier ${action.nom}`}
+                        >
+                          Modifier
+                        </Link>
+                        : 
+                        <Link
+                          className="fr-btn fr-btn--tertiary fr-mr-2w"
+                          href={action.urlVisualiser}
+                          title={`Visualiser ${action.nom}`}
+                        >
+                          Voir
+                        </Link>}
                       <button
                         aria-controls={modalId}
                         className="fr-btn fr-btn--tertiary color-red"

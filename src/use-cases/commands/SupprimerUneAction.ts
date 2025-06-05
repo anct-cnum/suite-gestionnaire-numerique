@@ -1,7 +1,6 @@
 import { CommandHandler, ResultAsync } from '../CommandHandler'
-import { StatutSubvention } from '../queries/shared/ActionReadModel'
 import { Action, ActionUid } from '@/domain/Action'
-import { DemandeDeSubvention, DemandeDeSubventionUid } from '@/domain/DemandeDeSubvention'
+import { DemandeDeSubvention , DemandeDeSubventionUid, StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { PrismaActionRepository } from '@/gateways/PrismaActionRepository'
 import { PrismaDemandeDeSubventionRepository } from '@/gateways/PrismaDemandeDeSubventionRepository'
 
@@ -29,7 +28,7 @@ export class SupprimerUneAction implements CommandHandler<Command> {
       if (!(demandeDeSubventionResult instanceof DemandeDeSubvention)) {
         return 'supprimerActionErreurInconnue'
       }
-      if (demandeDeSubventionResult.state.statut !== StatutSubvention.DEPOSEE.toString())
+      if (demandeDeSubventionResult.state.statut !== StatutSubvention.DEPOSEE)
       {return 'existeSubventionNonSupprimable'}
     }
 

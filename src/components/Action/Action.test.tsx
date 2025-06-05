@@ -345,6 +345,10 @@ describe('formulaire d‘ajout d‘une action', () => {
         expect(modifierUneActionAction).toHaveBeenCalledWith({
           anneeDeDebut: '2026',
           anneeDeFin: '2028',
+          besoins: [
+            'co_construire_la_feuille_de_route',
+            'monter_dossiers_de_subvention',
+          ],
           budgetGlobal: 1000,
           coFinancements: [
             {
@@ -365,12 +369,15 @@ describe('formulaire d‘ajout d‘une action', () => {
             },
           ],
           contexte: '<p>Contexte de l‘action</p>',
+          demandeDeSubvention: undefined,
           description: '<p><strong>Description de l‘action.</strong></p>',
           destinataires: [],
+          feuilleDeRoute: 'uidFeuilleDeRoute',
+          gouvernance: 'gouvernanceFooId',
           nom: 'Structurer une filière de reconditionnement locale 2',
-          porteur: '',
-          temporalite: 'pluriannuelle',
-          uid: '',
+          path: '/',
+          porteurs: [],
+          uid: 'actionFooId1',
         })
       })
     })
@@ -438,6 +445,8 @@ describe('formulaire d‘ajout d‘une action', () => {
       renderComponent(
         <ModifierUneAction
           action={actionVideViewModelFactory()}
+          date={epochTime}
+          uidFeuilleDeRoute="uidFeuilleDeRoute"
         />,
         { modifierUneActionAction }
       )
@@ -688,6 +697,8 @@ export function afficherFormulaireDeModificationAction(
   renderComponent(
     <ModifierUneAction
       action={actionViewModelFactory(overrides)}
+      date={epochTime}
+      uidFeuilleDeRoute="uidFeuilleDeRoute"
     />,
     { modifierUneActionAction },
     gouvernanceViewModel
