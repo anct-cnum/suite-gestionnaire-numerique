@@ -4,7 +4,7 @@ export const smtpReplyTo = 'conseiller-numerique@anct.gouv.fr'
 
 export function makeMjml(link: string): string {
   return `
-<mj-body>
+<mjml background-color="#f0f0f0">
     <mj-head>
         <mj-attributes>
             <mj-all align="center" />
@@ -69,7 +69,7 @@ export function makeMjml(link: string): string {
             }
         </mj-style>
     </mj-head>
-    <mj-body background-color="#f0f0f0">
+    <mj-body>
         <mj-section padding="8px"></mj-section>
         <mj-wrapper css-class="wrapper">
             <mj-section>
@@ -100,7 +100,7 @@ export function makeMjml(link: string): string {
                         informations et cliquez sur « Créer un compte&nbsp;».
                     </mj-text>
                     <mj-text>
-                        Si au bout de 10 minutes vous n’avez pas reçu d’e-mail pour activer
+                        Si au bout de 10 minutes vous n'avez pas reçu d'e-mail pour activer
                         votre compte, vérifiez dans vos spams ou cliquez sur « Cliquez
                         ici » pour renvoyer le courriel.
                     </mj-text>
@@ -140,12 +140,15 @@ export function makeMjml(link: string): string {
                     </mj-button>
                 </mj-column>
             </mj-section>
-            <mj-column width="600px">
-                <mj-button font-size="14px" href="mailto:conseiller-numerique@anct.gouv.fr" text-decoration="underline"
-                    background-color color="#24303A">
-                    Vous n’arrivez pas à créer votre compte ?
-                </mj-button>
-            </mj-column>
+            <mj-section>
+                <mj-column width="600px">
+                    <mj-text align="center">
+                        <a href="mailto:conseiller-numerique@anct.gouv.fr" style="color: #24303A; text-decoration: underline;">
+                            Vous n'arrivez pas à créer votre compte ?
+                        </a>
+                    </mj-text>
+                </mj-column>
+            </mj-section>
         </mj-wrapper>
         <mj-wrapper css-class="wrapper">
             <mj-section>
@@ -153,6 +156,6 @@ export function makeMjml(link: string): string {
             </mj-section>
         </mj-wrapper>
     </mj-body>
-</mj-body>
+</mjml>
   `
 }
