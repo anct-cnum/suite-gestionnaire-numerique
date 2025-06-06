@@ -243,7 +243,7 @@ describe('inviter un utilisateur action', () => {
 
           // THEN
           expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
-          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com')
+          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com/connexion')
         }
       )
     }
