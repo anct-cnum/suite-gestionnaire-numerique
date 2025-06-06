@@ -1,10 +1,9 @@
 // eslint-disable devrait être inutile mais la configuration ne fonctionne pas sans ça
 /* eslint-disable import/no-restricted-paths */
-import { readFileSync } from 'fs'
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
-import { join } from 'path'
 
+import { invitationEmailTemplate } from './emails/invitationEmail'
 import { NodemailerEmailInvitationGateway } from './NodemailerEmailInvitationGateway'
 
 describe('envoi de mail d’invitation', () => {
@@ -47,7 +46,7 @@ describe('envoi de mail d’invitation', () => {
       .mockReturnValueOnce({ sendMail: mockSendMail })
 
     // WHEN
-    const invitationEmail = readFileSync(join(__dirname, 'emails/invitationEmail.mjml'), 'utf-8').replace(
+    const invitationEmail = invitationEmailTemplate.replace(
       '<%= link %>',
       'localhost:3000/connexion'
     )

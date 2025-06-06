@@ -1,3 +1,4 @@
+export const invitationEmailTemplate = `
 <mjml background-color="#f6f6f6">
   <mj-head>
     <mj-attributes>
@@ -73,3 +74,4 @@
     <mj-section background-color="#f6f6f6" padding="20px 0"></mj-section>
   </mj-body>
 </mjml>
+` 
