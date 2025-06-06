@@ -44,12 +44,18 @@ describe('envoi de mail d’invitation', () => {
       .spyOn(nodemailer, 'createTransport')
       // @ts-expect-error
       .mockReturnValueOnce({ sendMail: mockSendMail })
-
+    
+    const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
+    const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
+    const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
     // WHEN
-    const invitationEmail = invitationEmailTemplate.replace(
+    const invitationEmail = invitationEmailTemplate.replaceAll(
       '<%= link %>',
       'localhost:3000/connexion'
     )
+      .replaceAll('<%= logoFrUrl %>', logoFrUrl)
+      .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
+      .replaceAll('<%= logominUrl %>', logominUrl)
 
     await emailInvitationGateway.send(destinataire)
 
