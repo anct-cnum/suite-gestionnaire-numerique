@@ -227,20 +227,22 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                         >
                           Voir
                         </Link>}
-                      <button
-                        aria-controls={modalId}
-                        className="fr-btn fr-btn--tertiary color-red"
-                        data-fr-opened="false"
-                        disabled={!action.supprimable}
-                        onClick={() => {
-                          setActionASupprimer(action)
-                          setIsModaleActionSuppressionOpen(true)
-                        }}
-                        title="Supprimer"
-                        type="button"
-                      >
-                        <Icon icon="delete-line" />
-                      </button>
+                      {action.supprimable ?
+                        <button
+                          aria-controls={modalId}
+                          className="fr-btn fr-btn--tertiary color-red"
+                          data-fr-opened="false"
+                          disabled={!action.supprimable}
+                          onClick={() => {
+                            setActionASupprimer(action)
+                            setIsModaleActionSuppressionOpen(true)
+                          }}
+                          title="Supprimer"
+                          type="button"
+                        >
+                          <Icon icon="delete-line" />
+                        </button>
+                        : null}
                     </div>
                   </div>
                   <h3
