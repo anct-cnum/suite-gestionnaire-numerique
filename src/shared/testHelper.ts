@@ -1,4 +1,3 @@
-import { Assertion } from 'vitest'
 
 const millisPerDay = 86_400_000
 
@@ -12,6 +11,3 @@ export const epochTimePlusOneDay: Date = new Date(millisPerDay)
 
 export const invalidDate: Date = new Date(NaN)
 
-export function expectNot<T>(expected: T): Assertion<T> {
-  return expect(expected).not
-}

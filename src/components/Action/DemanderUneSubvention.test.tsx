@@ -3,7 +3,6 @@ import { fireEvent, screen, within } from '@testing-library/react'
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'
 import { actionViewModelFactory } from '@/presenters/testHelper'
-import { expectNot } from '@/shared/testHelper'
 
 describe('faire une demande de subvention', () => {
   describe('étant donné que je me trouve sur le formulaire d’action', () => {
@@ -166,8 +165,8 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expectNot, message: '' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 30_001,
@@ -177,8 +176,8 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expectNot, message: '' },
-              erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied',
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention',
               },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
@@ -189,8 +188,8 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '3',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expect, message: 'Constraints not satisfied' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               expectedLimiteAffichee: '30 000',
               expectedTotalAffiche: '30 001',
               montantPrestation: 29_999,
@@ -202,8 +201,8 @@ describe('faire une demande de subvention', () => {
             {
               enveloppeDeRemplacementId: '4',
               enveloppeInitialeId: '3',
-              erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expectNot, message: '' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               expectedLimiteAffichee: '10 000',
               expectedTotalAffiche: '10 001',
               montantPrestation: 10_000,
@@ -263,23 +262,23 @@ describe('faire une demande de subvention', () => {
         () => {
           it.each([
             {
-              erreurMontantPrestation: { expectation: expectNot, message: '' },
-              erreurMontantRh: {  expectation: expect, message: 'Constraints not satisfied' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: {  expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               montantPrestation: 0,
               montantRh: 42_501,
               raison: 'car le montant en ressources humaines excède le budget maximal de l’action',
             },
             {
-              erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expectNot, message: '' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               montantPrestation: 42_501,
               montantRh: 0,
               raison:
                 'car le montant en prestation de service excède le budget maximal de l’action',
             },
             {
-              erreurMontantPrestation: { expectation: expect, message: 'Constraints not satisfied' },
-              erreurMontantRh: { expectation: expect,  message: 'Constraints not satisfied' },
+              erreurMontantPrestation: { expectation: expect, message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
+              erreurMontantRh: { expectation: expect,  message: 'Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention' },
               montantPrestation: 2,
               montantRh: 42_499,
               raison:

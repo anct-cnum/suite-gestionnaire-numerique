@@ -35,7 +35,7 @@ export default function DemanderUneSubvention({
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [budgetEnveloppe, setBudgetEnveloppe] = useState<number | undefined>(undefined)
-  // Stryker disable next-line BooleanLiteral
+  const [hasError, setHasError] = useState(false)
   const [isValid, setIsValid] = useState(false)
   const [montantPresta, setMontantPresta] = useState(demandeDeSubvention?.montantPrestation)
   const [montantRh, setMontantRh] = useState(demandeDeSubvention?.montantRh)
@@ -45,8 +45,12 @@ export default function DemanderUneSubvention({
   const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
 
   useEffect(() => {
-    setIsValid(isSaisieValide())
-  }, [montantPresta, montantRh, budgetEnveloppe, selectedEnveloppeId])
+    setIsEnveloppeSelectionnee(false)
+    setBudgetEnveloppe(undefined)
+    setMontantPresta(undefined)
+    setMontantRh(undefined)
+    setSelectedEnveloppeId('')
+  }, [isDrawerOpen])
 
   useEffect(() => {
     if (isDrawerOpen && demandeDeSubvention) {
@@ -67,6 +71,24 @@ export default function DemanderUneSubvention({
       }
     }
   }, [isDrawerOpen, demandeDeSubvention])
+
+  useEffect(() => {
+    const montantMax = montantMaximal()
+    const montantPrestaValue = montantPresta ?? 0
+    const montantRhValue = montantRh ?? 0
+    const total = montantPrestaValue + montantRhValue
+    
+    const hasErrorValue = total > montantMax
+    setHasError(hasErrorValue)
+    
+    setIsValid(
+      selectedEnveloppeId !== '' && 
+      !hasErrorValue && 
+      (montantPrestaValue > 0 || montantRhValue > 0) &&
+      total <= montantMax
+    )
+  }, [selectedEnveloppeId, montantPresta, montantRh, budgetEnveloppe, montantMaxAction])
+
   return (
     <>
       {
@@ -272,8 +294,7 @@ export default function DemanderUneSubvention({
             disabled={!isValid}
             onClick={() => {
               const nouvelleDemandeDeSubvention = {
-                enveloppeId:  selectedEnveloppeId,
-              
+                enveloppeId: selectedEnveloppeId,
                 montantPrestation: montantPresta ?? 0,
                 montantRh: montantRh ?? 0,
                 total: subventionsDemandees,
@@ -291,13 +312,8 @@ export default function DemanderUneSubvention({
   )
 
   function montantInput({ children, errorTextId, id, max, onInput, ref }: MontantInputProps): ReactElement {
-    const input = ref.current
-    const isInput = input !== null
-    const isInvalid = isInput && !input.validity.valid
     const inputGroupDisabledStyle = isEnveloppeSelectionnee ? '' : 'fr-input-group--disabled'
-    const [displayErrorText, inputGroupErrorStyle] = isInvalid
-      ? [Number(input.max) > 0, 'fr-input-group--error']
-      : [false, '']
+    const inputGroupErrorStyle = hasError ? 'fr-input-group--error' : ''
 
     return (
       <div className={`fr-input-group input-group--sobre ${inputGroupDisabledStyle} ${inputGroupErrorStyle}`}>
@@ -308,7 +324,7 @@ export default function DemanderUneSubvention({
           {children}
         </label>
         <input
-          aria-describedby={displayErrorText ? errorTextId : undefined}
+          aria-describedby={hasError ? errorTextId : undefined}
           className="fr-input"
           disabled={!isEnveloppeSelectionnee}
           id={id}
@@ -321,34 +337,23 @@ export default function DemanderUneSubvention({
           type="number"
         />
         {
-          displayErrorText ?
+          hasError ?
             <p
               className="fr-error-text"
               id={errorTextId}
             >
-              {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion*/}
-              {input!.validationMessage}
+              Les montants de prestation de service et ressources humaines cumulés dépassent vos droits de subvention
             </p> : null
         }
       </div>
     )
   }
 
-  function isSaisieValide(): boolean {
-    if(inputMontantPrestaRef.current  && inputMontantRhRef.current ) {
-      const montantInputs = [inputMontantPrestaRef.current, inputMontantRhRef.current]
-      return (
-        montantInputs.some(({ value }) => Boolean(value)) &&
-        montantInputs.every(({ validity: { valid } }) => valid)
-      )
-    }
-    return false
-  }
-
   function montantMaximal(autreMontant = 0): number {
-    return budgetEnveloppe === undefined
-      ? montantMaxAction
-      : Math.min(budgetEnveloppe - autreMontant, montantMaxAction - autreMontant)
+    if (budgetEnveloppe === undefined) {
+      return montantMaxAction
+    }
+    return Math.min(budgetEnveloppe - autreMontant, montantMaxAction - autreMontant)
   }
 }
 
