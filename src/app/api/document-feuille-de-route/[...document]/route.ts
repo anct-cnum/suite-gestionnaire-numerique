@@ -3,19 +3,23 @@
 import { GetObjectCommand, S3Client, S3ClientConfig } from '@aws-sdk/client-s3'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(request: NextRequest, _response: NextResponse, s3 = new S3Client({
+const s3Config: S3ClientConfig = {
   credentials: {
-    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_S3_SECRET_KEY,
+    accessKeyId: process.env.S3_ACCESS_KEY ?? '',
+    secretAccessKey: process.env.S3_SECRET_KEY ?? '',
   },
-  endpoint: 'https://s3.fr-par.scw.cloud',
-  region: process.env.AWS_S3_REGION,
-} as S3ClientConfig)): Promise<NextResponse<null | object>> {
+  endpoint: process.env.S3_ENDPOINT ?? '',
+  forcePathStyle: true,
+  region: process.env.S3_REGION,
+}
+
+export async function GET(request: NextRequest,
+  _response: NextResponse, s3 = new S3Client(s3Config)): Promise<NextResponse<null | object>> {
   try {
     const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
     const recuperationPdf = await s3.send(
       new GetObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET,
+        Bucket: process.env.S3_BUCKET,
         Key: nameFile,
       })
     )
