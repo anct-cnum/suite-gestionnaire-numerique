@@ -17,10 +17,11 @@ export async function GET(request: NextRequest,
   _response: NextResponse, s3 = new S3Client(s3Config)): Promise<NextResponse<null | object>> {
   try {
     const nameFile = decodeURIComponent(request.nextUrl.pathname).split('/api/document-feuille-de-route/')[1]
+    const key = nameFile
     const recuperationPdf = await s3.send(
       new GetObjectCommand({
         Bucket: process.env.S3_BUCKET,
-        Key: nameFile,
+        Key: key,
       })
     )
     if (!recuperationPdf.Body) {
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest,
     })
   } catch (error) {
     if (error instanceof Error && (error.message === 'The specified key does not exist.' || error.message === 'document_empty_body')) {
-      return NextResponse.json({ message: 'Le document n’existe pas' }, { status: 404 })
+      return NextResponse.json({ message: 'Le document n\'existe pas' }, { status: 404 })
     }
     throw error
   }

@@ -23,10 +23,50 @@ import {  FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 import { isNullish } from '@/shared/lang'
 
 export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
-  const { pathname, supprimerDocumentAction } = useContext(clientContext)
+  const { pathname, sessionUtilisateurViewModel, supprimerDocumentAction } = useContext(clientContext)
   const [isModaleActionSuppressionOpen, setIsModaleActionSuppressionOpen] = useState(false)
   const modalId = 'supprimer-une-action'
   const [actionASupprimer, setActionASupprimer] = useState({ nom: '', uid : '' })
+  const [isUploading, setIsUploading] = useState(false)
+
+  async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>): Promise<void>
+  {
+    const file = event.target.files?.[0]
+    if (!file) {return}
+
+    if (file.size > 25 * 1024 * 1024) { // 25 Mo
+      Notification('error', { description: 'Le fichier est trop volumineux', title: 'Erreur' })
+      return
+    }
+
+    if (file.type !== 'application/pdf') {
+      Notification('error', { description: 'Le fichier doit être au format PDF', title: 'Erreur' })
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('uidFeuilleDeRoute', viewModel.uidFeuilleDeRoute)
+      formData.append('uidEditeur', sessionUtilisateurViewModel.uid)
+
+      const response = await fetch('/api/document-feuille-de-route/upload', {
+        body: formData,
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de l’upload')
+      }
+
+      await response.json()
+      Notification('success', { description: 'Document uploadé avec succès', title: 'Succès' })
+      window.location.reload()
+    } finally {
+      setIsUploading(false)
+    }
+  }
 
   return (
     <div className="fr-grid-row fr-grid-row--center">
@@ -133,11 +173,34 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                       </span>
                     </label>
                     <input
+                      accept=".pdf"
                       className="fr-upload"
+                      disabled={isUploading}
                       id="file-upload"
                       name="file-upload"
+                      onChange={handleFileUpload}
                       type="file"
                     />
+                    {isUploading ? 
+                      <div className="fr-mt-2w">
+                        <div className="fr-progress">
+                          <p className="fr-progress__info">
+                            Upload en cours...
+                          </p>
+                          <div
+                            aria-valuemax={100}
+                            aria-valuemin={0}
+                            className="fr-progress__bar"
+                            role="progressbar"
+                          >
+                            <div
+                              className="fr-progress__value"
+                              style={{ width: '100%' }}
+                            />
+                          </div>
+                        </div>
+                      </div>                 
+                      : null}
                   </div>
                 </div>
                 <div>
