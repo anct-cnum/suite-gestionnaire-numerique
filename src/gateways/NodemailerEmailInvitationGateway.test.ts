@@ -65,7 +65,7 @@ describe('envoi de mail d’invitation', () => {
       from: 'communication@email.conseiller-numerique.gouv.fr',
       html: mjml2html(invitationEmail).html,
       replyTo: 'conseiller-numerique@anct.gouv.fr',
-      subject: 'Bienvenue sur Mon Inclusion Numérique',
+      subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
       to: 'martin.tartempion@example.com',
     })
   })
