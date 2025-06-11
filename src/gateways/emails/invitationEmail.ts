@@ -54,7 +54,7 @@ export const invitationEmailTemplate = `<mjml background-color="#f6f6f6">
         </mj-button>
         <mj-text align="center" font-size="14px" color="#24303A" padding="32px 25px 0 25px">
           <a
-            href="https://www.notion.so/Mon-Inclusion-Num-rique-Centre-d-aide-e65c135554784a78aaa91fc4cf56c807?source=copy_link"
+            href="<%= linkAide %>"
             style="color: #24303a; text-decoration: underline"
           >
             Vous n'arrivez pas à vous connecter avec ProConnect ?

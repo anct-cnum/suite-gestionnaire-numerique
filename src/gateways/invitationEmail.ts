@@ -9,10 +9,12 @@ export const smtpReplyTo = 'conseiller-numerique@anct.gouv.fr'
 const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
 const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
 const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
+const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
 export function makeMjml(link: string): string {
   return invitationEmailTemplate
     .replaceAll('<%= link %>', link)
     .replaceAll('<%= logoFrUrl %>', logoFrUrl)
     .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
     .replaceAll('<%= logominUrl %>', logominUrl)
+    .replaceAll('<%= linkAide %>', linkAide)
 }

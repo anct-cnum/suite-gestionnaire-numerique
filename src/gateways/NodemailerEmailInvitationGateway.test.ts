@@ -48,6 +48,7 @@ describe('envoi de mail d’invitation', () => {
     const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
     const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
     const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
+    const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
     // WHEN
     const invitationEmail = invitationEmailTemplate.replaceAll(
       '<%= link %>',
@@ -56,7 +57,8 @@ describe('envoi de mail d’invitation', () => {
       .replaceAll('<%= logoFrUrl %>', logoFrUrl)
       .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
       .replaceAll('<%= logominUrl %>', logominUrl)
-
+      .replaceAll('<%= linkAide %>', linkAide)
+      
     await emailInvitationGateway.send(destinataire)
 
     // THEN
