@@ -48,6 +48,9 @@ describe('envoi de mail d’invitation', () => {
     const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
     const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
     const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
+    const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
+    const prenom = 'Martin'
+    const nom = 'Tartempion'
     // WHEN
     const invitationEmail = invitationEmailTemplate.replaceAll(
       '<%= link %>',
@@ -56,8 +59,15 @@ describe('envoi de mail d’invitation', () => {
       .replaceAll('<%= logoFrUrl %>', logoFrUrl)
       .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
       .replaceAll('<%= logominUrl %>', logominUrl)
+      .replaceAll('<%= linkAide %>', linkAide)
+      .replaceAll('<%= prenom %>', prenom)
+      .replaceAll('<%= nom %>', nom)
 
-    await emailInvitationGateway.send(destinataire)
+    await emailInvitationGateway.send({
+      email: destinataire,
+      nom,
+      prenom,
+    })
 
     // THEN
     expect(spiedCreateTransport).toHaveBeenCalledWith(transport)
@@ -65,7 +75,7 @@ describe('envoi de mail d’invitation', () => {
       from: 'communication@email.conseiller-numerique.gouv.fr',
       html: mjml2html(invitationEmail).html,
       replyTo: 'conseiller-numerique@anct.gouv.fr',
-      subject: 'Bienvenue sur Mon Inclusion Numérique',
+      subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
       to: 'martin.tartempion@example.com',
     })
   })

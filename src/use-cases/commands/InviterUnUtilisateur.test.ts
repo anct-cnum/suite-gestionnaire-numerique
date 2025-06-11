@@ -4,13 +4,18 @@ import { AddUtilisateurRepository, GetUtilisateurRepository } from './shared/Uti
 import { TypologieRole } from '@/domain/Role'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { Destinataire } from '@/gateways/emails/invitationEmail'
 import { epochTime } from '@/shared/testHelper'
 
 describe('inviter un utilisateur', () => {
   beforeEach(() => {
     spiedUidToFind = ''
     spiedUtilisateurToAdd = null
-    spiedDestinataire = ''
+    spiedDestinataire = {
+      email: '',
+      nom: '',
+      prenom: '',
+    }
     spiedIsSuperAdmin = null
   })
 
@@ -151,7 +156,11 @@ describe('inviter un utilisateur', () => {
         expect(result).toBe('OK')
         expect(spiedUidToFind).toBe(utilisateurCourant.uid)
         expect(spiedUtilisateurToAdd?.state).toStrictEqual(expectedUtilisateurInvite.state)
-        expect(spiedDestinataire).toBe('martine.dugenoux@example.com')
+        expect(spiedDestinataire).toStrictEqual({
+          email: 'martine.dugenoux@example.com',
+          nom: 'Dugenoux',
+          prenom: 'Martine',
+        })
         expect(spiedIsSuperAdmin).toBe(utilisateurCourant.isSuperAdmin)
       }
     )
@@ -177,7 +186,11 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('utilisateurNePeutPasGererUtilisateurACreer')
     expect(spiedUidToFind).toBe('utilisateurGestionnaireUid')
     expect(spiedUtilisateurToAdd).toBeNull()
-    expect(spiedDestinataire).toBe('')
+    expect(spiedDestinataire).toStrictEqual({
+      email: '',
+      nom: '',
+      prenom: '',
+    })
     expect(spiedIsSuperAdmin).toBeNull()
   })
 
@@ -208,14 +221,18 @@ describe('inviter un utilisateur', () => {
     expect(result).toBe('emailExistant')
     expect(spiedUidToFind).toBe('utilisateurAdminUid')
     expect(spiedUtilisateurToAdd?.state).toStrictEqual(utilisateurACreer.state)
-    expect(spiedDestinataire).toBe('')
+    expect(spiedDestinataire).toStrictEqual({
+      email: '',
+      nom: '',
+      prenom: '',
+    })
     expect(spiedIsSuperAdmin).toBeNull()
   })
 })
 
 let spiedUidToFind: string
 let spiedUtilisateurToAdd: null | Utilisateur
-let spiedDestinataire: string
+let spiedDestinataire: Destinataire
 let spiedIsSuperAdmin: boolean | null
 
 class RepositorySpy implements AddUtilisateurRepository, GetUtilisateurRepository {
@@ -246,7 +263,7 @@ class RepositoryUtilisateurAInviterExisteDejaSpy extends RepositorySpy {
 function emailGatewayFactorySpy(isSuperAdmin: boolean): EmailGateway {
   spiedIsSuperAdmin = isSuperAdmin
   return new class implements EmailGateway {
-    async send(destinataire: string): Promise<void> {
+    async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }

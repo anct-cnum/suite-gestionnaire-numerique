@@ -46,7 +46,11 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
     const isUtilisateurCreated = await this.#utilisateurRepository.add(utilisateurACreer)
     if (isUtilisateurCreated) {
       const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
-      await emailGateway.send(command.email)
+      await emailGateway.send({
+        email: command.email,
+        nom: command.nom,
+        prenom: command.prenom,
+      })
       return 'OK'
     }
 
