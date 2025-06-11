@@ -106,6 +106,10 @@ export class FeuilleDeRoute extends Entity<State> {
     }
   }
 
+  ajouterDocument(document: { chemin: string; nom: string }): void {
+    this.#document = document
+  }
+
   ajouterUneNoteDeContextualisation(
     noteDeContextualisation: string,
     date: Date,

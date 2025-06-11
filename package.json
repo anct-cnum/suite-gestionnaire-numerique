@@ -39,7 +39,9 @@
     "test:mutation:backend": "yarn dotenv:test -- stryker run stryker-backend.conf.json",
     "test:watch": "yarn dotenv:test -- vitest",
     "typecheck": "tsc",
-    "bundle:analyze": "ANALYZE=true yarn build"
+    "bundle:analyze": "ANALYZE=true yarn build",
+    "minio:init": "bash scripts/init-minio.sh",
+    "minio:start": "docker compose up -d minio && yarn minio:init"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
@@ -55,6 +57,7 @@
     "chart.js": "^4.4.9",
     "mjml": "^4.15.3",
     "mongodb": "^6.16.0",
+    "nanoid": "3.3.8",
     "next": "^15.3.1",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",

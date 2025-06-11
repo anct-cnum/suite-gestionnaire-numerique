@@ -44,7 +44,7 @@ describe('route de téléchargement de document', () => {
 
     // THEN
     expect(result.status).toBe(404)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n’existe pas' })
+    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n\'existe pas' })
   })
 
   it('devrait retourner une erreur quand le corps de la réponse est vide', async () => {
@@ -65,7 +65,7 @@ describe('route de téléchargement de document', () => {
 
     // THEN
     expect(result.status).toBe(404)
-    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n’existe pas' })
+    await expect(result.json()).resolves.toStrictEqual({ message: 'Le document n\'existe pas' })
   })
 
   it('devrait retourner une erreur quand l’erreur n’est pas gérée', async () => {
