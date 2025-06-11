@@ -3,6 +3,7 @@
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
 
+import { Destinataire } from './emails/invitationEmail'
 import { makeMjml, smtpFrom, smtpReplyTo } from './invitationEmail'
 import { EmailGateway } from '@/use-cases/commands/shared/EmailGateway'
 
@@ -21,7 +22,7 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
     this.#password = password
   }
 
-  async send(destinataire: string): Promise<void> {
+  async send(destinataire: Destinataire): Promise<void> {
     const authParams = this.#user === '' ? {} : { auth: { pass: this.#password, user: this.#user } }
     // eslint-disable-next-line import/no-named-as-default-member
     const mailSender = nodemailer.createTransport({
@@ -34,10 +35,10 @@ export class NodemailerEmailInvitationGateway implements EmailGateway {
     const connexionUrl = `${this.#link}/connexion`
     await mailSender.sendMail({
       from: smtpFrom,
-      html: mjml2html(makeMjml(connexionUrl)).html,
+      html: mjml2html(makeMjml(connexionUrl, destinataire)).html,
       replyTo: smtpReplyTo,
       subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
-      to: destinataire,
+      to: destinataire.email,
     })
   }
 }

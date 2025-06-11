@@ -49,6 +49,8 @@ describe('envoi de mail d’invitation', () => {
     const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
     const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
     const linkAide = 'https://outline.incubateur.anct.gouv.fr/s/mon-inclusion-numerique-centre-aide'
+    const prenom = 'Martin'
+    const nom = 'Tartempion'
     // WHEN
     const invitationEmail = invitationEmailTemplate.replaceAll(
       '<%= link %>',
@@ -58,8 +60,14 @@ describe('envoi de mail d’invitation', () => {
       .replaceAll('<%= logoAnctUrl %>', logoAnctUrl)
       .replaceAll('<%= logominUrl %>', logominUrl)
       .replaceAll('<%= linkAide %>', linkAide)
-      
-    await emailInvitationGateway.send(destinataire)
+      .replaceAll('<%= prenom %>', prenom)
+      .replaceAll('<%= nom %>', nom)
+
+    await emailInvitationGateway.send({
+      email: destinataire,
+      nom,
+      prenom,
+    })
 
     // THEN
     expect(spiedCreateTransport).toHaveBeenCalledWith(transport)

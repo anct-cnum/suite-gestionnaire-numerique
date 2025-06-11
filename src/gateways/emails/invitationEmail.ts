@@ -1,3 +1,9 @@
+export interface Destinataire {
+  email: string
+  nom: string
+  prenom: string
+}
+
 export const invitationEmailTemplate = `<mjml background-color="#f6f6f6">
   <mj-head>
     <mj-attributes>
@@ -38,6 +44,8 @@ export const invitationEmailTemplate = `<mjml background-color="#f6f6f6">
           Invitation à rejoindre Mon Inclusion Numérique
         </mj-text>
         <mj-text font-size="16px" color="#000000" align="left" padding="32px 25px 30px 25px">
+          Bonjour <%= prenom %> <%= nom %>,<br/>
+          <br/>
           Vous êtes invité à rejoindre Mon Inclusion Numérique, l'outil de pilotage de la
           politique d'inclusion numérique sur votre territoire.
         </mj-text>

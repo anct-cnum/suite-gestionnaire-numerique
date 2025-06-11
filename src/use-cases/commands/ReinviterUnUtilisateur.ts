@@ -32,7 +32,11 @@ export class ReinviterUnUtilisateur implements CommandHandler<Command> {
     utilisateurAReinviter.changerDateDInvitation(this.#date)
     await this.#utilisateurRepository.update(utilisateurAReinviter)
     const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
-    await emailGateway.send(utilisateurAReinviter.state.emailDeContact)
+    await emailGateway.send({
+      email: utilisateurAReinviter.state.emailDeContact,
+      nom: utilisateurAReinviter.state.nom,
+      prenom: utilisateurAReinviter.state.prenom,
+    })
 
     return 'OK'
   }

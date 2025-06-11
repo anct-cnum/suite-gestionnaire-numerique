@@ -3,6 +3,7 @@ import { EmailGateway } from './shared/EmailGateway'
 import { GetUtilisateurRepository, UpdateUtilisateurRepository } from './shared/UtilisateurRepository'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { Destinataire } from '@/gateways/emails/invitationEmail'
 import { epochTime, epochTimeMinusOneDay, invalidDate } from '@/shared/testHelper'
 
 describe('réinviter un utilisateur', () => {
@@ -26,7 +27,11 @@ describe('réinviter un utilisateur', () => {
     })
 
     // THEN
-    expect(spiedDestinataire).toBe(spiedUtilisateurToUpdate?.state.emailDeContact)
+    expect(spiedDestinataire).toStrictEqual({
+      email: spiedUtilisateurToUpdate?.state.emailDeContact,
+      nom: spiedUtilisateurToUpdate?.state.nom,
+      prenom: spiedUtilisateurToUpdate?.state.prenom,
+    })
     expect(spiedUtilisateurToUpdate?.state).toStrictEqual(utilisateurFactory({
       derniereConnexion: undefined,
       inviteLe: epochTimeMinusOneDay,
@@ -120,7 +125,7 @@ const utilisateursByUid: Record<string, Utilisateur> = {
 
 let spiedUidToFind: string
 let spiedUtilisateurToUpdate: null | Utilisateur
-let spiedDestinataire: string
+let spiedDestinataire: Destinataire
 
 class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
@@ -136,7 +141,7 @@ class RepositorySpy implements GetUtilisateurRepository, UpdateUtilisateurReposi
 
 function emailGatewayFactorySpy(): EmailGateway {
   return new class implements EmailGateway {
-    async send(destinataire: string): Promise<void> {
+    async send(destinataire: Destinataire): Promise<void> {
       spiedDestinataire = destinataire
       return Promise.resolve()
     }

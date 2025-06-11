@@ -243,7 +243,11 @@ describe('inviter un utilisateur action', () => {
 
           // THEN
           expect(spiedMailerTransport).toHaveBeenCalledWith(expectedParams)
-          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com/connexion')
+          expect(spiedMakeMjml).toHaveBeenCalledWith('http://example.com/connexion', {
+            email: 'martin.tartempion@example.com',
+            nom: 'Tartempion',
+            prenom: 'Martin',
+          })
         }
       )
     }
