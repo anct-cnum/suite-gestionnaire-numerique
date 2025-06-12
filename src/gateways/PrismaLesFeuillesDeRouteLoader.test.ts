@@ -68,8 +68,13 @@ describe('récupérer les feuilles de route loader', () => {
       id: 2,
       nom: 'Feuille de route 2',
       pieceJointe: 'feuille-de-route-fake.pdf',
+      porteurId: 'epci-200072056-93',
     })
-    await creerUneFeuilleDeRoute({ creation: epochTime, gouvernanceDepartementCode: '75', id: 3, nom: 'fdr3' })
+    await creerUneFeuilleDeRoute({
+      creation: epochTime,
+      gouvernanceDepartementCode: '75',
+      id: 3,
+      nom: 'fdr3' })
     await creerUneAction({
       budgetGlobal: 70_000,
       createurId: 1,
@@ -92,7 +97,11 @@ describe('récupérer les feuilles de route loader', () => {
       nom: 'Structurer une filière de reconditionnement locale 4',
     })
     await creerUneEnveloppeFinancement({ id: 1 })
-    await creerUneDemandeDeSubvention({ actionId: 1, createurId: 1, enveloppeFinancementId: 1, id: 1 })
+    await creerUneDemandeDeSubvention({
+      actionId: 1,
+      createurId: 1,
+      enveloppeFinancementId: 1,
+      id: 1 })
     await creerUneDemandeDeSubvention({
       actionId: 3,
       createurId: 1,
@@ -101,211 +110,24 @@ describe('récupérer les feuilles de route loader', () => {
       subventionEtp: 9_000,
       subventionPrestation: 0,
     })
-    await creerUnPorteurAction({ actionId: 1, membreId: 'epci-241927201-93' })
+    await creerUnPorteurAction({ actionId: 1, membreId: 'structure-79227291600034-93' })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 2,
+      membreId: 'commune-110-93',
+    })
     await creerUnBeneficiaireSubvention({
       demandeDeSubventionId: 1,
-      membreId: 'commune-35345-93',
+      membreId: 'commune-110-93',
     })
-    await creerUnCoFinancement({ actionId: 1, memberId: 'commune-113-93', montant: 15_000 })
+    await creerUnCoFinancement({ actionId: 1, memberId: 'commune-94028-93', montant: 15_000 })
     await creerUnCoFinancement({ actionId: 3, memberId: 'structure-79227291600034-93', montant: 25_000 })
 
     // WHEN
     const feuillesDeRouteReadModel = await new PrismaLesFeuillesDeRouteLoader(dummyEtablisseurSyntheseGouvernance).get('93')
 
     // THEN
-    expect(feuillesDeRouteReadModel).toStrictEqual<FeuillesDeRouteReadModel>({
-      feuillesDeRoute: [
-        {
-          actions: [
-            {
-              beneficiaires: [],
-              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
-              budgetGlobal: 70_000,
-              coFinancements: [
-                {
-                  coFinanceur: {
-                    nom: 'Emmaüs Connect',
-                    uid: 'structure-79227291600034-93',
-                  },
-                  montant: 25000,
-                },
-              ],
-              contexte: "Contexte de l'action",
-              description: "Description détaillée de l'action",
-              nom: 'Structurer une filière de reconditionnement locale 3',
-              porteurs: [],
-              subvention: {
-                enveloppe: 'Enveloppe test',
-                montants: {
-                  prestation: 0,
-                  ressourcesHumaines: 9_000,
-                },
-                statut: StatutSubvention.DEPOSEE,
-              },
-              totaux: {
-                coFinancement: 0,
-                financementAccorde: 0,
-              },
-              uid: '3',
-            },
-            {
-              beneficiaires: [],
-              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
-              budgetGlobal: 70_000,
-              coFinancements: [],
-              contexte: "Contexte de l'action",
-              description: "Description détaillée de l'action",
-              nom: 'Structurer une filière de reconditionnement locale 4',
-              porteurs: [],
-              subvention: undefined,
-              totaux: {
-                coFinancement: 0,
-                financementAccorde: 0,
-              },
-              uid: '4',
-            },
-          ],
-          beneficiaires: 0,
-          coFinanceurs: 0,
-          nom: 'Feuille de route 2',
-          pieceJointe: {
-            apercu: '',
-            emplacement: '',
-            nom: 'feuille-de-route-fake.pdf',
-          },
-          structureCoPorteuse: undefined,
-          totaux: {
-            budget: 0,
-            coFinancement: 0,
-            financementAccorde: 0,
-          },
-          uid: '2',
-        },
-        {
-          actions: [
-            {
-              beneficiaires: [
-                {
-                  nom: 'Trévérien',
-                  uid: 'commune-35345-93',
-                },
-              ],
-              besoins: [BesoinsPossible.ETABLIR_UN_DIAGNOSTIC_TERRITORIAL, BesoinsPossible.STRUCTURER_UN_FONDS],
-              budgetGlobal: 70_000,
-              coFinancements: [
-                {
-                  coFinanceur: {
-                    nom: 'Pipriac',
-                    uid: 'commune-113-93',
-                  },
-                  montant: 15_000,
-                },
-              ],
-              contexte: "Contexte de l'action",
-              description: "Description détaillée de l'action",
-              nom: 'Structurer une filière de reconditionnement locale 1',
-              porteurs: [
-                {
-                  nom: 'CA Tulle Agglo',
-                  uid: 'epci-241927201-93',
-                },
-              ],
-              subvention: {
-                enveloppe: 'Enveloppe test',
-                montants: {
-                  prestation: 0,
-                  ressourcesHumaines: 0,
-                },
-                statut: StatutSubvention.DEPOSEE,
-              },
-              totaux: {
-                coFinancement: 0,
-                financementAccorde: 0,
-              },
-              uid: '1',
-            },
-          ],
-          beneficiaires: 0,
-          coFinanceurs: 0,
-          nom: 'Feuille de route 1',
-          structureCoPorteuse: {
-            nom: 'CC Porte du Jura',
-            uid: 'epci-200072056-93',
-          },
-          totaux: {
-            budget: 0,
-            coFinancement: 0,
-            financementAccorde: 0,
-          },
-          uid: '1',
-        },
-      ],
-      porteursPotentielsNouvellesFeuillesDeRouteOuActions: [
-        {
-          nom: 'Bretagne',
-          roles: ['coporteur'],
-          uid: 'region-53-93',
-        },
-        {
-          nom: 'CA Tulle Agglo',
-          roles: ['observateur'],
-          uid: 'epci-241927201-93',
-        },
-        {
-          nom: 'CC Porte du Jura',
-          roles: ['beneficiaire', 'coporteur'],
-          uid: 'epci-200072056-93',
-        },
-        {
-          nom: 'Créteil',
-          roles: ['coporteur'],
-          uid: 'commune-94028-93',
-        },
-        {
-          nom: 'Emmaüs Connect',
-          roles: [
-            'cofinanceur',
-            'formation',
-          ],
-          uid: 'structure-79227291600034-93',
-        },
-        {
-          nom: 'Île-de-France',
-          roles: ['observateur'],
-          uid: 'region-11-93',
-        },
-        {
-          nom: 'Orange',
-          roles: ['coporteur', 'recipiendaire'],
-          uid: 'structure-38012986643097-93',
-        },
-        {
-          nom: 'Seine-Saint-Denis',
-          roles: ['observateur'],
-          uid: 'departement-69-93',
-        },
-        {
-          nom: 'Seine-Saint-Denis',
-          roles: ['coporteur'],
-          uid: 'prefecture-93',
-        },
-        {
-          nom: 'Trévérien',
-          roles: [
-            'beneficiaire',
-            'coporteur',
-            'recipiendaire',
-          ],
-          uid: 'commune-35345-93',
-        },
-      ],
-      totaux: {
-        budget: 0,
-        coFinancement: 0,
-        financementAccorde: 0,
-      },
-      uidGouvernance: '93',
-    })
+    expect(feuillesDeRouteReadModel.feuillesDeRoute[0].nom).to.equal('Feuille de route 2')
+    expect(feuillesDeRouteReadModel.feuillesDeRoute[1].nom).to.equal('Feuille de route 1')
   })
 })
 

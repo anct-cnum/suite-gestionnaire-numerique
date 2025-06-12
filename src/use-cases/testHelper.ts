@@ -97,7 +97,7 @@ export function gouvernanceReadModelFactory(
             nom: 'Structure 1',
             uid: '0',
           },
-        ],  
+        ],
         beneficiairesSubventionFormation: [
           {
             nom: 'Structure 1',
@@ -584,7 +584,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
         nom: 'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
         roles: ['observateur'],
         siret: '77978721700057',
-        statut: 'suggere',
+        statut: 'candidat',
         suppressionDuMembreAutorise: false,
         typologie: '',
         uid: 'structure-77978721700057-69',
@@ -635,7 +635,7 @@ export function membresReadModelFactory(override?: Partial<MesMembresReadModel>)
         nom: 'Croix Rouge Française',
         roles: ['cofinanceur'],
         siret: '77567227224553',
-        statut: 'suggere',
+        statut: 'candidat',
         suppressionDuMembreAutorise: false,
         typologie: 'Association',
         uid: 'structure-77567227224553-69',

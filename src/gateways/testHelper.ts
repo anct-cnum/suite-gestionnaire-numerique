@@ -309,13 +309,13 @@ export async function creerMembres(gouvernanceDepartementCode: string): Promise<
     id: `commune-112-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
-  await creerUnSuggere({
+  await creerUnMembre({
     contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-111-${gouvernanceDepartementCode}`,
     type: 'Préfecture régionale',
   })
-  await creerUnSuggere({
+  await creerUnMembre({
     contact: `commune-35345-${gouvernanceDepartementCode}@example.com`,
     gouvernanceDepartementCode,
     id: `commune-113-${gouvernanceDepartementCode}`,
@@ -652,14 +652,14 @@ async function creerUnCandidat(override?: Partial<Prisma.MembreRecordUncheckedCr
   })
 }
 
-async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
-  await prisma.membreRecord.create({
-    data: membreRecordFactory({
-      statut: 'suggere',
-      ...override,
-    }),
-  })
-}
+// async function creerUnSuggere(override?: Partial<Prisma.MembreRecordUncheckedCreateInput>): Promise<void> {
+//   await prisma.membreRecord.create({
+//     data: membreRecordFactory({
+//       statut: 'suggere',
+//       ...override,
+//     }),
+//   })
+// }
 
 function coFinancementRecordFactory(
   override?: Partial<Prisma.CoFinancementRecordUncheckedCreateInput>

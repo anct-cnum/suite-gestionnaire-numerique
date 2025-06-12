@@ -76,7 +76,7 @@ const gouvernancesFNEQuery: Parameters<typeof prismaFNE.gouvernance.findMany>[0]
   },
 }
 
-const membresCandidatsEtSuggeresFNEQuery: Parameters<typeof prismaFNE.formulaireGouvernance.findMany>[0] = {
+const membresCandidatsFNEQuery: Parameters<typeof prismaFNE.formulaireGouvernance.findMany>[0] = {
   include: {
     membresGouvernance: true,
     relationCommune: true,
@@ -138,7 +138,7 @@ void (async function migrate(): Promise<void> {
       )
       return Promise.all([
         gouvernancesFNEGouvernancesEtCreateurs,
-        prismaFNE.formulaireGouvernance.findMany(membresCandidatsEtSuggeresFNEQuery),
+        prismaFNE.formulaireGouvernance.findMany(membresCandidatsFNEQuery),
         prisma.contactMembreGouvernanceRecord.createMany({
           data: membresFNE.map(({ email, fonction, nom, prenom }) => ({
             email: email.toLowerCase(),
@@ -333,7 +333,7 @@ function grouperDonneesACreer(
           }
         }
       } else {
-        groupe = ajouterMembres('observateur', membreFNE.confirmeEtEnvoye ? 'candidat' : 'suggere')
+        groupe = ajouterMembres('observateur', membreFNE.confirmeEtEnvoye ? 'candidat' : '')
       }
       return groupe
     }
@@ -532,10 +532,6 @@ async function creerGouvernanceEtMembresFictifs(): Promise<void> {
   await prisma.contactMembreGouvernanceRecord.create({ data: { email: 'epci@example.com', fonction: 'EPCI', nom: 'MIN', prenom: 'Michel' } })
   await prisma.membreRecord.create({ data: { contact: 'epci@example.com', gouvernanceDepartementCode: 'zzz', id: 'epci-aaaaaaaaaaaaaa-zzz', oldUUID: '30CA3FA5-76B8-471D-A811-D96074B18EB1', statut: 'candidat', type: 'Collectivité, EPCI' } })
   await prisma.membreGouvernanceEpciRecord.create({ data: { epci: 'EPCI MIN', membreId: 'epci-aaaaaaaaaaaaaa-zzz', role: 'observateur' } })
-
-  await prisma.contactMembreGouvernanceRecord.create({ data: { email: 'structure@example.com', fonction: 'Structure', nom: 'MIN', prenom: 'Bernard' } })
-  await prisma.membreRecord.create({ data: { contact: 'structure@example.com', gouvernanceDepartementCode: 'zzz', id: 'structure-bbbbbbbbbbbbbb-zzz', oldUUID: '30CA3FA5-76B8-471D-A811-D96074B18EB1', statut: 'suggere', type: 'Association déclarée' } })
-  await prisma.membreGouvernanceStructureRecord.create({ data: { membreId: 'structure-bbbbbbbbbbbbbb-zzz', role: 'observateur', structure: 'Structure MIN' } })
 
   await prisma.contactMembreGouvernanceRecord.create({ data: { email: 'commune@example.com', fonction: 'Commune', nom: 'MIN', prenom: 'José' } })
   await prisma.membreRecord.create({ data: { contact: 'commune@example.com', gouvernanceDepartementCode: 'zzz', id: 'commune-cccccccccccccc-zzz', oldUUID: '30CA3FA5-76B8-471D-A811-D96074B18EB1', statut: 'confirme', type: 'Collectivité, commune' } })

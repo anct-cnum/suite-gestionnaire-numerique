@@ -14,7 +14,7 @@ import { MembreViewModel } from '@/presenters/membresPresenter'
 import { isEmpty } from '@/shared/lang'
 
 export default function AjouterUnMembre({
-  candidatsEtSuggeres,
+  candidats,
   closeDrawer,
   id,
   labelId,
@@ -24,7 +24,7 @@ export default function AjouterUnMembre({
   const [isDisabled, setIsDisabled] = useState(true)
   const [informationsMembre, setInformationsMembre] = useState<MembreViewModel | null>(null)
   const [isAdded, setIsAdded] = useState(false)
-  const membresByUid = candidatsEtSuggeres.reduce<Readonly<Record<string, MembreViewModel>>>(
+  const membresByUid = candidats.reduce<Readonly<Record<string, MembreViewModel>>>(
     (byUid, membre) => Object.assign(byUid, { [membre.uid]: membre }), {}
   )
 
@@ -52,11 +52,11 @@ export default function AjouterUnMembre({
             isPlaceholderSelectable={true}
             name="membre"
             onChange={selectionnerUnMembre}
-            options={candidatsEtSuggeres.map(({ nom, uid }) => ({ id: 'uid', isSelected: false, label: nom, value: uid }))}
+            options={candidats.map(({ nom, uid }) => ({ id: 'uid', isSelected: false, label: nom, value: uid }))}
             placeholder="Sélectionner un membre"
             required={true}
           >
-            Membre candidat ou suggéré
+            Membre candidat
           </Select>
           {
             informationsMembre === null ? (
@@ -177,7 +177,7 @@ export default function AjouterUnMembre({
 }
 
 type Props = Readonly<{
-  candidatsEtSuggeres: ReadonlyArray<MembreViewModel>
+  candidats: ReadonlyArray<MembreViewModel>
   closeDrawer(): void
   id: string
   labelId: string
