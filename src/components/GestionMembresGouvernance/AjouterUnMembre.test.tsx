@@ -43,12 +43,6 @@ describe('membres gouvernance', () => {
       const laPoste = within(candidat).getByRole('option', { name: "La Voie du Num'" })
       expect(laPoste).toBeInTheDocument()
 
-      const information = within(fieldset).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
-      expect(information).toBeInTheDocument()
-      const lien = within(fieldset).getByRole('link', { name: 'https://inclusion-numerique.anct.gouv.fr/gouvernance' })
-      expect(lien).toHaveAttribute('href', 'https://inclusion-numerique.anct.gouv.fr/gouvernance')
-      expect(lien).toOpenInNewTab('Invitez les collectivités et structures')
-
       const bouton = within(formulaire).getByRole('button', { name: 'Ajouter' })
       expect(bouton).toBeDisabled()
       expect(bouton).toHaveAttribute('type', 'submit')
@@ -138,8 +132,6 @@ describe('membres gouvernance', () => {
 
       // THEN
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
-      const information = within(formulaire).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
-      expect(information).toBeInTheDocument()
       const bouton = within(formulaire).getByRole('button', { name: 'Ajouter' })
       expect(bouton).toBeDisabled()
     })

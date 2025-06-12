@@ -5,7 +5,6 @@ import Badge from '../shared/Badge/Badge'
 import { clientContext } from '../shared/ClientContext'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
-import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import { Notification } from '../shared/Notification/Notification'
 import Select from '../shared/Select/Select'
 import SubmitButton from '../shared/SubmitButton/SubmitButton'
@@ -59,30 +58,7 @@ export default function AjouterUnMembre({
             Membre candidat
           </Select>
           {
-            informationsMembre === null ? (
-              <div className="fr-grid-row background-info fr-p-4w">
-                <div className="fr-col-md-1">
-                  <InformationLogo />
-                </div>
-                <p className="fr-col-md-11 fr-mb-0">
-                  <span className="font-weight-700">
-                    Vous ne trouvez pas une collectivité/structure dans la liste ?
-                  </span>
-                  {' '}
-                  <br />
-                  Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas
-                  encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien :
-                  {' '}
-                  <ExternalLink
-                    className="color-blue-france"
-                    href="https://inclusion-numerique.anct.gouv.fr/gouvernance"
-                    title="Invitez les collectivités et structures"
-                  >
-                    https://inclusion-numerique.anct.gouv.fr/gouvernance
-                  </ExternalLink>
-                </p>
-              </div>
-            ) : (
+            informationsMembre === null ? null : (
               <address>
                 <Badge color="new">
                   {informationsMembre.statut}
