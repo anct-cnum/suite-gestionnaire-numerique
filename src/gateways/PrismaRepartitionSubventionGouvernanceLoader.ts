@@ -5,7 +5,7 @@ import { RepartitionSubventionGouvernanceLoader } from '@/use-cases/queries/Recu
 export class PrismaRepartitionSubventionGouvernanceLoader implements RepartitionSubventionGouvernanceLoader {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(uidGouvernance: string): Promise<ReadonlyMap<string, number>> {
-    const demandesDeSubventionsAccordees = await prisma.demandeDeSubventionRecord.findMany({
+    const demandesDeSubventionsValides = await prisma.demandeDeSubventionRecord.findMany({
       include: {
         enveloppe: true,
       },
@@ -15,13 +15,19 @@ export class PrismaRepartitionSubventionGouvernanceLoader implements Repartition
             gouvernanceDepartementCode: uidGouvernance,
           },
         },
-        statut: StatutSubvention.ACCEPTEE,
+        statut: {
+          in: [
+            StatutSubvention.ACCEPTEE,
+            StatutSubvention.EN_COURS,
+            StatutSubvention.DEPOSEE,
+          ],
+        },
       },
     })
 
     // cumul des subventions acceptées par enveloppe
     const repartitionParEnveloppe = 
-            demandesDeSubventionsAccordees.reduce<Record<string, number>>((acc, demandeDeSubvention) => {
+            demandesDeSubventionsValides.reduce<Record<string, number>>((acc, demandeDeSubvention) => {
               const enveloppeId = String(demandeDeSubvention.enveloppeFinancementId)
               const montantActuel = acc[enveloppeId] ?? 0
               return {
