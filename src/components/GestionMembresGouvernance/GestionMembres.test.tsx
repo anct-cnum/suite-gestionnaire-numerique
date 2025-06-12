@@ -24,15 +24,11 @@ describe('gestion des membres gouvernance', () => {
     const ongletMembresConfirmes = within(ongletsStatutMembre[0]).getByRole(
       'tab', { current: 'page', name: 'Membres · 5' }
     )
-    const ongletMembresSuggeres = within(ongletsStatutMembre[1]).getByRole(
-      'tab', { current: false, name: 'Suggestions · 2' }
+    const ongletMembresCandidats = within(ongletsStatutMembre[1]).getByRole(
+      'tab', { current: false, name: 'Candidats · 5' }
     )
-    const ongletMembresCandidats = within(ongletsStatutMembre[2]).getByRole(
-      'tab', { current: false, name: 'Candidats · 3' }
-    )
-    expect(ongletsStatutMembre).toHaveLength(3)
+    expect(ongletsStatutMembre).toHaveLength(2)
     expect(ongletMembresConfirmes).toBeInTheDocument()
-    expect(ongletMembresSuggeres).toBeInTheDocument()
     expect(ongletMembresCandidats).toBeInTheDocument()
 
     const filtres = screen.getByText('Filtres :')
@@ -106,28 +102,20 @@ describe('gestion des membres gouvernance', () => {
 
   it.each([
     {
-      expectedAriaCurrents: ['false', 'page', 'false'],
-      expectedLength: 2,
-      expectedRows: [
-        'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
-        'Croix Rouge FrançaiseAssociation',
-      ],
-      position: 1,
-      vue: 'suggestions',
-    },
-    {
-      expectedAriaCurrents: ['false', 'false', 'page'],
-      expectedLength: 3,
+      expectedAriaCurrents: ['false', 'page'],
+      expectedLength: 5,
       expectedRows: [
         'CC des Monts du LyonnaisCollectivité, EPCI',
         'La Voie du Num\'Association',
+        'Fédération départementale des centres sociaux du Rhône et de la Métropole de Lyon',
         'Emmaüs ConnectAssociation',
+        'Croix Rouge FrançaiseAssociation',
       ],
-      position: 2,
+      position: 1,
       vue: 'candidats',
     },
     {
-      expectedAriaCurrents: ['page', 'false', 'false'],
+      expectedAriaCurrents: ['page', 'false'],
       expectedLength: 5,
       expectedRows: [
         'Préfecture du RhônePréfecture départementale',
@@ -139,29 +127,30 @@ describe('gestion des membres gouvernance', () => {
       position: 0,
       vue: 'membres',
     },
-  ])('quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné', ({ expectedAriaCurrents, expectedLength, expectedRows, position }) => {
+  ])('quand je sélectionne la vue "$vue", alors la liste se rafraîchit, n’affichant que les membres correspondant au statut sélectionné',
+    ({ expectedAriaCurrents, expectedLength, expectedRows, position }) => {
     // GIVEN
-    afficherMembres()
+      afficherMembres()
 
-    // WHEN
-    const navigationTypesMembres = screen.getByRole('list')
-    const ongletsStatutsMembres = within(navigationTypesMembres).getAllByRole('tab')
-    fireEvent.click(ongletsStatutsMembres[position])
+      // WHEN
+      const navigationTypesMembres = screen.getByRole('list')
+      const ongletsStatutsMembres = within(navigationTypesMembres).getAllByRole('tab')
+      fireEvent.click(ongletsStatutsMembres[position])
 
-    // THEN
-    const membres = screen.getByRole('table', { name: 'Membres' })
-    const rowsGroup = within(membres).getAllByRole('rowgroup')
-    const body = rowsGroup[1]
-    const rowsBody = within(body).getAllByRole('row')
-    expectedAriaCurrents.forEach((expectedAriaCurrent, index) => {
-      expect(ongletsStatutsMembres[index].ariaCurrent).toBe(expectedAriaCurrent)
+      // THEN
+      const membres = screen.getByRole('table', { name: 'Membres' })
+      const rowsGroup = within(membres).getAllByRole('rowgroup')
+      const body = rowsGroup[1]
+      const rowsBody = within(body).getAllByRole('row')
+      expectedAriaCurrents.forEach((expectedAriaCurrent, index) => {
+        expect(ongletsStatutsMembres[index].ariaCurrent).toBe(expectedAriaCurrent)
+      })
+      expect(rowsBody).toHaveLength(expectedLength)
+      expectedRows.forEach((cell0, index) => {
+        const [columnsBody] = membresRow(rowsBody, index)
+        expect(columnsBody[0].textContent).toBe(cell0)
+      })
     })
-    expect(rowsBody).toHaveLength(expectedLength)
-    expectedRows.forEach((cell0, index) => {
-      const [columnsBody] = membresRow(rowsBody, index)
-      expect(columnsBody[0].textContent).toBe(cell0)
-    })
-  })
 
   it('quand je filtre sur un rôle, alors la liste se rafraîchit, n’affichant que les membres correspondant au rôle sélectionné', () => {
     // GIVEN
@@ -267,7 +256,7 @@ function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonl
   ReadonlyArray<HTMLElement>]>//,HTMLElement
 {
   const columnsBody = within(rowsBody[rank]).getAllByRole('cell')
-  return [columnsBody] //, within(columnsBody[3]).getByRole('button', { name: 'Supprimer' })
+  return [columnsBody]
 }
 
 function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>): void {

@@ -83,6 +83,6 @@ type Query = Readonly<{
 
 type RoleEtTypologie = Pick<MesMembresReadModel, 'roles' | 'typologies'>
 
-type Statut = 'candidat' | 'confirme' | 'suggere'
+type Statut = 'candidat' | 'confirme'
 
 type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'

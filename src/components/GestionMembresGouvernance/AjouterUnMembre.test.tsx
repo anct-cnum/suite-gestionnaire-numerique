@@ -35,12 +35,12 @@ describe('membres gouvernance', () => {
       const formulaire = within(drawer).getByRole('form', { name: 'Ajouter un membre à la gouvernance' })
       expect(formulaire).toHaveAttribute('method', 'dialog')
       const fieldset = within(formulaire).getByRole('group', { name: 'Sélectionner un membre' })
-      const candidatOuSuggere = within(fieldset).getByRole('combobox', { name: 'Membre candidat ou suggéré' })
-      const selectionnerUnMembre = within(candidatOuSuggere).getByRole('option', { name: 'Sélectionner un membre', selected: true })
+      const candidat = within(fieldset).getByRole('combobox', { name: 'Membre candidat' })
+      const selectionnerUnMembre = within(candidat).getByRole('option', { name: 'Sélectionner un membre', selected: true })
       expect(selectionnerUnMembre).toBeInTheDocument()
-      const croixRouge = within(candidatOuSuggere).getByRole('option', { name: 'Croix Rouge Française' })
+      const croixRouge = within(candidat).getByRole('option', { name: 'Croix Rouge Française' })
       expect(croixRouge).toBeInTheDocument()
-      const laPoste = within(candidatOuSuggere).getByRole('option', { name: "La Voie du Num'" })
+      const laPoste = within(candidat).getByRole('option', { name: "La Voie du Num'" })
       expect(laPoste).toBeInTheDocument()
 
       const information = within(fieldset).getByText(matchWithoutMarkup('Vous ne trouvez pas une collectivité/structure dans la liste ? Afin de récupérer leurs informations de contact, invitez les collectivités et structures qui n’ont pas encore manifesté leur souhait de participer à compléter le formulaire disponible via ce lien : https://inclusion-numerique.anct.gouv.fr/gouvernance'), { selector: 'p' })
@@ -198,7 +198,7 @@ describe('membres gouvernance', () => {
   }
 
   function jeSelectionneUnCandidat(value: string): void {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Membre candidat ou suggéré' }), { target: { value } })
+    fireEvent.change(screen.getByRole('combobox', { name: 'Membre candidat' }), { target: { value } })
   }
 
   function jAjouteUnMembre(): HTMLElement {

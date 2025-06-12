@@ -43,6 +43,12 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
         gouvernanceDepartementCode: codeDepartement,
       },
     })
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(feuillesDeRouteRecord, null, 2))
+    // eslint-disable-next-line no-console
+    console.log(membreConfirmesGouvernance)
+    // eslint-disable-next-line no-console
+    console.log(codeDepartement)
     return this.#transform(feuillesDeRouteRecord, membreConfirmesGouvernance, codeDepartement)
   }
 
@@ -67,11 +73,13 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
               isFormation: isEnveloppeDeFormation(demandeDeSubvention.enveloppe),
               montants: {
                 prestation: demandeDeSubvention.subventionPrestation ?? 0,
-                ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+                ressourcesHumaines: demandeDeSubvention?.subventionEtp ?? 0,
               },
               statut: demandeDeSubvention.statut as StatutSubvention,
             } : undefined,
-            uid: `${action.id}`,
+            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+            uid: `${action?.id ?? 'ID inconnu'}`,
           }
         }),
         uid: `${feuilleDeRoute.id}`,

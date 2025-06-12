@@ -39,14 +39,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
   }, [membresViewModel.membres])
 
-  const candidatsEtSuggeres = membresViewModel.candidats
-    .concat(membresViewModel.suggeres)
+  const candidats = membresViewModel.candidats
     .toSorted(alphaAsc('nom'))
 
   const membresByStatut: Readonly<Record<StatutSelectionnable, ReadonlyArray<MembreViewModel>>> = {
     candidat: membresViewModel.candidats,
     confirme: membresViewModel.membres,
-    suggere: membresViewModel.suggeres,
   }
 
   return (
@@ -73,7 +71,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         <ul className="fr-nav__list">
           {[
             ['confirme', 'Membres'] as const,
-            ['suggere', 'Suggestions'] as const,
             ['candidat', 'Candidats'] as const,
           ].map(([statut, libelle]) => (
             <li
@@ -232,7 +229,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         labelId={labelId}
       >
         <AjouterUnMembre
-          candidatsEtSuggeres={candidatsEtSuggeres}
+          candidats={candidats}
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
@@ -288,7 +285,7 @@ type Props = Readonly<{
   membresViewModel: MembresViewModel
 }>
 
-type StatutSelectionnable = 'candidat' | 'confirme' | 'suggere'
+type StatutSelectionnable = 'candidat' | 'confirme'
 
 type MembresView = Readonly<{
   membres: ReadonlyArray<MembreViewModel>
