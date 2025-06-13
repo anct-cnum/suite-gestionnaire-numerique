@@ -481,7 +481,7 @@ function sousFormulaireDemandeSubvention(): HTMLElement {
 function sousTitre(limite: string): HTMLElement {
   return within(sousFormulaireDemandeSubvention()).getByText(
     matchWithoutMarkup(
-      `Saisissez le montant de la subvention que vous souhaitez obtenir de l’état. Dans la limite de ${limite} €.`
+      `Saisissez le montant de la subvention que vous souhaitez obtenir de l'état. Dans la limite de ${limite} €.`
     ),
     { selector: 'p' }
   )
@@ -493,7 +493,7 @@ function champsSaisieMontants(): Readonly<[HTMLElement, HTMLElement]> {
     within(sousFormulaire).getByRole('spinbutton', { name: 'Montant en prestation de service' }),
     within(sousFormulaire).getByRole('spinbutton', {
       name:
-        'Montant en ressources humaines Il s’agit d’une ressource humaine interne à la structure employeuse' +
+        'Montant en ressources humaines Il s\'agit d\'une ressource humaine interne à la structure employeuse' +
         ' faisant partie de la gouvernance et récipiendaire des fonds. Format attendu : Montant ETP en euros',
     }),
   ]

@@ -147,7 +147,7 @@ describe('formulaire d‘ajout d‘une action', () => {
       expect(budgetGlobalDeLAction).toHaveAttribute('type', 'number')
       expect(budgetGlobalDeLAction).toHaveAttribute('min', '0')
       expect(budgetGlobalDeLAction).toHaveValue(0)
-      const demandeDeSubvention = within(formulaire).getByText('Subvention demandée à l‘état')
+      const demandeDeSubvention = within(formulaire).getByText('Subvention demandée à l\'état')
       expect(demandeDeSubvention).toBeInTheDocument()
       const boutonDemanderUneSubvention = within(formulaire).getByRole('button', { name: 'Demander une subvention' })
       expect(boutonDemanderUneSubvention).toHaveAttribute('type', 'button')

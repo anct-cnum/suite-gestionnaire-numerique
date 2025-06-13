@@ -44,12 +44,28 @@ export default function DemanderUneSubvention({
   const isBudgetAction = useMemo(() => montantMaxAction > 0, [montantMaxAction])
   const subventionsDemandees = useMemo(() => (montantPresta ?? 0) + (montantRh ?? 0), [montantPresta, montantRh])
 
-  useEffect(() => {
+  function reinitialiserDrawer(): void {
     setIsEnveloppeSelectionnee(false)
     setBudgetEnveloppe(undefined)
     setMontantPresta(undefined)
     setMontantRh(undefined)
     setSelectedEnveloppeId('')
+    setHasError(false)
+    setIsValid(false)
+    if (inputMontantPrestaRef.current) {
+      inputMontantPrestaRef.current.value = ''
+    }
+    if (inputMontantRhRef.current) {
+      inputMontantRhRef.current.value = ''
+    }
+    const selectEnveloppe = document.getElementById(selectEnveloppeId) as HTMLSelectElement
+    selectEnveloppe.value = ''
+  }
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      reinitialiserDrawer()
+    }
   }, [isDrawerOpen])
 
   useEffect(() => {
@@ -153,7 +169,7 @@ export default function DemanderUneSubvention({
                 className="fr-label fr-text--bold"
                 htmlFor="subventionsDemandees"
               >
-                Subvention demandée à l‘état
+                Subvention demandée à l&apos;état
               </label>
             </div>
             <button
@@ -189,7 +205,7 @@ export default function DemanderUneSubvention({
           Demander une subvention
         </DrawerTitle>
         <p className="color-grey fr-text--sm">
-          Saisissez le montant de la subvention que vous souhaitez obtenir de l’état.
+          Saisissez le montant de la subvention que vous souhaitez obtenir de l&apos;état.
           {' '}
           <span className="color-blue-france">
             {`Dans la limite de ${formatMontant(montantMaximal())}`}
@@ -238,7 +254,7 @@ export default function DemanderUneSubvention({
               Montant en ressources humaines
               {' '}
               <span className="fr-hint-text">
-                Il s’agit d’une ressource humaine interne à la structure employeuse faisant partie de la
+                Il s&apos;agit d&apos;une ressource humaine interne à la structure employeuse faisant partie de la
                 gouvernance et récipiendaire des fonds.
                 <br />
                 Format attendu : Montant
