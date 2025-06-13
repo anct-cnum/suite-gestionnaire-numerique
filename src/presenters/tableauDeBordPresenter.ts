@@ -1,10 +1,12 @@
 
-import { formaterEnNombreFrancais, formatMontant } from './shared/number'
+import { formaterEnNombreFrancais } from './shared/number'
+import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperLeTableauDeBord'
 
-export function tableauDeBordPresenter(
-  departementCode: string
+export function tableauDeBordPresenter(departementCode: string, 
+  tableauDeBordFinancements: TableauDeBordLoaderFinancements):
+  TableauDeBordViewModel {
+  const financements = construireFinancements(tableauDeBordFinancements)
 
-): TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -53,40 +55,7 @@ export function tableauDeBordPresenter(
       },
       total: 66,
     },
-    conventionnement: {
-      budget: {
-        feuilleDeRoute: 1,
-        total: formatMontant(225_000),
-      },
-      credit: {
-        pourcentage: 25,
-        total: formatMontant(118_000),
-      },
-      details: [
-        {
-          color: 'dot-purple-glycine-main-494',
-          label: 'Conseiller Numérique - 2024 - État',
-          total: formatMontant(40_000),
-        },
-        {
-          color: 'dot-purple-glycine-850-200',
-          label: 'Conseiller Numérique - Plan France Relance - État',
-          total: formatMontant(25_000),
-        },
-        {
-          color: 'dot-green-tilleul-verveine-925',
-          label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
-          total: formatMontant(30_000),
-        },
-        {
-          color: 'dot-orange-terre-battue-850-200',
-          label: 'Ingénierie France Numérique Ensemble - 2024 - État',
-          total: formatMontant(20_000),
-        },
-      ],
-    },
-    departement: departementCode,
-    
+    financements,
     gouvernance: {
       collectivite: {
         membre: 9,
@@ -157,7 +126,8 @@ export function tableauDeBordPresenter(
       },
     ],
   }
-} 
+}
+
 export type TableauDeBordViewModel = Readonly<{
   aidant: Readonly<{
     details: ReadonlyArray<{
@@ -182,16 +152,17 @@ export type TableauDeBordViewModel = Readonly<{
     }>
     total: number
   }>
-  conventionnement: Readonly<{
+  financements: Readonly<{
     budget: Readonly<{
-      feuilleDeRoute: number
+      feuillesDeRoute: number
       total: string
     }>
     credit: Readonly<{
       pourcentage: number
       total: string
     }>
-    details: ReadonlyArray<{
+    nombreDeFinancementsEngagesParLEtat: number
+    ventilationSubventionsParEnveloppe: ReadonlyArray<{
       color: string
       label: string
       total: string
@@ -234,4 +205,31 @@ export type TableauDeBordViewModel = Readonly<{
     label: string
     lien: string
   }>
-}> 
+}>
+
+function construireFinancements(tableauDeBordFinancements: TableauDeBordLoaderFinancements): TableauDeBordViewModel['financements'] {
+  const couleursEnveloppes = {
+    'Conseiller Numérique - 2024' :   'dot-purple-glycine-main-494',
+    'Conseiller Numérique - Plan France Relance' : 'dot-purple-glycine-950-100',
+    'Formation Aidant Numérique/Aidants Connect - 2024' : 'dot-purple-glycine-850-200',
+    'Ingénierie France Numérique Ensemble - 2024 - État' : 'dot-purple-glycine-925-125',
+  }
+  return {
+    budget: {
+      feuillesDeRoute: tableauDeBordFinancements.budget.feuillesDeRoute,
+      total: tableauDeBordFinancements.budget.total,
+    },
+    credit: {
+      pourcentage: tableauDeBordFinancements.credit.pourcentage,
+      total: tableauDeBordFinancements.credit.total,
+    },
+    nombreDeFinancementsEngagesParLEtat: tableauDeBordFinancements.nombreDeFinancementsEngagesParLEtat,
+    ventilationSubventionsParEnveloppe: tableauDeBordFinancements.ventilationSubventionsParEnveloppe.map(
+      ({ label, total }) => ({
+        color: couleursEnveloppes[label] ?? 'dot-purple-glycine-main-494',
+        label,
+        total,
+      })
+    ),
+  }
+}

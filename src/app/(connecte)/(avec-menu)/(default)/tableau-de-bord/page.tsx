@@ -9,6 +9,7 @@ import { PrismaAccompagnementsRealisesLoader } from '@/gateways/PrismaAccompagne
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/PrismaMediateursEtAidantsLoader'
+import { PrismaTableauDeBordLoader } from '@/gateways/PrismaTableauDeBordLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { accompagnementsRealisesPresenter } from '@/presenters/accompagnementsRealisesPresenter'
 import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/indiceFragilitePresenter'
@@ -60,7 +61,9 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     (readModel) => indiceFragiliteParCommunePresenter(readModel.communes)
   )
 
-  const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
+  const tableauDeBordLoader = await new PrismaTableauDeBordLoader().get('33' ?? '')
+  const tableauDeBordViewModel = tableauDeBordPresenter(utilisateur.departementCode ?? '', tableauDeBordLoader)
+
 
   return (
     <TableauDeBord 
