@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
 import carto from './carto.png'
+import Financements from './Financements'
 import styles from './TableauDeBord.module.css'
 import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
@@ -38,14 +39,14 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </span>
         <br />
         <span className="fr-text--lead color-blue-france">
-          Bienvenue sur l’outil de pilotage de l’Inclusion Numérique ·
+          Bienvenue sur l&apos;outil de pilotage de l&apos;Inclusion Numérique ·
           {' '}
           {tableauDeBordViewModel.departement}
         </span>
       </PageTitle>
       <section
         aria-labelledby="taches"
-        className="fr-mb-4w"
+        className={`fr-mb-4w ${styles.hidden}`}
       >
         <h2
           className="fr-h4 color-blue-france fr-m-0"
@@ -100,7 +101,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 className="fr-h4 color-blue-france fr-m-0"
                 id="etatDesLieux"
               >
-                État des lieux de l’inclusion numérique
+                État des lieux de l&apos;inclusion numérique
               </h2>
               <p className="fr-m-0 font-weight-500">
                 Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
@@ -111,7 +112,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
             href="/lieux-inclusion"
           >
-            Lieux d’inclusion numérique
+            Lieux d&apos;inclusion numérique
           </Link>
         </div>
         <div className="fr-grid-row">
@@ -143,7 +144,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 {tableauDeBordViewModel.etatDesLieux.inclusionNumerique}
               </div>
               <div className="font-weight-500">
-                Lieux d’inclusion numérique
+                Lieux d&apos;inclusion numérique
               </div>
               <div className="fr-text--xs color-blue-france fr-mb-0">
                 Toutes les typologies de lieux publics ou privés
@@ -202,7 +203,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Gouvernances
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Acteurs de l’inclusion numérique
+                Acteurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
@@ -279,99 +280,10 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
         </div>
       </section>
-      <section
-        aria-labelledby="conventionnements"
-        className="fr-mb-4w grey-border border-radius fr-p-4w"
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="pen-nib-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="conventionnements"
-              >
-                Conventionnements et financements
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Chiffres clés des budgets et financements
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.financements}
-          >
-            Les demandes
-          </Link>
-        </div>
-        <div className="fr-grid-row fr-mb-4w">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="money-euro-circle-line"
-              />
-              {tableauDeBordViewModel.conventionnement.budget.total}
-            </div>
-            <div className="font-weight-500">
-              Budget global renseigné
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              pour
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.conventionnement.budget.feuilleDeRoute}
-                {' '}
-                feuille de route
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="download-line"
-              />
-              {tableauDeBordViewModel.conventionnement.credit.total}
-            </div>
-            <div className="font-weight-500">
-              Crédits engagés par l’état
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Soit
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.conventionnement.credit.pourcentage}
-                {' '}
-                % de votre budget global
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="font-weight-500">
-          4 financements engagés par l’état
-        </div>
-        <ul>
-          {
-            tableauDeBordViewModel.conventionnement.details.map((detail) => (
-              <li
-                className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                key={detail.label}
-              >
-                <div>
-                  <Dot color={detail.color} />
-                  {' '}
-                  {detail.label}
-                </div>
-                <div className="font-weight-700">
-                  {detail.total}
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
+      <Financements 
+        conventionnement={tableauDeBordViewModel.financements}
+        lienFinancements={tableauDeBordViewModel.liens.financements}
+      />
       <section
         aria-labelledby="beneficiaires"
         className="fr-mb-4w grey-border border-radius fr-p-4w"
@@ -468,7 +380,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Aidants et médiateurs numériques
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les médiateurs de l’inclusion numérique
+                Chiffres clés sur les médiateurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
