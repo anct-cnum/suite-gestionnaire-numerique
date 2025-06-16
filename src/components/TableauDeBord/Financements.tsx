@@ -5,7 +5,7 @@ import Dot from '../shared/Dot/Dot'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function Conventionnement({ conventionnement, lienFinancements }: Props) : ReactElement {
+export default function Financements({ conventionnement, lienFinancements }: Props) : ReactElement {
   return (
     <section
       aria-labelledby="conventionnements"
@@ -19,7 +19,7 @@ export default function Conventionnement({ conventionnement, lienFinancements }:
               className="fr-h4 color-blue-france fr-m-0"
               id="conventionnements"
             >
-              Conventionnements et financements
+              Financements
             </h2>
             <p className="fr-m-0 font-weight-500">
               Chiffres clés des budgets et financements
@@ -42,14 +42,19 @@ export default function Conventionnement({ conventionnement, lienFinancements }:
             />
             {conventionnement.budget.total}
           </div>
-          <div className="font-weight-500">
+          <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Budget global renseigné
+            <span
+              aria-hidden="true"
+              className="fr-icon-question-line fr-ml-1w"
+              title="Somme des budgets globaux renseignés pour chaque action de vos feuilles de route"
+            />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             pour
             {' '}
             <span className="font-weight-700">
-              {conventionnement.budget.feuilleDeRoute}
+              {conventionnement.budget.feuillesDeRoute}
               {' '}
               feuille de route
             </span>
@@ -63,8 +68,13 @@ export default function Conventionnement({ conventionnement, lienFinancements }:
             />
             {conventionnement.credit.total}
           </div>
-          <div className="font-weight-500">
-            Crédits engagés par l&apos;état
+          <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
+            Financements engagés par l&apos;État
+            <span
+              aria-hidden="true"
+              className="fr-icon-question-line fr-ml-1w"
+              title="Somme des financements accordés par l&apos;État pour vos actions"
+            />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Soit
@@ -77,12 +87,19 @@ export default function Conventionnement({ conventionnement, lienFinancements }:
           </div>
         </div>
       </div>
-      <div className="font-weight-500">
-        4 financements engagés par l&apos;état
+      <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
+        {conventionnement.nombreDeFinancementsEngagesParLEtat}
+        {' '}
+        financement(s) engagé(s) par l&apos;État
+        <span
+          aria-hidden="true"
+          className="fr-icon-question-line fr-ml-1w"
+          title="Nombre total de demandes de financement ayant reçu un accord de l&apos;État. Ci-dessous la répartition par enveloppe."
+        />
       </div>
       <ul>
         {
-          conventionnement.details.map((detail) => (
+          conventionnement.ventilationSubventionsParEnveloppe.map((detail) => (
             <li
               className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
               key={detail.label}
@@ -104,6 +121,6 @@ export default function Conventionnement({ conventionnement, lienFinancements }:
 }
 
 type Props = Readonly<{
-  conventionnement: TableauDeBordViewModel['conventionnement']
+  conventionnement: TableauDeBordViewModel['financements']
   lienFinancements: string
 }>

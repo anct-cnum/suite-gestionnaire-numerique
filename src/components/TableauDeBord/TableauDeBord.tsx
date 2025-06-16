@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
 import carto from './carto.png'
-import Conventionnement from './Conventionnement'
+import Financements from './Financements'
 import styles from './TableauDeBord.module.css'
 import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
@@ -280,8 +280,8 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
         </div>
       </section>
-      <Conventionnement 
-        conventionnement={tableauDeBordViewModel.conventionnement}
+      <Financements 
+        conventionnement={tableauDeBordViewModel.financements}
         lienFinancements={tableauDeBordViewModel.liens.financements}
       />
       <section
