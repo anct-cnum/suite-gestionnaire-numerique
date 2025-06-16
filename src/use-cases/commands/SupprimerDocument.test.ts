@@ -4,6 +4,7 @@ import { SupprimerDocument } from './SupprimerDocument'
 import { Document, FeuilleDeRoute, FeuilleDeRouteUid } from '@/domain/FeuilleDeRoute'
 import { feuilleDeRouteFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { epochTime } from '@/shared/testHelper'
 
 describe('supprimer un document d‘une feuille de route', () => {
   beforeEach(() => {
@@ -22,6 +23,7 @@ describe('supprimer un document d‘une feuille de route', () => {
 
     // WHEN
     const result = await supprimerDocument.handle({
+      date: epochTime.toISOString(),
       uidEditeur,
       uidFeuilleDeRoute,
     })
@@ -41,7 +43,7 @@ describe('supprimer un document d‘une feuille de route', () => {
     )
 
     // WHEN
-    const result = await supprimerDocument.handle({ uidEditeur: 'utilisateurUsurpateur', uidFeuilleDeRoute })
+    const result = await supprimerDocument.handle({ date: epochTime.toISOString(), uidEditeur: 'utilisateurUsurpateur', uidFeuilleDeRoute })
 
     // THEN
     expect(spiedFeuilleDeRouteToUpdate).toBeNull()

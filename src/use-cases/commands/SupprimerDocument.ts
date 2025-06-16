@@ -23,6 +23,7 @@ export class SupprimerDocument implements CommandHandler<Command> {
     }
 
     feuilleDeRoute.supprimerDocument()
+    feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(command.date), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
 
     return 'OK'
@@ -32,6 +33,7 @@ export class SupprimerDocument implements CommandHandler<Command> {
 type Failure = 'editeurNePeutPasSupprimerDocument'
 
 type Command = Readonly<{
+  date: string
   uidEditeur: string
   uidFeuilleDeRoute: string
 }>

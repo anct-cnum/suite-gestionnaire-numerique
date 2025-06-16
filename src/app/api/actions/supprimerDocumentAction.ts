@@ -24,6 +24,7 @@ export async function supprimerDocumentAction(
     new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   )
   const result = await supprimerDocument.handle({
+    date: new Date().toISOString(),
     uidEditeur: await getSessionSub(),
     uidFeuilleDeRoute: actionParam.uidFeuilleDeRoute,
   })
