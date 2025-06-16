@@ -43,12 +43,6 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
         gouvernanceDepartementCode: codeDepartement,
       },
     })
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(feuillesDeRouteRecord, null, 2))
-    // eslint-disable-next-line no-console
-    console.log(membreConfirmesGouvernance)
-    // eslint-disable-next-line no-console
-    console.log(codeDepartement)
     return this.#transform(feuillesDeRouteRecord, membreConfirmesGouvernance, codeDepartement)
   }
 

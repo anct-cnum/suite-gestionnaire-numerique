@@ -17,6 +17,15 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     const utilisateurState = utilisateur.state
 
     try {
+      const utilisateurExistant = await this.#dataResource.findUnique({
+        where: {
+          ssoEmail: utilisateurState.uid.email,
+        },
+      })
+      if(utilisateurExistant?.isSupprime ?? false){
+        return await this.#undrop(utilisateurState.uid.email)
+      }
+
       await this.#dataResource.create({
         data: {
           dateDeCreation: utilisateurState.inviteLe,
@@ -52,7 +61,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async drop(utilisateur: Utilisateur): Promise<boolean> {
     return this.#drop(utilisateur.state.uid.value)
   }
-
+  
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     const record = await this.#dataResource.findUnique({
       include: {
@@ -139,6 +148,25 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
         }
         throw error
       })
+  }
+
+  async #undrop(ssoEmail: string): Promise<boolean> {
+    try {
+      await this.#dataResource.update({
+        data: {
+          isSupprime: false,
+        },
+        where: {
+          ssoEmail,
+        },
+      })
+      return true
+    } catch (error: unknown) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+        return false
+      }
+      throw error
+    }
   }
 }
 

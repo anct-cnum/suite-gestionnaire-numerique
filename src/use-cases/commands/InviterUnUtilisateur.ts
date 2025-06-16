@@ -43,8 +43,8 @@ export class InviterUnUtilisateur implements CommandHandler<Command> {
       return 'utilisateurNePeutPasGererUtilisateurACreer'
     }
 
-    const isUtilisateurCreated = await this.#utilisateurRepository.add(utilisateurACreer)
-    if (isUtilisateurCreated) {
+    const isUtilisateurCreeOuReactive = await this.#utilisateurRepository.add(utilisateurACreer)
+    if (isUtilisateurCreeOuReactive) {
       const emailGateway = this.#emailGatewayFactory(utilisateurCourant.state.isSuperAdmin)
       await emailGateway.send({
         email: command.email,
