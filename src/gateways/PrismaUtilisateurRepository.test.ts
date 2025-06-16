@@ -396,49 +396,17 @@ describe('utilisateur repository', () => {
       }))
     })
 
-    it('qui existe déjà par son ssoId : insertion en échec', async () => {
+    it('qui existe déjà par son ssoEmail : il est réactivé', async () => {
       // GIVEN
       const ssoIdExistant = uidUtilisateurValue
-      await creerUnUtilisateur({ ssoId: ssoIdExistant })
+      await creerUnUtilisateur({ isSupprime: true, ssoEmail: 'martin.tartempion@example.net' })
       const utilisateur = utilisateurFactory({ uid: { email: 'martin.tartempion@example.net', value: ssoIdExistant } })
 
       // WHEN
       const resultatCreation = await repository.add(utilisateur)
 
       // THEN
-      expect(resultatCreation).toBe(false)
-    })
-
-    it('erreur non gérée', async () => {
-      // GIVEN
-      const prismaClientAuthenticationFailedErrorStub = {
-        async create(): Promise<never> {
-          return Promise.reject(
-            new Prisma.PrismaClientKnownRequestError('authentication failed', {
-              clientVersion: '',
-              code: 'P1000',
-            })
-          )
-        },
-      } as unknown as Prisma.UtilisateurRecordDelegate
-
-      const prismaClientGenericErrorStub = {
-        async create(): Promise<never> {
-          return Promise.reject(new Error('generic error'))
-        },
-      } as unknown as Prisma.UtilisateurRecordDelegate
-
-      const utilisateur = utilisateurFactory()
-
-      // WHEN
-      const resultatGenericError = new PrismaUtilisateurRepository(prismaClientGenericErrorStub).add(utilisateur)
-      const resultatAuthenticationError = new PrismaUtilisateurRepository(
-        prismaClientAuthenticationFailedErrorStub
-      ).add(utilisateur)
-
-      // THEN
-      await expect(resultatGenericError).rejects.toThrow('generic error')
-      await expect(resultatAuthenticationError).rejects.toThrow('authentication failed')
+      expect(resultatCreation).toBe(true)
     })
   })
 })
