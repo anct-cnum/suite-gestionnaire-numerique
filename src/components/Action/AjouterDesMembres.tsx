@@ -102,14 +102,16 @@ export default function AjouterDesMembres({
                 <div style={{ border: 'none', display: 'flex', flexDirection: 'row' }}>
                   {
 
-                    membre.roles.map((role: RoleViewModel) => (
-                      <Badge
-                        color={role.color}
-                        key={membre.id+ role.nom+role.color}
-                      >
-                        {role.nom}
-                      </Badge>
-                    ))
+                    membre.roles
+                      .filter(role => role.nom !== 'Observateur' )
+                      .map((role: RoleViewModel) => (
+                        <Badge
+                          color={role.color}
+                          key={membre.id+ role.nom+role.color}
+                        >
+                          {role.nom}
+                        </Badge>
+                      ))
                   }
                 </div>
               </Checkbox>

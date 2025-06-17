@@ -21,16 +21,18 @@ export default function Membre({
       </DrawerTitle>
       <div className="fr-mb-2w">
         <ul className="fr-tags-group">
-          {membreDetails.roles.map((role) => (
-            <li
-              className="fr-mr-1w"
-              key={role.nom}
-            >
-              <Badge color={role.color}>
-                {role.nom}
-              </Badge>
-            </li>
-          ))}
+          {membreDetails.roles
+            .filter(role => role.nom !== 'Observateur' )
+            .map((role) => (
+              <li
+                className="fr-mr-1w"
+                key={role.nom}
+              >
+                <Badge color={role.color}>
+                  {role.nom}
+                </Badge>
+              </li>
+            ))}
           <li className="color-grey">
             {membreDetails.type}
           </li>
