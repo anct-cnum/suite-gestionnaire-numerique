@@ -10,7 +10,7 @@ generator json {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["min"]
+  schemas  = ["min", "admin"]
 }
 
 model GroupementRecord {
@@ -393,6 +393,36 @@ model DepartementEnveloppeRecord {
   @@unique([departementCode, enveloppeId])
   @@map("departement_enveloppe")
   @@schema("min")
+}
+
+model IfnCommune {
+  id        Int      @id @default(autoincrement())
+  codeInsee String   @unique @map("code_insee") @db.VarChar(5)
+  score     Float?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime? @map("updated_at")
+
+  commune Commune @relation(fields: [codeInsee], references: [codeInsee])
+
+  @@map("ifn_commune")
+  @@schema("admin")
+}
+
+model Commune {
+  id             Int      @id @default(autoincrement())
+  geom           Json     // Pour stocker la géométrie MultiPolygon
+  departementId  Int      @map("departement_id")
+  statut         String?  @db.VarChar(24)
+  codeInsee      String   @unique @map("code_insee") @db.VarChar(5)
+  nom            String   @db.VarChar(50)
+  population     Int?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime? @map("updated_at")
+
+  ifnCommune IfnCommune?
+
+  @@map("commune")
+  @@schema("admin")
 }
 
 enum Role {
