@@ -53,14 +53,16 @@ export default function Membre({ viewModel }: Props): ReactElement {
 
           <div className="fr-grid-row space-between">
             <div>
-              {viewModel.role.roles.map((role) => (
-                <Fragment key={role.color}>
-                  <Badge color={role.color}>
-                    {role.nom}
-                  </Badge>
-                  {' '}
-                </Fragment>
-              ))}
+              {viewModel.role.roles
+                .filter(role => role.nom !== 'Observateur')
+                .map((role) => (
+                  <Fragment key={role.color}>
+                    <Badge color={role.color}>
+                      {role.nom}
+                    </Badge>
+                    {' '}
+                  </Fragment>
+                ))}
             </div>
             <p className="fr-text--sm color-grey">
               Modifiée le
@@ -258,14 +260,16 @@ export default function Membre({ viewModel }: Props): ReactElement {
                     Rôle dans la gouvernance
                   </dt>
                   <dd className="font-weight-500">
-                    {viewModel.role.roles.map((role) => (
-                      <Fragment key={role.color}>
-                        <Badge color={role.color}>
-                          {role.nom}
-                        </Badge>
-                        {' '}
-                      </Fragment>
-                    ))}
+                    {viewModel.role.roles
+                      .filter(role => role.nom !== 'Observateur' )
+                      .map((role) => (
+                        <Fragment key={role.color}>
+                          <Badge color={role.color}>
+                            {role.nom}
+                          </Badge>
+                          {' '}
+                        </Fragment>
+                      ))}
                   </dd>
                 </div>
                 <div className="fr-col-6">

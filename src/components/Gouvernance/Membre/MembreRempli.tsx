@@ -47,14 +47,16 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
                 {membre.type}
               </td>
               <td>
-                {membre.roles.map((role) => (
-                  <Fragment key={role.nom}>
-                    <Badge color={role.color}>
-                      {role.nom}
-                    </Badge>
-                    {' '}
-                  </Fragment>
-                ))}
+                {membre.roles
+                  .filter(role => role.nom !== 'Observateur' )
+                  .map((role) => (
+                    <Fragment key={role.nom}>
+                      <Badge color={role.color}>
+                        {role.nom}
+                      </Badge>
+                      {' '}
+                    </Fragment>
+                  ))}
               </td>
             </tr>
           ))

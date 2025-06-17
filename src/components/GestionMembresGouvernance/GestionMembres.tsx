@@ -121,14 +121,16 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
               >
                 Rôles
               </option>
-              {membresViewModel.roles.map((role) => (
-                <option
-                  key={role.color}
-                  value={role.nom}
-                >
-                  {role.nom}
-                </option>
-              ))}
+              {membresViewModel.roles
+                .filter(role => role.nom !== 'Observateur' )
+                .map((role) => (
+                  <option
+                    key={role.color}
+                    value={role.nom}
+                  >
+                    {role.nom}
+                  </option>
+                ))}
             </select>
           </div>
           <div className={`fr-tag fr-accordion__btn color-blue-france ${styles.selecteur}`}>
@@ -192,14 +194,16 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
               {membre.contactReferent.intituleCourt}
             </td>
             <td>
-              {membre.roles.map((role) => (
-                <Fragment key={role.color}>
-                  <Badge color={role.color}>
-                    {role.nom}
-                  </Badge>
-                  {' '}
-                </Fragment>
-              ))}
+              {membre.roles
+                .filter(role => role.nom !== 'Observateur' )
+                .map((role) => (
+                  <Fragment key={role.color}>
+                    <Badge color={role.color}>
+                      {role.nom}
+                    </Badge>
+                    {' '}
+                  </Fragment>
+                ))}
             </td>
             <td
               className="fr-cell--center"
