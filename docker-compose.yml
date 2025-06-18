@@ -14,7 +14,6 @@ services:
       - type: bind
         source: ./dbs
         target: /dbs
-        
 
   postgres-test:
     extends:

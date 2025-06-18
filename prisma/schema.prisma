@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
 
@@ -10,7 +10,7 @@ generator json {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  schemas  = ["min", "admin"]
+  schemas  = ["min", "admin", "reference", "main"]
 }
 
 model GroupementRecord {
@@ -396,10 +396,10 @@ model DepartementEnveloppeRecord {
 }
 
 model IfnCommune {
-  id        Int      @id @default(autoincrement())
-  codeInsee String   @unique @map("code_insee") @db.VarChar(5)
+  id        Int       @id @default(autoincrement())
+  codeInsee String    @unique @map("code_insee") @db.VarChar(5)
   score     Float?
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @map("updated_at")
 
   commune Commune @relation(fields: [codeInsee], references: [codeInsee])
@@ -409,15 +409,15 @@ model IfnCommune {
 }
 
 model Commune {
-  id             Int      @id @default(autoincrement())
-  geom           Json     // Pour stocker la géométrie MultiPolygon
-  departementId  Int      @map("departement_id")
-  statut         String?  @db.VarChar(24)
-  codeInsee      String   @unique @map("code_insee") @db.VarChar(5)
-  nom            String   @db.VarChar(50)
-  population     Int?
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime? @map("updated_at")
+  id            Int       @id @default(autoincrement())
+  geom          Json // Pour stocker la géométrie MultiPolygon
+  departementId Int       @map("departement_id")
+  statut        String?   @db.VarChar(24)
+  codeInsee     String    @unique @map("code_insee") @db.VarChar(5)
+  nom           String    @db.VarChar(50)
+  population    Int?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime? @map("updated_at")
 
   ifnCommune IfnCommune?
 

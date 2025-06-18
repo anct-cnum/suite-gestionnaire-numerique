@@ -21,7 +21,7 @@ export type IndicesDeFragiliteReadModel = Readonly<{
   departement: string
 }>
 
-export type CommuneReadModel = Readonly<{
+type CommuneReadModel = Readonly<{
   codeInsee: string
   score: null | number
 }>

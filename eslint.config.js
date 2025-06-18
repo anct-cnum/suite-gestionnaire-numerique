@@ -14,7 +14,6 @@ import 'eslint-plugin-only-warn'
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { files: ['**/*.ts?(x)'] },
-  { ignores: ['seeds/fne/client-fne'] },
   { settings: { 'import/resolver': {typescript: {} } } },
   {
     languageOptions: {
@@ -343,7 +342,7 @@ export default [
   },
   {
     files: ['**/*'],
-    ignores: ['src/app/**/*', 'seeds/**/*'],
+    ignores: ['src/app/**/*'],
     rules: {
       'no-restricted-syntax': [
         'error',
