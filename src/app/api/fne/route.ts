@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 
 import prisma from '../../../../prisma/prismaClient'
-import { PrismaIndicesDeFragiliteLoader } from '@/infrastructure/loaders/PrismaIndicesDeFragiliteLoader'
+import { PrismaIndicesDeFragiliteLoader } from '@/gateways/PrismaIndicesDeFragiliteLoader'
 import { RecupererMesIndicesDeFragilite } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 
 export async function GET() {
@@ -9,7 +9,7 @@ export async function GET() {
     const loader = new PrismaIndicesDeFragiliteLoader(prisma)
     const useCase = new RecupererMesIndicesDeFragilite(loader)
 
-    const result = await useCase.handle({ codeDepartement: '29' })
+    const result = await useCase.handle({ codeDepartement: '01' })
 
     return NextResponse.json(result)
   } catch (error) {
