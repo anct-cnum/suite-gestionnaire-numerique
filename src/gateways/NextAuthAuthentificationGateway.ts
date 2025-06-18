@@ -63,6 +63,7 @@ const nextAuthOptions = {
   debug: process.env.NODE_ENV !== 'production',
   pages: {
     error: '/auth-error',
+    signOut: '/deconnexion',
   },
   providers: [
     {
@@ -139,17 +140,21 @@ async function recupereretMettreAJourUtilisateur(
 ): Promise<null | UnUtilisateurReadModel> {
   let utilisateurReadModel
   try {
-    utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)
+    utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub, profile.email)
   } catch (error) {
-    if (error instanceof Error && error.message === 'Utilisateur non trouvé') {
-      try {
-        await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
-          .handle({
-            emailAsUid: profile.email,
-            uid: profile.sub,
-          })
-      } catch {
-        return null
+    if (error instanceof Error) {
+      if (error.message === 'Doit etre mis a jour') {
+        try {
+          await new MettreAJourUidALaPremiereConnexion(utilisateurRepository)
+            .handle({
+              emailAsUid: profile.email,
+              uid: profile.sub,
+            })
+        } catch {
+          return null
+        }
+      } else {
+        throw error
       }
     }
     utilisateurReadModel = await utilisateurLoader.findByUid(profile.sub)

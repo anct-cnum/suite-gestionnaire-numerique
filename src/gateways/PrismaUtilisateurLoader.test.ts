@@ -168,6 +168,22 @@ describe('prisma utilisateur query', () => {
     })
   })
 
+  //Ticket #681 : https://github.com/anct-cnum/suite-gestionnaire-numerique/issues/681
+  it('quand je cherche un utilisateur qui existe par son ssoId et dont le ssoId egale a son email, et dont le compte est actif, alors je lui demande de se reconnecter', async () => {
+    // GIVEN
+    const ssoIdVenantDuProConnect = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+    const ssoIdDansLaBaeDeDonnees = 'martin.tartempion@example.net'
+    await creerUnUtilisateur({ isSupprime: false, ssoId: ssoIdDansLaBaeDeDonnees })
+
+    // WHEN
+    const utilisateurReadModel =
+      async (): Promise<UnUtilisateurReadModel> => new PrismaUtilisateurLoader()
+        .findByUid(ssoIdVenantDuProConnect, ssoIdDansLaBaeDeDonnees)
+
+    // THEN
+    await expect(utilisateurReadModel).rejects.toThrow('Doit etre mis a jour')
+  })
+
   describe('chercher mes utilisateurs', () => {
     it('étant admin quand je cherche mes utilisateurs alors je les trouve tous indépendamment de leur rôle rangé par ordre alphabétique', async () => {
       // GIVEN

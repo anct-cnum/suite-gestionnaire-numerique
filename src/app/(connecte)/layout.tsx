@@ -11,6 +11,7 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
 import config from '@/use-cases/config.json'
+import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export default async function Layout({ children }: Readonly<PropsWithChildren>): Promise<ReactElement> {
   const session = await getSession()
@@ -18,9 +19,14 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   if (!session) {
     redirect('/connexion')
   }
+  let utilisateurReadModel: UnUtilisateurReadModel
+  try {
+    const utilisateurLoader = new PrismaUtilisateurLoader()
+    utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
+  } catch {
+    redirect('/api/auth/signout?callbackUrl=/connexion')
+  }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateurReadModel = await utilisateurLoader.findByUid(session.user.sub)
   const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
 
   return (
