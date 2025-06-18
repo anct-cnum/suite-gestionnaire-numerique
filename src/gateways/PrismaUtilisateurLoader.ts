@@ -9,7 +9,7 @@ import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateur
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
-  async findByUid(uid: string): Promise<UnUtilisateurReadModel> {
+  async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
     const utilisateurRecord = await this.#dataResource.findUnique({
       include: {
         relationDepartement: true,
@@ -23,9 +23,27 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       },
     })
     if (!utilisateurRecord) {
-      throw new Error('Utilisateur non trouvé')
+      if (email !== undefined && email) {
+        const doitEtreMiseAJour = await this.#dataResource.findUnique({
+          include: {
+            relationDepartement: true,
+            relationGroupement: true,
+            relationRegion: true,
+            relationStructure: true,
+          },
+          where: {
+            isSupprime: false,
+            ssoId: email,
+          },
+        })
+        if (doitEtreMiseAJour) {
+          throw new Error('Doit etre mis a jour')
+        }
+      } else {
+        throw new Error('Utilisateur non trouvé')
+      }
     }
-    return transform(utilisateurRecord)
+    return transform(utilisateurRecord as UtilisateurEtSesRelationsRecord)
   }
 
   async mesUtilisateursEtLeTotal(
