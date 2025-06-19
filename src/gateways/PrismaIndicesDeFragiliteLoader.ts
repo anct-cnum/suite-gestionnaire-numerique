@@ -1,6 +1,4 @@
 
-import { Decimal } from '@prisma/client/runtime/library'
-
 import prisma from '../../prisma/prismaClient'
 import { IndicesDeFragiliteLoader, IndicesDeFragiliteReadModel } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 
@@ -19,7 +17,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
       },
     })
     return {
-      communes: communes.map((commune: { codeInsee: string; score: Decimal | null }) => ({
+      communes: communes.map((commune) => ({
         codeInsee: commune.codeInsee,
         score: commune.score ? Number(commune.score) : null,
       })),
