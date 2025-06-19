@@ -7371,6 +7371,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"decimal@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "decimal@npm:0.0.2"
+  checksum: 10c0/49e3db7c49bca4199c738acfda6480f0c68aaf99c509ebae3a0af2830a6eb812ea30e053755cf99a3dde307dab6d497b8cbefbe6a5e43e95a0b3f38dcf0d058c
+  languageName: node
+  linkType: hard
+
 "deep-eql@npm:^5.0.1":
   version: 5.0.2
   resolution: "deep-eql@npm:5.0.2"
@@ -10998,6 +11005,7 @@ __metadata:
     "@vitest/coverage-istanbul": "npm:^3.1.2"
     "@vitest/eslint-plugin": "npm:^1.1.36"
     chart.js: "npm:^4.4.9"
+    decimal: "npm:^0.0.2"
     depcheck: "npm:^1.4.7"
     dotenv-cli: "npm:^8.0.0"
     eslint: "npm:^9.21.0"

@@ -397,31 +397,13 @@ model DepartementEnveloppeRecord {
 
 model IfnCommune {
   id        Int       @id @default(autoincrement())
-  codeInsee String    @unique @map("code_insee") @db.VarChar(5)
-  score     Float?
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime? @map("updated_at")
+  codeInsee String    @map("code_insee") @db.VarChar(5)
+  score     Decimal?  @db.Decimal
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
 
-  commune Commune @relation(fields: [codeInsee], references: [codeInsee])
-
+  @@index([codeInsee])
   @@map("ifn_commune")
-  @@schema("admin")
-}
-
-model Commune {
-  id            Int       @id @default(autoincrement())
-  geom          Json // Pour stocker la géométrie MultiPolygon
-  departementId Int       @map("departement_id")
-  statut        String?   @db.VarChar(24)
-  codeInsee     String    @unique @map("code_insee") @db.VarChar(5)
-  nom           String    @db.VarChar(50)
-  population    Int?
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime? @map("updated_at")
-
-  ifnCommune IfnCommune?
-
-  @@map("commune")
   @@schema("admin")
 }
 
