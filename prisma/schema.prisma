@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 generator json {
@@ -9,6 +10,7 @@ generator json {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["admin", "main", "min", "reference"]
 }
 
 model GroupementRecord {
@@ -19,6 +21,7 @@ model GroupementRecord {
   utilisateurs UtilisateurRecord[]
 
   @@map("groupement")
+  @@schema("min")
 }
 
 model DepartementRecord {
@@ -35,6 +38,7 @@ model DepartementRecord {
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
+  @@schema("min")
 }
 
 model RegionRecord {
@@ -46,6 +50,7 @@ model RegionRecord {
   membresGouvernance MembreGouvernanceSgarRecord[]
 
   @@map("region")
+  @@schema("min")
 }
 
 model StructureRecord {
@@ -70,6 +75,7 @@ model StructureRecord {
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
   @@map("structure")
+  @@schema("min")
 }
 
 model UtilisateurRecord {
@@ -105,6 +111,7 @@ model UtilisateurRecord {
   FeuilleDeRouteRecord      FeuilleDeRouteRecord[]
 
   @@map("utilisateur")
+  @@schema("min")
 }
 
 model GouvernanceRecord {
@@ -125,6 +132,7 @@ model GouvernanceRecord {
   membres         MembreRecord[]
 
   @@map("gouvernance")
+  @@schema("min")
 }
 
 model ComiteRecord {
@@ -143,6 +151,7 @@ model ComiteRecord {
   relationGouvernance GouvernanceRecord @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
 
   @@map("comite")
+  @@schema("min")
 }
 
 model FeuilleDeRouteRecord {
@@ -166,6 +175,7 @@ model FeuilleDeRouteRecord {
   action              ActionRecord[]
 
   @@map("feuille_de_route")
+  @@schema("min")
 }
 
 model ContactMembreGouvernanceRecord {
@@ -179,6 +189,7 @@ model ContactMembreGouvernanceRecord {
   membresContactTechnique MembreRecord[] @relation("contactTechnique")
 
   @@map("contact_membre_gouvernance")
+  @@schema("min")
 }
 
 model MembreRecord {
@@ -207,6 +218,7 @@ model MembreRecord {
   feuillesDeRoute               FeuilleDeRouteRecord[]
 
   @@map("membre")
+  @@schema("min")
 }
 
 model MembreGouvernanceDepartementRecord {
@@ -219,6 +231,7 @@ model MembreGouvernanceDepartementRecord {
 
   @@unique([departementCode, membreId, role])
   @@map("membre_gouvernance_departement")
+  @@schema("min")
 }
 
 model MembreGouvernanceSgarRecord {
@@ -231,6 +244,7 @@ model MembreGouvernanceSgarRecord {
 
   @@unique([sgarCode, membreId, role])
   @@map("membre_gouvernance_sgar")
+  @@schema("min")
 }
 
 model MembreGouvernanceEpciRecord {
@@ -242,6 +256,7 @@ model MembreGouvernanceEpciRecord {
 
   @@id([epci, membreId, role])
   @@map("membre_gouvernance_epci")
+  @@schema("min")
 }
 
 model MembreGouvernanceCommuneRecord {
@@ -253,6 +268,7 @@ model MembreGouvernanceCommuneRecord {
 
   @@unique([commune, membreId, role])
   @@map("membre_gouvernance_commune")
+  @@schema("min")
 }
 
 model MembreGouvernanceStructureRecord {
@@ -264,6 +280,7 @@ model MembreGouvernanceStructureRecord {
 
   @@unique([structure, membreId, role])
   @@map("membre_gouvernance_structure")
+  @@schema("min")
 }
 
 model ActionRecord {
@@ -289,6 +306,7 @@ model ActionRecord {
   coFinancement        CoFinancementRecord[]
 
   @@map("action")
+  @@schema("min")
 }
 
 model DemandeDeSubventionRecord {
@@ -310,6 +328,7 @@ model DemandeDeSubventionRecord {
   beneficiaire BeneficiaireSubventionRecord[]
 
   @@map("demande_de_subvention")
+  @@schema("min")
 }
 
 model BeneficiaireSubventionRecord {
@@ -321,6 +340,7 @@ model BeneficiaireSubventionRecord {
 
   @@unique([demandeDeSubventionId, membreId])
   @@map("beneficiaire_subvention")
+  @@schema("min")
 }
 
 model PorteurActionRecord {
@@ -332,6 +352,7 @@ model PorteurActionRecord {
 
   @@unique([actionId, membreId])
   @@map("porteur_action")
+  @@schema("min")
 }
 
 model EnveloppeFinancementRecord {
@@ -345,6 +366,7 @@ model EnveloppeFinancementRecord {
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("enveloppe_financement")
+  @@schema("min")
 }
 
 model CoFinancementRecord {
@@ -357,6 +379,7 @@ model CoFinancementRecord {
   membre MembreRecord @relation(fields: [memberId], references: [id])
 
   @@map("co_financement")
+  @@schema("min")
 }
 
 model DepartementEnveloppeRecord {
@@ -369,6 +392,7 @@ model DepartementEnveloppeRecord {
 
   @@unique([departementCode, enveloppeId])
   @@map("departement_enveloppe")
+  @@schema("min")
 }
 
 enum Role {
@@ -380,4 +404,364 @@ enum Role {
   instructeur
   pilote_politique_publique
   support_animation
+
+  @@schema("min")
+}
+
+model commune {
+  id             Int                     @id @default(autoincrement())
+  geom           Unsupported("geometry")
+  departement_id Int
+  statut         String?                 @db.VarChar(24)
+  code_insee     String                  @unique(map: "commune_ukey") @db.VarChar(5)
+  nom            String                  @db.VarChar(50)
+  population     Int?
+  created_at     DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at     DateTime?               @db.Timestamp(6)
+  departement    admin_departement       @relation(fields: [departement_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commune_departement_id")
+  commune_epci   commune_epci[]
+  zonage         zonage[]
+
+  @@index([geom], type: Gist)
+  @@index([nom])
+  @@schema("admin")
+}
+
+model commune_epci {
+  id         Int       @id @default(autoincrement())
+  commune_id Int
+  epci_id    Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+  commune    commune   @relation(fields: [commune_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commune_epci_commune_id")
+  epci       epci      @relation(fields: [epci_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commune_epci_epci_id")
+
+  @@unique([commune_id, epci_id], map: "commune_epci_ukey")
+  @@schema("admin")
+}
+
+model admin_departement {
+  id         Int                     @id @default(autoincrement())
+  geom       Unsupported("geometry")
+  region_id  Int
+  code       String                  @unique(map: "departement_ukey") @db.VarChar(3)
+  nom        String                  @db.VarChar(30)
+  created_at DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at DateTime?               @db.Timestamp(6)
+  commune    commune[]
+  region     admin_region            @relation(fields: [region_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "departement_region_id")
+
+  @@map("departement")
+  @@schema("admin")
+}
+
+model epci {
+  id           Int                     @id @default(autoincrement())
+  geom         Unsupported("geometry")
+  code         String                  @unique(map: "epci_ukey") @db.VarChar(9)
+  type         String                  @db.VarChar(32)
+  nom          String                  @db.VarChar(90)
+  created_at   DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at   DateTime?               @db.Timestamp(6)
+  commune_epci commune_epci[]
+
+  @@schema("admin")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model IfnCommune {
+  id         Int       @id @default(autoincrement())
+  codeInsee  String    @map("code_insee") @db.VarChar(5)
+  score      Decimal?  @db.Decimal
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+
+  @@index([codeInsee])
+  @@map("ifn_commune")
+  @@schema("admin")
+}
+
+model insee_cp {
+  id          Int       @id @default(autoincrement())
+  code_insee  String    @db.VarChar(5)
+  code_postal String    @db.VarChar(5)
+  created_at  DateTime? @default(now()) @db.Timestamp(6)
+  updated_at  DateTime? @db.Timestamp(6)
+
+  @@unique([code_postal, code_insee], map: "insee_cp_ukey")
+  @@schema("admin")
+}
+
+model insee_historique {
+  id                 Int       @id @default(autoincrement())
+  code_insee_ancien  String    @db.VarChar(5)
+  code_insee_nouveau String    @db.VarChar(5)
+  created_at         DateTime? @default(now()) @db.Timestamp(6)
+  updated_at         DateTime? @db.Timestamp(6)
+
+  @@unique([code_insee_ancien, code_insee_nouveau], map: "insee_historique_ukey")
+  @@schema("admin")
+}
+
+model admin_region {
+  id          Int                     @id @default(autoincrement())
+  geom        Unsupported("geometry")
+  code        String                  @unique(map: "region_ukey") @db.VarChar(2)
+  nom         String                  @db.VarChar(35)
+  created_at  DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?               @db.Timestamp(6)
+  departement admin_departement[]
+
+  @@map("region")
+  @@schema("admin")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model zonage {
+  id          Int                      @id @default(autoincrement())
+  code        String?                  @unique(map: "zonage_code_ukey") @db.VarChar(8)
+  libelle     String?                  @db.VarChar(255)
+  code_insee  String                   @db.VarChar(5)
+  type        String                   @db.VarChar(3)
+  commentaire String?
+  geom        Unsupported("geometry")?
+  created_at  DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at  DateTime?                @db.Timestamp(6)
+  commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([code_insee])
+  @@index([geom], type: Gist)
+  @@schema("admin")
+}
+
+model zonage_log_erreur {
+  id          Int       @id @default(autoincrement())
+  code_insee  String?   @db.VarChar(5)
+  commentaire String?
+  erreur      String?
+  date_erreur DateTime? @default(now()) @db.Timestamp(6)
+
+  @@schema("admin")
+}
+
+model activites_coop {
+  id                                  Int       @id @default(autoincrement())
+  type                                String    @db.VarChar(100)
+  mediateur_id_coop                   String    @db.Uuid
+  structure_id_coop                   String?   @db.Uuid
+  date                                DateTime  @db.Timestamp(6)
+  duree                               Int
+  lieu_code_insee                     String?   @db.VarChar(20)
+  creation_coop                       DateTime? @db.Timestamp(6)
+  modification_coop                   DateTime? @db.Timestamp(6)
+  type_lieu                           String    @db.VarChar(100)
+  autonomie                           String?   @db.VarChar(100)
+  structure_de_redirection            String?   @db.VarChar(255)
+  oriente_vers_structure              Boolean?
+  precisions_demarche                 String?
+  degre_de_finalisation_demarche      String?   @db.VarChar(50)
+  titre_atelier                       String?   @db.VarChar(255)
+  niveau_atelier                      String?   @db.VarChar(50)
+  accompagnements                     Int       @default(0)
+  thematiques                         String[]
+  materiels                           String[]
+  thematiques_demarche_administrative String[]
+  created_at                          DateTime? @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime? @db.Timestamp(6)
+  personne_id                         Int
+  coop_id                             String?   @unique(map: "activites_coop_unique_coop_id") @db.Uuid
+  personne                            personne  @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
+
+  @@schema("main")
+}
+
+model adresse {
+  id                      Int                      @id @default(autoincrement())
+  id_adresse              String?                  @unique @db.Uuid
+  clef_interop            String?                  @db.VarChar(50)
+  departement             String?                  @db.VarChar(3)
+  code_postal             String?                  @db.VarChar(5)
+  nom_commune             String?                  @db.VarChar(255)
+  nom_voie                String?                  @db.VarChar(255)
+  numero_voie             Int?                     @db.SmallInt
+  created_at              DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?                @db.Timestamp(6)
+  geom                    Unsupported("geometry")?
+  code_insee              String?                  @db.VarChar(5)
+  repetition              String?                  @db.VarChar(10)
+  code_ban                String?                  @db.Uuid
+  additional_address_info Json?
+  structure               main_structure[]
+
+  @@unique([code_postal, nom_commune, nom_voie, numero_voie, repetition], map: "adresse_ukey")
+  @@index([geom], type: Gist)
+  @@schema("main")
+}
+
+model coordination_mediation {
+  id                                                             Int      @id @default(autoincrement())
+  coordinateur_id                                                Int
+  mediateur_id                                                   Int
+  coordination_id_coop                                           String   @db.Uuid
+  mediateur_id_coop                                              String   @db.Uuid
+  en_cours                                                       Boolean?
+  personne_coordination_mediation_coordinateur_idTopersonne      personne @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coodinateur_id")
+  personne_coordination_mediation_coordination_id_coopTopersonne personne @relation("coordination_mediation_coordination_id_coopTopersonne", fields: [coordination_id_coop], references: [coop_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coordination_id_coop")
+  personne_coordination_mediation_mediateur_idTopersonne         personne @relation("coordination_mediation_mediateur_idTopersonne", fields: [mediateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mediateur_id")
+  personne_coordination_mediation_mediateur_id_coopTopersonne    personne @relation("coordination_mediation_mediateur_id_coopTopersonne", fields: [mediateur_id_coop], references: [coop_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mediateur_id_coop")
+
+  @@schema("main")
+}
+
+model personne {
+  id                                                                                  Int                           @id @default(autoincrement())
+  prenom                                                                              String?                       @db.VarChar(50)
+  nom                                                                                 String?                       @db.VarChar(50)
+  telephone                                                                           String?                       @db.VarChar(20)
+  id_aidant_connect                                                                   String?                       @unique(map: "unique_id_aidant_connect") @db.VarChar(50)
+  id_conseiller_numerique                                                             String?                       @unique(map: "unique_id_conseiller_numerique") @db.VarChar(50)
+  original_created_at                                                                 DateTime?                     @db.Timestamp(6)
+  created_at                                                                          DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                                                                          DateTime?                     @db.Timestamp(6)
+  is_active_ac                                                                        Boolean?
+  formation_fne_ac                                                                    Boolean?
+  profession_ac                                                                       String?                       @db.VarChar
+  nb_accompagnements_ac                                                               Int?
+  id_structure_ac                                                                     String?                       @db.Uuid
+  emails                                                                              Json?
+  id_cn_pg                                                                            Int?                          @unique(map: "uq_id_cn_pg")
+  id_structure_tp                                                                     Int?
+  coop_id                                                                             String?                       @unique @db.Uuid
+  is_coordinateur                                                                     Boolean?
+  is_mediateur                                                                        Boolean?
+  activites_coop                                                                      activites_coop[]
+  coordination_mediation_coordination_mediation_coordinateur_idTopersonne             coordination_mediation[]      @relation("coordination_mediation_coordinateur_idTopersonne")
+  coordination_mediation_coordination_mediation_coordination_id_coopTopersonne        coordination_mediation[]      @relation("coordination_mediation_coordination_id_coopTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_idTopersonne                coordination_mediation[]      @relation("coordination_mediation_mediateur_idTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_id_coopTopersonne           coordination_mediation[]      @relation("coordination_mediation_mediateur_id_coopTopersonne")
+  structure_personne_id_structure_tpTostructure                                       main_structure?               @relation("personne_id_structure_tpTostructure", fields: [id_structure_tp], references: [id_structure_tp], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_structure_tp")
+  structure_personne_id_structure_acTostructure                                       main_structure?               @relation("personne_id_structure_acTostructure", fields: [id_structure_ac], references: [id_structure_ac], onDelete: NoAction, onUpdate: NoAction)
+  personne_lieux_activites_personne_lieux_activites_mediateur_id_coopTopersonne       personne_lieux_activites[]    @relation("personne_lieux_activites_mediateur_id_coopTopersonne")
+  personne_lieux_activites_personne_lieux_activites_personne_idTopersonne             personne_lieux_activites[]    @relation("personne_lieux_activites_personne_idTopersonne")
+  personne_structures_emplois_personne_structures_emplois_mediateur_id_coopTopersonne personne_structures_emplois[] @relation("personne_structures_emplois_mediateur_id_coopTopersonne")
+  personne_structures_emplois_personne_structures_emplois_personne_idTopersonne       personne_structures_emplois[] @relation("personne_structures_emplois_personne_idTopersonne")
+
+  @@schema("main")
+}
+
+model personne_lieux_activites {
+  id                                                              Int            @id @default(autoincrement())
+  personne_id                                                     Int
+  structure_id                                                    Int
+  structure_id_coop                                               String         @db.Uuid
+  mediateur_id_coop                                               String         @db.Uuid
+  en_cours                                                        Boolean?
+  structure_personne_lieux_activites_structure_idTostructure      main_structure @relation("personne_lieux_activites_structure_idTostructure", fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_lieu_id")
+  structure_personne_lieux_activites_structure_id_coopTostructure main_structure @relation("personne_lieux_activites_structure_id_coopTostructure", fields: [structure_id_coop], references: [structure_id_coop], onDelete: NoAction, onUpdate: NoAction, map: "fk_lieu_id_coop")
+  personne_personne_lieux_activites_mediateur_id_coopTopersonne   personne       @relation("personne_lieux_activites_mediateur_id_coopTopersonne", fields: [mediateur_id_coop], references: [coop_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mediateur_id_coop")
+  personne_personne_lieux_activites_personne_idTopersonne         personne       @relation("personne_lieux_activites_personne_idTopersonne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
+
+  @@schema("main")
+}
+
+model personne_structures_emplois {
+  id                                                                 Int            @id @default(autoincrement())
+  personne_id                                                        Int
+  structure_id                                                       Int
+  structure_id_coop                                                  String         @db.Uuid
+  mediateur_id_coop                                                  String         @db.Uuid
+  en_cours                                                           Boolean?
+  personne_personne_structures_emplois_mediateur_id_coopTopersonne   personne       @relation("personne_structures_emplois_mediateur_id_coopTopersonne", fields: [mediateur_id_coop], references: [coop_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mediateur_id_coop")
+  personne_personne_structures_emplois_personne_idTopersonne         personne       @relation("personne_structures_emplois_personne_idTopersonne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
+  structure_personne_structures_emplois_structure_idTostructure      main_structure @relation("personne_structures_emplois_structure_idTostructure", fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_structure_id")
+  structure_personne_structures_emplois_structure_id_coopTostructure main_structure @relation("personne_structures_emplois_structure_id_coopTostructure", fields: [structure_id_coop], references: [structure_id_coop], onDelete: NoAction, onUpdate: NoAction, map: "fk_structure_id_coop")
+
+  @@schema("main")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model poste {
+  id               Int             @id @default(autoincrement())
+  id_poste_conum   Int             @unique(map: "poste_unique_id_poste_conum")
+  id_structure_tp  Int?
+  id_cn            Int?
+  typologie        String?         @db.VarChar(255)
+  created_at       DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?       @db.Timestamp(6)
+  date_attribution DateTime        @db.Timestamp(6)
+  date_rendu_poste DateTime?       @db.Timestamp(6)
+  poste_renouvele  Boolean?
+  action_coselec   String?         @db.VarChar(255)
+  etat             String?         @db.VarChar(255)
+  structure        main_structure? @relation(fields: [id_structure_tp], references: [id_structure_tp], onDelete: NoAction, onUpdate: NoAction, map: "fk_id_structure_tp")
+
+  @@unique([id_poste_conum, id_structure_tp, id_cn], map: "uq_id_poste_cn_strcuture")
+  @@schema("main")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model main_structure {
+  id                                                                                   Int                           @id @default(autoincrement())
+  siret                                                                                String?                       @db.VarChar(15)
+  rna                                                                                  String?                       @db.VarChar(10)
+  nom                                                                                  String?                       @db.VarChar(255)
+  code_activite_principale                                                             String?                       @db.VarChar(6)
+  original_created_at                                                                  DateTime?                     @db.Timestamp(6)
+  created_at                                                                           DateTime?                     @default(now()) @db.Timestamp(6)
+  updated_at                                                                           DateTime?                     @db.Timestamp(6)
+  adresse_id                                                                           Int?
+  id_structure_ac                                                                      String?                       @unique(map: "structure_id_structure_ac_unique") @db.Uuid
+  categorie_juridique                                                                  String?                       @db.VarChar(4)
+  nb_mandats_ac                                                                        Int?
+  structure_id_coop                                                                    String?                       @unique(map: "structure_id_structure_coop_unique") @db.Uuid
+  etat_administratif                                                                   String?                       @db.VarChar
+  denomination_sirene                                                                  String?                       @db.VarChar
+  id_structure_tp                                                                      Int?                          @unique(map: "uq_id_structure_tp")
+  publique                                                                             Boolean?
+  visible_pour_cartographie_nationale                                                  Boolean?
+  structure_cartographie_nationale_id                                                  String?                       @db.VarChar(255)
+  typologies                                                                           String[]
+  presentation_resume                                                                  String?                       @db.VarChar(500)
+  presentation_detail                                                                  String?
+  contact                                                                              Json?
+  horaires                                                                             String?                       @db.VarChar
+  prise_rdv                                                                            String?                       @db.VarChar
+  structure_parente                                                                    String?                       @db.Uuid
+  services                                                                             String[]
+  publics_specifiquement_adresses                                                      String[]
+  prise_en_charge_specifique                                                           String[]
+  frais_a_charge                                                                       String[]
+  dispositif_programmes_nationaux                                                      String[]
+  formations_labels                                                                    String[]
+  autres_formations_labels                                                             String[]
+  itinerance                                                                           String[]
+  modalites_acces                                                                      String[]
+  modalites_accompagnement                                                             String[]
+  mediateurs_en_activite                                                               Int?
+  emplois                                                                              Int?
+  source                                                                               String?                       @db.VarChar
+  personne_personne_id_structure_tpTostructure                                         personne[]                    @relation("personne_id_structure_tpTostructure")
+  personne_personne_id_structure_acTostructure                                         personne[]                    @relation("personne_id_structure_acTostructure")
+  personne_lieux_activites_personne_lieux_activites_structure_idTostructure            personne_lieux_activites[]    @relation("personne_lieux_activites_structure_idTostructure")
+  personne_lieux_activites_personne_lieux_activites_structure_id_coopTostructure       personne_lieux_activites[]    @relation("personne_lieux_activites_structure_id_coopTostructure")
+  personne_structures_emplois_personne_structures_emplois_structure_idTostructure      personne_structures_emplois[] @relation("personne_structures_emplois_structure_idTostructure")
+  personne_structures_emplois_personne_structures_emplois_structure_id_coopTostructure personne_structures_emplois[] @relation("personne_structures_emplois_structure_id_coopTostructure")
+  poste                                                                                poste[]
+  adresse                                                                              adresse?                      @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
+  categories_juridiques                                                                categories_juridiques?        @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique")
+
+  @@map("structure")
+  @@schema("main")
+}
+
+model categories_juridiques {
+  id         Int              @id @default(autoincrement())
+  code       String           @unique(map: "categories_juridiques_ukey") @db.VarChar(4)
+  nom        String           @db.VarChar(150)
+  niveau     Int              @db.SmallInt
+  created_at DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at DateTime?        @db.Timestamp(6)
+  structure  main_structure[]
+
+  @@schema("reference")
 }
