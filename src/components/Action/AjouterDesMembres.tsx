@@ -48,7 +48,7 @@ export default function AjouterDesMembres({
         {hasMembres ? 'Modifier' : 'Ajouter'}
       </button>
       <Drawer
-        boutonFermeture={`Fermer l’ajout des ${labelPluriel}`}
+        boutonFermeture={`Fermer l'ajout des ${labelPluriel}`}
         closeDrawer={() => {
           setIsDrawerOpen(false)
         }}
@@ -102,10 +102,12 @@ export default function AjouterDesMembres({
                 </span>
                 {/* eslint-disable-next-line no-negated-condition */}
                 { membre.type !== undefined ?
-                  <>
-                    <br />
+                  <span
+                    className="fr-text--sm"
+                    style={{ marginBottom: 0 }}
+                  >
                     {membre.type}
-                  </>
+                  </span>
                   : null}
                 
                 <div style={{ border: 'none', display: 'flex', flexDirection: 'row' }}>

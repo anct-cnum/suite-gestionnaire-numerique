@@ -150,7 +150,7 @@ describe('ajout des bénéficiaires', () => {
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des bénéficiaires de la subvention')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) bénéficiaire(s)' })
-      const fermer = presserLeBouton('Fermer l’ajout des bénéficiaires de la subvention')
+      const fermer = presserLeBouton('Fermer l\'ajout des bénéficiaires de la subvention')
 
       // THEN
       expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterDesBeneficiairesId')

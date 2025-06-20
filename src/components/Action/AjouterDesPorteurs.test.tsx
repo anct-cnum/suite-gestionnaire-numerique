@@ -81,7 +81,7 @@ describe('ajout des porteurs', () => {
       // WHEN
       presserLeBouton('Modifier', 'Ajouter des porteurs')
       const drawer = screen.getByRole('dialog', { hidden: false, name: 'Ajouter le(s) porteur(s)' })
-      const fermer = presserLeBouton('Fermer l’ajout des porteurs')
+      const fermer = presserLeBouton('Fermer l\'ajout des porteurs')
 
       // THEN
       expect(fermer).toHaveAttribute('aria-controls', 'drawerAjouterDesPorteursId')
