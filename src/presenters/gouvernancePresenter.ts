@@ -30,6 +30,7 @@ export function gouvernancePresenter(
           link: membreLink(gouvernanceReadModel.uid, porteur.uid),
           nom: porteur.nom,
           roles: porteur.roles.map( role=> toRoleViewModel(role)),
+          type:  porteur.type,
         } as PorteurPotentielViewModel)),
     sectionFeuillesDeRoute: {
       ...buildTitresFeuillesDeRoute(gouvernanceReadModel),

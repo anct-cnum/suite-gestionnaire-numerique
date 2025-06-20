@@ -16,7 +16,8 @@ export type FeuillesDeRouteReadModel = Readonly<{
   uidGouvernance: string
 }>
 
-export type MembreAvecRoleDansLaGouvernance = Membre & Readonly<{ roles: ReadonlyArray<string> }>
+export type MembreAvecRoleDansLaGouvernance = Membre & Readonly<{ roles: ReadonlyArray<string> }> &
+ Readonly<{ type?: string }>
 
 type FeuilleDeRouteReadModel = Readonly<
   {

@@ -280,9 +280,9 @@ const include = {
 }
 
 function fromMembreAvecRoles(
-  { id, nom, roles }: Membre
+  { id, nom, roles, type }: Membre
 ): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, uid: id }
+  return { nom, roles, type: type ?? undefined, uid: id }
 }
 
 type Totaux = Readonly<{

@@ -32,7 +32,6 @@ export default async function Layout({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,
     })
-
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
 
     return (

@@ -32,7 +32,6 @@ export default function AjouterDesMembres({
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
   const membresGouvernanceConfirme = gouvernanceViewModel.porteursPotentielsNouvellesFeuillesDeRouteOuActions
   const hasMembres = membres.length > 0
-
   return (
     <>
       <button
@@ -98,7 +97,17 @@ export default function AjouterDesMembres({
                 label={checkboxName}
                 value={membre.id}
               >
-                {membre.nom}
+                <span className="primary font-weight-700 fr-px-0 no-hover d-block">
+                  {membre.nom}
+                </span>
+                {/* eslint-disable-next-line no-negated-condition */}
+                { membre.type !== undefined ?
+                  <>
+                    <br />
+                    {membre.type}
+                  </>
+                  : null}
+                
                 <div style={{ border: 'none', display: 'flex', flexDirection: 'row' }}>
                   {
 

@@ -5,5 +5,6 @@ export type  PorteurPotentielViewModel = Readonly<{
   link: string
   nom: string
   roles: Array<RoleViewModel>
+  type?: string
 }>
   
