@@ -1,3 +1,4 @@
+
 // Échelle de couleurs pour l'indice de fragilité (1 à 10)
 export const FRAGILITE_COLORS = {
   1: '#4A6BAE', // Très clair
@@ -9,9 +10,18 @@ export const FRAGILITE_COLORS = {
   7: '#D95C5E',
 }
 
-export function indiceFragilitePresenter(departement: string): Array<CommuneFragilite> {
-  return generateFakeCommunesFragilite(departement)
+export function indiceFragilitePresenter(ifnCommunes : ReadonlyArray<Readonly<{
+  codeInsee: string
+  score: null | number
+}>>): Array<CommuneFragilite> {
+  return ifnCommunes.map(commune => ({
+    codeInsee: commune.codeInsee,
+    couleur: getCouleurFragilite(commune.score ?? 0),
+    indice: commune.score ?? 0,
+  }))
 }
+
+interface CommuneScore { codeInsee: string; score: null | number }
 
 interface CommuneFragilite {
   codeInsee: string
@@ -20,19 +30,18 @@ interface CommuneFragilite {
 }
 
 function getCouleurFragilite(indice: number): string {
-  return FRAGILITE_COLORS[indice as keyof typeof FRAGILITE_COLORS] || '#ffffff'
+  const numberOfColors = Object.keys(FRAGILITE_COLORS).length
+  const maxIndice = 10
+
+  // Gère les cas où l'indice est en dehors de la plage [0, 10]
+  if (indice < 0 || indice > maxIndice) {
+    return '#ffffff' // Retourne une couleur par défaut
+  }
+
+  // Calcule l'index de la couleur (de 1 à 7)
+  const colorIndex = Math.max(1, Math.ceil(indice * numberOfColors / maxIndice))
+
+  return FRAGILITE_COLORS[colorIndex as keyof typeof FRAGILITE_COLORS] || '#ffffff'
 }
 
-function generateFakeCommunesFragilite(departement: string): Array<CommuneFragilite> {
-  const communesFragilite: Array<CommuneFragilite> = []
-  for (let index = 1; index <= 999; index += 1) {
-    const indice = Math.floor(Math.random() * 7) + 1 // Valeur entre 1 et 7
-    communesFragilite.push({
-      codeInsee: departement + index.toString().padStart(3, '0'),
-      couleur: getCouleurFragilite(indice),
-      indice,
-    })
-  }
-  return communesFragilite
-}
-export type { CommuneFragilite }
+export type { CommuneFragilite, CommuneScore }
