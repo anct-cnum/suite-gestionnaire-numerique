@@ -49,7 +49,6 @@
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
     "chart.js": "^4.4.9",
-    "decimal": "^0.0.2",
     "mjml": "^4.15.3",
     "mongodb": "^6.16.0",
     "nanoid": "3.3.8",
