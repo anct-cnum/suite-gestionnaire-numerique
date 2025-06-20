@@ -1,7 +1,7 @@
 @import 'maplibre-gl/dist/maplibre-gl.css';
 .mapContainer {
+  height: 100vh;
   width: 100%;
-  height: 620px;
   border-radius: 4px;
   overflow: hidden;
   position: relative;
@@ -10,4 +10,18 @@
 .maplibregl-canvas {
   width: 100%;
   height: 100%;
+}
+
+.mapWrapper {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+}
+
+.legendWrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
 } 

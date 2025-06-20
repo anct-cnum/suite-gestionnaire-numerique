@@ -1,5 +1,5 @@
 // Échelle de couleurs pour l'indice de fragilité (1 à 10)
-const FRAGILITE_COLORS = {
+export const FRAGILITE_COLORS = {
   1: '#4A6BAE', // Très clair
   2: '#5F8EC7',
   3: '#AAC4E6',
@@ -7,8 +7,7 @@ const FRAGILITE_COLORS = {
   5: '#EBB5BD',
   6: '#DD7480',
   7: '#D95C5E',
-}  7: '',
-
+}
 
 export function indiceFragilitePresenter(departement: string): Array<CommuneFragilite> {
   return generateFakeCommunesFragilite(departement)

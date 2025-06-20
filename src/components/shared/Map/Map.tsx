@@ -4,6 +4,7 @@ import maplibregl from 'maplibre-gl'
 import { ReactElement, useEffect, useRef } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
+import Legend from './Legend'
 import styles from './Map.module.css'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 
@@ -232,10 +233,15 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
   }, [departement, communesFragilite])
 
   return (
-    <div 
-      className={styles.mapContainer} 
-      ref={mapContainer}
-    />
+    <div className={styles.mapWrapper}>
+      <div 
+        className={styles.mapContainer} 
+        ref={mapContainer}
+      />
+      <div className={styles.legendWrapper}>
+        <Legend />
+      </div>
+    </div>
   )
 }
 
