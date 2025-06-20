@@ -18,7 +18,8 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function TableauDeBord({ indicesFragilite: communeFragilite, tableauDeBordViewModel }: Props): ReactElement {
+export default function TableauDeBord({ indicesFragilite: communeFragilite,
+  tableauDeBordViewModel }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   ChartJS.register(
@@ -127,7 +128,7 @@ export default function TableauDeBord({ indicesFragilite: communeFragilite, tabl
             </div>
             <Map
               communesFragilite={communeFragilite}
-              departement="69"
+              departement={tableauDeBordViewModel.departement}
             />
           </div>
           <div className="fr-col-4">
