@@ -238,6 +238,9 @@ describe('tableau de bord', () => {
 
   function afficherMonTableauDeBord(): void {
     const tableauDeBordViewModel = tableauDeBordPresenter('69')
-    renderComponent(<TableauDeBord tableauDeBordViewModel={tableauDeBordViewModel} />)
+    renderComponent(<TableauDeBord
+      indicesFragilite={[]}
+      tableauDeBordViewModel={tableauDeBordViewModel}
+    />)
   }
 })
