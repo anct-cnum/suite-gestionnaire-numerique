@@ -5,20 +5,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
+import EtatDesLieux from './EtatDesLieux'
 import styles from './TableauDeBord.module.css'
-import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
-import Map from '../shared/Map/Map'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function TableauDeBord({ indicesFragilite: communeFragilite,
+export default function TableauDeBord({ indicesFragilite: communesFragilite,
   tableauDeBordViewModel }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
@@ -90,101 +89,10 @@ export default function TableauDeBord({ indicesFragilite: communeFragilite,
         minHeight: '40vh',
       }}
       />
-      <section
-        aria-labelledby="etatDesLieux"
-        className="fr-mb-4w "
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="france-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="etatDesLieux"
-              >
-                État des lieux de l’inclusion numérique
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/lieux-inclusion"
-          >
-            Lieux d’inclusion numérique
-          </Link>
-        </div>
-        <div className="fr-grid-row">
-          <div className="fr-col-8 background-blue-france">
-            <div className="fr-grid-row space-between fr-p-4w">
-              <div className="font-weight-700 color-blue-france">
-                Indice de Fragilité numérique
-              </div>
-              <div className="color-grey">
-                Mise à jour le 23/09/2024
-              </div>
-            </div>
-            <Map
-              communesFragilite={communeFragilite}
-              departement={tableauDeBordViewModel.departement}
-            />
-          </div>
-          <div className="fr-col-4">
-            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="map-pin-2-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.inclusionNumerique}
-              </div>
-              <div className="font-weight-500">
-                Lieux d’inclusion numérique
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Toutes les typologies de lieux publics ou privés
-              </div>
-            </div>
-            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="map-pin-user-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.mediateursEtAidants}
-              </div>
-              <div className="font-weight-500">
-                Médiateurs et aidants numériques
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Conseillers numériques, coordinateurs, Aidants, …
-              </div>
-            </div>
-            <div className="background-blue-france fr-p-4w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="compass-3-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.accompagnementRealise}
-              </div>
-              <div className="font-weight-500">
-                Accompagnements réalisés
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Total cumulé des dispositifs
-              </div>
-              <Bar
-                backgroundColor={tableauDeBordViewModel.etatDesLieux.graphique.backgroundColor}
-                data={tableauDeBordViewModel.etatDesLieux.graphique.data}
-                labels={tableauDeBordViewModel.etatDesLieux.graphique.labels}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      <EtatDesLieux
+        communesFragilite={communesFragilite}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
       <section
         aria-labelledby="gouvernance"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
