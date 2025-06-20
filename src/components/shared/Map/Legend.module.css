@@ -1,21 +1,21 @@
 .legendContainer {
-  display: flex;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 8px 12px;
+  background-color: rgb(255 255 255 / 80%);
   border-radius: 8px;
+  color: #333;
+  display: flex;
   font-family: sans-serif;
   font-size: 14px;
-  color: #333;
   gap: 10px;
+  padding: 8px 12px;
 }
 
 .gradientBar {
-  display: flex;
-  width: 200px;
-  height: 20px;
   border-radius: 4px;
+  display: flex;
+  height: 20px;
   overflow: hidden;
+  width: 200px;
 }
 
 .colorBlock {

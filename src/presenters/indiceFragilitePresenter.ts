@@ -21,8 +21,6 @@ export function indiceFragilitePresenter(ifnCommunes : ReadonlyArray<Readonly<{
   }))
 }
 
-interface CommuneScore { codeInsee: string; score: null | number }
-
 interface CommuneFragilite {
   codeInsee: string
   couleur: string
@@ -44,4 +42,4 @@ function getCouleurFragilite(indice: number): string {
   return FRAGILITE_COLORS[colorIndex as keyof typeof FRAGILITE_COLORS] || '#ffffff'
 }
 
-export type { CommuneFragilite, CommuneScore }
+export type { CommuneFragilite }
