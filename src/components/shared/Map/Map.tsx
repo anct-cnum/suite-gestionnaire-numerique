@@ -49,7 +49,8 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
 
     // Ajouter la source pour le découpage administratif
     map.current.on('load', () => {
-      if (!map.current) {return}
+      console.log('...on load')
+      if (!mapContainer.current || !map.current) {return}
 
       console.log('Carte chargée, ajout de la source...')
       
@@ -89,10 +90,6 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
         const allSourceFeatures = map.current.querySourceFeatures('decoupage', {
           sourceLayer: 'departements',
         })
-        console.log('Toutes les features disponibles:', allSourceFeatures.map(f => ({
-          code: f.properties.code,
-          nom: f.properties.nom,
-        })))
         
         const allFeatures = map.current.querySourceFeatures('decoupage', {
           filter: ['==', 'code', departement],
@@ -100,7 +97,6 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
         })
         
         if (allFeatures.length > 0) {
-          console.log('Features trouvées avec succès:', allFeatures)
           const bounds = new maplibregl.LngLatBounds()
           const geometry = allFeatures[0].geometry as GeoJSON.Polygon
           geometry.coordinates[0].forEach((coord) => {
@@ -144,33 +140,8 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
           'source-layer': 'communes',
           type: 'fill',
         })
-        console.log('Couche communes ajoutée')
-
-        // Ajouter les noms des communes
-        map.current.addLayer({
-          filter: ['==', 'departement', departement],
-          id: 'communes-labels',
-          layout: {
-            'text-allow-overlap': false,
-            'text-field': ['get', 'nom'],
-            'text-size': 12,
-          },
-          paint: {
-            'text-color': '#000000',
-            'text-halo-color': '#ffffff',
-            'text-halo-width': 1,
-          },
-          source: 'decoupage',
-          'source-layer': 'communes',
-          type: 'symbol',
-        })
-        console.log('Couche labels ajoutée')
-
-        // Vérifier que les couches sont bien présentes
-        console.log('Layers après ajout:', map.current.getStyle().layers.map(l => l.id))
 
         // Chercher les features
-        console.log('Recherche des features du département...')
         searchFeatures()
       }
 
@@ -179,10 +150,8 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
         if (!map.current) {return}
         
         if (map.current.isSourceLoaded('decoupage')) {
-          console.log('Source decoupage chargée')
           initializeLayers()
         } else {
-          console.log('Source pas encore chargée, nouvelle tentative...')
           setTimeout(checkSourceLoaded, 100)
         }
       }
@@ -233,7 +202,10 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
   }, [departement, communesFragilite])
 
   return (
-    <div className={styles.mapWrapper}>
+    <div
+      className={styles.mapWrapper}
+      id="bli"
+    >
       <div 
         className={styles.mapContainer} 
         ref={mapContainer}
