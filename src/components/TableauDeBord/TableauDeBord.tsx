@@ -18,7 +18,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function TableauDeBord({ communeFragilite, tableauDeBordViewModel }: Props): ReactElement {
+export default function TableauDeBord({ indicesFragilite: communeFragilite, tableauDeBordViewModel }: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   ChartJS.register(
@@ -91,7 +91,7 @@ export default function TableauDeBord({ communeFragilite, tableauDeBordViewModel
       />
       <section
         aria-labelledby="etatDesLieux"
-        className={`fr-mb-4w  ${styles.hidden}`}
+        className="fr-mb-4w "
       >
         <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
           <div className="fr-grid-row fr-grid-row--middle">
@@ -635,6 +635,6 @@ export default function TableauDeBord({ communeFragilite, tableauDeBordViewModel
 }
 
 type Props = Readonly<{
-  communeFragilite: Array<CommuneFragilite>
+  indicesFragilite: Array<CommuneFragilite>
   tableauDeBordViewModel: TableauDeBordViewModel
 }>

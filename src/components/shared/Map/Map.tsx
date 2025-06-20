@@ -7,20 +7,6 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 import styles from './Map.module.css'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 
-// Échelle de couleurs pour l'indice de fragilité (1 à 10)
-const FRAGILITE_COLORS = {
-  1: '#e5f5e0', // Très clair
-  10: '#002d15', // Très foncé
-  2: '#c7e9c0',
-  3: '#a1d99b',
-  4: '#74c476',
-  5: '#41ab5d',
-  6: '#238b45',
-  7: '#006d2c',
-  8: '#00441b',
-  9: '#003d1a',
-}
-
 const EMPTY_STYLE = {
   glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
   layers: [
@@ -103,8 +89,8 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
           sourceLayer: 'departements',
         })
         console.log('Toutes les features disponibles:', allSourceFeatures.map(f => ({
-          code: f.properties?.code,
-          nom: f.properties?.nom,
+          code: f.properties.code,
+          nom: f.properties.nom,
         })))
         
         const allFeatures = map.current.querySourceFeatures('decoupage', {
@@ -145,8 +131,8 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
               'match',
               ['get', 'code'],
               ...communesFragilite.flatMap((commune) => [
-                commune.code,
-                FRAGILITE_COLORS[commune.fragilite as keyof typeof FRAGILITE_COLORS] || '#ffffff',
+                commune.codeInsee,
+                commune.couleur,
               ]),
               '#ffffff', // Couleur par défaut
             ] as any,
@@ -212,7 +198,7 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
 
         const feature = e.features[0]
         const coordinates = e.lngLat
-        const commune = communesFragilite.find((c) => c.code === feature.properties.code)
+        const commune = communesFragilite.find((c) => c.codeInsee === feature.properties.code)
 
         // Mettre à jour le popup
         if (popup.current && map.current) {
@@ -220,7 +206,7 @@ export default function Map({ communesFragilite, departement }: Props): ReactEle
             .setLngLat(coordinates)
             .setHTML(`
               <strong>${feature.properties.nom}</strong>
-              ${commune ? `<br/>Indice de fragilité : ${commune.fragilite}/10` : ''}
+              ${commune ? `<br/>Indice de fragilité : ${commune.indice}/10` : ''}
             `)
             .addTo(map.current)
         }
