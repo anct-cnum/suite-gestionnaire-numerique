@@ -2,11 +2,10 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import Notice from '@/components/shared/Notice/Notice'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
-import { indiceFragilitePresenter } from '@/presenters/indiceFragilitePresenter'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/indiceFragilitePresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
 export const metadata: Metadata = {
@@ -24,11 +23,12 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
   const tableauDeBordViewModel = tableauDeBordPresenter(utilisateur.departementCode ?? '')
-  const communeFragilite = indiceFragilitePresenter('69')
-  console.log(communeFragilite)
+  const indicesFragilite = indiceFragiliteParCommunePresenter('69')
+  console.log(indicesFragilite)
   return (
     <TableauDeBord 
-        communeFragilite={communeFragilite}
-	tableauDeBordViewModel={tableauDeBordViewModel} />
+      indicesFragilite={indicesFragilite}
+      tableauDeBordViewModel={tableauDeBordViewModel}
+    />
   )
 }
