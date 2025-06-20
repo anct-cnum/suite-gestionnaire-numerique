@@ -45,6 +45,62 @@ yarn dev
 
 Ouvrir le navigateur sur [http://localhost:3000](http://localhost:3000) pour voir le résultat.
 
+Vous ne pourrez pas vous connecter car vous n'avez pas de données en base.
+Il faut à minima un utilisateur et une gouvernance auquel il est raccroché.
+
+### 📊 Import des données de base
+
+#### Option 1 : Jeu de données MIN anonymisé (recommandé)
+
+1. Récupérer un jeu de données anonymisées de la base MIN
+2. Placer le fichier dans le répertoire `dbs/`
+3. Exécuter la commande suivante :
+
+```bash
+docker compose exec postgres-dev psql -U min -1 -f /dbs/min.sql
+```
+
+#### Option 2 : Jeu de données du dataspace
+
+```bash
+docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-data-01-admin-ref.sql
+docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-data-02-main.sql
+```
+
+#### Minimum requis : Données MIN anonymisées
+
+Pour pouvoir vous connecter, vous devez importer au minimum un jeu de données anonymisées de la base MIN :
+
+1. Récupérer un jeu de données anonymisées de la base MIN
+2. Placer le fichier dans le répertoire `dbs/`
+3. Exécuter la commande suivante :
+
+```bash
+docker compose exec postgres-dev psql -U min -1 -f /dbs/min.sql
+```
+
+#### Extension optionnelle : Données du dataspace
+
+Pour enrichir votre environnement avec des données supplémentaires du dataspace :
+
+```bash
+docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-data-01-admin-ref.sql
+docker compose exec postgres-dev psql -U min -1 -f /dbs/dataspace-data-02-main.sql
+```
+
+### 🔐 Configuration de l'authentification Pro-Connect
+
+Le `sso_id` et `sso_email` de l'utilisateur avec lequel vous voulez vous connecter doivent être égaux à votre identifiant de connexion Pro-Connect.
+
+**Exemple de mise à jour :**
+
+```bash
+docker compose exec postgres-dev psql -U min -1 -c "update utilisateur set sso_id='test@fia1.fr' where email_de_contact='compte.de.test@example.com';"
+docker compose exec postgres-dev psql -U min -1 -c "update utilisateur set sso_email='test@fia1.fr' where email_de_contact='compte.de.test@example.com';"
+```
+
+> **Note :** Le compte Pro-Connect de développement est `test@fia1.fr`
+
 ## 🧪 Tests
 
 Pour lancer les tests une fois :
@@ -93,13 +149,7 @@ Quand tu veux ré-initialiser la base de données :
 yarn prisma:drop:schema
 ```
 
-Quand le schéma de FNE est modifié, regénérer les types FNE pour Prisma Client :
-
-```bash
-yarn prisma:generate:fne
-```
-
-Quand tu veux enchainer les trois dernières commandes d'affilé :
+Quand tu veux enchainer les deux dernières commandes d'affilé :
 
 ```bash
 yarn prisma:reset
@@ -220,31 +270,6 @@ Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.be
 
 Se référer à [cette page de dicussion](https://github.com/anct-cnum/suite-gestionnaire-numerique/discussions/202)
 dédiée à une description exhaustive de l'architecture applicative en vigueur sur l'application.
-
-## ⚡ Production
-
-### Importer les données FNE et CoNum (<ins>avant mise en service</ins>)
-
-- Se connecter à un _one-off container_ Scalingo :  
-  `yarn bash:production`  
-  Il s'agit d'un environnement éphémère identique à celui de production et connecté à la même base de données.
-
-- Installer **prisma** :  
-  `yarn add @prisma/client`
-
-- Si le déploiement inclut des migrations "cassantes", c'est à dire qui ne peuvent s'exécuter sans reconstruire
-  intégralement la structure de la base de données, recréer la structure :  
-  `yarn prisma:reset`
-
-- Déclencher le déploiement (via un _commit_ ou _merge_ de branche sur **main**)
-
-- Se connecter à nouveau à un _one-off container_ Scalingo :  
-  `yarn bash:production`  
-  et installer **prisma** :  
-  `yarn add @prisma/client`
-
-- Lancer le script d'import :  
-  `yarn migration:all`
 
 ### Pro connect
 
