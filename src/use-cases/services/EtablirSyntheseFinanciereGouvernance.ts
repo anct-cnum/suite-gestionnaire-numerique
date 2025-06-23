@@ -78,7 +78,7 @@ function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions
   const financementDemande = (subvention?.montants.prestation ?? 0) + (subvention?.montants.ressourcesHumaines ?? 0)
   const accorde = subvention?.statut === StatutSubvention.ACCEPTEE ? financementDemande : 0
   const [financementAccorde, financementFormationAccorde] = isFormation
-    ? [0, accorde]
+    ? [accorde, accorde]
     : [accorde, 0]
   return {
     beneficiaires: new Set(action.beneficiaires.map(({ uid }) => uid)),
