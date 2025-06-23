@@ -15,7 +15,6 @@ export type Finances = Readonly<{
   coFinancement: Montant
   financementAccorde: Montant
   financementDemande: Montant
-  financementFormationAccorde: Montant
 }>
 
 type FeuilleDeRoute = Readonly<{
@@ -33,7 +32,6 @@ type Action = Readonly<{
     }>
   >
   subvention?: Readonly<{
-    isFormation: boolean
     montants: Readonly<{
       prestation: Montant
       ressourcesHumaines: Montant

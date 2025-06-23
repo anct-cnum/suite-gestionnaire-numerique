@@ -73,12 +73,9 @@ export type ComiteReadModel = Readonly<{
 export type FeuilleDeRouteReadModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<MembreReadModel>
   beneficiairesSubventionAccordee: ReadonlyArray<MembreReadModel>
-  beneficiairesSubventionFormation: ReadonlyArray<MembreReadModel>
-  beneficiairesSubventionFormationAccordee: ReadonlyArray<MembreReadModel>
   budgetGlobal: number
   montantSubventionAccordee: number
   montantSubventionDemandee: number
-  montantSubventionFormationAccordee: number
   nom: string
   pieceJointe?: Readonly<{
     apercu: string
@@ -122,7 +119,6 @@ export type CoporteurDetailReadModel = Readonly<{
   roles: ReadonlyArray<string>
   telephone?: string
   totalMontantsSubventionsAccordees?: number
-  totalMontantsSubventionsFormationAccordees?: number
   type: string
   uid: string
 }>

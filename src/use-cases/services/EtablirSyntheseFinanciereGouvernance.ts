@@ -41,8 +41,6 @@ function makeBilanGouvernance(bilanFeuilleDeRouteFactory: BilanFeuilleDeRouteFac
       feuillesDeRoute: bilanGouvernance.feuillesDeRoute.concat({ ...bilanFeuilleDeRoute, uid: feuilleDeRoute.uid }),
       financementAccorde: bilanGouvernance.financementAccorde + bilanFeuilleDeRoute.financementAccorde,
       financementDemande: bilanGouvernance.financementDemande + bilanFeuilleDeRoute.financementDemande,
-      financementFormationAccorde: bilanGouvernance.financementFormationAccorde
-        + bilanFeuilleDeRoute.financementFormationAccorde,
     }
   }
 }
@@ -56,14 +54,12 @@ function makeBilanFeuilleDeRoute(uid: string) {
     coFinanceurs: bilanFeuilleDeRoute.coFinanceurs.union(action.coFinanceurs),
     financementAccorde: bilanFeuilleDeRoute.financementAccorde + action.financementAccorde,
     financementDemande: bilanFeuilleDeRoute.financementDemande + action.financementDemande,
-    financementFormationAccorde: bilanFeuilleDeRoute.financementFormationAccorde + action.financementFormationAccorde,
     uid,
   })
 }
 
 function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions'][number]): BilanAction {
   const subvention = action.subvention
-  const isFormation = Boolean(subvention?.isFormation)
   const { coFinancement, coFinanceurs } = action.coFinancements
     .reduce(
       ({ coFinancement, coFinanceurs }, { coFinanceur: { uid }, montant }) => ({
@@ -77,18 +73,13 @@ function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions
     )
   const financementDemande = (subvention?.montants.prestation ?? 0) + (subvention?.montants.ressourcesHumaines ?? 0)
   const accorde = subvention?.statut === StatutSubvention.ACCEPTEE ? financementDemande : 0
-  const [financementAccorde, financementFormationAccorde] = isFormation
-    ? [0, accorde]
-    : [accorde, 0]
   return {
     beneficiaires: new Set(action.beneficiaires.map(({ uid }) => uid)),
     budget: action.budgetGlobal,
     coFinancement,
     coFinanceurs,
-    financementAccorde,
+    financementAccorde: accorde,
     financementDemande,
-    financementFormationAccorde,
-    isFormation,
     uid: action.uid,
   }
 }
@@ -101,7 +92,6 @@ const bilanInitialGouvernance: BilanGouvernance = {
   feuillesDeRoute: [],
   financementAccorde: 0,
   financementDemande: 0,
-  financementFormationAccorde: 0,
 }
 
 const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
@@ -112,7 +102,6 @@ const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
   coFinanceurs: new Set(),
   financementAccorde: 0,
   financementDemande: 0,
-  financementFormationAccorde: 0,
   uid: '',
 }
 
@@ -124,7 +113,7 @@ type BilanFeuilleDeRoute = Bilan & Readonly<{
   actions: ReadonlyArray<BilanAction>
 }> & Unique
 
-type BilanAction = Bilan & Readonly<{ isFormation: boolean }> & Unique
+type BilanAction = Bilan & Unique
 
 type Bilan = Finances & Readonly<{
   beneficiaires: ReadonlySet<string>

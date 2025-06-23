@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 
-import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -86,13 +85,11 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
             action.demandesDeSubvention[0] as typeof action.demandesDeSubvention[number] | undefined
           return {
             beneficiaires: beneficiairesSubvention(
-              [action],
-              enveloppe => !isEnveloppeDeFormation(enveloppe)
+              [action]
             ),
             budgetGlobal: action.budgetGlobal,
             coFinancements: [],
             subvention: demandeDeSubvention ? {
-              isFormation: isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe),
               montants: {
                 prestation: action.demandesDeSubvention[0].subventionPrestation ?? 0,
                 ressourcesHumaines: action.demandesDeSubvention[0].subventionEtp ?? 0,
@@ -108,20 +105,10 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
     const feuillesDeRoute = gouvernanceRecord.feuillesDeRoute.map((feuilleDeRoute, index) => {
       return {
         beneficiairesSubvention: beneficiairesSubvention(
-          feuilleDeRoute.action,
-          enveloppe => !isEnveloppeDeFormation(enveloppe)
+          feuilleDeRoute.action
         ),
         beneficiairesSubventionAccordee: beneficiairesSubventionAccordee(
-          feuilleDeRoute.action,
-          enveloppe => !isEnveloppeDeFormation(enveloppe)
-        ),
-        beneficiairesSubventionFormation: beneficiairesSubvention(
-          feuilleDeRoute.action,
-          isEnveloppeDeFormation
-        ),
-        beneficiairesSubventionFormationAccordee: beneficiairesSubventionAccordee(
-          feuilleDeRoute.action,
-          isEnveloppeDeFormation
+          feuilleDeRoute.action
         ),
         ...Boolean(feuilleDeRoute.pieceJointe) && {
           pieceJointe: {
@@ -134,7 +121,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         budgetGlobal: synthese.feuillesDeRoute[index].budget,
         montantSubventionAccordee: synthese.feuillesDeRoute[index].financementAccorde,
         montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
-        montantSubventionFormationAccordee: synthese.feuillesDeRoute[index].financementFormationAccorde,
         nom: feuilleDeRoute.nom,
         porteur: feuilleDeRoute.relationMembre
           ? toMembres([feuilleDeRoute.relationMembre]).map(fromMembre)[0]
@@ -177,7 +163,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
               roles: membre.roles,
               ...feuillesDeRoutePortees.reduce(calculerTotaux, {
                 totalMontantsSubventionsAccordees: 0,
-                totalMontantsSubventionsFormationAccordees: 0,
               }),
               type: membre.type ?? '',
               uid: membre.id,
@@ -191,14 +176,12 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
 }
 
 function beneficiairesSubvention(
-  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action'],
-  predicate: (enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>) => boolean
+  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action']
 ): ReadonlyArray<MembreReadModel> {
   return toMembres(
     actions
       .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
       .filter(Boolean)
-      .filter(({ enveloppe }) => predicate(enveloppe))
       .flatMap(({ beneficiaire }) => beneficiaire)
       .map(({ membre }) => membre)
   )
@@ -207,14 +190,13 @@ function beneficiairesSubvention(
 }
 
 function beneficiairesSubventionAccordee(
-  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action'],
-  predicate: (enveloppe: Prisma.EnveloppeFinancementRecordGetPayload<null>) => boolean
+  actions: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>['feuillesDeRoute'][number]['action']
 ): ReadonlyArray<MembreReadModel> {
   return toMembres(
     actions
       .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
       .filter(Boolean)
-      .filter(({ enveloppe, statut }) => predicate(enveloppe) && statut === StatutSubvention.ACCEPTEE.toString())
+      .filter(({  statut }) => statut === StatutSubvention.ACCEPTEE.toString())
       .flatMap(({ beneficiaire }) => beneficiaire)
       .map(({ membre }) => membre)
   )
@@ -237,8 +219,6 @@ function calculerTotaux(totaux: Totaux, feuilleDeRoute: FeuilleDeRouteReadModel)
   return {
     totalMontantsSubventionsAccordees: totaux.totalMontantsSubventionsAccordees
       + feuilleDeRoute.montantSubventionAccordee,
-    totalMontantsSubventionsFormationAccordees: totaux.totalMontantsSubventionsFormationAccordees +
-      feuilleDeRoute.montantSubventionFormationAccordee,
   }
 }
 
@@ -287,5 +267,4 @@ function fromMembreAvecRoles(
 
 type Totaux = Readonly<{
   totalMontantsSubventionsAccordees: number
-  totalMontantsSubventionsFormationAccordees: number
 }>

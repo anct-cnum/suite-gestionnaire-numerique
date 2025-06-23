@@ -61,7 +61,6 @@ describe('récupérer une feuille de route loader', () => {
             montant: 0,
           },
           isEditable: false,
-          isEnveloppeFormation: true,
           modifiable: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [
@@ -87,7 +86,6 @@ describe('récupérer une feuille de route loader', () => {
             montant: 0,
           },
           isEditable: true,
-          isEnveloppeFormation: false,
           modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
@@ -169,7 +167,6 @@ describe('récupérer une feuille de route loader', () => {
             montant: 0,
           },
           isEditable: false,
-          isEnveloppeFormation: true,
           modifiable: false,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [
@@ -195,7 +192,6 @@ describe('récupérer une feuille de route loader', () => {
             montant: 0,
           },
           isEditable: true,
-          isEnveloppeFormation: false,
           modifiable: true,
           nom: 'Structurer une filière de reconditionnement locale 1',
           porteurs: [],
@@ -381,7 +377,6 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
         coFinanceurs: 0,
         financementAccorde: 0,
         financementDemande: 0,
-        financementFormationAccorde: 0,
         uid: action.uid,
       })),
       beneficiaires: 0,
@@ -390,11 +385,9 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
       coFinanceurs: 0,
       financementAccorde: 0,
       financementDemande: 0,
-      financementFormationAccorde: 0,
       uid: feuilleDeRoute.uid,
     })),
     financementAccorde: 0,
     financementDemande: 0,
-    financementFormationAccorde: 0,
   }
 }

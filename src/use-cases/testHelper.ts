@@ -98,26 +98,9 @@ export function gouvernanceReadModelFactory(
             uid: '0',
           },
         ],
-        beneficiairesSubventionFormation: [
-          {
-            nom: 'Structure 1',
-            uid: '0',
-          },
-          {
-            nom: 'Structure 2',
-            uid: '3',
-          },
-        ],
-        beneficiairesSubventionFormationAccordee: [
-          {
-            nom: 'Structure 1',
-            uid: '0',
-          },
-        ],
         budgetGlobal: 145_000,
         montantSubventionAccordee: 5_000,
         montantSubventionDemandee: 40_000,
-        montantSubventionFormationAccordee: 5_000,
         nom: 'Feuille de route inclusion',
         pieceJointe: {
           apercu: '',
@@ -182,7 +165,6 @@ export function gouvernanceReadModelFactory(
           roles: ['coporteur', 'cofinanceur'],
           telephone: '+33 4 45 00 45 01',
           totalMontantsSubventionsAccordees: 5_000,
-          totalMontantsSubventionsFormationAccordees: 5_000,
           type: 'Conseil départemental',
           uid: 'departement-69-69',
         },
@@ -433,7 +415,6 @@ export function feuilleDeRouteReadModelFactory(
           montant: 20_000,
         },
         isEditable: true,
-        isEnveloppeFormation: true,
         modifiable: true,
         nom: 'Structurer une filière de reconditionnement locale 1',
         porteurs: [
@@ -459,7 +440,6 @@ export function feuilleDeRouteReadModelFactory(
           montant: 10_000,
         },
         isEditable: true,
-        isEnveloppeFormation: true,
         modifiable: true,
         nom: 'Structurer une filière de reconditionnement locale 2',
         porteurs: [],

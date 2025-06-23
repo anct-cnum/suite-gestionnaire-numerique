@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 
-import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -42,7 +41,6 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
               montant,
             })),
             subvention: demandeDeSubvention ? {
-              isFormation: isSubventionFormation(action),
               montants: {
                 prestation: demandeDeSubvention.subventionPrestation ?? 0,
                 ressourcesHumaines: demandeDeSubvention.subventionEtp ?? 0,
@@ -58,7 +56,7 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
     return {
       actions: feuilleDeRouteRecord.action.map((action, index) => {
         const demandeDeSubvention = action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined
-        const statut = (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention) 
+        const statut = (demandeDeSubvention && demandeDeSubvention.statut as StatutSubvention)
                   ?? 'nonSubventionnee'
         const isEditableEtModifiable = statut === StatutSubvention.DEPOSEE || statut === 'nonSubventionnee'
         return {
@@ -74,7 +72,6 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
             montant: syntheseFeuilleDeRoute.actions[index].financementDemande,
           },
           isEditable: isEditableEtModifiable,
-          isEnveloppeFormation: isSubventionFormation(action),
           modifiable: isEditableEtModifiable,
           nom: action.nom,
           porteurs: action.porteurAction.map((porteur) => fromMembre(toMembre(porteur.membre))),
@@ -111,11 +108,6 @@ export class PrismaUneFeuilleDeRouteLoader implements UneFeuilleDeRouteLoader {
 
 function fromMembre({ id, nom }: Membre): NonNullable<UneFeuilleDeRouteReadModel['porteur']> {
   return { nom, uid: id }
-}
-
-function isSubventionFormation(action: Prisma.FeuilleDeRouteRecordGetPayload<{ include: typeof include }>['action'][number]): boolean {
-  return Boolean(action.demandesDeSubvention[0] as typeof action['demandesDeSubvention'][number] | undefined)
-    && isEnveloppeDeFormation(action.demandesDeSubvention[0].enveloppe)
 }
 
 const include = {

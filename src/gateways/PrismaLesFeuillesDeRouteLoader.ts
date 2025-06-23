@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 
-import { isEnveloppeDeFormation } from './shared/Action'
 import { Membre, membreInclude, toMembre, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
@@ -64,7 +63,6 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
               montant,
             })),
             subvention: demandeDeSubvention ? {
-              isFormation: isEnveloppeDeFormation(demandeDeSubvention.enveloppe),
               montants: {
                 prestation: demandeDeSubvention.subventionPrestation ?? 0,
                 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition

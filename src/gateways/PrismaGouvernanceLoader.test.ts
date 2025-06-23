@@ -345,7 +345,6 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
         coFinanceurs: 0,
         financementAccorde: 0,
         financementDemande: 0,
-        financementFormationAccorde: 0,
         uid: action.uid,
       })),
       beneficiaires: 0,
@@ -354,11 +353,9 @@ function dummyEtablisseurSyntheseGouvernance(gouvernance: Gouvernance): Synthese
       coFinanceurs: 0,
       financementAccorde: 0,
       financementDemande: 0,
-      financementFormationAccorde: 0,
       uid: feuilleDeRoute.uid,
     })),
     financementAccorde: 0,
     financementDemande: 0,
-    financementFormationAccorde: 0,
   }
 }

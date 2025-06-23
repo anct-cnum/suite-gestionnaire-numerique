@@ -91,7 +91,7 @@ describe('feuille de route', () => {
     expect(budgetItemsAction1).toHaveLength(3)
     const budgetPrevisionnelAction1 = within(budgetItemsAction1[0]).getByText(matchWithoutMarkup('Budget prévisionnel de l’action 100 000 €'))
     expect(budgetPrevisionnelAction1).toBeInTheDocument()
-    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(matchWithoutMarkup('Subvention demandée pour l’action : Enveloppe test 40 000 €'))
+    const subventionDemandeeAction1 = within(budgetItemsAction1[1]).getByText(matchWithoutMarkup('Subvention demandée pour l’action : Enveloppe test 20 000 €'))
     expect(subventionDemandeeAction1).toBeInTheDocument()
     const cofinanceurAction1 = within(budgetItemsAction1[2]).getByText(matchWithoutMarkup('1 co-financeur 80 000 €'))
     expect(cofinanceurAction1).toBeInTheDocument()

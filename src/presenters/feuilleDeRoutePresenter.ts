@@ -132,11 +132,10 @@ interface FeuilleDeRouteActionViewModel {
 function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
   return (action: UneFeuilleDeRouteReadModel['actions'][number]): FeuilleDeRouteViewModel['actions'][number] => {
     // istanbul ignore next @preserve
-    const icone = action.isEnveloppeFormation ?
-      actionStatutViewModelByStatut.enCours : actionStatutViewModelByStatut.acceptee
+    const icone = actionStatutViewModelByStatut.acceptee
 
     const besoinsLabels = action.besoins.map(besoin => BESOINS_LABELS[besoin])
-    
+
     const besoinsText = besoinsLabels.length > 0 ? besoinsLabels.join(', ') : '-'
 
     return {
@@ -145,9 +144,7 @@ function toActionViewModel(uidGouvernance: string, uidFeuilleDeRoute: string) {
         coFinancement: formatMontant(action.coFinancement.montant),
         coFinanceur: `${action.coFinancement.financeur} co-financeur${formatPluriel(action.coFinancement.financeur)}`,
         enveloppe: action.enveloppe.libelle,
-        montant: action.isEnveloppeFormation
-          ? formatMontant(action.subventionDemandee)
-          : formatMontant(action.enveloppe.montant),
+        montant: formatMontant(action.enveloppe.montant),
         total: formatMontant(action.budgetPrevisionnel),
       },
       icone,

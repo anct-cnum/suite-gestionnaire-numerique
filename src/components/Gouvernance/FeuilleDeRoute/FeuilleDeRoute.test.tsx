@@ -17,14 +17,9 @@ describe('feuille de route', () => {
             { nom: 'Préfecture du Rhône', uid: '0' },
             { nom: 'CC des Monts du Lyonnais', uid: '1' },
           ],
-          beneficiairesSubventionFormation: [],
-          beneficiairesSubventionFormationAccordee: [
-            { nom: 'Préfecture du Rhône', uid: '0'  },
-            { nom: 'CC des Monts du Lyonnais', uid: '1' }],
           budgetGlobal: 145_000,
           montantSubventionAccordee: 100_000,
           montantSubventionDemandee: 115_000,
-          montantSubventionFormationAccordee: 5_000,
           nom: 'Feuille de route inclusion',
           pieceJointe: {
             apercu: '',
@@ -74,19 +69,7 @@ describe('feuille de route', () => {
     expect(premierBeneficiaireDesSubventions).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/0')
     const secondBeneficiaireDesSubventions = within(beneficiairesListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
     expect(secondBeneficiaireDesSubventions).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/1')
-    const montantDeLaSubventionFormationAccordeeLabel = within(drawer).getByText('Montant de la subvention formation accordée')
-    expect(montantDeLaSubventionFormationAccordeeLabel).toBeInTheDocument()
-    const montantDeLaSubventionFormationAccordee = within(drawer).getByText('5 000 €')
-    expect(montantDeLaSubventionFormationAccordee).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation accordées')
-    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
-    const beneficiairesSubventionFormationList = within(drawer).getAllByRole('list')[1]
-    const beneficiairesSubventionFormationListItems = within(beneficiairesSubventionFormationList).getAllByRole('listitem')
-    const premierBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[0]).getByRole('link', { name: 'Préfecture du Rhône' })
-    expect(premierBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/0')
-    const secondBeneficiaireDesSubventionsFormation = within(beneficiairesSubventionFormationListItems[1]).getByRole('link', { name: 'CC des Monts du Lyonnais' })
-    expect(secondBeneficiaireDesSubventionsFormation).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/1')
-    const buttonsList = within(drawer).getAllByRole('list')[2]
+    const buttonsList = within(drawer).getAllByRole('list')[1]
     const buttonsListItems = within(buttonsList).getAllByRole('listitem')
     const boutonPlusDeDetails = within(buttonsListItems[0]).getByRole('link', { name: 'Plus de détails' })
     expect(boutonPlusDeDetails).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/feuille-de-route/feuilleDeRouteFooId')
@@ -109,19 +92,9 @@ describe('feuille de route', () => {
             uid: '1',
           }],
           beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [{
-            nom: 'Préfecture du Rhône',
-            uid: '0',
-          },
-          {
-            nom: 'CC des Monts du Lyonnais',
-            uid: '1',
-          }],
-          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,
-          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
           porteur: undefined,
           totalActions: 1,
@@ -146,12 +119,9 @@ describe('feuille de route', () => {
         {
           beneficiairesSubvention: [],
           beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [],
-          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,
-          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', uid: '0' },
           totalActions: 1,
@@ -167,10 +137,8 @@ describe('feuille de route', () => {
     const drawer = screen.getByRole('dialog', { hidden: false, name: 'Feuille de route inclusion' })
     const beneficiairesDesSubventionsLabel = within(drawer).getByText('Bénéficiaire des subventions accordées')
     expect(beneficiairesDesSubventionsLabel).toBeInTheDocument()
-    const beneficiaireDesSubventionsFormationLabel = within(drawer).getByText('Bénéficiaire des subventions formation accordées')
-    expect(beneficiaireDesSubventionsFormationLabel).toBeInTheDocument()
     const tirets = within(drawer).getAllByText('-')
-    expect(tirets).toHaveLength(2)
+    expect(tirets).toHaveLength(1)
   })
 
   it('quand je suis dans le détail d’une feuille de route, s’il n’y a pas de pièce jointe alors le bouton "Ouvrir le document pdf" n’est pas affichée', () => {
@@ -180,12 +148,9 @@ describe('feuille de route', () => {
         {
           beneficiairesSubvention: [],
           beneficiairesSubventionAccordee: [],
-          beneficiairesSubventionFormation: [],
-          beneficiairesSubventionFormationAccordee: [],
           budgetGlobal: 50_000,
           montantSubventionAccordee: 0,
           montantSubventionDemandee: 15_000,
-          montantSubventionFormationAccordee: 0,
           nom: 'Feuille de route inclusion',
           porteur: { nom: 'Préfecture du Rhône', uid: '0' },
           totalActions: 1,

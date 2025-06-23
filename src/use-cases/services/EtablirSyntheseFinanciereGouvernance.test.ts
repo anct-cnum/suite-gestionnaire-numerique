@@ -19,7 +19,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           feuillesDeRoute: [],
           financementAccorde: 0,
           financementDemande: 0,
-          financementFormationAccorde: 0,
         },
       },
       {
@@ -46,13 +45,11 @@ describe('établir la synthèse financière d’une gouvernance', () => {
               coFinanceurs: 0,
               financementAccorde: 0,
               financementDemande: 0,
-              financementFormationAccorde: 0,
               uid: 'feuilleDeRouteId',
             },
           ],
           financementAccorde: 0,
           financementDemande: 0,
-          financementFormationAccorde: 0,
         },
       },
       {
@@ -86,8 +83,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
                 coFinanceurs: 0,
                 financementAccorde: 0,
                 financementDemande: 0,
-                financementFormationAccorde: 0,
-                isFormation: false,
                 uid: 'actionId',
               },
             ],
@@ -97,13 +92,11 @@ describe('établir la synthèse financière d’une gouvernance', () => {
             coFinanceurs: 0,
             financementAccorde: 0,
             financementDemande: 0,
-            financementFormationAccorde: 0,
             uid: 'feuilleDeRouteId',
           },
           ],
           financementAccorde: 0,
           financementDemande: 0,
-          financementFormationAccorde: 0,
         },
       },
     ])('$cas', ({ gouvernanceASynthetiser, syntheseAttendue }) => {
@@ -141,7 +134,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention?.statut).toBe('acceptee')
           expect(syntheseAction.financementAccorde).toBe(30_000)
           expect(syntheseAction.financementDemande).toBe(30_000)
-          expect(syntheseAction.financementFormationAccorde).toBe(0)
         })
 
         it.each([
@@ -176,7 +168,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention?.statut).toBe(statut)
           expect(syntheseAction.financementAccorde).toBe(0)
           expect(syntheseAction.financementDemande).toBe(30_000)
-          expect(syntheseAction.financementFormationAccorde).toBe(0)
         })
 
         it('à zéro en cas d’absence de demande de subvention', () => {
@@ -196,7 +187,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention).toBeUndefined()
           expect(syntheseAction.financementAccorde).toBe(0)
           expect(syntheseAction.financementDemande).toBe(0)
-          expect(syntheseAction.financementFormationAccorde).toBe(0)
         })
       })
 
@@ -219,9 +209,8 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention?.montants.prestation).toBe(4_000)
           expect(action.subvention?.montants.ressourcesHumaines).toBe(0)
           expect(action.subvention?.statut).toBe('acceptee')
-          expect(syntheseAction.financementAccorde).toBe(0)
+          expect(syntheseAction.financementAccorde).toBe(4_000)
           expect(syntheseAction.financementDemande).toBe(4_000)
-          expect(syntheseAction.financementFormationAccorde).toBe(4_000)
         })
 
         it.each([
@@ -256,7 +245,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention?.statut).toBe(statut)
           expect(syntheseAction.financementAccorde).toBe(0)
           expect(syntheseAction.financementDemande).toBe(4_000)
-          expect(syntheseAction.financementFormationAccorde).toBe(0)
         })
 
         it('à zéro en cas d’absence de demande de subvention', () => {
@@ -276,7 +264,6 @@ describe('établir la synthèse financière d’une gouvernance', () => {
           expect(action.subvention).toBeUndefined()
           expect(syntheseAction.financementAccorde).toBe(0)
           expect(syntheseAction.financementDemande).toBe(0)
-          expect(syntheseAction.financementFormationAccorde).toBe(0)
         })
       })
 
@@ -394,16 +381,12 @@ describe('établir la synthèse financière d’une gouvernance', () => {
         // THEN
         expect(action1.subvention?.montants.prestation).toBe(20_000)
         expect(action1.subvention?.montants.ressourcesHumaines).toBe(10_000)
-        expect(action1.subvention?.isFormation).toBe(false)
         expect(action2.subvention?.montants.prestation).toBe(4_000)
         expect(action2.subvention?.montants.ressourcesHumaines).toBe(3_000)
-        expect(action2.subvention?.isFormation).toBe(false)
         expect(action3.subvention?.montants.prestation).toBe(4_000)
         expect(action3.subvention?.montants.ressourcesHumaines).toBe(0)
-        expect(action3.subvention?.isFormation).toBe(true)
-        expect(syntheseFeuilleDeRoute1.financementAccorde).toBe(37_000)
+        expect(syntheseFeuilleDeRoute1.financementAccorde).toBe(41_000)
         expect(syntheseFeuilleDeRoute1.financementDemande).toBe(41_000)
-        expect(syntheseFeuilleDeRoute1.financementFormationAccorde).toBe(4000)
       })
 
       it('les sommes des co-financements pour toutes les actions sont calculées', () => {
@@ -533,16 +516,12 @@ describe('établir la synthèse financière d’une gouvernance', () => {
         // THEN
         expect(action1.subvention?.montants.prestation).toBe(20_000)
         expect(action1.subvention?.montants.ressourcesHumaines).toBe(10_000)
-        expect(action1.subvention?.isFormation).toBe(false)
         expect(action2.subvention?.montants.prestation).toBe(4_000)
         expect(action2.subvention?.montants.ressourcesHumaines).toBe(3_000)
-        expect(action2.subvention?.isFormation).toBe(false)
         expect(action3.subvention?.montants.prestation).toBe(4_000)
         expect(action3.subvention?.montants.ressourcesHumaines).toBe(0)
-        expect(action3.subvention?.isFormation).toBe(true)
-        expect(synthese.financementAccorde).toBe(37_000)
+        expect(synthese.financementAccorde).toBe(41_000)
         expect(synthese.financementDemande).toBe(41_000)
-        expect(synthese.financementFormationAccorde).toBe(4_000)
       })
 
       it('le co-financement est calculé', () => {
@@ -604,7 +583,6 @@ function actionAvecDemandeDeSubventionCoFinancementsEtBeneficiaires(
       },
     ],
     subvention: {
-      isFormation: false,
       montants: {
         prestation: 20_000,
         ressourcesHumaines: 10_000,
@@ -628,7 +606,6 @@ function actionAvecSubventionEtCoFinancementSansBeneficiaire(
       },
     ],
     subvention: {
-      isFormation: false,
       montants: {
         prestation: 4_000,
         ressourcesHumaines: 3_000,
@@ -652,7 +629,6 @@ function actionAvecSubventionFormationCoFinancementsEtBeneficiaires(
       },
     ],
     subvention: {
-      isFormation: true,
       montants: {
         prestation: 4_000,
         ressourcesHumaines: 0,

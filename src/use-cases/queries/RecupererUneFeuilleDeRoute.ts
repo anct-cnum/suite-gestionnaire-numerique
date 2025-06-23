@@ -19,7 +19,6 @@ export type UneFeuilleDeRouteReadModel = Readonly<{
       montant: number
     }>
     isEditable: boolean
-    isEnveloppeFormation: boolean
     modifiable: boolean
     nom: string
     porteurs: ReadonlyArray<{

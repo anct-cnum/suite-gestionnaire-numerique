@@ -124,13 +124,10 @@ export type ComiteViewModel = Readonly<{
 export type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<HyperLink>
   beneficiairesSubventionAccordee: ReadonlyArray<HyperLink>
-  beneficiairesSubventionFormation: ReadonlyArray<HyperLink>
-  beneficiairesSubventionFormationAccordee: ReadonlyArray<HyperLink>
   budgetGlobal: string
   lien: string
   montantSubventionAccordee: string
   montantSubventionDemandee: string
-  montantSubventionFormationAccordee: string
   nom: string
   pieceJointe?: Readonly<{
     apercu: string
@@ -143,8 +140,6 @@ export type FeuilleDeRouteViewModel = Readonly<{
   totalActions: string
   wordingBeneficiairesSubvention: string
   wordingBeneficiairesSubventionAccordee: string
-  wordingBeneficiairesSubventionFormation: string
-  wordingBeneficiairesSubventionFormationAccordee: string
 }>
 
 export type MembreDetailsViewModel = Readonly<{
@@ -204,24 +199,16 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
   return (feuilleDeRoute: FeuilleDeRouteReadModel): FeuilleDeRouteViewModel => {
     const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
     const nombreDeBeneficiairesSubventionAccordee = feuilleDeRoute.beneficiairesSubventionAccordee.length
-    const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
-    const nombreDeBeneficiairesSubventionFormationAccordee = 
-            feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
     return {
       beneficiairesSubvention: feuilleDeRoute.beneficiairesSubvention.map(toMembresViewModel(uidGouvernance)),
       beneficiairesSubventionAccordee:
              feuilleDeRoute.beneficiairesSubventionAccordee.map(toMembresViewModel(uidGouvernance)),
-      beneficiairesSubventionFormation:
-        feuilleDeRoute.beneficiairesSubventionFormation.map(toMembresViewModel(uidGouvernance)),
-      beneficiairesSubventionFormationAccordee:
-        feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel(uidGouvernance)),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
       lien: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
       montantSubventionAccordee: formatMontant(feuilleDeRoute.montantSubventionAccordee),
       montantSubventionDemandee: formatMontant(feuilleDeRoute.montantSubventionDemandee),
-      montantSubventionFormationAccordee: formaterEnNombreFrancais(feuilleDeRoute.montantSubventionFormationAccordee),
       nom: feuilleDeRoute.nom,
       pieceJointe: feuilleDeRoute.pieceJointe && {
         ...feuilleDeRoute.pieceJointe,
@@ -236,8 +223,6 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       totalActions: `${feuilleDeRoute.totalActions} action${formatPluriel(feuilleDeRoute.totalActions)}`,
       wordingBeneficiairesSubvention: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubvention)}`,
       wordingBeneficiairesSubventionAccordee: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionAccordee)}`,
-      wordingBeneficiairesSubventionFormation: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormation)}`,
-      wordingBeneficiairesSubventionFormationAccordee: `Bénéficiaire${formatPluriel(nombreDeBeneficiairesSubventionFormationAccordee)}`,
     }
   }
 }
@@ -265,13 +250,6 @@ function toCoporteursDetailsViewModel(uidGouvernance: string) {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsAccordees!)} €`,
           intitule: 'Total subventions accordées',
-        },
-      ],
-      ...isNaN(coporteur.totalMontantsSubventionsFormationAccordees ?? NaN) ? [] : [
-        {
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          information: `${formaterEnNombreFrancais(coporteur.totalMontantsSubventionsFormationAccordees!)} €`,
-          intitule: 'Total subventions formations accordées',
         },
       ],
       ...coporteur.contactReferent.denomination === 'Contact référent' ? [{ information: contactReferent, intitule: 'Contact référent' }] : [],

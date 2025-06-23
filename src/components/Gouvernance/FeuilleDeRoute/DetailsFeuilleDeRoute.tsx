@@ -74,34 +74,6 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
             : '-'
         }
       </div>
-      <div className="fr-mb-2w">
-        <div className="color-grey">
-          Montant de la subvention formation accordée
-        </div>
-        <div className="font-weight-700">
-          {`${feuilleDeRoute.montantSubventionFormationAccordee} €`}
-        </div>
-      </div>
-      <div className="fr-mb-2w">
-        <div className="color-grey fr-mb-1w">
-          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation accordées`}
-        </div>
-        {
-          feuilleDeRoute.beneficiairesSubventionFormationAccordee.length > 0 ?
-            <ul className="fr-tags-group">
-              {
-                feuilleDeRoute.beneficiairesSubventionFormationAccordee.map((beneficiaire) => (
-                  <li key={beneficiaire.label}>
-                    <Tag href={beneficiaire.link}>
-                      {beneficiaire.label}
-                    </Tag>
-                  </li>
-                ))
-              }
-            </ul>
-            : '-'
-        }
-      </div>
       <ul className="fr-btns-group--icon-left fr-btns-group">
         <li>
           <Link
