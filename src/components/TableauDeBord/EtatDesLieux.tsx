@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import Map from '../shared/Map/Map'
+import Carte from '../shared/Carte/Carte'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
@@ -25,7 +25,7 @@ export default function EtatDesLieux({
               className="fr-h4 color-blue-france fr-m-0"
               id="etatDesLieux"
             >
-              État des lieux de l'inclusion numérique
+              État des lieux de l&apos;inclusion numérique
             </h2>
             <p className="fr-m-0 font-weight-500">
               Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
@@ -36,7 +36,7 @@ export default function EtatDesLieux({
           className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
           href="/lieux-inclusion"
         >
-          Lieux d'inclusion numérique
+          Lieux d&apos;inclusion numérique
         </Link>
       </div>
       <div className="fr-grid-row">
@@ -65,7 +65,7 @@ export default function EtatDesLieux({
               </div>
             </div>
             <div style={{ flex: 1, minHeight: 0 }}>
-              <Map
+              <Carte
                 communesFragilite={communesFragilite}
                 departement={tableauDeBordViewModel.departement}
               />
@@ -82,7 +82,7 @@ export default function EtatDesLieux({
               {tableauDeBordViewModel.etatDesLieux.inclusionNumerique}
             </div>
             <div className="font-weight-500">
-              Lieux d'inclusion numérique
+              Lieux d&apos;inclusion numérique
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">
               Toutes les typologies de lieux publics ou privés
