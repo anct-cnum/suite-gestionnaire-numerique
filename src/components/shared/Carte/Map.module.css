@@ -6,7 +6,9 @@
   max-height: 600px;
   overflow: hidden;
   position: relative;
+  min-height: 400px;
   width: 100%;
+ 
 }
 
 .maplibregl-canvas {
@@ -15,13 +17,14 @@
 }
 
 .maplibregl-canvas-container {
-  height: 80% !important;
+  height: 100% !important;
   width: 100% !important;
 }
 
 .mapWrapper {
   height: 100%;
   max-height: 600px;
+  min-height: 400px;
   width: 100%;
   position: relative;
 }

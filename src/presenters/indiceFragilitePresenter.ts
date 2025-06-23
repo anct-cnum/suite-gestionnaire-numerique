@@ -1,7 +1,6 @@
 
-// Échelle de couleurs pour l'indice de fragilité (1 à 10)
 export const FRAGILITE_COLORS = {
-  1: '#4A6BAE', // Très clair
+  1: '#4A6BAE',
   2: '#5F8EC7',
   3: '#AAC4E6',
   4: '#E6DEEE',
@@ -17,7 +16,7 @@ export function indiceFragilitePresenter(ifnCommunes : ReadonlyArray<Readonly<{
   return ifnCommunes.map(commune => ({
     codeInsee: commune.codeInsee,
     couleur: getCouleurFragilite(commune.score ?? 0),
-    indice: commune.score ?? 0,
+    indice: Number((commune.score ?? 0).toFixed(2)),
   }))
 }
 
@@ -27,19 +26,14 @@ interface CommuneFragilite {
   indice: number
 }
 
+// il y a 7 couleurs pour un indice de 0 à 10
 function getCouleurFragilite(indice: number): string {
-  const numberOfColors = Object.keys(FRAGILITE_COLORS).length
-  const maxIndice = 10
+  const nombreDeCouleurs = Object.keys(FRAGILITE_COLORS).length
+  const nombreDIndice = 10
 
-  // Gère les cas où l'indice est en dehors de la plage [0, 10]
-  if (indice < 0 || indice > maxIndice) {
-    return '#ffffff' // Retourne une couleur par défaut
-  }
+  const indiceDeCouleur = Math.max(1, Math.ceil(indice * nombreDeCouleurs / nombreDIndice))
 
-  // Calcule l'index de la couleur (de 1 à 7)
-  const colorIndex = Math.max(1, Math.ceil(indice * numberOfColors / maxIndice))
-
-  return FRAGILITE_COLORS[colorIndex as keyof typeof FRAGILITE_COLORS] || '#ffffff'
+  return FRAGILITE_COLORS[indiceDeCouleur as keyof typeof FRAGILITE_COLORS] || '#ffffff'
 }
 
 export type { CommuneFragilite }
