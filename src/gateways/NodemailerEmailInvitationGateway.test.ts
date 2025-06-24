@@ -44,7 +44,7 @@ describe('envoi de mail d’invitation', () => {
       .spyOn(nodemailer, 'createTransport')
       // @ts-expect-error
       .mockReturnValueOnce({ sendMail: mockSendMail })
-    
+
     const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
     const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
     const logominUrl = `${process.env.NEXTAUTH_URL  }/min-texte.svg`
@@ -74,7 +74,7 @@ describe('envoi de mail d’invitation', () => {
     expect(mockSendMail).toHaveBeenCalledWith({
       from: 'communication@email.conseiller-numerique.gouv.fr',
       html: mjml2html(invitationEmail).html,
-      replyTo: 'societe.numerique@anct.gouv.fr',
+      replyTo: 'moninclusionnumerique@anct.gouv.fr',
       subject: 'Vous avez été invité à rejoindre Mon Inclusion Numérique',
       to: 'martin.tartempion@example.com',
     })

@@ -3,7 +3,7 @@ import { Destinataire, invitationEmailTemplate } from './emails/invitationEmail'
 
 export const smtpFrom = 'communication@email.conseiller-numerique.gouv.fr'
 
-export const smtpReplyTo = 'societe.numerique@anct.gouv.fr'
+export const smtpReplyTo = 'moninclusionnumerique@anct.gouv.fr'
 
 const logoFrUrl = `${process.env.NEXTAUTH_URL  }/fr.svg`
 const logoAnctUrl = `${process.env.NEXTAUTH_URL  }/anct-texte.svg`
