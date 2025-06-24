@@ -128,6 +128,7 @@ export type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubventionFormation: ReadonlyArray<HyperLink>
   beneficiairesSubventionFormationAccordee: ReadonlyArray<HyperLink>
   budgetGlobal: string
+  budgetSubventionDemandee: number
   lien: string
   montantSubventionAccordee: string
   montantSubventionDemandee: string
@@ -206,7 +207,7 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
     const nombreDeBeneficiairesSubvention = feuilleDeRoute.beneficiairesSubvention.length
     const nombreDeBeneficiairesSubventionAccordee = feuilleDeRoute.beneficiairesSubventionAccordee.length
     const nombreDeBeneficiairesSubventionFormation = feuilleDeRoute.beneficiairesSubventionFormation.length
-    const nombreDeBeneficiairesSubventionFormationAccordee = 
+    const nombreDeBeneficiairesSubventionFormationAccordee =
             feuilleDeRoute.beneficiairesSubventionFormationAccordee.length
     const tailleDocument = feuilleDeRoute.pieceJointe?.metadonnees?.taille
     const formatDocument = feuilleDeRoute.pieceJointe?.metadonnees?.format
@@ -219,6 +220,7 @@ function toFeuillesDeRouteViewModel(uidGouvernance: string) {
       beneficiairesSubventionFormationAccordee:
         feuilleDeRoute.beneficiairesSubventionFormationAccordee.map(toMembresViewModel(uidGouvernance)),
       budgetGlobal: formatMontant(feuilleDeRoute.budgetGlobal),
+      budgetSubventionDemandee: feuilleDeRoute.montantSubventionDemandee,
       lien: feuilleDeRouteLink(uidGouvernance, feuilleDeRoute.uid),
       montantSubventionAccordee: formatMontant(feuilleDeRoute.montantSubventionAccordee),
       montantSubventionDemandee: formatMontant(feuilleDeRoute.montantSubventionDemandee),
