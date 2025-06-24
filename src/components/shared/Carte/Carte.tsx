@@ -29,11 +29,10 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 
   function searchFeatures(): void {
     if (!map.current) {return}
-    
-    console.log('🔍 Calcul des bounds approximatifs pour le département:', departement)
-    
+        
     // Coordonnées approximatives du centre de chaque département
-    const departementCenters: Record<string, [number, number]> = {
+    // Le calcul par les features est trop complexe car elles ne se chargent pas à tous les niveaux de zoom
+    const centresDepartements: Record<string, [number, number]> = {
       '01': [5.2, 46.2], // Ain
       '02': [3.6, 49.6], // Aisne
       '03': [3.2, 46.3], // Allier
@@ -141,15 +140,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       988: [165.5, -20.9], // Nouvelle-Calédonie
     }
     
-    const center = departementCenters[departement]
-    if (!center) {
-      console.log('❌ Département non trouvé:', departement)
-      return
-    }
+    const center = centresDepartements[departement]
     
-    console.log('🎯 Centre du département:', center)
-    
-    // Calculer les bounds approximatifs (15000 km² ≈ 123 km x 123 km)
+    // Calculer les bounds approximatifs
     // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
     const latDelta = 0.55 // ~61 km au nord et au sud
     const lngDelta = 0.55 / Math.cos(center[1] * Math.PI / 180) // Ajuster pour la longitude
@@ -158,7 +151,13 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       [center[0] - lngDelta, center[1] - latDelta],
       [center[0] + lngDelta, center[1] + latDelta]
     )
-    
+    // Centrer la carte sur les bounds avec animation
+    map.current.fitBounds(bounds, {
+      maxZoom: 10,
+      padding: 50,
+      zoom: 7,
+    })
+  
     // Ajouter un padding de 120% aux bounds pour plus d'espace de navigation
     const padding = 1.2
     const sw = bounds.getSouthWest()
@@ -170,27 +169,17 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       [sw.lng - lngPadding, sw.lat - latPadding],
       [ne.lng + lngPadding, ne.lat + latPadding]
     )
-    
-    // Centrer la carte sur les bounds avec animation
-    map.current.fitBounds(bounds, {
-      maxZoom: 10,
-      padding: 50,
-      zoom: 7,
-    })
+
     map.current.setMaxBounds(paddedBounds)
   }
 
   function initializeLayers(): void {
     if (!map.current) {return}
 
-    console.log('🏗️ Ajout de la couche des communes...')
-
     // Ajouter une couche pour les communes avec l'indice de fragilité
     map.current.addLayer({
       filter: ['==', 'departement', departement],
       id: 'communes-layer',
-      maxzoom: 14, // Limiter le zoom maximum
-      minzoom: 0, // S'assurer que les communes sont visibles dès le niveau 0
       paint: {
         'fill-color': [
           'match',
@@ -201,24 +190,13 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
           ]),
           '#ffffff', 
         ] as unknown as DataDrivenPropertyValueSpecification<string>,
-        'fill-opacity': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          0,
-          0.7, // Plus transparent au zoom bas
-          8,
-          1,   // Complètement opaque au zoom élevé
-        ],
+        'fill-opacity': 0.7,
         'fill-outline-color': '#000000',
       },
       source: 'decoupage',
       'source-layer': 'communes',
       type: 'fill',
     })
-
-    console.log('✅ Couche des communes ajoutée')
-
     searchFeatures()
   }
 
@@ -236,12 +214,10 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     if (!mapContainer.current) {return undefined}
 
     map.current = new Map({
-      center: [2.3522, 48.8566], // Position par défaut (Paris)
       container: mapContainer.current,
       maxZoom: 11, 
       minZoom: 6,
       style: EMPTY_STYLE,
-      zoom: 6,
     })
 
     popup.current = new Popup({
@@ -253,8 +229,6 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       if (!mapContainer.current || !map.current) {return}
       
       map.current.addSource('decoupage', {
-        maxzoom: 14,
-        minzoom: 0,
         tiles: [
           'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
         ],
@@ -265,7 +239,6 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       map.current.addLayer({
         filter: ['==', 'code', departement],
         id: 'departement-layer',
-        minzoom: 0, // S'assurer que le département est visible dès le niveau 0
         paint: {
           'fill-color': '#f0f0f0',
           'fill-opacity': 1,
@@ -277,29 +250,6 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       })
 
       map.current.addControl(new NavigationControl(), 'top-right')
-
-      // Événements pour détecter l'affichage/masquage des couches
-      map.current.on('sourcedata', (e) => {
-        if (e.sourceId === 'decoupage' && e.isSourceLoaded) {
-          console.log('🔄 Source decoupage chargée, données disponibles')
-        }
-      })
-
-      map.current.on('idle', () => {
-        if (map.current) {
-          const communesLayer = map.current.getLayer('communes-layer')
-          if (communesLayer) {
-            const isVisible = map.current.isStyleLoaded() && 
-                             map.current.getZoom() >= (communesLayer.minzoom || 0) &&
-                             map.current.getZoom() <= (communesLayer.maxzoom || 24)
-            
-            console.log('👁️ Couche communes:', isVisible ? 'VISIBLE' : 'MASQUÉE', 'Zoom:', map.current.getZoom())
-          }else{
-            console.log('❌ Couche communes non trouvée Zoom:', map.current.getZoom())
-          }
-        }
-      })
-
       checkSourceLoaded()
     })
 
@@ -316,8 +266,10 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
           popup.current
             .setLngLat(coordinates)
             .setHTML(`
-              <strong>${feature.properties.nom}</strong>
-              ${commune ? `<br/>Indice de fragilité : ${commune.indice}/10` : ''}
+              <div class="fr-text--lg">
+                <div class="fr-text--bold fr-mb-1w">${feature.properties.nom}</div>
+                ${commune ? `<div class="color-blue-france">Indice : ${commune.indice}/10</div>` : ''}
+              </div>
             `)
             .addTo(map.current)
         }
@@ -344,12 +296,17 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   return (
     <div
       className={styles.mapWrapper}
+      data-testid="carte-wrapper"
     >
       <div 
         className={styles.mapContainer} 
+        data-testid="carte-container"
         ref={mapContainer}
       />
-      <div className={styles.legendWrapper}>
+      <div
+        className={styles.legendWrapper}
+        data-testid="legend-wrapper"
+      >
         <Legend />
       </div>
     </div>

@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 
+import Bar from '../shared/Bar/Bar'
 import Carte from '../shared/Carte/Carte'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
@@ -12,10 +13,35 @@ export default function EtatDesLieux({
   communesFragilite, 
   tableauDeBordViewModel, 
 }: Props): ReactElement {
+  const [isReady, setIsReady] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current) {return undefined}
+
+    let resizeTimeout: NodeJS.Timeout
+    
+    const resizeObserver = new ResizeObserver(() => {
+      // Attendre que la taille se stabilise
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        setIsReady(true)
+      }, 200)
+    })
+
+    resizeObserver.observe(containerRef.current)
+
+    return (): void => {
+      resizeObserver.disconnect()
+      clearTimeout(resizeTimeout)
+    }
+  }, [])
+
   return (
     <section
       aria-labelledby="etatDesLieux"
       className="fr-mb-4w "
+      ref={containerRef}
     >
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
@@ -51,7 +77,6 @@ export default function EtatDesLieux({
               flexDirection: 'column',
               gap: '1rem',
               height: '100%',
-           
             }}
           >
             <div style={{ padding: '1rem' }}>
@@ -59,16 +84,15 @@ export default function EtatDesLieux({
                 <div className="font-weight-700 color-blue-france">
                   Indice de Fragilité numérique
                 </div>
-                <div className="color-grey">
-                  Mise à jour le 23/09/2024
-                </div>
               </div>
             </div>
-            <div style={{ flex: 1, minHeight: 0 }}>
-              <Carte
-                communesFragilite={communesFragilite}
-                departement={tableauDeBordViewModel.departement}
-              />
+            <div style={{ flex: 1 }}>
+              {/* On attend que le composant chart soit prêt  avant de charger la carte */}
+              {isReady ? 
+                <Carte
+                  communesFragilite={communesFragilite}
+                  departement={tableauDeBordViewModel.departement}
+                /> : null}
             </div>
           </div>
         </div>
@@ -117,7 +141,11 @@ export default function EtatDesLieux({
             <div className="fr-text--xs color-blue-france fr-mb-0">
               Total cumulé des dispositifs
             </div>
-        
+            <Bar
+              backgroundColor={tableauDeBordViewModel.etatDesLieux.graphique.backgroundColor}
+              data={tableauDeBordViewModel.etatDesLieux.graphique.data}
+              labels={tableauDeBordViewModel.etatDesLieux.graphique.labels}
+            />
           </div>
         </div>
       </div>

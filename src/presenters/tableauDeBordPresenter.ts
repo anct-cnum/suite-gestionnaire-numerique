@@ -1,6 +1,14 @@
+import { AccompagnementsRealisesViewModel } from './shared/accompagnementsRealisesPresenter'
+import { LieuxInclusionNumeriqueViewModel } from './shared/lieuxInclusionNumeriquePresenter'
+import { MediateursEtAidantsViewModel } from './shared/mediateursEtAidantsPresenter'
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 
-export function tableauDeBordPresenter(departementCode: string): TableauDeBordViewModel {
+export function tableauDeBordPresenter(
+  departementCode: string,
+  lieuxInclusionNumerique: LieuxInclusionNumeriqueViewModel,
+  mediateursEtAidants: MediateursEtAidantsViewModel,
+  accompagnementsRealises: AccompagnementsRealisesViewModel
+): TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -83,14 +91,10 @@ export function tableauDeBordPresenter(departementCode: string): TableauDeBordVi
     },
     departement: departementCode,
     etatDesLieux: {
-      accompagnementRealise: formaterEnNombreFrancais(48_476),
-      graphique: {
-        backgroundColor: ['#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#6A6AF4'],
-        data: [10, 20, 30, 10, 15, 35],
-        labels: ['04/24', '05/24', '06/24', '07/24', '08/24', '09/24'],
-      },
-      inclusionNumerique: formaterEnNombreFrancais(479),
-      mediateursEtAidants: formaterEnNombreFrancais(148),
+      accompagnementRealise: accompagnementsRealises.nombreTotal,
+      graphique: accompagnementsRealises.graphique,
+      inclusionNumerique: lieuxInclusionNumerique.nombreLieux,
+      mediateursEtAidants: mediateursEtAidants.total,
     },
     gouvernance: {
       collectivite: {

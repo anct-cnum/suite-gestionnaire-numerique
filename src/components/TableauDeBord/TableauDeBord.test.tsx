@@ -4,13 +4,26 @@ import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import TableauDeBord from './TableauDeBord'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
+// Mock du composant Carte
+vi.mock('../shared/Carte/Carte', () => ({
+  // eslint-disable-next-line vitest/require-mock-type-parameters
+  default: vi.fn(() => (
+    <div data-testid="carte-mock">
+      Carte mockée
+    </div>)),
+}))
+
 describe('tableau de bord', () => {
-  it('quand j’affiche le tableau de bord, alors il s’affiche avec toutes ses informations', () => {
+  afterEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('quand j\'affiche le tableau de bord, alors il s\'affiche avec toutes ses informations', () => {
     // WHEN
     afficherMonTableauDeBord()
 
     // THEN
-    const titre = screen.getByRole('heading', { level: 1, name: '👋 Bonjour Martin Bienvenue sur l’outil de pilotage de l’Inclusion Numérique · 69' })
+    const titre = screen.getByRole('heading', { level: 1, name: '👋 Bonjour Martin Bienvenue sur l\'outil de pilotage de l\'Inclusion Numérique · 69' })
     expect(titre).toBeInTheDocument()
 
     const tachesSection = screen.getByRole('region', { name: 'Tâches à réaliser' })
@@ -40,20 +53,18 @@ describe('tableau de bord', () => {
     const posteVacantLien = within(tacheItems[2]).getByRole('link', { name: 'Les postes vacants' })
     expect(posteVacantLien).toHaveAttribute('href', '/')
 
-    const etatDesLieuxSection = screen.getByRole('region', { name: 'État des lieux de l’inclusion numérique' })
-    const etatDesLieuxTitre = within(etatDesLieuxSection).getByRole('heading', { level: 2, name: 'État des lieux de l’inclusion numérique' })
+    const etatDesLieuxSection = screen.getByRole('region', { name: 'État des lieux de l\'inclusion numérique' })
+    const etatDesLieuxTitre = within(etatDesLieuxSection).getByRole('heading', { level: 2, name: 'État des lieux de l\'inclusion numérique' })
     expect(etatDesLieuxTitre).toBeInTheDocument()
     const etatDesLieuxSousTitre = within(etatDesLieuxSection).getByText('Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect', { selector: 'p' })
     expect(etatDesLieuxSousTitre).toBeInTheDocument()
-    const etatDesLieuxLien = within(etatDesLieuxSection).getByRole('link', { name: 'Lieux d’inclusion numérique' })
+    const etatDesLieuxLien = within(etatDesLieuxSection).getByRole('link', { name: 'Lieux d\'inclusion numérique' })
     expect(etatDesLieuxLien).toHaveAttribute('href', '/lieux-inclusion')
     const indice = within(etatDesLieuxSection).getByText('Indice de Fragilité numérique')
     expect(indice).toBeInTheDocument()
-    const miseAJour = within(etatDesLieuxSection).getByText('Mise à jour le 23/09/2024')
-    expect(miseAJour).toBeInTheDocument()
     const lieuxInclusionNombre = within(etatDesLieuxSection).getByText('479')
     expect(lieuxInclusionNombre).toBeInTheDocument()
-    const lieuxInclusionTitre = within(etatDesLieuxSection).getAllByText('Lieux d’inclusion numérique')
+    const lieuxInclusionTitre = within(etatDesLieuxSection).getAllByText('Lieux d\'inclusion numérique')
     expect(lieuxInclusionTitre[1]).toBeInTheDocument()
     const lieuxInclusionSousTitre = within(etatDesLieuxSection).getByText('Toutes les typologies de lieux publics ou privés')
     expect(lieuxInclusionSousTitre).toBeInTheDocument()
@@ -63,7 +74,7 @@ describe('tableau de bord', () => {
     expect(mediateursNumériquesTitre).toBeInTheDocument()
     const mediateursNumériquesSousTitre = within(etatDesLieuxSection).getByText('Conseillers numériques, coordinateurs, Aidants, …')
     expect(mediateursNumériquesSousTitre).toBeInTheDocument()
-    const accompagnementsNombre = within(etatDesLieuxSection).getByText('48 476')
+    const accompagnementsNombre = within(etatDesLieuxSection).getByText('48476')
     expect(accompagnementsNombre).toBeInTheDocument()
     const accompagnementsTitre = within(etatDesLieuxSection).getByText('Accompagnements réalisés')
     expect(accompagnementsTitre).toBeInTheDocument()
@@ -73,7 +84,7 @@ describe('tableau de bord', () => {
     const gouvernancesSection = screen.getByRole('region', { name: 'Gouvernances' })
     const gouvernancesTitre = within(gouvernancesSection).getByRole('heading', { level: 2, name: 'Gouvernances' })
     expect(gouvernancesTitre).toBeInTheDocument()
-    const gouvernancesSousTitre = within(gouvernancesSection).getByText('Acteurs de l’inclusion numérique', { selector: 'p' })
+    const gouvernancesSousTitre = within(gouvernancesSection).getByText('Acteurs de l\'inclusion numérique', { selector: 'p' })
     expect(gouvernancesSousTitre).toBeInTheDocument()
     const gouvernancesLien = within(gouvernancesSection).getByRole('link', { name: 'La gouvernance' })
     expect(gouvernancesLien).toHaveAttribute('href', '/gouvernance/69')
@@ -111,11 +122,11 @@ describe('tableau de bord', () => {
     expect(budgetSousTitre).toBeInTheDocument()
     const creditsNombre = within(conventionnementSection).getByText('118 000 €')
     expect(creditsNombre).toBeInTheDocument()
-    const creditsTitre = within(conventionnementSection).getByText('Crédits engagés par l’état')
+    const creditsTitre = within(conventionnementSection).getByText('Crédits engagés par l\'état')
     expect(creditsTitre).toBeInTheDocument()
     const creditsSousTitre = within(conventionnementSection).getByText(matchWithoutMarkup('Soit 25 % de votre budget global'))
     expect(creditsSousTitre).toBeInTheDocument()
-    const financementEngage = within(conventionnementSection).getByText('4 financements engagés par l’état')
+    const financementEngage = within(conventionnementSection).getByText('4 financements engagés par l\'état')
     expect(financementEngage).toBeInTheDocument()
     const financements = within(conventionnementSection).getByRole('list')
     const financementsItems = within(financements).getAllByRole('listitem')
@@ -177,7 +188,7 @@ describe('tableau de bord', () => {
     const aidantsMediateursSection = screen.getByRole('region', { name: 'Aidants et médiateurs numériques' })
     const aidantsMediateursTitre = within(aidantsMediateursSection).getByRole('heading', { level: 2, name: 'Aidants et médiateurs numériques' })
     expect(aidantsMediateursTitre).toBeInTheDocument()
-    const aidantsMediateursSousTitre = within(aidantsMediateursSection).getByText('Chiffres clés sur les médiateurs de l’inclusion numérique', { selector: 'p' })
+    const aidantsMediateursSousTitre = within(aidantsMediateursSection).getByText('Chiffres clés sur les médiateurs de l\'inclusion numérique', { selector: 'p' })
     expect(aidantsMediateursSousTitre).toBeInTheDocument()
     const aidantsMediateursLien = within(aidantsMediateursSection).getByRole('link', { name: 'Les aidants et médiateurs' })
     expect(aidantsMediateursLien).toHaveAttribute('href', '/aidants-et-mediateurs')
@@ -237,10 +248,29 @@ describe('tableau de bord', () => {
   })
 
   function afficherMonTableauDeBord(): void {
-    const tableauDeBordViewModel = tableauDeBordPresenter('69')
-    renderComponent(<TableauDeBord
-      indicesFragilite={[]}
-      tableauDeBordViewModel={tableauDeBordViewModel}
-    />)
+    const tableauDeBordViewModel = tableauDeBordPresenter('69', {
+      departement: '69',
+      nombreLieux: '479',
+    }, {
+      departement: '69',
+      nombreAidants: '85',
+      nombreMediateurs: '63',
+      total: '148',
+    }, {
+      departement: '69',
+      graphique: {
+        backgroundColor: ['#000000'],
+        data: [48_476],
+        labels: ['2024'],
+      },
+      nombreTotal: '48476',
+    })
+    
+    renderComponent(
+      <TableauDeBord
+        indicesFragilite={[]}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
+    )
   }
 })

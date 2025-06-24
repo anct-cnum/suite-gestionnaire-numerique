@@ -39,7 +39,7 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
         </span>
         <br />
         <span className="fr-text--lead color-blue-france">
-          Bienvenue sur l’outil de pilotage de l’Inclusion Numérique ·
+          Bienvenue sur l&apos;outil de pilotage de l&apos;Inclusion Numérique ·
           {' '}
           {tableauDeBordViewModel.departement}
         </span>
@@ -82,13 +82,6 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
           }
         </ul>
       </section>
-      <hr />
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '40vh',
-      }}
-      />
       <EtatDesLieux
         communesFragilite={communesFragilite}
         tableauDeBordViewModel={tableauDeBordViewModel}
@@ -108,7 +101,7 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
                 Gouvernances
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Acteurs de l’inclusion numérique
+                Acteurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
@@ -242,7 +235,7 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
               {tableauDeBordViewModel.conventionnement.credit.total}
             </div>
             <div className="font-weight-500">
-              Crédits engagés par l’état
+              Crédits engagés par l&apos;état
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">
               Soit
@@ -256,7 +249,7 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
           </div>
         </div>
         <div className="font-weight-500">
-          4 financements engagés par l’état
+          4 financements engagés par l&apos;état
         </div>
         <ul>
           {
@@ -374,7 +367,7 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
                 Aidants et médiateurs numériques
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les médiateurs de l’inclusion numérique
+                Chiffres clés sur les médiateurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
