@@ -79,7 +79,7 @@ describe('les feuilles de route d’une gouvernance', () => {
     expect(typeDeLaPremiereAction).toHaveAttribute('type', 'button')
     const porteurDeLaPremiereAction = within(premiereAction).getByRole('link', { name: 'CC des Monts du Lyonnais' })
     expect(porteurDeLaPremiereAction).toHaveAttribute('href', '/gouvernance/gouvernanceFooId/membre/coPorteuseFooId')
-    const badgeDeStatutDeLaPremiereAction = within(premiereAction).getByText('Subvention acceptée', { selector: 'p' })
+    const badgeDeStatutDeLaPremiereAction = within(premiereAction).getByText('Subvention validée', { selector: 'p' })
     expect(badgeDeStatutDeLaPremiereAction).toBeInTheDocument()
     const labelBudgetTotalDeLaFeuilleDeRoute = within(premiereFeuilleDeRoute).getByText('Budget total de la feuille de route', { selector: 'p' })
     expect(labelBudgetTotalDeLaFeuilleDeRoute).toBeInTheDocument()
