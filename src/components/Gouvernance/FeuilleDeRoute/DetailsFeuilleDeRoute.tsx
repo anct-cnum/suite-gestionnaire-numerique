@@ -6,8 +6,11 @@ import ExternalLink from '@/components/shared/ExternalLink/ExternalLink'
 import Tag from '@/components/shared/Tag/Tag'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/gouvernancePresenter'
+import { formatMontant } from '@/presenters/shared/number'
 
-export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props): ReactElement {
+export default function DetailsFeuilleDeRoute(
+  { feuilleDeRoute, labelId, totalDesSubventionsDemande }: Props
+): ReactElement {
   return (
     <>
       <DrawerTitle id={labelId}>
@@ -40,7 +43,15 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
-          Montant de la subvention demandée
+          Montant total de subventions demandées
+        </div>
+        <div className="font-weight-700">
+          {formatMontant(totalDesSubventionsDemande)}
+        </div>
+      </div>
+      <div className="fr-mb-2w">
+        <div className="color-grey">
+          Montant des subventions d&apos;ingenierie demandées
         </div>
         <div className="font-weight-700">
           {feuilleDeRoute.montantSubventionDemandee}
@@ -48,7 +59,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey">
-          Montant de la subvention accordée
+          Montant des subventions d&apos;ingenierie accordées
         </div>
         <div className="font-weight-700">
           {feuilleDeRoute.montantSubventionAccordee}
@@ -56,7 +67,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey fr-mb-1w">
-          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions accordées`}
+          {`${feuilleDeRoute.wordingBeneficiairesSubvention} des subventions d'ingenierie accordées`}
         </div>
         {
           feuilleDeRoute.beneficiairesSubventionAccordee.length > 0 ?
@@ -84,7 +95,7 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
       </div>
       <div className="fr-mb-2w">
         <div className="color-grey fr-mb-1w">
-          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} des subventions formation accordées`}
+          {`${feuilleDeRoute.wordingBeneficiairesSubventionFormation} de la subvention formation accordée`}
         </div>
         {
           feuilleDeRoute.beneficiairesSubventionFormationAccordee.length > 0 ?
@@ -130,4 +141,5 @@ export default function DetailsFeuilleDeRoute({ feuilleDeRoute, labelId }: Props
 type Props = Readonly<{
   feuilleDeRoute: FeuilleDeRouteViewModel
   labelId: string
+  totalDesSubventionsDemande: number
 }>

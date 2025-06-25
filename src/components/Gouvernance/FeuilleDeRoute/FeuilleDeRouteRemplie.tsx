@@ -68,6 +68,9 @@ export default function FeuilleDeRouteRemplie({
         <DetailsFeuilleDeRoute
           feuilleDeRoute={feuilleDeRoute}
           labelId={labelId}
+          totalDesSubventionsDemande={feuillesDeRoute.reduce((acc, feuilleDeRoute) => {
+            return acc + feuilleDeRoute.budgetSubventionDemandee
+          }, 0)}
         />
       </Drawer>
     </>
