@@ -22,7 +22,6 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
           JOIN main.structure s2 ON s2.id = pl.structure_id
           JOIN main.adresse a2 ON s2.adresse_id = a2.id
           WHERE a2.departement = ${codeDepartement}
-            AND s2.colonne_inexistante = 'test' -- ERREUR SIMULÉE : colonne qui n'existe pas
         )
         SELECT 
           ac.nb_acteurs_ac,
@@ -31,8 +30,8 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
       `
 
       const row = result[0]
-      const nbActeursAc = Number(row.nb_acteurs_ac ?? 0)
-      const nbActeursCn = Number(row.nb_acteurs_cn ?? 0)
+      const nbActeursAc = Number(row.nb_acteurs_ac)
+      const nbActeursCn = Number(row.nb_acteurs_cn)
 
       return {
         departement: codeDepartement,
@@ -40,7 +39,6 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
         nombreMediateurs: nbActeursCn,
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des médiateurs et aidants:', error)
       reportLoaderError(error, 'PrismaMediateursEtAidantsLoader', {
         codeDepartement,
         operation: 'get',

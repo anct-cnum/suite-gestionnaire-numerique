@@ -1,12 +1,9 @@
 import { formaterEnNombreFrancais } from './shared/number'
 import { AccompagnementsRealisesReadModel } from '@/use-cases/queries/RecupererAccompagnementsRealises'
-import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export function accompagnementsRealisesPresenter(readModel: AccompagnementsRealisesReadModel | ErrorReadModel): AccompagnementsRealisesViewModel | ErrorReadModel {
-  if (isErrorReadModel(readModel)) {
-    return readModel
-  }
-
+export function accompagnementsRealisesPresenter(
+  readModel: AccompagnementsRealisesReadModel
+): AccompagnementsRealisesViewModel {
   return {
     departement: readModel.departement,
     graphique: {
@@ -26,8 +23,4 @@ export type AccompagnementsRealisesViewModel = Readonly<{
     labels: Array<string>
   }>
   nombreTotal: string
-}>
-
-function isErrorReadModel(readModel: AccompagnementsRealisesReadModel | ErrorReadModel): readModel is ErrorReadModel {
-  return 'type' in readModel && readModel.type === 'error'
-} 
+}> 

@@ -1,12 +1,7 @@
 import { formaterEnNombreFrancais } from './shared/number'
 import { MediateursEtAidantsReadModel } from '@/use-cases/queries/RecupererMediateursEtAidants'
-import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export function mediateursEtAidantsPresenter(readModel: ErrorReadModel | MediateursEtAidantsReadModel): ErrorReadModel | MediateursEtAidantsViewModel {
-  if (isErrorReadModel(readModel)) {
-    return readModel
-  }
-
+export function mediateursEtAidantsPresenter(readModel: MediateursEtAidantsReadModel): MediateursEtAidantsViewModel {
   return {
     departement: readModel.departement,
     nombreAidants: formaterEnNombreFrancais(readModel.nombreAidants),
@@ -20,8 +15,4 @@ export type MediateursEtAidantsViewModel = Readonly<{
   nombreAidants: string
   nombreMediateurs: string
   total: string
-}>
-
-function isErrorReadModel(readModel: ErrorReadModel | MediateursEtAidantsReadModel): readModel is ErrorReadModel {
-  return 'type' in readModel && readModel.type === 'error'
-} 
+}> 

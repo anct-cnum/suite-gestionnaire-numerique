@@ -8,28 +8,37 @@ import CarteFragilite from './EtatDesLieux/CarteFragilite'
 import LieuxInclusionNumerique from './EtatDesLieux/LieuxInclusionNumerique'
 import MediateursEtAidants from './EtatDesLieux/MediateursEtAidants'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
-import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
+export default function EtatDesLieux({
+  accompagnementsRealisesViewModel,
+  departement,
+  indicesFragilite,
+  lieuxInclusionViewModel,
+  mediateursEtAidantsViewModel,
+}: EtatDesLieuxProps): ReactElement {
   return (
     <section
-      aria-labelledby="etat-des-lieux"
-      className="fr-mb-4w"
+      aria-labelledby="etatDesLieux"
+      className="fr-mb-4w "
     >
       <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
         <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="map-pin-2-line" />
+          <TitleIcon icon="france-line" />
           <div>
             <h2
-              className="fr-h3 fr-mb-0"
-              id="etat-des-lieux"
+              className="fr-h4 color-blue-france fr-m-0"
+              id="etatDesLieux"
             >
-              État des lieux
+              État des lieux de l&apos;inclusion numérique
             </h2>
+            <p className="fr-m-0 font-weight-500">
+              Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
+            </p>
           </div>
         </div>
         <Link
@@ -41,13 +50,13 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
       </div>
       <div className="fr-grid-row">
         <CarteFragilite
-          communesFragilite={props.communesFragilite}
-          departement={props.departement}
+          communesFragilite={indicesFragilite}
+          departement={departement}
         />
         <div className="fr-col-4">
-          <LieuxInclusionNumerique viewModel={props.lieuxInclusionViewModel} />
-          <MediateursEtAidants viewModel={props.mediateursEtAidantsViewModel} />
-          <AccompagnementsRealises viewModel={props.accompagnementsRealisesViewModel} />
+          <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
+          <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
+          <AccompagnementsRealises viewModel={accompagnementsRealisesViewModel} />
         </div>
       </div>
     </section>
@@ -55,9 +64,9 @@ export default function EtatDesLieux(props: EtatDesLieuxProps): ReactElement {
 }
 
 type EtatDesLieuxProps = Readonly<{
-  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorReadModel
-  communesFragilite: Array<CommuneFragilite>
+  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
   departement: string
-  lieuxInclusionViewModel: ErrorReadModel | LieuxInclusionNumeriqueViewModel
-  mediateursEtAidantsViewModel: ErrorReadModel | MediateursEtAidantsViewModel
+  indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
+  lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
+  mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
 }> 

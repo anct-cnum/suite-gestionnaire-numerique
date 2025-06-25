@@ -1,4 +1,3 @@
-
 export const FRAGILITE_COLORS = {
   1: '#4A6BAE',
   2: '#5F8EC7',
@@ -9,7 +8,7 @@ export const FRAGILITE_COLORS = {
   7: '#D95C5E',
 }
 
-export function indiceFragilitePresenter(ifnCommunes : ReadonlyArray<Readonly<{
+export function indiceFragilitePresenter(ifnCommunes: ReadonlyArray<Readonly<{
   codeInsee: string
   score: null | number
 }>>): Array<CommuneFragilite> {
@@ -20,11 +19,11 @@ export function indiceFragilitePresenter(ifnCommunes : ReadonlyArray<Readonly<{
   }))
 }
 
-interface CommuneFragilite {
+export type CommuneFragilite = Readonly<{
   codeInsee: string
   couleur: string
   indice: number
-}
+}>
 
 // il y a 7 couleurs pour un indice de 0 à 10
 function getCouleurFragilite(indice: number): string {
@@ -35,5 +34,3 @@ function getCouleurFragilite(indice: number): string {
 
   return FRAGILITE_COLORS[indiceDeCouleur as keyof typeof FRAGILITE_COLORS] || '#ffffff'
 }
-
-export type { CommuneFragilite }

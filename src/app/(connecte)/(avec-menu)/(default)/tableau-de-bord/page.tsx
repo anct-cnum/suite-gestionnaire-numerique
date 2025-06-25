@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/PrismaAccompagnementsRealisesLoader'
@@ -13,6 +14,7 @@ import { accompagnementsRealisesPresenter } from '@/presenters/accompagnementsRe
 import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/indiceFragilitePresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/mediateursEtAidantsPresenter'
+import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -29,24 +31,36 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
   const departementCode = utilisateur.departementCode ?? ''
-
-  // Récupération des données depuis la base
+  
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const lieuxInclusionReadModel = await lieuxInclusionLoader.get(departementCode)
-  const lieuxInclusionViewModel = lieuxInclusionNumeriquePresenter(lieuxInclusionReadModel)
+  const lieuxInclusionViewModel = handleReadModelOrError(
+    lieuxInclusionReadModel,
+    lieuxInclusionNumeriquePresenter
+  )
 
   const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(departementCode)
-  const mediateursEtAidantsViewModel = mediateursEtAidantsPresenter(mediateursEtAidantsReadModel)
+  const mediateursEtAidantsViewModel = handleReadModelOrError(
+    mediateursEtAidantsReadModel,
+    mediateursEtAidantsPresenter
+  )
 
   const accompagnementsRealisesLoader = new PrismaAccompagnementsRealisesLoader()
   const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(departementCode)
-  const accompagnementsRealisesViewModel = accompagnementsRealisesPresenter(accompagnementsRealisesReadModel)
+  const accompagnementsRealisesViewModel = handleReadModelOrError(
+    accompagnementsRealisesReadModel,
+    accompagnementsRealisesPresenter
+  )
 
-  // Récupération des indices de fragilité
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
   const indicesReadModel = await indicesLoader.get(departementCode)
-  const indicesFragilite = indiceFragiliteParCommunePresenter(indicesReadModel.communes)
+  const indicesFragilite = handleReadModelOrError(
+    indicesReadModel,
+    (readModel) => indiceFragiliteParCommunePresenter(readModel.communes)
+  )
+
+  const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
 
   return (
     <TableauDeBord 
@@ -55,6 +69,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       indicesFragilite={indicesFragilite}
       lieuxInclusionViewModel={lieuxInclusionViewModel}
       mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+      tableauDeBordViewModel={tableauDeBordViewModel}
     />
   )
 }

@@ -248,27 +248,31 @@ describe('tableau de bord', () => {
   })
 
   function afficherMonTableauDeBord(): void {
-    const tableauDeBordViewModel = tableauDeBordPresenter('69', {
-      departement: '69',
-      nombreLieux: '479',
-    }, {
-      departement: '69',
-      nombreAidants: '85',
-      nombreMediateurs: '63',
-      total: '148',
-    }, {
-      departement: '69',
-      graphique: {
-        backgroundColor: ['#000000'],
-        data: [48_476],
-        labels: ['2024'],
-      },
-      nombreTotal: '48476',
-    })
+    const tableauDeBordViewModel = tableauDeBordPresenter('69')
     
     renderComponent(
       <TableauDeBord
+        accompagnementsRealisesViewModel={{
+          departement: '69',
+          graphique: {
+            backgroundColor: ['#000000'],
+            data: [48_476],
+            labels: ['2024'],
+          },
+          nombreTotal: '48476',
+        }}
+        departement="69"
         indicesFragilite={[]}
+        lieuxInclusionViewModel={{
+          departement: '69',
+          nombreLieux: '479',
+        }}
+        mediateursEtAidantsViewModel={{
+          departement: '69',
+          nombreAidants: '85',
+          nombreMediateurs: '63',
+          total: '148',
+        }}
         tableauDeBordViewModel={tableauDeBordViewModel}
       />
     )

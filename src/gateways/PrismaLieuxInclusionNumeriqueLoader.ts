@@ -20,7 +20,6 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
         nombreLieux: Number(result[0]?.nb_lieux ?? 0),
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des lieux d\'inclusion numérique:', error)
       reportLoaderError(error, 'PrismaLieuxInclusionNumeriqueLoader', {
         codeDepartement,
         operation: 'get',

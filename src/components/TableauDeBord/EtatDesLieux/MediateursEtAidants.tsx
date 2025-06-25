@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
 
 export default function MediateursEtAidants({ 
@@ -45,13 +46,8 @@ export default function MediateursEtAidants({
   )
 }
 
-type ErrorViewModel = Readonly<{
-  message: string
-  type: 'error'
-}>
-
 function isErrorViewModel(viewModel: ErrorViewModel | MediateursEtAidantsViewModel): viewModel is ErrorViewModel {
-  return 'type' in viewModel && viewModel.type === 'error'
+  return 'type' in viewModel
 }
 
 type Props = Readonly<{

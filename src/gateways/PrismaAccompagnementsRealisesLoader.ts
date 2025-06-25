@@ -51,7 +51,6 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
         })),
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des accompagnements réalisés:', error)
       reportLoaderError(error, 'PrismaAccompagnementsRealisesLoader', {
         codeDepartement,
         operation: 'get',
