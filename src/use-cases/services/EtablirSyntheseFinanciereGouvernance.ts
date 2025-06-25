@@ -39,10 +39,10 @@ function makeBilanGouvernance(bilanFeuilleDeRouteFactory: BilanFeuilleDeRouteFac
       coFinancement: bilanGouvernance.coFinancement + bilanFeuilleDeRoute.coFinancement,
       coFinanceurs: bilanGouvernance.coFinanceurs.union(bilanFeuilleDeRoute.coFinanceurs),
       feuillesDeRoute: bilanGouvernance.feuillesDeRoute.concat({ ...bilanFeuilleDeRoute, uid: feuilleDeRoute.uid }),
-      financementAccorde: bilanGouvernance.financementAccorde + bilanFeuilleDeRoute.financementAccorde,
       financementDemande: bilanGouvernance.financementDemande + bilanFeuilleDeRoute.financementDemande,
       financementFormationAccorde: bilanGouvernance.financementFormationAccorde
         + bilanFeuilleDeRoute.financementFormationAccorde,
+      financemenTotalAccorde: bilanGouvernance.financemenTotalAccorde + bilanFeuilleDeRoute.financemenTotalAccorde,
     }
   }
 }
@@ -54,9 +54,9 @@ function makeBilanFeuilleDeRoute(uid: string) {
     budget: bilanFeuilleDeRoute.budget + action.budget,
     coFinancement: bilanFeuilleDeRoute.coFinancement + action.coFinancement,
     coFinanceurs: bilanFeuilleDeRoute.coFinanceurs.union(action.coFinanceurs),
-    financementAccorde: bilanFeuilleDeRoute.financementAccorde + action.financementAccorde,
     financementDemande: bilanFeuilleDeRoute.financementDemande + action.financementDemande,
     financementFormationAccorde: bilanFeuilleDeRoute.financementFormationAccorde + action.financementFormationAccorde,
+    financemenTotalAccorde: bilanFeuilleDeRoute.financemenTotalAccorde + action.financemenTotalAccorde,
     uid,
   })
 }
@@ -77,7 +77,7 @@ function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions
     )
   const financementDemande = (subvention?.montants.prestation ?? 0) + (subvention?.montants.ressourcesHumaines ?? 0)
   const accorde = subvention?.statut === StatutSubvention.ACCEPTEE ? financementDemande : 0
-  const [financementAccorde, financementFormationAccorde] = isFormation
+  const [financementTotalAccorde, financementFormationAccorde] = isFormation
     ? [accorde, accorde]
     : [accorde, 0]
   return {
@@ -85,9 +85,9 @@ function makeBilanAction(action: Gouvernance['feuillesDeRoute'][number]['actions
     budget: action.budgetGlobal,
     coFinancement,
     coFinanceurs,
-    financementAccorde,
     financementDemande,
     financementFormationAccorde,
+    financemenTotalAccorde: financementTotalAccorde,
     isFormation,
     uid: action.uid,
   }
@@ -99,9 +99,9 @@ const bilanInitialGouvernance: BilanGouvernance = {
   coFinancement: 0,
   coFinanceurs: new Set(),
   feuillesDeRoute: [],
-  financementAccorde: 0,
   financementDemande: 0,
   financementFormationAccorde: 0,
+  financemenTotalAccorde: 0,
 }
 
 const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
@@ -110,9 +110,9 @@ const bilanInitialFeuilleDeRoute: BilanFeuilleDeRoute = {
   budget: 0,
   coFinancement: 0,
   coFinanceurs: new Set(),
-  financementAccorde: 0,
   financementDemande: 0,
   financementFormationAccorde: 0,
+  financemenTotalAccorde: 0,
   uid: '',
 }
 

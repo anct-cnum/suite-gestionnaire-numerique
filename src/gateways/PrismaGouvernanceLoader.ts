@@ -132,7 +132,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
           },
         },
         budgetGlobal: synthese.feuillesDeRoute[index].budget,
-        montantSubventionAccordee: synthese.feuillesDeRoute[index].financementAccorde,
+        montantSubventionAccordee: synthese.feuillesDeRoute[index].financemenTotalAccorde,
         montantSubventionDemandee: synthese.feuillesDeRoute[index].financementDemande,
         montantSubventionFormationAccordee: synthese.feuillesDeRoute[index].financementFormationAccorde,
         nom: feuilleDeRoute.nom,

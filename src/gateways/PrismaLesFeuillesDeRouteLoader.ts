@@ -107,7 +107,7 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
             } : undefined,
             totaux: {
               coFinancement: syntheseAction.coFinancement,
-              financementAccorde: syntheseAction.financementAccorde,
+              financementAccorde: syntheseAction.financemenTotalAccorde,
             },
             uid: String(action.id),
           }
@@ -129,7 +129,7 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
         totaux: {
           budget: synthese.feuillesDeRoute[indexDeuilleDeRoute].budget,
           coFinancement: synthese.feuillesDeRoute[indexDeuilleDeRoute].coFinancement,
-          financementAccorde: synthese.feuillesDeRoute[indexDeuilleDeRoute].financementAccorde,
+          financementAccorde: synthese.feuillesDeRoute[indexDeuilleDeRoute].financemenTotalAccorde,
         },
         uid: String(feuilleDeRouteRecord.id),
       })),
@@ -140,7 +140,7 @@ export class PrismaLesFeuillesDeRouteLoader implements FeuillesDeRouteLoader {
       totaux: {
         budget: synthese.budget,
         coFinancement: synthese.coFinancement,
-        financementAccorde: synthese.financementAccorde,
+        financementAccorde: synthese.financemenTotalAccorde,
       },
       uidGouvernance: codeDepartement,
     }

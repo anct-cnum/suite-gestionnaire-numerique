@@ -13,9 +13,9 @@ export type SyntheseGouvernance = Readonly<{
 export type Finances = Readonly<{
   budget: Montant
   coFinancement: Montant
-  financementAccorde: Montant
   financementDemande: Montant
   financementFormationAccorde: Montant
+  financemenTotalAccorde: Montant
 }>
 
 type FeuilleDeRoute = Readonly<{
