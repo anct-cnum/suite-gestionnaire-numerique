@@ -92,13 +92,14 @@ export default function TableauDeBord({
           }
         </ul>
       </section>
-      <EtatDesLieux
-        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
-        departement={departement}
-        indicesFragilite={indicesFragilite}
-        lieuxInclusionViewModel={lieuxInclusionViewModel}
-        mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-      />
+      {sessionUtilisateurViewModel.peutChangerDeRole ? 
+        <EtatDesLieux
+          accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+          departement={departement}
+          indicesFragilite={indicesFragilite}
+          lieuxInclusionViewModel={lieuxInclusionViewModel}
+          mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+        /> : null}
       <section
         aria-labelledby="gouvernance"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
