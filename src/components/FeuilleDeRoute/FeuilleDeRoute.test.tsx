@@ -78,7 +78,7 @@ describe('feuille de route', () => {
     expect(supprimerAction1).toHaveAttribute('type', 'button')
     const titreAction1 = within(enTeteAction1).getByRole('heading', { level: 3, name: 'Structurer une filière de reconditionnement locale 1' })
     expect(titreAction1).toBeInTheDocument()
-    const statutAction1 = within(action1).getByText(/demande déposée/i, { selector: 'p' })
+    const statutAction1 = within(action1).getByText(/demande envoyée/i, { selector: 'p' })
     expect(statutAction1).toBeInTheDocument()
     const besoinsEtBeneficiairesAction1 = within(action1).getByText('Établir un diagnostic territorial, 2 bénéficiaires', { selector: 'p' })
     expect(besoinsEtBeneficiairesAction1).toBeInTheDocument()

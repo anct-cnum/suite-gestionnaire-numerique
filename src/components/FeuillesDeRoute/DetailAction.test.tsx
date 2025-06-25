@@ -23,7 +23,7 @@ describe('détail d’une action', () => {
       const besoins = within(drawer).getByRole('list', { name: 'Besoins' })
       const besoinsItems = within(besoins).getAllByRole('listitem')
       expect(besoinsItems).toHaveLength(2)
-      const statut = within(drawer).getByText('Subvention acceptée')
+      const statut = within(drawer).getByText('Subvention validée')
       expect(statut).toBeInTheDocument()
       const diagnostic = within(besoinsItems[0]).getByText('Établir un diagnostic territorial')
       expect(diagnostic).toBeInTheDocument()
