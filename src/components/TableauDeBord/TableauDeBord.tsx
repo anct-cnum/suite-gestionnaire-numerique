@@ -5,9 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
-import carto from './carto.png'
+import EtatDesLieux from './EtatDesLieux'
 import styles from './TableauDeBord.module.css'
-import Bar from '../shared/Bar/Bar'
 import { clientContext } from '../shared/ClientContext'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
@@ -15,9 +14,21 @@ import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
+import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
+import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
+import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
 
-export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactElement {
+export default function TableauDeBord({ 
+  accompagnementsRealisesViewModel,
+  departement,
+  indicesFragilite,
+  lieuxInclusionViewModel,
+  mediateursEtAidantsViewModel,
+  tableauDeBordViewModel,
+}: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   ChartJS.register(
@@ -38,9 +49,9 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
         </span>
         <br />
         <span className="fr-text--lead color-blue-france">
-          Bienvenue sur l’outil de pilotage de l’Inclusion Numérique ·
+          Bienvenue sur l&apos;outil de pilotage de l&apos;Inclusion Numérique ·
           {' '}
-          {tableauDeBordViewModel.departement}
+          {departement}
         </span>
       </PageTitle>
       <section
@@ -81,112 +92,14 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           }
         </ul>
       </section>
-      <hr />
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '40vh',
-      }}
-      />
-      <section
-        aria-labelledby="etatDesLieux"
-        className={`fr-mb-4w  ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="france-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="etatDesLieux"
-              >
-                État des lieux de l’inclusion numérique
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/lieux-inclusion"
-          >
-            Lieux d’inclusion numérique
-          </Link>
-        </div>
-        <div className="fr-grid-row">
-          <div className="fr-col-8 background-blue-france">
-            <div className="fr-grid-row space-between fr-p-4w">
-              <div className="font-weight-700 color-blue-france">
-                Indice de Fragilité numérique
-              </div>
-              <div className="color-grey">
-                Mise à jour le 23/09/2024
-              </div>
-            </div>
-            <div className="center">
-              <Image
-                alt=""
-                height={510}
-                src={carto}
-                width={560}
-              />
-            </div>
-          </div>
-          <div className="fr-col-4">
-            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="map-pin-2-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.inclusionNumerique}
-              </div>
-              <div className="font-weight-500">
-                Lieux d’inclusion numérique
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Toutes les typologies de lieux publics ou privés
-              </div>
-            </div>
-            <div className="background-blue-france fr-p-4w fr-mb-1w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="map-pin-user-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.mediateursEtAidants}
-              </div>
-              <div className="font-weight-500">
-                Médiateurs et aidants numériques
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Conseillers numériques, coordinateurs, Aidants, …
-              </div>
-            </div>
-            <div className="background-blue-france fr-p-4w fr-ml-1w">
-              <div className="fr-h1 fr-m-0">
-                <TitleIcon
-                  background="white"
-                  icon="compass-3-line"
-                />
-                {tableauDeBordViewModel.etatDesLieux.accompagnementRealise}
-              </div>
-              <div className="font-weight-500">
-                Accompagnements réalisés
-              </div>
-              <div className="fr-text--xs color-blue-france fr-mb-0">
-                Total cumulé des dispositifs
-              </div>
-              <Bar
-                backgroundColor={tableauDeBordViewModel.etatDesLieux.graphique.backgroundColor}
-                data={tableauDeBordViewModel.etatDesLieux.graphique.data}
-                labels={tableauDeBordViewModel.etatDesLieux.graphique.labels}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {sessionUtilisateurViewModel.peutChangerDeRole ? 
+        <EtatDesLieux
+          accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+          departement={departement}
+          indicesFragilite={indicesFragilite}
+          lieuxInclusionViewModel={lieuxInclusionViewModel}
+          mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+        /> : null}
       <section
         aria-labelledby="gouvernance"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
@@ -202,7 +115,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Gouvernances
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Acteurs de l’inclusion numérique
+                Acteurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
@@ -336,7 +249,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
               {tableauDeBordViewModel.conventionnement.credit.total}
             </div>
             <div className="font-weight-500">
-              Crédits engagés par l’état
+              Crédits engagés par l&apos;état
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">
               Soit
@@ -350,7 +263,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
           </div>
         </div>
         <div className="font-weight-500">
-          4 financements engagés par l’état
+          4 financements engagés par l&apos;état
         </div>
         <ul>
           {
@@ -468,7 +381,7 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
                 Aidants et médiateurs numériques
               </h2>
               <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les médiateurs de l’inclusion numérique
+                Chiffres clés sur les médiateurs de l&apos;inclusion numérique
               </p>
             </div>
           </div>
@@ -638,5 +551,10 @@ export default function TableauDeBord({ tableauDeBordViewModel }: Props): ReactE
 }
 
 type Props = Readonly<{
+  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  departement: string
+  indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
+  lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
+  mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   tableauDeBordViewModel: TableauDeBordViewModel
 }>

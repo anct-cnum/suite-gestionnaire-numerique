@@ -1,0 +1,34 @@
+@import url('maplibre-gl/dist/maplibre-gl.css');
+
+.mapContainer {
+  border-radius: 0.25rem;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.maplibregl-canvas {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.maplibregl-canvas-container {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+.mapWrapper {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.legendWrapper {
+  bottom: 1.25rem;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  z-index: 1;
+}

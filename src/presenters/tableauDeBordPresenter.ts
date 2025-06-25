@@ -1,6 +1,10 @@
+
 import { formaterEnNombreFrancais, formatMontant } from './shared/number'
 
-export function tableauDeBordPresenter(departementCode: string): TableauDeBordViewModel {
+export function tableauDeBordPresenter(
+  departementCode: string
+
+): TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -82,16 +86,7 @@ export function tableauDeBordPresenter(departementCode: string): TableauDeBordVi
       ],
     },
     departement: departementCode,
-    etatDesLieux: {
-      accompagnementRealise: formaterEnNombreFrancais(48_476),
-      graphique: {
-        backgroundColor: ['#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#CACAFB', '#6A6AF4'],
-        data: [10, 20, 30, 10, 15, 35],
-        labels: ['04/24', '05/24', '06/24', '07/24', '08/24', '09/24'],
-      },
-      inclusionNumerique: formaterEnNombreFrancais(479),
-      mediateursEtAidants: formaterEnNombreFrancais(148),
-    },
+    
     gouvernance: {
       collectivite: {
         membre: 9,
@@ -162,8 +157,7 @@ export function tableauDeBordPresenter(departementCode: string): TableauDeBordVi
       },
     ],
   }
-}
-
+} 
 export type TableauDeBordViewModel = Readonly<{
   aidant: Readonly<{
     details: ReadonlyArray<{
@@ -204,16 +198,7 @@ export type TableauDeBordViewModel = Readonly<{
     }>
   }>
   departement: string
-  etatDesLieux: Readonly<{
-    accompagnementRealise: string
-    graphique: Readonly<{
-      backgroundColor: ReadonlyArray<string>
-      data: ReadonlyArray<number>
-      labels: Array<string>
-    }>
-    inclusionNumerique: string
-    mediateursEtAidants: string
-  }>
+  
   gouvernance: Readonly<{
     collectivite: Readonly<{
       membre: number
@@ -249,4 +234,4 @@ export type TableauDeBordViewModel = Readonly<{
     label: string
     lien: string
   }>
-}>
+}> 
