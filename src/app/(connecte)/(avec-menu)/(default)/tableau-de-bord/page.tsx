@@ -9,11 +9,10 @@ import { PrismaIndicesDeFragiliteLoader } from '@/gateways/PrismaIndicesDeFragil
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/PrismaMediateursEtAidantsLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { accompagnementsRealisesPresenter } from '@/presenters/accompagnementsRealisesPresenter'
 import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/indiceFragilitePresenter'
-import { accompagnementsRealisesPresenter } from '@/presenters/shared/accompagnementsRealisesPresenter'
-import { lieuxInclusionNumeriquePresenter } from '@/presenters/shared/lieuxInclusionNumeriquePresenter'
-import { mediateursEtAidantsPresenter } from '@/presenters/shared/mediateursEtAidantsPresenter'
-import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
+import { lieuxInclusionNumeriquePresenter } from '@/presenters/lieuxInclusionNumeriquePresenter'
+import { mediateursEtAidantsPresenter } from '@/presenters/mediateursEtAidantsPresenter'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -44,21 +43,18 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(departementCode)
   const accompagnementsRealisesViewModel = accompagnementsRealisesPresenter(accompagnementsRealisesReadModel)
 
-  const tableauDeBordViewModel = tableauDeBordPresenter(
-    departementCode,
-    lieuxInclusionViewModel,
-    mediateursEtAidantsViewModel,
-    accompagnementsRealisesViewModel
-  )
-
+  // Récupération des indices de fragilité
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
   const indicesReadModel = await indicesLoader.get(departementCode)
   const indicesFragilite = indiceFragiliteParCommunePresenter(indicesReadModel.communes)
-  
+
   return (
     <TableauDeBord 
+      accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+      departement={departementCode}
       indicesFragilite={indicesFragilite}
-      tableauDeBordViewModel={tableauDeBordViewModel}
+      lieuxInclusionViewModel={lieuxInclusionViewModel}
+      mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
     />
   )
 }

@@ -8,17 +8,20 @@ import { ReactElement, useContext } from 'react'
 import EtatDesLieux from './EtatDesLieux'
 import styles from './TableauDeBord.module.css'
 import { clientContext } from '../shared/ClientContext'
-import Dot from '../shared/Dot/Dot'
-import Doughnut from '../shared/Doughnut/Doughnut'
-import ExternalLink from '../shared/ExternalLink/ExternalLink'
-import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
-import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
 import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
-import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
+import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
+import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
+import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export default function TableauDeBord({ indicesFragilite: communesFragilite,
-  tableauDeBordViewModel }: Props): ReactElement {
+export default function TableauDeBord({ 
+  accompagnementsRealisesViewModel,
+  departement,
+  indicesFragilite: communesFragilite,
+  lieuxInclusionViewModel,
+  mediateursEtAidantsViewModel,
+}: Props): ReactElement {
   const { sessionUtilisateurViewModel } = useContext(clientContext)
 
   ChartJS.register(
@@ -41,428 +44,16 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
         <span className="fr-text--lead color-blue-france">
           Bienvenue sur l&apos;outil de pilotage de l&apos;Inclusion Numérique ·
           {' '}
-          {tableauDeBordViewModel.departement}
+          {departement}
         </span>
       </PageTitle>
-      <section
-        aria-labelledby="taches"
-        className={`fr-mb-4w ${styles.hidden}`}
-      >
-        <h2
-          className="fr-h4 color-blue-france fr-m-0"
-          id="taches"
-        >
-          Tâches à réaliser
-        </h2>
-        <ul className="background-blue-france fr-p-2w">
-          {
-            tableauDeBordViewModel.taches.map((tache) => (
-              <li
-                className={`fr-grid-row fr-btns-group--space-between fr-p-2w fr-m-1w ${styles.tache}`}
-                key={tache.label}
-              >
-                <div className="color-blue-france font-weight-500">
-                  👉
-                  {' '}
-                  {tache.label}
-                </div>
-                <div className="fr-text--xs fr-m-0">
-                  {tache.context}
-                </div>
-                <div>
-                  <Link
-                    className="fr-btn"
-                    href="/"
-                  >
-                    {tache.lien}
-                  </Link>
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
       <EtatDesLieux
+        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
         communesFragilite={communesFragilite}
-        tableauDeBordViewModel={tableauDeBordViewModel}
+        departement={departement}
+        lieuxInclusionViewModel={lieuxInclusionViewModel}
+        mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
       />
-      <section
-        aria-labelledby="gouvernance"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="compass-3-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="gouvernance"
-              >
-                Gouvernances
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Acteurs de l&apos;inclusion numérique
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.gouvernance}
-          >
-            La gouvernance
-          </Link>
-        </div>
-        <div className="fr-grid-row">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="bank-line"
-              />
-              {tableauDeBordViewModel.gouvernance.membre.total}
-            </div>
-            <div className="font-weight-500">
-              Membres de la gouvernance
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              dont
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.membre.coporteur}
-                {' '}
-                coporteurs
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="community-line"
-              />
-              {tableauDeBordViewModel.gouvernance.collectivite.total}
-            </div>
-            <div className="font-weight-500">
-              Collectivité impliquées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              sur les
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.collectivite.membre}
-                {' '}
-                membres
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="file-download-line"
-              />
-              {tableauDeBordViewModel.gouvernance.feuilleDeRoute.total}
-            </div>
-            <div className="font-weight-500">
-              Feuilles de route déposées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              comprenant
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.feuilleDeRoute.action}
-                {' '}
-                actions enregistrées
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section
-        aria-labelledby="conventionnements"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="pen-nib-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="conventionnements"
-              >
-                Conventionnements et financements
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Chiffres clés des budgets et financements
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.financements}
-          >
-            Les demandes
-          </Link>
-        </div>
-        <div className="fr-grid-row fr-mb-4w">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="money-euro-circle-line"
-              />
-              {tableauDeBordViewModel.conventionnement.budget.total}
-            </div>
-            <div className="font-weight-500">
-              Budget global renseigné
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              pour
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.conventionnement.budget.feuilleDeRoute}
-                {' '}
-                feuille de route
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="download-line"
-              />
-              {tableauDeBordViewModel.conventionnement.credit.total}
-            </div>
-            <div className="font-weight-500">
-              Crédits engagés par l&apos;état
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Soit
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.conventionnement.credit.pourcentage}
-                {' '}
-                % de votre budget global
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="font-weight-500">
-          4 financements engagés par l&apos;état
-        </div>
-        <ul>
-          {
-            tableauDeBordViewModel.conventionnement.details.map((detail) => (
-              <li
-                className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                key={detail.label}
-              >
-                <div>
-                  <Dot color={detail.color} />
-                  {' '}
-                  {detail.label}
-                </div>
-                <div className="font-weight-700">
-                  {detail.total}
-                </div>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-      <section
-        aria-labelledby="beneficiaires"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="community-line" />
-            <div>
-
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="beneficiaires"
-              >
-                Bénéficiaires de financement(s)
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les bénéficiaires de financement(s)
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.beneficiaires}
-          >
-            Les conventions
-          </Link>
-        </div>
-        <div className="fr-grid-row fr-mb-4w">
-          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div>
-              <Doughnut
-                backgroundColor={tableauDeBordViewModel.beneficiaire.graphique.backgroundColor}
-                data={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.total)}
-                isFull={false}
-                labels={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.label)}
-              />
-            </div>
-            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-              {tableauDeBordViewModel.beneficiaire.total}
-            </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Bénéficiaires
-            </div>
-            <div className="color-blue-france">
-              dont
-              {' '}
-              {tableauDeBordViewModel.beneficiaire.collectivite}
-              {' '}
-              collectivités
-            </div>
-          </div>
-          <div className="fr-col">
-            <div className="font-weight-500">
-              Nombre de bénéficiaires par financements
-            </div>
-            <ul>
-              {
-                tableauDeBordViewModel.beneficiaire.details.map((detail) => (
-                  <li
-                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                    key={detail.label}
-                  >
-                    <div>
-                      <Dot color={detail.color} />
-                      {' '}
-                      {detail.label}
-                    </div>
-                    <div className="font-weight-700">
-                      {detail.total}
-                    </div>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
-        <p className="fr-grid-row background-info fr-p-3w">
-          <InformationLogo />
-          Un bénéficiaire peut cumuler plusieurs financements.
-        </p>
-      </section>
-      <section
-        aria-labelledby="aidantsMediateurs"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="group-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="aidantsMediateurs"
-              >
-                Aidants et médiateurs numériques
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les médiateurs de l&apos;inclusion numérique
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/aidants-et-mediateurs"
-          >
-            Les aidants et médiateurs
-          </Link>
-        </div>
-        <div className="fr-grid-row fr-mb-3w fr-pb-3w separator">
-          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div>
-              <Doughnut
-                backgroundColor={tableauDeBordViewModel.mediateur.graphique.backgroundColor}
-                data={tableauDeBordViewModel.mediateur.details.map((detail) => detail.total)}
-                isFull={false}
-                labels={tableauDeBordViewModel.mediateur.details.map((detail) => detail.label)}
-              />
-            </div>
-            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-              {tableauDeBordViewModel.mediateur.total}
-            </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Médiateurs numériques
-            </div>
-          </div>
-          <div className="fr-col">
-            <div className="font-weight-500">
-              Dont
-            </div>
-            <ul>
-              {
-                tableauDeBordViewModel.mediateur.details.map((detail) => (
-                  <li
-                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                    key={detail.label}
-                  >
-                    <div>
-                      <Dot color={detail.color} />
-                      {' '}
-                      {detail.label}
-                    </div>
-                    <div className="font-weight-700">
-                      {detail.total}
-                    </div>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
-        <div className="fr-grid-row">
-          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div>
-              <Doughnut
-                backgroundColor={tableauDeBordViewModel.aidant.graphique.backgroundColor}
-                data={tableauDeBordViewModel.aidant.details.map((detail) => detail.total)}
-                isFull={false}
-                labels={tableauDeBordViewModel.aidant.details.map((detail) => detail.label)}
-              />
-            </div>
-            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-              {tableauDeBordViewModel.aidant.total}
-            </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Aidants numériques
-            </div>
-          </div>
-          <div className="fr-col">
-            <div className="font-weight-500">
-              Dont
-            </div>
-            <ul>
-              {
-                tableauDeBordViewModel.aidant.details.map((detail) => (
-                  <li
-                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                    key={detail.label}
-                  >
-                    <div>
-                      <Dot color={detail.color} />
-                      {' '}
-                      {detail.label}
-                    </div>
-                    <div className="font-weight-700">
-                      {detail.total}
-                    </div>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
-      </section>
       <section
         aria-labelledby="sources"
         className={`background-blue-france fr-mb-4w fr-py-4w fr-px-16w ${styles.hidden}`}
@@ -523,13 +114,13 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
           Blandit sed aenean ullamcorper diam. In donec et in duis magna.
         </p>
         <div className="fr-grid-row fr-grid-row--center">
-          <ExternalLink
+          <Link
             className="color-blue-france"
             href="https://inclusion-numerique.anct.gouv.fr/en-savoir-plus-sur-les-donnees"
             title="Sources et données utilisées"
           >
             En savoir plus
-          </ExternalLink>
+          </Link>
         </div>
       </section>
     </>
@@ -537,6 +128,9 @@ export default function TableauDeBord({ indicesFragilite: communesFragilite,
 }
 
 type Props = Readonly<{
+  accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorReadModel
+  departement: string
   indicesFragilite: Array<CommuneFragilite>
-  tableauDeBordViewModel: TableauDeBordViewModel
+  lieuxInclusionViewModel: ErrorReadModel | LieuxInclusionNumeriqueViewModel
+  mediateursEtAidantsViewModel: ErrorReadModel | MediateursEtAidantsViewModel
 }>
