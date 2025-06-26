@@ -133,7 +133,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
         </div>
       </div>
-      <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
+      <div className="font-weight-500 fr-grid-row fr-grid-row--middle fr-mb-3w">
         {conventionnement.nombreDeFinancementsEngagesParLEtat}
         {' '}
         financement(s) engagé(s) par l&apos;État
@@ -147,7 +147,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
         {
           conventionnement.ventilationSubventionsParEnveloppe.map((detail) => (
             <li
-              className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
+              className="fr-grid-row fr-btns-group--space-between fr-mb-1w fr-mt-1w"
               key={detail.label}
             >
               <div>
