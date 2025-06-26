@@ -13,7 +13,7 @@ import 'eslint-plugin-only-warn'
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { files: ['**/*.ts?(x)'] },
+  { files: ['src/**/*.ts?(x)'] },
   { settings: { 'import/resolver': {typescript: {} } } },
   {
     languageOptions: {
