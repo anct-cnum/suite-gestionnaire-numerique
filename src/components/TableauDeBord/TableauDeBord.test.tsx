@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import TableauDeBord from './TableauDeBord'
-import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
+import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 // Mock du composant Carte
 vi.mock('../shared/Carte/Carte', () => ({
@@ -107,8 +107,8 @@ describe('tableau de bord', () => {
     const feuillesDeRouteSousTitre = within(gouvernancesSection).getByText(matchWithoutMarkup('comprenant 3 actions enregistrées'))
     expect(feuillesDeRouteSousTitre).toBeInTheDocument()
 
-    const conventionnementSection = screen.getByRole('region', { name: 'Conventionnements et financements' })
-    const conventionnementTitre = within(conventionnementSection).getByRole('heading', { level: 2, name: 'Conventionnements et financements' })
+    const conventionnementSection = screen.getByRole('region', { name: 'Financements' })
+    const conventionnementTitre = within(conventionnementSection).getByRole('heading', { level: 2, name: 'Financements' })
     expect(conventionnementTitre).toBeInTheDocument()
     const conventionnementSousTitre = within(conventionnementSection).getByText('Chiffres clés des budgets et financements', { selector: 'p' })
     expect(conventionnementSousTitre).toBeInTheDocument()
@@ -122,11 +122,11 @@ describe('tableau de bord', () => {
     expect(budgetSousTitre).toBeInTheDocument()
     const creditsNombre = within(conventionnementSection).getByText('118 000 €')
     expect(creditsNombre).toBeInTheDocument()
-    const creditsTitre = within(conventionnementSection).getByText('Crédits engagés par l\'état')
+    const creditsTitre = within(conventionnementSection).getByText('Financements engagés par l\'État')
     expect(creditsTitre).toBeInTheDocument()
     const creditsSousTitre = within(conventionnementSection).getByText(matchWithoutMarkup('Soit 25 % de votre budget global'))
     expect(creditsSousTitre).toBeInTheDocument()
-    const financementEngage = within(conventionnementSection).getByText('4 financements engagés par l\'état')
+    const financementEngage = within(conventionnementSection).getByText('4 financement(s) engagé(s) par l\'État')
     expect(financementEngage).toBeInTheDocument()
     const financements = within(conventionnementSection).getByRole('list')
     const financementsItems = within(financements).getAllByRole('listitem')
@@ -262,6 +262,39 @@ describe('tableau de bord', () => {
           nombreTotal: '48476',
         }}
         departement="69"
+        financementsViewModel={{
+          budget: {
+            feuillesDeRoute: 1,
+            total: '225 000 €',
+          },
+          credit: {
+            pourcentage: 25,
+            total: '118 000 €',
+          },
+          nombreDeFinancementsEngagesParLEtat: 4,
+          ventilationSubventionsParEnveloppe: [
+            {
+              color: 'dot-purple-glycine-main-494',
+              label: 'Conseiller Numérique - 2024 - État',
+              total: '40 000 €',
+            },
+            {
+              color: 'dot-purple-glycine-950-100',
+              label: 'Conseiller Numérique - Plan France Relance - État',
+              total: '25 000 €',
+            },
+            {
+              color: 'dot-purple-glycine-850-200',
+              label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
+              total: '30 000 €',
+            },
+            {
+              color: 'dot-purple-glycine-925-125',
+              label: 'Ingénierie France Numérique Ensemble - 2024 - État',
+              total: '20 000 €',
+            },
+          ],
+        }}
         indicesFragilite={[]}
         lieuxInclusionViewModel={{
           departement: '69',

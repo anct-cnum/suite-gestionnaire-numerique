@@ -1,4 +1,4 @@
-import { formaterEnNombreFrancais } from './shared/number'
+import { formaterEnNombreFrancais } from '../shared/number'
 import { LieuxInclusionNumeriqueReadModel } from '@/use-cases/queries/RecupererLieuxInclusionNumerique'
 
 export function lieuxInclusionNumeriquePresenter(readModel: LieuxInclusionNumeriqueReadModel)

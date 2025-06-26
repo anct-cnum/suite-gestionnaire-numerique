@@ -1,5 +1,5 @@
-import { reportLoaderError } from './shared/sentryErrorReporter'
-import prisma from '../../prisma/prismaClient'
+import prisma from '../../../prisma/prismaClient'
+import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { AccompagnementsRealisesLoader, AccompagnementsRealisesReadModel } from '@/use-cases/queries/RecupererAccompagnementsRealises'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 

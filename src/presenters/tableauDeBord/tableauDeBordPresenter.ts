@@ -1,12 +1,7 @@
 
-import { formaterEnNombreFrancais } from './shared/number'
-import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperLeTableauDeBord'
+import { formaterEnNombreFrancais } from '../shared/number'
 
-export function tableauDeBordPresenter(departementCode: string, 
-  tableauDeBordFinancements: TableauDeBordLoaderFinancements):
-  TableauDeBordViewModel {
-  const financements = construireFinancements(tableauDeBordFinancements)
-
+export function tableauDeBordPresenter(departementCode: string):  TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -55,7 +50,7 @@ export function tableauDeBordPresenter(departementCode: string,
       },
       total: 66,
     },
-    financements,
+    departement: departementCode,
     gouvernance: {
       collectivite: {
         membre: 9,
@@ -152,23 +147,23 @@ export type TableauDeBordViewModel = Readonly<{
     }>
     total: number
   }>
-  financements: Readonly<{
-    budget: Readonly<{
-      feuillesDeRoute: number
-      total: string
-    }>
-    credit: Readonly<{
-      pourcentage: number
-      total: string
-    }>
-    nombreDeFinancementsEngagesParLEtat: number
-    ventilationSubventionsParEnveloppe: ReadonlyArray<{
-      color: string
-      label: string
-      total: string
-    }>
-  }>
   departement: string
+  // financements: Readonly<{
+  //   budget: Readonly<{
+  //     feuillesDeRoute: number
+  //     total: string
+  //   }>
+  //   credit: Readonly<{
+  //     pourcentage: number
+  //     total: string
+  //   }>
+  //   nombreDeFinancementsEngagesParLEtat: number
+  //   ventilationSubventionsParEnveloppe: ReadonlyArray<{
+  //     color: string
+  //     label: string
+  //     total: string
+  //   }>
+  // }>
   
   gouvernance: Readonly<{
     collectivite: Readonly<{
@@ -207,29 +202,3 @@ export type TableauDeBordViewModel = Readonly<{
   }>
 }>
 
-function construireFinancements(tableauDeBordFinancements: TableauDeBordLoaderFinancements): TableauDeBordViewModel['financements'] {
-  const couleursEnveloppes = {
-    'Conseiller Numérique - 2024' :   'dot-purple-glycine-main-494',
-    'Conseiller Numérique - Plan France Relance' : 'dot-purple-glycine-950-100',
-    'Formation Aidant Numérique/Aidants Connect - 2024' : 'dot-purple-glycine-850-200',
-    'Ingénierie France Numérique Ensemble - 2024 - État' : 'dot-purple-glycine-925-125',
-  }
-  return {
-    budget: {
-      feuillesDeRoute: tableauDeBordFinancements.budget.feuillesDeRoute,
-      total: tableauDeBordFinancements.budget.total,
-    },
-    credit: {
-      pourcentage: tableauDeBordFinancements.credit.pourcentage,
-      total: tableauDeBordFinancements.credit.total,
-    },
-    nombreDeFinancementsEngagesParLEtat: tableauDeBordFinancements.nombreDeFinancementsEngagesParLEtat,
-    ventilationSubventionsParEnveloppe: tableauDeBordFinancements.ventilationSubventionsParEnveloppe.map(
-      ({ label, total }) => ({
-        color: couleursEnveloppes[label] ?? 'dot-purple-glycine-main-494',
-        label,
-        total,
-      })
-    ),
-  }
-}

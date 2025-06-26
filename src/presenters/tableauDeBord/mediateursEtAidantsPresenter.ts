@@ -1,4 +1,4 @@
-import { formaterEnNombreFrancais } from './shared/number'
+import { formaterEnNombreFrancais } from '../shared/number'
 import { MediateursEtAidantsReadModel } from '@/use-cases/queries/RecupererMediateursEtAidants'
 
 export function mediateursEtAidantsPresenter(readModel: MediateursEtAidantsReadModel): MediateursEtAidantsViewModel {

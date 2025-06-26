@@ -5,17 +5,18 @@ import { ReactElement } from 'react'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaAccompagnementsRealisesLoader } from '@/gateways/PrismaAccompagnementsRealisesLoader'
-import { PrismaIndicesDeFragiliteLoader } from '@/gateways/PrismaIndicesDeFragiliteLoader'
-import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
-import { PrismaMediateursEtAidantsLoader } from '@/gateways/PrismaMediateursEtAidantsLoader'
-import { PrismaTableauDeBordLoader } from '@/gateways/PrismaTableauDeBordLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { accompagnementsRealisesPresenter } from '@/presenters/accompagnementsRealisesPresenter'
-import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/indiceFragilitePresenter'
-import { lieuxInclusionNumeriquePresenter } from '@/presenters/lieuxInclusionNumeriquePresenter'
-import { mediateursEtAidantsPresenter } from '@/presenters/mediateursEtAidantsPresenter'
-import { tableauDeBordPresenter } from '@/presenters/tableauDeBordPresenter'
+import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
+import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
+import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
+import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
+import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
+import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { financementsPresenter } from '@/presenters/tableauDeBord/financementPresenter'
+import { indiceFragilitePresenter as indiceFragiliteParCommunePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
+import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
+import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -61,14 +62,20 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     (readModel) => indiceFragiliteParCommunePresenter(readModel.communes)
   )
 
-  const tableauDeBordLoader = await new PrismaTableauDeBordLoader().get('33' ?? '')
-  const tableauDeBordViewModel = tableauDeBordPresenter(utilisateur.departementCode ?? '', tableauDeBordLoader)
+  const financementsLoader = new PrismaFinancementsLoader()
+  const financementsReadModel = await financementsLoader.get(departementCode)
+  const financementsViewModel = handleReadModelOrError(
+    financementsReadModel,
+    financementsPresenter
+  )
 
+  const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
 
   return (
     <TableauDeBord 
       accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
       departement={departementCode}
+      financementsViewModel={financementsViewModel}
       indicesFragilite={indicesFragilite}
       lieuxInclusionViewModel={lieuxInclusionViewModel}
       mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}

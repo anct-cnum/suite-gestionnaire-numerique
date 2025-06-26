@@ -1,4 +1,4 @@
-import { formaterEnNombreFrancais } from './shared/number'
+import { formaterEnNombreFrancais } from '../shared/number'
 import { AccompagnementsRealisesReadModel } from '@/use-cases/queries/RecupererAccompagnementsRealises'
 
 export function accompagnementsRealisesPresenter(

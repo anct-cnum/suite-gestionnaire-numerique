@@ -1,5 +1,7 @@
-export interface TableauDeBordLoader {
-  get(codeDepartement: string): Promise<TableauDeBordLoaderFinancements>
+import { ErrorReadModel } from './shared/ErrorReadModel'
+
+export interface FinancementLoader {
+  get(codeDepartement: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements>
 }
 
 export interface TableauDeBordLoaderFinancements {

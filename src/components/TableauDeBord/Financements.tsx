@@ -3,9 +3,53 @@ import { ReactElement } from 'react'
 
 import Dot from '../shared/Dot/Dot'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
 
 export default function Financements({ conventionnement, lienFinancements }: Props) : ReactElement {
+  if (isErrorViewModel(conventionnement)) {
+    return (
+      <section
+        aria-labelledby="conventionnements"
+        className="fr-mb-4w grey-border border-radius fr-p-4w"
+      >
+        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
+          <div className="fr-grid-row fr-grid-row--middle">
+            <TitleIcon icon="pen-nib-line" />
+            <div>
+              <h2
+                className="fr-h4 color-blue-france fr-m-0"
+                id="conventionnements"
+              >
+                Financements
+              </h2>
+              <p className="fr-m-0 font-weight-500">
+                Chiffres clés des budgets et financements
+              </p>
+            </div>
+          </div>
+          <Link
+            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+            href={lienFinancements}
+          >
+            Les demandes
+          </Link>
+        </div>
+        <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+          <div style={{ textAlign: 'center' }}>
+            <TitleIcon
+              background="white"
+              icon="error-warning-line"
+            />
+            <div className="fr-text--sm color-blue-france fr-mt-2w">
+              {conventionnement.message}
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section
       aria-labelledby="conventionnements"
@@ -44,6 +88,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Budget global renseigné
+            {' '}
             <span
               aria-hidden="true"
               className="fr-icon-question-line fr-ml-1w"
@@ -70,6 +115,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Financements engagés par l&apos;État
+            {' '}
             <span
               aria-hidden="true"
               className="fr-icon-question-line fr-ml-1w"
@@ -120,7 +166,11 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
   )
 }
 
+function isErrorViewModel(viewModel: ErrorViewModel | FinancementViewModel): viewModel is ErrorViewModel {
+  return 'type' in viewModel
+}
+
 type Props = Readonly<{
-  conventionnement: TableauDeBordViewModel['financements']
+  conventionnement: ErrorViewModel | FinancementViewModel
   lienFinancements: string
 }>

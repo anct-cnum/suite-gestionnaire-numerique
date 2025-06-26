@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
+import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
 export default function MediateursEtAidants({ 
   viewModel,

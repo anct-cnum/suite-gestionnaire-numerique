@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
-import EtatDesLieux from './EtatDesLieux'
+import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import Financements from './Financements'
 import styles from './TableauDeBord.module.css'
 import { clientContext } from '../shared/ClientContext'
@@ -16,15 +16,17 @@ import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
-import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
-import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
-import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
-import { TableauDeBordViewModel } from '@/presenters/tableauDeBordPresenter'
+import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
+import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
+import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 export default function TableauDeBord({ 
   accompagnementsRealisesViewModel,
   departement,
+  financementsViewModel,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -193,10 +195,12 @@ export default function TableauDeBord({
           </div>
         </div>
       </section>
-      <Financements 
-        conventionnement={tableauDeBordViewModel.financements}
-        lienFinancements={tableauDeBordViewModel.liens.financements}
-      />
+      {sessionUtilisateurViewModel.peutChangerDeRole ? 
+        <Financements 
+          conventionnement={financementsViewModel}
+          lienFinancements={tableauDeBordViewModel.liens.financements}
+        />
+        : null}
       <section
         aria-labelledby="beneficiaires"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
@@ -465,6 +469,7 @@ export default function TableauDeBord({
 type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
   departement: string
+  financementsViewModel: ErrorViewModel | FinancementViewModel
   indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel

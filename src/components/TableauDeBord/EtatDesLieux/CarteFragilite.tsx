@@ -3,7 +3,7 @@ import { ReactElement, useEffect, useRef, useState } from 'react'
 import Carte from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
 export default function CarteFragilite({ 
   communesFragilite,

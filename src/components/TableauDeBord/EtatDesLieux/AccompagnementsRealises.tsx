@@ -3,7 +3,7 @@ import { ReactElement } from 'react'
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
+import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 
 export default function AccompagnementsRealises({ 
   viewModel,

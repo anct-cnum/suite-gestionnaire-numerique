@@ -3,7 +3,7 @@
 import { ReactElement } from 'react'
 
 import styles from './Legend.module.css'
-import { FRAGILITE_COLORS } from '@/presenters/indiceFragilitePresenter'
+import { FRAGILITE_COLORS } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
 export default function Legend(): ReactElement {
   const colors = Object.values(FRAGILITE_COLORS)
