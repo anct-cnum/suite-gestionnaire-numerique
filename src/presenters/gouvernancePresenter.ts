@@ -122,7 +122,22 @@ export type ComiteViewModel = Readonly<{
   uid: number
 }>
 
-export type FeuilleDeRouteViewModel = Readonly<{
+export type MembreDetailsViewModel = Readonly<{
+  details: ReadonlyArray<
+    Readonly<{
+      feuillesDeRoute?: ReadonlyArray<HyperLink>
+      information: string
+      intitule: string
+    }>
+  >
+  logo: string
+  nom: string
+  plusDetailsHref?: string
+  roles: ReadonlyArray<RoleViewModel>
+  type: string
+}>
+
+type FeuilleDeRouteViewModel = Readonly<{
   beneficiairesSubvention: ReadonlyArray<HyperLink>
   beneficiairesSubventionAccordee: ReadonlyArray<HyperLink>
   beneficiairesSubventionFormation: ReadonlyArray<HyperLink>
@@ -147,21 +162,6 @@ export type FeuilleDeRouteViewModel = Readonly<{
   wordingBeneficiairesSubventionAccordee: string
   wordingBeneficiairesSubventionFormation: string
   wordingBeneficiairesSubventionFormationAccordee: string
-}>
-
-export type MembreDetailsViewModel = Readonly<{
-  details: ReadonlyArray<
-    Readonly<{
-      feuillesDeRoute?: ReadonlyArray<HyperLink>
-      information: string
-      intitule: string
-    }>
-  >
-  logo: string
-  nom: string
-  plusDetailsHref?: string
-  roles: ReadonlyArray<RoleViewModel>
-  type: string
 }>
 
 function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
