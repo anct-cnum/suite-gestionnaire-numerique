@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { PrismaIndicesDeFragiliteLoader } from '@/gateways/PrismaIndicesDeFragiliteLoader'
+import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { RecupererMesIndicesDeFragilite } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 
 export async function GET(): Promise<NextResponse> {

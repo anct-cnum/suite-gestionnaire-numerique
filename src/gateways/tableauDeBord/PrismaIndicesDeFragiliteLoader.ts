@@ -1,5 +1,5 @@
-import { reportLoaderError } from './shared/sentryErrorReporter'
-import prisma from '../../prisma/prismaClient'
+import prisma from '../../../prisma/prismaClient'
+import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { IndicesDeFragiliteLoader, IndicesDeFragiliteReadModel } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 

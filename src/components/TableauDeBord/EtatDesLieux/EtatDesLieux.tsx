@@ -3,16 +3,16 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
-import AccompagnementsRealises from './EtatDesLieux/AccompagnementsRealises'
-import CarteFragilite from './EtatDesLieux/CarteFragilite'
-import LieuxInclusionNumerique from './EtatDesLieux/LieuxInclusionNumerique'
-import MediateursEtAidants from './EtatDesLieux/MediateursEtAidants'
-import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import AccompagnementsRealises from './AccompagnementsRealises'
+import CarteFragilite from './CarteFragilite'
+import LieuxInclusionNumerique from './LieuxInclusionNumerique'
+import MediateursEtAidants from './MediateursEtAidants'
+import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsRealisesViewModel } from '@/presenters/accompagnementsRealisesPresenter'
-import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
-import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
-import { MediateursEtAidantsViewModel } from '@/presenters/mediateursEtAidantsPresenter'
+import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
+import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
 export default function EtatDesLieux({
   accompagnementsRealisesViewModel,

@@ -1,5 +1,5 @@
-import { reportLoaderError } from './shared/sentryErrorReporter'
-import prisma from '../../prisma/prismaClient'
+import prisma from '../../../prisma/prismaClient'
+import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { LieuxInclusionNumeriqueLoader, LieuxInclusionNumeriqueReadModel } from '@/use-cases/queries/RecupererLieuxInclusionNumerique'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 

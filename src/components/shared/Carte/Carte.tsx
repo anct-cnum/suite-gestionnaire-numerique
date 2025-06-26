@@ -5,7 +5,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 
 import Legend from './Legend'
 import styles from './Map.module.css'
-import { CommuneFragilite } from '@/presenters/indiceFragilitePresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
 const EMPTY_STYLE = {
   glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
