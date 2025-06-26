@@ -37,7 +37,8 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
         JOIN main.structure s ON ac.structure_id_coop = s.structure_id_coop
         JOIN main.adresse a ON s.adresse_id = a.id
         WHERE a.departement = ${codeDepartement}
-          AND ac.date >= CURRENT_DATE - INTERVAL '6 months'
+          AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
+          AND ac.date < DATE_TRUNC('month', CURRENT_DATE + INTERVAL '1 month')
         GROUP BY TO_CHAR(ac.date, 'MM/YY')
         ORDER BY mois
       `

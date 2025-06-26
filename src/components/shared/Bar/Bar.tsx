@@ -22,6 +22,14 @@ export default function Bar({ backgroundColor, data, labels }: Props): ReactElem
           title: {
             display: false,
           },
+          tooltip: {
+            bodyFont: {
+              size: 14,
+            },
+            titleFont: {
+              size: 14,
+            },
+          },
         },
         scales: {
           // eslint-disable-next-line id-length
@@ -31,6 +39,11 @@ export default function Bar({ backgroundColor, data, labels }: Props): ReactElem
             },
             grid: {
               display: false,
+            },
+            ticks: {
+              font: {
+                size: 14,
+              },
             },
           },
           // eslint-disable-next-line id-length
