@@ -1,0 +1,4 @@
+demande_subvention_id;statut;action_id;nom_action;feuille_route_id;nom_feuille_route;code_departement;montant_subvention;
+39;acceptee;39;Déploiement de la feuille de route FNE dans l'Ain;49;France numérique ensemble Ain;1;25000;
+99;acceptee;99;Appui à l'élaboration et la rédaction de la feuille de route;49;France numérique ensemble Ain;1;20350;
+334;acceptee;334;Formation Aidant Connect;49;France numérique ensemble Ain;1;20000; 

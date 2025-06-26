@@ -35,7 +35,9 @@
     "typecheck": "tsc",
     "bundle:analyze": "ANALYZE=true yarn build",
     "minio:init": "bash scripts/init-minio.sh",
-    "minio:start": "docker compose up -d minio && yarn minio:init"
+    "minio:start": "docker compose up -d minio && yarn minio:init",
+    "update-subventions": "tsx scripts/update-subvention-status.ts",
+    "update-subventions:example": "tsx scripts/update-subvention-status.ts scripts/subventions_exemple.csv"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
