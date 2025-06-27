@@ -1,4 +1,4 @@
-import { formaterEnNombreFrancais } from '../shared/number'
+import { formatMontant } from '../shared/number'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
@@ -22,18 +22,18 @@ export function financementsPresenter(
   return {
     budget: {
       feuillesDeRoute: readModel.budget.feuillesDeRoute,
-      total: formaterEnNombreFrancais(Number(readModel.budget.total)),
+      total: formatMontant(Number(readModel.budget.total)),
     },
     credit: {
       pourcentage: readModel.credit.pourcentage,
-      total: formaterEnNombreFrancais(Number(readModel.credit.total)),
+      total: formatMontant(Number(readModel.credit.total)),
     },
     nombreDeFinancementsEngagesParLEtat: readModel.nombreDeFinancementsEngagesParLEtat,
     ventilationSubventionsParEnveloppe: readModel.ventilationSubventionsParEnveloppe.map(
       ({ label, total }) => ({
         color: label in couleursEnveloppes ? couleursEnveloppes[label as keyof typeof couleursEnveloppes] : 'dot-purple-glycine-main-494',
         label,
-        total: formaterEnNombreFrancais(Number(total)),
+        total: formatMontant(Number(total)),
       })
     ),
   }
