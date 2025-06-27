@@ -99,9 +99,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
             pour
             {' '}
             <span className="font-weight-700">
-              {conventionnement.budget.feuillesDeRoute}
-              {' '}
-              feuille de route
+              {conventionnement.budget.feuillesDeRouteWording}
             </span>
           </div>
         </div>

@@ -21,7 +21,7 @@ export function financementsPresenter(
   }
   return {
     budget: {
-      feuillesDeRoute: readModel.budget.feuillesDeRoute,
+      feuillesDeRouteWording: `${readModel.budget.feuillesDeRoute} feuille${readModel.budget.feuillesDeRoute > 1 ? 's' : ''} de route`,
       total: formatMontant(Number(readModel.budget.total)),
     },
     credit: {
@@ -41,7 +41,7 @@ export function financementsPresenter(
 
 export type FinancementViewModel = Readonly<{
   budget: Readonly<{
-    feuillesDeRoute: number
+    feuillesDeRouteWording: string
     total: string
   }>
   credit: Readonly<{

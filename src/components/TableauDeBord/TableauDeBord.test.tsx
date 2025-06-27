@@ -264,7 +264,7 @@ describe('tableau de bord', () => {
         departement="69"
         financementsViewModel={{
           budget: {
-            feuillesDeRoute: 1,
+            feuillesDeRouteWording: '1 feuille de route',
             total: '225 000 €',
           },
           credit: {
