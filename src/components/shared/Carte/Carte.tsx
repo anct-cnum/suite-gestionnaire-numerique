@@ -13,7 +13,7 @@ const EMPTY_STYLE = {
     {
       id: 'background',
       paint: {
-        'background-color': '#e8edff',
+        'background-color': '#f5f5fe',
       },
       type: 'background' as const,
     },
