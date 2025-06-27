@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 
@@ -139,7 +140,7 @@ export default function Gouvernance({
             </span>
           </div>
         </div>
-        <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
+        <div className={`fr-col background-blue-france fr-p-4w fr-mr-4w ${styles.hidden}`}>
           <div className="fr-h1 fr-m-0">
             <TitleIcon
               background="white"

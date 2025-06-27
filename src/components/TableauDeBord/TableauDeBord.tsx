@@ -106,10 +106,12 @@ export default function TableauDeBord({
           lieuxInclusionViewModel={lieuxInclusionViewModel}
           mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
         /> : null}
-      <Gouvernance
-        gouvernanceViewModel={gouvernanceViewModel}
-        lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
-      />
+      {sessionUtilisateurViewModel.peutChangerDeRole ? 
+        <Gouvernance
+          gouvernanceViewModel={gouvernanceViewModel}
+          lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
+        />
+        : null}
       {sessionUtilisateurViewModel.peutChangerDeRole ? 
         <Financements 
           conventionnement={financementsViewModel}
