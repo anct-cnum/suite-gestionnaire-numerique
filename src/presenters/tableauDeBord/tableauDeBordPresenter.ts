@@ -1,4 +1,3 @@
-
 import { formaterEnNombreFrancais } from '../shared/number'
 
 export function tableauDeBordPresenter(departementCode: string):  TableauDeBordViewModel {
@@ -51,20 +50,6 @@ export function tableauDeBordPresenter(departementCode: string):  TableauDeBordV
       total: 66,
     },
     departement: departementCode,
-    gouvernance: {
-      collectivite: {
-        membre: 9,
-        total: 3,
-      },
-      feuilleDeRoute: {
-        action: 3,
-        total: 1,
-      },
-      membre: {
-        coporteur: 3,
-        total: 9,
-      },
-    },
     liens: {
       beneficiaires: `/gouvernance/${departementCode}/beneficiaires`,
       financements: `/gouvernance/${departementCode}/financements`,
@@ -148,37 +133,6 @@ export type TableauDeBordViewModel = Readonly<{
     total: number
   }>
   departement: string
-  // financements: Readonly<{
-  //   budget: Readonly<{
-  //     feuillesDeRoute: number
-  //     total: string
-  //   }>
-  //   credit: Readonly<{
-  //     pourcentage: number
-  //     total: string
-  //   }>
-  //   nombreDeFinancementsEngagesParLEtat: number
-  //   ventilationSubventionsParEnveloppe: ReadonlyArray<{
-  //     color: string
-  //     label: string
-  //     total: string
-  //   }>
-  // }>
-  
-  gouvernance: Readonly<{
-    collectivite: Readonly<{
-      membre: number
-      total: number
-    }>
-    feuilleDeRoute: Readonly<{
-      action: number
-      total: number
-    }>
-    membre: Readonly<{
-      coporteur: number
-      total: number
-    }>
-  }>
   liens: Readonly<{
     beneficiaires: string
     financements: string

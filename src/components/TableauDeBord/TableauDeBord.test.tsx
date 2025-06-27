@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import TableauDeBord from './TableauDeBord'
+import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 // Mock du composant Carte
@@ -247,8 +248,84 @@ describe('tableau de bord', () => {
     expect(sourceLien).toOpenInNewTab('Sources et données utilisées')
   })
 
+  it('quand il y a une erreur dans les données de gouvernance, alors l\'erreur s\'affiche correctement', () => {
+    // WHEN
+    const tableauDeBordViewModel = tableauDeBordPresenter('69')
+    const gouvernanceViewModel = gouvernancePresenter({
+      message: 'Erreur lors du chargement des données de gouvernance',
+      type: 'error',
+    })
+    
+    renderComponent(
+      <TableauDeBord
+        accompagnementsRealisesViewModel={{
+          departement: '69',
+          graphique: {
+            backgroundColor: ['#000000'],
+            data: [48_476],
+            labels: ['2024'],
+          },
+          nombreTotal: '48476',
+        }}
+        departement="69"
+        financementsViewModel={{
+          budget: {
+            feuillesDeRouteWording: '1 feuille de route',
+            total: '225 000 €',
+          },
+          credit: {
+            pourcentage: 25,
+            total: '118 000 €',
+          },
+          nombreDeFinancementsEngagesParLEtat: 4,
+          ventilationSubventionsParEnveloppe: [],
+        }}
+        gouvernanceViewModel={gouvernanceViewModel}
+        indicesFragilite={[]}
+        lieuxInclusionViewModel={{
+          departement: '69',
+          nombreLieux: '479',
+        }}
+        mediateursEtAidantsViewModel={{
+          departement: '69',
+          nombreAidants: '85',
+          nombreMediateurs: '63',
+          total: '148',
+        }}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
+    )
+
+    // THEN
+    const gouvernancesSection = screen.getByRole('region', { name: 'Gouvernances' })
+    const gouvernancesTitre = within(gouvernancesSection).getByRole('heading', { level: 2, name: 'Gouvernances' })
+    expect(gouvernancesTitre).toBeInTheDocument()
+    
+    // Vérifier que les erreurs s'affichent
+    const erreurs = within(gouvernancesSection).getAllByText('Erreur lors du chargement des données')
+    expect(erreurs).toHaveLength(3)
+    
+    // Vérifier que les valeurs sont remplacées par des tirets
+    const tirets = within(gouvernancesSection).getAllByText('-')
+    expect(tirets).toHaveLength(3)
+  })
+
   function afficherMonTableauDeBord(): void {
     const tableauDeBordViewModel = tableauDeBordPresenter('69')
+    const gouvernanceViewModel = gouvernancePresenter({
+      collectivite: {
+        membre: 9,
+        total: 3,
+      },
+      feuilleDeRoute: {
+        action: 3,
+        total: 1,
+      },
+      membre: {
+        coporteur: 3,
+        total: 9,
+      },
+    })
     
     renderComponent(
       <TableauDeBord
@@ -279,22 +356,23 @@ describe('tableau de bord', () => {
               total: '40 000 €',
             },
             {
-              color: 'dot-purple-glycine-950-100',
+              color: 'dot-purple-glycine-850-200',
               label: 'Conseiller Numérique - Plan France Relance - État',
               total: '25 000 €',
             },
             {
-              color: 'dot-purple-glycine-850-200',
+              color: 'dot-green-tilleul-verveine-925',
               label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
               total: '30 000 €',
             },
             {
-              color: 'dot-purple-glycine-925-125',
+              color: 'dot-orange-terre-battue-850-200',
               label: 'Ingénierie France Numérique Ensemble - 2024 - État',
               total: '20 000 €',
             },
           ],
         }}
+        gouvernanceViewModel={gouvernanceViewModel}
         indicesFragilite={[]}
         lieuxInclusionViewModel={{
           departement: '69',

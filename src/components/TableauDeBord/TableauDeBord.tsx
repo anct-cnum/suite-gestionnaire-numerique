@@ -7,6 +7,7 @@ import { ReactElement, useContext } from 'react'
 
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import Financements from './Financements'
+import Gouvernance from './Gouvernance/Gouvernance'
 import styles from './TableauDeBord.module.css'
 import { clientContext } from '../shared/ClientContext'
 import Dot from '../shared/Dot/Dot'
@@ -18,6 +19,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
+import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
@@ -27,6 +29,7 @@ export default function TableauDeBord({
   accompagnementsRealisesViewModel,
   departement,
   financementsViewModel,
+  gouvernanceViewModel,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -103,98 +106,10 @@ export default function TableauDeBord({
           lieuxInclusionViewModel={lieuxInclusionViewModel}
           mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
         /> : null}
-      <section
-        aria-labelledby="gouvernance"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="compass-3-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="gouvernance"
-              >
-                Gouvernances
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Acteurs de l&apos;inclusion numérique
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.gouvernance}
-          >
-            La gouvernance
-          </Link>
-        </div>
-        <div className="fr-grid-row">
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="bank-line"
-              />
-              {tableauDeBordViewModel.gouvernance.membre.total}
-            </div>
-            <div className="font-weight-500">
-              Membres de la gouvernance
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              dont
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.membre.coporteur}
-                {' '}
-                coporteurs
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="community-line"
-              />
-              {tableauDeBordViewModel.gouvernance.collectivite.total}
-            </div>
-            <div className="font-weight-500">
-              Collectivité impliquées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              sur les
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.collectivite.membre}
-                {' '}
-                membres
-              </span>
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="file-download-line"
-              />
-              {tableauDeBordViewModel.gouvernance.feuilleDeRoute.total}
-            </div>
-            <div className="font-weight-500">
-              Feuilles de route déposées
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              comprenant
-              {' '}
-              <span className="font-weight-700">
-                {tableauDeBordViewModel.gouvernance.feuilleDeRoute.action}
-                {' '}
-                actions enregistrées
-              </span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Gouvernance
+        gouvernanceViewModel={gouvernanceViewModel}
+        lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
+      />
       {sessionUtilisateurViewModel.peutChangerDeRole ? 
         <Financements 
           conventionnement={financementsViewModel}
@@ -470,6 +385,7 @@ type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
   departement: string
   financementsViewModel: ErrorViewModel | FinancementViewModel
+  gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
   indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
