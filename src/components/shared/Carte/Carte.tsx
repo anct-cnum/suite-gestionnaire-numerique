@@ -13,7 +13,7 @@ const EMPTY_STYLE = {
     {
       id: 'background',
       paint: {
-        'background-color': '#e8edff',
+        'background-color': '#f5f5fe',
       },
       type: 'background' as const,
     },
@@ -155,7 +155,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     map.current.fitBounds(bounds, {
       maxZoom: 10,
       padding: 50,
-      zoom: 7,
+      zoom: 8,
     })
   
     // Ajouter un padding de 120% aux bounds pour plus d'espace de navigation
@@ -180,6 +180,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
     map.current.addLayer({
       filter: ['==', 'departement', departement],
       id: 'communes-layer',
+      minzoom: 8,
       paint: {
         'fill-color': [
           'match',
