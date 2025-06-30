@@ -6,8 +6,10 @@ import { nanoid } from 'nanoid'
 import { NextRequest, NextResponse } from 'next/server'
 
 import prisma from '../../../../../prisma/prismaClient'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaFeuilleDeRouteRepository } from '@/gateways/PrismaFeuilleDeRouteRepository'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { isNullish } from '@/shared/lang'
 import { AjouterDocument } from '@/use-cases/commands/AjouterDocument'
 
 const s3Config: S3ClientConfig = {
@@ -24,6 +26,15 @@ const s3 = new S3Client(s3Config)
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Vérification de l'authentification
+    const session = await getSession()
+    if (isNullish(session)) {
+      return NextResponse.json(
+        { message: 'Accès non autorisé' },
+        { status: 403 }
+      )
+    }
+
     const formData = await request.formData()
     const fileRaw = formData.get('file') 
     const uidFeuilleDeRoute = formData.get('uidFeuilleDeRoute') as string
@@ -33,6 +44,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(
         { message: 'Fichier, uidFeuilleDeRoute ou uidEditeur manquant' },
         { status: 400 }
+      )
+    }
+
+    // Vérification que l'utilisateur authentifié correspond à l'uidEditeur
+    if (session?.user.sub !== uidEditeur) {
+      return NextResponse.json(
+        { message: 'Accès non autorisé' },
+        { status: 403 }
       )
     }
 
