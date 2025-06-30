@@ -183,15 +183,21 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           >
             <td>
               <Link
-                className="primary font-weight-700 fr-px-0 no-hover d-block"
+                className="primary fr-px-0 no-hover d-block"
                 href={membre.link}
               >
-                {membre.nom}
+                <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">
+                  {membre.nom}
+                </p>
               </Link>
-              {membre.typologie.simple.value}
+              <p className="fr-text--sm fr-text-mention--grey" >
+                {membre.typologie.simple.value}
+              </p>
             </td>
             <td>
-              {membre.contactReferent.intituleCourt}
+              <p className="fr-text--sm fr-text-mention--grey">
+                {membre.contactReferent.intituleCourt}
+              </p>
             </td>
             <td>
               {membre.roles

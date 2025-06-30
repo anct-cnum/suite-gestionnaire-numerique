@@ -5,3 +5,7 @@
 .fr-table__wrapper table tbody td {
   --border-contrast-grey: var(--grey-900-175);
 }
+
+.noBgImage {
+  background-image: none !important;
+}

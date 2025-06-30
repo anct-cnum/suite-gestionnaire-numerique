@@ -10,13 +10,16 @@ export default function Table({
 }: Props): ReactElement {
   return (
     <div
-      className="fr-table--sm fr-table fr-table"
+      className="fr-table--lg  fr-table fr-table"
       id="table-sm-component"
     >
       <div className={`fr-table__wrapper ${styles['fr-table__wrapper']}`}>
         <div className="fr-table__container">
           <div className="fr-table__content">
-            <table id="table-sm">
+            <table
+              className="fr-table"
+              id="table-sm"
+            >
               <caption className="fr-sr-only">
                 {titre}
               </caption>
@@ -24,8 +27,10 @@ export default function Table({
                 <tr>
                   {enTetes.map((enTete) => (
                     <th
+                      className={`fr-text--xs fr-text-mention--grey ${styles.noBgImage}`}
                       key={enTete}
                       scope="col"
+                      style={{ borderBottom: '5px solid var(--border-default-grey)', fontWeight: 500 }}
                     >
                       {
                         enTete === '' ? (
