@@ -2,9 +2,10 @@ import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import Information from '@/components/shared/Information/Information'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 
-export default function LieuxInclusionNumerique({ 
+export default function LieuxInclusionNumerique({
   viewModel,
 }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
@@ -37,10 +38,10 @@ export default function LieuxInclusionNumerique({
         {viewModel.nombreLieux}
       </div>
       <div className="font-weight-500">
-        Lieux d&apos;inclusion numérique
-      </div>
-      <div className="fr-text--xs color-blue-france fr-mb-0">
-        Toutes les typologies de lieux publics ou privés
+        <span>
+          Lieux d&apos;inclusion numérique
+        </span>
+        <Information label="Nombre de lieux d'inclusion numérique répertoriés sur la Cartographie Nationale des lieux d'inclusion numérique" />
       </div>
     </div>
   )
@@ -52,4 +53,4 @@ function isErrorViewModel(viewModel: ErrorViewModel | LieuxInclusionNumeriqueVie
 
 type Props = Readonly<{
   viewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
-}> 
+}>

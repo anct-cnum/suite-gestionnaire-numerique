@@ -2,9 +2,10 @@ import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import Information from '@/components/shared/Information/Information'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
-export default function MediateursEtAidants({ 
+export default function MediateursEtAidants({
   viewModel,
 }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
@@ -18,7 +19,10 @@ export default function MediateursEtAidants({
           —
         </div>
         <div className="font-weight-500">
-          Médiateurs et aidants numériques
+          <span>
+            Médiateurs et aidants numériques
+          </span>
+          <Information label="Nombre d'Aidants et médiateurs inscrits sur la Coop ou labellisés Aidants Connect (Sources : Coop, Aidants Connect)" />
         </div>
         <div className="fr-text--xs color-blue-france fr-mb-0">
           {viewModel.message}
@@ -37,11 +41,12 @@ export default function MediateursEtAidants({
         {viewModel.total}
       </div>
       <div className="font-weight-500">
-        Médiateurs et aidants numériques
+        <span>
+          Médiateurs et aidants numériques
+        </span>
+        <Information label="Nombre d'Aidants et médiateurs inscrits sur la Coop ou labellisés Aidants Connect (Sources : Coop, Aidants Connect)" />
       </div>
-      <div className="fr-text--xs color-blue-france fr-mb-0">
-        Conseillers numériques, coordinateurs, Aidants, …
-      </div>
+
     </div>
   )
 }
@@ -52,4 +57,4 @@ function isErrorViewModel(viewModel: ErrorViewModel | MediateursEtAidantsViewMod
 
 type Props = Readonly<{
   viewModel: ErrorViewModel | MediateursEtAidantsViewModel
-}> 
+}>

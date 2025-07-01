@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 import Dot from '../shared/Dot/Dot'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import Information from '@/components/shared/Information/Information'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
 
 export default function Financements({ conventionnement, lienFinancements }: Props) : ReactElement {
@@ -32,7 +33,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
             href={lienFinancements}
           >
-            Les demandes
+            Les demandes en cours
           </Link>
         </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
@@ -88,12 +89,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Budget global renseigné
-            {' '}
-            <span
-              aria-hidden="true"
-              className="fr-icon-question-line fr-ml-1w"
-              title="Somme des budgets globaux renseignés pour chaque action de vos feuilles de route"
-            />
+            <Information label="Somme des budgets des feuilles de route de votre gouvernance" />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             pour
@@ -113,12 +109,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Financements engagés par l&apos;État
-            {' '}
-            <span
-              aria-hidden="true"
-              className="fr-icon-question-line fr-ml-1w"
-              title="Somme des financements accordés par l&apos;État pour vos actions"
-            />
+            <Information label="Somme des montants des subventions validées des feuilles de route de votre gouvernance" />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Soit
@@ -135,11 +126,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
         {conventionnement.nombreDeFinancementsEngagesParLEtat}
         {' '}
         financement(s) engagé(s) par l&apos;État
-        <span
-          aria-hidden="true"
-          className="fr-icon-question-line fr-ml-1w"
-          title="Nombre total de demandes de financement ayant reçu un accord de l&apos;État. Ci-dessous la répartition par enveloppe."
-        />
+        <Information label="Nombre de demandes de subventions validées des feuilles de route de votre gouvernance" />
       </div>
       <ul>
         {

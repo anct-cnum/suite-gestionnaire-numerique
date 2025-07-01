@@ -3,9 +3,10 @@ import { ReactElement, useEffect, useRef, useState } from 'react'
 import Carte from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import Information from '@/components/shared/Information/Information'
 import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
-export default function CarteFragilite({ 
+export default function CarteFragilite({
   communesFragilite,
   departement,
 }: Props): ReactElement {
@@ -16,7 +17,7 @@ export default function CarteFragilite({
     if (!containerRef.current) {return undefined}
 
     let resizeTimeout: NodeJS.Timeout
-    
+
     const resizeObserver = new ResizeObserver(() => {
       // Attendre que la taille se stabilise
       clearTimeout(resizeTimeout)
@@ -42,8 +43,8 @@ export default function CarteFragilite({
       >
         <div
           className="fr-p-0w"
-          style={{ 
-            display: 'flex', 
+          style={{
+            display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
             height: '100%',
@@ -52,7 +53,11 @@ export default function CarteFragilite({
           <div style={{ padding: '1rem' }}>
             <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
               <div className="font-weight-700 color-blue-france">
-                Indice de Fragilité numérique
+                <span>
+                  {' '}
+                  Indice de Fragilité numérique
+                </span>
+                <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
               </div>
             </div>
           </div>
@@ -80,8 +85,8 @@ export default function CarteFragilite({
     >
       <div
         className="fr-p-0w"
-        style={{ 
-          display: 'flex', 
+        style={{
+          display: 'flex',
           flexDirection: 'column',
           gap: '1rem',
           height: '100%',
@@ -90,13 +95,17 @@ export default function CarteFragilite({
         <div style={{ padding: '1rem' }}>
           <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
             <div className="font-weight-700 color-blue-france">
-              Indice de Fragilité numérique
+              <span>
+                {' '}
+                Indice de Fragilité numérique
+              </span>
+              <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
             </div>
           </div>
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
-          {isReady ? 
+          {isReady ?
             <Carte
               communesFragilite={communesFragilite}
               departement={departement}
@@ -114,4 +123,4 @@ function isErrorViewModel(viewModel: Array<CommuneFragilite> | ErrorViewModel): 
 type Props = Readonly<{
   communesFragilite: Array<CommuneFragilite> | ErrorViewModel
   departement: string
-}> 
+}>
