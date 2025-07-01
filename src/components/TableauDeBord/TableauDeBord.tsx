@@ -25,7 +25,7 @@ import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lie
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
-export default function TableauDeBord({ 
+export default function TableauDeBord({
   accompagnementsRealisesViewModel,
   departement,
   financementsViewModel,
@@ -98,22 +98,25 @@ export default function TableauDeBord({
           }
         </ul>
       </section>
-      {sessionUtilisateurViewModel.peutChangerDeRole ? 
-        <EtatDesLieux
-          accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
-          departement={departement}
-          indicesFragilite={indicesFragilite}
-          lieuxInclusionViewModel={lieuxInclusionViewModel}
-          mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-        /> : null}
-      {sessionUtilisateurViewModel.peutChangerDeRole ? 
+      {sessionUtilisateurViewModel.peutChangerDeRole ?
+        <>
+          <hr className="fr-hr" />
+          <EtatDesLieux
+            accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+            departement={departement}
+            indicesFragilite={indicesFragilite}
+            lieuxInclusionViewModel={lieuxInclusionViewModel}
+            mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+          />
+        </> : null}
+      {sessionUtilisateurViewModel.peutChangerDeRole ?
         <Gouvernance
           gouvernanceViewModel={gouvernanceViewModel}
           lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
         />
         : null}
-      {sessionUtilisateurViewModel.peutChangerDeRole ? 
-        <Financements 
+      {sessionUtilisateurViewModel.peutChangerDeRole ?
+        <Financements
           conventionnement={financementsViewModel}
           lienFinancements={tableauDeBordViewModel.liens.financements}
         />

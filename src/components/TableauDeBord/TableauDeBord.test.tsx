@@ -57,7 +57,7 @@ describe('tableau de bord', () => {
     const etatDesLieuxSection = screen.getByRole('region', { name: 'État des lieux de l\'inclusion numérique' })
     const etatDesLieuxTitre = within(etatDesLieuxSection).getByRole('heading', { level: 2, name: 'État des lieux de l\'inclusion numérique' })
     expect(etatDesLieuxTitre).toBeInTheDocument()
-    const etatDesLieuxSousTitre = within(etatDesLieuxSection).getByText('Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect', { selector: 'p' })
+    const etatDesLieuxSousTitre = within(etatDesLieuxSection).getByText('Source de données : Conseillers numériques, La Coop, Cartographie nationale des lieux d\'inclusion numérique, Aidants Connect, France Services', { selector: 'p' })
     expect(etatDesLieuxSousTitre).toBeInTheDocument()
     const etatDesLieuxLien = within(etatDesLieuxSection).getByRole('link', { name: 'Lieux d\'inclusion numérique' })
     expect(etatDesLieuxLien).toHaveAttribute('href', '/lieux-inclusion')
@@ -67,26 +67,18 @@ describe('tableau de bord', () => {
     expect(lieuxInclusionNombre).toBeInTheDocument()
     const lieuxInclusionTitre = within(etatDesLieuxSection).getAllByText('Lieux d\'inclusion numérique')
     expect(lieuxInclusionTitre[1]).toBeInTheDocument()
-    const lieuxInclusionSousTitre = within(etatDesLieuxSection).getByText('Toutes les typologies de lieux publics ou privés')
-    expect(lieuxInclusionSousTitre).toBeInTheDocument()
     const mediateursNumériquesNombre = within(etatDesLieuxSection).getByText('148')
     expect(mediateursNumériquesNombre).toBeInTheDocument()
     const mediateursNumériquesTitre = within(etatDesLieuxSection).getByText('Médiateurs et aidants numériques')
     expect(mediateursNumériquesTitre).toBeInTheDocument()
-    const mediateursNumériquesSousTitre = within(etatDesLieuxSection).getByText('Conseillers numériques, coordinateurs, Aidants, …')
-    expect(mediateursNumériquesSousTitre).toBeInTheDocument()
     const accompagnementsNombre = within(etatDesLieuxSection).getByText('48476')
     expect(accompagnementsNombre).toBeInTheDocument()
     const accompagnementsTitre = within(etatDesLieuxSection).getByText('Accompagnements réalisés')
     expect(accompagnementsTitre).toBeInTheDocument()
-    const accompagnementsSousTitre = within(etatDesLieuxSection).getByText('Total cumulé des dispositifs')
-    expect(accompagnementsSousTitre).toBeInTheDocument()
 
     const gouvernancesSection = screen.getByRole('region', { name: 'Gouvernances' })
     const gouvernancesTitre = within(gouvernancesSection).getByRole('heading', { level: 2, name: 'Gouvernances' })
     expect(gouvernancesTitre).toBeInTheDocument()
-    const gouvernancesSousTitre = within(gouvernancesSection).getByText('Acteurs de l\'inclusion numérique', { selector: 'p' })
-    expect(gouvernancesSousTitre).toBeInTheDocument()
     const gouvernancesLien = within(gouvernancesSection).getByRole('link', { name: 'La gouvernance' })
     expect(gouvernancesLien).toHaveAttribute('href', '/gouvernance/69')
     const membresNombre = within(gouvernancesSection).getByText('9')
@@ -255,7 +247,7 @@ describe('tableau de bord', () => {
       message: 'Erreur lors du chargement des données de gouvernance',
       type: 'error',
     })
-    
+
     renderComponent(
       <TableauDeBord
         accompagnementsRealisesViewModel={{
@@ -300,11 +292,11 @@ describe('tableau de bord', () => {
     const gouvernancesSection = screen.getByRole('region', { name: 'Gouvernances' })
     const gouvernancesTitre = within(gouvernancesSection).getByRole('heading', { level: 2, name: 'Gouvernances' })
     expect(gouvernancesTitre).toBeInTheDocument()
-    
+
     // Vérifier que les erreurs s'affichent
     const erreurs = within(gouvernancesSection).getAllByText('Erreur lors du chargement des données')
     expect(erreurs).toHaveLength(3)
-    
+
     // Vérifier que les valeurs sont remplacées par des tirets
     const tirets = within(gouvernancesSection).getAllByText('-')
     expect(tirets).toHaveLength(3)
@@ -326,7 +318,7 @@ describe('tableau de bord', () => {
         total: 9,
       },
     })
-    
+
     renderComponent(
       <TableauDeBord
         accompagnementsRealisesViewModel={{

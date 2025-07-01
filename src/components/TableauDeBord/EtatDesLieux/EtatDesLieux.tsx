@@ -26,27 +26,42 @@ export default function EtatDesLieux({
       aria-labelledby="etatDesLieux"
       className="fr-mb-4w "
     >
-      <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-        <div className="fr-grid-row fr-grid-row--middle">
+      <div className="fr-grid-row fr-grid-row--middle fr-pb-2w">
+        <div
+          className="fr-col-auto"
+          style={{ alignItems: 'stretch', display: 'flex' }}
+        >
           <TitleIcon icon="france-line" />
+        </div>
+        <div className="fr-col fr-grid-row fr-grid-row--middle">
           <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="etatDesLieux"
+            <div
+              className="fr-mb-1w"
+              style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}
             >
-              État des lieux de l&apos;inclusion numérique
-            </h2>
-            <p className="fr-m-0 font-weight-500">
-              Données cumulées des dispositifs : Conseillers Numériques et Aidants Connect
-            </p>
+              <h2
+                className="fr-h4 color-blue-france fr-m-0"
+                id="etatDesLieux"
+              >
+                État des lieux de l&apos;inclusion numérique
+              </h2>
+              <Link
+                className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+                href="/lieux-inclusion"
+              >
+                Lieux d&apos;inclusion numérique
+              </Link>
+            </div>
+            <div>
+              <p className="fr-m-0 font-weight-500">
+                Source de données : Conseillers numériques, La Coop,
+                Cartographie nationale des lieux d&apos;inclusion numérique, Aidants Connect,
+                France Services
+              </p>
+            </div>
           </div>
         </div>
-        <Link
-          className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-          href="/lieux-inclusion"
-        >
-          Lieux d&apos;inclusion numérique
-        </Link>
+
       </div>
       <div className="fr-grid-row">
         <CarteFragilite
@@ -69,4 +84,4 @@ type EtatDesLieuxProps = Readonly<{
   indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
-}> 
+}>

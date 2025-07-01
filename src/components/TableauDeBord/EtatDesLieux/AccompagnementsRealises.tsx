@@ -3,9 +3,10 @@ import { ReactElement } from 'react'
 import Bar from '../../shared/Bar/Bar'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import Information from '@/components/shared/Information/Information'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 
-export default function AccompagnementsRealises({ 
+export default function AccompagnementsRealises({
   viewModel,
 }: Props): ReactElement {
   if (isErrorViewModel(viewModel)) {
@@ -19,7 +20,11 @@ export default function AccompagnementsRealises({
           —
         </div>
         <div className="font-weight-500">
-          Accompagnements réalisés
+          <span>
+            {' '}
+            Accompagnements réalisés
+          </span>
+          <Information label="Nombre d'accompagnements total depuis le lancement des dispositifs Conseiller Numérique et Aidants Connect" />
         </div>
         <div className="fr-text--xs color-blue-france fr-mb-0">
           {viewModel.message}
@@ -29,26 +34,31 @@ export default function AccompagnementsRealises({
   }
 
   return (
-    <div className="background-blue-france fr-p-4w fr-ml-1w">
-      <div className="fr-h1 fr-m-0">
-        <TitleIcon
-          background="white"
-          icon="compass-3-line"
+    <>
+      <div className="background-blue-france fr-p-4w fr-ml-1w">
+        <div className="fr-h1 fr-m-0">
+          <TitleIcon
+            background="white"
+            icon="compass-3-line"
+          />
+          {viewModel.nombreTotal}
+        </div>
+        <div className="font-weight-500">
+          <span>
+            {' '}
+            Accompagnements réalisés
+          </span>
+          <Information label="Nombre d'accompagnements total depuis le lancement des dispositifs Conseiller Numérique et Aidants Connect" />
+        </div>
+      </div>
+      <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
+        <Bar
+          backgroundColor={viewModel.graphique.backgroundColor}
+          data={viewModel.graphique.data}
+          labels={viewModel.graphique.labels}
         />
-        {viewModel.nombreTotal}
       </div>
-      <div className="font-weight-500">
-        Accompagnements réalisés
-      </div>
-      <div className="fr-text--xs color-blue-france fr-mb-0">
-        Total cumulé des dispositifs
-      </div>
-      <Bar
-        backgroundColor={viewModel.graphique.backgroundColor}
-        data={viewModel.graphique.data}
-        labels={viewModel.graphique.labels}
-      />
-    </div>
+    </>
   )
 }
 
@@ -58,4 +68,4 @@ function isErrorViewModel(viewModel: AccompagnementsRealisesViewModel | ErrorVie
 
 type Props = Readonly<{
   viewModel: AccompagnementsRealisesViewModel | ErrorViewModel
-}> 
+}>

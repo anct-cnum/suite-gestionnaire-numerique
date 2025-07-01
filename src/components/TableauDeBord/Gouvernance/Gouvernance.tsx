@@ -8,7 +8,7 @@ import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 
-export default function Gouvernance({ 
+export default function Gouvernance({
   gouvernanceViewModel,
   lienGouvernance,
 }: Props): ReactElement {
@@ -28,9 +28,6 @@ export default function Gouvernance({
               >
                 Gouvernances
               </h2>
-              <p className="fr-m-0 font-weight-500">
-                Acteurs de l&apos;inclusion numérique
-              </p>
             </div>
           </div>
           <Link
@@ -106,9 +103,6 @@ export default function Gouvernance({
             >
               Gouvernances
             </h2>
-            <p className="fr-m-0 font-weight-500">
-              Acteurs de l&apos;inclusion numérique
-            </p>
           </div>
         </div>
         <Link
@@ -190,7 +184,7 @@ export default function Gouvernance({
 type Props = Readonly<{
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
   lienGouvernance: string
-}> 
+}>
 
 function isErrorViewModel(viewModel: ErrorViewModel | GouvernanceViewModel): viewModel is ErrorViewModel {
   return 'type' in viewModel
