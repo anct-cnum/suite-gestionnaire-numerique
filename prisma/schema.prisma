@@ -34,7 +34,6 @@ model DepartementRecord {
 
   relationRegion         RegionRecord                         @relation(fields: [regionCode], references: [code])
   gouvernances           GouvernanceRecord[]
-  membresGouvernance     MembreGouvernanceDepartementRecord[]
   departementsEnveloppes DepartementEnveloppeRecord[]
 
   @@map("departement")
@@ -47,7 +46,6 @@ model RegionRecord {
 
   departements       DepartementRecord[]
   utilisateurs       UtilisateurRecord[]
-  membresGouvernance MembreGouvernanceSgarRecord[]
 
   @@map("region")
   @@schema("min")
@@ -200,6 +198,8 @@ model MembreRecord {
   contactTechnique           String? @map("contact_technique")
   type                       String?
   statut                     String
+  isCoporteur                Boolean  @default(false) @map("is_coporteur")
+  categorieMembre            String?  @map("categorie_membre")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
@@ -207,79 +207,12 @@ model MembreRecord {
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
 
-  membresGouvernanceDepartement MembreGouvernanceDepartementRecord[]
-  membresGouvernanceSgar        MembreGouvernanceSgarRecord[]
-  membresGouvernanceEpci        MembreGouvernanceEpciRecord[]
-  membresGouvernanceCommune     MembreGouvernanceCommuneRecord[]
-  membresGouvernanceStructure   MembreGouvernanceStructureRecord[]
-  beneficiaireSubvention        BeneficiaireSubventionRecord[]
-  porteurAction                 PorteurActionRecord[]
-  coFinancement                 CoFinancementRecord[]
-  feuillesDeRoute               FeuilleDeRouteRecord[]
+  FeuilleDeRouteRecord               FeuilleDeRouteRecord[]
+  BeneficiaireSubventionRecord       BeneficiaireSubventionRecord[]
+  PorteurActionRecord                PorteurActionRecord[]
+  CoFinancementRecord                CoFinancementRecord[]
 
   @@map("membre")
-  @@schema("min")
-}
-
-model MembreGouvernanceDepartementRecord {
-  departementCode String @map("departement_code")
-  role            String
-  membreId        String @map("membre_id")
-
-  relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
-  relationMembre      MembreRecord      @relation(fields: [membreId], references: [id])
-
-  @@unique([departementCode, membreId, role])
-  @@map("membre_gouvernance_departement")
-  @@schema("min")
-}
-
-model MembreGouvernanceSgarRecord {
-  sgarCode String @map("sgar_code")
-  role     String
-  membreId String @map("membre_id")
-
-  relationSgar   RegionRecord @relation(fields: [sgarCode], references: [code])
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
-
-  @@unique([sgarCode, membreId, role])
-  @@map("membre_gouvernance_sgar")
-  @@schema("min")
-}
-
-model MembreGouvernanceEpciRecord {
-  epci     String
-  role     String
-  membreId String @map("membre_id")
-
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
-
-  @@id([epci, membreId, role])
-  @@map("membre_gouvernance_epci")
-  @@schema("min")
-}
-
-model MembreGouvernanceCommuneRecord {
-  commune  String
-  role     String
-  membreId String @map("membre_id")
-
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
-
-  @@unique([commune, membreId, role])
-  @@map("membre_gouvernance_commune")
-  @@schema("min")
-}
-
-model MembreGouvernanceStructureRecord {
-  structure String
-  role      String
-  membreId  String @map("membre_id")
-
-  relationMembre MembreRecord @relation(fields: [membreId], references: [id])
-
-  @@unique([structure, membreId, role])
-  @@map("membre_gouvernance_structure")
   @@schema("min")
 }
 
