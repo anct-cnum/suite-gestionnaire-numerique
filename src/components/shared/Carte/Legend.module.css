@@ -1,6 +1,5 @@
 .legendContainer {
   align-items: center;
-  background-color: rgb(255 255 255 / 80%);
   border-radius: 0.5rem;
   color: var(--grey-1000);
   display: flex;
@@ -11,11 +10,11 @@
 }
 
 .gradientBar {
-  border-radius: 0.25rem;
+  border-radius: 0.5rem;
   display: flex;
-  height: 1.25rem;
+  height: 0.75rem;
   overflow: hidden;
-  width: 12.5rem;
+  width: 20rem;
 }
 
 .colorBlock {

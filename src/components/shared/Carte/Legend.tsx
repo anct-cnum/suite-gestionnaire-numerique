@@ -10,7 +10,7 @@ export default function Legend(): ReactElement {
 
   return (
     <div className={styles.legendContainer}>
-      <span>
+      <span style={{ whiteSpace: 'nowrap' }}>
         Risque faible
       </span>
       <div className={styles.gradientBar}>
@@ -22,9 +22,9 @@ export default function Legend(): ReactElement {
           />
         ))}
       </div>
-      <span>
+      <span style={{ whiteSpace: 'nowrap' }}>
         Risque fort
       </span>
     </div>
   )
-} 
+}
