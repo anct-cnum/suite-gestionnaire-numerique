@@ -10,9 +10,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         membres: {
-          include: {
-            ...membreInclude,
-          },
+          include: membreInclude,
           orderBy: {
             id: 'asc',
           },
@@ -45,20 +43,20 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
 
 function toMesMembresReadModel(membre: Membre): MembreReadModel {
   return {
-    adresse: 'Adresse bouchonnée',
+    adresse: '', // TODO: Récupérer l'adresse depuis les données du membre
     contactReferent: {
       email: membre.contactReferent.email,
       fonction: membre.contactReferent.fonction,
       nom: membre.contactReferent.nom,
       prenom: membre.contactReferent.prenom,
     },
-    isDeletable: true,
+    isDeletable: !isPrefectureDepartementale(membre),
     nom: membre.nom,
-    roles: membre.roles as MesMembresReadModel['roles'],
-    siret: 'Siret bouchonné',
-    statut: membre.statut as MembreReadModel['statut'],
-    suppressionDuMembreAutorise: false,
-    typologie: membre.type ?? '',
+    roles: membre.roles,
+    siret: '', // TODO: Récupérer le SIRET depuis les données du membre
+    statut: membre.statut as any, // TODO: Corriger le type Statut
+    suppressionDuMembreAutorise: true, // TODO: Logique métier à implémenter
+    typologie: membre.type,
     uid: membre.id,
   }
 }

@@ -5,23 +5,24 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeBordGouvernanceLoader {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(departementCode: string): Promise<ErrorReadModel | GouvernanceReadModel> {
-    // Compter les membres de la gouvernance
-    const membresGouvernance = await prisma.membreGouvernanceDepartementRecord.findMany({
+    // Compter les membres de la gouvernance (non supprimés)
+    const membresGouvernance = await prisma.membreRecord.findMany({
       where: {
-        departementCode,
+        gouvernanceDepartementCode: departementCode,
+        statut: {
+          not: 'supprime', // Exclure les membres supprimés
+        },
       },
     })
 
     const totalMembres = membresGouvernance.length
-    const coporteurs = membresGouvernance.filter(membre => membre.role === 'coporteur').length
+    const coporteurs = membresGouvernance.filter(membre => membre.isCoporteur).length
 
     // Compter les collectivités impliquées
-    const membresCollectivites = await prisma.membreRecord.findMany({
-      where: {
-        gouvernanceDepartementCode: departementCode,
-        type: 'collectivite',
-      },
-    })
+    const membresCollectivites = membresGouvernance.filter(membre => 
+      membre.categorieMembre === 'commune' || 
+      membre.categorieMembre === 'departement' || 
+      membre.categorieMembre === 'epci')
 
     const totalCollectivites = membresCollectivites.length
     const membresCollectivitesTotal = membresCollectivites.length

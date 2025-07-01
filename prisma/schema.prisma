@@ -200,6 +200,7 @@ model MembreRecord {
   statut                     String
   isCoporteur                Boolean  @default(false) @map("is_coporteur")
   categorieMembre            String?  @map("categorie_membre")
+  nom                        String?  @map("nom")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
