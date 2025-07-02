@@ -75,7 +75,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
           href={lienFinancements}
         >
-          Les demandes
+          Les demandes en cours
         </Link>
       </div>
       <div className="fr-grid-row fr-mb-4w">
@@ -117,7 +117,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
             <span className="font-weight-700">
               {conventionnement.credit.pourcentage}
               {' '}
-              % de votre budget global
+              % de votre budget global renseigné
             </span>
           </div>
         </div>

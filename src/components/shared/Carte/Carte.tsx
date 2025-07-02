@@ -29,7 +29,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 
   function searchFeatures(): void {
     if (!map.current) {return}
-        
+
     // Coordonnées approximatives du centre de chaque département
     // Le calcul par les features est trop complexe car elles ne se chargent pas à tous les niveaux de zoom
     const centresDepartements: Record<string, [number, number]> = {
@@ -139,14 +139,14 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       978: [-63.1, 18.1], // Saint-Martin
       988: [165.5, -20.9], // Nouvelle-Calédonie
     }
-    
+
     const center = centresDepartements[departement]
-    
+
     // Calculer les bounds approximatifs
     // 1 degré de latitude ≈ 111 km, 1 degré de longitude ≈ 111 km * cos(latitude)
     const latDelta = 0.55 // ~61 km au nord et au sud
     const lngDelta = 0.55 / Math.cos(center[1] * Math.PI / 180) // Ajuster pour la longitude
-    
+
     const bounds = new LngLatBounds(
       [center[0] - lngDelta, center[1] - latDelta],
       [center[0] + lngDelta, center[1] + latDelta]
@@ -157,14 +157,14 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       padding: 50,
       zoom: 8,
     })
-  
+
     // Ajouter un padding de 120% aux bounds pour plus d'espace de navigation
     const padding = 1.2
     const sw = bounds.getSouthWest()
     const ne = bounds.getNorthEast()
     const latPadding = (ne.lat - sw.lat) * padding
     const lngPadding = (ne.lng - sw.lng) * padding
-    
+
     const paddedBounds = new LngLatBounds(
       [sw.lng - lngPadding, sw.lat - latPadding],
       [ne.lng + lngPadding, ne.lat + latPadding]
@@ -189,7 +189,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
             commune.codeInsee,
             commune.couleur,
           ]),
-          '#ffffff', 
+          '#ffffff',
         ] as unknown as DataDrivenPropertyValueSpecification<string>,
         'fill-opacity': 0.7,
         'fill-outline-color': '#000000',
@@ -203,7 +203,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 
   function checkSourceLoaded(): void {
     if (!map.current) {return}
-    
+
     if (map.current.isSourceLoaded('decoupage')) {
       initializeLayers()
     } else {
@@ -216,7 +216,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 
     map.current = new Map({
       container: mapContainer.current,
-      maxZoom: 11, 
+      maxZoom: 11,
       minZoom: 6,
       style: EMPTY_STYLE,
     })
@@ -228,7 +228,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 
     map.current.on('load', () => {
       if (!mapContainer.current || !map.current) {return}
-      
+
       map.current.addSource('decoupage', {
         tiles: [
           'https://openmaptiles.geo.data.gouv.fr/data/decoupage-administratif/{z}/{x}/{y}.pbf',
@@ -299,14 +299,15 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       className={styles.mapWrapper}
       data-testid="carte-wrapper"
     >
-      <div 
-        className={styles.mapContainer} 
+      <div
+        className={styles.mapContainer}
         data-testid="carte-container"
         ref={mapContainer}
       />
       <div
         className={styles.legendWrapper}
         data-testid="legend-wrapper"
+        style={{ width: '90%'  }}
       >
         <Legend />
       </div>
@@ -317,4 +318,4 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
 type Props = Readonly<{
   communesFragilite: Array<CommuneFragilite>
   departement: string
-}> 
+}>

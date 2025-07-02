@@ -14,7 +14,7 @@
   display: flex;
   height: 0.75rem;
   overflow: hidden;
-  width: 20rem;
+  width: 100%;
 }
 
 .colorBlock {
