@@ -51,7 +51,7 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   
   // Cofinanceur : si le membre a des cofinancements
   const coFinancements = membre.CoFinancementRecord
-  if (coFinancements && coFinancements.length > 0) {
+  if (coFinancements.length > 0) {
     roles.push('cofinanceur')
   }
   
