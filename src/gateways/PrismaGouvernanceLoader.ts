@@ -80,8 +80,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       : undefined
     const membres = toMembres(membresConfirmesGouvernance)
     
-    const coporteurs = membres.filter(isCoporteur)
-
     const synthese = this.#etablisseurSynthese({
       feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map(feuilleDeRoute => ({
         actions: feuilleDeRoute.action.map(action => {

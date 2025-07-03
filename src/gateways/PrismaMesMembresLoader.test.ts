@@ -3,9 +3,12 @@ import { Prisma } from '@prisma/client'
 import { PrismaMesMembresLoader } from './PrismaMesMembresLoader'
 import {
   creerMembres,
+  creerUnBeneficiaireSubvention,
   creerUnCoFinancement,
   creerUnDepartement,
   creerUneAction,
+  creerUneDemandeDeSubvention,
+  creerUneEnveloppeFinancement,
   creerUneFeuilleDeRoute,
   creerUneGouvernance,
   creerUneRegion,
@@ -44,9 +47,52 @@ describe('mes membres loader', () => {
       nom: 'Action test',
     })
 
+    await creerUneAction({
+      budgetGlobal: 30000,
+      createurId: 1,
+      feuilleDeRouteId: 1,
+      id: 2,
+      nom: 'Action test 2',
+    })
+
+    await creerUneEnveloppeFinancement({
+      id: 1,
+      libelle: 'Enveloppe formation',
+    })
+    
+    await creerUneEnveloppeFinancement({
+      id: 2,
+      libelle: 'Enveloppe autre',
+    })
+    
+    await creerUneDemandeDeSubvention({
+      actionId: 1,
+      enveloppeFinancementId: 1,
+      id: 1,
+    })
+    
+    await creerUneDemandeDeSubvention({
+      actionId: 2,
+      enveloppeFinancementId: 2,
+      id: 2,
+    })
+    
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId: 'commune-blabla-69',
+    })
+    
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 2,
+      membreId: 'epci-200072056-69',
+    })
+    await creerUnBeneficiaireSubvention({
+      demandeDeSubventionId: 1,
+      membreId:'structure-38012986643097-69',
+    })
     await creerUnCoFinancement({
       actionId: 1,
-      memberId: 'commune-35345-69',
+      memberId: 'commune-blabla-69',
       montant: 15000,
     })
 
@@ -106,7 +152,7 @@ describe('mes membres loader', () => {
           },
           isDeletable: true,
           nom: 'CC Porte du Jura',
-          roles: ['beneficiaire', 'coporteur'],
+          roles: ['observateur',  'coporteur','beneficiaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
           suppressionDuMembreAutorise: false,
@@ -140,7 +186,7 @@ describe('mes membres loader', () => {
           },
           isDeletable: true,
           nom: 'Orange',
-          roles: ['coporteur', 'recipiendaire'],
+          roles: ['observateur', 'coporteur', 'recipiendaire'],
           siret: 'Siret bouchonné',
           statut: 'confirme',
           suppressionDuMembreAutorise: false,
@@ -158,16 +204,16 @@ describe('mes membres loader', () => {
           isDeletable: true,
           nom: 'Trévérien',
           roles: [
-            'beneficiaire',
-            'cofinanceur',
+            'observateur',
             'coporteur',
+            'cofinanceur',
             'recipiendaire',
           ],
           siret: 'Siret bouchonné',
           statut: 'confirme',
           suppressionDuMembreAutorise: false,
-          typologie: '',
-          uid: 'commune-35345-69',
+          typologie: 'Commune',
+          uid: 'commune-blabla-69',
         },
         {
           adresse: 'Adresse bouchonnée',
@@ -213,7 +259,7 @@ describe('mes membres loader', () => {
           },
           isDeletable: true,
           nom: 'Pipriac',
-          roles: ['observateur'],
+          roles: [],
           siret: 'Siret bouchonné',
           statut: 'candidat',
           suppressionDuMembreAutorise: false,
@@ -268,7 +314,7 @@ describe('mes membres loader', () => {
           },
           isDeletable: true,
           nom: 'Rennes',
-          roles: ['observateur'],
+          roles: [],
           siret: 'Siret bouchonné',
           statut: 'candidat',
           suppressionDuMembreAutorise: false,

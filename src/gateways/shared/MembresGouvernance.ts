@@ -1,7 +1,5 @@
 import { Prisma } from '@prisma/client'
 
-export type Role = 'beneficiaire' | 'coporteur' | 'observateur' | 'recipiendaire'
-
 export type Membre = Readonly<{
   contactReferent: Readonly<{
     email: string
@@ -22,27 +20,19 @@ export type Membre = Readonly<{
   type: string
 }>
 
-export type AssociationMembreEtRoleUnique = Readonly<{
-  contactReferent: Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  contactTechnique: null | Readonly<{
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }>
-  id: string
-  nom: string
-  role: Role
-  statut: string
-  type: string
-}>
+type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'
 
 export const membreInclude = {
+  BeneficiaireSubventionRecord: {
+    include: {
+      demandeDeSubvention: {
+        include: {
+          enveloppe: true,
+        },
+      },
+    },
+  },
+  CoFinancementRecord: true,
   relationContact: true,
   relationContactTechnique: true,
 }
@@ -57,6 +47,12 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   
   if (membre.isCoporteur) {
     roles.push('coporteur')
+  }
+  
+  // Cofinanceur : si le membre a des cofinancements
+  const coFinancements = membre.CoFinancementRecord
+  if (coFinancements && coFinancements.length > 0) {
+    roles.push('cofinanceur')
   }
   
   const beneficiaireSubvention = membre.BeneficiaireSubventionRecord
