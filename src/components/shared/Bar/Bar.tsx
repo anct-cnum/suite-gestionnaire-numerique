@@ -9,9 +9,9 @@ export default function Bar({ backgroundColor, data, labels }: Props): ReactElem
       <div className="font-weight-500">
         <span>
           {' '}
-          Evolution des accompagnements
+          Accompagnements des 6 derniers mois
         </span>
-        <Information label="Répartition des accompagnements saisis sur la Coop lors des 6 derniers mois" />
+        <Information label="Accompagnements saisis sur La Coop" />
       </div>
       <ReactBar
         data={{
