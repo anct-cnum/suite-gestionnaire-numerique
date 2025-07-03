@@ -98,7 +98,6 @@ export default function TableauDeBord({
           }
         </ul>
       </section>
-        <>
           <hr className="fr-hr" />
           <EtatDesLieux
             accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
