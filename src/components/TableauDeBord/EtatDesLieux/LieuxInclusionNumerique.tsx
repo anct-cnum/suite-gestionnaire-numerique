@@ -41,7 +41,7 @@ export default function LieuxInclusionNumerique({
         <span>
           Lieux d&apos;inclusion numérique
         </span>
-        <Information label="Nombre de lieux d'inclusion numérique répertoriés sur la Cartographie Nationale des lieux d'inclusion numérique" />
+        <Information label="Lieux référencés sur la Cartographie nationale des lieux d'inclusion numérique" />
       </div>
     </div>
   )
