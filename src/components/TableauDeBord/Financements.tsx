@@ -89,7 +89,6 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Budget global renseigné
-            <Information label="Somme des budgets des feuilles de route de votre gouvernance" />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             pour
@@ -109,7 +108,6 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
           <div className="font-weight-500 fr-grid-row fr-grid-row--middle">
             Financements engagés par l&apos;État
-            <Information label="Somme des montants des subventions validées des feuilles de route de votre gouvernance" />
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Soit
