@@ -98,7 +98,6 @@ export default function TableauDeBord({
           }
         </ul>
       </section>
-      {sessionUtilisateurViewModel.peutChangerDeRole ?
         <>
           <hr className="fr-hr" />
           <EtatDesLieux
@@ -107,20 +106,15 @@ export default function TableauDeBord({
             indicesFragilite={indicesFragilite}
             lieuxInclusionViewModel={lieuxInclusionViewModel}
             mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-          />
-        </> : null}
-      {sessionUtilisateurViewModel.peutChangerDeRole ?
+          /> 
         <Gouvernance
           gouvernanceViewModel={gouvernanceViewModel}
           lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
         />
-        : null}
-      {sessionUtilisateurViewModel.peutChangerDeRole ?
         <Financements
           conventionnement={financementsViewModel}
           lienFinancements={tableauDeBordViewModel.liens.financements}
         />
-        : null}
       <section
         aria-labelledby="beneficiaires"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
