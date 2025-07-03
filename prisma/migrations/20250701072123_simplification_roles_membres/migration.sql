@@ -116,7 +116,8 @@ SET "categorie_membre" = CASE
   WHEN id LIKE 'commune-%' THEN 'commune'
   WHEN id LIKE 'departement-%' THEN 'departement'
   WHEN id LIKE 'epci-%' THEN 'epci'
-  WHEN id LIKE 'region-%' THEN 'sgar'
+  WHEN id LIKE 'sgar-%' THEN 'prefecture_regionale'
+  WHEN id LIKE 'prefecture-%' THEN 'prefecture_departementale'
   WHEN id LIKE 'structure-%' THEN 'structure'
   ELSE 'structure' -- valeur par défaut
 END;

@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaMembreRepository } from './PrismaMembreRepository'
-import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreCommune, creerUnMembreDepartement, creerUnMembreEpci, creerUnMembreSgar, creerUnMembreStructure } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { MembreUid } from '@/domain/Membre'
 import { membreConfirmeFactory } from '@/domain/testHelper'
@@ -34,7 +34,6 @@ describe('membre repository', () => {
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
     await creerUnMembre({ id: 'departement-69-69', statut: 'confirme' })
-    await creerUnMembreDepartement({ departementCode: '69', membreId: 'departement-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'departement-93-93', statut: 'confirme' })
 
     // WHEN
@@ -60,9 +59,8 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '69', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUnMembre({ id: 'sgar-69-69', statut: 'confirme' })
-    await creerUnMembreSgar({ membreId: 'sgar-69-69', role: 'observateur', sgarCode: '84' })
-    await creerUnMembre({ id: 'sgar-93-93', statut: 'confirme' })
+    await creerUnMembre({ id: 'sgar-69-69', nom:'84', statut: 'confirme' })
+    await creerUnMembre({ id: 'sgar-93-93', nom:'93', statut: 'confirme' })
 
     // WHEN
     const membre = await new PrismaMembreRepository().get(new MembreUid('sgar-69-69').state.value)
@@ -88,7 +86,6 @@ describe('membre repository', () => {
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
     await creerUnMembre({ id: 'commune-69-69', statut: 'confirme' })
-    await creerUnMembreCommune({ commune: 'Paris', membreId: 'commune-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'commune-93-93', statut: 'confirme' })
 
     // WHEN
@@ -115,7 +112,6 @@ describe('membre repository', () => {
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
     await creerUnMembre({ id: 'epci-69-69', statut: 'confirme' })
-    await creerUnMembreEpci({ epci: 'Bordeaux Métropole', membreId: 'epci-69-69', role: 'observateur' })
     await creerUnMembre({ id: 'epci-93-93', statut: 'confirme' })
 
     // WHEN
@@ -141,8 +137,7 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '69', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUnMembre({ id: 'structure-69-69', statut: 'candidat' })
-    await creerUnMembreStructure({ membreId: 'structure-69-69', role: 'observateur', structure: 'HUBIKOOP' })
+    await creerUnMembre({ id: 'structure-69-69', nom: 'HUBIKOOP', statut: 'candidat' })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
 
     // WHEN
@@ -171,10 +166,10 @@ describe('membre repository', () => {
     await creerUnMembre({
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',
+      nom: 'HUBIKOOP',
       statut: 'candidat',
       type: 'Préfecture départementale',
     })
-    await creerUnMembreStructure({ membreId: 'structure-69-69', role: 'observateur', structure: 'HUBIKOOP' })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme' })
 
     // WHEN

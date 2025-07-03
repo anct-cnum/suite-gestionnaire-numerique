@@ -55,46 +55,41 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
     roles.push('observateur')
   }
   
-  // Coporteur : si isCoporteur = true
   if (membre.isCoporteur) {
     roles.push('coporteur')
   }
   
-  // TODO: Ajouter la logique pour recipiendaire/beneficiaire basée sur les subventions
-  // quand les types Prisma seront correctement générés
+  const beneficiaireSubvention = membre.BeneficiaireSubventionRecord
+  if (beneficiaireSubvention.length > 0) {
+    // Vérifier si le membre a des demandes de subvention avec des enveloppes de formation
+    const aEnveloppeFormation = beneficiaireSubvention.some(
+      (beneficiaire) => beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    )
+    
+    // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
+    const aEnveloppeNonFormation = beneficiaireSubvention.some(
+      (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    )
+    
+    if (aEnveloppeFormation) {
+      roles.push('recipiendaire')
+    }
+    if (aEnveloppeNonFormation) {
+      roles.push('beneficiaire')
+    }
+  }
   
   return roles
 }
 
-function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<AssociationMembreEtRoleUnique> {
-  const roles = deduireRoles(membre)
-  
-  // Déterminer le nom du membre selon sa catégorie
-  const nomMembre = determinerNomMembre(membre)
-  
-  return roles.map((role) => {
-    if (!isRole(role)) {
-      throw new Error(`Rôle invalide: ${role}`)
-    }
-    return {
-      contactReferent: membre.relationContact,
-      contactTechnique: membre.relationContactTechnique,
-      id: membre.id,
-      nom: nomMembre,
-      role,
-      statut: membre.statut,
-      type: membre.type ?? '',
-    }
-  })
-}
-
 function determinerNomMembre(membre: MembreRecord): string {
   // Utiliser le nom stocké en base de données s'il existe
-  if (membre.nom) {
+  if (membre.nom !== null) {
     return membre.nom
   }
   
   // Fallback : nom générique basé sur la catégorie
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const nomFallback = (() => {
     switch (membre.categorieMembre) {
       case 'commune':
@@ -144,19 +139,13 @@ function isPrefectureDepartementale(membre: Membre): boolean {
   return membre.type === 'Préfecture départementale'
 }
 
-function isRole(role: string): role is Role {
-  return ['beneficiaire', 'coporteur', 'observateur', 'recipiendaire'].includes(role)
-}
-
 type MembreRecord = Prisma.MembreRecordGetPayload<{
   include: typeof membreInclude
 }>
 
 export {
-  associationsMembreEtRoleUnique,
   isCoporteur,
   isPrefectureDepartementale,
-  isRole,
   toMembre,
   toMembres
 }

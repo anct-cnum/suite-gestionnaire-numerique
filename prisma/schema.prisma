@@ -32,7 +32,7 @@ model DepartementRecord {
   structures   StructureRecord[]
   utilisateurs UtilisateurRecord[]
 
-  relationRegion         RegionRecord                         @relation(fields: [regionCode], references: [code])
+  relationRegion         RegionRecord                 @relation(fields: [regionCode], references: [code])
   gouvernances           GouvernanceRecord[]
   departementsEnveloppes DepartementEnveloppeRecord[]
 
@@ -44,8 +44,8 @@ model RegionRecord {
   code String @id
   nom  String
 
-  departements       DepartementRecord[]
-  utilisateurs       UtilisateurRecord[]
+  departements DepartementRecord[]
+  utilisateurs UtilisateurRecord[]
 
   @@map("region")
   @@schema("min")
@@ -198,9 +198,9 @@ model MembreRecord {
   contactTechnique           String? @map("contact_technique")
   type                       String?
   statut                     String
-  isCoporteur                Boolean  @default(false) @map("is_coporteur")
-  categorieMembre            String?  @map("categorie_membre")
-  nom                        String?  @map("nom")
+  isCoporteur                Boolean @default(false) @map("is_coporteur")
+  categorieMembre            String? @map("categorie_membre")
+  nom                        String? @map("nom")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
@@ -208,10 +208,10 @@ model MembreRecord {
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
 
-  FeuilleDeRouteRecord               FeuilleDeRouteRecord[]
-  BeneficiaireSubventionRecord       BeneficiaireSubventionRecord[]
-  PorteurActionRecord                PorteurActionRecord[]
-  CoFinancementRecord                CoFinancementRecord[]
+  FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
+  BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
+  PorteurActionRecord          PorteurActionRecord[]
+  CoFinancementRecord          CoFinancementRecord[]
 
   @@map("membre")
   @@schema("min")

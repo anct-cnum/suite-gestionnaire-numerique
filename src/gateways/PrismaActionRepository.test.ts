@@ -1,6 +1,6 @@
 
 import { PrismaActionRepository } from './PrismaActionRepository'
-import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur } from './testHelper'
+import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre,  creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { actionFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -30,10 +30,6 @@ describe('action repository', () => {
           contact: 'structure@example.com',
           gouvernanceDepartementCode: departementCode,
           id: uidPorteur,
-        }, tx)
-        await creerUnMembreDepartement({
-          departementCode,
-          membreId: uidPorteur,
         }, tx)
         await creerUnUtilisateur({
           id: utilisateurId,

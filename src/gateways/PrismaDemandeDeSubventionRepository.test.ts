@@ -9,7 +9,6 @@ import {
   creerUneGouvernance,
   creerUneRegion,
   creerUnMembre,
-  creerUnMembreDepartement,
   creerUnUtilisateur,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -62,11 +61,6 @@ describe('demande de subvention repository', () => {
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
-    })
-
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
     })
 
     // Création de la feuille de route et de l'action

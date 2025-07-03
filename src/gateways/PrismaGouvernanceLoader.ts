@@ -182,7 +182,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 totalMontantsSubventionsAccordees: 0,
                 totalMontantsSubventionsFormationAccordees: 0,
               }),
-              type: membre.type ?? '',
+              type: membre.type,
               uid: membre.id,
             }
           }),
@@ -281,7 +281,7 @@ const include = {
 function fromMembreAvecRoles(
   { id, nom, roles, type }: Membre
 ): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, type: type ?? undefined, uid: id }
+  return { nom, roles, type, uid: id }
 }
 
 type Totaux = Readonly<{
