@@ -22,7 +22,7 @@ export default function MediateursEtAidants({
           <span>
             Médiateurs et aidants numériques
           </span>
-          <Information label="Nombre d'Aidants et médiateurs inscrits sur la Coop ou labellisés Aidants Connect (Sources : Coop, Aidants Connect)" />
+          <Information label="Professionnels inscrits sur la Coop et/ou labellisés Aidants Connect" />
         </div>
         <div className="fr-text--xs color-blue-france fr-mb-0">
           {viewModel.message}
@@ -44,7 +44,7 @@ export default function MediateursEtAidants({
         <span>
           Médiateurs et aidants numériques
         </span>
-        <Information label="Nombre d'Aidants et médiateurs inscrits sur la Coop ou labellisés Aidants Connect (Sources : Coop, Aidants Connect)" />
+        <Information label="Professionnels inscrits sur la Coop et/ou labellisés Aidants Connect" />
       </div>
 
     </div>
