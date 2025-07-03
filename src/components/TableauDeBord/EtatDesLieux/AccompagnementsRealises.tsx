@@ -24,7 +24,7 @@ export default function AccompagnementsRealises({
             {' '}
             Accompagnements réalisés
           </span>
-          <Information label="Nombre d'accompagnements total depuis le lancement des dispositifs Conseiller Numérique et Aidants Connect" />
+          <Information label="Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect" />
         </div>
         <div className="fr-text--xs color-blue-france fr-mb-0">
           {viewModel.message}
@@ -48,7 +48,7 @@ export default function AccompagnementsRealises({
             {' '}
             Accompagnements réalisés
           </span>
-          <Information label="Nombre d'accompagnements total depuis le lancement des dispositifs Conseiller Numérique et Aidants Connect" />
+          <Information label="Depuis 2021, avec les dispositifs Conseillers Numériques et Aidants Connect" />
         </div>
       </div>
       <div className="background-blue-france fr-p-4w fr-ml-1w fr-mt-1w">
