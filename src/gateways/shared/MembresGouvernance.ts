@@ -1,151 +1,147 @@
 import { Prisma } from '@prisma/client'
 
-import { alphaAsc } from '@/shared/lang'
+export type Membre = Readonly<{
+  contactReferent: Readonly<{
+    email: string
+    fonction: string
+    nom: string
+    prenom: string
+  }>
+  contactTechnique: null | Readonly<{
+    email: string
+    fonction: string
+    nom: string
+    prenom: string
+  }>
+  id: string
+  nom: string
+  roles: ReadonlyArray<Role>
+  statut: string
+  type: string
+}>
 
-type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'formation' | 'observateur' | 'recipiendaire'
-
-const ROLES: ReadonlyArray<Role> = ['beneficiaire', 'cofinanceur', 'coporteur', 'formation', 'observateur', 'recipiendaire']
-
-export function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<Membre> {
-  return Object.values(
-    membres
-      .values()
-      .flatMap(associationsMembreEtRoleUnique)
-      .reduce(groupMembresById, {})
-  )
-}
-
-export function toMembre(membre: MembreRecord): Membre {
-  return associationsMembreEtRoleUnique(membre).reduce(groupMembresById, {})[membre.id]
-}
-
-export function isPrefectureDepartementale(membre: Membre): boolean {
-  return membre.type === 'Préfecture départementale'
-}
-
-export function isCoporteur(membre: Membre): boolean {
-  return membre.roles.includes('coporteur')
-}
-
-function isRole(role: string): role is Role {
-  return ROLES.includes(role as Role)
-}
+type Role = 'beneficiaire' | 'cofinanceur' | 'coporteur' | 'observateur' | 'recipiendaire'
 
 export const membreInclude = {
-  coFinancement: {
+  BeneficiaireSubventionRecord: {
     include: {
-      action: {
+      demandeDeSubvention: {
         include: {
-          feuilleDeRoute: true,
+          enveloppe: true,
         },
       },
     },
   },
-  membresGouvernanceCommune: true,
-  membresGouvernanceDepartement: {
-    include: {
-      relationDepartement: true,
-    },
-  },
-  membresGouvernanceEpci: true,
-  membresGouvernanceSgar: {
-    include: {
-      relationSgar: true,
-    },
-  },
-  membresGouvernanceStructure: true,
+  CoFinancementRecord: true,
   relationContact: true,
+  relationContactTechnique: true,
 }
 
-export type Membre = MembreSansRole & Readonly<{ roles: ReadonlyArray<Role> }>
-
-function associationsMembreEtRoleUnique(membre: MembreRecord): ReadonlyArray<AssociationMembreEtRoleUnique> {
-  const roles = [
-    membre.membresGouvernanceCommune.map(({ commune, role }) => ({ nom: commune, role })),
-    membre.membresGouvernanceDepartement.map(({ relationDepartement, role }) => ({
-      nom: relationDepartement.nom,
-      role,
-    })),
-    membre.membresGouvernanceEpci.map(({ epci, role }) => ({ nom: epci, role })),
-    membre.membresGouvernanceSgar.map(({ relationSgar, role }) => ({ nom: relationSgar.nom, role })),
-    membre.membresGouvernanceStructure.map(({ role, structure }) => ({ nom: structure, role })),
-  ]
-    .flat()
-    .map(({ nom, role }) => {
-      if (!isRole(role)) {
-        throw new Error(`Rôle invalide: ${role}`)
-      }
-      return {
-        contactReferent: membre.relationContact,
-        contactTechnique: membre.contactTechnique,
-        id: membre.id,
-        nom,
-        role,
-        statut: membre.statut,
-        type: membre.type,
-      }
-    })
-
-  // Ajout du rôle cofinanceur si le membre a des cofinancements
-  if (membre.coFinancement.length > 0) {
-    const nomMembre = membre.membresGouvernanceCommune[0]?.commune ||
-      membre.membresGouvernanceDepartement[0]?.relationDepartement.nom ||
-      membre.membresGouvernanceEpci[0]?.epci ||
-      membre.membresGouvernanceSgar[0]?.relationSgar.nom ||
-      membre.membresGouvernanceStructure[0]?.structure
-
-    if (nomMembre) {
-      roles.push({
-        contactReferent: membre.relationContact,
-        contactTechnique: membre.contactTechnique,
-        id: membre.id,
-        nom: nomMembre,
-        role: 'cofinanceur',
-        statut: membre.statut,
-        type: membre.type,
-      })
+function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
+  const roles: Array<Role> = []
+  
+  // Observateur : si statut = 'confirme'
+  if (membre.statut === 'confirme') {
+    roles.push('observateur')
+  }
+  
+  if (membre.isCoporteur) {
+    roles.push('coporteur')
+  }
+  
+  // Cofinanceur : si le membre a des cofinancements
+  const coFinancements = membre.CoFinancementRecord
+  if (coFinancements.length > 0) {
+    roles.push('cofinanceur')
+  }
+  
+  const beneficiaireSubvention = membre.BeneficiaireSubventionRecord
+  if (beneficiaireSubvention.length > 0) {
+    // Vérifier si le membre a des demandes de subvention avec des enveloppes de formation
+    const aEnveloppeFormation = beneficiaireSubvention.some(
+      (beneficiaire) => beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    )
+    
+    // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
+    const aEnveloppeNonFormation = beneficiaireSubvention.some(
+      (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
+    )
+    
+    if (aEnveloppeFormation) {
+      roles.push('recipiendaire')
+    }
+    if (aEnveloppeNonFormation) {
+      roles.push('beneficiaire')
     }
   }
-
+  
   return roles
 }
 
-function groupMembresById(membresById: MembresById, membreUniqueRole: AssociationMembreEtRoleUnique): MembresById {
-  const membre = membresById[membreUniqueRole.id] ?? { roles: [] }
-  return {
-    ...membresById,
-    [membreUniqueRole.id]: {
-      ...membre,
-      contactReferent: membreUniqueRole.contactReferent,
-      id: membreUniqueRole.id,
-      nom: membreUniqueRole.nom,
-      roles: membre.roles
-        .concat(membreUniqueRole.role)
-        .toSorted(alphaAsc()),
-      statut: membreUniqueRole.statut,
-      type: membreUniqueRole.type,
-    },
+function determinerNomMembre(membre: MembreRecord): string {
+  // Utiliser le nom stocké en base de données s'il existe
+  if (membre.nom !== null) {
+    return membre.nom
   }
+  
+  // Fallback : nom générique basé sur la catégorie
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  const nomFallback = (() => {
+    switch (membre.categorieMembre) {
+      case 'commune':
+        return 'Commune'
+      case 'departement':
+        return 'Département'
+      case 'epci':
+        return 'EPCI'
+      case 'sgar':
+        return 'SGAR'
+      case 'structure':
+        return 'Structure'
+      default:
+        return 'Membre'
+    }
+  })()
+  
+  return nomFallback
+}
+
+function toMembre(membre: MembreRecord): Membre {
+  const roles = deduireRoles(membre)
+  const nomMembre = determinerNomMembre(membre)
+  
+  const result = {
+    contactReferent: membre.relationContact,
+    contactTechnique: membre.relationContactTechnique,
+    id: membre.id,
+    nom: nomMembre,
+    roles,
+    statut: membre.statut,
+    type: membre.type ?? '',
+  }
+  
+  return result
+}
+
+function toMembres(membres: ReadonlyArray<MembreRecord>): ReadonlyArray<Membre> {
+  return membres.map(toMembre)
+}
+
+function isCoporteur(membre: Membre): boolean {
+  return membre.roles.includes('coporteur')
+}
+
+function isPrefectureDepartementale(membre: Membre): boolean {
+  return membre.type === 'Préfecture départementale'
 }
 
 type MembreRecord = Prisma.MembreRecordGetPayload<{
   include: typeof membreInclude
 }>
 
-type AssociationMembreEtRoleUnique = MembreSansRole & Readonly<{ role: Role }>
-
-type MembreSansRole = Readonly<{
-  contactReferent: {
-    email: string
-    fonction: string
-    nom: string
-    prenom: string
-  }
-  contactTechnique: null | string
-  id: string
-  nom: string
-  statut: string
-  type: null | string
-}>
-
-type MembresById = Readonly<Record<string, Membre>>
+export {
+  isCoporteur,
+  isPrefectureDepartementale,
+  toMembre,
+  toMembres
+}

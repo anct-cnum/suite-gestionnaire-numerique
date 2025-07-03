@@ -1,5 +1,5 @@
 import { PrismaLesFeuillesDeRouteLoader } from './PrismaLesFeuillesDeRouteLoader'
-import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreStructure, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
+import { creerMembres, creerUnBeneficiaireSubvention, creerUnCoFinancement, creerUnContact, creerUnDepartement, creerUneAction, creerUneDemandeDeSubvention, creerUneEnveloppeFinancement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnPorteurAction, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { epochTime, epochTimeMinusTwoDays } from '@/shared/testHelper'
 import { Gouvernance, SyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
@@ -41,17 +41,8 @@ describe('récupérer les feuilles de route loader', () => {
       contact: 'contact@example.com',
       gouvernanceDepartementCode: '75',
       id: 'structure-79227291600034-75',
+      isCoporteur: true,
       statut: 'confirme',
-    })
-    await creerUnMembreStructure({
-      membreId: 'structure-79227291600034-93',
-      role: 'formation',
-      structure: 'Emmaüs Connect',
-    })
-    await creerUnMembreStructure({
-      membreId: 'structure-79227291600034-75',
-      role: 'coporteur',
-      structure: 'Emmaüs Connect',
     })
     await creerUneFeuilleDeRoute({
       creation: epochTimeMinusTwoDays,

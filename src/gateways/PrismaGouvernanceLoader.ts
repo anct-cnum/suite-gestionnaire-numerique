@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { isEnveloppeDeFormation } from './shared/Action'
-import { Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
+import { isCoporteur, Membre, membreInclude, toMembres } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'
@@ -78,7 +78,8 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
         type: comite.type as TypeDeComite,
       }))
       : undefined
-    const membres = toMembres(gouvernanceRecord.membres)
+    const membres = toMembres(membresConfirmesGouvernance)
+    
     const synthese = this.#etablisseurSynthese({
       feuillesDeRoute: gouvernanceRecord.feuillesDeRoute.map(feuilleDeRoute => ({
         actions: feuilleDeRoute.action.map(action => {
@@ -170,7 +171,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 poste: membre.contactReferent.fonction,
                 prenom: membre.contactReferent.prenom,
               },
-              contactTechnique: membre.contactTechnique ?? undefined,
+              contactTechnique: membre.contactTechnique ? `${membre.contactTechnique.prenom} ${membre.contactTechnique.nom} (${membre.contactTechnique.email})` : undefined,
               feuillesDeRoute: feuillesDeRoutePortees.map(({ nom, uid }) => ({ nom, uid })),
               links: {},
               nom: membre.nom,
@@ -179,7 +180,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
                 totalMontantsSubventionsAccordees: 0,
                 totalMontantsSubventionsFormationAccordees: 0,
               }),
-              type: membre.type ?? '',
+              type: membre.type,
               uid: membre.id,
             }
           }),
@@ -220,10 +221,6 @@ function beneficiairesSubventionAccordee(
   )
     .map(fromMembre)
     .toSorted(alphaAsc('nom'))
-}
-
-function isCoporteur(membre: Membre): boolean {
-  return membre.roles.includes('coporteur')
 }
 
 function fromMembre(membre: Membre): MembreReadModel {
@@ -282,7 +279,7 @@ const include = {
 function fromMembreAvecRoles(
   { id, nom, roles, type }: Membre
 ): FeuillesDeRouteReadModel['porteursPotentielsNouvellesFeuillesDeRouteOuActions'][number] {
-  return { nom, roles, type: type ?? undefined, uid: id }
+  return { nom, roles, type, uid: id }
 }
 
 type Totaux = Readonly<{

@@ -10,9 +10,7 @@ export class PrismaMesMembresLoader implements MesMembresLoader {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include: {
         membres: {
-          include: {
-            ...membreInclude,
-          },
+          include: membreInclude,
           orderBy: {
             id: 'asc',
           },
@@ -54,11 +52,11 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     },
     isDeletable: true,
     nom: membre.nom,
-    roles: membre.roles as MesMembresReadModel['roles'],
+    roles: membre.roles,
     siret: 'Siret bouchonné',
     statut: membre.statut as MembreReadModel['statut'],
     suppressionDuMembreAutorise: false,
-    typologie: membre.type ?? '',
+    typologie: membre.type,
     uid: membre.id,
   }
 }

@@ -98,22 +98,22 @@ export default function TableauDeBord({
           }
         </ul>
       </section>
-          <hr className="fr-hr" />
-          <EtatDesLieux
-            accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
-            departement={departement}
-            indicesFragilite={indicesFragilite}
-            lieuxInclusionViewModel={lieuxInclusionViewModel}
-            mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-          /> 
-        <Gouvernance
-          gouvernanceViewModel={gouvernanceViewModel}
-          lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
-        />
-        <Financements
-          conventionnement={financementsViewModel}
-          lienFinancements={tableauDeBordViewModel.liens.financements}
-        />
+      <hr className="fr-hr" />
+      <EtatDesLieux
+        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        departement={departement}
+        indicesFragilite={indicesFragilite}
+        lieuxInclusionViewModel={lieuxInclusionViewModel}
+        mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+      /> 
+      <Gouvernance
+        gouvernanceViewModel={gouvernanceViewModel}
+        lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
+      />
+      <Financements
+        conventionnement={financementsViewModel}
+        lienFinancements={tableauDeBordViewModel.liens.financements}
+      />
       <section
         aria-labelledby="beneficiaires"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}

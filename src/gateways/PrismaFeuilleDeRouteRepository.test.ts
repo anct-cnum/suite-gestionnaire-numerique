@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { PrismaFeuilleDeRouteRepository } from './PrismaFeuilleDeRouteRepository'
-import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre, creerUnMembreDepartement, creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre,  creerUnUtilisateur, feuilleDeRouteRecordFactory } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { feuilleDeRouteFactory } from '@/domain/testHelper'
 import { epochTime } from '@/shared/testHelper'
@@ -29,10 +29,6 @@ describe('feuille de route repository', () => {
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
-    })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
     })
     const feuilleDeRoute = feuilleDeRouteFactory({
       dateDeCreation: epochTime,
@@ -79,10 +75,6 @@ describe('feuille de route repository', () => {
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
-    })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
     })
     await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUneFeuilleDeRoute({
@@ -158,10 +150,7 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
-    })
+    
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       derniereEdition: epochTime,
@@ -220,10 +209,6 @@ describe('feuille de route repository', () => {
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
-    })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
     })
     await creerUneFeuilleDeRoute({
       creation: epochTime,
@@ -286,10 +271,7 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
-    })
+    
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       derniereEdition: epochTime,
@@ -390,10 +372,7 @@ describe('feuille de route repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
     })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
-    })
+    
     await creerUneFeuilleDeRoute({
       editeurUtilisateurId: uidEditeur,
       gouvernanceDepartementCode: '75',
@@ -457,10 +436,6 @@ describe('feuille de route repository', () => {
       contact: 'structure@example.com',
       gouvernanceDepartementCode: departementCode,
       id: uidPorteur,
-    })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidPorteur,
     })
     await creerUneFeuilleDeRoute({
       editeurUtilisateurId: uidEditeurAvant,

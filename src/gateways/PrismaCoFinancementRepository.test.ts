@@ -8,7 +8,6 @@ import {
   creerUneGouvernance,
   creerUneRegion,
   creerUnMembre,
-  creerUnMembreDepartement,
 } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { coFinancementFactory } from '@/domain/testHelper'
@@ -59,11 +58,6 @@ describe('co-financement repository', () => {
       gouvernanceDepartementCode: departementCode,
       id: uidMembre,
     })
-    await creerUnMembreDepartement({
-      departementCode,
-      membreId: uidMembre,
-    })
-
     await creerUneFeuilleDeRoute({
       creation: epochTime,
       gouvernanceDepartementCode: departementCode,
