@@ -13,6 +13,7 @@ export default function AjouterNoteDeContexte({
   closeDrawer,
   id,
   labelId,
+  peutGerer,
   uidGouvernance,
 }: Props): ReactElement {
   const { ajouterUneNoteDeContexteAction, pathname } = useContext(clientContext)
@@ -41,25 +42,27 @@ export default function AjouterNoteDeContexte({
         height={380}
         onChange={gererLeChangementDeContenu}
       />
-      <div className="fr-btns-group fr-mt-2w">
-        <SubmitButton
-          ariaControls={id}
-          isDisabled={!contenu.trim()}
-        >
-          {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-        </SubmitButton>
-        {
-          contenu.trim() ?
-            <button
-              className="fr-btn red-button"
-              onClick={viderLeContenu}
-              type="button"
-            >
-              Supprimer
-            </button>
-            : null
-        }
-      </div>
+      {peutGerer ? 
+        <div className="fr-btns-group fr-mt-2w">
+          <SubmitButton
+            ariaControls={id}
+            isDisabled={!contenu.trim()}
+          >
+            {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+          </SubmitButton>
+          {
+            contenu.trim() ?
+              <button
+                className="fr-btn red-button"
+                onClick={viderLeContenu}
+                type="button"
+              >
+                Supprimer
+              </button>
+              : null
+          }
+        </div>
+        : null}
     </form>
   )
 
@@ -82,5 +85,6 @@ type Props = Readonly<{
   closeDrawer(): void
   id: string
   labelId: string
+  peutGerer: boolean
   uidGouvernance: string
 }>

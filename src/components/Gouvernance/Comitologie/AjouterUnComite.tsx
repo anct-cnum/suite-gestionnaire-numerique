@@ -12,6 +12,7 @@ export default function AjouterUnComite({
   dateAujourdhui,
   id,
   labelId,
+  peutGerer,
   uidGouvernance,
 }: Props): ReactElement {
   const { ajouterUnComiteAction, pathname } = useContext(clientContext)
@@ -25,12 +26,14 @@ export default function AjouterUnComite({
       labelId={labelId}
       validerFormulaire={creerUnComite}
     >
-      <SubmitButton
-        ariaControls={id}
-        isDisabled={isDisabled}
-      >
-        {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
-      </SubmitButton>
+      {peutGerer ? 
+        <SubmitButton
+          ariaControls={id}
+          isDisabled={isDisabled}
+        >
+          {isDisabled ? 'Ajout en cours...' : 'Enregistrer'}
+        </SubmitButton>
+        : null}
     </FormulaireComite>
   )
 
@@ -65,5 +68,6 @@ type Props = Readonly<{
   dateAujourdhui: string
   id: string
   labelId: string
+  peutGerer: boolean
   uidGouvernance: string
 }>

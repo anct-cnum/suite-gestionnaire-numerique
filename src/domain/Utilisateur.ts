@@ -14,6 +14,10 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     return this.#isAdmin
   }
 
+  get isSuperAdmin(): boolean {
+    return this.#isSuperAdmin
+  }
+
   override get state(): UtilisateurState {
     return {
       derniereConnexion: this.#derniereConnexion?.toJSON(),

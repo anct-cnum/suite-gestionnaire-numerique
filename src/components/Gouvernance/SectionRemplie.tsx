@@ -35,7 +35,7 @@ export default function SectionRemplie({
 }
 
 type Props = PropsWithChildren<Readonly<{
-  button: ReactElement
+  button?: ReactElement
   id: string
   subButton?: ReactElement
   subTitle?: ReactElement

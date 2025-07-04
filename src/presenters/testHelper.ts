@@ -84,6 +84,7 @@ export function gouvernanceViewModelFactory(
     links: {
       membres: '/',
     },
+    peutGererGouvernance: true,
     peutVoirNotePrivee: true,
     porteursPotentielsNouvellesFeuillesDeRouteOuActions: [],
     sectionFeuillesDeRoute: {
