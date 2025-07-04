@@ -1,5 +1,6 @@
 import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { MembreUid } from './Membre'
+import { isGestionnaireDepartement } from './Role'
 import { Exception } from './shared/Exception'
 import { Entity, Uid } from './shared/Model'
 import { ValidDate } from './shared/ValidDate'
@@ -147,11 +148,11 @@ export class FeuilleDeRoute extends Entity<State> {
 
     return 'noteDeContextualisationInexistante'
   }
-
+  
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
     return utilisateur.isAdmin
       || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
-      || this.#uidGouvernance.state.value === utilisateur.state.region?.code
+      && isGestionnaireDepartement(utilisateur.state.role.nom)
   }
 
   supprimerDocument(): void {

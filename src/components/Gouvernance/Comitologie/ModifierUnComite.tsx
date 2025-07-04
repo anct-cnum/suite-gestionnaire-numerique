@@ -13,6 +13,7 @@ export default function ModifierUnComite({
   id,
   label,
   labelId,
+  peutGerer,
   uidGouvernance,
 }: Props): ReactElement {
   const { modifierUnComiteAction, pathname, supprimerUnComiteAction } = useContext(clientContext)
@@ -27,23 +28,25 @@ export default function ModifierUnComite({
         labelId={labelId}
         validerFormulaire={modifierUnComite}
       >
-        <>
-          <SubmitButton
-            ariaControls={id}
-            isDisabled={isDisabled}
-          >
-            {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
-          </SubmitButton>
-          <button
-            aria-controls={id}
-            className="fr-btn red-button"
-            disabled={isDisabled}
-            onClick={supprimerUnComite}
-            type="button"
-          >
-            {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
-          </button>
-        </>
+        {peutGerer ?
+          <>
+            <SubmitButton
+              ariaControls={id}
+              isDisabled={isDisabled}
+            >
+              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+            </SubmitButton>
+            <button
+              aria-controls={id}
+              className="fr-btn red-button"
+              disabled={isDisabled}
+              onClick={supprimerUnComite}
+              type="button"
+            >
+              {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
+            </button>
+          </> 
+          : null}
       </FormulaireComite>
       <p className="fr-text--xs center">
         Modifié le
@@ -105,5 +108,6 @@ type Props = Readonly<{
   id: string
   label: string
   labelId: string
+  peutGerer: boolean
   uidGouvernance: string
 }>

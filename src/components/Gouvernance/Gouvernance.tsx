@@ -105,13 +105,14 @@ export default function Gouvernance(): ReactElement {
             dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
             id={drawerComiteId}
             labelId={labelComiteId}
+            peutGerer={gouvernanceViewModel.peutGererGouvernance}
             uidGouvernance={gouvernanceViewModel.uid}
           />
         </Drawer>
         {
           gouvernanceViewModel.comites ? (
             <SectionRemplie
-              button={(
+              button={gouvernanceViewModel.peutGererGouvernance ? (
                 <button
                   aria-controls={drawerComiteId}
                   className="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-add-line"
@@ -123,13 +124,14 @@ export default function Gouvernance(): ReactElement {
                 >
                   Ajouter
                 </button>
-              )}
+              ) : undefined}
               id="comitologie"
               title="Comitologie"
             >
               <ComitologieRemplie
                 comites={gouvernanceViewModel.comites}
                 dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
+                peutGerer={gouvernanceViewModel.peutGererGouvernance}
                 uidGouvernance={gouvernanceViewModel.uid}
               />
             </SectionRemplie>
@@ -140,6 +142,7 @@ export default function Gouvernance(): ReactElement {
             >
               <ComitologieVide
                 drawerComiteId={drawerComiteId}
+                peutAjouter={gouvernanceViewModel.peutGererGouvernance}
                 showDrawer={() => {
                   setIsDrawerOpen(true)
                 }}
@@ -155,7 +158,7 @@ export default function Gouvernance(): ReactElement {
               className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
               href={`/gouvernance/${gouvernanceViewModel.uid}/membres`}
             >
-              Gérer
+              {gouvernanceViewModel.peutGererGouvernance ? 'Gérer' : 'Voir'}
             </Link>
           )}
           id="membre"
@@ -180,7 +183,7 @@ export default function Gouvernance(): ReactElement {
                   className="fr-btn fr-btn--secondary fr-btn--icon-right fr-icon-arrow-right-line"
                   href={`/gouvernance/${gouvernanceViewModel.uid}/feuilles-de-route`}
                 >
-                  Gérer
+                  {gouvernanceViewModel.peutGererGouvernance ? 'Gérer' : 'Voir'}
                 </Link>
               )}
               id="feuilleDeRoute"
@@ -210,7 +213,7 @@ export default function Gouvernance(): ReactElement {
           gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte ? (
             <>
               <SectionRemplie
-                button={(
+                button={gouvernanceViewModel.peutGererGouvernance ? (
                   <button
                     aria-controls={drawerNoteDeContexteId}
                     className="fr-btn fr-btn--secondary"
@@ -222,7 +225,7 @@ export default function Gouvernance(): ReactElement {
                   >
                     Modifier
                   </button>
-                )}
+                ) : undefined}
                 id="noteDeContexte"
                 subButton={(
                   <SubSectionButton>
@@ -253,6 +256,7 @@ export default function Gouvernance(): ReactElement {
                   id={drawerNoteDeContexteId}
                   label="Note de contexte"
                   labelId={labelNoteDeContexteId}
+                  peutGerer={gouvernanceViewModel.peutGererGouvernance}
                   sousTitre={gouvernanceViewModel.sectionNoteDeContexte.sousTitre}
                   texte={gouvernanceViewModel.sectionNoteDeContexte.noteDeContexte.texteAvecHTML}
                   uidGouvernance={gouvernanceViewModel.uid}
@@ -267,6 +271,7 @@ export default function Gouvernance(): ReactElement {
               >
                 <NoteDeContexteVide
                   drawerNoteDeContexteId={drawerNoteDeContexteId}
+                  peutAjouter={gouvernanceViewModel.peutGererGouvernance}
                   showDrawer={() => {
                     setIsDrawerOpen(true)
                   }}
@@ -290,6 +295,7 @@ export default function Gouvernance(): ReactElement {
                   }}
                   id={drawerNoteDeContexteId}
                   labelId={labelNoteDeContexteId}
+                  peutGerer={gouvernanceViewModel.peutGererGouvernance}
                   uidGouvernance={gouvernanceViewModel.uid}
                 />
               </Drawer>

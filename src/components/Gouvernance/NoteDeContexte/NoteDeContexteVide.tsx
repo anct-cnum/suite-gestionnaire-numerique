@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-export default function NoteDeContexteVide({ drawerNoteDeContexteId, showDrawer }: Props): ReactElement {
+export default function NoteDeContexteVide({ drawerNoteDeContexteId, peutAjouter, showDrawer }: Props): ReactElement {
   return (
     <>
       <p className="fr-h6">
@@ -11,20 +11,23 @@ export default function NoteDeContexteVide({ drawerNoteDeContexteId, showDrawer 
         les éventuelles difficultés que vous rencontrez, ou tout autre élément
         que vous souhaitez porter à notre connaissance.
       </p>
-      <button
-        aria-controls={drawerNoteDeContexteId}
-        className="fr-btn fr-btn--icon-left fr-icon-add-line"
-        data-fr-opened="false"
-        onClick={showDrawer}
-        type="button"
-      >
-        Ajouter une note de contexte
-      </button>
+      {peutAjouter ?
+        <button
+          aria-controls={drawerNoteDeContexteId}
+          className="fr-btn fr-btn--icon-left fr-icon-add-line"
+          data-fr-opened="false"
+          onClick={showDrawer}
+          type="button"
+        >
+          Ajouter une note de contexte
+        </button>
+        : null}
     </>
   )
 }
 
 type Props = Readonly<{
   drawerNoteDeContexteId: string
+  peutAjouter: boolean
   showDrawer(): void
 }>

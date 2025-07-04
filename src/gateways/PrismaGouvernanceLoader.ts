@@ -6,7 +6,7 @@ import prisma from '../../prisma/prismaClient'
 import { StatutSubvention } from '@/domain/DemandeDeSubvention'
 import { alphaAsc } from '@/shared/lang'
 import { FeuillesDeRouteReadModel } from '@/use-cases/queries/RecupererLesFeuillesDeRoute'
-import { FeuilleDeRouteReadModel, MembreReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
+import { FeuilleDeRouteReadModel, MembreReadModel, TypeDeComite, UneGouvernanceLoader, UneGouvernanceLoaderReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { EtablisseurSyntheseGouvernance } from '@/use-cases/services/shared/etablisseur-synthese-gouvernance'
 
 export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
@@ -18,7 +18,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
     this.#etablisseurSynthese = etablisseurSynthese
   }
 
-  async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
+  async get(codeDepartement: string): Promise<UneGouvernanceLoaderReadModel> {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include,
       where: {
@@ -48,7 +48,7 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
   #transform(
     gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>,
     membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>
-  ): UneGouvernanceReadModel {
+  ): UneGouvernanceLoaderReadModel {
     const noteDeContexte =
       // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
       gouvernanceRecord.noteDeContexte &&
@@ -150,7 +150,6 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
       feuillesDeRoute,
       noteDeContexte,
       notePrivee,
-      peutVoirNotePrivee: false,
       porteursPotentielsNouvellesFeuillesDeRouteOuActions: toMembres(membresConfirmesGouvernance)
         .toSorted(alphaAsc('id'))
         .toSorted(alphaAsc('nom'))

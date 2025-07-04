@@ -25,10 +25,7 @@ describe('gouvernance', () => {
       intention: 'un gestionnaire département ayant le même département que celui de la gouvernance peut la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }),
     },
-    {
-      intention: 'un gestionnaire région dont le département de la gouvernance appartient à celle-ci peut la gérer',
-      utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
-    },
+    
   ])('$intention', ({ utilisateur }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({
@@ -57,6 +54,10 @@ describe('gouvernance', () => {
     {
       intention: 'un gestionnaire groupement ne peut pas la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '', role: 'Gestionnaire groupement' }),
+    },
+    {
+      intention: 'un gestionnaire région dont le département de la gouvernance appartient à celle-ci ne peut pas la gérer',
+      utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
     },
   ])('$intention', ({ utilisateur }) => {
     // GIVEN

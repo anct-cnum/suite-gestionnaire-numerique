@@ -34,6 +34,10 @@ export const Roles = [
 
 export type TypologieRole = (typeof Roles)[number]
 
+export function isGestionnaireDepartement(nom: TypologieRole): boolean {
+  return nom === 'Gestionnaire département'
+}
+
 function isAdmin(groupe: string): boolean {
   return groupe === 'admin'
 }

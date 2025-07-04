@@ -14,6 +14,7 @@ export default function ModifierNoteDeContexte({
   id,
   label,
   labelId,
+  peutGerer,
   sousTitre,
   texte,
   uidGouvernance,
@@ -46,25 +47,27 @@ export default function ModifierNoteDeContexte({
           height={380}
           onChange={gererLeChangementDeContenu}
         />
-        <ul className="fr-btns-group fr-mt-2w">
-          <li>
-            <SubmitButton
-              ariaControls={id}
-              isDisabled={isDisabled}
-            >
-              {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
-            </SubmitButton>
-          </li>
-          <li>
-            <button
-              className="fr-btn red-button"
-              onClick={viderLEditeur}
-              type="button"
-            >
-              Effacer
-            </button>
-          </li>
-        </ul>
+        {peutGerer ?
+          <ul className="fr-btns-group fr-mt-2w">
+            <li>
+              <SubmitButton
+                ariaControls={id}
+                isDisabled={isDisabled}
+              >
+                {isDisabled ? 'Modification en cours...' : 'Enregistrer'}
+              </SubmitButton>
+            </li>
+            <li>
+              <button
+                className="fr-btn red-button"
+                onClick={viderLEditeur}
+                type="button"
+              >
+                Effacer
+              </button>
+            </li>
+          </ul> 
+          : null}
       </form>
       <p className="fr-text--xs center">
         {sousTitre}
@@ -113,6 +116,7 @@ type Props = Readonly<{
   id: string
   label: string
   labelId: string
+  peutGerer: boolean
   sousTitre: string
   texte: string
   uidGouvernance: string

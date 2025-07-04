@@ -21,6 +21,7 @@ export function gouvernancePresenter(
       membres: `/gouvernance/${gouvernanceReadModel.uid}/membres`,
     },
     notePrivee: toNotePriveeViewModel(gouvernanceReadModel.notePrivee),
+    peutGererGouvernance: gouvernanceReadModel.peutGererGouvernance,
     peutVoirNotePrivee: gouvernanceReadModel.peutVoirNotePrivee,
     porteursPotentielsNouvellesFeuillesDeRouteOuActions:
       gouvernanceReadModel
@@ -72,6 +73,7 @@ export type GouvernanceViewModel = Readonly<{
     resume: string
     texte: string
   }>
+  peutGererGouvernance: boolean
   peutVoirNotePrivee: boolean
   porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<PorteurPotentielViewModel>
   sectionFeuillesDeRoute: Readonly<{

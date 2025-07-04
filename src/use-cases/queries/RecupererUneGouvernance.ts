@@ -26,26 +26,38 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
       }))
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
+    
+    const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid)
+    
     // Met les dates des comites à undefined si elles sont dans le passé
     const comites = readModel.comites?.map((comite) => ({
       ...comite,
       date: comite.date !== undefined && comite.date < this.#now ? undefined : comite.date,
     }))
-    //Met à j our le readmodel avec les comites
-    const readModelAvecComites = {
+    
+    return {
       ...readModel,
       comites,
-    }
-    return {
-      ...readModelAvecComites,
+      peutGererGouvernance,
       peutVoirNotePrivee,
     }
   }
 }
 
 export interface UneGouvernanceLoader {
-  get(codeDepartement: string): Promise<UneGouvernanceReadModel>
+  get(codeDepartement: string): Promise<UneGouvernanceLoaderReadModel>
 }
+
+export type UneGouvernanceLoaderReadModel = Readonly<{
+  comites?: ReadonlyArray<ComiteReadModel>
+  departement: string
+  feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>
+  noteDeContexte?: NoteDeContexteReadModel
+  notePrivee?: NotePriveeReadModel
+  porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<MembreAvecRoleDansLaGouvernance>
+  syntheseMembres: SyntheseMembres
+  uid: string
+}>
 
 export type UneGouvernanceReadModel = Readonly<{
   comites?: ReadonlyArray<ComiteReadModel>
@@ -53,6 +65,7 @@ export type UneGouvernanceReadModel = Readonly<{
   feuillesDeRoute: ReadonlyArray<FeuilleDeRouteReadModel>
   noteDeContexte?: NoteDeContexteReadModel
   notePrivee?: NotePriveeReadModel
+  peutGererGouvernance: boolean
   peutVoirNotePrivee: boolean
   porteursPotentielsNouvellesFeuillesDeRouteOuActions: ReadonlyArray<MembreAvecRoleDansLaGouvernance>
   syntheseMembres: SyntheseMembres
