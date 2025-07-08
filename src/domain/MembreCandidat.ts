@@ -3,7 +3,7 @@ import { Membre, MembreFailure, MembreUid, Role, Statut } from './Membre'
 import { membreFactory } from './MembreFactory'
 import { Result } from '@/shared/lang'
 
-export class MembrePotentiel extends Membre {
+export class MembreCandidat extends Membre {
   constructor(
     uid: MembreUid,
     nom: string,

@@ -39,34 +39,34 @@ export const membreInclude = {
 
 function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
   const roles: Array<Role> = []
-  
+
   // Observateur : si statut = 'confirme'
   if (membre.statut === 'confirme') {
     roles.push('observateur')
   }
-  
+
   if (membre.isCoporteur) {
     roles.push('coporteur')
   }
-  
+
   // Cofinanceur : si le membre a des cofinancements
   const coFinancements = membre.CoFinancementRecord
   if (coFinancements.length > 0) {
     roles.push('cofinanceur')
   }
-  
+
   const beneficiaireSubvention = membre.BeneficiaireSubventionRecord
   if (beneficiaireSubvention.length > 0) {
     // Vérifier si le membre a des demandes de subvention avec des enveloppes de formation
     const aEnveloppeFormation = beneficiaireSubvention.some(
       (beneficiaire) => beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
     )
-    
+
     // Vérifier si le membre a des demandes de subvention avec des enveloppes non-formation
     const aEnveloppeNonFormation = beneficiaireSubvention.some(
       (beneficiaire) => !beneficiaire.demandeDeSubvention.enveloppe.libelle.toLowerCase().includes('formation')
     )
-    
+
     if (aEnveloppeFormation) {
       roles.push('recipiendaire')
     }
@@ -74,7 +74,7 @@ function deduireRoles(membre: MembreRecord): ReadonlyArray<Role> {
       roles.push('beneficiaire')
     }
   }
-  
+
   return roles
 }
 
@@ -83,7 +83,7 @@ function determinerNomMembre(membre: MembreRecord): string {
   if (membre.nom !== null) {
     return membre.nom
   }
-  
+
   // Fallback : nom générique basé sur la catégorie
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const nomFallback = (() => {
@@ -102,14 +102,14 @@ function determinerNomMembre(membre: MembreRecord): string {
         return 'Membre'
     }
   })()
-  
+
   return nomFallback
 }
 
 function toMembre(membre: MembreRecord): Membre {
   const roles = deduireRoles(membre)
   const nomMembre = determinerNomMembre(membre)
-  
+
   const result = {
     contactReferent: membre.relationContact,
     contactTechnique: membre.relationContactTechnique,
@@ -119,7 +119,7 @@ function toMembre(membre: MembreRecord): Membre {
     statut: membre.statut,
     type: membre.type ?? '',
   }
-  
+
   return result
 }
 

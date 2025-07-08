@@ -28,15 +28,14 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
   return (
     <div
       className="fr-dropdown fr-border-default--grey"
-      style={{ display: 'inline-block', position: 'relative' }} // important
+      style={{ display: 'inline-block', position: 'relative' }}
     >
       <button
         aria-controls="dropdown-menu"
         aria-expanded={open}
         aria-haspopup="true"
         className="fr-btn fr-btn--tertiary-no-outline w-100"
-        onClick={(event) => {
-          event.stopPropagation()
+        onClick={() => {
           setOpen(true)
         }}
         ref={buttonRef}

@@ -33,6 +33,7 @@ export class PrismaMembreRepository implements MembreRepository {
   async update(membre: Membre): Promise<void> {
     await this.#membreDataResource.update({
       data: {
+        isCoporteur: membre.state.roles.includes('coporteur'),
         statut: membre.state.statut,
       },
       where: {

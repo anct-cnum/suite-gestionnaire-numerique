@@ -10,13 +10,13 @@ export default function MenuItem({ iconClass, label, onClick }: Readonly<MenuIte
     >
       <button
         className="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left w-full text-left flex items-center justify-start px-4 py-2"
-        onClick={(event) => {
-          event.stopPropagation()
+        onClick={() => {
           onClick()
+
         }}
         role="menuitem"
         style={{
-          minHeight: '48px',
+          minHeight: '3em',
           width: '100%',
         }}
         type="button"

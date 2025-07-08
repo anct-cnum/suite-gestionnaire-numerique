@@ -1,15 +1,17 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Fragment, ReactElement, useEffect, useId, useState } from 'react'
+import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
 import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
+import { clientContext } from '@/components/shared/ClientContext'
 import Menu from '@/components/shared/Menu/Menu'
-import MenuItem from '@/components/shared/Menu/MenuItem'
+import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
+import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 import { alphaAsc } from '@/shared/lang'
@@ -42,6 +44,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
   }, [membresViewModel.membres])
 
+  const {
+    accepterUnMembreAction,
+    definirUnCoPorteurAction ,
+    pathname,
+    retirerUnCoPorteurAction } = useContext(clientContext)
+
   const candidats = membresViewModel.candidats
     .toSorted(alphaAsc('nom'))
 
@@ -50,68 +58,59 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     confirme: membresViewModel.membres,
   }
 
-  function getMenuMembreCoPorteur(membre: MembreViewModel): ReactElement {
-    return (
-      <Menu
-        items={[
-          <MenuItem
-            iconClass="fr-icon-user-line"
-            key={`ajout-${membre.uid}`}
-            label="Retirer le rôle de coporteur"
-            onClick={() => {
-              alert('Retirer le rôle de coporteur')
-            }}
-          />,
-          <MenuItem
+  function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+    return [
+      <MenuItem
+        iconClass="fr-icon-user-line"
+        key={`ajout-${membre.uid}`}
+        label="Retirer le rôle de coporteur"
+        onClick={async () => {
+          await retirerUnCoPorteur(membre)
+        }}
+      />,
+      /*<MenuItem
             iconClass="fr-icon-delete-line"
             key={`delete-${membre.uid}`}
             label="Retirer ce membre"
             onClick={() => {
               alert(`Retirer ce membre ${membre.nom}`)
             }}
-          />,
-        ]}
-      />
-    )
+          />,*/
+    ]
   }
 
-  function getMenuMembreNonCoPorteur(membre: MembreViewModel): ReactElement {
-    return (
-      <Menu
-        items={[
-          <MenuItem
-            iconClass="fr-icon-user-star-line"
-            key={`ajout-${membre.uid}`}
-            label="Définir comme coporteur"
-            onClick={() => {
-              alert('Définir comme coporteur')
-            }}
-          />,
-          <MenuItem
+  function getMenuMembreNonCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+    return [
+      <MenuItem
+        iconClass="fr-icon-user-star-line"
+        key={`ajout-${membre.uid}`}
+        label="Définir comme coporteur"
+        onClick={async () => {
+          await definirUnCoPorteur(membre)
+        }}
+      />,
+      /*<MenuItem
             iconClass="fr-icon-delete-line"
             key={`delete-${membre.uid}`}
             label="Retirer ce membre"
             onClick={() => {
               alert(`Retirer ce membre ${membre.nom}`)
             }}
-          />,
-        ]}
-      />
-    )
+          />,*/
+    ]
   }
 
-  function getMenuCandidat(membre: MembreViewModel): ReactElement {
-    return (
-      <Menu
-        items={[
-          <MenuItem
-            iconClass="fr-icon-add-line"
-            key={`ajout-${membre.uid}`}
-            label="Ajouter à la gouvernance"
-            onClick={() => {
-              alert('Ajouter à la gouvernance')
-            }}
-          />,
+  function getMenuCandidat(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>>{
+    return [
+      <MenuItem
+        iconClass="fr-icon-add-line"
+        key={`ajout-${membre.uid}`}
+        label="Ajouter à la gouvernance"
+        onClick={async () => {
+          await ajouterUnMembre(membre)
+        }}
+      />,
+      /*
           <MenuItem
             iconClass="fr-icon-delete-line"
             key={`delete-${membre.uid}`}
@@ -119,18 +118,28 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             onClick={() => {
               alert(`Retirer ce candidat ${membre.nom}`)
             }}
-          />,
-        ]}
-      />
-    )
+          />,*/
+    ]
   }
 
   function getMenu(membre: MembreViewModel): ReactElement {
+    let menuItem
     if(membresView.statutSelectionne === 'candidat')
-    {return getMenuCandidat(membre)}
-    if(membre.roles.some((role) => role.nom === 'Co-porteur'))
-    {return getMenuMembreCoPorteur(membre)}
-    return getMenuMembreNonCoPorteur(membre)
+    {
+      menuItem =  getMenuCandidat(membre)
+    }
+    else if(membre.roles.some((role) => role.nom === 'Co-porteur'))
+    {
+      menuItem =  getMenuMembreCoPorteur(membre)
+    }
+    else {
+      menuItem = getMenuMembreNonCoPorteur(membre)
+    }
+    return  (
+      <Menu
+        items={menuItem}
+      />
+    )
   }
 
   return (
@@ -262,21 +271,32 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             key={membre.uid}
           >
             <td
-              onClick={() => { router.push(membre.link) }}
-              onKeyDown={(event): void => {
-                if (event.key === 'Enter' || event.key === ' ') {router.push(membre.link)}
-              }}
-              role="link"
-              style={{ cursor: 'pointer' }}
+              style={{ height: '5em' }}
               tabIndex={0}
             >
-              <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">
-                {membre.nom}
-              </p>
-              <p className="fr-text--sm fr-text-mention--grey">
-                {membre.typologie.simple.value}
-              </p>
+              <button
+                onClick={() => { router.push(membre.link) }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    router.push(membre.link)
+                  }
+                }}
+                style={{
+                  height: '100%',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+                type="button"
+              >
+                <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">
+                  {membre.nom}
+                </p>
+                <p className="fr-text--sm fr-text-mention--grey">
+                  {membre.typologie.simple.value}
+                </p>
+              </button>
             </td>
+
             <td>
               <p className="fr-text--sm fr-text-mention--grey">
                 {membre.contactReferent.intituleCourt}
@@ -366,6 +386,47 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       .filter(({ roles }) => role === toutRole ? true : roles.map(({ nom }) => nom).includes(role))
       .filter((membre) => typologie === touteTypologie ? true : typologie === membre.typologie.simple.value)
       .toArray()
+  }
+
+  async function ajouterUnMembre(membre: MembreViewModel): Promise<void> {
+    const messages = await accepterUnMembreAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembrePotentiel: membre.uid,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'ajouté', title: 'Membre' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  async function definirUnCoPorteur(membre: MembreViewModel): Promise<void> {
+    const messages = await definirUnCoPorteurAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembre: membre.uid,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'Défini', title: 'Rôle coporteur' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  async function retirerUnCoPorteur(membre: MembreViewModel): Promise<void> {
+    const messages = await retirerUnCoPorteurAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembre: membre.uid,
+    })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'Retiré', title: 'Rôle coporteur' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
   }
 }
 
