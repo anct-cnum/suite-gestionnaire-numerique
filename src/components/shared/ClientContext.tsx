@@ -14,6 +14,7 @@ import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNote
 import { ajouterUneNoteDeContextualisationAction } from '@/app/api/actions/ajouterUneNoteDeContextualisationAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
+import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
@@ -23,6 +24,7 @@ import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNo
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
+import { retirerUnCoPorteurAction } from '@/app/api/actions/retirerUnCoPorteurAction'
 import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
 import { supprimerMonCompteAction } from '@/app/api/actions/supprimerMonCompteAction'
 import { supprimerUnComiteAction } from '@/app/api/actions/supprimerUnComiteAction'
@@ -53,6 +55,7 @@ export default function ClientContext({
       ajouterUneNoteDeContextualisationAction,
       ajouterUneNotePriveeAction,
       changerMonRoleAction,
+      definirUnCoPorteurAction,
       inviterUnUtilisateurAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
@@ -63,6 +66,7 @@ export default function ClientContext({
       modifierUneNotePriveeAction,
       pathname,
       reinviterUnUtilisateurAction,
+      retirerUnCoPorteurAction,
       roles,
       router,
       searchParams,
@@ -98,6 +102,7 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   changerMonRoleAction: typeof changerMonRoleAction
+  definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
   modifierUnComiteAction: typeof modifierUnComiteAction
@@ -108,6 +113,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
+  retirerUnCoPorteurAction: typeof retirerUnCoPorteurAction
   roles: ReadonlyArray<string>
   router: AppRouterInstance
   searchParams: URLSearchParams
@@ -122,7 +128,6 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number
 }>
-
 type Props = PropsWithChildren<Readonly<{
   roles: ReadonlyArray<string>
   sessionUtilisateurViewModel: SessionUtilisateurViewModel

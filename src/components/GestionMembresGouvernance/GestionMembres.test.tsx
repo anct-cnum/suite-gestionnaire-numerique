@@ -5,6 +5,22 @@ import { renderComponent } from '../testHelper'
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
+vi.mock('next/navigation', () => ({
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  useRouter: () => ({
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    back: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    prefetch: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    push: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    refresh: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    replace: vi.fn(),
+  }),
+}))
+
 describe('gestion des membres gouvernance', () => {
   it('quand je consulte les membres d’une gouvernance, alors la page s’affiche, positionnée sur la liste des membres confirmés', () => {
     // WHEN
@@ -13,11 +29,9 @@ describe('gestion des membres gouvernance', () => {
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Gérer les membres · Rhône' })
     const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un membre' })
-    //const exporter = screen.getByRole('button', { name: 'Exporter' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
     expect(ajouterUnMembre).toHaveAttribute('aria-controls', 'drawerGererLesMembresId')
-    //expect(exporter).toHaveAttribute('type', 'button')
 
     const navigationTypesMembres = screen.getByRole('list')
     const ongletsStatutMembre = within(navigationTypesMembres).getAllByRole('listitem')
@@ -69,8 +83,7 @@ describe('gestion des membres gouvernance', () => {
     const rowHead = within(head).getByRole('row')
     const columnsHead = within(rowHead).getAllByRole('columnheader')
     const rowsBody = within(body).getAllByRole('row')
-    //const [columnsBody1, suppressionColumnsBody1] = membresRow(rowsBody, 0)
-    const [columnsBody1] = membresRow(rowsBody, 0)
+
     expect(columnsHead).toHaveLength(3)// 4
     expect(columnsHead[0].textContent).toBe('Structure')
     expect(columnsHead[0]).toHaveAttribute('scope', 'col')
@@ -78,24 +91,16 @@ describe('gestion des membres gouvernance', () => {
     expect(columnsHead[1]).toHaveAttribute('scope', 'col')
     expect(columnsHead[2].textContent).toBe('Rôles')
     expect(columnsHead[2]).toHaveAttribute('scope', 'col')
-    // expect(columnsHead[3].textContent).toBe('Action')
-    // expect(columnsHead[3]).toHaveAttribute('scope', 'col')
-    const lienMembre = within(columnsBody1[0]).getByRole('link', { name: 'Préfecture du Rhône' })
-    expect(lienMembre).toHaveAttribute('href', '/gouvernance/69/membre/prefecture-69')
+    const columnsBody1 = membresRow(rowsBody, 0)
     expect(columnsBody1).toHaveLength(3)//
     expect(columnsBody1[0].textContent).toBe('Préfecture du RhônePréfecture départementale')
     expect(columnsBody1[1].textContent).toBe('Laetitia Henrich')
-    expect(columnsBody1[2].textContent).toBe('Co-porteur ')
-    // expect(suppressionColumnsBody1).toHaveAttribute('type', 'button')
-    // expect(suppressionColumnsBody1).toBeDisabled()
-    //const [columnsBody2, suppressionColumnsBody2] = membresRow(rowsBody, 1)
-    const [columnsBody2] = membresRow(rowsBody, 1)
+    expect(columnsBody1[2].textContent).toBe('Co-porteur ⋯')
+    const columnsBody2 = membresRow(rowsBody, 1)
     expect(columnsBody2).toHaveLength(3)
     expect(columnsBody2[0].textContent).toBe('Rhône (69)Collectivité, conseil départemental')
     expect(columnsBody2[1].textContent).toBe('Pauline Chappuis')
-    expect(columnsBody2[2].textContent).toBe('Co-porteur Co-financeur ')
-    // expect(suppressionColumnsBody2).toHaveAttribute('type', 'button')
-    // expect(suppressionColumnsBody2).toBeEnabled()
+    expect(columnsBody2[2].textContent).toBe('Co-porteur Co-financeur ⋯')
   })
 
   it.each([
@@ -145,7 +150,7 @@ describe('gestion des membres gouvernance', () => {
       })
       expect(rowsBody).toHaveLength(expectedLength)
       expectedRows.forEach((cell0, index) => {
-        const [columnsBody] = membresRow(rowsBody, index)
+        const columnsBody = membresRow(rowsBody, index)
         expect(columnsBody[0].textContent).toBe(cell0)
       })
     })
@@ -165,8 +170,8 @@ describe('gestion des membres gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     expect(rowsBody).toHaveLength(4)
     rowsBody.forEach((_, index) => {
-      const [columnsBody] = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(3) //4
+      const columnsBody = membresRow(rowsBody, index)
+      expect(columnsBody).toHaveLength(3)
       expect(columnsBody[2].textContent).toContain('Co-porteur')
     })
   })
@@ -203,8 +208,8 @@ describe('gestion des membres gouvernance', () => {
     const rowsBody = within(body).getAllByRole('row')
     expect(rowsBody).toHaveLength(2)
     rowsBody.forEach((_, index) => {
-      const [columnsBody] = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(3) // 4
+      const columnsBody = membresRow(rowsBody, index)
+      expect(columnsBody).toHaveLength(3)
       expect(columnsBody[0].textContent).toContain('Association')
     })
   })
@@ -242,19 +247,18 @@ describe('gestion des membres gouvernance', () => {
     const body = rowsGroup[1]
     const rowsBody = within(body).queryAllByRole('row')
     expect(rowsBody).toHaveLength(1)
-    const [columnsBody] = membresRow(rowsBody, 0)
-    expect(columnsBody).toHaveLength(3) //4
+    const columnsBody = membresRow(rowsBody, 0)
+    expect(columnsBody).toHaveLength(3)
     expect(columnsBody[0].textContent).toBe('Info-Jeunes Rhône (CRIJ)Association')
     expect(columnsBody[1].textContent).toBe('Grégory Geffroy')
-    expect(columnsBody[2].textContent).toBe('Co-porteur ')
+    expect(columnsBody[2].textContent).toBe('Co-porteur ⋯')
   })
 })
 
-function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonly<[
-  ReadonlyArray<HTMLElement>]>//,HTMLElement
+function membresRow(rowsBody: ReadonlyArray<HTMLElement>, rank: number): Readonly<
+  ReadonlyArray<HTMLElement>>
 {
-  const columnsBody = within(rowsBody[rank]).getAllByRole('cell')
-  return [columnsBody]
+  return within(rowsBody[rank]).getAllByRole('cell')
 }
 
 function afficherMembres(options?: Partial<Parameters<typeof renderComponent>[1]>): void {

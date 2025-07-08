@@ -5,6 +5,22 @@ import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../tes
 import { membresPresenter } from '@/presenters/membresPresenter'
 import { membresReadModelFactory } from '@/use-cases/testHelper'
 
+vi.mock('next/navigation', () => ({
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  useRouter: () => ({
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    back: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    prefetch: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    push: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    refresh: vi.fn(),
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    replace: vi.fn(),
+  }),
+}))
+
 describe('membres gouvernance', () => {
   it('quand j’affiche les membres de la gouvernance, alors s’affiche le bouton pour ajouter un membre', () => {
     // WHEN

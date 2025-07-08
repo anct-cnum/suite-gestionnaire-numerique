@@ -1,7 +1,7 @@
 import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { Membre, MembreFailure, MembreState, MembreUid, Role, Statut } from './Membre'
+import { MembreCandidat } from './MembreCandidat'
 import { MembreConfirme } from './MembreConfirme'
-import { MembrePotentiel } from './MembrePotentiel'
 import { Result } from '@/shared/lang'
 
 export function membreFactory({
@@ -21,7 +21,7 @@ export function membreFactory({
     )
   }
 
-  return new MembrePotentiel(
+  return new MembreCandidat(
     new MembreUid(uid.value),
     nom,
     new GouvernanceUid(uidGouvernance.value),

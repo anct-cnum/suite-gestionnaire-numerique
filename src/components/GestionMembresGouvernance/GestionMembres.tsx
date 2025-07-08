@@ -1,14 +1,17 @@
 'use client'
 
-import Link from 'next/link'
-import { Fragment, ReactElement, useEffect, useId, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
 import Drawer from '../shared/Drawer/Drawer'
-import Icon from '../shared/Icon/Icon'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
+import { clientContext } from '@/components/shared/ClientContext'
+import Menu from '@/components/shared/Menu/Menu'
+import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
+import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
 import { alphaAsc } from '@/shared/lang'
@@ -18,6 +21,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   const selectTypologieId = useId()
   const labelId = useId()
   const drawerId = 'drawerGererLesMembresId'
+
+  const router = useRouter()
 
   const [membresView, setMembresView] = useState<MembresView>({
     membres: membresViewModel.membres,
@@ -39,12 +44,102 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
   }, [membresViewModel.membres])
 
+  const {
+    accepterUnMembreAction,
+    definirUnCoPorteurAction ,
+    pathname,
+    retirerUnCoPorteurAction } = useContext(clientContext)
+
   const candidats = membresViewModel.candidats
     .toSorted(alphaAsc('nom'))
 
   const membresByStatut: Readonly<Record<StatutSelectionnable, ReadonlyArray<MembreViewModel>>> = {
     candidat: membresViewModel.candidats,
     confirme: membresViewModel.membres,
+  }
+
+  function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+    return [
+      <MenuItem
+        iconClass="fr-icon-user-line"
+        key={`ajout-${membre.uid}`}
+        label="Retirer le rôle de coporteur"
+        onClick={async () => {
+          await retirerUnCoPorteur(membre)
+        }}
+      />,
+      /*<MenuItem
+            iconClass="fr-icon-delete-line"
+            key={`delete-${membre.uid}`}
+            label="Retirer ce membre"
+            onClick={() => {
+              alert(`Retirer ce membre ${membre.nom}`)
+            }}
+          />,*/
+    ]
+  }
+
+  function getMenuMembreNonCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
+    return [
+      <MenuItem
+        iconClass="fr-icon-user-star-line"
+        key={`ajout-${membre.uid}`}
+        label="Définir comme coporteur"
+        onClick={async () => {
+          await definirUnCoPorteur(membre)
+        }}
+      />,
+      /*<MenuItem
+            iconClass="fr-icon-delete-line"
+            key={`delete-${membre.uid}`}
+            label="Retirer ce membre"
+            onClick={() => {
+              alert(`Retirer ce membre ${membre.nom}`)
+            }}
+          />,*/
+    ]
+  }
+
+  function getMenuCandidat(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>>{
+    return [
+      <MenuItem
+        iconClass="fr-icon-add-line"
+        key={`ajout-${membre.uid}`}
+        label="Ajouter à la gouvernance"
+        onClick={async () => {
+          await ajouterUnMembre(membre)
+        }}
+      />,
+      /*
+          <MenuItem
+            iconClass="fr-icon-delete-line"
+            key={`delete-${membre.uid}`}
+            label="Retirer ce candidat"
+            onClick={() => {
+              alert(`Retirer ce candidat ${membre.nom}`)
+            }}
+          />,*/
+    ]
+  }
+
+  function getMenu(membre: MembreViewModel): ReactElement {
+    let menuItem
+    if(membresView.statutSelectionne === 'candidat')
+    {
+      menuItem =  getMenuCandidat(membre)
+    }
+    else if(membre.roles.some((role) => role.nom === 'Co-porteur'))
+    {
+      menuItem =  getMenuMembreCoPorteur(membre)
+    }
+    else {
+      menuItem = getMenuMembreNonCoPorteur(membre)
+    }
+    return  (
+      <Menu
+        items={menuItem}
+      />
+    )
   }
 
   return (
@@ -164,16 +259,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </select>
           </div>
         </div>
-        <button
-          className="fr-mb-2w fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-download-line"
-          style={{ display: 'none' }}
-          type="button"
-        >
-          Exporter
-        </button>
+
       </div>
       <Table
-        enTetes={['Structure', 'Contact référent', 'Rôles']} //, 'Action'
+        enTetes={['Structure', 'Contact référent', 'Rôles']}
         titre="Membres"
       >
         {membresView.membres.map((membre, index) => (
@@ -181,52 +270,64 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             data-row-key={index}
             key={membre.uid}
           >
-            <td>
-              <Link
-                className="primary fr-px-0 no-hover d-block"
-                href={membre.link}
+            <td
+              style={{ height: '5em' }}
+              tabIndex={0}
+            >
+              <button
+                onClick={() => { router.push(membre.link) }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    router.push(membre.link)
+                  }
+                }}
+                style={{
+                  height: '100%',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+                type="button"
               >
                 <p className="fr-text--sm fr-text--bold fr-text-action-high--grey">
                   {membre.nom}
                 </p>
-              </Link>
-              <p className="fr-text--sm fr-text-mention--grey" >
-                {membre.typologie.simple.value}
-              </p>
+                <p className="fr-text--sm fr-text-mention--grey">
+                  {membre.typologie.simple.value}
+                </p>
+              </button>
             </td>
+
             <td>
               <p className="fr-text--sm fr-text-mention--grey">
                 {membre.contactReferent.intituleCourt}
               </p>
             </td>
             <td>
-              {membre.roles
-                .filter(role => role.nom !== 'Observateur' )
-                .map((role) => (
-                  <Fragment key={role.color}>
-                    <Badge color={role.color}>
-                      {role.nom}
-                    </Badge>
-                    {' '}
-                  </Fragment>
-                ))}
-            </td>
-            <td
-              className="fr-cell--center"
-              style={{ display : 'none' }}
-            >
-              <button
-                className="fr-btn fr-btn--tertiary color-red"
-                disabled={!membre.isDeletable}
-                title="Supprimer"
-                type="button"
+              <div
+                className="fr-grid-row fr-items-center"
+                style={{ justifyContent: 'space-between' }}
               >
-                <Icon icon="delete-line" />
-              </button>
+                <div className="fr-col">
+                  {membre.roles
+                    .filter(role => role.nom !== 'Observateur')
+                    .map((role) => (
+                      <Fragment key={role.color}>
+                        <Badge color={role.color}>
+                          {role.nom}
+                        </Badge>
+                        {' '}
+                      </Fragment>
+                    ))}
+                </div>
+                <div className="fr-col-auto">
+                  {getMenu(membre)}
+                </div>
+              </div>
             </td>
           </tr>
         ))}
       </Table>
+
       <Drawer
         boutonFermeture="Fermer l’ajout d’un membre"
         closeDrawer={() => {
@@ -285,6 +386,47 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       .filter(({ roles }) => role === toutRole ? true : roles.map(({ nom }) => nom).includes(role))
       .filter((membre) => typologie === touteTypologie ? true : typologie === membre.typologie.simple.value)
       .toArray()
+  }
+
+  async function ajouterUnMembre(membre: MembreViewModel): Promise<void> {
+    const messages = await accepterUnMembreAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembrePotentiel: membre.uid,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'ajouté', title: 'Membre' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  async function definirUnCoPorteur(membre: MembreViewModel): Promise<void> {
+    const messages = await definirUnCoPorteurAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembre: membre.uid,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'Défini', title: 'Rôle coporteur' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  async function retirerUnCoPorteur(membre: MembreViewModel): Promise<void> {
+    const messages = await retirerUnCoPorteurAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembre: membre.uid,
+    })
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'Retiré', title: 'Rôle coporteur' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
   }
 }
 
