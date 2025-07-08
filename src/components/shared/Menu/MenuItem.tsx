@@ -12,7 +12,6 @@ export default function MenuItem({ iconClass, label, onClick }: Readonly<MenuIte
         className="fr-btn fr-btn--tertiary-no-outline fr-btn--icon-left w-full text-left flex items-center justify-start px-4 py-2"
         onClick={() => {
           onClick()
-
         }}
         role="menuitem"
         style={{

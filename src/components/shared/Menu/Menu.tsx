@@ -25,6 +25,26 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
     return (): void => { document.removeEventListener('click', handleClickOutside) }
   }, [])
 
+  const itemsWithCloseMenu = items
+    .map((item) => {
+      return {
+        ...item,
+        props: {
+          ...item.props,
+          onClick: (): void => {
+            try {
+              item.props.onClick()
+            } finally {
+              closeMenu()
+            }
+          },
+        },
+      }
+    })
+
+  function closeMenu(): void {
+    setOpen(false)
+  }
   return (
     <div
       className="fr-dropdown fr-border-default--grey"
@@ -71,8 +91,8 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
             ref={menuRef}
             role="menu"
           >
-            {items.flatMap((item, index) => {
-              const isLast = index === items.length - 1
+            {itemsWithCloseMenu.flatMap((item, index) => {
+              const isLast = index === itemsWithCloseMenu.length - 1
               const itemKey = typeof item.key === 'string' ? item.key : `item-${index}`
 
               return isLast
