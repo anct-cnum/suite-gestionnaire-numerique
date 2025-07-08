@@ -3,7 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import prisma from '../../../../prisma/prismaClient'
+import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { ResultAsync } from '@/use-cases/CommandHandler'
 import { DefinirUnCoPorteur } from '@/use-cases/commands/DefinirUnCoPorteur'
 
@@ -15,10 +19,18 @@ export async function definirUnCoPorteurAction(
   if (validationResult.error) {
     return validationResult.error.issues.map(({ message }) => message)
   }
-  const message = await new DefinirUnCoPorteur(new PrismaMembreRepository())
+
+  const sessionSub = await getSessionSub()
+
+  const message = await new DefinirUnCoPorteur(
+    new PrismaMembreRepository(),
+    new PrismaUtilisateurRepository(prisma.utilisateurRecord),
+    new PrismaGouvernanceRepository()
+  )
     .handle({
       uidGouvernance: actionParams.uidGouvernance,
       uidMembre: actionParams.uidMembre,
+      uidUtilisateurConnecte: sessionSub,
     })
 
   revalidatePath(actionParams.path)
@@ -33,6 +45,5 @@ type ActionParams = Readonly<{
 }>
 
 const validator = z.object({
-  //nouveauRole: z.enum(Roles, { message: 'Le rôle n’est pas correct' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })
