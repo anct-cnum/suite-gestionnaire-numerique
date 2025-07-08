@@ -5,15 +5,19 @@
       "minio-client"
     ],
     "env": {
-      "DEVBOX_COREPACK_ENABLED": "true"
+      "DEVBOX_COREPACK_ENABLED": "true",
+      "NPM_CONFIG_PREFIX": "$HOME/.npm-global"
     },
     "shell": {
       "init_hook": [
-        "echo 'Welcome to devbox!' > /dev/null"
+        "echo 'Welcome to devbox!' > /dev/null",
+        "mkdir -p $HOME/.npm-global",
+        "export PATH=$HOME/.npm-global/bin:$PATH"
       ],
       "scripts": {
         "install-dependencies": [
-          "curl -O https://cli-dl.scalingo.com/install && bash install --install-dir ${DEVBOX_PACKAGES_DIR}/bin"
+          "curl -O https://cli-dl.scalingo.com/install && bash install --install-dir ${DEVBOX_PACKAGES_DIR}/bin",
+          "npm install -g @anthropic-ai/claude-code@latest"
         ]
       }
     }

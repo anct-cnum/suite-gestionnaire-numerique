@@ -1,11 +1,9 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
-import AjouterUnMembre from './AjouterUnMembre'
 import styles from './GestionMembres.module.css'
-import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import { clientContext } from '@/components/shared/ClientContext'
@@ -14,35 +12,14 @@ import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
 import { Notification } from '@/components/shared/Notification/Notification'
 import Table from '@/components/shared/Table/Table'
 import { MembresViewModel, MembreViewModel } from '@/presenters/membresPresenter'
-import { alphaAsc } from '@/shared/lang'
 
 export default function GestionMembres({ membresViewModel }: Props): ReactElement {
   const selectRoleId = useId()
   const selectTypologieId = useId()
-  const labelId = useId()
-  const drawerId = 'drawerGererLesMembresId'
 
   const router = useRouter()
-
-  const [membresView, setMembresView] = useState<MembresView>({
-    membres: membresViewModel.membres,
-    roleSelectionne: toutRole,
-    statutSelectionne: 'confirme',
-    typologieSelectionnee: touteTypologie,
-  })
-  // Stryker disable next-line BooleanLiteral
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-
-  // Ce code n'est pas testé
-  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
-  useEffect(() => {
-    setMembresView({
-      membres: membresViewModel.membres,
-      roleSelectionne: toutRole,
-      statutSelectionne: 'confirme',
-      typologieSelectionnee: touteTypologie,
-    })
-  }, [membresViewModel.membres])
+  const searchParams = useSearchParams()
+  const statutInitial = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
 
   const {
     accepterUnMembreAction,
@@ -50,13 +27,28 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     pathname,
     retirerUnCoPorteurAction } = useContext(clientContext)
 
-  const candidats = membresViewModel.candidats
-    .toSorted(alphaAsc('nom'))
-
   const membresByStatut: Readonly<Record<StatutSelectionnable, ReadonlyArray<MembreViewModel>>> = {
     candidat: membresViewModel.candidats,
     confirme: membresViewModel.membres,
   }
+
+  const [membresView, setMembresView] = useState<MembresView>({
+    membres: membresByStatut[statutInitial],
+    roleSelectionne: toutRole,
+    statutSelectionne: statutInitial,
+    typologieSelectionnee: touteTypologie,
+  })
+
+  // Ce code n'est pas testé
+  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
+  useEffect(() => {
+    setMembresView({
+      membres: membresByStatut[statutInitial],
+      roleSelectionne: toutRole,
+      statutSelectionne: statutInitial,
+      typologieSelectionnee: touteTypologie,
+    })
+  }, [membresViewModel.membres, statutInitial])
 
   function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
@@ -151,15 +143,14 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           {membresViewModel.departement}
         </PageTitle>
         <button
-          aria-controls={drawerId}
           className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
-          data-fr-opened="false"
           onClick={() => {
-            setIsDrawerOpen(true)
+            const ajouterPath = `${pathname}/ajouter`
+            router.push(ajouterPath)
           }}
           type="button"
         >
-          Ajouter un membre
+          Ajouter un candidat
         </button>
       </div>
       <div className="fr-tabs fr-tabs__list fr-pb-0">
@@ -336,27 +327,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
         ))}
       </Table>
 
-      <Drawer
-        boutonFermeture="Fermer l’ajout d’un membre"
-        closeDrawer={() => {
-          setIsDrawerOpen(false)
-        }}
-        id={drawerId}
-        // Stryker disable next-line BooleanLiteral
-        isFixedWidth={false}
-        isOpen={isDrawerOpen}
-        labelId={labelId}
-      >
-        <AjouterUnMembre
-          candidats={candidats}
-          closeDrawer={() => {
-            setIsDrawerOpen(false)
-          }}
-          id={drawerId}
-          labelId={labelId}
-          uidGouvernance={membresViewModel.uidGouvernance}
-        />
-      </Drawer>
     </>
   )
 

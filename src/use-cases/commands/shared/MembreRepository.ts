@@ -8,6 +8,28 @@ export interface UpdateMembreRepository {
   update(membre: Membre): Promise<void>
 }
 
+export interface CreateMembreRepository {
+  create(
+    membre: Membre, 
+    contactData?: ContactData, 
+    contactTechniqueData?: ContactData, 
+    entrepriseData?: EntrepriseData
+  ): Promise<void>
+}
+
+export type ContactData = Readonly<{
+  email: string
+  fonction: string
+  nom: string
+  prenom: string
+}>
+
+export type EntrepriseData = Readonly<{
+  categorieJuridiqueUniteLegale: string
+  siret: string
+}>
+
 export interface MembreRepository
-  extends GetMembreRepository,
+  extends CreateMembreRepository,
+  GetMembreRepository,
   UpdateMembreRepository {}
