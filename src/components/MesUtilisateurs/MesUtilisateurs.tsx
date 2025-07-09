@@ -122,17 +122,19 @@ export default function MesUtilisateurs(
               />
             </Drawer>
             <div className="fr-grid-row space-between fr-grid-row--middle">
-              <Search
-                labelBouton="Rechercher"
-                placeholder="Rechercher par nom ou adresse électronique"
-                rechercher={(event) => {
-                  setTermesDeRechercheNomOuEmail(event.target.value)
-                }}
-                reinitialiserBouton="Reinitialiser"
-                reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
-                soumettreLaRecherche={soumettreLaRecherche}
-                termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
-              />
+              <div className="fr-col-6">
+                <Search
+                  labelBouton="Rechercher"
+                  placeholder="Rechercher par nom ou adresse électronique"
+                  rechercher={(event) => {
+                    setTermesDeRechercheNomOuEmail(event.target.value)
+                  }}
+                  reinitialiserBouton="Reinitialiser"
+                  reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserLesTermesDeRechercheNomOuEmail}
+                  soumettreLaRecherche={soumettreLaRecherche}
+                  termesDeRechercheNomOuEmail={termesDeRechercheNomOuEmail}
+                />
+              </div>
               <div>
                 <button
                   aria-controls={drawerFiltreId}

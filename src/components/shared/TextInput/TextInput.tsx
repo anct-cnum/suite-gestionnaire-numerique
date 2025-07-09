@@ -57,7 +57,7 @@ type Props = PropsWithChildren<Readonly<{
   }>
   id: string
   name: string
-  onChange?: (event: FormEvent<HTMLInputElement>) => void
+  onChange?(event: FormEvent<HTMLInputElement>): void
   pattern?: string
   placeholder?: string
   required?: boolean

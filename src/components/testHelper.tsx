@@ -31,6 +31,7 @@ export function renderComponent(
     ajouterUneNoteDeContexteAction: vi.fn(),
     ajouterUneNoteDeContextualisationAction: vi.fn(),
     ajouterUneNotePriveeAction: vi.fn(),
+    ajouterUnMembreAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),

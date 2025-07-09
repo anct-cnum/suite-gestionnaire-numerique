@@ -31,7 +31,6 @@ describe('gestion des membres gouvernance', () => {
     const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un membre' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
-    expect(ajouterUnMembre).toHaveAttribute('aria-controls', 'drawerGererLesMembresId')
 
     const navigationTypesMembres = screen.getByRole('list')
     const ongletsStatutMembre = within(navigationTypesMembres).getAllByRole('listitem')

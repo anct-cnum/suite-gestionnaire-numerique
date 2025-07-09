@@ -49,3 +49,6 @@ client-fne
 *.code-workspace
 .cursor/
 .idea
+CLAUDE.md
+.claude/
+.vscode/
