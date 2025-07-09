@@ -271,7 +271,11 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             key={membre.uid}
           >
             <td
-              style={{ height: '5em' }}
+              style={{ maxWidth: '50ch' ,
+                minHeight: '6em',
+                overflowWrap: 'break-word',
+                whiteSpace: 'normal',
+                wordWrap: 'break-word' }}
               tabIndex={0}
             >
               <button
@@ -304,10 +308,24 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
             </td>
             <td>
               <div
-                className="fr-grid-row fr-items-center"
-                style={{ justifyContent: 'space-between' }}
+                className="fr-container"
+                style={{
+                  alignItems: 'center',
+                  display: 'flex',
+                  flexWrap: 'nowrap',
+                  justifyContent: 'space-between',
+                  paddingLeft: 0,
+                }}
               >
-                <div className="fr-col">
+                <div
+                  style={{
+                    display: 'flex',
+                    flex: '1 1 auto',
+                    flexWrap: 'wrap',
+                    minWidth: 0,
+
+                  }}
+                >
                   {membre.roles
                     .filter(role => role.nom !== 'Observateur')
                     .map((role) => (
@@ -319,10 +337,14 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                       </Fragment>
                     ))}
                 </div>
-                <div className="fr-col-auto">
+
+                <div
+                  className="fr-col-auto"
+                >
                   {getMenu(membre)}
                 </div>
               </div>
+
             </td>
           </tr>
         ))}
