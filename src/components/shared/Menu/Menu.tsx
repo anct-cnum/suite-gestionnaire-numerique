@@ -73,7 +73,8 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
   }))
 
   return (
-    <>
+
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
       <button
         aria-controls="dropdown-menu"
         aria-expanded={open}
@@ -134,7 +135,7 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
           document.body
         )
         : null}
-    </>
+    </div>
   )
 }
 
