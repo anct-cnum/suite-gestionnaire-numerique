@@ -6,7 +6,7 @@ export default function Information({ label }: Props): ReactElement {
       {'\u00A0'}
       <span
         aria-label={label}
-        className="fr-icon fr-icon-information-line color-blue-france"
+        className="fr-icon fr-icon-information-line fr-p-0 fr-btn--sm color-blue-france"
         role="img"
         title={label}
       />
