@@ -54,6 +54,7 @@ type ActionParams = Readonly<{
   }>
   entreprise?: Readonly<{
     categorieJuridiqueUniteLegale: string
+    siret: string
   }>
   nomEntreprise: string
   path: string
@@ -75,6 +76,7 @@ const validator = z.object({
   }).optional(),
   entreprise: z.object({
     categorieJuridiqueUniteLegale: z.string().min(1, { message: 'La catégorie juridique doit être renseignée' }),
+    siret: z.string().min(1, { message: 'Le SIRET doit être renseigné' }),
   }).optional(),
   nomEntreprise: z.string().min(1, { message: 'Le nom de l\'entreprise doit être renseigné' }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),

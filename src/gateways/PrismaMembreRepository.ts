@@ -65,29 +65,22 @@ export class PrismaMembreRepository implements MembreRepository {
     let categorieMembre = 'structure'
     let typeMembre = 'Structure privée'
 
-    if (entrepriseData?.categorieJuridiqueUniteLegale !== null &&
-        entrepriseData?.categorieJuridiqueUniteLegale !== undefined &&
+    if (entrepriseData?.categorieJuridiqueUniteLegale !== undefined &&
         entrepriseData.categorieJuridiqueUniteLegale !== '' &&
         entrepriseData.categorieJuridiqueUniteLegale.trim() !== '') {
-      // Extraire le code de la catégorie juridique (ex: "7389" de "7389 - Description")
-      const regex = /^(\d{4})/
-      const codeMatch = regex.exec(entrepriseData.categorieJuridiqueUniteLegale)
+      const codeCategorie = entrepriseData.categorieJuridiqueUniteLegale.trim()
       
-      if (codeMatch) {
-        const codeCategorie = codeMatch[1]
-        
-        // Récupérer le nom de la catégorie juridique depuis la table reference
-        const categorieJuridique = await prisma.categories_juridiques.findUnique({
-          where: { code: codeCategorie },
-        })
+      // Récupérer le nom de la catégorie juridique depuis la table reference
+      const categorieJuridique = await prisma.categories_juridiques.findUnique({
+        where: { code: codeCategorie },
+      })
 
-        if (categorieJuridique) {
-          typeMembre = categorieJuridique.nom
-        }
+      if (categorieJuridique) {
+        typeMembre = categorieJuridique.nom
       }
 
-      // Stocker la forme juridique complète dans categorieMembre
-      categorieMembre = entrepriseData.categorieJuridiqueUniteLegale
+      // Stocker le code de catégorie juridique dans categorieMembre
+      categorieMembre = codeCategorie
     }
     
     await this.#membreDataResource.create({
@@ -100,6 +93,7 @@ export class PrismaMembreRepository implements MembreRepository {
         isCoporteur: membre.state.roles.includes('coporteur'),
         nom: membre.state.nom,
         oldUUID: crypto.randomUUID(),
+        siretRidet: entrepriseData?.siret,
         statut: membre.state.statut,
         type: typeMembre,
       },

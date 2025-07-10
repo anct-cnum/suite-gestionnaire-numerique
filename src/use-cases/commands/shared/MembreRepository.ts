@@ -26,6 +26,7 @@ export type ContactData = Readonly<{
 
 export type EntrepriseData = Readonly<{
   categorieJuridiqueUniteLegale: string
+  siret: string
 }>
 
 export interface MembreRepository

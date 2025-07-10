@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+import prisma from '../../../../../prisma/prismaClient'
 import { createSireneLoader } from '@/gateways/sirene/sireneLoaderFactory'
 import { RechercherUneEntreprise } from '@/use-cases/queries/RechercherUneEntreprise'
 
@@ -25,7 +26,27 @@ export async function GET(
     // Exécution du use case
     const entreprise = await rechercherUneEntreprise.handle({ siret })
 
-    return NextResponse.json(entreprise)
+    // Enrichissement avec le libellé de catégorie juridique
+    let entrepriseEnrichie = { ...entreprise }
+    
+    if (entreprise.categorieJuridiqueUniteLegale) {
+      try {
+        const categorieJuridique = await prisma.categories_juridiques.findUnique({
+          where: { code: entreprise.categorieJuridiqueUniteLegale },
+        })
+        
+        if (categorieJuridique) {
+          entrepriseEnrichie = {
+            ...entreprise,
+            categorieJuridiqueUniteLegaleLibelle: categorieJuridique.nom,
+          }
+        }
+      } catch {
+        // En cas d'erreur, on continue sans le libellé
+      }
+    }
+
+    return NextResponse.json(entrepriseEnrichie)
   } catch (error)
   {
     const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'

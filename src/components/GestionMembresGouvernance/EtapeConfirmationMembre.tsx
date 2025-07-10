@@ -57,7 +57,7 @@ export default function EtapeConfirmationMembre({
                       Forme juridique
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.categorieJuridiqueUniteLegale}
+                      {data.entreprise.categorieJuridiqueUniteLegaleLibelle ?? `Code ${data.entreprise.categorieJuridiqueUniteLegale}`}
                     </dd>
                   </div>
                   <div className="fr-col-6">

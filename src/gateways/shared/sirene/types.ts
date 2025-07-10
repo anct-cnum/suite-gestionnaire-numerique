@@ -24,16 +24,16 @@ export type SireneEtablissement = Readonly<{
   uniteLegale: SireneUniteLegale
 }>
 
-export type SireneUniteLegale = Readonly<{
+export type SireneErrorResponse = Readonly<{
+  header: Readonly<{
+    message: string
+  }>
+}>
+
+type SireneUniteLegale = Readonly<{
   activitePrincipaleUniteLegale: string
   categorieJuridiqueUniteLegale: string
   denominationUniteLegale: null | string
   etatAdministratifUniteLegale: string
   nomUniteLegale: null | string
-}>
-
-export type SireneErrorResponse = Readonly<{
-  header: Readonly<{
-    message: string
-  }>
 }>

@@ -28,7 +28,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # BDD
-*.sql
 *.dump
 
 # local env files
@@ -52,3 +51,4 @@ client-fne
 CLAUDE.md
 .claude/
 .vscode/
+dbs/

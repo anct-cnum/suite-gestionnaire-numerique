@@ -93,7 +93,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                           Forme juridique :
                         </strong> 
                         {' '}
-                        {entreprise.categorieJuridiqueUniteLegale}
+                        {entreprise.categorieJuridiqueUniteLegaleLibelle ?? `Code ${entreprise.categorieJuridiqueUniteLegale}`}
                         <br />
                         <strong>
                           Adresse :

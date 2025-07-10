@@ -64,6 +64,7 @@ type Command = Readonly<{
   }>
   entreprise?: Readonly<{
     categorieJuridiqueUniteLegale: string
+    siret: string
   }>
   nomEntreprise: string
   uidGestionnaire: string

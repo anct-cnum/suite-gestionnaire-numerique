@@ -2,6 +2,7 @@ export type EntrepriseSirene = Readonly<{
   activitePrincipaleUniteLegale: string
   adresseComplete: string
   categorieJuridiqueUniteLegale: string
+  categorieJuridiqueUniteLegaleLibelle?: string
   codePostal: string
   denominationUniteLegale: string
   libelleCommuneEtablissement: string
