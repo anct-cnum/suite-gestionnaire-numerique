@@ -214,6 +214,16 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
   useEffect(() => {
     if (!mapContainer.current) {return undefined}
 
+    // Vérifier le support WebGL avant d'initialiser la carte
+    const canvas = document.createElement('canvas')
+    const gl = canvas.getContext('webgl') ?? canvas.getContext('experimental-webgl')
+    
+    if (!gl) {
+      // Afficher un message d'erreur dans le conteneur de la carte
+      mapContainer.current.innerHTML = '<div class="fr-alert fr-alert--error fr-m-2w"><p>Votre navigateur ne supporte pas WebGL, nécessaire pour afficher la carte. Veuillez activer WebGL ou utiliser un navigateur compatible.</p></div>'
+      return undefined
+    }
+
     map.current = new Map({
       container: mapContainer.current,
       maxZoom: 11,

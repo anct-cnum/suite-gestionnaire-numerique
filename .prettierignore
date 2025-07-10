@@ -7,3 +7,6 @@ yarn.lock
 devbox.*
 .devbox/
 .venv
+CLAUDE.md
+.vscode/
+.claude/
