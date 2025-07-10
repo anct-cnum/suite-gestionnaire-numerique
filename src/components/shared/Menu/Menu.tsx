@@ -73,72 +73,68 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
   }))
 
   return (
-    <div className="fr-dropdown fr-border-default--grey">
+    <>
       <button
         aria-controls="dropdown-menu"
         aria-expanded={open}
         aria-haspopup="true"
-        className="fr-btn fr-btn--tertiary-no-outline w-100"
-        onClick={() => { setOpen((prev) => !prev) }}
+        className="fr-btn fr-btn--sm fr-btn--tertiary fr-icon-more-fill"
+        onClick={() => {
+          setOpen((prev) => !prev)
+        }}
         ref={buttonRef}
         style={{
           textAlign: 'center',
         }}
         type="button"
-      >
-        <span
-          aria-hidden="true"
-          style={{ fontSize: '20px' }}
-        >
-          ⋯
-        </span>
-      </button>
-
-      {open ? createPortal(
-        <div
-          aria-label="Menu des actions"
-          className="fr-border-default--grey fr-py-1w"
-          ref={menuRef}
-          style={{
-            background: 'white',
-            borderRadius: 4,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            left: position.left,
-            position: 'absolute',
-            top: position.top,
-            width: '300px',
-            zIndex: 9999,
-          }}
-        >
-          <ul
-            id="dropdown-menu"
-            role="menu"
+      />
+      {open
+        ? createPortal(
+          <div
+            aria-label="Menu des actions"
+            className="fr-border-default--grey fr-py-1w"
+            ref={menuRef}
+            style={{
+              background: 'white',
+              borderRadius: 4,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+              left: position.left,
+              position: 'absolute',
+              top: position.top,
+              width: '300px',
+              zIndex: 9999,
+            }}
           >
-            {itemsWithCloseMenu.flatMap((item, index) => {
-              const isLast = index === itemsWithCloseMenu.length - 1
-              const itemKey = typeof item.key === 'string' ? item.key : `item-${index}`
+            <ul
+              id="dropdown-menu"
+              role="menu"
+            >
+              {itemsWithCloseMenu.flatMap((item, index) => {
+                const isLast = index === itemsWithCloseMenu.length - 1
+                const itemKey = typeof item.key === 'string' ? item.key : `item-${index}`
 
-              return isLast
-                ? [item]
-                : [
-                  item,
-                  <hr
-                    key={`separator-after-${itemKey}`}
-                    style={{
-                      backgroundColor: 'var(--border-default-grey)',
-                      border: 'none',
-                      height: '1px',
-                      margin: '0 auto',
-                      width:'90%',
-                    }}
-                  />,
-                ]
-            })}
-          </ul>
-        </div>,
-        document.body
-      ) : null}
-    </div>
+                return isLast
+                  ? [item]
+                  : [
+                    item,
+                    <hr
+                      key={`separator-after-${itemKey}`}
+                      style={{
+                        backgroundColor: 'var(--border-default-grey)',
+                        border: 'none',
+                        height: '1px',
+                        margin: '0 auto',
+                        width: '90%',
+                      }}
+                    />,
+                  ]
+              })}
+            </ul>
+          </div>,
+          document.body
+        )
+        : null}
+    </>
   )
 }
 

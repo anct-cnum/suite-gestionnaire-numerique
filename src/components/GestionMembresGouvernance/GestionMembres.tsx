@@ -262,7 +262,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
 
       </div>
       <Table
-        enTetes={['Structure', 'Contact référent', 'Rôles']}
+        enTetes={['Structure', 'Contact référent', 'Rôles', '']}
         titre="Membres"
       >
         {membresView.membres.map((membre, index) => (
@@ -313,38 +313,24 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                   alignItems: 'center',
                   display: 'flex',
                   flexWrap: 'nowrap',
-                  justifyContent: 'space-between',
                   paddingLeft: 0,
+                  paddingRight:0,
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    flex: '1 1 auto',
-                    flexWrap: 'wrap',
-                    minWidth: 0,
-
-                  }}
-                >
-                  {membre.roles
-                    .filter(role => role.nom !== 'Observateur')
-                    .map((role) => (
-                      <Fragment key={role.color}>
-                        <Badge color={role.color}>
-                          {role.nom}
-                        </Badge>
-                        {' '}
-                      </Fragment>
-                    ))}
-                </div>
-
-                <div
-                  className="fr-col-auto"
-                >
-                  {getMenu(membre)}
-                </div>
+                {membre.roles
+                  .filter(role => role.nom !== 'Observateur')
+                  .map((role) => (
+                    <Fragment key={role.color}>
+                      <Badge color={role.color}>
+                        {role.nom}
+                      </Badge>
+                      {' '}
+                    </Fragment>
+                  ))}
               </div>
-
+            </td>
+            <td>
+              {getMenu(membre)}
             </td>
           </tr>
         ))}

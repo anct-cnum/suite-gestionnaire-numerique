@@ -84,7 +84,7 @@ describe('gestion des membres gouvernance', () => {
     const columnsHead = within(rowHead).getAllByRole('columnheader')
     const rowsBody = within(body).getAllByRole('row')
 
-    expect(columnsHead).toHaveLength(3)// 4
+    expect(columnsHead).toHaveLength(4)
     expect(columnsHead[0].textContent).toBe('Structure')
     expect(columnsHead[0]).toHaveAttribute('scope', 'col')
     expect(columnsHead[1].textContent).toBe('Contact référent')
@@ -92,15 +92,15 @@ describe('gestion des membres gouvernance', () => {
     expect(columnsHead[2].textContent).toBe('Rôles')
     expect(columnsHead[2]).toHaveAttribute('scope', 'col')
     const columnsBody1 = membresRow(rowsBody, 0)
-    expect(columnsBody1).toHaveLength(3)//
+    expect(columnsBody1).toHaveLength(4)
     expect(columnsBody1[0].textContent).toBe('Préfecture du RhônePréfecture départementale')
     expect(columnsBody1[1].textContent).toBe('Laetitia Henrich')
-    expect(columnsBody1[2].textContent).toBe('Co-porteur ⋯')
+    expect(columnsBody1[2].textContent).toBe('Co-porteur ')
     const columnsBody2 = membresRow(rowsBody, 1)
-    expect(columnsBody2).toHaveLength(3)
+    expect(columnsBody2).toHaveLength(4)
     expect(columnsBody2[0].textContent).toBe('Rhône (69)Collectivité, conseil départemental')
     expect(columnsBody2[1].textContent).toBe('Pauline Chappuis')
-    expect(columnsBody2[2].textContent).toBe('Co-porteur Co-financeur ⋯')
+    expect(columnsBody2[2].textContent).toBe('Co-porteur Co-financeur ')
   })
 
   it.each([
@@ -171,7 +171,7 @@ describe('gestion des membres gouvernance', () => {
     expect(rowsBody).toHaveLength(4)
     rowsBody.forEach((_, index) => {
       const columnsBody = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(3)
+      expect(columnsBody).toHaveLength(4)
       expect(columnsBody[2].textContent).toContain('Co-porteur')
     })
   })
@@ -209,7 +209,7 @@ describe('gestion des membres gouvernance', () => {
     expect(rowsBody).toHaveLength(2)
     rowsBody.forEach((_, index) => {
       const columnsBody = membresRow(rowsBody, index)
-      expect(columnsBody).toHaveLength(3)
+      expect(columnsBody).toHaveLength(4)
       expect(columnsBody[0].textContent).toContain('Association')
     })
   })
@@ -248,10 +248,10 @@ describe('gestion des membres gouvernance', () => {
     const rowsBody = within(body).queryAllByRole('row')
     expect(rowsBody).toHaveLength(1)
     const columnsBody = membresRow(rowsBody, 0)
-    expect(columnsBody).toHaveLength(3)
+    expect(columnsBody).toHaveLength(4)
     expect(columnsBody[0].textContent).toBe('Info-Jeunes Rhône (CRIJ)Association')
     expect(columnsBody[1].textContent).toBe('Grégory Geffroy')
-    expect(columnsBody[2].textContent).toBe('Co-porteur ⋯')
+    expect(columnsBody[2].textContent).toBe('Co-porteur ')
   })
 })
 

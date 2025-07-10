@@ -10,7 +10,7 @@ export default function Table({
 }: Props): ReactElement {
   return (
     <div
-      className="fr-table--lg  fr-table fr-table"
+      className="fr-table--md  fr-table fr-table"
       id="table-sm-component"
     >
       <div className={`fr-table__wrapper ${styles['fr-table__wrapper']}`}>
