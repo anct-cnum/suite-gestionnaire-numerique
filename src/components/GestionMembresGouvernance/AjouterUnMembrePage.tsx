@@ -90,8 +90,9 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
           title: 'Membre ', 
         })
         
-        // Retour à la page de gestion des membres
-        router.back()
+        // Retour à la page de gestion des membres avec l'onglet candidats sélectionné
+        const basePath = pathname.replace('/ajouter', '')
+        router.push(`${basePath}?statut=candidat`)
       } else {
         Notification('error', { 
           description: (messages as ReadonlyArray<string>).join(', '), 

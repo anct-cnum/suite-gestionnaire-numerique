@@ -19,6 +19,11 @@ vi.mock('next/navigation', () => ({
     // eslint-disable-next-line vitest/require-mock-type-parameters
     replace: vi.fn(),
   }),
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  useSearchParams: () => ({
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    get: vi.fn().mockReturnValue(null),
+  }),
 }))
 
 describe('gestion des membres gouvernance', () => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Fragment, ReactElement, useContext, useEffect, useId, useState } from 'react'
 
 import styles from './GestionMembres.module.css'
@@ -18,24 +18,8 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   const selectTypologieId = useId()
 
   const router = useRouter()
-
-  const [membresView, setMembresView] = useState<MembresView>({
-    membres: membresViewModel.membres,
-    roleSelectionne: toutRole,
-    statutSelectionne: 'confirme',
-    typologieSelectionnee: touteTypologie,
-  })
-
-  // Ce code n'est pas testé
-  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
-  useEffect(() => {
-    setMembresView({
-      membres: membresViewModel.membres,
-      roleSelectionne: toutRole,
-      statutSelectionne: 'confirme',
-      typologieSelectionnee: touteTypologie,
-    })
-  }, [membresViewModel.membres])
+  const searchParams = useSearchParams()
+  const statutInitial = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
 
   const {
     accepterUnMembreAction,
@@ -47,6 +31,24 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     candidat: membresViewModel.candidats,
     confirme: membresViewModel.membres,
   }
+
+  const [membresView, setMembresView] = useState<MembresView>({
+    membres: membresByStatut[statutInitial],
+    roleSelectionne: toutRole,
+    statutSelectionne: statutInitial,
+    typologieSelectionnee: touteTypologie,
+  })
+
+  // Ce code n'est pas testé
+  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
+  useEffect(() => {
+    setMembresView({
+      membres: membresByStatut[statutInitial],
+      roleSelectionne: toutRole,
+      statutSelectionne: statutInitial,
+      typologieSelectionnee: touteTypologie,
+    })
+  }, [membresViewModel.membres, statutInitial])
 
   function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
     return [
