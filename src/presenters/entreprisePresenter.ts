@@ -6,6 +6,7 @@ export function entreprisePresenter(readModel: EntrepriseReadModel): EntrepriseV
   return {
     activitePrincipale: readModel.activitePrincipale,
     adresse: readModel.adresse,
+    categorieJuridiqueCode: readModel.categorieJuridiqueCode,
     categorieJuridiqueLibelle: readModel.categorieJuridiqueLibelle ?? `Code ${readModel.categorieJuridiqueCode}`,
     denomination: readModel.denomination,
     identifiant: readModel.identifiant,

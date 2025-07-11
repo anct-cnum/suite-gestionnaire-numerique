@@ -60,32 +60,10 @@ export class PrismaMembreRepository implements MembreRepository {
       })
       contactTechniqueEmail = contactTechniqueData.email
     }
-
-    // Traitement de la catégorie juridique
-    let categorieMembre = 'structure'
-    let typeMembre = 'Structure privée'
-
-    if (entrepriseData?.categorieJuridiqueUniteLegale !== undefined &&
-        entrepriseData.categorieJuridiqueUniteLegale !== '' &&
-        entrepriseData.categorieJuridiqueUniteLegale.trim() !== '') {
-      const codeCategorie = entrepriseData.categorieJuridiqueUniteLegale.trim()
-      
-      // Récupérer le nom de la catégorie juridique depuis la table reference
-      const categorieJuridique = await prisma.categories_juridiques.findUnique({
-        where: { code: codeCategorie },
-      })
-
-      if (categorieJuridique) {
-        typeMembre = categorieJuridique.nom
-      }
-
-      // Stocker le code de catégorie juridique dans categorieMembre
-      categorieMembre = codeCategorie
-    }
     
     await this.#membreDataResource.create({
       data: {
-        categorieMembre,
+        categorieMembre : entrepriseData?.categorieJuridiqueCode,
         contact: email,
         contactTechnique: contactTechniqueEmail,
         gouvernanceDepartementCode: membre.state.uidGouvernance.value,
@@ -95,7 +73,7 @@ export class PrismaMembreRepository implements MembreRepository {
         oldUUID: crypto.randomUUID(),
         siretRidet: entrepriseData?.siret,
         statut: membre.state.statut,
-        type: typeMembre,
+        type : entrepriseData?.categorieJuridiqueUniteLegale,
       },
     })
   }

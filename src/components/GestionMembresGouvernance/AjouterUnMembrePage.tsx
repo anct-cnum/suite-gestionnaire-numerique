@@ -77,6 +77,7 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
         contact: donneesMembre.contact,
         contactTechnique: donneesMembre.contactSecondaire ?? undefined,
         entreprise: {
+          categorieJuridiqueCode: donneesMembre.entreprise.categorieJuridiqueCode,
           categorieJuridiqueUniteLegale: donneesMembre.entreprise.categorieJuridiqueLibelle,
           siret: donneesMembre.entreprise.identifiant,
         },

@@ -63,6 +63,7 @@ type Command = Readonly<{
     prenom: string
   }>
   entreprise?: Readonly<{
+    categorieJuridiqueCode: string
     categorieJuridiqueUniteLegale: string
     siret: string
   }>
