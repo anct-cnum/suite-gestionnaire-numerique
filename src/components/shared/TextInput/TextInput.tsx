@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement, ReactNode } from 'react'
+import React, { FormEvent, PropsWithChildren, ReactElement, ReactNode } from 'react'
 
 export default function TextInput({
   ariaDescribedById,
@@ -8,10 +8,16 @@ export default function TextInput({
   erreur = errorDefault,
   id,
   name,
+  onChange,
   pattern,
+  placeholder,
   required,
   type = 'text',
+  value,
 }: Props): ReactElement {
+  // Utilise soit un composant contrôlé (value + onChange) soit non-contrôlé (defaultValue)
+  const isControlled = value !== undefined && onChange !== undefined
+  
   return (
     <div className={`fr-input-group ${erreur.className}`}>
       <label
@@ -24,13 +30,16 @@ export default function TextInput({
         aria-describedby={ariaDescribedById}
         aria-required={required}
         className="fr-input"
-        defaultValue={defaultValue}
+        defaultValue={isControlled ? undefined : defaultValue}
         disabled={disabled}
         id={id}
         name={name}
+        onChange={isControlled ? onChange : undefined}
         pattern={pattern}
+        placeholder={placeholder}
         required={required}
         type={type}
+        value={isControlled ? value : undefined}
       />
       {erreur.content}
     </div>
@@ -48,7 +57,10 @@ type Props = PropsWithChildren<Readonly<{
   }>
   id: string
   name: string
+  onChange?(event: FormEvent<HTMLInputElement>): void
   pattern?: string
-  required: boolean
+  placeholder?: string
+  required?: boolean
   type?: 'email' | 'tel' | 'text'
+  value?: string
 }>>

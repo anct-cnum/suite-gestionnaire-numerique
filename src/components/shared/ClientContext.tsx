@@ -13,6 +13,7 @@ import { ajouterUneFeuilleDeRouteAction } from '@/app/api/actions/ajouterUneFeui
 import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNoteDeContexteAction'
 import { ajouterUneNoteDeContextualisationAction } from '@/app/api/actions/ajouterUneNoteDeContextualisationAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
+import { ajouterUnMembreAction } from '@/app/api/actions/ajouterUnMembreAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
@@ -23,6 +24,7 @@ import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFe
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
+import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { retirerUnCoPorteurAction } from '@/app/api/actions/retirerUnCoPorteurAction'
 import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
@@ -54,6 +56,7 @@ export default function ClientContext({
       ajouterUneNoteDeContexteAction,
       ajouterUneNoteDeContextualisationAction,
       ajouterUneNotePriveeAction,
+      ajouterUnMembreAction,
       changerMonRoleAction,
       definirUnCoPorteurAction,
       inviterUnUtilisateurAction,
@@ -65,6 +68,7 @@ export default function ClientContext({
       modifierUneNoteDeContextualisationAction,
       modifierUneNotePriveeAction,
       pathname,
+      rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
       retirerUnCoPorteurAction,
       roles,
@@ -101,6 +105,7 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneNoteDeContexteAction: typeof ajouterUneNoteDeContexteAction
   ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
+  ajouterUnMembreAction: typeof ajouterUnMembreAction
   changerMonRoleAction: typeof changerMonRoleAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
@@ -112,6 +117,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
+  rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   retirerUnCoPorteurAction: typeof retirerUnCoPorteurAction
   roles: ReadonlyArray<string>

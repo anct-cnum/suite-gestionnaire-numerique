@@ -19,6 +19,11 @@ vi.mock('next/navigation', () => ({
     // eslint-disable-next-line vitest/require-mock-type-parameters
     replace: vi.fn(),
   }),
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  useSearchParams: () => ({
+    // eslint-disable-next-line vitest/require-mock-type-parameters
+    get: vi.fn().mockReturnValue(null),
+  }),
 }))
 
 describe('gestion des membres gouvernance', () => {
@@ -28,10 +33,9 @@ describe('gestion des membres gouvernance', () => {
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Gérer les membres · Rhône' })
-    const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un membre' })
+    const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un candidat' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
-    expect(ajouterUnMembre).toHaveAttribute('aria-controls', 'drawerGererLesMembresId')
 
     const navigationTypesMembres = screen.getByRole('list')
     const ongletsStatutMembre = within(navigationTypesMembres).getAllByRole('listitem')

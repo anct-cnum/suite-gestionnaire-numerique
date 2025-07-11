@@ -31,6 +31,7 @@ export function renderComponent(
     ajouterUneNoteDeContexteAction: vi.fn(),
     ajouterUneNoteDeContextualisationAction: vi.fn(),
     ajouterUneNotePriveeAction: vi.fn(),
+    ajouterUnMembreAction: vi.fn(),
     changerMonRoleAction: vi.fn(),
     definirUnCoPorteurAction: vi.fn(),
     inviterUnUtilisateurAction: vi.fn(),
@@ -42,6 +43,7 @@ export function renderComponent(
     modifierUneNoteDeContextualisationAction: vi.fn(),
     modifierUneNotePriveeAction: vi.fn(),
     pathname: '/',
+    rechercherUneEntrepriseAction: vi.fn(),
     reinviterUnUtilisateurAction: vi.fn(),
     retirerUnCoPorteurAction: vi.fn(),
     roles: Roles,
@@ -62,7 +64,7 @@ export function renderComponent(
     supprimerUneNoteDeContexteAction: vi.fn(),
     supprimerUneNoteDeContextualisationAction: vi.fn(),
     supprimerUneNotePriveeAction: vi.fn(),
-    supprimerUnUtilisateurAction: vi.fn() ,
+    supprimerUnUtilisateurAction: vi.fn(),
     utilisateursParPage: 10,
   }
 
