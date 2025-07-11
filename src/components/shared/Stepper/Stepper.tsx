@@ -1,9 +1,11 @@
+ 
 import { ReactElement } from 'react'
 
 export default function Stepper({ currentStep, steps }: StepperProps): ReactElement {
   const currentStepData = steps[currentStep - 1]
   const nextStepData = steps[currentStep]
-  
+  const isLastStep = currentStep === steps.length
+
   return (
     <div className="fr-stepper">
       <h2 className="fr-stepper__title">
@@ -23,7 +25,7 @@ export default function Stepper({ currentStep, steps }: StepperProps): ReactElem
         data-fr-current-step={currentStep}
         data-fr-steps={steps.length}
       />
-      {nextStepData !==undefined ? (
+      {!isLastStep && (
         <p className="fr-stepper__details">
           <span className="fr-text--bold">
             Étape suivante :
@@ -31,7 +33,7 @@ export default function Stepper({ currentStep, steps }: StepperProps): ReactElem
           {' '}
           {nextStepData.title}
         </p>
-      ) : null}
+      )}
     </div>
   )
 }

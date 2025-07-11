@@ -1,15 +1,18 @@
 'use client'
 
-import { FormEvent, ReactElement, useState } from 'react'
+import { FormEvent, ReactElement, useContext, useState } from 'react'
 
-import { ContactPrincipal, EntrepriseSirene, NouveauMembreData } from './types'
+import { ContactPrincipal, NouveauMembreData } from './types'
+import { clientContext } from '../shared/ClientContext'
+import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 import Search from '../shared/Search/Search'
 import TextInput from '../shared/TextInput/TextInput'
 
 // eslint-disable-next-line complexity
 export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: EtapeSelectionMembreProps): ReactElement {
-  const [siret, setSiret] = useState(donneesMembre?.entreprise?.siret ?? '')
-  const [entreprise, setEntreprise] = useState<EntrepriseSirene | null>(donneesMembre?.entreprise ?? null)
+  const { rechercherUneEntrepriseAction } = useContext(clientContext)
+  const [siret, setSiret] = useState(donneesMembre?.entreprise?.identifiant ?? '')
+  const [entreprise, setEntreprise] = useState<EntrepriseViewModel | null>(donneesMembre?.entreprise ?? null)
   const [erreurRechercheSiret, setErreurRechercheSiret] = useState('')
   const [contact, setContact] = useState<ContactPrincipal>(donneesMembre?.contact ?? { email: '', fonction: '', nom: '', prenom: '' })
   const [contactSecondaire, setContactSecondaire] = useState<ContactPrincipal>(donneesMembre?.contactSecondaire ?? { email: '', fonction: '', nom: '', prenom: '' })
@@ -51,15 +54,15 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
               </h3>              
               <Search
                 labelBouton="Rechercher"
-                placeholder="Renseignez le Numéro SIRET *"
+                placeholder="Renseignez le Numéro SIRET ou RIDET *"
                 rechercher={changerSiret}
                 reinitialiserBouton="Effacer la recherche"
                 reinitialiserLesTermesDeRechercheNomOuEmail={reinitialiserSiret}
                 soumettreLaRecherche={soumettreRechercheSiret}
-                termesDeRechercheNomOuEmail={formaterSiret(siret)}
+                termesDeRechercheNomOuEmail={formaterNumero(siret)}
               />
               <p className="color-grey fr-mb-1w">
-                Format attendu : SIRET (12345678901234)
+                Format attendu : SIRET (14 chiffres) ou RIDET (6 ou 7 chiffres)
               </p>
 
               {erreurRechercheSiret ? 
@@ -73,33 +76,15 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                 <div className="fr-card fr-mt-3w background-blue-france">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
-                      <h4 className="fr-card__title">
-                        {entreprise.denominationUniteLegale}
+                      <h4 className="fr-card__title color-blue-france">
+                        {entreprise.denomination}
                       </h4>
                       <p className="fr-card__desc">
-                        <strong>
-                          SIRET :
-                        </strong> 
-                        {' '}
-                        {entreprise.siret}
+                        {entreprise.activitePrincipale}
                         <br />
-                        <strong>
-                          Activité :
-                        </strong> 
-                        {' '}
-                        {entreprise.activitePrincipaleUniteLegale}
+                        {entreprise.categorieJuridiqueLibelle}
                         <br />
-                        <strong>
-                          Forme juridique :
-                        </strong> 
-                        {' '}
-                        {entreprise.categorieJuridiqueUniteLegaleLibelle ?? `Code ${entreprise.categorieJuridiqueUniteLegale}`}
-                        <br />
-                        <strong>
-                          Adresse :
-                        </strong> 
-                        {' '}
-                        {entreprise.adresseComplete}
+                        {entreprise.adresse}
                       </p>
                     </div>
                   </div>
@@ -329,6 +314,13 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     if (nouveauSiret !== siret) {
       setEntreprise(null)
     }
+    
+    // Validation indicative pendant la saisie
+    if (nouveauSiret.length > 0 && nouveauSiret.length < 6) {
+      // Pas encore assez de chiffres, on n'affiche pas d'erreur
+    } else if (nouveauSiret.length > 7 && nouveauSiret.length < 14) {
+      setErreurRechercheSiret('Format invalide : saisissez 6-7 chiffres (RIDET) ou 14 chiffres (SIRET)')
+    }
   }
 
   function reinitialiserSiret(): void {
@@ -339,8 +331,18 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
 
   function soumettreRechercheSiret(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
-    if (siret.length === 14) {
+    // SIRET = 14 chiffres, RIDET = 6 ou 7 chiffres
+    if (siret.length === 14 || siret.length >= 6 && siret.length <= 7) {
       void rechercherEntreprise()
+    } else if (siret.length > 0) {
+      // Affichage d'un message d'erreur pour les saisies invalides
+      if (siret.length < 6) {
+        setErreurRechercheSiret('Le numéro saisi est trop court. Saisissez un SIRET (14 chiffres) ou un RIDET (6-7 chiffres)')
+      } else if (siret.length > 7 && siret.length < 14) {
+        setErreurRechercheSiret('Le numéro saisi ne correspond ni à un SIRET (14 chiffres) ni à un RIDET (6-7 chiffres)')
+      } else if (siret.length > 14) {
+        setErreurRechercheSiret('Le numéro saisi est trop long. Maximum 14 chiffres pour un SIRET')
+      }
     }
   }
 
@@ -349,12 +351,16 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
     window.history.back()
   }
 
-  function formaterSiret(siretBrut: string): string {
-    // Formate le SIRET pour l'affichage : 123 456 789 01234
-    if (siretBrut.length <= 3) {return siretBrut}
-    if (siretBrut.length <= 6) {return `${siretBrut.slice(0, 3)} ${siretBrut.slice(3)}`}
-    if (siretBrut.length <= 9) {return `${siretBrut.slice(0, 3)} ${siretBrut.slice(3, 6)} ${siretBrut.slice(6)}`}
-    return `${siretBrut.slice(0, 3)} ${siretBrut.slice(3, 6)} ${siretBrut.slice(6, 9)} ${siretBrut.slice(9)}`
+  function formaterNumero(numeroBrut: string): string {
+    // RIDET (7 chiffres ou moins) : pas de formatage
+    if (numeroBrut.length <= 7) {
+      return numeroBrut
+    }
+    // SIRET (14 chiffres) : formatage 123 456 789 01234
+    if (numeroBrut.length <= 9) {
+      return `${numeroBrut.slice(0, 3)} ${numeroBrut.slice(3, 6)} ${numeroBrut.slice(6)}`
+    }
+    return `${numeroBrut.slice(0, 3)} ${numeroBrut.slice(3, 6)} ${numeroBrut.slice(6, 9)} ${numeroBrut.slice(9)}`
   }
 
   function changerNomContact(event: FormEvent<HTMLInputElement>): void {
@@ -403,27 +409,30 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
   }
 
   async function rechercherEntreprise(): Promise<void> {
-    if (siret.length !== 14) {
+    const isRidet = siret.length <= 7
+    
+    if (!isRidet && siret.length !== 14) {
       setErreurRechercheSiret('Le SIRET doit contenir exactement 14 chiffres')
+      return
+    }
+    
+    if (isRidet && (siret.length < 6 || siret.length > 7)) {
+      setErreurRechercheSiret('Le RIDET doit contenir 6 ou 7 chiffres')
       return
     }
 
     setErreurRechercheSiret('')
 
     try {
-      const response = await fetch(`/api/sirene/${siret}`)
+      const result = await rechercherUneEntrepriseAction({ siret })
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          setErreurRechercheSiret('Aucune entreprise trouvée avec ce SIRET')
-        } else {
-          setErreurRechercheSiret('Erreur lors de la recherche. Veuillez réessayer.')
-        }
-        return
+      if (Array.isArray(result)) {
+        // Erreur : result contient des messages d'erreur
+        setErreurRechercheSiret(result.join(', '))
+      } else {
+        // Succès : result contient les données de l'entreprise
+        setEntreprise(result as EntrepriseViewModel)
       }
-
-      const data = await response.json() as EntrepriseSirene
-      setEntreprise(data)
     } catch {
       setErreurRechercheSiret('Erreur lors de la recherche. Veuillez réessayer.')
     }

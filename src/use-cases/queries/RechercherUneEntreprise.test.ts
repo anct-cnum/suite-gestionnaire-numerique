@@ -6,17 +6,19 @@ describe('rechercherUneEntreprise', () => {
   it('doit retourner les données d\'une entreprise quand le SIRET existe', async () => {
     // Given
     const mockEntreprise = {
-      activitePrincipaleUniteLegale: '6201Z - Programmation informatique',
-      adresseComplete: '8 RUE DE LONDRES, 75009 PARIS 9',
-      categorieJuridiqueUniteLegale: '5499 - Société par actions simplifiée',
+      activitePrincipale: '6201Z - Programmation informatique',
+      adresse: '8 RUE DE LONDRES, 75009 PARIS 9',
+      categorieJuridiqueCode: '5499',
+      categorieJuridiqueLibelle: 'Société par actions simplifiée',
       codePostal: '75009',
-      denominationUniteLegale: 'GOOGLE FRANCE',
-      libelleCommuneEtablissement: 'PARIS 9',
-      siret: '73282932000074',
+      commune: 'PARIS 9',
+      denomination: 'GOOGLE FRANCE',
+      identifiant: '73282932000074',
     }
     
     const mockSireneLoader: SireneLoader = {
-      rechercherParSiret: vi.fn<(siret: string) => Promise<typeof mockEntreprise>>().mockResolvedValue(mockEntreprise),
+      rechercherParIdentifiant: vi.fn<(siret: string) => 
+      Promise<typeof mockEntreprise>>().mockResolvedValue(mockEntreprise),
     }
     
     const rechercherUneEntreprise = new RechercherUneEntreprise(mockSireneLoader)
@@ -25,14 +27,14 @@ describe('rechercherUneEntreprise', () => {
     const resultat = await rechercherUneEntreprise.handle({ siret: '73282932000074' })
 
     // Then
-    expect(mockSireneLoader.rechercherParSiret).toHaveBeenCalledWith('73282932000074')
+    expect(mockSireneLoader.rechercherParIdentifiant).toHaveBeenCalledWith('73282932000074')
     expect(resultat).toStrictEqual(mockEntreprise)
   })
 
   it('doit propager l\'erreur quand le loader échoue', async () => {
     // Given
     const mockSireneLoader: SireneLoader = {
-      rechercherParSiret: vi.fn<(siret: string) => Promise<never>>().mockRejectedValue(new Error('SIRET inexistant')),
+      rechercherParIdentifiant: vi.fn<(siret: string) => Promise<never>>().mockRejectedValue(new Error('SIRET inexistant')),
     }
     
     const rechercherUneEntreprise = new RechercherUneEntreprise(mockSireneLoader)

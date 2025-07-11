@@ -77,16 +77,16 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
         contact: donneesMembre.contact,
         contactTechnique: donneesMembre.contactSecondaire ?? undefined,
         entreprise: {
-          categorieJuridiqueUniteLegale: donneesMembre.entreprise.categorieJuridiqueUniteLegale,
-          siret: donneesMembre.entreprise.siret,
+          categorieJuridiqueUniteLegale: donneesMembre.entreprise.categorieJuridiqueLibelle,
+          siret: donneesMembre.entreprise.identifiant,
         },
-        nomEntreprise: donneesMembre.entreprise.denominationUniteLegale,
+        nomEntreprise: donneesMembre.entreprise.denomination,
         path: pathname,
       })
 
       if (messages.includes('OK')) {
         Notification('success', { 
-          description: `${donneesMembre.entreprise.denominationUniteLegale} ajouté avec succès`, 
+          description: `${donneesMembre.entreprise.denomination} ajouté avec succès`, 
           title: 'Membre ', 
         })
         

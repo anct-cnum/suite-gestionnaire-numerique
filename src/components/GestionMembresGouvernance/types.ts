@@ -1,13 +1,4 @@
-export type EntrepriseSirene = Readonly<{
-  activitePrincipaleUniteLegale: string
-  adresseComplete: string
-  categorieJuridiqueUniteLegale: string
-  categorieJuridiqueUniteLegaleLibelle?: string
-  codePostal: string
-  denominationUniteLegale: string
-  libelleCommuneEtablissement: string
-  siret: string
-}>
+import { EntrepriseViewModel } from '../shared/Membre/EntrepriseType'
 
 export type ContactPrincipal = Readonly<{
   email: string
@@ -19,7 +10,7 @@ export type ContactPrincipal = Readonly<{
 export type NouveauMembreData = Readonly<{
   contact: ContactPrincipal | null
   contactSecondaire: ContactPrincipal | null
-  entreprise: EntrepriseSirene | null
+  entreprise: EntrepriseViewModel | null
 }>
 
 export type AjoutMembreEtape = 'confirmation' | 'selection'

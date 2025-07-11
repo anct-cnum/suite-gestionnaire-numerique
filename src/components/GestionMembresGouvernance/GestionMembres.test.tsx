@@ -28,7 +28,7 @@ describe('gestion des membres gouvernance', () => {
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Gérer les membres · Rhône' })
-    const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un membre' })
+    const ajouterUnMembre = screen.getByRole('button', { name: 'Ajouter un candidat' })
     expect(titre).toBeInTheDocument()
     expect(ajouterUnMembre).toHaveAttribute('type', 'button')
 

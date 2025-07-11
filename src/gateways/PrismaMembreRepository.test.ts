@@ -196,6 +196,7 @@ describe('membre repository', () => {
       isCoporteur: false,
       nom: 'HUBIKOOP',
       oldUUID: '30ca3fa5-76b8-471d-a811-d96074b18eb1',
+      siretRidet: null,
       statut: 'confirme',
       type: 'Préfecture départementale',
     })

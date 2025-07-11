@@ -1,23 +1,35 @@
 import { QueryHandler } from '../QueryHandler'
-import { EntrepriseSirene } from '@/components/GestionMembresGouvernance/types'
 
-export class RechercherUneEntreprise implements QueryHandler<Query, EntrepriseReadModel> {
-  readonly #sireneLoader: SireneLoader
+export class RechercherUneEntreprise implements QueryHandler<Query, EntrepriseNonTrouvee | EntrepriseReadModel> {
+  readonly #rechercheEntrepriseGateway: SireneLoader
 
-  constructor(sireneLoader: SireneLoader) {
-    this.#sireneLoader = sireneLoader
+  constructor(rechercheEntrepriseGateway: SireneLoader) {
+    this.#rechercheEntrepriseGateway = rechercheEntrepriseGateway
   }
 
-  async handle(query: Query): Promise<EntrepriseReadModel> {
-    return this.#sireneLoader.rechercherParSiret(query.siret)
+  async handle(query: Query): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
+    return this.#rechercheEntrepriseGateway.rechercherParIdentifiant(query.siret)
   }
 }
 
 export interface SireneLoader {
-  rechercherParSiret(siret: string): Promise<EntrepriseReadModel>
+  rechercherParIdentifiant(siret: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel>
 }
 
-export type EntrepriseReadModel = EntrepriseSirene
+export type EntrepriseReadModel = Readonly<{
+  activitePrincipale: string
+  adresse: string
+  categorieJuridiqueCode: string
+  categorieJuridiqueLibelle?: string
+  codePostal: string
+  commune: string
+  denomination: string
+  identifiant: string
+}>
+
+export interface EntrepriseNonTrouvee {
+  estTrouvee: false
+}
 
 type Query = Readonly<{
   siret: string

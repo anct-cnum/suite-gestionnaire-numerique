@@ -33,15 +33,15 @@ export default function EtapeConfirmationMembre({
                       Dénomination
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.denominationUniteLegale}
+                      {data.entreprise.denomination}
                     </dd>
                   </div>
                   <div className="fr-col-6">
                     <dt className="color-grey">
-                      SIRET
+                      SIRET/RIDET
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.siret}
+                      {data.entreprise.identifiant}
                     </dd>
                   </div>
                   <div className="fr-col-6">
@@ -49,7 +49,7 @@ export default function EtapeConfirmationMembre({
                       Activité principale
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.activitePrincipaleUniteLegale}
+                      {data.entreprise.activitePrincipale}
                     </dd>
                   </div>
                   <div className="fr-col-6">
@@ -57,7 +57,7 @@ export default function EtapeConfirmationMembre({
                       Forme juridique
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.categorieJuridiqueUniteLegaleLibelle ?? `Code ${data.entreprise.categorieJuridiqueUniteLegale}`}
+                      {data.entreprise.categorieJuridiqueLibelle}
                     </dd>
                   </div>
                   <div className="fr-col-6">
@@ -65,7 +65,7 @@ export default function EtapeConfirmationMembre({
                       Adresse
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.adresseComplete}
+                      {data.entreprise.adresse}
                     </dd>
                   </div>
                 </dl> : null}

@@ -24,6 +24,7 @@ import { modifierUneFeuilleDeRouteAction } from '@/app/api/actions/modifierUneFe
 import { modifierUneNoteDeContexteAction } from '@/app/api/actions/modifierUneNoteDeContexteAction'
 import { modifierUneNoteDeContextualisationAction } from '@/app/api/actions/modifierUneNoteDeContextualisationAction'
 import { modifierUneNotePriveeAction } from '@/app/api/actions/modifierUneNotePriveeAction'
+import { rechercherUneEntrepriseAction } from '@/app/api/actions/rechercherUneEntrepriseAction'
 import { reinviterUnUtilisateurAction } from '@/app/api/actions/reinviterUnUtilisateurAction'
 import { retirerUnCoPorteurAction } from '@/app/api/actions/retirerUnCoPorteurAction'
 import { supprimerDocumentAction } from '@/app/api/actions/supprimerDocumentAction'
@@ -67,6 +68,7 @@ export default function ClientContext({
       modifierUneNoteDeContextualisationAction,
       modifierUneNotePriveeAction,
       pathname,
+      rechercherUneEntrepriseAction,
       reinviterUnUtilisateurAction,
       retirerUnCoPorteurAction,
       roles,
@@ -115,6 +117,7 @@ export type ClientContextProviderValue = Readonly<{
   modifierUneNoteDeContextualisationAction: typeof modifierUneNoteDeContextualisationAction
   modifierUneNotePriveeAction: typeof modifierUneNotePriveeAction
   pathname: string
+  rechercherUneEntrepriseAction: typeof rechercherUneEntrepriseAction
   reinviterUnUtilisateurAction: typeof reinviterUnUtilisateurAction
   retirerUnCoPorteurAction: typeof retirerUnCoPorteurAction
   roles: ReadonlyArray<string>
