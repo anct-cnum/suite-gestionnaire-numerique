@@ -5,6 +5,7 @@ import { Result } from '@/shared/lang'
 export abstract class Membre extends Entity<MembreState> {
   override get state(): MembreState {
     return {
+      dateSuppression: this.dateSuppression,
       nom: this.nom,
       roles: this.roles.map((role) => role.state.value),
       statut: this.statut.state.value,
@@ -13,6 +14,7 @@ export abstract class Membre extends Entity<MembreState> {
     }
   }
 
+  protected readonly dateSuppression: Date | undefined
   protected readonly nom: string
   protected readonly roles: ReadonlyArray<Role>
   protected readonly statut: Statut
@@ -23,13 +25,15 @@ export abstract class Membre extends Entity<MembreState> {
     nom: string,
     roles: ReadonlyArray<Role>,
     uidGouvernance: GouvernanceUid,
-    statut: Statut
+    statut: Statut,
+    dateSuppression: Date | undefined
   ) {
     super(uid)
     this.uidGouvernance = uidGouvernance
     this.nom = nom
     this.roles = roles
     this.statut = statut
+    this.dateSuppression = dateSuppression
   }
 
   appartientALaGouvernance(uidGouvernance: string): boolean {
@@ -37,6 +41,7 @@ export abstract class Membre extends Entity<MembreState> {
   }
 
   abstract confirmer(): Result<MembreFailure, Membre>
+  abstract supprimer(date: Date): Membre
 }
 
 export class MembreUid extends Uid<UidState> {
@@ -58,6 +63,7 @@ export class Statut extends ValueObject<AttributState> {
 }
 
 export type MembreState = Readonly<{
+  dateSuppression: Date | undefined
   nom: string
   roles: ReadonlyArray<string>
   statut: string
@@ -65,7 +71,7 @@ export type MembreState = Readonly<{
   uidGouvernance: GouvernanceUidState
 }>
 
-export type MembreFailure = 'membreDejaConfirme'
+export type MembreFailure = 'membreDejaConfirme' | 'membreSupprimer'
 
 type UidState = Readonly<{ value: string }>
 

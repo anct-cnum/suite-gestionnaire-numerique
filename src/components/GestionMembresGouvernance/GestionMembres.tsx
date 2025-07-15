@@ -33,7 +33,9 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     accepterUnMembreAction,
     definirUnCoPorteurAction ,
     pathname,
-    retirerUnCoPorteurAction } = useContext(clientContext)
+    retirerUnCoPorteurAction,
+    supprimerUnMembreOuCandidatAction,
+  } = useContext(clientContext)
 
   const membresByStatut: Readonly<Record<StatutSelectionnable, ReadonlyArray<MembreViewModel>>> = {
     candidat: membresViewModel.candidats,
@@ -68,14 +70,14 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await retirerUnCoPorteur(membre)
         }}
       />,
-      /*<MenuItem
-            iconClass="fr-icon-delete-line"
-            key={`delete-${membre.uid}`}
-            label="Retirer ce membre"
-            onClick={() => {
-              alert(`Retirer ce membre ${membre.nom}`)
-            }}
-          />,*/
+      <MenuItem
+        iconClass="fr-icon-delete-line"
+        key={`delete-${membre.uid}`}
+        label="Retirer ce membre"
+        onClick={async () => {
+          await supprimerUnMembreOuCandidat(membre)
+        }}
+      />,
     ]
   }
 
@@ -89,14 +91,14 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await definirUnCoPorteur(membre)
         }}
       />,
-      /*<MenuItem
-            iconClass="fr-icon-delete-line"
-            key={`delete-${membre.uid}`}
-            label="Retirer ce membre"
-            onClick={() => {
-              alert(`Retirer ce membre ${membre.nom}`)
-            }}
-          />,*/
+      <MenuItem
+        iconClass="fr-icon-delete-line"
+        key={`delete-${membre.uid}`}
+        label="Retirer ce membre"
+        onClick={async () => {
+          await supprimerUnMembreOuCandidat(membre)
+        }}
+      />,
     ]
   }
 
@@ -110,15 +112,14 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await ajouterUnMembre(membre)
         }}
       />,
-      /*
-          <MenuItem
-            iconClass="fr-icon-delete-line"
-            key={`delete-${membre.uid}`}
-            label="Retirer ce candidat"
-            onClick={() => {
-              alert(`Retirer ce candidat ${membre.nom}`)
-            }}
-          />,*/
+      <MenuItem
+        iconClass="fr-icon-delete-line"
+        key={`delete-${membre.uid}`}
+        label="Retirer ce candidat"
+        onClick={async () => {
+          await supprimerUnMembreOuCandidat(membre)
+        }}
+      />,
     ]
   }
 
@@ -414,6 +415,20 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
     if (messages.includes('OK')) {
       Notification('success', { description: 'Retiré', title: 'Rôle coporteur' })
+    } else {
+      Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
+    }
+  }
+
+  async function supprimerUnMembreOuCandidat(membre: MembreViewModel): Promise<void> {
+    const messages = await supprimerUnMembreOuCandidatAction({
+      path: pathname,
+      uidGouvernance: membresViewModel.uidGouvernance,
+      uidMembre: membre.uid,
+    })
+
+    if (messages.includes('OK')) {
+      Notification('success', { description: 'supprimé', title: 'Membre' })
     } else {
       Notification('error', { description: (messages as ReadonlyArray<string>).join(', '), title: 'Erreur : ' })
     }

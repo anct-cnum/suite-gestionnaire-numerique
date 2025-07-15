@@ -24,6 +24,7 @@ export type MembresViewModel = Readonly<{
   departement: string
   membres: ReadonlyArray<MembreViewModel>
   roles: ReadonlyArray<RoleViewModel>
+  supprimer: ReadonlyArray<MembreViewModel>
   typologies: ReadonlyArray<TypologieViewModel>
   uidGouvernance: string
 }>
@@ -56,6 +57,7 @@ function membresParStatut(membres: ReadonlyArray<MembreReadModel>, uidGouvernanc
   }), {
     candidats: [],
     membres: [],
+    supprimer: [],
   })
 }
 
@@ -93,9 +95,10 @@ const labelTypologieIndefinieByMode = {
 const nomListeMembresParStatut: Readonly<Record<MembreReadModel['statut'], keyof MembresByStatut>> = {
   candidat: 'candidats',
   confirme: 'membres',
+  supprimer: 'supprimer',
 }
 
-type MembresByStatut = Pick<MembresViewModel, 'candidats' | 'membres' >
+type MembresByStatut = Pick<MembresViewModel, 'candidats' | 'membres' | 'supprimer'>
 
 type TypologieViewModel = Readonly<{
   label: string

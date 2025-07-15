@@ -125,6 +125,7 @@ export default function Menu({ items }: Readonly<MenuProps>): ReactElement {
                         border: 'none',
                         height: '1px',
                         margin: '0 auto',
+                        padding: '0',
                         width: '90%',
                       }}
                     />,

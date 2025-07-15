@@ -8,14 +8,14 @@ export class PrismaMembreRepository implements MembreRepository {
   readonly #membreDataResource = prisma.membreRecord
 
   async create(
-    membre: Membre, 
-    contactData?: ContactData, 
-    contactTechniqueData?: ContactData, 
+    membre: Membre,
+    contactData?: ContactData,
+    contactTechniqueData?: ContactData,
     entrepriseData?: EntrepriseData
   ): Promise<void> {
     let email: string
     let contactTechniqueEmail: string | undefined
-    
+
     if (contactData) {
       // Créer ou récupérer le contact principal
       await prisma.contactMembreGouvernanceRecord.upsert({
@@ -60,7 +60,7 @@ export class PrismaMembreRepository implements MembreRepository {
       })
       contactTechniqueEmail = contactTechniqueData.email
     }
-    
+
     await this.#membreDataResource.create({
       data: {
         categorieMembre : entrepriseData?.categorieJuridiqueCode,
@@ -104,6 +104,7 @@ export class PrismaMembreRepository implements MembreRepository {
   async update(membre: Membre): Promise<void> {
     await this.#membreDataResource.update({
       data: {
+        dateSuppression: membre.state.dateSuppression,
         isCoporteur: membre.state.roles.includes('coporteur'),
         statut: membre.state.statut,
       },

@@ -193,15 +193,16 @@ model ContactMembreGouvernanceRecord {
 model MembreRecord {
   id String @id
 
-  gouvernanceDepartementCode String  @map("gouvernance_departement_code")
+  gouvernanceDepartementCode String    @map("gouvernance_departement_code")
   contact                    String
-  contactTechnique           String? @map("contact_technique")
+  contactTechnique           String?   @map("contact_technique")
   type                       String?
   statut                     String
-  isCoporteur                Boolean @default(false) @map("is_coporteur")
-  categorieMembre            String? @map("categorie_membre")
-  nom                        String? @map("nom")
-  siretRidet                 String? @map("siret_ridet")
+  isCoporteur                Boolean   @default(false) @map("is_coporteur")
+  categorieMembre            String?   @map("categorie_membre")
+  nom                        String?   @map("nom")
+  siretRidet                 String?   @map("siret_ridet")
+  dateSuppression            DateTime? @map("date_suppression")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
