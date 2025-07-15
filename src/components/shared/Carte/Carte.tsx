@@ -151,8 +151,9 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
       [center[0] - lngDelta, center[1] - latDelta],
       [center[0] + lngDelta, center[1] + latDelta]
     )
-    // Centrer la carte sur les bounds avec animation
+    // Centrer la carte sur les bounds sans animation
     map.current.fitBounds(bounds, {
+      duration: 0,
       maxZoom: 10,
       padding: 50,
       zoom: 8,
