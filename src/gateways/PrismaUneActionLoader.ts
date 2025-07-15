@@ -68,7 +68,7 @@ export class PrismaUneActionLoader implements PrismaUneActionLoader {
     })
     const feuilleDeRoute = await prisma.feuilleDeRouteRecord.findUniqueOrThrow({
       where: {
-        id: Number(actionRecord.feuilleDeRouteId),
+        id: actionRecord.feuilleDeRouteId,
       },
     })
     return PrismaUneActionLoader.#transform(actionRecord, feuilleDeRoute.nom, feuilleDeRoute.gouvernanceDepartementCode)

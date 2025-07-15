@@ -1,4 +1,5 @@
 import { fireEvent, screen, within } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 
 import GestionMembres from './GestionMembres'
 import { renderComponent } from '../testHelper'
