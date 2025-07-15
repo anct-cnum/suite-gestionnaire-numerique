@@ -11247,7 +11247,7 @@ __metadata:
     maplibre-gl: "npm:^5.5.0"
     mjml: "npm:^4.15.3"
     mongodb: "npm:^6.16.0"
-    nanoid: "npm:3.3.8"
+    nanoid: "npm:5.1.5"
     next: "npm:^15.3.1"
     next-auth: "npm:^4.24.11"
     nodemailer: "npm:^6.10.1"
@@ -11382,7 +11382,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:3.3.8, nanoid@npm:^3.3.6, nanoid@npm:^3.3.8":
+"nanoid@npm:5.1.5":
+  version: 5.1.5
+  resolution: "nanoid@npm:5.1.5"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10c0/e6004f1ad6c7123eeb037062c4441d44982037dc043aabb162457ef6986e99964ba98c63c975f96c547403beb0bf95bc537bd7bf9a09baf381656acdc2975c3c
+  languageName: node
+  linkType: hard
+
+"nanoid@npm:^3.3.6, nanoid@npm:^3.3.8":
   version: 3.3.8
   resolution: "nanoid@npm:3.3.8"
   bin:
