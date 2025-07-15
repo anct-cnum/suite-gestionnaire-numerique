@@ -21,14 +21,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   const searchParams = useSearchParams()
   const statutInitial = searchParams.get('statut') === 'candidat' ? 'candidat' : 'confirme'
 
-  useEffect(() => {
-    if (searchParams.get('statut') === null) {
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.set('statut', 'confirme')
-      router.replace(newUrl.pathname + newUrl.search)
-    }
-  }, [searchParams, router])
-
   const {
     accepterUnMembreAction,
     definirUnCoPorteurAction ,
@@ -343,10 +335,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
   }
 
   function setStatut(statut: StatutSelectionnable): void {
-    const newUrl = new URL(window.location.href)
-    newUrl.searchParams.set('statut', statut)
-    router.replace(newUrl.pathname + newUrl.search)
-    
     setMembresView({
       ...membresView,
       membres: membresByStatut[statut],
