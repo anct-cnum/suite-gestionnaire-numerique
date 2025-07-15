@@ -11,6 +11,7 @@ Le script `update-subvention-status.ts` permet de mettre à jour les statuts de 
 ### Prérequis
 
 1. **devbox** activé avec les packages suivants dans `devbox.json` :
+
    - `nodejs@22`
    - `minio-client`
 

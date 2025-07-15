@@ -1,5 +1,4 @@
 import { fireEvent, screen, within } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
 
 import { renderComponent } from '../testHelper'
 import { FormulaireAction } from './FormulaireAction'

@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 
 import { PrismaMembreRepository } from './PrismaMembreRepository'
 import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUnMembre } from './testHelper'

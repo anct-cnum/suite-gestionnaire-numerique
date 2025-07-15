@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import { Administrateur } from './Administrateur'
 import { GestionnaireDepartement } from './GestionnaireDepartement'
 import { GestionnaireGroupement } from './GestionnaireGroupement'

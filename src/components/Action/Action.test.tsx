@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { FormEvent } from 'react'
-import { describe, expect, it, Mock } from 'vitest'
+import { Mock } from 'vitest'
 
 import AjouterUneAction from './AjouterUneAction'
 import { FormulaireAction } from './FormulaireAction'

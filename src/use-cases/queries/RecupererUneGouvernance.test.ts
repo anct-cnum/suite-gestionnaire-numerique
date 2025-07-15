@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-
 import { RecupererUneGouvernance, UneGouvernanceLoader, UneGouvernanceReadModel } from './RecupererUneGouvernance'
 import { GetUtilisateurRepository } from '../commands/shared/UtilisateurRepository'
 import { gouvernanceReadModelFactory } from '../testHelper'

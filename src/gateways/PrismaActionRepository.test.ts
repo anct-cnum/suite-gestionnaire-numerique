@@ -1,6 +1,4 @@
 
-import { describe, expect, it } from 'vitest'
-
 import { PrismaActionRepository } from './PrismaActionRepository'
 import { actionRecordFactory, creerUnContact, creerUnDepartement, creerUneFeuilleDeRoute, creerUneGouvernance, creerUneRegion, creerUnMembre,  creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
@@ -81,7 +79,7 @@ describe('action repository', () => {
           dateDeDebut: new Date('2024-01-01'),
           dateDeFin: new Date('2025-01-01'),
           description: 'Description détaillée de l\'action',
-          feuilleDeRouteId,
+          feuilleDeRouteId: Number(feuilleDeRouteId),
           nom: 'Action test',
         }))
         throw new Error('ROLLBACK_TEST')
