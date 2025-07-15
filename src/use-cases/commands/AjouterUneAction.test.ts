@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma } from '@prisma/client'
+import { beforeEach, describe, expect, it } from 'vitest'
 
 import { AjouterUneAction } from './AjouterUneAction'
 import { AddActionRepository } from './shared/ActionRepository'
@@ -178,8 +179,8 @@ describe('ajouter une action à une feuille de route', () => {
         besoins: ['besoin 1'],
         budgetGlobal: 10000,
         contexte: 'Un contexte',
-        dateDeDebut: dateDeDebut.toString(),
-        dateDeFin: dateDeFin.toString(),
+        dateDeDebut,
+        dateDeFin,
         description: 'Description',
         destinataires: ['uidBeneficiaire1', 'uidBeneficiaire2'],
         nom,

@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, it } from 'vitest'
+
 import { ModifierUneNotePrivee } from './ModifierUneNotePrivee'
 import { GetGouvernanceRepository, UpdateGouvernanceRepository } from './shared/GouvernanceRepository'
 import { GetUtilisateurRepository } from './shared/UtilisateurRepository'
