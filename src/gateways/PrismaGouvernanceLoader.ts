@@ -214,8 +214,7 @@ function beneficiairesSubventionAccordee(
     actions
       .map(({ demandesDeSubvention }) => demandesDeSubvention[0])
       .filter(Boolean)
-      .filter(({ enveloppe, statut }) => predicate(enveloppe) && 
-              (statut as StatutSubvention) === StatutSubvention.ACCEPTEE)
+      .filter(({ enveloppe, statut }) => predicate(enveloppe) && statut === StatutSubvention.ACCEPTEE.toString())
       .flatMap(({ beneficiaire }) => beneficiaire)
       .map(({ membre }) => membre)
   )

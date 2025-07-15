@@ -1,5 +1,3 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-
 import { PrismaStructureLoader } from './PrismaStructureLoader'
 import { creerUnDepartement, creerUneRegion, creerUneStructure } from './testHelper'
 import prisma from '../../prisma/prismaClient'

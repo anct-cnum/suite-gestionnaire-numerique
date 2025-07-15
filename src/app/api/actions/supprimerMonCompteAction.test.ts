@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import { supprimerMonCompteAction } from './supprimerMonCompteAction'
 import * as ssoGateway from '@/gateways/NextAuthAuthentificationGateway'
 import { SupprimerUnUtilisateur } from '@/use-cases/commands/SupprimerUnUtilisateur'

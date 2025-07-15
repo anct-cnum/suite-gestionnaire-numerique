@@ -1,7 +1,7 @@
 // eslint-disable devrait être inutile mais la configuration ne fonctionne pas sans ça
+/* eslint-disable import/no-restricted-paths */
 import mjml2html from 'mjml'
 import nodemailer from 'nodemailer'
-import { describe, expect } from 'vitest'
 
 import { invitationEmailTemplate } from './emails/invitationEmail'
 import { NodemailerEmailInvitationGateway } from './NodemailerEmailInvitationGateway'

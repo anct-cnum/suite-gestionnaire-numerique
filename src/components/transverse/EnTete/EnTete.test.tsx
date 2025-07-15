@@ -1,6 +1,5 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import * as nextAuth from 'next-auth/react'
-import { describe, expect, it } from 'vitest'
 
 import EnTete from './EnTete'
 import { renderComponent, stubbedServerAction } from '@/components/testHelper'

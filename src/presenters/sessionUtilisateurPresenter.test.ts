@@ -1,5 +1,3 @@
-import { describe, expect, it } from 'vitest'
-
 import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 

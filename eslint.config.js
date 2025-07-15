@@ -83,7 +83,7 @@ export default [
         {
           zones: [
             {
-              target: ['src/domain/**[^test].ts'],
+              target: ['src/domain'],
               from: ['src', 'node_modules'],
               except: ['domain', 'shared'],
               message: "Le domain représente le métier, il ne dépend d'aucun élément extérieur.",
@@ -116,9 +116,29 @@ export default [
               message: "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases.",
             },
             {
+              target: ['src/gateways/**test.ts'],
+              from: ['src', 'node_modules'],
+              except: [
+                'domain',
+                'use-cases',
+                'gateways',
+                'shared',
+                '@prisma/client',
+                'nodemailer',
+                'mjml',
+              ],
+              message: "Les gateways n'ont besoin que du domain et d'implementer les ports définis dans les use cases.",
+            },
+            {
               target: ['src/presenters/**[^test].ts'],
               from: ['src', 'node_modules'],
               except: ['use-cases', 'presenters/shared', 'shared'],
+              message: "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
+            },
+            {
+              target: ['src/presenters/**test.ts'],
+              from: ['src', 'node_modules'],
+              except: ['use-cases', 'presenters'],
               message: "Les presenters préparent les données à afficher et n'ont pas connaissance du domain ni des gateways.",
             },
             {

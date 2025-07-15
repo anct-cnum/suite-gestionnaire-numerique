@@ -1,5 +1,3 @@
-import { beforeEach, describe, expect } from 'vitest'
-
 import { RechercherLesStructures, StructureLoader, StructuresReadModel } from './RechercherLesStructures'
 
 describe('rechercher les structures', () => {

@@ -1,5 +1,3 @@
-import { describe, expect } from 'vitest'
-
 import { Gouvernance } from './Gouvernance'
 import { utilisateurFactory } from './testHelper'
 import { UtilisateurUid } from './Utilisateur'
