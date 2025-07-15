@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: 'Se connecter',
 }
 
+// Forcer le rendu dynamique pour éviter les appels API à la compilation
+export const dynamic = 'force-dynamic'
+
 export default async function ConnexionController(): Promise<ReactElement> {
   const providers = await getProviders() as unknown as ProConnectProvider
 
