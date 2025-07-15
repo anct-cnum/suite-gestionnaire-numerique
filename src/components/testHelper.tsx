@@ -64,6 +64,7 @@ export function renderComponent(
     supprimerUneNoteDeContexteAction: vi.fn(),
     supprimerUneNoteDeContextualisationAction: vi.fn(),
     supprimerUneNotePriveeAction: vi.fn(),
+    supprimerUnMembreOuCandidatAction: vi.fn(),
     supprimerUnUtilisateurAction: vi.fn(),
     utilisateursParPage: 10,
   }

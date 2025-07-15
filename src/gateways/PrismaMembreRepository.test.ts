@@ -41,6 +41,7 @@ describe('membre repository', () => {
 
     // THEN
     expect(membre.state).toStrictEqual({
+      dateSuppression: undefined,
       nom: 'Lyon',
       roles: ['observateur'],
       statut: 'confirme',
@@ -67,6 +68,7 @@ describe('membre repository', () => {
 
     // THEN
     expect(membre.state).toStrictEqual({
+      dateSuppression: undefined,
       nom: 'Auvergne-Rhône-Alpes',
       roles: ['observateur'],
       statut: 'confirme',
@@ -93,6 +95,7 @@ describe('membre repository', () => {
 
     // THEN
     expect(membre.state).toStrictEqual({
+      dateSuppression: undefined,
       nom: 'Paris',
       roles: ['observateur'],
       statut: 'confirme',
@@ -119,6 +122,7 @@ describe('membre repository', () => {
 
     // THEN
     expect(membre.state).toStrictEqual({
+      dateSuppression: undefined,
       nom: 'Bordeaux Métropole',
       roles: ['observateur'],
       statut: 'confirme',
@@ -145,6 +149,7 @@ describe('membre repository', () => {
 
     // THEN
     expect(membre.state).toStrictEqual({
+      dateSuppression: undefined,
       nom: 'HUBIKOOP',
       roles: ['observateur'],
       statut: 'candidat',
@@ -191,6 +196,7 @@ describe('membre repository', () => {
       categorieMembre: 'Préfecture départementale',
       contact: 'email@example.com',
       contactTechnique: null,
+      dateSuppression: null,
       gouvernanceDepartementCode: '69',
       id: 'structure-69-69',
       isCoporteur: false,

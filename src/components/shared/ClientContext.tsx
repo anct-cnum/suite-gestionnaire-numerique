@@ -34,6 +34,7 @@ import { supprimerUneActionAction } from '@/app/api/actions/supprimerUneActionAc
 import { supprimerUneNoteDeContexteAction } from '@/app/api/actions/supprimerUneNoteDeContexteAction'
 import { supprimerUneNoteDeContextualisationAction } from '@/app/api/actions/supprimerUneNoteDeContextualisationAction'
 import { supprimerUneNotePriveeAction } from '@/app/api/actions/supprimerUneNotePriveeAction'
+import { supprimerUnMembreOuCandidatAction } from '@/app/api/actions/supprimerUnMembreOuCandidatAction'
 import { supprimerUnUtilisateurAction } from '@/app/api/actions/supprimerUnUtilisateurAction'
 import { SessionUtilisateurViewModel } from '@/presenters/sessionUtilisateurPresenter'
 
@@ -82,6 +83,7 @@ export default function ClientContext({
       supprimerUneNoteDeContexteAction,
       supprimerUneNoteDeContextualisationAction,
       supprimerUneNotePriveeAction,
+      supprimerUnMembreOuCandidatAction,
       supprimerUnUtilisateurAction,
       utilisateursParPage,
     }),
@@ -131,6 +133,7 @@ export type ClientContextProviderValue = Readonly<{
   supprimerUneNoteDeContexteAction: typeof supprimerUneNoteDeContexteAction
   supprimerUneNoteDeContextualisationAction: typeof supprimerUneNoteDeContextualisationAction
   supprimerUneNotePriveeAction: typeof supprimerUneNotePriveeAction
+  supprimerUnMembreOuCandidatAction: typeof supprimerUnMembreOuCandidatAction
   supprimerUnUtilisateurAction: typeof supprimerUnUtilisateurAction
   utilisateursParPage: number
 }>

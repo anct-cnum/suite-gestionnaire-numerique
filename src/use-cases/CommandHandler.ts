@@ -1,6 +1,6 @@
-import { Result, ResultOk, Struct } from '@/shared/lang'
+import { Result, ResultOk } from '@/shared/lang'
 
-export interface CommandHandler<Command extends Struct, Failure = string, Success = ResultOk> {
+export interface CommandHandler<Command, Failure = string, Success = ResultOk> {
   handle(command: Command): ResultAsync<Failure, Success>
 }
 
