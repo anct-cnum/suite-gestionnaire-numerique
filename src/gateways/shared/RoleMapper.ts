@@ -50,9 +50,6 @@ const typologieRoleByEnumRole: TypologieRoleByEnumRole = {
   gestionnaire_groupement: 'Gestionnaire groupement',
   gestionnaire_region: 'Gestionnaire région',
   gestionnaire_structure: 'Gestionnaire structure',
-  instructeur: 'Instructeur',
-  pilote_politique_publique: 'Pilote politique publique',
-  support_animation: 'Support animation',
 }
 
 const enumRoleByTypologieRole = Object.fromEntries(

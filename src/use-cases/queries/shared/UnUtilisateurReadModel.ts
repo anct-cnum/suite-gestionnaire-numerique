@@ -1,3 +1,10 @@
+export type RoleUtilisateur = 
+  | 'administrateur_dispositif'
+  | 'gestionnaire_departement'
+  | 'gestionnaire_groupement'
+  | 'gestionnaire_region'
+  | 'gestionnaire_structure'
+
 export type UnUtilisateurReadModel = Readonly<{
   departementCode: null | string
   derniereConnexion: Date
@@ -16,6 +23,7 @@ export type UnUtilisateurReadModel = Readonly<{
     nom: string
     organisation: string
     rolesGerables: ReadonlyArray<string>
+    type: RoleUtilisateur
   }>
   structureId: null | number
   telephone: string

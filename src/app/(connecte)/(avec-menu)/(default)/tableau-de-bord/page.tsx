@@ -34,6 +34,16 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
+  // Affichage conditionnel selon le rôle
+  if (utilisateur.role.type === 'administrateur_dispositif') {
+    return (
+      <div>
+        <h1>Tableau de bord de l'administrateur</h1>
+      </div>
+    )
+  }
+
+  // Tableau de bord du gestionnaire de département
   const departementCode = utilisateur.departementCode ?? ''
   
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
