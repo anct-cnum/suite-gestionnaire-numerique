@@ -24,9 +24,10 @@ export default function AjouterUnComite({
       dateAujourdhui={dateAujourdhui}
       label="Ajouter un comité"
       labelId={labelId}
+      peutGerer={peutGerer}
       validerFormulaire={creerUnComite}
     >
-      {peutGerer ? 
+      {peutGerer ?
         <SubmitButton
           ariaControls={id}
           isDisabled={isDisabled}

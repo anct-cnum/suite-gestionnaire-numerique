@@ -26,6 +26,7 @@ export default function ModifierUnComite({
         dateAujourdhui={dateAujourdhui}
         label={label}
         labelId={labelId}
+        peutGerer={peutGerer}
         validerFormulaire={modifierUnComite}
       >
         {peutGerer ?
@@ -45,7 +46,7 @@ export default function ModifierUnComite({
             >
               {isDisabled ? 'Suppression en cours...' : 'Supprimer'}
             </button>
-          </> 
+          </>
           : null}
       </FormulaireComite>
       <p className="fr-text--xs center">

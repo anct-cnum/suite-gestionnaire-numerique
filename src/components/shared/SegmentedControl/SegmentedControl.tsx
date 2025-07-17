@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function SegmentedControl({ children, name, options }: Props): ReactElement {
+export default function SegmentedControl({ children, disabled, name, options }: Props): ReactElement {
   return (
     <fieldset className="fr-segmented fr-segmented--sm fr-mb-2w full-width">
       <legend className="fr-segmented__legend">
@@ -14,6 +14,7 @@ export default function SegmentedControl({ children, name, options }: Props): Re
           >
             <input
               defaultChecked={isChecked}
+              disabled={disabled}
               id={id}
               name={name}
               type="radio"
@@ -33,6 +34,7 @@ export default function SegmentedControl({ children, name, options }: Props): Re
 }
 
 type Props = PropsWithChildren<Readonly<{
+  disabled?: boolean
   name: string
   options: ReadonlyArray<{
     id: string

@@ -19,6 +19,7 @@ import ReadMore from '../shared/ReadMore/ReadMore'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import SupprimerUneAction from '@/components/FeuilleDeRoute/SupprimerUneAction'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import {  FeuilleDeRouteViewModel } from '@/presenters/feuilleDeRoutePresenter'
 import { isNullish } from '@/shared/lang'
 
@@ -28,6 +29,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
   const modalId = 'supprimer-une-action'
   const [actionASupprimer, setActionASupprimer] = useState({ nom: '', uid : '' })
   const [isUploading, setIsUploading] = useState(false)
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
 
   async function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>): Promise<void>
   {
@@ -56,16 +58,123 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
         method: 'POST',
       })
 
-      if (!response.ok) {
-        throw new Error('Erreur lors de l’upload')
+      if (response.ok) {
+        await response.json()
+        Notification('success', { description: 'Document uploadé avec succès', title: 'Succès' })
+        window.location.reload()
+      } else {
+        Notification('error', { description: 'l’upload pdf', title: 'Erreur : ' })
       }
-
-      await response.json()
-      Notification('success', { description: 'Document uploadé avec succès', title: 'Succès' })
-      window.location.reload()
     } finally {
       setIsUploading(false)
     }
+  }
+  function renderNoteDeContextualisation() : null | ReactElement {
+    if (isNullish(viewModel.contextualisation) && gouvernanceViewModel.peutGererGouvernance) {
+      return <AjouterUneNoteDeContextualisation uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute} />
+    }
+
+    if (gouvernanceViewModel.peutGererGouvernance) {
+      return (
+        <ModifierUneNoteDeContextualisation
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+          contextualisation={viewModel.contextualisation!}
+          uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
+        />
+      )
+    }
+
+    return null
+  }
+
+  function renderSectionPdf() : null | ReactElement {
+    if(viewModel.document === undefined && !gouvernanceViewModel.peutGererGouvernance)
+    {return null}
+    let content : null | ReactElement
+    if(viewModel.document) {
+      if(gouvernanceViewModel.peutGererGouvernance)
+      {content =  (
+        <OuvrirPdf
+          href={viewModel.document.href}
+          nom={viewModel.document.nom}
+          onDelete={async () => handleSupprimerDocument()}
+        />
+      )}
+      else {
+        content = (
+          <OuvrirPdf
+            href={viewModel.document.href}
+            nom={viewModel.document.nom}
+          />
+        )
+      }
+    }
+    else{
+      content =  (
+        <div className="fr-grid-row space-between">
+          <div>
+            <header>
+              <h2
+                className="fr-h6 color-blue-france"
+                id="document"
+              >
+                Déposez votre document de stratégie
+              </h2>
+            </header>
+            <div className="fr-upload-group">
+              <label
+                className="fr-label"
+                htmlFor="file-upload"
+              >
+                <span className="fr-hint-text">
+                  Taille maximale : 25 Mo. Format .pdf
+                </span>
+              </label>
+              <input
+                accept=".pdf"
+                className="fr-upload"
+                disabled={isUploading}
+                id="file-upload"
+                name="file-upload"
+                onChange={handleFileUpload}
+                type="file"
+              />
+              {isUploading ? (
+                <div className="fr-mt-2w">
+                  <div className="fr-progress">
+                    <p className="fr-progress__info">
+                      Upload en cours...
+                    </p>
+                    <div
+                      aria-valuemax={100}
+                      aria-valuemin={0}
+                      className="fr-progress__bar"
+                      role="progressbar"
+                    >
+                      <div
+                        className="fr-progress__value"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+          <div>
+            <DocumentVide />
+          </div>
+        </div>
+      )
+    }
+    return (
+      <section
+        aria-labelledby="document"
+        className="fr-mb-4w grey-dashed-border border-radius fr-p-4w"
+      >
+        {content}
+      </section>
+    )
   }
 
   return (
@@ -78,14 +187,16 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
           <PageTitle>
             {viewModel.nom}
           </PageTitle>
-          <ModifierUneFeuilleDeRoute
-            membres={viewModel.formulaire.membres}
-            nom={viewModel.nom}
-            perimetre={viewModel.perimetre}
-            perimetres={viewModel.formulaire.perimetres}
-            uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
-            uidGouvernance={viewModel.uidGouvernance}
-          />
+          {gouvernanceViewModel.peutGererGouvernance ?
+            <ModifierUneFeuilleDeRoute
+              membres={viewModel.formulaire.membres}
+              nom={viewModel.nom}
+              perimetre={viewModel.perimetre}
+              perimetres={viewModel.formulaire.perimetres}
+              uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
+              uidGouvernance={viewModel.uidGouvernance}
+            />: null}
+
         </div>
         <div className="fr-mb-3w">
           {
@@ -126,13 +237,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             >
               Contextualisation des demandes de subvention
             </h2>
-            { isNullish(viewModel.contextualisation) ?
-              <AjouterUneNoteDeContextualisation uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute} /> :
-              <ModifierUneNoteDeContextualisation
-                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                contextualisation={viewModel.contextualisation!}
-                uidFeuilleDeRoute={viewModel.uidFeuilleDeRoute}
-              />}
+            {renderNoteDeContextualisation()}
           </header>
           { isNullish(viewModel.contextualisation) ? null : (
             <ReadMore
@@ -141,75 +246,9 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
             />
           )}
         </section>
-        <section
-          aria-labelledby="document"
-          className="fr-mb-4w grey-dashed-border border-radius fr-p-4w"
-        >
-          {
-            viewModel.document ? (
-              <OuvrirPdf
-                href={viewModel.document.href}
-                nom={viewModel.document.nom}
-                onDelete={async () => handleSupprimerDocument()}
-              />
-            ) : (
-              <div className="fr-grid-row space-between">
-                <div>
-                  <header>
-                    <h2
-                      className="fr-h6 color-blue-france"
-                      id="document"
-                    >
-                      Déposez votre document de stratégie
-                    </h2>
-                  </header>
-                  <div className="fr-upload-group">
-                    <label
-                      className="fr-label"
-                      htmlFor="file-upload"
-                    >
-                      <span className="fr-hint-text">
-                        Taille maximale : 25 Mo. Format .pdf
-                      </span>
-                    </label>
-                    <input
-                      accept=".pdf"
-                      className="fr-upload"
-                      disabled={isUploading}
-                      id="file-upload"
-                      name="file-upload"
-                      onChange={handleFileUpload}
-                      type="file"
-                    />
-                    {isUploading ? 
-                      <div className="fr-mt-2w">
-                        <div className="fr-progress">
-                          <p className="fr-progress__info">
-                            Upload en cours...
-                          </p>
-                          <div
-                            aria-valuemax={100}
-                            aria-valuemin={0}
-                            className="fr-progress__bar"
-                            role="progressbar"
-                          >
-                            <div
-                              className="fr-progress__value"
-                              style={{ width: '100%' }}
-                            />
-                          </div>
-                        </div>
-                      </div>                 
-                      : null}
-                  </div>
-                </div>
-                <div>
-                  <DocumentVide />
-                </div>
-              </div>
-            )
-          }
-        </section>
+        {
+          renderSectionPdf()
+        }
         <section
           aria-labelledby="actions"
           className="glycine-background fr-p-4w fr-mb-4w"
@@ -251,12 +290,15 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
               >
                 {viewModel.action}
               </h2>
-              <Link
-                className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-                href={viewModel.urlAjouterUneAction}
-              >
-                Ajouter une action
-              </Link>
+              {gouvernanceViewModel.peutGererGouvernance ?
+                <Link
+                  className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
+                  href={viewModel.urlAjouterUneAction}
+                >
+                  Ajouter une action
+                </Link>
+                : null}
+
             </div>
           </header>
           {
@@ -273,8 +315,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                       icon={action.icone.icon}
                     />
                     <div>
-                      {action.modifiable ?
-                        
+                      {action.modifiable && gouvernanceViewModel.peutGererGouvernance ?
                         <Link
                           className="fr-btn fr-btn--tertiary fr-mr-2w"
                           href={action.urlModifier}
@@ -282,7 +323,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                         >
                           Modifier
                         </Link>
-                        : 
+                        :
                         <Link
                           className="fr-btn fr-btn--tertiary fr-mr-2w"
                           href={action.urlVisualiser}
@@ -290,7 +331,7 @@ export default function FeuilleDeRoute({ viewModel }: Props): ReactElement {
                         >
                           Voir
                         </Link>}
-                      {action.supprimable ?
+                      {action.supprimable && gouvernanceViewModel.peutGererGouvernance?
                         <button
                           aria-controls={modalId}
                           className="fr-btn fr-btn--tertiary color-red"

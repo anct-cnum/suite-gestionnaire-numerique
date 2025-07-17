@@ -66,7 +66,7 @@ describe('menu lateral', () => {
     afficherMenuLateralGestionnaireDepartement()
 
     // THEN
-    const menuGouvernance = screen.getByRole('link', { expanded: false, name: 'Gouvernance' })
+    const menuGouvernance = screen.getByRole('link', { expanded: true, name: 'Gouvernance' })
     expect(menuGouvernance).toHaveAttribute('aria-controls', 'fr-sidemenu-gouvernance')
   })
 

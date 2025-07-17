@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 
 import FeuilleDeRoute from './FeuilleDeRoute'
 import { matchWithoutMarkup, renderComponent, stubbedServerAction } from '../testHelper'
@@ -11,7 +11,8 @@ describe('feuille de route', () => {
     const viewModel = feuilleDeRoutePresenter(feuilleDeRouteReadModelFactory(),gouvernanceReadModelFactory())
 
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
+    //render(<FeuilleDeRoute viewModel={viewModel} />)
 
     // THEN
     const titre = screen.getByRole('heading', { level: 1, name: 'Feuille de route FNE' })
@@ -147,7 +148,7 @@ describe('feuille de route', () => {
     }, gouvernanceReadModelFactory())
 
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
 
     // THEN
     const sectionUpload = screen.getByRole('region', { name: 'Déposez votre document de stratégie' })
@@ -164,9 +165,8 @@ describe('feuille de route', () => {
       ...feuilleDeRouteReadModelFactory(),
       porteur: undefined,
     }, gouvernanceReadModelFactory())
-
     // WHEN
-    render(<FeuilleDeRoute viewModel={viewModel} />)
+    renderComponent(<FeuilleDeRoute viewModel={viewModel} />)
 
     // THEN
     const porteur = screen.getByTitle('Aucun responsable de la feuille de route')

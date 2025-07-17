@@ -13,6 +13,7 @@ export default function FormulaireComite({
   dateAujourdhui,
   label,
   labelId,
+  peutGerer,
   validerFormulaire,
 }: Props): ReactElement {
   return (
@@ -30,6 +31,7 @@ export default function FormulaireComite({
         Renseignez les comités prévus et la fréquence à laquelle ils se réunissent
       </p>
       <SegmentedControl
+        disabled={!(peutGerer ?? false)}
         name="type"
         options={comite.types}
       >
@@ -42,6 +44,7 @@ export default function FormulaireComite({
         </p>
       </SegmentedControl>
       <SegmentedControl
+        disabled={!(peutGerer ?? false)}
         name="frequence"
         options={comite.frequences}
       >
@@ -56,6 +59,7 @@ export default function FormulaireComite({
       <div className="fr-col-6 fr-mb-3w">
         <Datepicker
           defaultValue={comite.date}
+          disable={!(peutGerer ?? false)}
           min={dateAujourdhui}
           name="date"
         >
@@ -64,6 +68,7 @@ export default function FormulaireComite({
       </div>
       <TextArea
         defaultValue={comite.commentaire}
+        disable={!(peutGerer ?? false)}
         maxLength={500}
         rows={9}
       >
@@ -86,5 +91,6 @@ type Props = PropsWithChildren<Readonly<{
   dateAujourdhui: string
   label: string
   labelId: string
+  peutGerer?: boolean
   validerFormulaire(event: FormEvent<HTMLFormElement>): void
 }>>

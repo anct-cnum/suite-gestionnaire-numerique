@@ -66,7 +66,7 @@ export class Gouvernance extends Entity<State> {
   }
 
   static peutEtreGereePar(utilisateur: Utilisateur, codeDepartement: string): boolean {
-    return utilisateur.isSuperAdmin
+    return utilisateur.isSuperAdmin || utilisateur.isAdmin
       || codeDepartement === utilisateur.state.departement?.code
   }
 
@@ -110,8 +110,7 @@ export class Gouvernance extends Entity<State> {
   }
 
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isAdmin
-      || this.#departement.state.code === utilisateur.state.departement?.code
+    return Gouvernance.peutEtreGereePar(utilisateur, this.#departement.state.code)
   }
 
   supprimerNoteDeContexte(): void {

@@ -7,6 +7,7 @@ import styles from './GestionMembres.module.css'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Badge from '@/components/shared/Badge/Badge'
 import { clientContext } from '@/components/shared/ClientContext'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import Menu from '@/components/shared/Menu/Menu'
 import MenuItem, { MenuItemProps } from '@/components/shared/Menu/MenuItem'
 import { Notification } from '@/components/shared/Notification/Notification'
@@ -48,7 +49,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     statutSelectionne: statutInitial,
     typologieSelectionnee: touteTypologie,
   })
-
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
   // Ce code n'est pas testé
   // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
   useEffect(() => {
@@ -123,7 +124,10 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     ]
   }
 
-  function getMenu(membre: MembreViewModel): ReactElement {
+  function getMenu(membre: MembreViewModel): null | ReactElement {
+    if(!gouvernanceViewModel.peutGererGouvernance){
+      return null
+    }
     let menuItem
     if(membresView.statutSelectionne === 'candidat')
     {
@@ -137,10 +141,19 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       menuItem = getMenuMembreNonCoPorteur(membre)
     }
     return  (
-      <Menu
-        items={menuItem}
-      />
+      <td>
+        <Menu
+          items={menuItem}
+        />
+      </td>
     )
+  }
+
+  function getEnTetes() : Array<string>{
+    const enTetes: Array<string> = ['Structure', 'Contact référent', 'Rôles']
+    if(gouvernanceViewModel.peutGererGouvernance)
+    {return enTetes.concat([''])}
+    return  enTetes
   }
 
   return (
@@ -151,16 +164,19 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           {' '}
           {membresViewModel.departement}
         </PageTitle>
-        <button
-          className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
-          onClick={() => {
-            const ajouterPath = `${pathname}/ajouter`
-            router.push(ajouterPath)
-          }}
-          type="button"
-        >
-          Ajouter un candidat
-        </button>
+        {
+          gouvernanceViewModel.peutGererGouvernance ?
+            <button
+              className="fr-btn fr-btn--primary fr-btn--icon-left fr-icon-add-line fr-mt-4v"
+              onClick={() => {
+                const ajouterPath = `${pathname}/ajouter`
+                router.push(ajouterPath)
+              }}
+              type="button"
+            >
+              Ajouter un candidat
+            </button>: null
+        }
       </div>
       <div className="fr-tabs fr-tabs__list fr-pb-0">
         <ul className="fr-nav__list">
@@ -262,7 +278,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
 
       </div>
       <Table
-        enTetes={['Structure', 'Contact référent', 'Rôles', '']}
+        enTetes={getEnTetes()}
         titre="Membres"
       >
         {membresView.membres.map((membre, index) => (
@@ -329,9 +345,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
                   ))}
               </div>
             </td>
-            <td>
-              {getMenu(membre)}
-            </td>
+            {getMenu(membre)}
           </tr>
         ))}
       </Table>
