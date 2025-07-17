@@ -1,13 +1,15 @@
 import Link from 'next/link'
-import { PropsWithChildren, ReactElement } from 'react'
+import { PropsWithChildren, ReactElement, useContext } from 'react'
 
 import styles from './FeuillesDeRoute.module.css'
 import OuvrirPdf from '../shared/OuvrirPdf/OuvrirPdf'
 import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props): ReactElement {
+  const { gouvernanceViewModel } = useContext(gouvernanceContext)
   return (
     <div
       aria-label={feuilleDeRoute.nom}
@@ -45,12 +47,16 @@ export default function ResumeFeuilleDeRoute({ children, feuilleDeRoute }: Props
           <p className="fr-text--bold fr-mb-0">
             {feuilleDeRoute.nombreDActionsAttachees}
           </p>
-          <Link
-            className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
-            href={feuilleDeRoute.links.ajouter}
-          >
-            Ajouter une action
-          </Link>
+          {
+            gouvernanceViewModel.peutGererGouvernance ?
+              <Link
+                className="fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line"
+                href={feuilleDeRoute.links.ajouter}
+              >
+                Ajouter une action
+              </Link>:
+              null
+          }
         </div>
         <hr className="fr-mb-1w fr-py-1w" />
         {children}

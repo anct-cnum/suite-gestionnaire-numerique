@@ -26,15 +26,14 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
       }))
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    
     const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid)
-    
+
     // Met les dates des comites à undefined si elles sont dans le passé
     const comites = readModel.comites?.map((comite) => ({
       ...comite,
       date: comite.date !== undefined && comite.date < this.#now ? undefined : comite.date,
     }))
-    
+
     return {
       ...readModel,
       comites,

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactElement, useId } from 'react'
 
-export default function TextArea({ children, defaultValue = '', maxLength, rows = 15 }: Props): ReactElement {
+export default function TextArea({ children, defaultValue = '', disable, maxLength, rows = 15 }: Props): ReactElement {
   const id = useId()
 
   return (
@@ -14,6 +14,7 @@ export default function TextArea({ children, defaultValue = '', maxLength, rows 
       <textarea
         className="fr-input"
         defaultValue={defaultValue}
+        disabled={disable}
         id={id}
         maxLength={maxLength}
         name="textarea"
@@ -25,6 +26,7 @@ export default function TextArea({ children, defaultValue = '', maxLength, rows 
 
 type Props = PropsWithChildren<Readonly<{
   defaultValue?: string
+  disable?: boolean
   maxLength?: number
   rows?: number
 }>>

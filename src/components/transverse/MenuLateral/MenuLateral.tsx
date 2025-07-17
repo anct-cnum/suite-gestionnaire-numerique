@@ -14,7 +14,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
   const menusPilotage = [
     {
       ariaControls: 'fr-sidemenu-gouvernance',
-      ariaExpanded: false,
+      ariaExpanded: true,
       icon: 'compass-3-line',
       label: 'Gouvernance',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,

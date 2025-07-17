@@ -148,9 +148,9 @@ export class FeuilleDeRoute extends Entity<State> {
 
     return 'noteDeContextualisationInexistante'
   }
-  
+
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return utilisateur.isAdmin
+    return utilisateur.isSuperAdmin || utilisateur.isAdmin
       || this.#uidGouvernance.state.value === utilisateur.state.departement?.code
       && isGestionnaireDepartement(utilisateur.state.role.nom)
   }

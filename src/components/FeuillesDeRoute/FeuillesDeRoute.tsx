@@ -23,11 +23,12 @@ export default function FeuillesDeRoute({ feuillesDeRouteViewModel }: Props): Re
           {' '}
           {gouvernanceViewModel.departement}
         </PageTitle>
-        <AjouterUneFeuilleDeRoute
-          membres={feuillesDeRouteViewModel.formulaire.membres}
-          perimetres={feuillesDeRouteViewModel.formulaire.perimetres}
-          uidGouvernance={gouvernanceViewModel.uid}
-        />
+        {gouvernanceViewModel.peutGererGouvernance ?
+          <AjouterUneFeuilleDeRoute
+            membres={feuillesDeRouteViewModel.formulaire.membres}
+            perimetres={feuillesDeRouteViewModel.formulaire.perimetres}
+            uidGouvernance={gouvernanceViewModel.uid}
+          /> : null}
       </div>
       {
         feuillesDeRouteViewModel.feuillesDeRoute.length === 0 ? (
