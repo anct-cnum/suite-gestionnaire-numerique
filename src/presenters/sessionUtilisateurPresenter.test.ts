@@ -1,4 +1,5 @@
 import { createSessionUtilisateurPresenter, SessionUtilisateurViewModel } from './sessionUtilisateurPresenter'
+import { RoleUtilisateur } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 import { utilisateurReadModelFactory } from '@/use-cases/testHelper'
 
 describe('session utilisateur presenter', () => {
@@ -11,6 +12,7 @@ describe('session utilisateur presenter', () => {
         nom: 'Support animation',
         organisation: 'Mednum',
         rolesGerables: [],
+        type: 'gestionnaire_structure' as RoleUtilisateur,
       },
       uid: 'fooId',
     })

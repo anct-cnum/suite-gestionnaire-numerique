@@ -116,36 +116,6 @@ describe('utilisateur repository', () => {
             role: 'Administrateur dispositif' as const,
           },
         },
-        {
-          createRecordWith: {
-            role: 'instructeur' as const,
-          },
-          desc: 'pour un instructeur',
-          expected: {
-            organisation: 'Banque des territoires',
-            role: 'Instructeur' as const,
-          },
-        },
-        {
-          createRecordWith: {
-            role: 'support_animation' as const,
-          },
-          desc: 'pour un support animation',
-          expected: {
-            organisation: 'Mednum',
-            role: 'Support animation' as const,
-          },
-        },
-        {
-          createRecordWith: {
-            role: 'pilote_politique_publique' as const,
-          },
-          desc: 'pour un pilote politique publique',
-          expected: {
-            organisation: 'France Numérique Ensemble',
-            role: 'Pilote politique publique' as const,
-          },
-        },
       ])('$desc', async ({ createRecordWith, expected }) => {
         // GIVEN
         await creerUneRegion({ code: regionCode })
@@ -235,7 +205,7 @@ describe('utilisateur repository', () => {
         nom: 'Tartempion',
         prenom: 'Martin',
         regionCode: null,
-        role: 'instructeur',
+        role: 'gestionnaire_structure',
         ssoEmail: 'martin.tartempion@example.net',
         ssoId: ssoIdUtilisateurExistant,
         structureId: null,
@@ -314,7 +284,7 @@ describe('utilisateur repository', () => {
           inviteLe: date,
           nom: 'Dugenoux',
           prenom: 'Martine',
-          role: 'Instructeur',
+          role: 'Gestionnaire structure',
           uid: { email: 'martine.dugenoux@example.org', value: uidUtilisateurValue },
         })
       )
@@ -325,7 +295,7 @@ describe('utilisateur repository', () => {
           ssoId: uidUtilisateurValue,
         },
       })
-      expect(updatedRecord?.role).toBe('instructeur')
+      expect(updatedRecord?.role).toBe('gestionnaire_structure')
       expect(updatedRecord?.nom).toBe('Dugenoux')
       expect(updatedRecord?.prenom).toBe('Martine')
       expect(updatedRecord?.emailDeContact).toBe('martine.dugenoux@example.org')

@@ -10,18 +10,6 @@ describe('gouvernance', () => {
       utilisateur: utilisateurFactory({ role: 'Administrateur dispositif' }),
     },
     {
-      intention: 'un instructeur peut gérer une gouvernance',
-      utilisateur: utilisateurFactory({ role: 'Instructeur' }),
-    },
-    {
-      intention: 'un pilote politique publique peut gérer une gouvernance',
-      utilisateur: utilisateurFactory({ role: 'Pilote politique publique' }),
-    },
-    {
-      intention: 'un support animation peut gérer une gouvernance',
-      utilisateur: utilisateurFactory({ role: 'Support animation' }),
-    },
-    {
       intention: 'un gestionnaire département ayant le même département que celui de la gouvernance peut la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }),
     },
@@ -84,18 +72,7 @@ describe('gouvernance', () => {
       intention: 'un administrateur dispositif ne peut pas gérer une note privée',
       utilisateur: utilisateurFactory({ role: 'Administrateur dispositif' }),
     },
-    {
-      intention: 'un instructeur ne peut pas gérer une note privée',
-      utilisateur: utilisateurFactory({ role: 'Instructeur' }),
-    },
-    {
-      intention: 'un pilote politique publique ne peut pas gérer une note privée',
-      utilisateur: utilisateurFactory({ role: 'Pilote politique publique' }),
-    },
-    {
-      intention: 'un support animation ne peut pas gérer une note privée',
-      utilisateur: utilisateurFactory({ role: 'Support animation' }),
-    },
+    
   ])('$intention', ({ utilisateur }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({

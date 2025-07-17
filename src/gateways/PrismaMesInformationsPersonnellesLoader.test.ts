@@ -24,18 +24,6 @@ describe('mes informations personnelles loader', () => {
       roleLabel: 'Gestionnaire région',
     },
     {
-      role: 'instructeur' as Role,
-      roleLabel: 'Instructeur',
-    },
-    {
-      role: 'pilote_politique_publique' as Role,
-      roleLabel: 'Pilote politique publique',
-    },
-    {
-      role: 'support_animation' as Role,
-      roleLabel: 'Support animation',
-    },
-    {
       role: 'gestionnaire_groupement' as Role,
       roleLabel: 'Gestionnaire groupement',
     },

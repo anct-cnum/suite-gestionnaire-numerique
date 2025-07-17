@@ -9,7 +9,7 @@ describe('changer mon rôle action', () => {
     // GIVEN
     const sub = 'd96a66b5-8980-4e5c-88a9-aa0ff334a828'
     const path = '/'
-    const nouveauRole = 'Instructeur'
+    const nouveauRole = 'Gestionnaire structure'
     vi.spyOn(ssoGateway, 'getSessionSub').mockResolvedValueOnce(sub)
     vi.spyOn(nextCache, 'revalidatePath').mockReturnValueOnce()
     vi.spyOn(ChangerMonRole.prototype, 'handle').mockResolvedValueOnce('OK')
@@ -39,7 +39,7 @@ describe('changer mon rôle action', () => {
 
   it('étant donné un path non renseigné quand mon rôle est changé alors cela renvoie une erreur', async () => {
     // GIVEN
-    const nouveauRole = 'Instructeur'
+    const nouveauRole = 'Gestionnaire structure'
     const pathIncorrect = ''
 
     // WHEN

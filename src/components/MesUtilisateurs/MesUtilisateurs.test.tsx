@@ -568,6 +568,7 @@ const utilisateurActifReadModel = utilisateurReadModelFactory({
     nom: 'Administrateur dispositif',
     organisation: 'Préfecture du Rhône',
     rolesGerables: [],
+    type: 'administrateur_dispositif',
   },
   uid: 'fooId',
 })
@@ -608,6 +609,7 @@ const utilisateurActifSansTelephoneVideReadModel = utilisateurReadModelFactory({
     nom: 'Administrateur dispositif',
     organisation: 'Préfecture du Rhône',
     rolesGerables: [],
+    type: 'administrateur_dispositif',
   },
   telephone: '',
 })

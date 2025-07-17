@@ -69,39 +69,6 @@ describe('prisma utilisateur query', () => {
           rolesGerables: ['Gestionnaire structure'],
         },
       },
-      {
-        isGestionnaireDepartement: false,
-        role: 'instructeur',
-        roleReadModel: {
-          categorie: 'bdt',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Instructeur',
-          organisation: 'Banque des territoires',
-          rolesGerables: Roles,
-        },
-      },
-      {
-        isGestionnaireDepartement: false,
-        role: 'pilote_politique_publique',
-        roleReadModel: {
-          categorie: 'anct',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Pilote politique publique',
-          organisation: 'France Numérique Ensemble',
-          rolesGerables: Roles,
-        },
-      },
-      {
-        isGestionnaireDepartement: false,
-        role: 'support_animation',
-        roleReadModel: {
-          categorie: 'mednum',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Support animation',
-          organisation: 'Mednum',
-          rolesGerables: Roles,
-        },
-      },
     ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ isGestionnaireDepartement, role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
@@ -520,7 +487,6 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
       await creerUnUtilisateur({ nom: 'a', role: 'administrateur_dispositif', ssoId })
-      await creerUnUtilisateur({ nom: 'b', role: 'instructeur', ssoEmail: 'marcus.florent@example.com', ssoId: '123456' })
       await creerUnUtilisateur({ nom: 'c', role: 'gestionnaire_structure', ssoEmail: 'nicolas.james@example.com', ssoId: '67890' })
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 

@@ -9,9 +9,10 @@ describe('utilisateur', () => {
       () => {
         describe.each([
           'Administrateur dispositif',
-          'Instructeur',
-          'Pilote politique publique',
-          'Support animation',
+          'Gestionnaire département',
+          'Gestionnaire groupement',
+          'Gestionnaire région',
+          'Gestionnaire structure',
         ] as const)('%s peut gérer', (roleGerant) => {
           it.each(Roles)('%s', (roleAGerer) => {
             // GIVEN
@@ -109,6 +110,6 @@ const utilisateurProps = {
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',
-  role: 'Instructeur',
+  role: 'Gestionnaire structure',
   uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
 }

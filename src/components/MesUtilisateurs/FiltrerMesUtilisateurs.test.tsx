@@ -42,12 +42,6 @@ describe('filtrer mes utilisateurs', () => {
     expect(gestionnaireRegion).toHaveAttribute('name', 'roles')
     const gestionnaireStructure = within(formulaire).getByRole('checkbox', { checked: true, name: 'Gestionnaire structure' })
     expect(gestionnaireStructure).toHaveAttribute('name', 'roles')
-    const instructeur = within(formulaire).getByRole('checkbox', { checked: true, name: 'Instructeur' })
-    expect(instructeur).toHaveAttribute('name', 'roles')
-    const pilotePolitiquePublique = within(formulaire).getByRole('checkbox', { checked: true, name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toHaveAttribute('name', 'roles')
-    const supportAnimation = within(formulaire).getByRole('checkbox', { checked: true, name: 'Support animation' })
-    expect(supportAnimation).toHaveAttribute('name', 'roles')
 
     const boutonReinitialiser = within(formulaire).getByRole('button', { name: 'Réinitialiser les filtres' })
     expect(boutonReinitialiser).toHaveAttribute('type', 'reset')
@@ -74,7 +68,7 @@ describe('filtrer mes utilisateurs', () => {
 
   it('ayant des filtres déjà actifs quand je clique sur le bouton pour filtrer alors ils apparaissent préremplis', () => {
     // GIVEN
-    afficherMesUtilisateurs({ searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement,instructeur&codeDepartement=978') })
+    afficherMesUtilisateurs({ searchParams: new URLSearchParams('utilisateursActives=on&roles=gestionnaire_groupement&codeDepartement=978') })
 
     // WHEN
     jOuvreLeFormulairePourFiltrer()
@@ -84,7 +78,6 @@ describe('filtrer mes utilisateurs', () => {
     expect(formulaire).toHaveFormValues({
       roles: [
         'gestionnaire_groupement',
-        'instructeur',
       ],
       utilisateursActives: true,
       zoneGeographique: '00_978',
@@ -117,7 +110,7 @@ describe('filtrer mes utilisateurs', () => {
 
   it('quand il n’y a aucun résultat après un filtrage alors une phrase s’affiche pour informer l’utilisateur et le drawer se ferme', () => {
     // WHEN
-    afficherMesUtilisateurs({ searchParams: new URLSearchParams('roles=instructeur') }, 0)
+    afficherMesUtilisateurs({ searchParams: new URLSearchParams('roles=Gestionnaire structure') }, 0)
 
     // THEN
     const phraseInformative = screen.getByText('Aucun utilisateur ne correspond aux filtres sélectionnés.', { selector: 'p' })
