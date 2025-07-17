@@ -60,24 +60,6 @@ describe('utilisateur factory', () => {
       params: {},
       role: 'Administrateur dispositif' as const,
     },
-    {
-      desc: 'un instructeur est créé en tant qu’administrateur',
-      expectedType: Administrateur,
-      params: {},
-      role: 'Instructeur' as const,
-    },
-    {
-      desc: 'un pilote politique publique est créé en tant qu’administrateur',
-      expectedType: Administrateur,
-      params: {},
-      role: 'Pilote politique publique' as const,
-    },
-    {
-      desc: 'un support animation est créé en tant qu’administrateur',
-      expectedType: Administrateur,
-      params: {},
-      role: 'Support animation' as const,
-    },
   ])('$desc', ({ expectedType, params, role }) => {
     // GIVEN
     const utilisateurParams = {
@@ -123,7 +105,7 @@ describe('utilisateur factory', () => {
     }
 
     // WHEN
-    const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
+    const utilisateur = new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
     expect(utilisateur.state.isActive).toBe(expectedIsActive)
@@ -153,7 +135,7 @@ describe('utilisateur factory', () => {
     }
 
     // WHEN
-    const utilisateur = new UtilisateurFactory(utilisateurParams).create('Instructeur')
+    const utilisateur = new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
     expect(utilisateur.state.telephone).toBe(expectedTelephone)
@@ -172,7 +154,7 @@ describe('utilisateur factory', () => {
     }
 
     // WHEN
-    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Instructeur')
+    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
     expect(lazyUtilisateur).toThrow('dateDeDerniereConnexionInvalide')
@@ -191,7 +173,7 @@ describe('utilisateur factory', () => {
     }
 
     // WHEN
-    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Instructeur')
+    const lazyUtilisateur = (): Utilisateur => new UtilisateurFactory(utilisateurParams).create('Gestionnaire structure')
 
     // THEN
     expect(lazyUtilisateur).toThrow('dateDInvitationInvalide')

@@ -337,9 +337,6 @@ enum Role {
   gestionnaire_groupement
   gestionnaire_region
   gestionnaire_structure
-  instructeur
-  pilote_politique_publique
-  support_animation
 
   @@schema("min")
 }

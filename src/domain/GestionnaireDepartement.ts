@@ -38,7 +38,10 @@ export class GestionnaireDepartement extends Utilisateur {
   }
 
   override peutGerer(autre: Utilisateur): boolean {
-    return autre instanceof GestionnaireDepartement && autre.#departement.equals(this.#departement)
+    return (
+      this.isSuperAdmin ||
+      autre instanceof GestionnaireDepartement && autre.#departement.equals(this.#departement)
+    )
   }
 }
 

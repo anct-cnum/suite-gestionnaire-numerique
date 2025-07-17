@@ -64,7 +64,7 @@ describe('supprimer un utilisateur', () => {
 
 const utilisateursByUid: Readonly<Record<string, Utilisateur>> = {
   utilisateurASupprimerExistantUid: utilisateurFactory({
-    role: 'Instructeur',
+    role: 'Gestionnaire structure',
     uid: { email: 'martin.tartempion@example.com', value: 'utilisateurASupprimerExistantUid' },
   }),
   utilisateurCourantExistantAutreUid: utilisateurFactory({

@@ -30,25 +30,6 @@ describe('inviter un utilisateur action', () => {
       },
       {
         actionParams: {
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          path: '/mes-utilisateurs',
-          prenom: 'Martin',
-          role: 'Instructeur',
-        },
-        desc: 'avec rôle spécifié',
-        expectedCommand: {
-          email: 'martin.tartempion@example.com',
-          nom: 'Tartempion',
-          prenom: 'Martin',
-          role: {
-            type: 'Instructeur',
-          },
-          uidUtilisateurCourant: sub,
-        },
-      },
-      {
-        actionParams: {
           codeOrganisation: '21',
           email: 'martin.tartempion@example.com',
           nom: 'Tartempion',

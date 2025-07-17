@@ -29,7 +29,7 @@ export function utilisateurFactory(
     telephone: '0102030405',
     uid: { email: 'martin.tartempion@example.net', value: 'userFooId' },
     ...override,
-  }).create(override?.role ?? 'Instructeur', override?.codeOrganisation)
+  }).create(override?.role ?? 'Gestionnaire structure', override?.codeOrganisation)
 }
 
 export function gouvernanceFactory(override?: Partial<Parameters<typeof Gouvernance.create>[0]>): Gouvernance {

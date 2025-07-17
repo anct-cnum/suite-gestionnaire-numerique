@@ -10,7 +10,7 @@ describe('changer mon rôle', () => {
 
   it('ayant le rôle super admin quand un utilisateur change de rôle alors le rôle est modifié', async () => {
     // GIVEN
-    const nouveauRole = 'Pilote politique publique'
+    const nouveauRole = 'Gestionnaire structure'
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN
@@ -23,14 +23,14 @@ describe('changer mon rôle', () => {
     expect(result).toBe('OK')
     expect(spiedUtilisateur.state).toStrictEqual(utilisateurFactory({
       isSuperAdmin: true,
-      role: 'Pilote politique publique',
+      role: 'Gestionnaire structure',
       uid: { email: 'martin.tartempion@example.fr', value: 'utilisateurSuperAdminUid' },
     }).state)
   })
 
   it('n’ayant pas le rôle super admin quand un utilisateur change de rôle alors le rôle est n’est pas modifié', async () => {
     // GIVEN
-    const nouveauRole = 'Pilote politique publique'
+    const nouveauRole = 'Gestionnaire structure'
     const changerMonRole = new ChangerMonRole(utilisateurRepository)
 
     // WHEN

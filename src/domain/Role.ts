@@ -27,9 +27,6 @@ export const Roles = [
   'Gestionnaire groupement',
   'Gestionnaire région',
   'Gestionnaire structure',
-  'Instructeur',
-  'Pilote politique publique',
-  'Support animation',
 ] as const
 
 export type TypologieRole = (typeof Roles)[number]
@@ -76,20 +73,5 @@ const classificationParType: ClassificationParType = {
   'Gestionnaire structure': {
     categorie: 'structure',
     groupe: 'gestionnaire',
-  },
-  Instructeur: {
-    categorie: 'bdt',
-    groupe: 'admin',
-    organisation: 'Banque des territoires',
-  },
-  'Pilote politique publique': {
-    categorie: 'anct',
-    groupe: 'admin',
-    organisation: 'France Numérique Ensemble',
-  },
-  'Support animation': {
-    categorie: 'mednum',
-    groupe: 'admin',
-    organisation: 'Mednum',
   },
 }

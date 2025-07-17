@@ -30,18 +30,6 @@ export default function FiltrerParRoles(): ReactElement {
       label: 'Gestionnaire structure',
       value: 'gestionnaire_structure',
     },
-    {
-      label: 'Instructeur',
-      value: 'instructeur',
-    },
-    {
-      label: 'Pilote politique publique',
-      value: 'pilote_politique_publique',
-    },
-    {
-      label: 'Support animation',
-      value: 'support_animation',
-    },
   ]
 
   return (

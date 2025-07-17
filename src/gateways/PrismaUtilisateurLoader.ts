@@ -1,10 +1,10 @@
-import { $Enums, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
-import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
+import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
@@ -70,20 +70,20 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
     }
 
     if (utilisateurCourant.role.nom === 'Gestionnaire structure') {
-      where = { role: 'gestionnaire_structure', structureId: utilisateurCourant.structureId }
+      where = { role: 'gestionnaire_structure' as RoleUtilisateur, structureId: utilisateurCourant.structureId }
     } else if (utilisateurCourant.role.nom === 'Gestionnaire département') {
-      where = { departementCode: utilisateurCourant.departementCode, role: 'gestionnaire_departement' }
+      where = { departementCode: utilisateurCourant.departementCode, role: 'gestionnaire_departement' as RoleUtilisateur }
     } else if (utilisateurCourant.role.nom === 'Gestionnaire groupement') {
-      where = { groupementId: utilisateurCourant.groupementId, role: 'gestionnaire_groupement' }
+      where = { groupementId: utilisateurCourant.groupementId, role: 'gestionnaire_groupement' as RoleUtilisateur }
     } else if (utilisateurCourant.role.nom === 'Gestionnaire région') {
-      where = { regionCode: utilisateurCourant.regionCode, role: 'gestionnaire_region' }
+      where = { regionCode: utilisateurCourant.regionCode, role: 'gestionnaire_region' as RoleUtilisateur }
     } else {
       if (utilisateursActives) {
         where.NOT = { derniereConnexion: null }
       }
 
       if (roles.length > 0) {
-        where.role = { in: roles as Array<$Enums.Role> }
+        where.role = { in: roles as Array<RoleUtilisateur> }
       }
 
       if (codeDepartement !== departementInexistant) {
@@ -163,6 +163,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
   const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
 
+  const roleType: RoleUtilisateur = ((): RoleUtilisateur => {
+    switch (utilisateurRecord.role) {
+      case 'administrateur_dispositif':
+      case 'gestionnaire_departement':
+      case 'gestionnaire_groupement':
+      case 'gestionnaire_region':
+      case 'gestionnaire_structure':
+        return utilisateurRecord.role
+      default:
+        return 'gestionnaire_structure'
+    }
+  })()
+
   return {
     departementCode: utilisateurRecord.departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
@@ -181,6 +194,7 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
       nom: role.nom,
       organisation: role.organisation,
       rolesGerables: role.rolesGerables,
+      type: roleType,
     },
     structureId: utilisateurRecord.structureId,
     telephone: utilisateurRecord.telephone,

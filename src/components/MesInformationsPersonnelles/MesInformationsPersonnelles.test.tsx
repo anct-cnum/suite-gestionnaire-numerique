@@ -73,9 +73,6 @@ describe('mes informations personnelles : en tant qu’utilisateur authentifié'
     'Administrateur dispositif',
     'Gestionnaire département',
     'Gestionnaire région',
-    'Instructeur',
-    'Pilote politique publique',
-    'Support animation',
   ])('étant un %s quand j’affiche mes informations personnelles alors l’encart "structure" ne s’affiche pas', (role) => {
     // WHEN
     afficherMesInformationsPersonnelles({}, mesInformationsPersonnellesReadModelFactory({ role }))

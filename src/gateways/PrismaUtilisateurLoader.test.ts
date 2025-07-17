@@ -23,6 +23,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Administrateur dispositif',
           organisation: 'Administrateur dispositif',
           rolesGerables: Roles,
+          type: 'administrateur_dispositif',
         },
       },
       {
@@ -34,6 +35,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire département',
           organisation: 'Paris (75)',
           rolesGerables: ['Gestionnaire département'],
+          type: 'gestionnaire_departement',
         },
       },
       {
@@ -45,6 +47,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
           rolesGerables: ['Gestionnaire groupement'],
+          type: 'gestionnaire_groupement',
         },
       },
       {
@@ -56,6 +59,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire région',
           organisation: 'Île-de-France (11)',
           rolesGerables: ['Gestionnaire région'],
+          type: 'gestionnaire_region',
         },
       },
       {
@@ -67,39 +71,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
           rolesGerables: ['Gestionnaire structure'],
-        },
-      },
-      {
-        isGestionnaireDepartement: false,
-        role: 'instructeur',
-        roleReadModel: {
-          categorie: 'bdt',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Instructeur',
-          organisation: 'Banque des territoires',
-          rolesGerables: Roles,
-        },
-      },
-      {
-        isGestionnaireDepartement: false,
-        role: 'pilote_politique_publique',
-        roleReadModel: {
-          categorie: 'anct',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Pilote politique publique',
-          organisation: 'France Numérique Ensemble',
-          rolesGerables: Roles,
-        },
-      },
-      {
-        isGestionnaireDepartement: false,
-        role: 'support_animation',
-        roleReadModel: {
-          categorie: 'mednum',
-          doesItBelongToGroupeAdmin: true,
-          nom: 'Support animation',
-          organisation: 'Mednum',
-          rolesGerables: Roles,
+          type: 'gestionnaire_structure',
         },
       },
     ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ isGestionnaireDepartement, role, roleReadModel }) => {
@@ -233,6 +205,7 @@ describe('prisma utilisateur query', () => {
               nom: 'Gestionnaire département',
               organisation: 'Paris (75)',
               rolesGerables: ['Gestionnaire département'],
+              type: 'gestionnaire_departement',
             },
             structureId: null,
             telephone: '0102030405',
@@ -256,6 +229,7 @@ describe('prisma utilisateur query', () => {
               nom: 'Administrateur dispositif',
               organisation: 'Administrateur dispositif',
               rolesGerables: Roles,
+              type: 'administrateur_dispositif',
             },
             structureId: null,
             telephone: '0102030405',
@@ -277,6 +251,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire département',
           organisation: 'Rhône (69)',
           rolesGerables: [],
+          type: 'gestionnaire_departement',
         },
         uid: ssoId,
       })
@@ -317,6 +292,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire région',
           organisation: 'Auvergne-Rhône-Alpes (93)',
           rolesGerables: [],
+          type: 'gestionnaire_region',
         },
         uid: ssoId,
       })
@@ -356,6 +332,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire groupement',
           organisation: 'Hubikoop',
           rolesGerables: [],
+          type: 'gestionnaire_groupement',
         },
         uid: ssoId,
       })
@@ -394,6 +371,7 @@ describe('prisma utilisateur query', () => {
           nom: 'Gestionnaire structure',
           organisation: 'Solidarnum',
           rolesGerables: ['Gestionnaire structure'],
+          type: 'gestionnaire_structure',
         },
         structureId,
         uid: ssoId,
@@ -520,7 +498,6 @@ describe('prisma utilisateur query', () => {
     it('quand je cherche mes utilisateurs par rôles alors je trouve tous ceux qui ont ces rôles', async () => {
       // GIVEN
       await creerUnUtilisateur({ nom: 'a', role: 'administrateur_dispositif', ssoId })
-      await creerUnUtilisateur({ nom: 'b', role: 'instructeur', ssoEmail: 'marcus.florent@example.com', ssoId: '123456' })
       await creerUnUtilisateur({ nom: 'c', role: 'gestionnaire_structure', ssoEmail: 'nicolas.james@example.com', ssoId: '67890' })
       const roles = ['administrateur_dispositif', 'gestionnaire_structure']
 

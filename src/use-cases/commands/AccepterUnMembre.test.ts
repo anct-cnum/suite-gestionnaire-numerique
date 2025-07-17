@@ -31,6 +31,7 @@ describe('accepter un membre', () => {
     })
 
     // THEN
+    expect(result).toBe('OK')
     expect(spiedUtilisateurUidToFind).toBe(uidGestionnaire)
     expect(spiedMembrePotentielUidToFind).toBe(uidMembrePotentiel)
     expect(spiedGouvernanceUidToFind?.state).toStrictEqual(new GouvernanceUid(uidGouvernance).state)
@@ -122,7 +123,7 @@ let spiedUtilisateurUidToFind: null | string
 class GestionnaireRepositorySpy implements GetUtilisateurRepository {
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     spiedUtilisateurUidToFind = uid
-    return Promise.resolve(utilisateurFactory())
+    return Promise.resolve(utilisateurFactory({ departement: { code: '75', codeRegion: '11', nom: 'Paris' }, role: 'Gestionnaire département' }))
   }
 }
 

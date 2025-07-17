@@ -26,11 +26,11 @@ describe('inviter un utilisateur', () => {
           'qu’il est super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci est' +
           ' enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
         utilisateurAInviter: {
-          role: 'Instructeur' as const,
+          role: 'Gestionnaire structure' as const,
         },
         utilisateurCourant: {
           isSuperAdmin: true,
-          role: 'Support animation' as const,
+          role: 'Gestionnaire groupement' as const,
           uid: 'utilisateurAdminUid',
         },
       },
@@ -45,7 +45,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           isSuperAdmin: true,
-          role: 'Support animation' as const,
+          role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
       },
@@ -70,11 +70,11 @@ describe('inviter un utilisateur', () => {
           'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci' +
           ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
         utilisateurAInviter: {
-          role: 'Instructeur' as const,
+          role: 'Gestionnaire structure' as const,
         },
         utilisateurCourant: {
           isSuperAdmin: false,
-          role: 'Support animation' as const,
+          role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
       },
@@ -89,7 +89,7 @@ describe('inviter un utilisateur', () => {
         },
         utilisateurCourant: {
           isSuperAdmin: false,
-          role: 'Support animation' as const,
+          role: 'Administrateur dispositif' as const,
           uid: 'utilisateurAdminUid',
         },
       },
@@ -171,7 +171,7 @@ describe('inviter un utilisateur', () => {
     const repository = new RepositorySpy(utilisateurFactory({ role: 'Gestionnaire structure' }))
     const emailGatewayFactory = emailGatewayFactorySpy
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, epochTime)
-    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
+    const roleUtilisateurAInviter: TypologieRole = 'Administrateur dispositif'
 
     // WHEN
     const result = await inviterUnUtilisateur.handle({
@@ -206,7 +206,7 @@ describe('inviter un utilisateur', () => {
     const repository = new RepositoryUtilisateurAInviterExisteDejaSpy(utilisateurACreer)
     const emailGatewayFactory = emailGatewayFactorySpy
     const inviterUnUtilisateur = new InviterUnUtilisateur(repository, emailGatewayFactory, date)
-    const roleUtilisateurAInviter: TypologieRole = 'Instructeur'
+    const roleUtilisateurAInviter: TypologieRole = 'Gestionnaire structure'
 
     // WHEN
     const result = await inviterUnUtilisateur.handle({

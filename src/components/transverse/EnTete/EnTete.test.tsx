@@ -71,12 +71,6 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
     expect(gestionnaireRegion).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
     const gestionnaireStructure = within(roles).getByRole('option', { name: 'Gestionnaire structure' })
     expect(gestionnaireStructure).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
-    const instructeur = within(roles).getByRole('option', { name: 'Instructeur' })
-    expect(instructeur).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
-    const pilotePolitiquePublique = within(roles).getByRole('option', { name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toHaveAttribute('aria-controls', 'drawerMenuUtilisateurId')
-    const supportAnimation = within(roles).getByRole('option', { name: 'Support animation', selected: true })
-    expect(supportAnimation).toBeInTheDocument()
   })
 
   describe('le menu utilisateur étant ouvert', () => {
@@ -104,7 +98,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
 
       // THEN
       await waitFor(() => {
-        expect(changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Instructeur', path: '/' })
+        expect(changerMonRoleAction).toHaveBeenCalledWith({ nouveauRole: 'Gestionnaire structure', path: '/' })
       })
     })
 
@@ -143,7 +137,7 @@ describe('en-tête : en tant qu’utilisateur authentifié', () => {
   }
 
   function jeChangeMonRole(): void {
-    fireEvent.change(screen.getByRole('combobox', { name: 'Rôle' }), { target: { value: 'Instructeur' } })
+    fireEvent.change(screen.getByRole('combobox', { name: 'Rôle' }), { target: { value: 'Gestionnaire structure' } })
   }
 
   function jeMeDeconnecte(): void {

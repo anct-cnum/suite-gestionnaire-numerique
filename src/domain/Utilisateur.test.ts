@@ -5,13 +5,10 @@ import { epochTime } from '@/shared/testHelper'
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
     describe(
-      'l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur',
+      'un Administrateur dispositif peut gérer n’importe quel autre utilisateur',
       () => {
         describe.each([
           'Administrateur dispositif',
-          'Instructeur',
-          'Pilote politique publique',
-          'Support animation',
         ] as const)('%s peut gérer', (roleGerant) => {
           it.each(Roles)('%s', (roleAGerer) => {
             // GIVEN
@@ -109,6 +106,6 @@ const utilisateurProps = {
   isSuperAdmin: false,
   nom: 'tartempion',
   prenom: 'martin',
-  role: 'Instructeur',
+  role: 'Gestionnaire structure',
   uid: { email: 'martin.tartempion@example.net', value: 'fooId' },
 }

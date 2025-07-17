@@ -17,7 +17,7 @@ export function utilisateurRecordFactory(
     isSupprime: false,
     nom: 'Tartempion',
     prenom: 'Martin',
-    role: 'instructeur',
+    role: 'gestionnaire_structure',
     ssoEmail: 'martin.tartempion@example.net',
     ssoId: 'userFooId',
     telephone: '0102030405',

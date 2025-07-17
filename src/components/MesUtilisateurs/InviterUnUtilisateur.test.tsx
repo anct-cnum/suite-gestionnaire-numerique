@@ -77,21 +77,6 @@ describe('inviter un utilisateur', () => {
     expect(gestionnaireStructure).toHaveAttribute('name', 'attributionRole')
     expect(gestionnaireStructure).toHaveAttribute('id', 'Gestionnaire structure')
 
-    const instructeur = within(fieldset).getByRole('radio', { checked: false, name: 'Instructeur' })
-    expect(instructeur).toBeRequired()
-    expect(instructeur).toHaveAttribute('name', 'attributionRole')
-    expect(instructeur).toHaveAttribute('id', 'Instructeur')
-
-    const pilotePolitiquePublique = within(fieldset).getByRole('radio', { checked: false, name: 'Pilote politique publique' })
-    expect(pilotePolitiquePublique).toBeRequired()
-    expect(pilotePolitiquePublique).toHaveAttribute('name', 'attributionRole')
-    expect(pilotePolitiquePublique).toHaveAttribute('id', 'Pilote politique publique')
-
-    const supportAnimation = within(fieldset).getByRole('radio', { checked: false, name: 'Support animation' })
-    expect(supportAnimation).toBeRequired()
-    expect(supportAnimation).toHaveAttribute('name', 'attributionRole')
-    expect(supportAnimation).toHaveAttribute('id', 'Support animation')
-
     const envoyerInvitation = within(formulaireInvitation).getByRole('button', { name: 'Envoyer l’invitation' })
     expect(envoyerInvitation).toHaveAttribute('type', 'submit')
     expect(envoyerInvitation).toBeEnabled()
@@ -475,9 +460,6 @@ describe('inviter un utilisateur', () => {
             'Gestionnaire groupement',
             'Gestionnaire région',
             'Gestionnaire structure',
-            'Instructeur',
-            'Pilote politique publique',
-            'Support animation',
           ],
         },
       }),
