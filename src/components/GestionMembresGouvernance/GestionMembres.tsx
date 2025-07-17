@@ -193,7 +193,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       </div>
       <div className="fr-grid-row space-between fr-mt-4w">
         <div className="fr-grid-row fr-grid-row--middle">
-          <div className={styles['label-filtres']}>
+          <div className="fr-pr-1w">
             Filtres :
           </div>
           <div className={`fr-tag fr-accordion__btn ${styles.selecteur} fr-mr-1w`}>
@@ -347,7 +347,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     const newUrl = new URL(window.location.href)
     newUrl.searchParams.set('statut', statut)
     router.replace(newUrl.pathname + newUrl.search)
-    
+
     setMembresView({
       ...membresView,
       membres: membresByStatut[statut],
