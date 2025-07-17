@@ -32,6 +32,7 @@ export function utilisateurReadModelFactory(
       nom: 'Administrateur dispositif',
       organisation: '',
       rolesGerables: Roles,
+      type: 'administrateur_dispositif',
     },
     structureId: null,
     telephone: '0102030405',

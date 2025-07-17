@@ -38,7 +38,9 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   if (utilisateur.role.type === 'administrateur_dispositif') {
     return (
       <div>
-        <h1>Tableau de bord de l'administrateur</h1>
+        <h1>
+          Tableau de bord de l&apos;administrateur dispositif
+        </h1>
       </div>
     )
   }

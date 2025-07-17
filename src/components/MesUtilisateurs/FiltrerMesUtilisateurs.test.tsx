@@ -164,7 +164,7 @@ describe('filtrer mes utilisateurs', () => {
       jeFiltreLesUtilisateurs()
 
       // THEN
-      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure%2Cinstructeur%2Cpilote_politique_publique%2Csupport_animation')
+      expect(spiedRouterPush).toHaveBeenCalledWith('http://example.com/mes-utilisateurs?roles=administrateur_dispositif%2Cgestionnaire_groupement%2Cgestionnaire_structure')
     })
 
     it('[URL] sur un département alors je n’affiche qu’eux', async () => {

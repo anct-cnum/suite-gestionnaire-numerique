@@ -5,14 +5,10 @@ import { epochTime } from '@/shared/testHelper'
 describe('utilisateur', () => {
   describe("gestion d'un utilisateur", () => {
     describe(
-      'l’utilisateur appartient au groupe "admin" : il peut gérer n’importe quel autre utilisateur',
+      'un Administrateur dispositif peut gérer n’importe quel autre utilisateur',
       () => {
         describe.each([
           'Administrateur dispositif',
-          'Gestionnaire département',
-          'Gestionnaire groupement',
-          'Gestionnaire région',
-          'Gestionnaire structure',
         ] as const)('%s peut gérer', (roleGerant) => {
           it.each(Roles)('%s', (roleAGerer) => {
             // GIVEN

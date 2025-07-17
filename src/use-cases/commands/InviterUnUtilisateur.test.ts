@@ -19,7 +19,7 @@ describe('inviter un utilisateur', () => {
     spiedIsSuperAdmin = null
   })
 
-  describe.only('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter', () => {
+  describe('étant donné que l’utilisateur courant peut gérer l’utilisateur à inviter', () => {
     it.each([
       {
         desc:
@@ -34,81 +34,81 @@ describe('inviter un utilisateur', () => {
           uid: 'utilisateurAdminUid',
         },
       },
-      // {
-      //   desc:
-      //     'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci' +
-      //     ' est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisie par l’' +
-      //     ' utilisateur courant',
-      //   utilisateurAInviter: {
-      //     codeOrganisation: '15',
-      //     role: 'Gestionnaire groupement' as const,
-      //   },
-      //   utilisateurCourant: {
-      //     isSuperAdmin: true,
-      //     role: 'Gestionnaire groupement' as const,
-      //     uid: 'utilisateurAdminUid',
-      //   },
-      // },
-      // {
-      //   desc:
-      //     'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors' +
-      //     ' celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
-      //     ' l’utilisateur courant',
-      //   utilisateurAInviter: {
-      //     codeOrganisation: '53',
-      //     role: 'Gestionnaire région' as const,
-      //   },
-      //   utilisateurCourant: {
-      //     codeOrganisation: '53',
-      //     isSuperAdmin: true,
-      //     role: 'Gestionnaire région' as const,
-      //     uid: 'utilisateurGestionnaireUid',
-      //   },
-      // },
-      // {
-      //   desc:
-      //     'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci' +
-      //     ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
-      //   utilisateurAInviter: {
-      //     role: 'Gestionnaire structure' as const,
-      //   },
-      //   utilisateurCourant: {
-      //     isSuperAdmin: false,
-      //     role: 'Gestionnaire groupement' as const,
-      //     uid: 'utilisateurAdminUid',
-      //   },
-      // },
-      // {
-      //   desc:
-      //     'qu’il n’est pas super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors' +
-      //     ' celui-ci est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisis par l’' +
-      //     'utilisateur courant',
-      //   utilisateurAInviter: {
-      //     codeOrganisation: '15',
-      //     role: 'Gestionnaire groupement' as const,
-      //   },
-      //   utilisateurCourant: {
-      //     isSuperAdmin: false,
-      //     role: 'Gestionnaire structure' as const,
-      //     uid: 'utilisateurAdminUid',
-      //   },
-      // },
-      // {
-      //   desc:
-      //     'qu’il n’est pas super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite,' +
-      //     ' alors celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
-      //     ' l’utilisateur courant',
-      //   utilisateurAInviter: {
-      //     codeOrganisation: '53',
-      //     role: 'Gestionnaire région' as const,
-      //   },
-      //   utilisateurCourant: {
-      //     codeOrganisation: '53',
-      //     isSuperAdmin: false,
-      //     role: 'Gestionnaire région' as const,
-      //     uid: 'utilisateurGestionnaireUid',
-      //   },
-      // },
+      {
+        desc:
+          'qu’il est super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors celui-ci' +
+          ' est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisie par l’' +
+          ' utilisateur courant',
+        utilisateurAInviter: {
+          codeOrganisation: '15',
+          role: 'Gestionnaire groupement' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: true,
+          role: 'Administrateur dispositif' as const,
+          uid: 'utilisateurAdminUid',
+        },
+      },
+      {
+        desc:
+          'qu’il est super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite, alors' +
+          ' celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
+          ' l’utilisateur courant',
+        utilisateurAInviter: {
+          codeOrganisation: '53',
+          role: 'Gestionnaire région' as const,
+        },
+        utilisateurCourant: {
+          codeOrganisation: '53',
+          isSuperAdmin: true,
+          role: 'Gestionnaire région' as const,
+          uid: 'utilisateurGestionnaireUid',
+        },
+      },
+      {
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle admin et invite un admin, quand il l’invite, alors celui-ci' +
+          ' est enregistré avec un compte ordinaire et un rôle admin choisi par l’utilisateur courant',
+        utilisateurAInviter: {
+          role: 'Gestionnaire structure' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: false,
+          role: 'Administrateur dispositif' as const,
+          uid: 'utilisateurAdminUid',
+        },
+      },
+      {
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle admin et invite un gestionnaire, quand il l’invite, alors' +
+          ' celui-ci est enregistré avec un compte ordinaire, un rôle gestionnaire et une organisation choisis par l’' +
+          'utilisateur courant',
+        utilisateurAInviter: {
+          codeOrganisation: '15',
+          role: 'Gestionnaire groupement' as const,
+        },
+        utilisateurCourant: {
+          isSuperAdmin: false,
+          role: 'Administrateur dispositif' as const,
+          uid: 'utilisateurAdminUid',
+        },
+      },
+      {
+        desc:
+          'qu’il n’est pas super admin, qu’il a un rôle gestionnaire et invite un gestionnaire, quand il l’invite,' +
+          ' alors celui-ci est enregistré avec un compte ordinaire, un rôle et une organisation identiques à ceux de' +
+          ' l’utilisateur courant',
+        utilisateurAInviter: {
+          codeOrganisation: '53',
+          role: 'Gestionnaire région' as const,
+        },
+        utilisateurCourant: {
+          codeOrganisation: '53',
+          isSuperAdmin: false,
+          role: 'Gestionnaire région' as const,
+          uid: 'utilisateurGestionnaireUid',
+        },
+      },
     ])(
       '$desc puis un e-mail lui est envoyé',
       async ({ utilisateurAInviter, utilisateurCourant }) => {
