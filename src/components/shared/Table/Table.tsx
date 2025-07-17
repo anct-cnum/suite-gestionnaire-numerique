@@ -14,11 +14,15 @@ export default function Table({
       id="table-sm-component"
     >
       <div className={`fr-table__wrapper ${styles['fr-table__wrapper']}`}>
-        <div className="fr-table__container">
+        <div
+          className="fr-table__container"
+          style={{ margin:0, padding:0 }}
+        >
           <div className="fr-table__content">
             <table
               className="fr-table"
               id="table-sm"
+              style={{ margin:0, padding:0 }}
             >
               <caption className="fr-sr-only">
                 {titre}
