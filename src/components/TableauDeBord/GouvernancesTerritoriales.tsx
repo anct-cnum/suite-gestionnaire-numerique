@@ -57,22 +57,6 @@ export default function GouvernancesTerritoriales({
         aria-labelledby="gouvernances-territoriales"
         className="fr-mb-4w grey-border border-radius fr-p-4w"
       >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="government-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="gouvernances-territoriales"
-              >
-                Gouvernances territoriales
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Répartition des gouvernances par type de coporteur
-              </p>
-            </div>
-          </div>
-        </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
             <TitleIcon
@@ -105,51 +89,30 @@ export default function GouvernancesTerritoriales({
       aria-labelledby="gouvernances-territoriales"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
     >
-      <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
-        <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="government-line" />
-          <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="gouvernances-territoriales"
-            >
-              Gouvernances territoriales
-            </h2>
-            <p className="fr-m-0 font-weight-500">
-              Répartition des gouvernances par type de coporteur
-            </p>
-          </div>
-        </div>
-      </div>
       
-      <div className="fr-grid-row fr-mb-4w">
-        <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-          <div>
-            <Doughnut
-              backgroundColor={allItems.map(item => getBackgroundColor(item.color))}
-              data={allItems.map(item => item.count)}
-              isFull={false}
-              labels={allItems.map(item => item.type)}
-            />
-          </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-            {gouvernancesTerritoriales.nombreTotal}
-          </div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">
-            Gouvernances territoriales
-          </div>
-          <div className="color-blue-france">
-            dont
-            {' '}
-            {gouvernancesTerritoriales.nombreTotal - gouvernancesTerritoriales.sansCoporteur.count}
-            {' '}
-            avec coporteur(s)
-          </div>
+      <div className="center">
+        <div>
+          <Doughnut
+            backgroundColor={allItems.map(item => getBackgroundColor(item.color))}
+            data={allItems.map(item => item.count)}
+            isFull={false}
+            labels={allItems.map(item => item.type)}
+          />
         </div>
-        <div className="fr-col">
-          <div className="font-weight-500">
-            Ventilation par type de coporteur
-          </div>
+        <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
+          {gouvernancesTerritoriales.nombreTotal}
+        </div>
+        <div className="fr-text--lg font-weight-700 fr-m-0">
+          Gouvernances territoriales
+        </div>
+        <div className="color-blue-france fr-pb-4w separator">
+          dont
+          {' '}
+          {gouvernancesTerritoriales.nombreTotal - gouvernancesTerritoriales.sansCoporteur.count}
+          {' '}
+          avec coporteur(s)
+        </div>
+        <div className="fr-mt-4w">
           <ul>
             {allItems.map((item) => (
               <li
@@ -163,9 +126,6 @@ export default function GouvernancesTerritoriales({
                 </div>
                 <div className="font-weight-700">
                   {item.count}
-                  {' '}
-                  {item.type === 'Sans coporteur' ? 'gouvernance' : 'membre'}
-                  {item.count > 1 ? 's' : ''}
                 </div>
               </li>
             ))}

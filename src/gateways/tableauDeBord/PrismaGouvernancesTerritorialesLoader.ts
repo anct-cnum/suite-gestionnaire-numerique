@@ -34,22 +34,36 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
         (gouvernance) => gouvernance.membres.length === 0
       ).length
 
-      // Regrouper les membres coporteurs par type
-      const coporteursParType = new Map<string, number>()
+      // Compter les gouvernances par type de coporteur
+      const gouvernancesParType = new Map<string, Set<string>>()
       
       gouvernances.forEach((gouvernance) => {
+        // Collecter tous les types de coporteurs uniques pour cette gouvernance
+        const typesDeCetteGouvernance = new Set<string>()
+        
         gouvernance.membres.forEach((membre) => {
           // Exclure les préfectures départementales du comptage
           if (membre.type !== 'Préfecture départementale') {
             const type = membre.type ?? 'Autre'
-            coporteursParType.set(type, (coporteursParType.get(type) ?? 0) + 1)
+            typesDeCetteGouvernance.add(type)
+          }
+        })
+        
+        // Pour chaque type trouvé dans cette gouvernance, l'ajouter au comptage
+        typesDeCetteGouvernance.forEach((type) => {
+          if (!gouvernancesParType.has(type)) {
+            gouvernancesParType.set(type, new Set())
+          }
+          const gouvernancesSet = gouvernancesParType.get(type)
+          if (gouvernancesSet) {
+            gouvernancesSet.add(gouvernance.departementCode)
           }
         })
       })
 
-      // Convertir en tableau trié par nombre décroissant
-      const ventilationParTypeDeCoporteur = Array.from(coporteursParType.entries())
-        .map(([type, count]) => ({ count, type }))
+      // Convertir en tableau avec le nombre de gouvernances par type, trié par nombre décroissant
+      const ventilationParTypeDeCoporteur = Array.from(gouvernancesParType.entries())
+        .map(([type, gouvernancesSet]) => ({ count: gouvernancesSet.size, type }))
         .sort((itemA, itemB) => itemB.count - itemA.count)
 
       return {

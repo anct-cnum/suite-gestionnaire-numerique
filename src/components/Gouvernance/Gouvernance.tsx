@@ -50,6 +50,7 @@ export default function Gouvernance(): ReactElement {
         {' '}
         {gouvernanceViewModel.departement}
       </PageTitle>
+    
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
       </p>
