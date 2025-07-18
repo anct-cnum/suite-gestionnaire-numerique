@@ -52,6 +52,7 @@
     "@tiptap/starter-kit": "^2.11.7",
     "@types/maplibre-gl": "^1.13.2",
     "chart.js": "^4.4.9",
+    "html2canvas": "^1.4.1",
     "maplibre-gl": "^5.5.0",
     "mjml": "^4.15.3",
     "mongodb": "^6.16.0",

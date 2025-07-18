@@ -27,7 +27,7 @@ export default function TableauDeBordAdmin({
         </div>
         <div className="fr-col-auto">
           <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+            className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
             href="/gouvernances"
           >
             Voir les 105 gouvernances
