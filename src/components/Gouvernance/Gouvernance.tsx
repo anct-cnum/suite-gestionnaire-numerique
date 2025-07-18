@@ -169,9 +169,15 @@ export default function Gouvernance(): ReactElement {
           }
           title={`${gouvernanceViewModel.sectionMembres.totalEtWording[0]} ${gouvernanceViewModel.sectionMembres.totalEtWording[1]}`}
         >
-          <MembreRempli
-            coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
-          />
+          {
+            gouvernanceViewModel.sectionMembres.coporteurs.length > 0 ? (
+              <MembreRempli
+                coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
+              />
+            ) : 
+              null
+            
+          }
         </SectionRemplie>
       </section>
       <section aria-labelledby="feuilleDeRoute">
