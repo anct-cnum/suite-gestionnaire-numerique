@@ -33,22 +33,6 @@ export default function FeuillesDeRouteDeposees({
         aria-labelledby="feuilles-de-route-deposees"
         className="fr-mb-4w grey-border border-radius fr-p-4w"
       >
-        <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-2w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="file-line" />
-            <div>
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="feuilles-de-route-deposees"
-              >
-                Feuilles de route déposées
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Répartition des feuilles de route déposées par périmètre
-              </p>
-            </div>
-          </div>
-        </div>
         <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', padding: '2rem' }}>
           <div style={{ textAlign: 'center' }}>
             <TitleIcon
@@ -67,69 +51,40 @@ export default function FeuillesDeRouteDeposees({
   // Items pour le graphique Doughnut - seulement la ventilation par périmètre
   const doughnutItems = feuillesDeRouteDeposees.ventilationParPerimetre
 
-  // Items pour la liste - inclut aussi les sans demande de subvention
-  const allItems = [
-    ...feuillesDeRouteDeposees.ventilationParPerimetre,
-    ...feuillesDeRouteDeposees.sansDemandeSubvention.count > 0 
-      ? [{
-        color: feuillesDeRouteDeposees.sansDemandeSubvention.color,
-        count: feuillesDeRouteDeposees.sansDemandeSubvention.count,
-        perimetre: feuillesDeRouteDeposees.sansDemandeSubvention.label,
-      }]
-      : []
-    ,
-  ]
+  // Items pour la liste - exclut 'Sans demande de subvention' et 'Autre'
+  const allItems = feuillesDeRouteDeposees.ventilationParPerimetre.filter(
+    item => item.perimetre !== 'Autre'
+  )
 
   return (
     <section
       aria-labelledby="feuilles-de-route-deposees"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
     >
-      <div className="fr-grid-row fr-grid-row--middle space-between fr-pb-3w fr-mb-3w separator">
-        <div className="fr-grid-row fr-grid-row--middle">
-          <TitleIcon icon="file-line" />
-          <div>
-            <h2
-              className="fr-h4 color-blue-france fr-m-0"
-              id="feuilles-de-route-deposees"
-            >
-              Feuilles de route déposées
-            </h2>
-            <p className="fr-m-0 font-weight-500">
-              Répartition des feuilles de route déposées par périmètre
-            </p>
-          </div>
-        </div>
-      </div>
       
-      <div className="fr-grid-row fr-mb-4w">
-        <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-          <div>
-            <Doughnut
-              backgroundColor={doughnutItems.map(item => getBackgroundColor(item.color))}
-              data={doughnutItems.map(item => item.count)}
-              isFull={false}
-              labels={doughnutItems.map(item => item.perimetre)}
-            />
-          </div>
-          <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-            {feuillesDeRouteDeposees.nombreTotal}
-          </div>
-          <div className="fr-text--lg font-weight-700 fr-m-0">
-            Feuilles de route
-          </div>
-          <div className="color-blue-france">
-            dont
-            {' '}
-            {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
-            {' '}
-            déposée(s)
-          </div>
+      <div className="center">
+        <div>
+          <Doughnut
+            backgroundColor={doughnutItems.map(item => getBackgroundColor(item.color))}
+            data={doughnutItems.map(item => item.count)}
+            isFull={false}
+            labels={doughnutItems.map(item => item.perimetre)}
+          />
         </div>
-        <div className="fr-col">
-          <div className="font-weight-500">
-            Ventilation par périmètre géographique
-          </div>
+        <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
+          {feuillesDeRouteDeposees.nombreTotal}
+        </div>
+        <div className="fr-text--lg font-weight-700 fr-m-0">
+          Feuilles de route
+        </div>
+        <div className="color-blue-france fr-pb-4w separator">
+          dont
+          {' '}
+          {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
+          {' '}
+          avec demande de subvention
+        </div>
+        <div className="fr-mt-4w">
           <ul>
             {allItems.map((item) => (
               <li
@@ -143,11 +98,6 @@ export default function FeuillesDeRouteDeposees({
                 </div>
                 <div className="font-weight-700">
                   {item.count}
-                  {' '}
-                  feuille
-                  {item.count > 1 ? 's' : ''}
-                  {' '}
-                  de route
                 </div>
               </li>
             ))}

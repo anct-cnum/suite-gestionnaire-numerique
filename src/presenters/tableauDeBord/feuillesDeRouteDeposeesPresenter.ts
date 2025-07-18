@@ -36,7 +36,7 @@ export function feuillesDeRouteDeposeesPresenter(
     ventilationParPerimetre: readModel.ventilationParPerimetre.map((item) => ({
       color: getColorForPerimetre(item.perimetre),
       count: item.count,
-      perimetre: item.perimetre,
+      perimetre: getLibelleForPerimetre(item.perimetre),
     })),
   }
 }
@@ -57,4 +57,15 @@ function getColorForPerimetre(perimetre: string): string {
   }
   
   return couleursMappings[perimetre] ?? 'dot-green-archipel-main-648'
+}
+
+// Mapping des périmètres vers les libellés affichés
+function getLibelleForPerimetre(perimetre: string): string {
+  const libelleMappings: Record<string, string> = {
+    departemental: 'Feuilles de route départementales',
+    groupementsDeCommunes: 'Feuilles de route infra-départementales',
+    regional: 'Feuilles de route régionales',
+  }
+  
+  return libelleMappings[perimetre] ?? perimetre
 }
