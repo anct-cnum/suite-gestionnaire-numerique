@@ -9,6 +9,10 @@
   background-color: var(--grey-0-1000);
 }
 
+.dot-grey-sans-coporteur {
+  background-color: var(--grey-425-625);
+}
+
 .dot-purple-glycine-main-494 {
   background-color: var(--purple-glycine-main-494);
 }
@@ -51,4 +55,87 @@
 
 .dot-green-menthe-main-548 {
   background-color: var(--green-menthe-main-548);
+}
+
+/* Purple colors */
+.dot-purple-glycine-sun-113-moon-797 {
+  background-color: var(--purple-glycine-sun-113-moon-797);
+}
+
+.dot-purple-glycine-975-75 {
+  background-color: var(--purple-glycine-975-75);
+}
+
+.dot-purple-glycine-main-732 {
+  background-color: var(--purple-glycine-main-732);
+}
+
+.dot-purple-glycine-200-850 {
+  background-color: var(--purple-glycine-200-850);
+}
+
+.dot-purple-glycine-125-925 {
+  background-color: var(--purple-glycine-125-925);
+}
+
+.dot-purple-glycine-100-950 {
+  background-color: var(--purple-glycine-100-950);
+}
+
+/* Pink colors */
+.dot-pink-macaron-main-689 {
+  background-color: var(--pink-macaron-main-689);
+}
+
+.dot-pink-macaron-975-75 {
+  background-color: var(--pink-macaron-975-75);
+}
+
+.dot-pink-macaron-850-200 {
+  background-color: var(--pink-macaron-850-200);
+}
+
+.dot-pink-macaron-925-125 {
+  background-color: var(--pink-macaron-925-125);
+}
+
+.dot-pink-macaron-950-100 {
+  background-color: var(--pink-macaron-950-100);
+}
+
+.dot-pink-tuile-main-556 {
+  background-color: var(--pink-tuile-main-556);
+}
+
+.dot-pink-tuile-975-75 {
+  background-color: var(--pink-tuile-975-75);
+}
+
+.dot-pink-tuile-850-200 {
+  background-color: var(--pink-tuile-850-200);
+}
+
+.dot-pink-tuile-925-125 {
+  background-color: var(--pink-tuile-925-125);
+}
+
+.dot-pink-tuile-950-100 {
+  background-color: var(--pink-tuile-950-100);
+}
+
+/* Additional green colors */
+.dot-green-tilleul-verveine-main-707 {
+  background-color: var(--green-tilleul-verveine-main-707);
+}
+
+.dot-green-emeraude-main-632 {
+  background-color: var(--green-emeraude-main-632);
+}
+
+.dot-green-archipel-main-648 {
+  background-color: var(--green-archipel-main-648);
+}
+
+.dot-green-bourgeon-main-640 {
+  background-color: var(--green-bourgeon-main-640);
 }
