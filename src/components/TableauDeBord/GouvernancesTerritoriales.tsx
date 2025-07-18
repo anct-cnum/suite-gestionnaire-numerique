@@ -1,7 +1,8 @@
 'use client'
 
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
-import { ReactElement } from 'react'
+import html2canvas from 'html2canvas'
+import { ReactElement, useRef } from 'react'
 
 import styles from './TableauDeBord.module.css'
 import Dot from '../shared/Dot/Dot'
@@ -84,13 +85,52 @@ export default function GouvernancesTerritoriales({
     
   ]
 
+  const componentRef = useRef<HTMLDivElement>(null)
+
+  async function handleDownload(): Promise<void> {
+    if (componentRef.current) {
+      try {
+        const canvas = await html2canvas(componentRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 2, // Pour une meilleure qualité
+        })
+        
+        // Convertir en blob et télécharger
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.download = 'gouvernances-territoriales.png'
+            link.href = url
+            link.click()
+            URL.revokeObjectURL(url)
+          }
+        })
+      } catch {
+        // Erreur silencieuse pour l'utilisateur
+      }
+    }
+  }
+
   return (
     <section
       aria-labelledby="gouvernances-territoriales"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
     >
+      <div className="fr-grid-row fr-grid-row--right fr-mb-2w">
+        <button
+          className="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-download-line"
+          onClick={handleDownload}
+          type="button"
+        >
+          Télécharger
+        </button>
+      </div>
       
-      <div className="center">
+      <div
+        className="center"
+        ref={componentRef}
+      >
         <div>
           <Doughnut
             backgroundColor={allItems.map(item => getBackgroundColor(item.color))}
