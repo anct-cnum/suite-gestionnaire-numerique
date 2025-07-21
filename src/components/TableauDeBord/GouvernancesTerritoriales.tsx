@@ -117,12 +117,21 @@ export default function GouvernancesTerritoriales({
                 className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                 key={item.type}
               >
-                <div>
-                  <Dot color={item.color} />
-                  {' '}
-                  {item.type}
+                <div
+                  className={styles['text-ellipsis']}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <span className={styles['dot-margin']}>
+                    <Dot color={item.color} />
+                  </span>
+                  <span className={styles['item-type-padding']}>
+                    {item.type}
+                  </span>
                 </div>
-                <div className="font-weight-700">
+                <div
+                  className="font-weight-700"
+                  style={{ flexShrink: 0 }}
+                >
                   {item.count}
                 </div>
               </li>
@@ -137,7 +146,7 @@ export default function GouvernancesTerritoriales({
       >
         <div style={{ flex: 1 }}>
           <p className="fr-text--sm fr-mb-0">
-            Données mise à jour le
+            Données mises à jour le
             {' '}
             {dateGeneration.toLocaleDateString('fr-FR')}
           </p>

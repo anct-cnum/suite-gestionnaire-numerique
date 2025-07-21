@@ -102,7 +102,7 @@ export default function FeuillesDeRouteDeposees({
           <strong>
             {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
             {' '}
-            avec demande de subvention
+            avec demandes de subvention
           </strong>
         </div>
         <div className="fr-mt-4w">
@@ -132,7 +132,7 @@ export default function FeuillesDeRouteDeposees({
       >
         <div style={{ flex: 1 }}>
           <p className="fr-text--sm fr-mb-0">
-            Données mise à jour le
+            Données mises à jour le
             {' '}
             {dateGeneration.toLocaleDateString('fr-FR')}
           </p>

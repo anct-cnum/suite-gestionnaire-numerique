@@ -22,3 +22,19 @@
 .download-button::before {
   font-size: 1rem !important;
 }
+
+.text-ellipsis {
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot-margin {
+  margin-right: 0.5em;
+}
+
+.item-type-padding {
+  padding-left: 0.1em;
+}
