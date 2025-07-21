@@ -55,8 +55,11 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       feuillesDeRouteDeposeesPresenter
     )
 
+    const dateGeneration = new Date()
+    
     return (
       <TableauDeBordAdmin
+        dateGeneration={dateGeneration}
         feuillesDeRouteDeposeesViewModel={feuillesDeRouteDeposeesViewModel}
         gouvernancesTerritorialesViewModel={gouvernancesTerritorialesViewModel}
       />

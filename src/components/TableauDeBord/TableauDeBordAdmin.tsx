@@ -10,6 +10,7 @@ import { FeuillesDeRouteDeposeesViewModel } from '@/presenters/tableauDeBord/feu
 import { GouvernancesTerritorialesViewModel } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
 
 export default function TableauDeBordAdmin({
+  dateGeneration,
   feuillesDeRouteDeposeesViewModel,
   gouvernancesTerritorialesViewModel,
 }: Props): ReactElement {
@@ -38,11 +39,13 @@ export default function TableauDeBordAdmin({
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <GouvernancesTerritoriales
+            dateGeneration={dateGeneration}
             gouvernancesTerritoriales={gouvernancesTerritorialesViewModel}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
           <FeuillesDeRouteDeposees
+            dateGeneration={dateGeneration}
             feuillesDeRouteDeposees={feuillesDeRouteDeposeesViewModel}
           />
         </div>
@@ -52,6 +55,7 @@ export default function TableauDeBordAdmin({
 }
 
 type Props = Readonly<{
+  dateGeneration: Date
   feuillesDeRouteDeposeesViewModel: ErrorViewModel | FeuillesDeRouteDeposeesViewModel
   gouvernancesTerritorialesViewModel: ErrorViewModel | GouvernancesTerritorialesViewModel
 }>

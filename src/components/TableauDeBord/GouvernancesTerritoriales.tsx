@@ -12,45 +12,10 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernancesTerritorialesViewModel } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
 
 export default function GouvernancesTerritoriales({ 
+  dateGeneration,
   gouvernancesTerritoriales,
 }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
-
-  // Conversion des classes CSS vers les couleurs pour le graphique Doughnut
-  function getBackgroundColor(cssClass: string): string {
-    const colorMappings: Record<string, string> = {
-      'dot-black': '#000000',
-      'dot-blue-france-main-525': '#000091',
-      'dot-green-menthe-main-548': '#009081',
-      'dot-green-tilleul-verveine-850': '#8db836',
-      'dot-green-tilleul-verveine-925': '#b9d15e',
-      'dot-green-tilleul-verveine-950': '#5a7d2e',
-      'dot-grey-sans-coporteur': '#929292',
-      'dot-orange-terre-battue-850-200': '#e17b47',
-      // Pink colors
-      'dot-pink-macaron-850-200': '#f5b7c7',
-      'dot-pink-macaron-925-125': '#fad7e1',
-      'dot-pink-macaron-950-100': '#fce9ed',
-      'dot-pink-macaron-975-75': '#fef4f6',
-      'dot-pink-macaron-main-689': '#e18b96',
-      'dot-pink-tuile-850-200': '#e8a598',
-      'dot-pink-tuile-925-125': '#f3d2ca',
-      'dot-pink-tuile-950-100': '#f9e9e5',
-      'dot-pink-tuile-975-75': '#fcf4f2',
-      'dot-pink-tuile-main-556': '#ce614a',
-      // Purple colors
-      'dot-purple-glycine-100-950': '#e8d5f5',
-      'dot-purple-glycine-200-850': '#d1aaea',
-      'dot-purple-glycine-850-200': '#b19dd1',
-      'dot-purple-glycine-925-125': '#c4a9d8',
-      'dot-purple-glycine-950-100': '#c4a9d8',
-      'dot-purple-glycine-975-75': '#f5f0fc',
-      'dot-purple-glycine-main-494': '#8b5fb4',
-      'dot-purple-glycine-main-732': '#6a4c93',
-      'dot-purple-glycine-sun-113-moon-797': '#d4c5e8',
-    }
-    return colorMappings[cssClass] ?? '#929292'
-  }
 
   if (isErrorViewModel(gouvernancesTerritoriales)) {
     return (
@@ -77,6 +42,7 @@ export default function GouvernancesTerritoriales({
     ...gouvernancesTerritoriales.ventilationParTypeDeCoporteur,
     ...gouvernancesTerritoriales.sansCoporteur.count > 0 
       ? [{
+        backgroundColor: gouvernancesTerritoriales.sansCoporteur.backgroundColor,
         color: gouvernancesTerritoriales.sansCoporteur.color,
         count: gouvernancesTerritoriales.sansCoporteur.count,
         type: gouvernancesTerritoriales.sansCoporteur.label,
@@ -116,24 +82,14 @@ export default function GouvernancesTerritoriales({
     <section
       aria-labelledby="gouvernances-territoriales"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
-      <div className="fr-grid-row fr-grid-row--right fr-mb-2w">
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-download-line"
-          onClick={handleDownload}
-          type="button"
-        >
-          Télécharger
-        </button>
-      </div>
-      
+    >      
       <div
         className="center"
         ref={componentRef}
       >
         <div>
           <Doughnut
-            backgroundColor={allItems.map(item => getBackgroundColor(item.color))}
+            backgroundColor={allItems.map(item => item.backgroundColor)}
             data={allItems.map(item => item.count)}
             isFull={false}
             labels={allItems.map(item => item.type)}
@@ -148,9 +104,11 @@ export default function GouvernancesTerritoriales({
         <div className="color-blue-france fr-pb-4w separator">
           dont
           {' '}
-          {gouvernancesTerritoriales.nombreTotal - gouvernancesTerritoriales.sansCoporteur.count}
-          {' '}
-          avec coporteur(s)
+          <strong>
+            {gouvernancesTerritoriales.nombreTotal - gouvernancesTerritoriales.sansCoporteur.count}
+            {' '}
+            co-portées
+          </strong>
         </div>
         <div className="fr-mt-4w">
           <ul>
@@ -159,17 +117,61 @@ export default function GouvernancesTerritoriales({
                 className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                 key={item.type}
               >
-                <div>
-                  <Dot color={item.color} />
-                  {' '}
-                  {item.type}
+                <div
+                  className={styles['text-ellipsis']}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <span className={styles['dot-margin']}>
+                    <Dot color={item.color} />
+                  </span>
+                  <span className={styles['item-type-padding']}>
+                    {item.type}
+                  </span>
                 </div>
-                <div className="font-weight-700">
+                <div
+                  className="font-weight-700"
+                  style={{ flexShrink: 0 }}
+                >
                   {item.count}
                 </div>
               </li>
             ))}
           </ul>
+        </div>
+      </div>
+      <hr className="fr-hr fr-mt-3w" />
+      <div
+        className="fr-grid-row fr-grid-row--middle fr-mt-2w"
+        style={{ alignItems: 'center' }}
+      >
+        <div style={{ flex: 1 }}>
+          <p className="fr-text--sm fr-mb-0">
+            Données mises à jour le
+            {' '}
+            {dateGeneration.toLocaleDateString('fr-FR')}
+          </p>
+        </div>
+        <div>
+          <button
+            className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
+            onClick={handleDownload}
+            style={{ 
+              alignItems: 'center',
+              border: '1px solid var(--border-default-grey)',
+              color: 'var(--text-mention-grey)',
+              display: 'flex',
+              height: '32px',
+              justifyContent: 'center',
+              minHeight: '32px',
+              width: '32px',
+            }}
+            title="Télécharger le graphique"
+            type="button"
+          >
+            <span className="fr-sr-only">
+              Télécharger le graphique
+            </span>
+          </button>
         </div>
       </div>
     </section>
@@ -183,5 +185,6 @@ function isErrorViewModel(
 }
 
 type Props = Readonly<{
+  dateGeneration: Date
   gouvernancesTerritoriales: ErrorViewModel | GouvernancesTerritorialesViewModel
 }>

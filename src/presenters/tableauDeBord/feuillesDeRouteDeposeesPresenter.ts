@@ -5,11 +5,13 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export type FeuillesDeRouteDeposeesViewModel = Readonly<{
   nombreTotal: number
   sansDemandeSubvention: {
+    backgroundColor: string
     color: string
     count: number
     label: string
   }
   ventilationParPerimetre: ReadonlyArray<{
+    backgroundColor: string
     color: string
     count: number
     perimetre: string
@@ -29,15 +31,20 @@ export function feuillesDeRouteDeposeesPresenter(
   return {
     nombreTotal: readModel.nombreTotal,
     sansDemandeSubvention: {
+      backgroundColor: getBackgroundColor('dot-grey-sans-coporteur'),
       color: 'dot-grey-sans-coporteur', // Réutilisation de la classe grise
       count: readModel.nombreSansDemandeSubvention,
       label: 'Sans demande de subvention',
     },
-    ventilationParPerimetre: readModel.ventilationParPerimetre.map((item) => ({
-      color: getColorForPerimetre(item.perimetre),
-      count: item.count,
-      perimetre: getLibelleForPerimetre(item.perimetre),
-    })),
+    ventilationParPerimetre: readModel.ventilationParPerimetre.map((item) => {
+      const color = getColorForPerimetre(item.perimetre)
+      return {
+        backgroundColor: getBackgroundColor(color),
+        color,
+        count: item.count,
+        perimetre: getLibelleForPerimetre(item.perimetre),
+      }
+    }),
   }
 }
 
@@ -68,4 +75,16 @@ function getLibelleForPerimetre(perimetre: string): string {
   }
   
   return libelleMappings[perimetre] ?? perimetre
+}
+
+// Conversion des classes CSS vers les couleurs hexadécimales pour le graphique
+function getBackgroundColor(cssClass: string): string {
+  const colorMappings: Record<string, string> = {
+    'dot-green-archipel-main-648': '#00A95F',
+    'dot-green-emeraude-main-632': '#00AC8C',
+    'dot-green-menthe-main-548': '#009081',
+    'dot-green-tilleul-verveine-main-707': '#B8E986',
+    'dot-grey-sans-coporteur': '#929292',
+  }
+  return colorMappings[cssClass] ?? '#929292'
 }
