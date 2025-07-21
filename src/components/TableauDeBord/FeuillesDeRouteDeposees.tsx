@@ -12,21 +12,10 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { FeuillesDeRouteDeposeesViewModel } from '@/presenters/tableauDeBord/feuillesDeRouteDeposeesPresenter'
 
 export default function FeuillesDeRouteDeposees({ 
+  dateGeneration,
   feuillesDeRouteDeposees,
 }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
-
-  // Conversion des classes CSS vers les couleurs pour le graphique Doughnut
-  function getBackgroundColor(cssClass: string): string {
-    const colorMappings: Record<string, string> = {
-      'dot-green-archipel-main-648': '#00A95F',
-      'dot-green-emeraude-main-632': '#00AC8C',
-      'dot-green-menthe-main-548': '#009081',
-      'dot-green-tilleul-verveine-main-707': '#B8E986',
-      'dot-grey-sans-coporteur': '#929292',
-    }
-    return colorMappings[cssClass] ?? '#929292'
-  }
 
   if (isErrorViewModel(feuillesDeRouteDeposees)) {
     return (
@@ -88,24 +77,14 @@ export default function FeuillesDeRouteDeposees({
     <section
       aria-labelledby="feuilles-de-route-deposees"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
-    >
-      <div className="fr-grid-row fr-grid-row--right fr-mb-2w">
-        <button
-          className="fr-btn fr-btn--secondary fr-btn--sm fr-btn--icon-left fr-icon-download-line"
-          onClick={handleDownload}
-          type="button"
-        >
-          Télécharger
-        </button>
-      </div>
-      
+    >      
       <div
         className="center"
         ref={componentRef}
       >
         <div>
           <Doughnut
-            backgroundColor={doughnutItems.map(item => getBackgroundColor(item.color))}
+            backgroundColor={doughnutItems.map(item => item.backgroundColor)}
             data={doughnutItems.map(item => item.count)}
             isFull={false}
             labels={doughnutItems.map(item => item.perimetre)}
@@ -120,9 +99,11 @@ export default function FeuillesDeRouteDeposees({
         <div className="color-blue-france fr-pb-4w separator">
           dont
           {' '}
-          {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
-          {' '}
-          avec demande de subvention
+          <strong>
+            {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
+            {' '}
+            avec demande de subvention
+          </strong>
         </div>
         <div className="fr-mt-4w">
           <ul>
@@ -144,6 +125,41 @@ export default function FeuillesDeRouteDeposees({
           </ul>
         </div>
       </div>
+      <hr className="fr-hr fr-mt-3w" />
+      <div
+        className="fr-grid-row fr-grid-row--middle fr-mt-2w"
+        style={{ alignItems: 'center' }}
+      >
+        <div style={{ flex: 1 }}>
+          <p className="fr-text--sm fr-mb-0">
+            Données mise à jour le
+            {' '}
+            {dateGeneration.toLocaleDateString('fr-FR')}
+          </p>
+        </div>
+        <div>
+          <button
+            className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
+            onClick={handleDownload}
+            style={{ 
+              alignItems: 'center',
+              border: '1px solid var(--border-default-grey)',
+              color: 'var(--text-mention-grey)',
+              display: 'flex',
+              height: '32px',
+              justifyContent: 'center',
+              minHeight: '32px',
+              width: '32px',
+            }}
+            title="Télécharger le graphique"
+            type="button"
+          >
+            <span className="fr-sr-only">
+              Télécharger le graphique
+            </span>
+          </button>
+        </div>
+      </div>
     </section>
   )
 }
@@ -155,5 +171,6 @@ function isErrorViewModel(
 }
 
 type Props = Readonly<{
+  dateGeneration: Date
   feuillesDeRouteDeposees: ErrorViewModel | FeuillesDeRouteDeposeesViewModel
 }>
