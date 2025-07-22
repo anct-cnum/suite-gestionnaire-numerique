@@ -64,10 +64,23 @@ export default function EtatDesLieux({
 
       </div>
       <div className="fr-grid-row">
-        <CarteFragilite
-          communesFragilite={indicesFragilite}
-          departement={departement}
-        />
+        {departement === 'France' ? (
+          <div className="fr-col-8">
+            <div className="fr-card fr-p-4w">
+              <h3 className="fr-h5 fr-mb-2w">
+                France
+              </h3>
+              <p className="fr-text--sm fr-m-0">
+                Carte de fragilité non disponible pour l&apos;ensemble du territoire national.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <CarteFragilite
+            communesFragilite={indicesFragilite}
+            departement={departement}
+          />
+        )}
         <div className="fr-col-4">
           <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
           <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />

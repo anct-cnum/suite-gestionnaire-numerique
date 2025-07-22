@@ -1,7 +1,7 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface RecupererTableauDeBordGouvernanceLoader {
-  get(departementCode: string): Promise<ErrorReadModel | GouvernanceReadModel>
+  get(territoire: string): Promise<ErrorReadModel | GouvernanceReadModel>
 } 
 
 export type GouvernanceReadModel = Readonly<{
