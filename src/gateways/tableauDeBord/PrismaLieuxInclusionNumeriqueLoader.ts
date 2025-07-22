@@ -5,24 +5,36 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeriqueLoader {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async get(codeDepartement: string): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel> {
+  async get(territoire: string): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel> {
     try {
-      const result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
-        SELECT COUNT(*) AS nb_lieux
-        FROM main.personne_lieux_activites pla
-        JOIN main.structure s ON pla.structure_id = s.id
-        JOIN main.adresse a ON s.adresse_id = a.id
-        WHERE a.departement = ${codeDepartement}
-      `
+      let result: Array<{ nb_lieux: bigint }>
+      
+      if (territoire === 'France') {
+        result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
+          SELECT COUNT(*) AS nb_lieux
+          FROM main.personne_lieux_activites pla
+          JOIN main.structure s ON pla.structure_id = s.id
+          JOIN main.adresse a ON s.adresse_id = a.id
+          WHERE a.departement != 'zzz'
+        `
+      } else {
+        result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
+          SELECT COUNT(*) AS nb_lieux
+          FROM main.personne_lieux_activites pla
+          JOIN main.structure s ON pla.structure_id = s.id
+          JOIN main.adresse a ON s.adresse_id = a.id
+          WHERE a.departement = ${territoire}
+        `
+      }
 
       return {
-        departement: codeDepartement,
+        departement: territoire,
         nombreLieux: Number(result[0]?.nb_lieux ?? 0),
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaLieuxInclusionNumeriqueLoader', {
-        codeDepartement,
         operation: 'get',
+        territoire,
       })
       return {
         message: 'Impossible de récupérer les données des lieux d\'inclusion numérique',

@@ -1,7 +1,7 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface AccompagnementsRealisesLoader {
-  get(codeDepartement: string): Promise<AccompagnementsRealisesReadModel | ErrorReadModel>
+  get(territoire: string): Promise<AccompagnementsRealisesReadModel | ErrorReadModel>
 }
 
 export type AccompagnementsRealisesReadModel = Readonly<{

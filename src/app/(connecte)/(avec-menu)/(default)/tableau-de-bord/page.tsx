@@ -4,6 +4,7 @@ import { ReactElement } from 'react'
 
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
+import TableauDeBordAdmin from '@/components/TableauDeBord/TableauDeBordAdmin'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
@@ -34,56 +35,103 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
-  // Rediriger les administrateurs vers la page dédiée gouvernances
+  // Chargement des données communes
+  const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
+  const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
+  const accompagnementsRealisesLoader = new PrismaAccompagnementsRealisesLoader()
+  const indicesLoader = new PrismaIndicesDeFragiliteLoader()
+  const financementsLoader = new PrismaFinancementsLoader()
+  const gouvernanceLoader = new PrismaGouvernanceTableauDeBordLoader()
+
+  // Si administrateur, charger les données pour la France entière
   if (utilisateur.role.type === 'administrateur_dispositif') {
+    const lieuxInclusionReadModel = await lieuxInclusionLoader.get('France')
+    const lieuxInclusionViewModel = handleReadModelOrError(
+      lieuxInclusionReadModel,
+      lieuxInclusionNumeriquePresenter
+    )
+
+    const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get('France')
+    const mediateursEtAidantsViewModel = handleReadModelOrError(
+      mediateursEtAidantsReadModel,
+      mediateursEtAidantsPresenter
+    )
+
+    const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get('France')
+    const accompagnementsRealisesViewModel = handleReadModelOrError(
+      accompagnementsRealisesReadModel,
+      accompagnementsRealisesPresenter
+    )
+
+    // Pour l'administrateur, on passe un tableau vide car la carte n'est pas affichée
+    const indicesFragilite = [] as Array<{ codeInsee: string; couleur: string; indice: number }>
+
+    const financementsReadModel = await financementsLoader.get('France')
+    const financementsViewModel = handleReadModelOrError(
+      financementsReadModel,
+      financementsPresenter
+    )
+
+    const gouvernanceReadModel = await gouvernanceLoader.get('France')
+    const gouvernanceViewModel = handleReadModelOrError(
+      gouvernanceReadModel,
+      gouvernancePresenter
+    )
+
+    const tableauDeBordViewModel = tableauDeBordPresenter('France')
+
     return (
-      <div>
-        <h1>
-          Tableau de bord administrateur
-        </h1>
-      </div>
+      <TableauDeBordAdmin
+        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        financementsViewModel={financementsViewModel}
+        gouvernanceViewModel={gouvernanceViewModel}
+        indicesFragilite={indicesFragilite}
+        lieuxInclusionViewModel={lieuxInclusionViewModel}
+        mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
     )
   }
 
   // Tableau de bord du gestionnaire de département
   const departementCode = utilisateur.departementCode ?? ''
   
-  const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
   const lieuxInclusionReadModel = await lieuxInclusionLoader.get(departementCode)
   const lieuxInclusionViewModel = handleReadModelOrError(
     lieuxInclusionReadModel,
     lieuxInclusionNumeriquePresenter
   )
 
-  const mediateursEtAidantsLoader = new PrismaMediateursEtAidantsLoader()
   const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(departementCode)
   const mediateursEtAidantsViewModel = handleReadModelOrError(
     mediateursEtAidantsReadModel,
     mediateursEtAidantsPresenter
   )
 
-  const accompagnementsRealisesLoader = new PrismaAccompagnementsRealisesLoader()
   const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(departementCode)
   const accompagnementsRealisesViewModel = handleReadModelOrError(
     accompagnementsRealisesReadModel,
     accompagnementsRealisesPresenter
   )
 
-  const indicesLoader = new PrismaIndicesDeFragiliteLoader()
   const indicesReadModel = await indicesLoader.get(departementCode)
   const indicesFragilite = handleReadModelOrError(
     indicesReadModel,
-    (readModel) => indiceFragilitePresenter(readModel.communes)
+    (readModel) => {
+      if (readModel.type === 'communes') {
+        return indiceFragilitePresenter(readModel.communes)
+      }
+      // Pour l'instant, on retourne un tableau vide pour le type 'departements'
+      return indiceFragilitePresenter([])
+    }
   )
 
-  const financementsLoader = new PrismaFinancementsLoader()
   const financementsReadModel = await financementsLoader.get(departementCode)
   const financementsViewModel = handleReadModelOrError(
     financementsReadModel,
     financementsPresenter
   )
 
-  const gouvernanceLoader = new PrismaGouvernanceTableauDeBordLoader()
   const gouvernanceReadModel = await gouvernanceLoader.get(departementCode)
   const gouvernanceViewModel = handleReadModelOrError(
     gouvernanceReadModel,

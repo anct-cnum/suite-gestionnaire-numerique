@@ -1,7 +1,7 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface FinancementLoader {
-  get(codeDepartement: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements>
+  get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements>
 }
 
 export interface TableauDeBordLoaderFinancements {

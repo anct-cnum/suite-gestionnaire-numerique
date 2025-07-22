@@ -7,7 +7,7 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaFinancementsLoader implements FinancementLoader {
   readonly #feuilleDeRouteDao = prisma.feuilleDeRouteRecord
 
-  async get(codeDepartement: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
+  async get(territoire: string): Promise<ErrorReadModel | TableauDeBordLoaderFinancements> {
     try {
       const feuillesDeRoute = await this.#feuilleDeRouteDao.findMany({
         include: {
@@ -21,8 +21,12 @@ export class PrismaFinancementsLoader implements FinancementLoader {
             },
           },
         },
-        where: {
-          gouvernanceDepartementCode: codeDepartement,
+        where: territoire === 'France' ? {
+          gouvernanceDepartementCode: {
+            not: 'zzz',
+          },
+        } : {
+          gouvernanceDepartementCode: territoire,
         },
       })
 
@@ -66,8 +70,8 @@ export class PrismaFinancementsLoader implements FinancementLoader {
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaFinancementsLoader', {
-        codeDepartement,
         operation: 'get',
+        territoire,
       })
       return {
         message: 'Impossible de récupérer les données de financement',

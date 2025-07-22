@@ -1,7 +1,7 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface MediateursEtAidantsLoader {
-  get(codeDepartement: string): Promise<ErrorReadModel | MediateursEtAidantsReadModel>
+  get(territoire: string): Promise<ErrorReadModel | MediateursEtAidantsReadModel>
 }
 
 export type MediateursEtAidantsReadModel = Readonly<{
