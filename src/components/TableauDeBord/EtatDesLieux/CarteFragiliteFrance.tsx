@@ -1,14 +1,13 @@
+'use client'
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
-import Carte from '../../shared/Carte/Carte'
+import CarteFranceAvecInsets, { getDepartementFragiliteColor } from '../../shared/Carte/CarteFranceAvecInsets'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
-export default function CarteFragilite({
-  communesFragilite,
-  departement,
+export default function CarteFragiliteFrance({
+  departementsFragilite,
 }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -34,7 +33,7 @@ export default function CarteFragilite({
     }
   }, [])
 
-  if (isErrorViewModel(communesFragilite)) {
+  if (isErrorViewModel(departementsFragilite)) {
     return (
       <div
         className="fr-col-8 background-blue-france"
@@ -55,7 +54,7 @@ export default function CarteFragilite({
               <div className="font-weight-700 color-blue-france">
                 <span>
                   {' '}
-                  Indice de Fragilité numérique
+                  Indice de Fragilité numérique - France
                 </span>
                 <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
               </div>
@@ -68,7 +67,7 @@ export default function CarteFragilite({
                 icon="error-warning-line"
               />
               <div className="fr-text--sm color-blue-france fr-mt-2w">
-                {communesFragilite.message}
+                {departementsFragilite.message}
               </div>
             </div>
           </div>
@@ -76,6 +75,13 @@ export default function CarteFragilite({
       </div>
     )
   }
+
+  // Transformer les données pour le composant CarteFrance
+  const departementsData = departementsFragilite.map(dept => ({
+    codeDepartement: dept.codeDepartement,
+    couleur: getDepartementFragiliteColor(dept.score),
+    score: dept.score,
+  }))
 
   return (
     <div
@@ -97,7 +103,7 @@ export default function CarteFragilite({
             <div className="font-weight-700 color-blue-france">
               <span>
                 {' '}
-                Indice de Fragilité numérique
+                Indice de Fragilité numérique - France
               </span>
               <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
             </div>
@@ -106,9 +112,8 @@ export default function CarteFragilite({
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
           {isReady ?
-            <Carte
-              communesFragilite={communesFragilite}
-              departement={departement}
+            <CarteFranceAvecInsets
+              departementsFragilite={departementsData}
             /> : null}
         </div>
       </div>
@@ -116,11 +121,16 @@ export default function CarteFragilite({
   )
 }
 
-function isErrorViewModel(viewModel: Array<CommuneFragilite> | ErrorViewModel): viewModel is ErrorViewModel {
+function isErrorViewModel(viewModel: ErrorViewModel | ReadonlyArray<DepartementFragilite>)
+  :viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 
+type DepartementFragilite = Readonly<{
+  codeDepartement: string
+  score: number
+}>
+
 type Props = Readonly<{
-  communesFragilite: Array<CommuneFragilite> | ErrorViewModel
-  departement: string
+  departementsFragilite: ErrorViewModel | ReadonlyArray<DepartementFragilite>
 }>
