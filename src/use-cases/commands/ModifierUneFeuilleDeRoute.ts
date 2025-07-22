@@ -34,6 +34,7 @@ export class ModifierUneFeuilleDeRoute implements CommandHandler<Command> {
     const feuilleDeRouteModifiee = FeuilleDeRoute.create({
       dateDeCreation: new Date(feuilleDeRoute.state.dateDeCreation),
       dateDeModification: this.#date,
+      document: feuilleDeRoute.state.document,
       nom: command.nom,
       noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation,
       perimetreGeographique: command.perimetreGeographique,

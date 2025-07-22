@@ -26,6 +26,8 @@ export class AjouterDocument implements CommandHandler<Command> {
       chemin: command.chemin,
       nom: command.nom,
     })
+    // eslint-disable-next-line no-restricted-syntax
+    feuilleDeRoute.mettreAjourLaDateDeModificationEtLEditeur(new Date(), editeur)
     await this.#feuilleDeRouteRepository.update(feuilleDeRoute)
 
     return 'OK'
@@ -43,4 +45,4 @@ type Command = Readonly<{
 
 interface FeuilleDeRouteRepository extends GetFeuilleDeRouteRepository, UpdateFeuilleDeRouteRepository { }
 
-type UtilisateurRepository = GetUtilisateurRepository 
+type UtilisateurRepository = GetUtilisateurRepository
