@@ -9,7 +9,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { FeuillesDeRouteDeposeesViewModel } from '@/presenters/tableauDeBord/feuillesDeRouteDeposeesPresenter'
 import { GouvernancesTerritorialesViewModel } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
 
-export default function TableauDeBordAdmin({
+export default function Gouvernances({
   dateGeneration,
   feuillesDeRouteDeposeesViewModel,
   gouvernancesTerritorialesViewModel,
@@ -29,7 +29,7 @@ export default function TableauDeBordAdmin({
         <div className="fr-col-auto">
           <Link
             className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/gouvernances"
+            href="/liste-des-gouvernances"
           >
             Voir les 105 gouvernances
           </Link>

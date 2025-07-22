@@ -4,7 +4,7 @@ import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
 import html2canvas from 'html2canvas'
 import { ReactElement, useRef } from 'react'
 
-import styles from './TableauDeBord.module.css'
+import styles from './Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'

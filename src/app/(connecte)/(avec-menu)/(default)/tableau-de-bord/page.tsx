@@ -4,22 +4,17 @@ import { ReactElement } from 'react'
 
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
-import TableauDeBordAdmin from '@/components/TableauDeBord/TableauDeBordAdmin'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
-import { PrismaFeuillesDeRouteDeposeesLoader } from '@/gateways/tableauDeBord/PrismaFeuillesDeRouteDeposeesLoader'
 import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
-import { PrismaGouvernancesTerritorialesLoader } from '@/gateways/tableauDeBord/PrismaGouvernancesTerritorialesLoader'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
 import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
-import { feuillesDeRouteDeposeesPresenter } from '@/presenters/tableauDeBord/feuillesDeRouteDeposeesPresenter'
 import { financementsPresenter } from '@/presenters/tableauDeBord/financementPresenter'
 import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
-import { gouvernancesTerritorialesPresenter } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
 import { indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
@@ -39,30 +34,14 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
-  // Affichage conditionnel selon le rôle
+  // Rediriger les administrateurs vers la page dédiée gouvernances
   if (utilisateur.role.type === 'administrateur_dispositif') {
-    const gouvernancesTerritorialesLoader = new PrismaGouvernancesTerritorialesLoader()
-    const gouvernancesTerritorialesReadModel = await gouvernancesTerritorialesLoader.get()
-    const gouvernancesTerritorialesViewModel = handleReadModelOrError(
-      gouvernancesTerritorialesReadModel,
-      gouvernancesTerritorialesPresenter
-    )
-
-    const feuillesDeRouteDeposeesLoader = new PrismaFeuillesDeRouteDeposeesLoader()
-    const feuillesDeRouteDeposeesReadModel = await feuillesDeRouteDeposeesLoader.get()
-    const feuillesDeRouteDeposeesViewModel = handleReadModelOrError(
-      feuillesDeRouteDeposeesReadModel,
-      feuillesDeRouteDeposeesPresenter
-    )
-
-    const dateGeneration = new Date()
-    
     return (
-      <TableauDeBordAdmin
-        dateGeneration={dateGeneration}
-        feuillesDeRouteDeposeesViewModel={feuillesDeRouteDeposeesViewModel}
-        gouvernancesTerritorialesViewModel={gouvernancesTerritorialesViewModel}
-      />
+      <div>
+        <h1>
+          Tableau de bord administrateur
+        </h1>
+      </div>
     )
   }
 
