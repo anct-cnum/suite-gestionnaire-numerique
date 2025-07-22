@@ -112,12 +112,21 @@ export default function FeuillesDeRouteDeposees({
                 className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
                 key={item.perimetre}
               >
-                <div>
-                  <Dot color={item.color} />
-                  {' '}
-                  {item.perimetre}
+                <div
+                  className={styles['text-ellipsis']}
+                  style={{ flex: 1, minWidth: 0 }}
+                >
+                  <span className={styles['dot-margin']}>
+                    <Dot color={item.color} />
+                  </span>
+                  <span className={styles['item-type-padding']}>
+                    {item.perimetre}
+                  </span>
                 </div>
-                <div className="font-weight-700">
+                <div
+                  className="font-weight-700"
+                  style={{ flexShrink: 0 }}
+                >
                   {item.count}
                 </div>
               </li>
