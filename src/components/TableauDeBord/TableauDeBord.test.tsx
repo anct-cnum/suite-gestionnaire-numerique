@@ -14,6 +14,17 @@ vi.mock('../shared/Carte/Carte', () => ({
     </div>)),
 }))
 
+// Mock du composant CarteFranceAvecInsets
+vi.mock('../shared/Carte/CarteFranceAvecInsets', () => ({
+  // eslint-disable-next-line vitest/require-mock-type-parameters
+  default: vi.fn(() => (
+    <div data-testid="carte-france-mock">
+      Carte France mockée
+    </div>)),
+  // eslint-disable-next-line vitest/require-mock-type-parameters
+  getDepartementFragiliteColor: vi.fn(() => '#ffffff'),
+}))
+
 describe('tableau de bord', () => {
   afterEach(() => {
     vi.clearAllMocks()

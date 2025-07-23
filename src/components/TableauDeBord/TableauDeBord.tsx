@@ -101,10 +101,13 @@ export default function TableauDeBord({
       <hr className="fr-hr" />
       <EtatDesLieux
         accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
-        departement={departement}
-        indicesFragilite={indicesFragilite}
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+        territoire={{
+          codeDepartement: departement,
+          indicesFragilite: indicesFragilite as Array<CommuneFragilite>,
+          type: 'Departement',
+        }}
       /> 
       <Gouvernance
         gouvernanceViewModel={gouvernanceViewModel}

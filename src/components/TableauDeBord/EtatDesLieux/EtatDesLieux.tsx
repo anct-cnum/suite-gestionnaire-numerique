@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import AccompagnementsRealises from './AccompagnementsRealises'
-import CarteFragilite from './CarteFragilite'
+import CarteFragiliteDepartement from './CarteFragiliteDepartement'
+import CarteFragiliteFrance from './CarteFragiliteFrance'
 import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
+import { DepartementFragilite } from '@/components/shared/Carte/CarteFranceAvecInsets'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
@@ -16,10 +18,9 @@ import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediate
 
 export default function EtatDesLieux({
   accompagnementsRealisesViewModel,
-  departement,
-  indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
+  territoire,
 }: EtatDesLieuxProps): ReactElement {
   return (
     <section
@@ -64,21 +65,14 @@ export default function EtatDesLieux({
 
       </div>
       <div className="fr-grid-row">
-        {departement === 'France' ? (
-          <div className="fr-col-8">
-            <div className="fr-card fr-p-4w">
-              <h3 className="fr-h5 fr-mb-2w">
-                France
-              </h3>
-              <p className="fr-text--sm fr-m-0">
-                Carte de fragilité non disponible pour l&apos;ensemble du territoire national.
-              </p>
-            </div>
-          </div>
+        {territoire.type === 'France' ? (
+          <CarteFragiliteFrance
+            departementsFragilite={territoire.indicesFragilite}
+          />
         ) : (
-          <CarteFragilite
-            communesFragilite={indicesFragilite}
-            departement={departement}
+          <CarteFragiliteDepartement
+            communesFragilite={territoire.indicesFragilite}
+            departement={territoire.codeDepartement}
           />
         )}
         <div className="fr-col-4">
@@ -93,8 +87,8 @@ export default function EtatDesLieux({
 
 type EtatDesLieuxProps = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
-  departement: string
-  indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
+  territoire: { codeDepartement: string; indicesFragilite: Array<CommuneFragilite>; type: 'Departement' }
+     | { indicesFragilite: Array<DepartementFragilite>; type: 'France' }
 }>

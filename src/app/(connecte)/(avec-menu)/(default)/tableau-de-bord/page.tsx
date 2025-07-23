@@ -63,8 +63,22 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       accompagnementsRealisesPresenter
     )
 
-    // Pour l'administrateur, on passe un tableau vide car la carte n'est pas affichée
-    const indicesFragilite = [] as Array<{ codeInsee: string; couleur: string; indice: number }>
+    const indicesReadModel = await indicesLoader.get('France')
+    const indicesFragilite = handleReadModelOrError(
+      indicesReadModel,
+      (readModel) => {
+        if (readModel.type === 'departements') {
+          // Pour la France, on transforme en format départements pour la carte
+          return readModel.departements.map(dept => ({
+            codeDepartement: dept.codeDepartement,
+            couleur: indiceFragilitePresenter([{ codeInsee: dept.codeDepartement, score: dept.score }])[0]?.couleur || '#ffffff',
+            score: dept.score,
+          }))
+        }
+        // Fallback pour le type 'communes' - retourner un tableau vide car pas adapté pour la vue France
+        return []
+      }
+    )
 
     const financementsReadModel = await financementsLoader.get('France')
     const financementsViewModel = handleReadModelOrError(
