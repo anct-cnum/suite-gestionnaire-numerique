@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/class-methods-use-this */
 import { EntrepriseNonTrouvee, EntrepriseReadModel, SireneLoader } from '@/use-cases/queries/RechercherUneEntreprise'
 
 // Types pour l'API Sirene INSEE officielle
@@ -10,17 +9,17 @@ export class ApiSireneLoader implements SireneLoader {
       const urlApiSirene = `https://api.insee.fr/api-sirene/3.11/siret/${siret}`
       const reponse = await this.recupererAvecTentatives(urlApiSirene)
       const donnees = await this.gererReponse(reponse)
-      
+
       return this.traiterReponseApi(donnees)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
-      
+
       // Si l'entreprise n'est pas trouvée, retourner EntrepriseNonTrouvee
-      if (errorMessage.includes('Aucun établissement trouvé') || 
+      if (errorMessage.includes('Aucun établissement trouvé') ||
           errorMessage.includes('n\'est plus en activité')) {
         return { estTrouvee: false }
       }
-      
+
       // Pour les autres erreurs, on les relance
       throw error
     }
@@ -30,7 +29,7 @@ export class ApiSireneLoader implements SireneLoader {
     const entetes: Record<string, string> = {
       Accept: 'application/json',
     }
-    
+
     if (process.env.INSEE_API_KEY === undefined || process.env.INSEE_API_KEY === '') {
       throw new Error('Erreur de configuration')
     }
@@ -42,11 +41,11 @@ export class ApiSireneLoader implements SireneLoader {
   private async gererReponse(reponse: Response): Promise<InseeApiResponse | SireneErrorResponse> {
     if (!reponse.ok) {
       const texteErreur = await reponse.text()
-      
+
       if (reponse.status === 404) {
         throw new Error('Aucun établissement trouvé avec ce SIRET')
       }
-      
+
       if (reponse.status === 429) {
         throw new Error('Trop de requêtes. Veuillez réessayer dans quelques instants.')
       }
@@ -60,20 +59,20 @@ export class ApiSireneLoader implements SireneLoader {
   private async recupererAvecTentatives(url: string): Promise<Response> {
     let reponse: Response | undefined
     let derniereErreur: Error | null = null
-    
+
     // Retry jusqu'à 3 fois en cas d'erreur réseau
     for (let tentative = 1; tentative <= 3; tentative += 1) {
       try {
         const entetes = this.configurationEntetes()
-        
+
         // eslint-disable-next-line no-await-in-loop
         reponse = await fetch(url, {
           headers: entetes,
           // Timeout de 10 secondes
           signal: AbortSignal.timeout(10000),
         })
-        
-        break 
+
+        break
       } catch (erreur) {
         derniereErreur = erreur as Error
 
@@ -81,7 +80,7 @@ export class ApiSireneLoader implements SireneLoader {
         if (tentative === 3) {
           throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur.message}`)
         }
-        
+
         // Attente avant retry (500ms, puis 1s)
         // eslint-disable-next-line no-await-in-loop
         await new Promise(resolve => {
@@ -89,11 +88,11 @@ export class ApiSireneLoader implements SireneLoader {
         })
       }
     }
-    
+
     if (!reponse) {
       throw new Error(`Échec de connexion à l'API Sirene après 3 tentatives: ${derniereErreur?.message}`)
     }
-    
+
     return reponse
   }
 
@@ -101,9 +100,9 @@ export class ApiSireneLoader implements SireneLoader {
     // Pour l'API INSEE, la réponse contient directement l'établissement
     if ('etablissement' in donnees) {
       const etablissement = donnees.etablissement
-      
+
       this.validerEtablissement(etablissement)
-      
+
       // Transformation des données pour l'interface
       return this.transformerEtablissementSirene(etablissement)
     }
@@ -115,7 +114,7 @@ export class ApiSireneLoader implements SireneLoader {
 
   private transformerEtablissementSirene(etablissement: SireneEtablissement): EntrepriseReadModel {
     const uniteLegale = etablissement.uniteLegale
-    
+
     // Construction de l'adresse complète (format INSEE)
     const adresseEtab = etablissement.adresseEtablissement
     const adresseElements = [
@@ -124,7 +123,7 @@ export class ApiSireneLoader implements SireneLoader {
       adresseEtab.typeVoieEtablissement,
       adresseEtab.libelleVoieEtablissement,
     ].filter(Boolean)
-    
+
     const adresseComplete = [
       adresseElements.join(' '),
       adresseEtab.codePostalEtablissement,
@@ -133,7 +132,7 @@ export class ApiSireneLoader implements SireneLoader {
 
     // Récupération de la dénomination (priorité : dénomination > nom > enseigne)
     const periodeActuelle = etablissement.periodesEtablissement[0]
-    const denominationUniteLegale = 
+    const denominationUniteLegale =
       uniteLegale.denominationUniteLegale ??
       uniteLegale.nomUniteLegale ??
       periodeActuelle.enseigne1Etablissement ??

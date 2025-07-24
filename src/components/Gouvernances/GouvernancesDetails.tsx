@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import Table from '@/components/shared/Table/Table'
-import { MontantPositif } from '@/domain/shared/MontantPositif'
 import { Optional } from '@/shared/Optional'
 
 export default function GouvernancesDetails({ details }: Props): ReactElement {
@@ -23,6 +23,7 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
                     {detail.departementCode}
                     {' '}
                     -
+                    {' '}
                     {detail.departementNom}
                   </span>
                   {' '}

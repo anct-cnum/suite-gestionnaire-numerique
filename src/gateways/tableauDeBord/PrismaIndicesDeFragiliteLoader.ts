@@ -108,7 +108,6 @@ const codesDepartements = [
 ]
 
 export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
     try {
       const communes = await prisma.ifnCommune.findMany({
@@ -139,7 +138,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getForFrance(): Promise<ErrorReadModel | ReadonlyArray<DepartementReadModel>> {
     try {
       // Pour la France, on retourne des indices aléatoires pour tous les départements

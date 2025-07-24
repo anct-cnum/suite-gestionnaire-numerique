@@ -8,7 +8,6 @@ import groupements from '../../ressources/groupements.json'
 import regions from '../../ressources/regions.json'
 import { clientContext, ClientContextProviderValue } from '@/components/shared/ClientContext'
 import { gouvernanceContext } from '@/components/shared/GouvernanceContext'
-// eslint-disable-next-line import/no-restricted-paths
 import { Roles } from '@/domain/Role'
 import { GouvernanceViewModel } from '@/presenters/gouvernancePresenter'
 import { RolesAvecStructure } from '@/presenters/mesUtilisateursPresenter'

@@ -29,13 +29,13 @@ export default function Gouvernances({
         <div className="fr-col-auto">
           <Link
             className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
-            href="/liste-des-gouvernances"
+            href="/gouvernances/list"
           >
             Voir les 105 gouvernances
           </Link>
         </div>
       </div>
-      
+
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
           <GouvernancesTerritoriales

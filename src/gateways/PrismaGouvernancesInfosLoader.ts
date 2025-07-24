@@ -1,5 +1,6 @@
 import prisma from '../../prisma/prismaClient'
-import { MontantPositif } from '@/domain/shared/MontantPositif'
+// eslint-disable-next-line import/no-restricted-paths
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import { GouvernancesInfosReadModel } from '@/use-cases/queries/RecupererGouvernancesInfos'
 
 export class PrismaGouvernancesInfosLoader {

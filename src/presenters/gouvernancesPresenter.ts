@@ -1,5 +1,6 @@
+
 // eslint-disable-next-line import/no-restricted-paths
-import { MontantPositif } from '@/domain/shared/MontantPositif'
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import { GouvernancesInfosReadModel } from '@/use-cases/queries/RecupererGouvernancesInfos'
 
 export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel) : GouvernancesViewModel {

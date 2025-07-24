@@ -4,11 +4,10 @@ import { LieuxInclusionNumeriqueLoader, LieuxInclusionNumeriqueReadModel } from 
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeriqueLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(territoire: string): Promise<ErrorReadModel | LieuxInclusionNumeriqueReadModel> {
     try {
       let result: Array<{ nb_lieux: bigint }>
-      
+
       if (territoire === 'France') {
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
           SELECT COUNT(*) AS nb_lieux
@@ -42,4 +41,4 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
       }
     }
   }
-} 
+}

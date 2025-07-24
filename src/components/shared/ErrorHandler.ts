@@ -1,5 +1,4 @@
 import { ErrorViewModel } from './ErrorViewModel'
-// eslint-disable-next-line import/no-restricted-paths
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export function handleReadModelOrError<T, U>(
@@ -12,10 +11,10 @@ export function handleReadModelOrError<T, U>(
       type: 'error',
     }
   }
-  
+
   return presenter(readModel)
 }
 
 function isErrorReadModel(readModel: unknown): readModel is ErrorReadModel {
   return typeof readModel === 'object' && readModel !== null && 'type' in readModel && readModel.type === 'error'
-} 
+}

@@ -14,7 +14,6 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
 }
 
 export class MockSireneLoader implements SireneLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async rechercherParIdentifiant(siret: string): Promise<EntrepriseNonTrouvee | EntrepriseReadModel> {
     // Simulation d'un délai d'API
     await new Promise(resolve => {
@@ -24,7 +23,7 @@ export class MockSireneLoader implements SireneLoader {
     if (siret !== SIRET_VALIDE) {
       return { estTrouvee: false }
     }
-    
+
     return ENTREPRISE_MOCK
   }
 }

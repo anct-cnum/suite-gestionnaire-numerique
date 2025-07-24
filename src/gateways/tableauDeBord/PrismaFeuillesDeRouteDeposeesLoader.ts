@@ -7,7 +7,6 @@ import {
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDeposeesLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(): Promise<ErrorReadModel | FeuillesDeRouteDeposeesReadModel> {
     try {
       // Récupérer toutes les feuilles de route avec leurs actions et demandes de subvention
@@ -42,7 +41,7 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
 
       // Regrouper les feuilles de route déposées par périmètre géographique
       const feuillesParPerimetre = new Map<string, number>()
-      
+
       feuillesDeRouteDeposees.forEach((feuilleDeRoute) => {
         const perimetre = feuilleDeRoute.perimetreGeographique ?? 'Autre'
         feuillesParPerimetre.set(perimetre, (feuillesParPerimetre.get(perimetre) ?? 0) + 1)
