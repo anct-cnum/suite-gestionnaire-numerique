@@ -5,7 +5,6 @@ import { FeuilleDeRoute } from '@/domain/FeuilleDeRoute'
 import { FeuilleDeRouteRepository } from '@/use-cases/commands/shared/FeuilleDeRouteRepository'
 
 export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
     const feuilleDeRouteResource = client.feuilleDeRouteRecord
@@ -24,7 +23,6 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(uid: FeuilleDeRoute['uid']['state']['value']): Promise<FeuilleDeRoute> {
     const record = await  prisma.feuilleDeRouteRecord.findUniqueOrThrow({
       include: {
@@ -55,7 +53,6 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     return feuilleDeRoute
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async update(feuilleDeRoute: FeuilleDeRoute, tx?: Prisma.TransactionClient): Promise<void> {
     const client = tx ?? prisma
     const feuilleDeRouteResource = client.feuilleDeRouteRecord

@@ -3,7 +3,6 @@ import { GouvernanceReadModel , RecupererTableauDeBordGouvernanceLoader } from '
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeBordGouvernanceLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(territoire: string): Promise<ErrorReadModel | GouvernanceReadModel> {
     // Compter les membres de la gouvernance (non supprimés)
     const membresGouvernance = await prisma.membreRecord.findMany({
@@ -26,9 +25,9 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
     const coporteurs = membresGouvernance.filter(membre => membre.isCoporteur).length
 
     // Compter les collectivités impliquées
-    const membresCollectivites = membresGouvernance.filter(membre => 
-      membre.categorieMembre === 'commune' || 
-      membre.categorieMembre === 'departement' || 
+    const membresCollectivites = membresGouvernance.filter(membre =>
+      membre.categorieMembre === 'commune' ||
+      membre.categorieMembre === 'departement' ||
       membre.categorieMembre === 'epci')
 
     const totalCollectivites = membresCollectivites.length
@@ -66,4 +65,4 @@ export class PrismaGouvernanceTableauDeBordLoader implements RecupererTableauDeB
       },
     }
   }
-} 
+}

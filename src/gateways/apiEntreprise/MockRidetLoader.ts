@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/class-methods-use-this */
 import { EntrepriseNonTrouvee, EntrepriseReadModel, SireneLoader } from '@/use-cases/queries/RechercherUneEntreprise'
 
 const RIDET_VALIDE = '0271528'
@@ -20,16 +19,16 @@ export class MockRidetLoader implements SireneLoader {
     await new Promise(resolve => {
       setTimeout(resolve, 500)
     })
-    
+
     const ridetPadded = numeroRidet.padStart(7, '0')
-    
+
     if (ridetPadded === RIDET_VALIDE) {
       return {
         ...ENTREPRISE_MOCK,
         identifiant: numeroRidet, // Retourne le RIDET original saisi
       }
     }
-    
+
     return { estTrouvee: false }
   }
 }

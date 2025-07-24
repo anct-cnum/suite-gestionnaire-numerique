@@ -35,47 +35,38 @@ class EmptyOptional<Value> extends Optional<Value> {
     return this
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   flatMap<Output>(): Optional<Output> {
     return Optional.empty()
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   ifPresent(): void {
     // Nothing to do
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   isEmpty(): boolean {
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   isPresent(): boolean {
     return false
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   map<Output>(): Optional<Output> {
     return Optional.empty()
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   or(factory: () => Optional<Value>): Optional<Value> {
     return factory()
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   orElse(value: Value): Value {
     return value
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   orElseGet(factory: () => Value): Value {
     return factory()
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   orElseThrow<U>(throwable?: () => U): Value {
     if (throwable === undefined) {
       throw new Error("Can't get value from an empty optional")
@@ -85,7 +76,6 @@ class EmptyOptional<Value> extends Optional<Value> {
     throw throwable()
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   toArray(): Array<Value> {
     return []
   }
@@ -113,12 +103,10 @@ class ValuatedOptional<Value> extends Optional<Value> {
     consumer(this.value)
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   isEmpty(): boolean {
     return false
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   isPresent(): boolean {
     return true
   }

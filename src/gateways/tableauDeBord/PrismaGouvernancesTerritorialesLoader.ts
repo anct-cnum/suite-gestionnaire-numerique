@@ -7,7 +7,6 @@ import {
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerritorialesLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(): Promise<ErrorReadModel | GouvernancesTerritorialesReadModel> {
     try {
       // Récupérer toutes les gouvernances sauf 'zzz'
@@ -36,11 +35,11 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
 
       // Compter les gouvernances par type de coporteur
       const gouvernancesParType = new Map<string, Set<string>>()
-      
+
       gouvernances.forEach((gouvernance) => {
         // Collecter tous les types de coporteurs uniques pour cette gouvernance
         const typesDeCetteGouvernance = new Set<string>()
-        
+
         gouvernance.membres.forEach((membre) => {
           // Exclure les préfectures départementales du comptage
           if (membre.type !== 'Préfecture départementale') {
@@ -48,7 +47,7 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
             typesDeCetteGouvernance.add(type)
           }
         })
-        
+
         // Pour chaque type trouvé dans cette gouvernance, l'ajouter au comptage
         typesDeCetteGouvernance.forEach((type) => {
           if (!gouvernancesParType.has(type)) {

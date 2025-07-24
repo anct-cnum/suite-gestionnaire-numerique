@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/class-methods-use-this */
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
 import { CoFinancement } from '@/domain/CoFinancement'
-import { 
-  AddCoFinancementRepository, 
+import {
+  AddCoFinancementRepository,
   GetCoFinancementRepository,
   SupprimerCoFinancementRepository,
-  UpdateCoFinancementRepository, 
+  UpdateCoFinancementRepository,
 } from '@/use-cases/commands/shared/CoFinancementRepository'
 
-export class PrismaCoFinancementRepository implements 
+export class PrismaCoFinancementRepository implements
   AddCoFinancementRepository,
   GetCoFinancementRepository,
   SupprimerCoFinancementRepository,
@@ -38,7 +37,7 @@ export class PrismaCoFinancementRepository implements
       },
     })
 
-    return coFinancements.map(coFinancement => 
+    return coFinancements.map(coFinancement =>
       CoFinancement.create({
         montant: coFinancement.montant,
         uid: { value: coFinancement.id.toString() },

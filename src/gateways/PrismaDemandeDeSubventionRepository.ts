@@ -10,11 +10,10 @@ import {
 } from '@/use-cases/commands/shared/DemandeDeSubventionRepository'
 
 export class PrismaDemandeDeSubventionRepository
-implements AddDemandeDeSubventionRepository, 
-GetDemandeDeSubventionRepository, 
-SupprimerDemandeDeSubventionRepository, 
+implements AddDemandeDeSubventionRepository,
+GetDemandeDeSubventionRepository,
+SupprimerDemandeDeSubventionRepository,
 UpdateDemandeDeSubventionRepository {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
@@ -53,7 +52,6 @@ UpdateDemandeDeSubventionRepository {
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(uid: DemandeDeSubvention['uid']['state']['value']): Promise<DemandeDeSubvention> {
     const demande = await prisma.demandeDeSubventionRecord.findUniqueOrThrow({
       include: {
@@ -88,7 +86,6 @@ UpdateDemandeDeSubventionRepository {
     return demandeDeSubvention
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async supprimer(uid: DemandeDeSubvention['uid']['state']['value'], tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 
@@ -109,7 +106,6 @@ UpdateDemandeDeSubventionRepository {
     return true
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async update(demandeDeSubvention: DemandeDeSubvention, tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
 

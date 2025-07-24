@@ -17,7 +17,6 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
 {
   readonly #dataResource = prisma.actionRecord
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async add(action: Action, tx?: Prisma.TransactionClient): Promise<RecordId> {
     const client = tx ?? prisma
     const utilisateurResource = client.utilisateurRecord
@@ -96,7 +95,6 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
     return action
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async supprimer(actionId: ActionUid, demandeDeSubventionId: DemandeDeSubventionUid): Promise<boolean> {
     const result = await prisma.$transaction([
       prisma.beneficiaireSubventionRecord.deleteMany(
@@ -107,15 +105,14 @@ implements AddActionRepository, GetActionRepository, SupprimerActionRepository, 
       prisma.porteurActionRecord.deleteMany({ where: { actionId: Number(actionId.state.value) } }),
       prisma.actionRecord.deleteMany({ where: { id: Number(actionId.state.value) } }),
     ])
-      
+
     // On vérifie uniquement que l'action a bien été supprimée
     return result[result.length - 1].count === 1
   }
 
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async update(action: Action,  tx?: Prisma.TransactionClient): Promise<boolean> {
     const client = tx ?? prisma
-    
+
     // eslint-disable-next-line no-restricted-syntax
     const now = new Date()
     await client.porteurActionRecord.deleteMany({

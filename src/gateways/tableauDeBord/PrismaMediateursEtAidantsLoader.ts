@@ -4,11 +4,10 @@ import { MediateursEtAidantsLoader, MediateursEtAidantsReadModel } from '@/use-c
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(territoire: string): Promise<ErrorReadModel | MediateursEtAidantsReadModel> {
     try {
       let result: Array<{ nb_acteurs_ac: bigint; nb_acteurs_cn: bigint }>
-      
+
       if (territoire === 'France') {
         result = await prisma.$queryRaw<Array<{ nb_acteurs_ac: bigint; nb_acteurs_cn: bigint }>>`
           WITH nb_acteurs_ac AS (
@@ -26,7 +25,7 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
             WHERE a2.departement != 'zzz'
           )
-          SELECT 
+          SELECT
             ac.nb_acteurs_ac,
             cn.nb_acteurs_cn
           FROM nb_acteurs_ac ac, nb_acteurs_cn cn
@@ -48,7 +47,7 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
             WHERE a2.departement = ${territoire}
           )
-          SELECT 
+          SELECT
             ac.nb_acteurs_ac,
             cn.nb_acteurs_cn
           FROM nb_acteurs_ac ac, nb_acteurs_cn cn
@@ -75,4 +74,4 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
       }
     }
   }
-} 
+}

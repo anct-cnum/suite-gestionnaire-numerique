@@ -1,5 +1,5 @@
 /* eslint-disable @stylistic/quote-props */
- 
+
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { AccompagnementsRealisesLoader, AccompagnementsRealisesReadModel } from '@/use-cases/queries/RecupererAccompagnementsRealises'
@@ -110,12 +110,11 @@ const accompagnementsPrecedents = {
 }
 
 export class PrismaAccompagnementsRealisesLoader implements AccompagnementsRealisesLoader {
-  // eslint-disable-next-line @typescript-eslint/class-methods-use-this
   async get(territoire: string): Promise<AccompagnementsRealisesReadModel | ErrorReadModel> {
     try {
       // Récupération du total des accompagnements
       let totalResult: Array<{ total_accompagnements: bigint }>
-      
+
       if (territoire === 'France') {
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           WITH all_activites_coop AS (
@@ -132,7 +131,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement != 'zzz'
           )
-          SELECT 
+          SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
           FROM sum_accompagnements_ac, all_activites_coop
         `
@@ -152,14 +151,14 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement = ${territoire}
           )
-          SELECT 
+          SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
           FROM sum_accompagnements_ac, all_activites_coop
         `
       }
 
       let nombreTotal = Number(totalResult[0]?.total_accompagnements ?? 0)
-      
+
       // Ajout des accompagnements précédents
       if (territoire === 'France') {
         // Pour la France, on somme tous les accompagnements précédents
@@ -167,13 +166,13 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       } else if (territoire in accompagnementsPrecedents) {
         nombreTotal += accompagnementsPrecedents[territoire as keyof typeof accompagnementsPrecedents]
       }
-      
+
       // Récupération de la répartition mensuelle (activités COOP uniquement car on a les dates)
       let repartitionResult: Array<{ mois: string; nombre: bigint }>
-      
+
       if (territoire === 'France') {
         repartitionResult = await prisma.$queryRaw<Array<{ mois: string; nombre: bigint }>>`
-          SELECT 
+          SELECT
             TO_CHAR(ac.date, 'MM/YY') as mois,
             COUNT(*) as nombre
           FROM main.activites_coop ac
@@ -187,7 +186,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
         `
       } else {
         repartitionResult = await prisma.$queryRaw<Array<{ mois: string; nombre: bigint }>>`
-          SELECT 
+          SELECT
             TO_CHAR(ac.date, 'MM/YY') as mois,
             COUNT(*) as nombre
           FROM main.activites_coop ac
@@ -220,4 +219,4 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       }
     }
   }
-} 
+}

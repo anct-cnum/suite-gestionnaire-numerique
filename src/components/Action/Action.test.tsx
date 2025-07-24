@@ -13,7 +13,6 @@ import { ActionViewModel } from '@/presenters/actionPresenter'
 import { gouvernancePresenter } from '@/presenters/gouvernancePresenter'
 import { actionVideViewModelFactory, actionViewModelFactory } from '@/presenters/testHelper'
 import { epochTime } from '@/shared/testHelper'
-// eslint-disable-next-line import/no-restricted-paths
 import { UneGouvernanceReadModel } from '@/use-cases/queries/RecupererUneGouvernance'
 import { gouvernanceReadModelFactory } from '@/use-cases/testHelper'
 
