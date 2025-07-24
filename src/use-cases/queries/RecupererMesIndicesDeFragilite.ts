@@ -1,29 +1,16 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface IndicesDeFragiliteLoader {
-  get(territoire: string): Promise<ErrorReadModel | IndicesDeFragiliteReadModel>
+  getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>>
+  getForFrance(): Promise<ErrorReadModel | ReadonlyArray<DepartementReadModel>>
 }
 
-export type IndicesDeFragiliteReadModel = IndicesDeFragiliteCommuneReadModel | IndicesDeFragiliteDepartementReadModel
-
-type IndicesDeFragiliteCommuneReadModel = Readonly<{
-  communes: ReadonlyArray<CommuneReadModel>
-  departement: string
-  type: 'communes'
-}>
-
-type IndicesDeFragiliteDepartementReadModel = Readonly<{
-  departements: ReadonlyArray<DepartementReadModel>
-  territoire: string
-  type: 'departements'
-}>
-
-type CommuneReadModel = Readonly<{
+export type CommuneReadModel = Readonly<{
   codeInsee: string
   score: null | number
 }>
 
-type DepartementReadModel = Readonly<{
+export type DepartementReadModel = Readonly<{
   codeDepartement: string
   score: number
 }>

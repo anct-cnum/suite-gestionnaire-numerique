@@ -1,6 +1,6 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { IndicesDeFragiliteLoader, IndicesDeFragiliteReadModel } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
+import { CommuneReadModel, DepartementReadModel, IndicesDeFragiliteLoader } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 const codesDepartements = [
@@ -109,23 +109,8 @@ const codesDepartements = [
 
 export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader {
   // eslint-disable-next-line @typescript-eslint/class-methods-use-this
-  async get(territoire: string): Promise<ErrorReadModel | IndicesDeFragiliteReadModel> {
+  async getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
     try {
-      if (territoire === 'France') {
-        // Pour la France, on retourne des indices aléatoires pour tous les départements
-        const departements = codesDepartements.map((codeDepartement) => ({
-          codeDepartement,
-          // eslint-disable-next-line sonarjs/pseudo-random
-          score: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
-        }))
-
-        return {
-          departements,
-          territoire,
-          type: 'departements',
-        }
-      } 
-      // Pour un département spécifique, on retourne les communes
       const communes = await prisma.ifnCommune.findMany({
         select: {
           codeInsee: true,
@@ -133,23 +118,39 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
         },
         where: {
           codeInsee: {
-            startsWith: territoire,
+            startsWith: codeDepartement,
           },
         },
       })
 
-      return {
-        communes: communes.map((commune) => ({
-          codeInsee: commune.codeInsee,
-          score: commune.score ? Number(commune.score) : null,
-        })),
-        departement: territoire,
-        type: 'communes',
-      }
+      return communes.map((commune) => ({
+        codeInsee: commune.codeInsee,
+        score: commune.score ? Number(commune.score) : null,
+      }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
-        operation: 'get',
-        territoire,
+        codeDepartement,
+        operation: 'getForDepartement',
+      })
+      return {
+        message: 'Impossible de récupérer les données des indices de fragilité',
+        type: 'error',
+      }
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/class-methods-use-this, @typescript-eslint/require-await
+  async getForFrance(): Promise<ErrorReadModel | ReadonlyArray<DepartementReadModel>> {
+    try {
+      // Pour la France, on retourne des indices aléatoires pour tous les départements
+      return codesDepartements.map((codeDepartement) => ({
+        codeDepartement,
+        // eslint-disable-next-line sonarjs/pseudo-random
+        score: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
+      }))
+    } catch (error) {
+      reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
+        operation: 'getForFrance',
       })
       return {
         message: 'Impossible de récupérer les données des indices de fragilité',

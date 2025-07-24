@@ -19,10 +19,27 @@ export function indiceFragilitePresenter(ifnCommunes: ReadonlyArray<Readonly<{
   }))
 }
 
+export function indiceFragiliteDepartementsPresenter(departements: ReadonlyArray<Readonly<{
+  codeDepartement: string
+  score: number
+}>>): Array<DepartementFragilite> {
+  return departements.map(departement => ({
+    codeDepartement: departement.codeDepartement,
+    couleur: getCouleurFragilite(departement.score),
+    score: departement.score,
+  }))
+}
+
 export type CommuneFragilite = Readonly<{
   codeInsee: string
   couleur: string
   indice: number
+}>
+
+export type DepartementFragilite = Readonly<{
+  codeDepartement: string
+  couleur: string
+  score: number
 }>
 
 // il y a 7 couleurs pour un indice de 0 à 10

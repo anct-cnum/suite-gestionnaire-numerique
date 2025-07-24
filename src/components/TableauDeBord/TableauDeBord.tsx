@@ -20,7 +20,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -387,7 +387,7 @@ type Props = Readonly<{
   departement: string
   financementsViewModel: ErrorViewModel | FinancementViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
-  indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
+  indicesFragilite: Array<CommuneFragilite> | Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   tableauDeBordViewModel: TableauDeBordViewModel

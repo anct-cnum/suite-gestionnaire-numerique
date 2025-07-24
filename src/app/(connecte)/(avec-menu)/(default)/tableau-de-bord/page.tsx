@@ -16,7 +16,7 @@ import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/Prisma
 import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { financementsPresenter } from '@/presenters/tableauDeBord/financementPresenter'
 import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
-import { indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -63,21 +63,10 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       accompagnementsRealisesPresenter
     )
 
-    const indicesReadModel = await indicesLoader.get('France')
+    const indicesReadModel = await indicesLoader.getForFrance()
     const indicesFragilite = handleReadModelOrError(
       indicesReadModel,
-      (readModel) => {
-        if (readModel.type === 'departements') {
-          // Pour la France, on transforme en format départements pour la carte
-          return readModel.departements.map(dept => ({
-            codeDepartement: dept.codeDepartement,
-            couleur: indiceFragilitePresenter([{ codeInsee: dept.codeDepartement, score: dept.score }])[0]?.couleur || '#ffffff',
-            score: dept.score,
-          }))
-        }
-        // Fallback pour le type 'communes' - retourner un tableau vide car pas adapté pour la vue France
-        return []
-      }
+      indiceFragiliteDepartementsPresenter
     )
 
     const financementsReadModel = await financementsLoader.get('France')
@@ -128,16 +117,10 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     accompagnementsRealisesPresenter
   )
 
-  const indicesReadModel = await indicesLoader.get(departementCode)
+  const indicesReadModel = await indicesLoader.getForDepartement(departementCode)
   const indicesFragilite = handleReadModelOrError(
     indicesReadModel,
-    (readModel) => {
-      if (readModel.type === 'communes') {
-        return indiceFragilitePresenter(readModel.communes)
-      }
-      // Pour l'instant, on retourne un tableau vide pour le type 'departements'
-      return indiceFragilitePresenter([])
-    }
+    indiceFragilitePresenter
   )
 
   const financementsReadModel = await financementsLoader.get(departementCode)
