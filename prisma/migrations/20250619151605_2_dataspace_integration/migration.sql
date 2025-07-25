@@ -1,109 +1,74 @@
-DO
-$do$
-BEGIN
-   IF EXISTS (
-      SELECT FROM pg_catalog.pg_roles
-      WHERE  rolname = 'sonum') THEN
-
-      RAISE NOTICE 'Role "sonum" already exists. Skipping.';
-   ELSE
-      CREATE ROLE sonum LOGIN PASSWORD 'my_password';
-   END IF;
-END
-$do$;
 
 
-DO
-$do$
-BEGIN
-   IF EXISTS (
-      SELECT FROM pg_catalog.pg_roles
-      WHERE  rolname = 'app_python') THEN
-
-      RAISE NOTICE 'Role "app_python" already exists. Skipping.';
-   ELSE
-      CREATE ROLE app_python LOGIN PASSWORD 'my_password';
-   END IF;
-END
-$do$;
-
-DO
-$do$
-BEGIN
-   IF EXISTS (
-      SELECT FROM pg_catalog.pg_roles
-      WHERE  rolname = 'min_dev') THEN
-
-      RAISE NOTICE 'Role "min_dev" already exists. Skipping.';
-   ELSE
-      CREATE ROLE min_dev  LOGIN PASSWORD 'my_password';
-   END IF;
-END
-$do$;
-
-DO
-$do$
-BEGIN
-   IF EXISTS (
-      SELECT FROM pg_catalog.pg_roles
-      WHERE  rolname = 'min_scalingo') THEN
-
-      RAISE NOTICE 'Role "min_scalingo" already exists. Skipping.';
-   ELSE
-      CREATE ROLE min_scalingo  LOGIN PASSWORD 'my_password';
-   END IF;
-END
-$do$;
-
---
--- Name: admin; Type: SCHEMA; Schema: -; Owner: sonum
---
-
-CREATE SCHEMA IF NOT EXISTS admin;
-
-
-ALTER SCHEMA admin OWNER TO sonum;
-
---
--- Name: main; Type: SCHEMA; Schema: -; Owner: sonum
---
-
-CREATE SCHEMA IF NOT EXISTS main;
-
-
-ALTER SCHEMA main OWNER TO sonum;
-
---
--- Name: reference; Type: SCHEMA; Schema: -; Owner: sonum
---
-
-CREATE SCHEMA IF NOT EXISTS reference;
-
-
-ALTER SCHEMA reference OWNER TO sonum;
-
---
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
---
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA min;
 
 
---
+-- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
+
+COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
+
+
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: 
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
+
+
+
+
+
+
 -- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
---
 
 CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
 
---
+
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry and geography spatial types and functions';
+
+
 -- Name: unaccent; Type: EXTENSION; Schema: -; Owner: -
---
 
 CREATE EXTENSION IF NOT EXISTS unaccent WITH SCHEMA public;
 
---
+
+-- Name: EXTENSION unaccent; Type: COMMENT; Schema: -; Owner: 
+
+COMMENT ON EXTENSION unaccent IS 'text search dictionary that removes accents';
+
+
+-- Name: refresh_coll_terr(); Type: FUNCTION; Schema: admin; Owner: sonum
+
+CREATE FUNCTION admin.refresh_coll_terr() RETURNS void
+    LANGUAGE plpgsql SECURITY DEFINER
+    AS $$
+BEGIN
+    REFRESH MATERIALIZED VIEW admin.coll_terr;
+END;
+$$;
+
+
+ALTER FUNCTION admin.refresh_coll_terr() OWNER TO sonum;
+
+-- Name: FUNCTION refresh_coll_terr(); Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON FUNCTION admin.refresh_coll_terr() IS 'Fonction permettant de rafraichir la MV admin.coll_terr sans droits de propriétaire';
+
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
 -- Name: commune; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.commune (
     id integer NOT NULL,
@@ -120,9 +85,7 @@ CREATE TABLE admin.commune (
 
 ALTER TABLE admin.commune OWNER TO sonum;
 
---
 -- Name: commune_epci; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.commune_epci (
     id integer NOT NULL,
@@ -135,9 +98,7 @@ CREATE TABLE admin.commune_epci (
 
 ALTER TABLE admin.commune_epci OWNER TO sonum;
 
---
 -- Name: departement; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.departement (
     id integer NOT NULL,
@@ -152,9 +113,7 @@ CREATE TABLE admin.departement (
 
 ALTER TABLE admin.departement OWNER TO sonum;
 
---
 -- Name: epci; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.epci (
     id integer NOT NULL,
@@ -169,9 +128,7 @@ CREATE TABLE admin.epci (
 
 ALTER TABLE admin.epci OWNER TO sonum;
 
---
 -- Name: region; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.region (
     id integer NOT NULL,
@@ -185,9 +142,7 @@ CREATE TABLE admin.region (
 
 ALTER TABLE admin.region OWNER TO sonum;
 
---
 -- Name: coll_terr; Type: MATERIALIZED VIEW; Schema: admin; Owner: sonum
---
 
 CREATE MATERIALIZED VIEW admin.coll_terr AS
  SELECT region.id AS region_id,
@@ -202,19 +157,22 @@ CREATE MATERIALIZED VIEW admin.coll_terr AS
     commune.id AS commune_id,
     commune.code_insee,
     commune.nom AS commune_nom
-   FROM ((((admin.commune
-     LEFT JOIN admin.commune_epci ON ((commune.id = commune_epci.commune_id)))
-     LEFT JOIN admin.epci ON ((epci.id = commune_epci.epci_id)))
-     LEFT JOIN admin.departement ON ((departement.id = commune.departement_id)))
-     LEFT JOIN admin.region ON ((region.id = departement.region_id)))
+   FROM ((((admin.commune commune
+     LEFT JOIN admin.commune_epci commune_epci ON ((commune.id = commune_epci.commune_id)))
+     LEFT JOIN admin.epci epci ON ((commune_epci.epci_id = epci.id)))
+     LEFT JOIN admin.departement departement ON ((commune.departement_id = departement.id)))
+     LEFT JOIN admin.region region ON ((departement.region_id = region.id)))
   WITH NO DATA;
 
 
 ALTER MATERIALIZED VIEW admin.coll_terr OWNER TO sonum;
 
---
+-- Name: MATERIALIZED VIEW coll_terr; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON MATERIALIZED VIEW admin.coll_terr IS 'Table de regroupement des territoires (région, département, EPCI, commune).';
+
+
 -- Name: commune_epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.commune_epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.commune_epci_id_seq
@@ -226,9 +184,7 @@ ALTER TABLE admin.commune_epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENT
 );
 
 
---
 -- Name: commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.commune_id_seq
@@ -240,9 +196,7 @@ ALTER TABLE admin.commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.departement_id_seq
@@ -254,9 +208,7 @@ ALTER TABLE admin.departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTI
 );
 
 
---
 -- Name: epci_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.epci_id_seq
@@ -268,14 +220,12 @@ ALTER TABLE admin.epci ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: ifn_commune; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.ifn_commune (
     id integer NOT NULL,
     code_insee character varying(5) NOT NULL,
-    score numeric,
+    score numeric NOT NULL,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
 );
@@ -283,30 +233,22 @@ CREATE TABLE admin.ifn_commune (
 
 ALTER TABLE admin.ifn_commune OWNER TO sonum;
 
---
 -- Name: TABLE ifn_commune; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON TABLE admin.ifn_commune IS 'Table de gestion des communes IFN - Indice de Fragilité Numérique : https://fragilite-numerique.fr/';
+COMMENT ON TABLE admin.ifn_commune IS 'Table des Indices de Fragilité Numérique communaux : https://fragilite-numerique.fr/.';
 
 
---
 -- Name: COLUMN ifn_commune.code_insee; Type: COMMENT; Schema: admin; Owner: sonum
---
 
 COMMENT ON COLUMN admin.ifn_commune.code_insee IS 'Code INSEE de la commune.';
 
 
---
 -- Name: COLUMN ifn_commune.score; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON COLUMN admin.ifn_commune.score IS 'Score : Un nombre réel qui varie de [0 - 10] indiquant l''indice de fragilité numérique de la commune. cette valeur est une somme totale de plusieurs indicateurs, pour plus d''informations, voir le site : https://infos.fragilite-numerique.fr/ressources-cgu';
+COMMENT ON COLUMN admin.ifn_commune.score IS 'Valeur de 0 à 10 indiquant l''indice de fragilité numérique de la commune. Cette valeur est la somme de plusieurs indicateurs, pour plus d''informations : https://infos.fragilite-numerique.fr/ressources-cgu.';
 
 
---
 -- Name: ifn_commune_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.ifn_commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.ifn_commune_id_seq
@@ -318,9 +260,47 @@ ALTER TABLE admin.ifn_commune ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTI
 );
 
 
---
+-- Name: ifn_departement; Type: TABLE; Schema: admin; Owner: sonum
+
+CREATE TABLE admin.ifn_departement (
+    id integer NOT NULL,
+    code character varying(3) NOT NULL,
+    score numeric NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE admin.ifn_departement OWNER TO sonum;
+
+-- Name: TABLE ifn_departement; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON TABLE admin.ifn_departement IS 'Table de gestion des départements IFN - Indice de Fragilité Numérique : https://fragilite-numerique.fr/';
+
+
+-- Name: COLUMN ifn_departement.code; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON COLUMN admin.ifn_departement.code IS 'Code département : un code à 2 ou 3 chiffres qui identifie le département français, en métropole ou en outre-mer. Par exemple, "13" pour les Bouches-du-Rhône.';
+
+
+-- Name: COLUMN ifn_departement.score; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON COLUMN admin.ifn_departement.score IS 'Score : Un nombre réel qui varie de [0 - 10] indiquant l''indice de fragilité numérique du département. cette valeur est une somme totale de plusieurs indicateurs, pour plus d''informations, voir le site : https://infos.fragilite-numerique.fr/ressources-cgu';
+
+
+-- Name: ifn_departement_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
+
+ALTER TABLE admin.ifn_departement ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME admin.ifn_departement_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
 -- Name: insee_cp; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.insee_cp (
     id integer NOT NULL,
@@ -333,9 +313,7 @@ CREATE TABLE admin.insee_cp (
 
 ALTER TABLE admin.insee_cp OWNER TO sonum;
 
---
 -- Name: insee_cp_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.insee_cp ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.insee_cp_id_seq
@@ -347,9 +325,7 @@ ALTER TABLE admin.insee_cp ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
 );
 
 
---
 -- Name: insee_historique; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.insee_historique (
     id integer NOT NULL,
@@ -362,9 +338,22 @@ CREATE TABLE admin.insee_historique (
 
 ALTER TABLE admin.insee_historique OWNER TO sonum;
 
---
+-- Name: TABLE insee_historique; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON TABLE admin.insee_historique IS 'Table d''historisation des modifications des codes INSEE (création, suppression, fusion etc. des communes).';
+
+
+-- Name: COLUMN insee_historique.code_insee_ancien; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON COLUMN admin.insee_historique.code_insee_ancien IS 'Ancien code INSEE.';
+
+
+-- Name: COLUMN insee_historique.code_insee_nouveau; Type: COMMENT; Schema: admin; Owner: sonum
+
+COMMENT ON COLUMN admin.insee_historique.code_insee_nouveau IS 'Nouveau code INSEE.';
+
+
 -- Name: insee_historique_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.insee_historique ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.insee_historique_id_seq
@@ -376,9 +365,7 @@ ALTER TABLE admin.insee_historique ALTER COLUMN id ADD GENERATED BY DEFAULT AS I
 );
 
 
---
 -- Name: region_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.region ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.region_id_seq
@@ -390,18 +377,16 @@ ALTER TABLE admin.region ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: zonage; Type: TABLE; Schema: admin; Owner: sonum
---
 
 CREATE TABLE admin.zonage (
     id integer NOT NULL,
+    geom public.geometry(MultiPolygon,4326) DEFAULT NULL::public.geometry,
     code character varying(8),
     libelle character varying(255),
     code_insee character varying(5) NOT NULL,
     type character varying(3) NOT NULL,
     commentaire text,
-    geom public.geometry(MultiPolygon,4326),
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
 );
@@ -409,44 +394,32 @@ CREATE TABLE admin.zonage (
 
 ALTER TABLE admin.zonage OWNER TO sonum;
 
---
 -- Name: TABLE zonage; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON TABLE admin.zonage IS 'Table de gestion des zonages administratifs FRR et QPV';
+COMMENT ON TABLE admin.zonage IS 'Table de gestion des zonages administratifs FRR et QPV.';
 
 
---
 -- Name: COLUMN zonage.code; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON COLUMN admin.zonage.code IS 'Identifiant unique du zonage concerne QPV uniquement - généré par l''API';
+COMMENT ON COLUMN admin.zonage.code IS 'Identifiant unique du zonage concerne QPV uniquement - généré par l''API.';
 
 
---
 -- Name: COLUMN zonage.libelle; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON COLUMN admin.zonage.libelle IS 'Libelle du zonage concerne QPV uniquement - généré par l''API';
+COMMENT ON COLUMN admin.zonage.libelle IS 'Libelle du zonage concerne QPV uniquement - généré par l''API.';
 
 
---
 -- Name: COLUMN zonage.type; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON COLUMN admin.zonage.type IS 'Type de zonage (QPV: Quartier Prioritaire de la Ville, FRR: France Ruralités Revitalisation';
+COMMENT ON COLUMN admin.zonage.type IS 'Type de zonage (QPV: Quartier Prioritaire de la Ville, FRR: France Ruralités Revitalisation).';
 
 
---
 -- Name: COLUMN zonage.commentaire; Type: COMMENT; Schema: admin; Owner: sonum
---
 
-COMMENT ON COLUMN admin.zonage.commentaire IS 'Commentaire sur le zonage - généré par l''API';
+COMMENT ON COLUMN admin.zonage.commentaire IS 'Commentaire sur le zonage - généré par l''API.';
 
 
---
 -- Name: zonage_id_seq; Type: SEQUENCE; Schema: admin; Owner: sonum
---
 
 ALTER TABLE admin.zonage ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME admin.zonage_id_seq
@@ -458,9 +431,7 @@ ALTER TABLE admin.zonage ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: adresse; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.adresse (
     id integer NOT NULL,
@@ -474,7 +445,6 @@ CREATE TABLE main.adresse (
     nom_voie character varying(255),
     repetition character varying(10),
     numero_voie smallint,
-    additional_address_info jsonb,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
 );
@@ -482,30 +452,28 @@ CREATE TABLE main.adresse (
 
 ALTER TABLE main.adresse OWNER TO sonum;
 
---
 -- Name: structure; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.structure (
     id integer NOT NULL,
-    adresse_id integer,
+    structure_coop_id uuid,
+    structure_ac_id uuid,
+    structure_tp_id integer,
+    nom character varying(255) NOT NULL,
+    denomination_sirene character varying,
     siret character varying(14),
     rna character varying(10),
-    nom character varying(255),
+    adresse_id integer,
+    contact jsonb,
     etat_administratif character varying,
-    denomination_sirene character varying,
     code_activite_principale character varying(6),
     categorie_juridique character varying(4) DEFAULT NULL::character varying,
-    structure_id_coop uuid,
     nb_mandats_ac integer,
-    id_structure_ac uuid,
-    contact jsonb,
-    id_structure_tp integer,
     publique boolean,
-    visible_pour_cartographie_nationale boolean,
     structure_cartographie_nationale_id character varying,
+    visible_pour_cartographie_nationale boolean,
     typologies text[],
-    presentation_resume character varying(500),
+    presentation_resume text,
     presentation_detail text,
     horaires character varying,
     prise_rdv character varying,
@@ -522,8 +490,8 @@ CREATE TABLE main.structure (
     modalites_accompagnement text[],
     mediateurs_en_activite integer,
     emplois integer,
-    original_created_at timestamp without time zone,
     source character varying,
+    last_sirene_enrich_at date,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone,
     CONSTRAINT structure_siret_format_check CHECK (((siret)::text ~ '^\d{14}$'::text))
@@ -532,9 +500,7 @@ CREATE TABLE main.structure (
 
 ALTER TABLE main.structure OWNER TO sonum;
 
---
 -- Name: categories_juridiques; Type: TABLE; Schema: reference; Owner: sonum
---
 
 CREATE TABLE reference.categories_juridiques (
     id integer NOT NULL,
@@ -548,29 +514,24 @@ CREATE TABLE reference.categories_juridiques (
 
 ALTER TABLE reference.categories_juridiques OWNER TO sonum;
 
---
 -- Name: personne; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.personne (
     id integer NOT NULL,
     prenom character varying(50),
     nom character varying(50),
-    emails jsonb,
-    telephone character varying(20),
-    id_aidant_connect character varying(50),
-    id_conseiller_numerique character varying(50),
-    id_cn_pg integer,
-    id_structure_tp integer,
+    contact jsonb,
+    structure_id integer,
+    aidant_connect_id integer,
+    conseiller_numerique_id character varying(50),
+    cn_pg_id integer,
+    coop_id uuid,
+    is_coordinateur boolean,
+    is_mediateur boolean,
     is_active_ac boolean,
     formation_fne_ac boolean,
     profession_ac character varying,
     nb_accompagnements_ac integer,
-    id_structure_ac uuid,
-    coop_id uuid,
-    is_coordinateur boolean,
-    is_mediateur boolean,
-    original_created_at timestamp without time zone,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
 );
@@ -578,16 +539,14 @@ CREATE TABLE main.personne (
 
 ALTER TABLE main.personne OWNER TO sonum;
 
---
 -- Name: personne_lieux_activites; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.personne_lieux_activites (
     id integer NOT NULL,
     personne_id integer NOT NULL,
     structure_id integer,
-    structure_id_coop uuid,
-    mediateur_id_coop uuid NOT NULL,
+    structure_coop_id uuid,
+    mediateur_coop_id uuid,
     en_cours boolean,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
@@ -596,16 +555,14 @@ CREATE TABLE main.personne_lieux_activites (
 
 ALTER TABLE main.personne_lieux_activites OWNER TO sonum;
 
---
 -- Name: personne_structures_emplois; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.personne_structures_emplois (
     id integer NOT NULL,
     personne_id integer NOT NULL,
     structure_id integer,
-    structure_id_coop uuid,
-    mediateur_id_coop uuid NOT NULL,
+    structure_coop_id uuid,
+    mediateur_coop_id uuid,
     en_cours boolean,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
@@ -614,47 +571,17 @@ CREATE TABLE main.personne_structures_emplois (
 
 ALTER TABLE main.personne_structures_emplois OWNER TO sonum;
 
---
--- Name: poste; Type: TABLE; Schema: main; Owner: sonum
---
-
-CREATE TABLE main.poste (
-    id integer NOT NULL,
-    id_poste_conum integer NOT NULL,
-    id_structure_tp integer,
-    id_cn integer,
-    typologie character varying(255),
-    date_attribution timestamp without time zone NOT NULL,
-    date_rendu_poste timestamp without time zone,
-    poste_renouvele boolean,
-    action_coselec character varying(255),
-    etat character varying(255),
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone,
-    CONSTRAINT check_etat_rendu CHECK ((NOT (((etat)::text = 'rendu'::text) AND (date_rendu_poste IS NULL)))),
-    CONSTRAINT poste_etat_check CHECK (((etat)::text = ANY ((ARRAY['vacant'::character varying, 'occupe'::character varying, 'rendu'::character varying])::text[]))),
-    CONSTRAINT poste_typologie_check CHECK (((typologie)::text = ANY ((ARRAY['conum'::character varying, 'coordo'::character varying, 'dns'::character varying])::text[])))
-);
-
-
-ALTER TABLE main.poste OWNER TO sonum;
-
---
 -- Name: activites_coop; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.activites_coop (
     id integer NOT NULL,
-    type character varying(100) NOT NULL,
-    structure_id_coop uuid,
     coop_id uuid,
+    structure_id integer,
     personne_id integer NOT NULL,
-    mediateur_id_coop uuid NOT NULL,
-    date timestamp without time zone NOT NULL,
+    type character varying(100) NOT NULL,
+    date date NOT NULL,
     duree integer NOT NULL,
-    lieu_code_insee character varying(20),
-    creation_coop timestamp without time zone,
-    modification_coop timestamp without time zone,
+    lieu_code_insee character varying(5),
     type_lieu character varying(100) NOT NULL,
     autonomie character varying(100),
     structure_de_redirection character varying(255),
@@ -674,9 +601,93 @@ CREATE TABLE main.activites_coop (
 
 ALTER TABLE main.activites_coop OWNER TO sonum;
 
---
+-- Name: COLUMN activites_coop.duree; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.activites_coop.duree IS 'Valeur en minutes';
+
+
+-- Name: formation; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.formation (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    label character varying(11),
+    parcours character varying(4),
+    lot smallint,
+    marche_formation character varying(8),
+    lieu character varying(255),
+    date_debut date,
+    date_fin date,
+    pix boolean,
+    remn boolean,
+    observations text,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT formation_label_check CHECK (((label)::text = ANY ((ARRAY['CCP1'::character varying, 'CCP2'::character varying, 'CCP2 & CCP3'::character varying])::text[]))),
+    CONSTRAINT formation_parcours_check CHECK (((parcours)::text = ANY ((ARRAY['70h'::character varying, '175h'::character varying, '315h'::character varying, '105h'::character varying, '420h'::character varying, '280h'::character varying, '350h'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.formation OWNER TO sonum;
+
+-- Name: TABLE formation; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON TABLE main.formation IS 'Table de gestion des formations des Conseillers Numériques.';
+
+
+-- Name: COLUMN formation.label; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.formation.label IS 'Label de la formation, exemple : CCP1, CCP2, CCP2 & CCP3';
+
+
+-- Name: COLUMN formation.parcours; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.formation.parcours IS 'Parcours de formation défini après un test de positionnement : débutant (315h), intermédiaire (175h), ou avancé (70h).';
+
+
+-- Name: contrat; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.contrat (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    date_debut date,
+    date_fin date,
+    date_rupture date,
+    type character varying(3),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT contrat_type_check CHECK (((type)::text = ANY ((ARRAY['CDD'::character varying, 'CDI'::character varying, 'CDP'::character varying, 'PEC'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.contrat OWNER TO sonum;
+
+-- Name: poste; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.poste (
+    id integer NOT NULL,
+    poste_conum_id integer NOT NULL,
+    structure_id integer,
+    personne_id integer,
+    etat_instruction character varying(30),
+    typologie character varying(6),
+    date_attribution date NOT NULL,
+    date_rendu_poste date,
+    poste_renouvele boolean,
+    action_coselec character varying(255),
+    origine_transfert integer,
+    etat character varying(6),
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT poste_check CHECK ((NOT (((etat)::text = 'rendu'::text) AND (date_rendu_poste IS NULL)))),
+    CONSTRAINT poste_etat_check CHECK (((etat)::text = ANY ((ARRAY['vacant'::character varying, 'occupe'::character varying, 'rendu'::character varying])::text[]))),
+    CONSTRAINT poste_typologie_check CHECK (((typologie)::text = ANY ((ARRAY['conum'::character varying, 'coordo'::character varying, 'dns'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.poste OWNER TO sonum;
+
 -- Name: activites_coop_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.activites_coop ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.activites_coop_id_seq
@@ -688,9 +699,7 @@ ALTER TABLE main.activites_coop ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDEN
 );
 
 
---
 -- Name: adresse_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.adresse ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.adresse_id_seq
@@ -702,16 +711,26 @@ ALTER TABLE main.adresse ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
+-- Name: contrat_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+
+ALTER TABLE main.contrat ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.contrat_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
 -- Name: coordination_mediation; Type: TABLE; Schema: main; Owner: sonum
---
 
 CREATE TABLE main.coordination_mediation (
     id integer NOT NULL,
     coordinateur_id integer NOT NULL,
     mediateur_id integer NOT NULL,
-    coordination_id_coop uuid NOT NULL,
-    mediateur_id_coop uuid NOT NULL,
+    coordinateur_coop_id uuid NOT NULL,
+    mediateur_coop_id uuid NOT NULL,
     en_cours boolean,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone
@@ -720,9 +739,7 @@ CREATE TABLE main.coordination_mediation (
 
 ALTER TABLE main.coordination_mediation OWNER TO sonum;
 
---
 -- Name: coordination_mediation_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.coordination_mediation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.coordination_mediation_id_seq
@@ -734,9 +751,19 @@ ALTER TABLE main.coordination_mediation ALTER COLUMN id ADD GENERATED BY DEFAULT
 );
 
 
---
+-- Name: formation_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+
+ALTER TABLE main.formation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.formation_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
 -- Name: personne_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.personne ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.personne_id_seq
@@ -748,9 +775,7 @@ ALTER TABLE main.personne ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: personne_lieux_activites_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.personne_lieux_activites ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.personne_lieux_activites_id_seq
@@ -762,9 +787,7 @@ ALTER TABLE main.personne_lieux_activites ALTER COLUMN id ADD GENERATED BY DEFAU
 );
 
 
---
 -- Name: personne_structures_emplois_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.personne_structures_emplois ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.personne_structures_emplois_id_seq
@@ -776,9 +799,7 @@ ALTER TABLE main.personne_structures_emplois ALTER COLUMN id ADD GENERATED BY DE
 );
 
 
---
 -- Name: poste_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.poste ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.poste_id_seq
@@ -790,9 +811,7 @@ ALTER TABLE main.poste ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
 );
 
 
---
 -- Name: structure_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
---
 
 ALTER TABLE main.structure ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME main.structure_id_seq
@@ -804,9 +823,93 @@ ALTER TABLE main.structure ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
 );
 
 
---
+-- Name: subvention; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.subvention (
+    id integer NOT NULL,
+    poste_id integer NOT NULL,
+    source_financement character varying(4),
+    date_debut_convention date,
+    date_debut_financement date,
+    date_fin_convention date,
+    date_fin_financement date,
+    montant_subvention bigint,
+    montant_bonification bigint,
+    versement_1 bigint,
+    versement_2 bigint,
+    versement_3 bigint,
+    date_versement_1 date,
+    date_versement_2 date,
+    date_versement_3 date,
+    is_territoire_prioritaire boolean,
+    mois_utilises_periode_financement smallint,
+    mois_utilises_poste smallint,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT subvention_source_check CHECK (((source_financement)::text = ANY ((ARRAY['DGCL'::character varying, 'DGE'::character varying, 'DITP'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.subvention OWNER TO sonum;
+
+-- Name: COLUMN subvention.source_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.source_financement IS 'Origine des fonds reversés à la structure : DGCL (financement initial), DITP ou DGE (reconventionnement ou financement direct en phase 2)';
+
+
+-- Name: COLUMN subvention.date_debut_convention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_debut_convention IS 'Date de signature de la convention entre la structure employeuse et l’État. Marque le début de la relation contractuelle.';
+
+
+-- Name: COLUMN subvention.date_debut_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_debut_financement IS 'Date du premier versement de subvention effectué à la structure (début effectif du financement).';
+
+
+-- Name: COLUMN subvention.date_fin_convention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_fin_convention IS 'Date de fin prévisionnelle de la convention (généralement 2 à 3 ans après la signature, ajustée si des périodes de vacance existent).';
+
+
+-- Name: COLUMN subvention.date_fin_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_fin_financement IS 'Date de fin effective de la période de financement. En général, un an après le dernier versement sur le poste.';
+
+
+-- Name: COLUMN subvention.montant_subvention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.montant_subvention IS 'Montant total de la subvention attribuée à la structure pour le poste concerné.';
+
+
+-- Name: COLUMN subvention.montant_bonification; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.montant_bonification IS 'Montant supplémentaire éventuellement accordé en complément de la subvention de base, attribuer en fonction de la priorité du territoire.';
+
+
+-- Name: COLUMN subvention.is_territoire_prioritaire; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.is_territoire_prioritaire IS 'Indique si le poste subventionné se situe dans un territoire prioritaire au sens de la politique publique, Exemple : QPV (Quartiers Prioritaires de la Ville) ou FRR (France Ruralités Revitalisation) ';
+
+
+-- Name: COLUMN subvention.mois_utilises_periode_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.mois_utilises_periode_financement IS 'Nombre de mois réellement consommés sur la période de financement allouée.';
+
+
+-- Name: subvention_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
+
+ALTER TABLE main.subvention ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME main.subvention_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
 -- Name: categories_juridiques_id_seq; Type: SEQUENCE; Schema: reference; Owner: sonum
---
 
 ALTER TABLE reference.categories_juridiques ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
     SEQUENCE NAME reference.categories_juridiques_id_seq
@@ -818,800 +921,822 @@ ALTER TABLE reference.categories_juridiques ALTER COLUMN id ADD GENERATED BY DEF
 );
 
 
---
+-- Name: naf; Type: TABLE; Schema: reference; Owner: sonum
+
+CREATE TABLE reference.naf (
+    id integer NOT NULL,
+    code character varying(6) NOT NULL,
+    intitule_long character varying(150) NOT NULL,
+    intitule_court character varying(65) NOT NULL,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE reference.naf OWNER TO sonum;
+
+-- Name: naf_id_seq; Type: SEQUENCE; Schema: reference; Owner: sonum
+
+ALTER TABLE reference.naf ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME reference.naf_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
 -- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune_epci
     ADD CONSTRAINT commune_epci_pkey PRIMARY KEY (id);
 
 
---
 -- Name: commune_epci commune_epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune_epci
     ADD CONSTRAINT commune_epci_ukey UNIQUE (commune_id, epci_id);
 
 
---
 -- Name: commune commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune
     ADD CONSTRAINT commune_pkey PRIMARY KEY (id);
 
 
---
 -- Name: commune commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune
     ADD CONSTRAINT commune_ukey UNIQUE (code_insee);
 
 
---
 -- Name: departement departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.departement
     ADD CONSTRAINT departement_pkey PRIMARY KEY (id);
 
 
---
 -- Name: departement departement_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.departement
     ADD CONSTRAINT departement_ukey UNIQUE (code);
 
 
---
 -- Name: epci epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.epci
     ADD CONSTRAINT epci_pkey PRIMARY KEY (id);
 
 
---
 -- Name: epci epci_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.epci
     ADD CONSTRAINT epci_ukey UNIQUE (code);
 
 
---
 -- Name: ifn_commune ifn_commune_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.ifn_commune
     ADD CONSTRAINT ifn_commune_pkey PRIMARY KEY (id);
 
 
---
+-- Name: ifn_commune ifn_commune_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.ifn_commune
+    ADD CONSTRAINT ifn_commune_ukey UNIQUE (code_insee);
+
+
+-- Name: ifn_departement ifn_departement_code_dept_unique; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.ifn_departement
+    ADD CONSTRAINT ifn_departement_code_dept_unique UNIQUE (code);
+
+
+-- Name: ifn_departement ifn_departement_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.ifn_departement
+    ADD CONSTRAINT ifn_departement_pkey PRIMARY KEY (id);
+
+
 -- Name: insee_cp insee_cp_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.insee_cp
     ADD CONSTRAINT insee_cp_pkey PRIMARY KEY (id);
 
 
---
 -- Name: insee_cp insee_cp_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.insee_cp
     ADD CONSTRAINT insee_cp_ukey UNIQUE (code_postal, code_insee);
 
 
---
 -- Name: insee_historique insee_historique_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.insee_historique
     ADD CONSTRAINT insee_historique_pkey PRIMARY KEY (id);
 
 
---
 -- Name: insee_historique insee_historique_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.insee_historique
     ADD CONSTRAINT insee_historique_ukey UNIQUE (code_insee_ancien, code_insee_nouveau);
 
 
---
 -- Name: region region_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.region
     ADD CONSTRAINT region_pkey PRIMARY KEY (id);
 
 
---
 -- Name: region region_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.region
     ADD CONSTRAINT region_ukey UNIQUE (code);
 
 
---
 -- Name: zonage zonage_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.zonage
-    ADD CONSTRAINT zonage_code_ukey UNIQUE (code);
+    ADD CONSTRAINT zonage_code_ukey UNIQUE (code, code_insee);
 
 
---
 -- Name: zonage zonage_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.zonage
     ADD CONSTRAINT zonage_pkey PRIMARY KEY (id);
 
 
---
+-- Name: zonage zonage_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.zonage
+    ADD CONSTRAINT zonage_ukey UNIQUE (code, code_insee);
+
+
+-- Name: activites_coop activites_coop_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.activites_coop
+    ADD CONSTRAINT activites_coop_coop_id_ukey UNIQUE (coop_id);
+
+
 -- Name: activites_coop activites_coop_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.activites_coop
     ADD CONSTRAINT activites_coop_pkey PRIMARY KEY (id);
 
 
---
--- Name: activites_coop activites_coop_unique_coop_id; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.activites_coop
-    ADD CONSTRAINT activites_coop_unique_coop_id UNIQUE (coop_id);
-
-
---
--- Name: adresse adresse_clef_interop_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.adresse
-    ADD CONSTRAINT adresse_clef_interop_ukey UNIQUE (clef_interop);
-
-
---
 -- Name: adresse adresse_code_ban_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.adresse
     ADD CONSTRAINT adresse_code_ban_ukey UNIQUE (code_ban);
 
 
---
 -- Name: adresse adresse_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.adresse
     ADD CONSTRAINT adresse_pkey PRIMARY KEY (id);
 
 
---
+-- Name: contrat contrat_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.contrat
+    ADD CONSTRAINT contrat_pkey PRIMARY KEY (id);
+
+
 -- Name: coordination_mediation coordination_mediation_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.coordination_mediation
     ADD CONSTRAINT coordination_mediation_pkey PRIMARY KEY (id);
 
 
---
--- Name: personne personne_coop_id_key; Type: CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: formation formation_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.formation
+    ADD CONSTRAINT formation_pkey PRIMARY KEY (id);
+
+
+-- Name: personne personne_aidant_connect_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT personne_coop_id_key UNIQUE (coop_id);
+    ADD CONSTRAINT personne_aidant_connect_id_ukey UNIQUE (aidant_connect_id);
 
 
---
+-- Name: personne personne_cn_pg_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne
+    ADD CONSTRAINT personne_cn_pg_id_ukey UNIQUE (cn_pg_id);
+
+
+-- Name: personne personne_conseiller_numerique_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne
+    ADD CONSTRAINT personne_conseiller_numerique_id_ukey UNIQUE (conseiller_numerique_id);
+
+
+-- Name: personne personne_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne
+    ADD CONSTRAINT personne_coop_id_ukey UNIQUE (coop_id);
+
+
 -- Name: personne_lieux_activites personne_lieux_activites_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.personne_lieux_activites
     ADD CONSTRAINT personne_lieux_activites_pkey PRIMARY KEY (id);
 
 
---
 -- Name: personne personne_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.personne
     ADD CONSTRAINT personne_pkey PRIMARY KEY (id);
 
 
---
 -- Name: personne_structures_emplois personne_structures_emplois_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.personne_structures_emplois
     ADD CONSTRAINT personne_structures_emplois_pkey PRIMARY KEY (id);
 
 
---
 -- Name: poste poste_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.poste
     ADD CONSTRAINT poste_pkey PRIMARY KEY (id);
 
 
---
--- Name: poste poste_unique_id_poste_conum; Type: CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: poste poste_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.poste
-    ADD CONSTRAINT poste_unique_id_poste_conum UNIQUE (id_poste_conum);
+    ADD CONSTRAINT poste_ukey UNIQUE (poste_conum_id, structure_id, personne_id);
 
 
---
--- Name: structure structure_id_structure_ac_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.structure
-    ADD CONSTRAINT structure_id_structure_ac_ukey UNIQUE (id_structure_ac);
-
-
---
--- Name: structure structure_id_structure_tp_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.structure
-    ADD CONSTRAINT structure_id_structure_tp_ukey UNIQUE (id_structure_tp);
-
-
---
 -- Name: structure structure_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.structure
     ADD CONSTRAINT structure_pkey PRIMARY KEY (id);
 
 
---
--- Name: structure structure_structure_id_coop_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: structure structure_structure_ac_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.structure
-    ADD CONSTRAINT structure_structure_id_coop_ukey UNIQUE (structure_id_coop);
+    ADD CONSTRAINT structure_structure_ac_id_ukey UNIQUE (structure_ac_id);
 
 
---
+-- Name: structure structure_structure_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.structure
+    ADD CONSTRAINT structure_structure_coop_id_ukey UNIQUE (structure_coop_id);
+
+
+-- Name: structure structure_structure_tp_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.structure
+    ADD CONSTRAINT structure_structure_tp_id_ukey UNIQUE (structure_tp_id);
+
+
 -- Name: structure structure_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.structure
     ADD CONSTRAINT structure_ukey UNIQUE (siret, nom, adresse_id);
 
 
---
--- Name: personne unique_id_aidant_connect; Type: CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: subvention subvention_pkey; Type: CONSTRAINT; Schema: main; Owner: sonum
 
-ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT unique_id_aidant_connect UNIQUE (id_aidant_connect);
+ALTER TABLE ONLY main.subvention
+    ADD CONSTRAINT subvention_pkey PRIMARY KEY (id);
 
 
---
--- Name: personne unique_id_conseiller_numerique; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT unique_id_conseiller_numerique UNIQUE (id_conseiller_numerique);
-
-
---
--- Name: personne uq_id_cn_pg; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT uq_id_cn_pg UNIQUE (id_cn_pg);
-
-
---
--- Name: poste uq_id_poste_cn_strcuture; Type: CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.poste
-    ADD CONSTRAINT uq_id_poste_cn_strcuture UNIQUE (id_poste_conum, id_structure_tp, id_cn);
-
-
---
 -- Name: categories_juridiques categories_juridiques_pkey; Type: CONSTRAINT; Schema: reference; Owner: sonum
---
 
 ALTER TABLE ONLY reference.categories_juridiques
     ADD CONSTRAINT categories_juridiques_pkey PRIMARY KEY (id);
 
 
---
 -- Name: categories_juridiques categories_juridiques_ukey; Type: CONSTRAINT; Schema: reference; Owner: sonum
---
 
 ALTER TABLE ONLY reference.categories_juridiques
     ADD CONSTRAINT categories_juridiques_ukey UNIQUE (code);
 
 
---
+-- Name: naf naf_pkey; Type: CONSTRAINT; Schema: reference; Owner: sonum
+
+ALTER TABLE ONLY reference.naf
+    ADD CONSTRAINT naf_pkey PRIMARY KEY (id);
+
+
+-- Name: naf naf_ukey; Type: CONSTRAINT; Schema: reference; Owner: sonum
+
+ALTER TABLE ONLY reference.naf
+    ADD CONSTRAINT naf_ukey UNIQUE (code);
+
+
 -- Name: commune_geom_idx; Type: INDEX; Schema: admin; Owner: sonum
---
 
 CREATE INDEX commune_geom_idx ON admin.commune USING gist (geom);
 
 
---
 -- Name: commune_nom_idx; Type: INDEX; Schema: admin; Owner: sonum
---
 
 CREATE INDEX commune_nom_idx ON admin.commune USING btree (nom);
 
 
---
 -- Name: ifn_commune_code_insee_idx; Type: INDEX; Schema: admin; Owner: sonum
---
 
 CREATE INDEX ifn_commune_code_insee_idx ON admin.ifn_commune USING btree (code_insee);
 
 
---
+-- Name: ifn_departement_code_dept_idx; Type: INDEX; Schema: admin; Owner: sonum
+
+CREATE INDEX ifn_departement_code_dept_idx ON admin.ifn_departement USING btree (code);
+
+
 -- Name: zonage_code_insee_idx; Type: INDEX; Schema: admin; Owner: sonum
---
 
 CREATE INDEX zonage_code_insee_idx ON admin.zonage USING btree (code_insee);
 
 
---
 -- Name: zonage_geom_idx; Type: INDEX; Schema: admin; Owner: sonum
---
 
 CREATE INDEX zonage_geom_idx ON admin.zonage USING gist (geom);
 
 
---
--- Name: adresse_clef_interop_idx; Type: INDEX; Schema: main; Owner: sonum
---
+-- Name: activites_coop_lieu_code_insee_idx; Type: INDEX; Schema: main; Owner: sonum
 
-CREATE INDEX adresse_clef_interop_idx ON main.adresse USING btree (clef_interop);
+CREATE INDEX activites_coop_lieu_code_insee_idx ON main.activites_coop USING btree (lieu_code_insee);
 
 
---
--- Name: adresse_code_ban_idx; Type: INDEX; Schema: main; Owner: sonum
---
+-- Name: adresse_code_insee_idx; Type: INDEX; Schema: main; Owner: sonum
 
-CREATE INDEX adresse_code_ban_idx ON main.adresse USING btree (code_ban);
+CREATE INDEX adresse_code_insee_idx ON main.adresse USING btree (code_insee);
 
 
---
 -- Name: adresse_geom_idx; Type: INDEX; Schema: main; Owner: sonum
---
 
 CREATE INDEX adresse_geom_idx ON main.adresse USING gist (geom);
 
---
+
+-- Name: adresse_ukey; Type: INDEX; Schema: main; Owner: sonum
+
+CREATE UNIQUE INDEX adresse_ukey ON main.adresse USING btree (code_postal, nom_commune, nom_voie, COALESCE((numero_voie)::integer, 0), COALESCE(repetition, ''::character varying));
+
+
+-- Name: formation_personne_id_idx; Type: INDEX; Schema: main; Owner: sonum
+
+CREATE INDEX formation_personne_id_idx ON main.formation USING btree (personne_id);
+
+
 -- Name: commune commune_departement_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune
     ADD CONSTRAINT commune_departement_id FOREIGN KEY (departement_id) REFERENCES admin.departement(id);
 
 
---
 -- Name: commune_epci commune_epci_commune_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune_epci
     ADD CONSTRAINT commune_epci_commune_id FOREIGN KEY (commune_id) REFERENCES admin.commune(id);
 
 
---
 -- Name: commune_epci commune_epci_epci_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.commune_epci
     ADD CONSTRAINT commune_epci_epci_id FOREIGN KEY (epci_id) REFERENCES admin.epci(id);
 
 
---
 -- Name: departement departement_region_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.departement
     ADD CONSTRAINT departement_region_id FOREIGN KEY (region_id) REFERENCES admin.region(id);
 
 
---
 -- Name: zonage zonage_code_insee_fkey; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
---
 
 ALTER TABLE ONLY admin.zonage
     ADD CONSTRAINT zonage_code_insee_fkey FOREIGN KEY (code_insee) REFERENCES admin.commune(code_insee);
 
 
---
--- Name: coordination_mediation fk_coodinateur_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_coodinateur_id FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
-
-
---
--- Name: coordination_mediation fk_coordination_id_coop; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_coordination_id_coop FOREIGN KEY (coordination_id_coop) REFERENCES main.personne(coop_id);
-
-
---
--- Name: personne fk_id_structure_tp; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT fk_id_structure_tp FOREIGN KEY (id_structure_tp) REFERENCES main.structure(id_structure_tp);
-
-
---
--- Name: poste fk_id_structure_tp; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.poste
-    ADD CONSTRAINT fk_id_structure_tp FOREIGN KEY (id_structure_tp) REFERENCES main.structure(id_structure_tp);
-
-
-
---
--- Name: coordination_mediation fk_mediateur_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_mediateur_id FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
-
-
---
--- Name: coordination_mediation fk_mediateur_id_coop; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_mediateur_id_coop FOREIGN KEY (mediateur_id_coop) REFERENCES main.personne(coop_id);
-
-
---
--- Name: personne_structures_emplois fk_mediateur_id_coop; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.personne_structures_emplois
-    ADD CONSTRAINT fk_mediateur_id_coop FOREIGN KEY (mediateur_id_coop) REFERENCES main.personne(coop_id);
-
-
---
--- Name: personne_lieux_activites fk_mediateur_id_coop; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
-
-ALTER TABLE ONLY main.personne_lieux_activites
-    ADD CONSTRAINT fk_mediateur_id_coop FOREIGN KEY (mediateur_id_coop) REFERENCES main.personne(coop_id);
-
-
---
--- Name: activites_coop fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: activites_coop activites_coop_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.activites_coop
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT activites_coop_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
---
--- Name: personne_structures_emplois fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: activites_coop activites_coop_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
-ALTER TABLE ONLY main.personne_structures_emplois
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+ALTER TABLE ONLY main.activites_coop
+    ADD CONSTRAINT activites_coop_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
 
 
---
--- Name: personne_lieux_activites fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: contrat contrat_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.contrat
+    ADD CONSTRAINT contrat_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: coordination_mediation coordination_mediation_coodinateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.coordination_mediation
+    ADD CONSTRAINT coordination_mediation_coodinateur_id_fkey FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
+
+
+-- Name: coordination_mediation coordination_mediation_coordinateur_coop_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.coordination_mediation
+    ADD CONSTRAINT coordination_mediation_coordinateur_coop_id_fkey FOREIGN KEY (coordinateur_coop_id) REFERENCES main.personne(coop_id);
+
+
+-- Name: coordination_mediation coordination_mediation_mediateur_coop_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.coordination_mediation
+    ADD CONSTRAINT coordination_mediation_mediateur_coop_id_fkey FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
+
+
+-- Name: coordination_mediation coordination_mediation_mediateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.coordination_mediation
+    ADD CONSTRAINT coordination_mediation_mediateur_id_fkey FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
+
+
+-- Name: formation formation_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.formation
+    ADD CONSTRAINT formation_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+-- Name: personne_lieux_activites personne_lieux_activites_mediateur_coop_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne_lieux_activites
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT personne_lieux_activites_mediateur_coop_id_fkey FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
 
 
---
--- Name: personne personne_id_structure_ac_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
+-- Name: personne_lieux_activites personne_lieux_activites_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne_lieux_activites
+    ADD CONSTRAINT personne_lieux_activites_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: personne personne_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT personne_id_structure_ac_fkey FOREIGN KEY (id_structure_ac) REFERENCES main.structure(id_structure_ac);
+    ADD CONSTRAINT personne_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
 
 
---
+-- Name: personne_structures_emplois personne_structures_emplois_mediateur_coop_id_key; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne_structures_emplois
+    ADD CONSTRAINT personne_structures_emplois_mediateur_coop_id_key FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
+
+
+-- Name: personne_structures_emplois personne_structures_emplois_personne_id_key; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.personne_structures_emplois
+    ADD CONSTRAINT personne_structures_emplois_personne_id_key FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: poste poste_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.poste
+    ADD CONSTRAINT poste_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+
+
+-- Name: poste poste_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.poste
+    ADD CONSTRAINT poste_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+
+
 -- Name: structure structure_adresse_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.structure
     ADD CONSTRAINT structure_adresse_fkey FOREIGN KEY (adresse_id) REFERENCES main.adresse(id);
 
 
---
 -- Name: structure structure_categorie_juridique_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
---
 
 ALTER TABLE ONLY main.structure
     ADD CONSTRAINT structure_categorie_juridique_fkey FOREIGN KEY (categorie_juridique) REFERENCES reference.categories_juridiques(code);
 
 
---
+-- Name: subvention subvention_poste_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.subvention
+    ADD CONSTRAINT subvention_poste_id_fkey FOREIGN KEY (poste_id) REFERENCES main.poste(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
 -- Name: SCHEMA admin; Type: ACL; Schema: -; Owner: sonum
---
 
 GRANT USAGE ON SCHEMA admin TO app_python;
 GRANT USAGE ON SCHEMA admin TO min_scalingo;
 GRANT USAGE ON SCHEMA admin TO min_dev;
 
 
---
 -- Name: SCHEMA main; Type: ACL; Schema: -; Owner: sonum
---
 
 GRANT USAGE ON SCHEMA main TO app_python;
 GRANT USAGE ON SCHEMA main TO min_scalingo;
 GRANT USAGE ON SCHEMA main TO min_dev;
 
 
---
 -- Name: SCHEMA reference; Type: ACL; Schema: -; Owner: sonum
---
 
 GRANT USAGE ON SCHEMA reference TO min_scalingo;
 GRANT USAGE ON SCHEMA reference TO min_dev;
 
 
---
+-- Name: FUNCTION refresh_coll_terr(); Type: ACL; Schema: admin; Owner: sonum
+
+GRANT ALL ON FUNCTION admin.refresh_coll_terr() TO app_python;
+
+
 -- Name: TABLE commune; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune TO app_python;
 GRANT SELECT ON TABLE admin.commune TO min_scalingo;
 GRANT SELECT ON TABLE admin.commune TO min_dev;
 
 
---
 -- Name: TABLE commune_epci; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune_epci TO app_python;
 GRANT SELECT ON TABLE admin.commune_epci TO min_scalingo;
 GRANT SELECT ON TABLE admin.commune_epci TO min_dev;
 
 
---
 -- Name: TABLE departement; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.departement TO app_python;
 GRANT SELECT ON TABLE admin.departement TO min_scalingo;
 GRANT SELECT ON TABLE admin.departement TO min_dev;
 
 
---
 -- Name: TABLE epci; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.epci TO app_python;
 GRANT SELECT ON TABLE admin.epci TO min_scalingo;
 GRANT SELECT ON TABLE admin.epci TO min_dev;
 
 
---
 -- Name: TABLE region; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.region TO app_python;
 GRANT SELECT ON TABLE admin.region TO min_scalingo;
 GRANT SELECT ON TABLE admin.region TO min_dev;
 
 
---
 -- Name: TABLE coll_terr; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.coll_terr TO app_python;
 GRANT SELECT ON TABLE admin.coll_terr TO min_scalingo;
 GRANT SELECT ON TABLE admin.coll_terr TO min_dev;
 
 
---
 -- Name: SEQUENCE commune_epci_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.commune_epci_id_seq TO app_python;
 
 
---
 -- Name: SEQUENCE commune_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.commune_id_seq TO app_python;
 
 
---
 -- Name: SEQUENCE departement_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.departement_id_seq TO app_python;
 
 
---
 -- Name: SEQUENCE epci_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.epci_id_seq TO app_python;
 
 
---
 -- Name: TABLE ifn_commune; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_commune TO app_python;
 GRANT SELECT ON TABLE admin.ifn_commune TO min_scalingo;
 GRANT SELECT ON TABLE admin.ifn_commune TO min_dev;
 
 
---
 -- Name: SEQUENCE ifn_commune_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_commune_id_seq TO app_python;
 
 
---
+-- Name: TABLE ifn_departement; Type: ACL; Schema: admin; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_departement TO app_python;
+GRANT SELECT ON TABLE admin.ifn_departement TO min_scalingo;
+GRANT SELECT ON TABLE admin.ifn_departement TO min_dev;
+
+
+-- Name: SEQUENCE ifn_departement_id_seq; Type: ACL; Schema: admin; Owner: sonum
+
+GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_departement_id_seq TO app_python;
+
+
 -- Name: TABLE insee_cp; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_cp TO app_python;
 GRANT SELECT ON TABLE admin.insee_cp TO min_scalingo;
 GRANT SELECT ON TABLE admin.insee_cp TO min_dev;
 
 
---
 -- Name: SEQUENCE insee_cp_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.insee_cp_id_seq TO app_python;
 
 
---
 -- Name: TABLE insee_historique; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_historique TO app_python;
 GRANT SELECT ON TABLE admin.insee_historique TO min_scalingo;
 GRANT SELECT ON TABLE admin.insee_historique TO min_dev;
 
 
---
 -- Name: SEQUENCE insee_historique_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.insee_historique_id_seq TO app_python;
 
 
---
 -- Name: SEQUENCE region_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.region_id_seq TO app_python;
 
 
---
 -- Name: TABLE zonage; Type: ACL; Schema: admin; Owner: sonum
---
 
-GRANT SELECT,INSERT,TRIGGER,TRUNCATE,UPDATE ON TABLE admin.zonage TO app_python;
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.zonage TO app_python;
 GRANT SELECT ON TABLE admin.zonage TO min_scalingo;
 GRANT SELECT ON TABLE admin.zonage TO min_dev;
 
 
---
 -- Name: SEQUENCE zonage_id_seq; Type: ACL; Schema: admin; Owner: sonum
---
 
 GRANT USAGE,UPDATE ON SEQUENCE admin.zonage_id_seq TO app_python;
 
 
---
 -- Name: TABLE adresse; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.adresse TO app_python;
 GRANT SELECT ON TABLE main.adresse TO min_scalingo;
 GRANT SELECT ON TABLE main.adresse TO min_dev;
 
 
---
 -- Name: TABLE structure; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.structure TO app_python;
 GRANT SELECT ON TABLE main.structure TO min_scalingo;
 GRANT SELECT ON TABLE main.structure TO min_dev;
 
 
---
 -- Name: TABLE categories_juridiques; Type: ACL; Schema: reference; Owner: sonum
---
 
 GRANT SELECT ON TABLE reference.categories_juridiques TO min_scalingo;
 GRANT SELECT ON TABLE reference.categories_juridiques TO min_dev;
 
 
---
 -- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne TO app_python;
 GRANT SELECT ON TABLE main.personne TO min_scalingo;
 GRANT SELECT ON TABLE main.personne TO min_dev;
 
 
---
 -- Name: TABLE personne_lieux_activites; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_lieux_activites TO app_python;
 GRANT SELECT ON TABLE main.personne_lieux_activites TO min_scalingo;
 GRANT SELECT ON TABLE main.personne_lieux_activites TO min_dev;
 
 
---
 -- Name: TABLE personne_structures_emplois; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_structures_emplois TO app_python;
 GRANT SELECT ON TABLE main.personne_structures_emplois TO min_scalingo;
 GRANT SELECT ON TABLE main.personne_structures_emplois TO min_dev;
 
 
---
--- Name: TABLE poste; Type: ACL; Schema: main; Owner: sonum
---
-
-GRANT SELECT ON TABLE main.poste TO min_scalingo;
-GRANT SELECT ON TABLE main.poste TO min_dev;
-
-
---
 -- Name: TABLE activites_coop; Type: ACL; Schema: main; Owner: sonum
---
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.activites_coop TO app_python;
 GRANT SELECT ON TABLE main.activites_coop TO min_scalingo;
 GRANT SELECT ON TABLE main.activites_coop TO min_dev;
 
 
---
--- Name: TABLE coordination_mediation; Type: ACL; Schema: main; Owner: sonum
---
+-- Name: TABLE formation; Type: ACL; Schema: main; Owner: sonum
 
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.formation TO app_python;
+GRANT SELECT ON TABLE main.formation TO min_scalingo;
+GRANT SELECT ON TABLE main.formation TO min_dev;
+
+
+-- Name: TABLE contrat; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.contrat TO app_python;
+GRANT SELECT ON TABLE main.contrat TO min_scalingo;
+GRANT SELECT ON TABLE main.contrat TO min_dev;
+
+
+-- Name: TABLE poste; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.poste TO app_python;
+GRANT SELECT ON TABLE main.poste TO min_scalingo;
+GRANT SELECT ON TABLE main.poste TO min_dev;
+
+
+-- Name: SEQUENCE activites_coop_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.activites_coop_id_seq TO app_python;
+
+
+-- Name: SEQUENCE adresse_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.adresse_id_seq TO app_python;
+
+
+-- Name: SEQUENCE contrat_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.contrat_id_seq TO app_python;
+
+
+-- Name: TABLE coordination_mediation; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.coordination_mediation TO app_python;
 GRANT SELECT ON TABLE main.coordination_mediation TO min_scalingo;
 GRANT SELECT ON TABLE main.coordination_mediation TO min_dev;
 
 
---
+-- Name: SEQUENCE coordination_mediation_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.coordination_mediation_id_seq TO app_python;
+
+
+-- Name: SEQUENCE formation_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.formation_id_seq TO app_python;
+
+
+-- Name: SEQUENCE personne_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.personne_id_seq TO app_python;
+
+
+-- Name: SEQUENCE personne_lieux_activites_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.personne_lieux_activites_id_seq TO app_python;
+
+
+-- Name: SEQUENCE personne_structures_emplois_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.personne_structures_emplois_id_seq TO app_python;
+
+
+-- Name: SEQUENCE poste_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.poste_id_seq TO app_python;
+
+
+-- Name: SEQUENCE structure_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.structure_id_seq TO app_python;
+
+
+-- Name: TABLE subvention; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.subvention TO app_python;
+GRANT SELECT ON TABLE main.subvention TO min_scalingo;
+GRANT SELECT ON TABLE main.subvention TO min_dev;
+
+
+-- Name: SEQUENCE subvention_id_seq; Type: ACL; Schema: main; Owner: sonum
+
+GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
+
+
+-- Name: TABLE naf; Type: ACL; Schema: reference; Owner: sonum
+
+GRANT SELECT ON TABLE reference.naf TO min_scalingo;
+GRANT SELECT ON TABLE reference.naf TO min_dev;
+
+
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: admin; Owner: sonum
---
 
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT USAGE,UPDATE ON SEQUENCES TO app_python;
 
 
---
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: admin; Owner: sonum
---
 
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA admin GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLES TO app_python;
 
 
---
+-- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: main; Owner: sonum
+
+ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA main GRANT USAGE ON SEQUENCES TO app_python;
+
+
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: main; Owner: sonum
+
+ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA main GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLES TO app_python;
+
+
 -- PostgreSQL database dump complete
---
 
