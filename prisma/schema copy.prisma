@@ -462,6 +462,7 @@ model zonage {
   updated_at  DateTime?                @db.Timestamp(6)
   commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
 
+  @@unique([code, code_insee], map: "zonage_code_ukey")
   @@unique([code, code_insee], map: "zonage_ukey")
   @@index([code_insee])
   @@index([geom], type: Gist)
