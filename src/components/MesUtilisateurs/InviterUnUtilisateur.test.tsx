@@ -179,6 +179,7 @@ describe('inviter un utilisateur', () => {
           nom: 'Gestionnaire département',
           pictogramme: 'maille',
           rolesGerables: ['Gestionnaire département'],
+          type: 'gestionnaire_departement',
         },
       }),
     })
@@ -461,6 +462,7 @@ describe('inviter un utilisateur', () => {
             'Gestionnaire région',
             'Gestionnaire structure',
           ],
+          type: 'administrateur_dispositif',
         },
       }),
       ...options,

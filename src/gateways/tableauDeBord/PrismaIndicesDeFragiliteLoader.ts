@@ -124,7 +124,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
 
       return communes.map((commune) => ({
         codeInsee: commune.codeInsee,
-        score: commune.score ? Number(commune.score) : null,
+        score: Number(commune.score),
       }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {

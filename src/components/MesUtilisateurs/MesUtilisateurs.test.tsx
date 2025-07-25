@@ -116,6 +116,7 @@ describe('mes utilisateurs', () => {
             nom: 'Gestionnaire groupement',
             pictogramme: 'maille',
             rolesGerables: [],
+            type: 'gestionnaire_groupement',
           },
         }),
       }

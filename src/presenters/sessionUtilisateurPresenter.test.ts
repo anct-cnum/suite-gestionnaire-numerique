@@ -9,7 +9,7 @@ describe('session utilisateur presenter', () => {
       role: {
         categorie: 'mednum',
         doesItBelongToGroupeAdmin: true,
-        nom: 'Support animation',
+        nom: 'Gestionnaire structure',
         organisation: 'Mednum',
         rolesGerables: [],
         type: 'gestionnaire_structure' as RoleUtilisateur,
@@ -33,9 +33,10 @@ describe('session utilisateur presenter', () => {
       role: {
         doesItBelongToGroupeAdmin: true,
         libelle: 'Mednum',
-        nom: 'Support animation',
+        nom: 'Gestionnaire structure',
         pictogramme: 'mednum',
         rolesGerables: [],
+        type: 'gestionnaire_structure',
       },
       telephone: '0102030405',
       uid: 'fooId',

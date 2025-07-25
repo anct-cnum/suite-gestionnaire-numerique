@@ -1,4 +1,4 @@
-import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
+import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function createSessionUtilisateurPresenter(
   utilisateurReadModel: UnUtilisateurReadModel
@@ -17,6 +17,7 @@ export function createSessionUtilisateurPresenter(
       nom: role.nom,
       pictogramme: role.categorie,
       rolesGerables: role.rolesGerables,
+      type: role.type,
     },
     telephone: utilisateurReadModel.telephone,
     uid: utilisateurReadModel.uid,
@@ -36,6 +37,7 @@ export type SessionUtilisateurViewModel = Readonly<{
     nom: string
     pictogramme: string
     rolesGerables: ReadonlyArray<string>
+    type: RoleUtilisateur
   }>
   telephone: string
   uid: string
