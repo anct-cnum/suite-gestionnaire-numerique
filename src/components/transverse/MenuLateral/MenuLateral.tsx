@@ -11,6 +11,15 @@ import Icon from '@/components/shared/Icon/Icon'
 export default function MenuLateral({ children }: Readonly<PropsWithChildren>): ReactElement {
   const { pathname, sessionUtilisateurViewModel } = useContext(clientContext)
 
+  // Menu pour administrateur_dispositif
+  const menusAdmin = [
+    {
+      icon: 'compass-3-line',
+      label: 'Gouvernances',
+      url: '/gouvernances',
+    },
+  ]
+
   const menusPilotage = [
     {
       ariaControls: 'fr-sidemenu-gouvernance',
@@ -39,12 +48,120 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
     },
     {
       icon: 'map-pin-2-line',
-      label: 'Lieux d‘inclusion',
+      label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
     },
   ]
 
   const activeClass = pathname === '/tableau-de-bord' ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+  function renderMenusSelonRole(): null | ReactElement {
+    if (sessionUtilisateurViewModel.role.type === 'administrateur_dispositif') {
+      return (
+        <>
+          <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
+            ADMINISTRATION
+          </p>
+          <ul className="fr-sidemenu__list">
+            {menusAdmin.map((menu) => {
+              const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+              return (
+                <li 
+                  className={`fr-sidemenu__item ${activeClass}`} 
+                  key={menu.url}
+                >
+                  <Link
+                    aria-current={pathname === menu.url ? 'page' : false}
+                    className="fr-sidemenu__link"
+                    href={menu.url}
+                  >
+                    <Icon
+                      classname="fr-mr-1w"
+                      icon={menu.icon}
+                    />
+                    {menu.label}
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )
+    }
+    
+    if (sessionUtilisateurViewModel.displayLiensGouvernance) {
+      return (
+        <>
+          <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
+            PILOTAGE
+          </p>
+          <ul className="fr-sidemenu__list">
+            {menusPilotage.map((menu) => {
+              const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+              return (
+                <Fragment key={menu.url}>
+                  <li className={`fr-sidemenu__item ${activeClass}`}>
+                    <Link
+                      aria-controls={menu.ariaControls}
+                      aria-current={pathname === menu.url ? 'page' : false}
+                      aria-expanded={menu.ariaExpanded}
+                      className="fr-sidemenu__link"
+                      href={menu.url}
+                    >
+                      <Icon
+                        classname="fr-mr-1w"
+                        icon={menu.icon}
+                      />
+                      {menu.label}
+                    </Link>
+                    {children}
+                  </li>
+                </Fragment>
+              )
+            })}
+          </ul>
+          <div className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
+            <Badge
+              color="new"
+              icon={true}
+            >
+              à venir
+            </Badge>
+          </div>
+          <ul className="fr-sidemenu__list">
+            {menusAVenir.map((menu) => {
+              const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
+
+              return (
+                <li
+                  className={`fr-sidemenu__item ${activeClass}`}
+                  key={menu.url}
+                >
+                  <Link
+                    aria-current={pathname === menu.url ? 'page' : false}
+                    className="fr-sidemenu__link"
+                    href={menu.url}
+                  >
+                    <span className="color-grey">
+                      <Icon
+                        classname="fr-mr-1w"
+                        icon={menu.icon}
+                      />
+                      {menu.label}
+                    </span>
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </>
+      )
+    }
+    
+    return null
+  }
 
   return (
     <nav
@@ -72,75 +189,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
           </Link>
         </li>
       </ul>
-      {
-        sessionUtilisateurViewModel.displayLiensGouvernance ? (
-          <>
-            <p className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
-              PILOTAGE
-            </p>
-            <ul className="fr-sidemenu__list">
-              {menusPilotage.map((menu) => {
-                const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
-
-                return (
-                  <Fragment key={menu.url}>
-                    <li className={`fr-sidemenu__item ${activeClass}`}>
-                      <Link
-                        aria-controls={menu.ariaControls}
-                        aria-current={pathname === menu.url ? 'page' : false}
-                        aria-expanded={menu.ariaExpanded}
-                        className="fr-sidemenu__link"
-                        href={menu.url}
-                      >
-                        <Icon
-                          classname="fr-mr-1w"
-                          icon={menu.icon}
-                        />
-                        {menu.label}
-                      </Link>
-                      {children}
-                    </li>
-                  </Fragment>
-                )
-              })}
-            </ul>
-            <div className="fr-text--sm color-grey separator fr-mt-2w fr-mb-1w">
-              <Badge
-                color="new"
-                icon={true}
-              >
-                à venir
-              </Badge>
-            </div>
-            <ul className="fr-sidemenu__list">
-              {menusAVenir.map((menu) => {
-                const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
-
-                return (
-                  <li
-                    className={`fr-sidemenu__item ${activeClass}`}
-                    key={menu.url}
-                  >
-                    <Link
-                      aria-current={pathname === menu.url ? 'page' : false}
-                      className="fr-sidemenu__link"
-                      href={menu.url}
-                    >
-                      <span className="color-grey">
-                        <Icon
-                          classname="fr-mr-1w"
-                          icon={menu.icon}
-                        />
-                        {menu.label}
-                      </span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </>
-        ) : null
-      }
+      {renderMenusSelonRole()}
     </nav>
   )
 }

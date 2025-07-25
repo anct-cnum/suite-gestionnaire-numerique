@@ -56,9 +56,10 @@ export function sessionUtilisateurViewModelFactory(
     role: {
       doesItBelongToGroupeAdmin: true,
       libelle: 'Mednum',
-      nom: 'Support animation',
+      nom: 'Gestionnaire structure',
       pictogramme: 'support-animation',
       rolesGerables: [] as ReadonlyArray<string>,
+      type: 'gestionnaire_structure',
     },
     telephone: '0102030405',
     uid: 'fooId',
