@@ -26,7 +26,7 @@ export function indiceFragiliteDepartementsPresenter(departements: ReadonlyArray
   return departements.map(departement => ({
     codeDepartement: departement.codeDepartement,
     couleur: getCouleurFragilite(departement.score),
-    score: departement.score,
+    score: Number(departement.score.toFixed(2)),
   }))
 }
 

@@ -3,110 +3,6 @@ import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { CommuneReadModel, DepartementReadModel, IndicesDeFragiliteLoader } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-const codesDepartements = [
-  '01',
-  '02',
-  '03',
-  '04',
-  '05',
-  '06',
-  '07',
-  '08',
-  '09',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-  '16',
-  '17',
-  '18',
-  '19',
-  '21',
-  '22',
-  '23',
-  '24',
-  '25',
-  '26',
-  '27',
-  '28',
-  '29',
-  '2A',
-  '2B',
-  '30',
-  '31',
-  '32',
-  '33',
-  '34',
-  '35',
-  '36',
-  '37',
-  '38',
-  '39',
-  '40',
-  '41',
-  '42',
-  '43',
-  '44',
-  '45',
-  '46',
-  '47',
-  '48',
-  '49',
-  '50',
-  '51',
-  '52',
-  '53',
-  '54',
-  '55',
-  '56',
-  '57',
-  '58',
-  '59',
-  '60',
-  '61',
-  '62',
-  '63',
-  '64',
-  '65',
-  '66',
-  '67',
-  '68',
-  '69',
-  '70',
-  '71',
-  '72',
-  '73',
-  '74',
-  '75',
-  '76',
-  '77',
-  '78',
-  '79',
-  '80',
-  '81',
-  '82',
-  '83',
-  '84',
-  '85',
-  '86',
-  '87',
-  '88',
-  '89',
-  '90',
-  '91',
-  '92',
-  '93',
-  '94',
-  '95',
-  '971',
-  '972',
-  '973',
-  '974',
-  '976',
-]
-
 export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader {
   async getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
     try {
@@ -138,14 +34,18 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/require-await
   async getForFrance(): Promise<ErrorReadModel | ReadonlyArray<DepartementReadModel>> {
     try {
-      // Pour la France, on retourne des indices aléatoires pour tous les départements
-      return codesDepartements.map((codeDepartement) => ({
-        codeDepartement,
-        // eslint-disable-next-line sonarjs/pseudo-random
-        score: Math.floor(Math.random() * 10) + 1, // Score aléatoire entre 1 et 10
+      const departements = await prisma.ifn_departement.findMany({
+        select: {
+          code: true,
+          score: true,
+        },
+      })
+
+      return departements.map((departement) => ({
+        codeDepartement: departement.code,
+        score: Number(departement.score),
       }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
