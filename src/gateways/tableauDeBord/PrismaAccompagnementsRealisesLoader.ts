@@ -120,14 +120,14 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
           WITH all_activites_coop AS (
             SELECT COUNT(*) AS nb_activites_coop
             FROM main.activites_coop ac
-            JOIN main.structure s2 on ac.structure_id_coop = s2.structure_id_coop
+            JOIN main.structure s2 ON ac.structure_id = s2.id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
             WHERE a2.departement != 'zzz'
           ),
           sum_accompagnements_ac AS (
             SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
             FROM main.personne p
-            JOIN main.structure s ON p.id_structure_ac = s.id_structure_ac
+            JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement != 'zzz'
           )
@@ -140,14 +140,14 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
           WITH all_activites_coop AS (
             SELECT COUNT(*) AS nb_activites_coop
             FROM main.activites_coop ac
-            JOIN main.structure s2 on ac.structure_id_coop = s2.structure_id_coop
+            JOIN main.structure s2 ON ac.structure_id = s2.id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
             WHERE a2.departement = ${territoire}
           ),
           sum_accompagnements_ac AS (
             SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
             FROM main.personne p
-            JOIN main.structure s ON p.id_structure_ac = s.id_structure_ac
+            JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement = ${territoire}
           )
@@ -176,7 +176,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             TO_CHAR(ac.date, 'MM/YY') as mois,
             COUNT(*) as nombre
           FROM main.activites_coop ac
-          JOIN main.structure s ON ac.structure_id_coop = s.structure_id_coop
+          JOIN main.structure s ON ac.structure_id = s.id
           JOIN main.adresse a ON s.adresse_id = a.id
           WHERE a.departement != 'zzz'
             AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
@@ -190,7 +190,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             TO_CHAR(ac.date, 'MM/YY') as mois,
             COUNT(*) as nombre
           FROM main.activites_coop ac
-          JOIN main.structure s ON ac.structure_id_coop = s.structure_id_coop
+          JOIN main.structure s ON ac.structure_id = s.id
           JOIN main.adresse a ON s.adresse_id = a.id
           WHERE a.departement = ${territoire}
             AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')

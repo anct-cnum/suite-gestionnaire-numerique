@@ -13,7 +13,7 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
           WITH nb_acteurs_ac AS (
             SELECT COUNT(*) AS nb_acteurs_ac
             FROM main.personne p
-            JOIN main.structure s ON p.id_structure_ac = s.id_structure_ac
+            JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement != 'zzz'
           ),
@@ -35,7 +35,7 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
           WITH nb_acteurs_ac AS (
             SELECT COUNT(*) AS nb_acteurs_ac
             FROM main.personne p
-            JOIN main.structure s ON p.id_structure_ac = s.id_structure_ac
+            JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE a.departement = ${territoire}
           ),
