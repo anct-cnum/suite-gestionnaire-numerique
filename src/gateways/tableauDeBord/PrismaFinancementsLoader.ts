@@ -34,7 +34,7 @@ export class PrismaFinancementsLoader implements FinancementLoader {
         return acc + feuille.action.reduce((accAction, action) => accAction + action.budgetGlobal, 0)
       }, 0)
 
-      const subventionsParEnveloppe = new Map<string, number>()
+      const subventionsParEnveloppe = new Map<string, { total: number; enveloppeTotale: number }>()
       let nombreDeFinancementsEngages = 0
 
       feuillesDeRoute.forEach(feuille => {
@@ -44,13 +44,18 @@ export class PrismaFinancementsLoader implements FinancementLoader {
               nombreDeFinancementsEngages += 1
               const montant = demande.subventionDemandee
               const enveloppe = demande.enveloppe.libelle
-              subventionsParEnveloppe.set(enveloppe, (subventionsParEnveloppe.get(enveloppe) ?? 0) + montant)
+              const enveloppeTotale = demande.enveloppe.montant
+              const current = subventionsParEnveloppe.get(enveloppe) ?? { total: 0, enveloppeTotale }
+              subventionsParEnveloppe.set(enveloppe, { 
+                total: current.total + montant,
+                enveloppeTotale
+              })
             }
           })
         })
       })
 
-      const totalSubventions = Array.from(subventionsParEnveloppe.values()).reduce((acc, val) => acc + val, 0)
+      const totalSubventions = Array.from(subventionsParEnveloppe.values()).reduce((acc, val) => acc + val.total, 0)
       const pourcentageCredit = totalBudget > 0 ? totalSubventions / totalBudget * 100 : 0
 
       return {
@@ -63,9 +68,10 @@ export class PrismaFinancementsLoader implements FinancementLoader {
           total: totalSubventions.toString(),
         },
         nombreDeFinancementsEngagesParLEtat: nombreDeFinancementsEngages,
-        ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, total]) => ({
+        ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, data]) => ({
           label,
-          total: total.toString(),
+          total: data.total.toString(),
+          enveloppeTotale: data.enveloppeTotale.toString(),
         })),
       }
     } catch (error) {

@@ -130,16 +130,40 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
         {
           conventionnement.ventilationSubventionsParEnveloppe.map((detail) => (
             <li
-              className="fr-grid-row fr-btns-group--space-between fr-mb-1w fr-mt-1w"
+              className="fr-mb-2w fr-mt-1w"
               key={detail.label}
+              style={{ listStyle: 'none' }}
             >
-              <div>
-                <Dot color={detail.color} />
-                {' '}
-                {detail.label}
-              </div>
-              <div className="font-weight-700">
-                {detail.total}
+              <div className="fr-grid-row fr-grid-row--middle">
+                <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                  <Dot color={detail.color} />
+                  {' '}
+                  {detail.label}
+                </div>
+                <div 
+                  className="font-weight-700" 
+                  style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
+                >
+                  {detail.total}
+                </div>
+                {conventionnement.contexte === 'admin' && (
+                  <div 
+                    style={{ position: 'relative', width: '6.25rem' }}
+                    title={`${detail.pourcentageConsomme}% de l'enveloppe consommée`}
+                  >
+                    <div style={{ backgroundColor: '#e3e3fd', borderRadius: '4px', height: '8px', width: '100%' }}>
+                      <div 
+                        style={{ 
+                          backgroundColor: '#000091',
+                          borderRadius: '4px',
+                          height: '8px',
+                          transition: 'width 0.3s ease',
+                          width: `${detail.pourcentageConsomme}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </li>
           ))

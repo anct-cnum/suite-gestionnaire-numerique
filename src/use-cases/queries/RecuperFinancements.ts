@@ -17,5 +17,6 @@ export interface TableauDeBordLoaderFinancements {
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
     label: string
     total: string
+    enveloppeTotale: string
   }>
 }
