@@ -4,7 +4,7 @@ import { FilterType } from '@/components/Gouvernances/GouvernancesList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function GouvernancesHearder(props: Props): ReactElement {
-  const { filterAvance, filtreGeographique, onFilterClick } = props
+  const { drawerId, filterAvance, filtreGeographique, onFilterClick } = props
   return (
     <section
       aria-labelledby="entete"
@@ -31,18 +31,17 @@ export default function GouvernancesHearder(props: Props): ReactElement {
 
         </div>
         <button
+          aria-controls={drawerId}
           className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line badge-button"
-          onClick={() =>{
-            console.log("Click sur gouverance header")
-            onFilterClick()
-        }}
+          data-fr-opened="false"
+          onClick={onFilterClick}
           type="button"
         >
           Filtrer
         </button>
       </div>
       <div>
-        {filterAvance?.value !== FilterType.NO_FILTRE ? (
+        {filterAvance.value !== FilterType.NO_FILTRE ? (
           <button
             aria-label={`Retirer le filtre ${filterAvance.libeller}`}
             className="fr-tag fr-icon-close-line fr-tag--icon-left fr-mr-1w "
@@ -57,7 +56,7 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           </button>
         ) : null}
 
-        {filtreGeographique?.value !== '' ? (
+        {filtreGeographique.value !== '' ? (
           <button
             aria-label={`Retirer le filtre ${filtreGeographique.value}`}
             className="fr-tag fr-icon-close-line fr-tag--icon-left"
@@ -77,14 +76,15 @@ export default function GouvernancesHearder(props: Props): ReactElement {
   )
 }
 type Props = Readonly<{
+  drawerId: string
   filterAvance:{
     libeller:string
-    onRemove(): void
+    onRemove: () => void
     value:FilterType
   }
   filtreGeographique: {
-    onRemove(): void
+    onRemove: () => void
     value:string
   }
-  onFilterClick(): void
+  onFilterClick: () => void
 }>

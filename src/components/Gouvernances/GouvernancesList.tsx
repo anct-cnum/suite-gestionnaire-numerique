@@ -1,18 +1,16 @@
 'use client'
 
-import { ReactElement, useEffect, useId, useRef, useState } from 'react'
+import { ReactElement, useEffect, useId, useState } from 'react'
 
-import styles from '@/components/Action/Action.module.css'
 import { filtrerDetails, getInfosFilrer } from '@/components/Gouvernances/GouvernanceFiltrage'
-import Checkbox from '@/components/shared/Checkbox/Checkbox'
+import GouvernanceListFiltre from '@/components/Gouvernances/GouvernanceListFiltre'
+import GouvernancesDetails from '@/components/Gouvernances/GouvernancesDetails'
+import GouvernancesHearder from '@/components/Gouvernances/GouvernancesHeader'
+import GouvernancesInfos from '@/components/Gouvernances/GouvernancesInfos'
 import Drawer from '@/components/shared/Drawer/Drawer'
 import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { GouvernancesViewModel } from '@/presenters/gouvernancesPresenter'
-import GouvernanceListFiltre from '@/components/Gouvernances/GouvernanceListFiltre'
-import GouvernancesDetails from '@/components/Gouvernances/GouvernancesDetails'
-import GouvernancesInfos from '@/components/Gouvernances/GouvernancesInfos'
-import GouvernancesHearder from '@/components/Gouvernances/GouvernancesHeader'
 
 export default function GouvernancesList(props: GouvernancesViewModel): ReactElement {
   const { details } = props
@@ -28,10 +26,6 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
     setInfosFiltrer(gouvernanceInfo)
   }, [detailsFiltrer])
 
-  function handleFilterClick(): void {
-    setIsDrawerOpen(true)
-  }
-
   function onFilter(filtreGeographique: string, filterAvance: FilterType ): void {
     setFiltreGeographique(filtreGeographique)
     setFilterAvance(filterAvance)
@@ -40,41 +34,22 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
   }
 
   function onReset(): void {
+    setFiltreGeographique('')
+    setFilterAvance(FilterType.NO_FILTRE)
     setInfosFiltrer(getInfosFilrer(details))
     setDetailsFiltrer(details)
     setIsDrawerOpen(false)
   }
 
-  function onCloseSidePanel(): void {
-    setIsDrawerOpen(false)
-  }
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const drawerId = 'drawerAjouterDesBesoinsId'
+  const drawerId = 'drawerFiltreGouvernances'
   const labelId = useId()
-  const fieldset = useRef<HTMLFieldSetElement>(null)
-  const hasBesoins = true
-  const resetToutEffacer = (bla) => {}
 
   return (
-    <>
-      <button
-        aria-controls={drawerId}
-        className={
-          hasBesoins ?
-            'fr-btn fr-btn--tertiary' :
-            'fr-btn fr-btn--primary fr-btn--icon-left fr-fi-add-line'
-        }
-        data-fr-opened="false"
-        onClick={() => {
-          setIsDrawerOpen(true)
-        }}
-        title={hasBesoins ? 'Modifier les besoins' : 'Ajouter des besoins'}
-        type="button"
-      >
-        {hasBesoins ? 'Modifier' : 'Ajouter'}
-      </button>
+    <div className="fr-mt-4w">
+
       <GouvernancesHearder
+        drawerId={drawerId}
         filterAvance={{
           libeller: filterAvance,
           onRemove() {
@@ -89,17 +64,14 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
           value: filtreGeographique,
         }}
         onFilterClick={() => {
-          console.log("Click sur gouverance list")
           setIsDrawerOpen(true)
         }}
       />
       <GouvernancesInfos infos={infosFiltrer} />
       <GouvernancesDetails details={detailsFiltrer} />
-
       <Drawer
-        boutonFermeture={hasBesoins ? 'Fermer la modification des besoins' : 'Fermer l‘ajout des besoins'}
+        boutonFermeture="Fermer le filtre des gouvernances"
         closeDrawer={() => {
-          resetToutEffacer(fieldset)
           setIsDrawerOpen(false)
         }}
         id={drawerId}
@@ -110,22 +82,23 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
       >
         <DrawerTitle id={labelId}>
           <TitleIcon
-            background="purple"
-            icon="flashlight-line"
+            background="blue"
+            icon="filter-line"
           />
           <br />
-          Ajouter le(s) besoin(s)
+          Filtrer des gouvernances
         </DrawerTitle>
         <GouvernanceListFiltre
           details={details}
+          drawerId={drawerId}
           filterAvance={filterAvance}
           filtreGeographique={filtreGeographique}
-          onFilter={onFilter}
-          onReset={onReset}
+          onFilterAction={onFilter}
+          onResetAction={onReset}
         />
 
       </Drawer>
-    </>
+    </div>
   )
 }
 

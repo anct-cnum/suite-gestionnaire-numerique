@@ -8,10 +8,11 @@ import { GouvernanceDetails } from '@/presenters/gouvernancesPresenter'
 
 export default function GouvernanceListFiltre({
   details,
+  drawerId,
   filterAvance,
   filtreGeographique,
-  onFilter,
-  onReset,
+  onFilterAction,
+  onResetAction,
 }: Props): ReactElement {
   const [avance, setAvance] = useState<FilterType>(filterAvance)
   const [geographique, setGeographique] = useState<string>(filtreGeographique)
@@ -31,10 +32,6 @@ export default function GouvernanceListFiltre({
 
   return (
     <div className="sidepanel__content">
-      <h2 className="fr-h4">
-        Filtrer les gouvernances
-      </h2>
-
       <div className="fr-mb-3w">
         <label
           className="fr-label"
@@ -66,15 +63,9 @@ export default function GouvernanceListFiltre({
 
       <fieldset
         aria-labelledby="radio-group-1"
-        className="fr-fieldset  fr-mb-3w"
+        className="fr-fieldset fr-ml-0"
       >
-        <legend
-          className="fr-fieldset__legend fr-text--regular"
-          id="radio-group-1"
-        >
-          Filtres avancés
-        </legend>
-        <div className="fr-radio-group">
+        <div className="fr-radio-group fr-mb-2w">
           <input
             checked={avance === FilterType.NO_GOUV}
             id="gouv1"
@@ -93,7 +84,7 @@ export default function GouvernanceListFiltre({
           </label>
         </div>
 
-        <div className="fr-radio-group">
+        <div className="fr-radio-group fr-mb-2w">
           <input
             checked={avance === FilterType.NO_ROADMAP}
             id="gouv2"
@@ -112,7 +103,7 @@ export default function GouvernanceListFiltre({
           </label>
         </div>
 
-        <div className="fr-radio-group">
+        <div className="fr-radio-group fr-mb-2w">
           <input
             checked={avance === FilterType.MULTI_ROADMAP}
             id="gouv3"
@@ -131,7 +122,7 @@ export default function GouvernanceListFiltre({
           </label>
         </div>
 
-        <div className="fr-radio-group">
+        <div className="fr-radio-group fr-mb-2w">
           <input
             checked={avance === FilterType.NO_ACTIONS}
             id="gouv4"
@@ -151,10 +142,11 @@ export default function GouvernanceListFiltre({
         </div>
       </fieldset>
 
-      <div className="fr-btns-group fr-btns-group--inline-md fr-btns-group--inline-lg">
+      <div className="fr-btns-group">
         <button
+          aria-controls={drawerId}
           className="fr-btn"
-          onClick={() => { onFilter(geographique, avance) }}
+          onClick={() => { onFilterAction(geographique, avance) }}
           type="button"
         >
           Afficher les
@@ -164,8 +156,9 @@ export default function GouvernanceListFiltre({
           résultats
         </button>
         <button
+          aria-controls={drawerId}
           className="fr-btn fr-btn--secondary"
-          onClick={onReset}
+          onClick={onResetAction}
           type="button"
         >
           Réinitialiser
@@ -177,8 +170,9 @@ export default function GouvernanceListFiltre({
 
 type Props = Readonly<{
   details: Array<GouvernanceDetails>
+  drawerId: string
   filterAvance: FilterType
   filtreGeographique: string
-  onFilter(filtreGeographique: string, filterAvance: FilterType): void
-  onReset(): void
+  onFilterAction: (filtreGeographique: string, filterAvance: FilterType) => void
+  onResetAction: () => void
 }>
