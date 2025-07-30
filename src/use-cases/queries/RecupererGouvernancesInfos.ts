@@ -9,32 +9,18 @@ export class RecupererGouvernancesInfos implements QueryHandler<Query, Gouvernan
 
 export type GouvernancesInfosReadModel = Readonly<{
   details: ReadonlyArray<GouvernanceDetails>
-  infos: {
-    creditEngager: {
-      creditEngagerGlobal: string
-      envelopeGlobal: string
-    }
-    feuilleDeRoutes: {
-      feuilleDeRouteCompte: string
-      subventionValiderCompte: string
-    }
-    gouvernancesTerritoriales: {
-      gouvernanceCoporterCompte:string
-      gouvernancesCompte: string
-    }
-  }
 }>
 interface GouvernanceDetails {
   actionCount: number
-  coFinancementMontant: string
+  coFinancementMontant: number
   coporteurCount: number
   departementCode: string
   departementNom: string
   departementRegion: string
-  dotationEtatMontant: string
+  dotationEtatMontant: number
   feuilleDeRouteCount: number
   membreCount: number
-  montantEngager: string
+  montantEngager: Array<number>
 }
  type Query = Readonly<{
    match: string

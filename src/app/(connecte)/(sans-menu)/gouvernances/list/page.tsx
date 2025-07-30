@@ -11,7 +11,6 @@ export default async function GouvernancesController(): Promise<ReactElement> {
   return (
     <GouvernancesList
       details={gonvernancesViewModel.details}
-      infos={gonvernancesViewModel.infos}
     />
   )
 }

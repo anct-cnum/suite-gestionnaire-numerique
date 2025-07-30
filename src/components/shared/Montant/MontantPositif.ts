@@ -36,6 +36,10 @@ export class MontantPositif {
     return Optional.of(new MontantPositif(safeVal))
   }
 
+  static ofNumber(valeur: number): Optional<MontantPositif>{
+    return MontantPositif.of(String(Math.max(0, Math.floor(valeur))))
+  }
+
   static ofZero(): Optional<MontantPositif> {
     return Optional.of(new MontantPositif(0))
   }
