@@ -41,7 +41,7 @@ export default function GouvernancesHearder(props: Props): ReactElement {
         </button>
       </div>
       <div>
-        {filterAvance.value !== FilterType.NO_FILTRE ? (
+        {filterAvance.value === FilterType.NO_FILTRE ? null:  (
           <button
             aria-label={`Retirer le filtre ${filterAvance.libeller}`}
             className="fr-tag fr-icon-close-line fr-tag--icon-left fr-mr-1w "
@@ -54,9 +54,9 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           >
             {filterAvance.libeller}
           </button>
-        ) : null}
+        ) }
 
-        {filtreGeographique.value !== '' ? (
+        {filtreGeographique.value === '' ? null : (
           <button
             aria-label={`Retirer le filtre ${filtreGeographique.value}`}
             className="fr-tag fr-icon-close-line fr-tag--icon-left"
@@ -69,7 +69,7 @@ export default function GouvernancesHearder(props: Props): ReactElement {
           >
             {filtreGeographique.value}
           </button>
-        ) : null}
+        ) }
 
       </div>
     </section>
@@ -79,12 +79,12 @@ type Props = Readonly<{
   drawerId: string
   filterAvance:{
     libeller:string
-    onRemove: () => void
+    onRemove(): void
     value:FilterType
   }
   filtreGeographique: {
-    onRemove: () => void
+    onRemove(): void
     value:string
   }
-  onFilterClick: () => void
+  onFilterClick(): void
 }>

@@ -173,6 +173,6 @@ type Props = Readonly<{
   drawerId: string
   filterAvance: FilterType
   filtreGeographique: string
-  onFilterAction: (filtreGeographique: string, filterAvance: FilterType) => void
-  onResetAction: () => void
+  onFilterAction(filtreGeographique: string, filterAvance: FilterType): void
+  onResetAction(): void
 }>

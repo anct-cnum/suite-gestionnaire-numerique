@@ -37,26 +37,31 @@ export function filtrerDetails(details: Array<GouvernanceDetails>, filtreGeograp
 
 export function getInfosFilrer(details: Array<GouvernanceDetails>): InfosGouvernances {
   const creditEngagerGlobal = details
-    .filter((x) => undefined !== x.montantEngager)
-    .flatMap((x) => x.montantEngager)
+    // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
+    .filter((gouvernanceDetail) =>  gouvernanceDetail.montantEngager !== undefined)
+    .flatMap((gouvernanceDetail) => gouvernanceDetail.montantEngager)
     .reduce((count, value) => count + value, 0)
 
   const subventionValiderCompte = details
-    .filter((x) => undefined !== x.montantEngager)
-    .map((x) => x.montantEngager.length)
+    // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
+    .filter((gouvernanceDetail) => gouvernanceDetail.montantEngager !== undefined)
+    .map((gouvernanceDetail) => gouvernanceDetail.montantEngager.length)
     .reduce((count, value) => count + value, 0)
   const gouvernanceCoporterCompte = details
-    .filter((x) => undefined !== x.coporteurCount)
-    .map((x) => x.coporteurCount)
+    // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
+    .filter((gouvernanceDetail) => gouvernanceDetail.coporteurCount !== undefined)
+    .map((gouvernanceDetail) => gouvernanceDetail.coporteurCount)
     .filter((membre) => membre >= 2).length
   const feuilleDeRouteCompte = details
-    .filter((x) => undefined !== x.feuilleDeRouteCount)
-    .map((x) => x.feuilleDeRouteCount)
+    // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
+    .filter((gouvernanceDetail) => gouvernanceDetail.feuilleDeRouteCount !== undefined)
+    .map((gouvernanceDetail) => gouvernanceDetail.feuilleDeRouteCount)
     .reduce((sum, value) => sum + value, 0)
 
   const actionsCompte = details
-    .filter((x) => undefined !== x.actionCount)
-    .map((x) => x.actionCount)
+    // eslint-disable-next-line sonarjs/different-types-comparison,@typescript-eslint/no-unnecessary-condition
+    .filter((gouvernanceDetail) => gouvernanceDetail.actionCount !== undefined)
+    .map((gouvernanceDetail) => gouvernanceDetail.actionCount)
     .reduce((count, value) => count + value, 0)
   return {
     creditEngager: {

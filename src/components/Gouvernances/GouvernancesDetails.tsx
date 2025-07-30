@@ -70,6 +70,7 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               </td>
               <td>
                 <span className="fr-text--sm">
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                   {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0)).orElse(MontantPositif.Zero).format()} €`}
                 </span>
               </td>
@@ -80,6 +81,7 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               </td>
               <td>
                 <span className="fr-text--sm fr-text--bold">
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
                   {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0))
                     .orElse(MontantPositif.Zero)
                     .add(MontantPositif.ofNumber(detail.coFinancementMontant))

@@ -18,7 +18,6 @@ export class PrismaGouvernancesInfosLoader {
       const cofinancementGouvernance = cofinancement[gouvernanceCode]
       return {
         /* eslint-disable */
-        /* eslint-enable */
         actionCount: feuilleDeRoute?.nombreActions ?? 0,
         coFinancementMontant:
           cofinancementGouvernance !== null ? cofinancementGouvernance : 0,
@@ -31,7 +30,7 @@ export class PrismaGouvernancesInfosLoader {
         feuilleDeRouteCount: feuilleDeRoute?.nombreFeuillesDeRoute ?? 0,
         membreCount: membre?.membre ?? 0,
         montantEngager: montantEngagerGouvernance ?? [],
-
+        /* eslint-enable */
       }
     })
 
