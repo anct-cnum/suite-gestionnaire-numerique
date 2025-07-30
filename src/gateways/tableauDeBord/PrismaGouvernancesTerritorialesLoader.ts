@@ -15,9 +15,6 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
           membres: {
             where: {
               isCoporteur: true,
-              NOT: {
-                type: 'Préfecture départementale',
-              },
             },
           },
         },
@@ -30,7 +27,7 @@ export class PrismaGouvernancesTerritorialesLoader implements GouvernancesTerrit
 
       // Compter les gouvernances sans coporteur (autre que préfecture)
       const gouvernancesSansCoporteur = gouvernances.filter(
-        (gouvernance) => gouvernance.membres.length === 0
+        (gouvernance) => gouvernance.membres.length === 1
       ).length
 
       // Compter les gouvernances par type de coporteur
