@@ -72,7 +72,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     const financementsReadModel = await financementsLoader.get('France')
     const financementsViewModel = handleReadModelOrError(
       financementsReadModel,
-      financementsPresenter
+      (readModel) => financementsPresenter(readModel, 'admin')
     )
 
     const gouvernanceReadModel = await gouvernanceLoader.get('France')
