@@ -276,6 +276,7 @@ describe('tableau de bord', () => {
             feuillesDeRouteWording: '1 feuille de route',
             total: '225 000 €',
           },
+          contexte: 'departement',
           credit: {
             pourcentage: 25,
             total: '118 000 €',
@@ -347,6 +348,7 @@ describe('tableau de bord', () => {
             feuillesDeRouteWording: '1 feuille de route',
             total: '225 000 €',
           },
+          contexte: 'departement',
           credit: {
             pourcentage: 25,
             total: '118 000 €',
@@ -356,21 +358,25 @@ describe('tableau de bord', () => {
             {
               color: 'dot-purple-glycine-main-494',
               label: 'Conseiller Numérique - 2024 - État',
+              pourcentageConsomme: 0,
               total: '40 000 €',
             },
             {
               color: 'dot-purple-glycine-850-200',
               label: 'Conseiller Numérique - Plan France Relance - État',
+              pourcentageConsomme: 0,
               total: '25 000 €',
             },
             {
               color: 'dot-green-tilleul-verveine-925',
               label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
+              pourcentageConsomme: 0,
               total: '30 000 €',
             },
             {
               color: 'dot-orange-terre-battue-850-200',
               label: 'Ingénierie France Numérique Ensemble - 2024 - État',
+              pourcentageConsomme: 0,
               total: '20 000 €',
             },
           ],

@@ -34,7 +34,7 @@ export class PrismaFinancementsLoader implements FinancementLoader {
         return acc + feuille.action.reduce((accAction, action) => accAction + action.budgetGlobal, 0)
       }, 0)
 
-      const subventionsParEnveloppe = new Map<string, { total: number; enveloppeTotale: number }>()
+      const subventionsParEnveloppe = new Map<string, { enveloppeTotale: number; total: number }>()
       let nombreDeFinancementsEngages = 0
 
       feuillesDeRoute.forEach(feuille => {
@@ -45,10 +45,10 @@ export class PrismaFinancementsLoader implements FinancementLoader {
               const montant = demande.subventionDemandee
               const enveloppe = demande.enveloppe.libelle
               const enveloppeTotale = demande.enveloppe.montant
-              const current = subventionsParEnveloppe.get(enveloppe) ?? { total: 0, enveloppeTotale }
+              const current = subventionsParEnveloppe.get(enveloppe) ?? { enveloppeTotale, total: 0 }
               subventionsParEnveloppe.set(enveloppe, { 
+                enveloppeTotale,
                 total: current.total + montant,
-                enveloppeTotale
               })
             }
           })
@@ -69,9 +69,9 @@ export class PrismaFinancementsLoader implements FinancementLoader {
         },
         nombreDeFinancementsEngagesParLEtat: nombreDeFinancementsEngages,
         ventilationSubventionsParEnveloppe: Array.from(subventionsParEnveloppe.entries()).map(([label, data]) => ({
+          enveloppeTotale: data.enveloppeTotale.toString(),
           label,
           total: data.total.toString(),
-          enveloppeTotale: data.enveloppeTotale.toString(),
         })),
       }
     } catch (error) {

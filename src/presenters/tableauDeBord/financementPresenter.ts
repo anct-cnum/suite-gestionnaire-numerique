@@ -3,8 +3,6 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export type ContexteFinancement = 'admin' | 'departement'
-
 export function financementsPresenter(
   readModel: ErrorReadModel | TableauDeBordLoaderFinancements,
   contexte: ContexteFinancement = 'departement'
@@ -23,7 +21,7 @@ export function financementsPresenter(
     'Ingénierie France Numérique Ensemble - 2024 - État' : 'dot-orange-terre-battue-850-200',
   }
   
-  const formateurMontant = contexte === 'admin' ? formatMontantEnMillions : formatMontant
+  const formateurMontant =  contexte === 'admin' ? formatMontantEnMillions : formatMontant
   
   return {
     budget: {
@@ -37,10 +35,10 @@ export function financementsPresenter(
     },
     nombreDeFinancementsEngagesParLEtat: readModel.nombreDeFinancementsEngagesParLEtat,
     ventilationSubventionsParEnveloppe: readModel.ventilationSubventionsParEnveloppe.map(
-      ({ label, total, enveloppeTotale }) => {
+      ({ enveloppeTotale, label, total }) => {
         const montantUtilise = Number(total)
         const montantTotal = Number(enveloppeTotale)
-        const pourcentageConsomme = montantTotal > 0 ? Math.round((montantUtilise / montantTotal) * 100) : 0
+        const pourcentageConsomme = montantTotal > 0 ? Math.round(montantUtilise / montantTotal * 100) : 0
         
         return {
           color: label in couleursEnveloppes ? couleursEnveloppes[label as keyof typeof couleursEnveloppes] : 'dot-purple-glycine-main-494',
@@ -71,6 +69,8 @@ export type FinancementViewModel = Readonly<{
     total: string
   }>
 }>
+
+type ContexteFinancement = 'admin' | 'departement'
 
 function isErrorReadModel(readModel: ErrorReadModel | TableauDeBordLoaderFinancements): readModel is ErrorReadModel {
   return 'type' in readModel

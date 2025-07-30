@@ -8,5 +8,5 @@ export function formatMontant(montant: number): string {
 
 export function formatMontantEnMillions(montant: number): string {
   const millions = montant / 1_000_000
-  return `${millions.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} M€`
+  return `${millions.toLocaleString('fr-FR', { maximumFractionDigits: 2, minimumFractionDigits: 2 })} M€`
 }

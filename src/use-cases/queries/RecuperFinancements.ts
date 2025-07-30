@@ -15,8 +15,8 @@ export interface TableauDeBordLoaderFinancements {
   }>
   nombreDeFinancementsEngagesParLEtat: number
   ventilationSubventionsParEnveloppe: ReadonlyArray<{
+    enveloppeTotale: string
     label: string
     total: string
-    enveloppeTotale: string
   }>
 }
