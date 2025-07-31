@@ -1,3 +1,4 @@
+import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
 import { formatMontant, formatMontantEnMillions } from '../shared/number'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperFinancements'
@@ -14,13 +15,6 @@ export function financementsPresenter(
     }
   }
 
-  const couleursEnveloppes = {
-    'Conseiller Numérique - 2024 - État' :   'dot-purple-glycine-main-494',
-    'Conseiller Numérique - Plan France Relance - État' : 'dot-purple-glycine-850-200',
-    'Formation Aidant Numérique/Aidants Connect - 2024 - État' : 'dot-green-tilleul-verveine-925',
-    'Ingénierie France Numérique Ensemble - 2024 - État' : 'dot-orange-terre-battue-850-200',
-  }
-  
   const formateurMontant =  contexte === 'admin' ? formatMontantEnMillions : formatMontant
   
   return {
@@ -41,7 +35,7 @@ export function financementsPresenter(
         const pourcentageConsomme = montantTotal > 0 ? Math.round(montantUtilise / montantTotal * 100) : 0
         
         return {
-          color: label in couleursEnveloppes ? couleursEnveloppes[label as keyof typeof couleursEnveloppes] : 'dot-purple-glycine-main-494',
+          color: obtenirCouleurEnveloppe(label),
           label,
           pourcentageConsomme,
           total: formateurMontant(montantUtilise),

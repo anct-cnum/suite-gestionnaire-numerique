@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
+import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import Financements from './Financements'
 import Gouvernance from './Gouvernance/Gouvernance'
@@ -13,11 +14,11 @@ import { clientContext } from '../shared/ClientContext'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
-import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
@@ -27,6 +28,7 @@ import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBord
 
 export default function TableauDeBord({
   accompagnementsRealisesViewModel,
+  beneficiairesViewModel,
   departement,
   financementsViewModel,
   gouvernanceViewModel,
@@ -117,87 +119,10 @@ export default function TableauDeBord({
         conventionnement={financementsViewModel}
         lienFinancements={tableauDeBordViewModel.liens.financements}
       />
-      <section
-        aria-labelledby="beneficiaires"
-        className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
-      >
-        <div className="fr-grid-row fr-grid-row--middle space-between separator fr-pb-3w fr-mb-3w">
-          <div className="fr-grid-row fr-grid-row--middle">
-            <TitleIcon icon="community-line" />
-            <div>
-
-              <h2
-                className="fr-h4 color-blue-france fr-m-0"
-                id="beneficiaires"
-              >
-                Bénéficiaires de financement(s)
-              </h2>
-              <p className="fr-m-0 font-weight-500">
-                Chiffres clés sur les bénéficiaires de financement(s)
-              </p>
-            </div>
-          </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={tableauDeBordViewModel.liens.beneficiaires}
-          >
-            Les conventions
-          </Link>
-        </div>
-        <div className="fr-grid-row fr-mb-4w">
-          <div className={`fr-col-4 fr-mr-4w fr-pr-4w ${styles.separator} center`}>
-            <div>
-              <Doughnut
-                backgroundColor={tableauDeBordViewModel.beneficiaire.graphique.backgroundColor}
-                data={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.total)}
-                isFull={false}
-                labels={tableauDeBordViewModel.beneficiaire.details.map((detail) => detail.label)}
-              />
-            </div>
-            <div className={`fr-display--lg fr-mb-0 ${styles['remonter-donnee']}`}>
-              {tableauDeBordViewModel.beneficiaire.total}
-            </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Bénéficiaires
-            </div>
-            <div className="color-blue-france">
-              dont
-              {' '}
-              {tableauDeBordViewModel.beneficiaire.collectivite}
-              {' '}
-              collectivités
-            </div>
-          </div>
-          <div className="fr-col">
-            <div className="font-weight-500">
-              Nombre de bénéficiaires par financements
-            </div>
-            <ul>
-              {
-                tableauDeBordViewModel.beneficiaire.details.map((detail) => (
-                  <li
-                    className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
-                    key={detail.label}
-                  >
-                    <div>
-                      <Dot color={detail.color} />
-                      {' '}
-                      {detail.label}
-                    </div>
-                    <div className="font-weight-700">
-                      {detail.total}
-                    </div>
-                  </li>
-                ))
-              }
-            </ul>
-          </div>
-        </div>
-        <p className="fr-grid-row background-info fr-p-3w">
-          <InformationLogo />
-          Un bénéficiaire peut cumuler plusieurs financements.
-        </p>
-      </section>
+      <Beneficiaires
+        beneficiairesViewModel={beneficiairesViewModel}
+        lienBeneficiaires={tableauDeBordViewModel.liens.beneficiaires}
+      />
       <section
         aria-labelledby="aidantsMediateurs"
         className={`fr-mb-4w grey-border border-radius fr-p-4w ${styles.hidden}`}
@@ -384,6 +309,7 @@ export default function TableauDeBord({
 
 type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   departement: string
   financementsViewModel: ErrorViewModel | FinancementViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
