@@ -254,7 +254,7 @@ export default [
       '@typescript-eslint/init-declarations': 'off',
       '@typescript-eslint/max-params': 'off',
       "@typescript-eslint/member-ordering": "off",
-      '@typescript-eslint/method-signature-style': ['error', 'method'],
+      '@typescript-eslint/method-signature-style': ["error", "method"],
       '@typescript-eslint/naming-convention': 'off',
       '@typescript-eslint/no-magic-numbers': 'off',
       '@typescript-eslint/no-shadow': 'off',

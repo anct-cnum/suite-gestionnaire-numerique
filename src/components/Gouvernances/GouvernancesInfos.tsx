@@ -1,5 +1,8 @@
 import { ReactElement } from 'react'
 
+import { InfosGouvernances } from '@/components/Gouvernances/GouvernancesList'
+import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
+
 export default function GouvernancesInfos(props: Props): ReactElement {
   const { infos } = props
 
@@ -13,20 +16,23 @@ export default function GouvernancesInfos(props: Props): ReactElement {
           {renderGouvernanceInfoCart({
             description: 'Gouvernances territoriales',
             icon: 'bank-line',
-            indicateur: infos.gouvernancesTerritoriales.gouvernancesCompte,
+            indicateur: String(infos.gouvernancesTerritoriales.gouvernancesCompte),
             legends: `dont ${infos.gouvernancesTerritoriales.gouvernanceCoporterCompte} gouvernances co-portées`,
           })}
           {renderGouvernanceInfoCart({
             description: 'Feuilles de route',
             icon: 'file-download-line',
-            indicateur: infos.feuilleDeRoutes.feuilleDeRouteCompte,
-            legends: `pour ${infos.feuilleDeRoutes.subventionValiderCompte} financements`,
+            indicateur: String(infos.feuilleDeRoutes.feuilleDeRouteCompte),
+            legends: `pour ${infos.feuilleDeRoutes.actionsCompte} actions`,
           })}
           {renderGouvernanceInfoCart({
             description: 'Crédits engagés par l’état',
             icon: 'download-line',
-            indicateur: infos.creditEngager.creditEngagerGlobal,
-            legends: `${infos.creditEngager.envelopeGlobal} restant à attribuer`,
+            indicateur: `${MontantPositif
+              .ofNumber(infos.creditEngager.creditEngagerGlobal)
+              .orElse(MontantPositif.Zero)
+              .format()} €`,
+            legends: `pour ${infos.creditEngager.subventionValiderCompte} demandes de subvention`,
           })}
         </div>
       </div>
@@ -93,18 +99,5 @@ type GouvernancesInfo = Readonly<{
 }>
 
 type Props = Readonly<{
-  infos: {
-    creditEngager: {
-      creditEngagerGlobal: string
-      envelopeGlobal: string
-    }
-    feuilleDeRoutes: {
-      feuilleDeRouteCompte: string
-      subventionValiderCompte: string
-    }
-    gouvernancesTerritoriales: {
-      gouvernanceCoporterCompte: string
-      gouvernancesCompte: string
-    }
-  }
+  infos: InfosGouvernances
 }>

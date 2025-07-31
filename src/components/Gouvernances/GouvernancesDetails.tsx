@@ -3,7 +3,6 @@ import { ReactElement } from 'react'
 
 import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import Table from '@/components/shared/Table/Table'
-import { Optional } from '@/shared/Optional'
 
 export default function GouvernancesDetails({ details }: Props): ReactElement {
   return (
@@ -66,23 +65,26 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
               </td>
               <td>
                 <span className="fr-text--sm">
-                  {`${detail.dotationEtatMontant.format()} €`}
+                  {`${MontantPositif.ofNumber(detail.dotationEtatMontant).orElse(MontantPositif.Zero).format()} €`}
                 </span>
               </td>
               <td>
                 <span className="fr-text--sm">
-                  {`${detail.montantEngager.format()} €`}
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+                  {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0)).orElse(MontantPositif.Zero).format()} €`}
                 </span>
               </td>
               <td>
                 <span className="fr-text--sm">
-                  {`${detail.coFinancementMontant.format()} €`}
+                  {`${MontantPositif.ofNumber(detail.coFinancementMontant).orElse(MontantPositif.Zero).format()} €`}
                 </span>
               </td>
               <td>
                 <span className="fr-text--sm fr-text--bold">
-                  {`${detail.montantEngager
-                    .add(Optional.of(detail.coFinancementMontant))
+                  {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+                  {`${MontantPositif.ofNumber(detail.montantEngager?.reduce((count, value) => count + value, 0))
+                    .orElse(MontantPositif.Zero)
+                    .add(MontantPositif.ofNumber(detail.coFinancementMontant))
                     .orElseGet(() => MontantPositif.Zero)
                     .format()} €`}
                 </span>
@@ -111,14 +113,14 @@ type Props = Readonly<{
 }>
 type GouvernanceDetails = {
   actionCount: number
-  coFinancementMontant: MontantPositif
+  coFinancementMontant: number
   coporteurCount: number
   departementCode: string
   departementNom: string
   departementRegion: string
-  dotationEtatMontant: MontantPositif
+  dotationEtatMontant: number
   feuilleDeRouteCount: number
   membreCount: number
-  montantEngager: MontantPositif
+  montantEngager: Array<number>
 }
 

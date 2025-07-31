@@ -1,6 +1,4 @@
 import prisma from '../../prisma/prismaClient'
-// eslint-disable-next-line import/no-restricted-paths
-import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
 import { GouvernancesInfosReadModel } from '@/use-cases/queries/RecupererGouvernancesInfos'
 
 export class PrismaGouvernancesInfosLoader {
@@ -11,7 +9,7 @@ export class PrismaGouvernancesInfosLoader {
     const dotationsEtat = await this.getDotationEtatParGouvernance()
     const montantEngager = await this.getMontantEngagerParGouvernance()
     const cofinancement = await this.getCofinancementParGouvernance()
-    const details = Array.from(gouvernances).map(gouvernance => {
+    const details = Array.from(gouvernances).map((gouvernance) => {
       const gouvernanceCode = gouvernance.code
       const membre = membres[gouvernanceCode]
       const feuilleDeRoute = feuilleDeRoutes[gouvernanceCode]
@@ -20,44 +18,24 @@ export class PrismaGouvernancesInfosLoader {
       const cofinancementGouvernance = cofinancement[gouvernanceCode]
       return {
         /* eslint-disable */
-        actionCount: feuilleDeRoute?.nombreActions?? 0,
-        coFinancementMontant: cofinancementGouvernance !== null ? String(cofinancementGouvernance)  : '',
+        actionCount: feuilleDeRoute?.nombreActions ?? 0,
+        coFinancementMontant:
+          cofinancementGouvernance !== null ? cofinancementGouvernance : 0,
         coporteurCount: membre?.coporteur ?? 0,
         departementCode: gouvernance.code,
         departementNom: gouvernance.nom,
         departementRegion: gouvernance.relationRegion.nom,
-        dotationEtatMontant: dotationsEtatGouvernance !== null ? String(dotationsEtatGouvernance)  : '',
-        feuilleDeRouteCount: feuilleDeRoute?.nombreFeuillesDeRoute?? 0,
+        dotationEtatMontant:
+          dotationsEtatGouvernance !== null ? dotationsEtatGouvernance : 0,
+        feuilleDeRouteCount: feuilleDeRoute?.nombreFeuillesDeRoute ?? 0,
         membreCount: membre?.membre ?? 0,
-        montantEngager: montantEngagerGouvernance !== null ? String(montantEngagerGouvernance)  : '',
+        montantEngager: montantEngagerGouvernance ?? [],
         /* eslint-enable */
       }
     })
 
-    const creditEngagerGlobal = Object.values(montantEngager).reduce((sum, value) => sum + value, 0)
-    const enveloppes = await prisma.enveloppeFinancementRecord.findMany()
-
-    const envelopeGlobal = enveloppes.reduce((sum, value) => sum + value.montant, 0)
-    const gouvernanceCoporter = Object.values(membres).filter(membre => membre.coporteur >= 2).length
-    const feuilleDeRouteCompte = Object.values(feuilleDeRoutes)
-      .reduce((sum, value) => sum +  value.nombreFeuillesDeRoute, 0 )
-    const subventionValiderCompte = Object.values(montantEngager).length
     return {
       details,
-      infos: {
-        creditEngager: {
-          creditEngagerGlobal: `${MontantPositif.of(String(creditEngagerGlobal)).orElse(MontantPositif.Zero).format()} €`,
-          envelopeGlobal: `${MontantPositif.of(String(envelopeGlobal)).orElse(MontantPositif.Zero).format()} € `,
-        },
-        feuilleDeRoutes: {
-          feuilleDeRouteCompte: String(feuilleDeRouteCompte),
-          subventionValiderCompte: String(subventionValiderCompte),
-        },
-        gouvernancesTerritoriales: {
-          gouvernanceCoporterCompte: String(gouvernanceCoporter),
-          gouvernancesCompte: String(gouvernances.length),
-        },
-      },
     }
   }
 
@@ -72,29 +50,35 @@ export class PrismaGouvernancesInfosLoader {
       },
     })
 
-    return cofinancements.reduce<Record<string, number>>(
-      (acc, cof) => {
-        const code = cof.action.feuilleDeRoute.gouvernanceDepartementCode
-        acc[code] = (acc[code] ?? 0) + cof.montant
-        return acc
-      },
-      {}
-    )
+    return cofinancements.reduce<Record<string, number>>((acc, cof) => {
+      const code = cof.action.feuilleDeRoute.gouvernanceDepartementCode
+      acc[code] = (acc[code] ?? 0) + cof.montant
+      return acc
+    }, {})
   }
 
-  private async getDepartementParGouvernances(): Promise<Array<{
-    code: string
-    nom: string
-    regionCode: string
-  } & {
-    relationRegion: {
-      code: string
-      nom: string
-    }
-  }>> {
+  private async getDepartementParGouvernances(): Promise<
+    Array<
+      {
+        code: string
+        nom: string
+        regionCode: string
+      } & {
+        relationRegion: {
+          code: string
+          nom: string
+        }
+      }
+    >
+  > {
     return prisma.departementRecord.findMany({
       include: {
         relationRegion: true,
+      },
+      where: {
+        code: {
+          not: 'zzz',
+        },
       },
     })
   }
@@ -107,76 +91,76 @@ export class PrismaGouvernancesInfosLoader {
       by: ['departementCode'],
     })
 
-    return  Object.fromEntries(
+    return Object.fromEntries(
       // eslint-disable-next-line no-underscore-dangle
-      result.map(dep => [dep.departementCode, dep._sum.plafond])
+      result.map((dep) => [dep.departementCode, dep._sum.plafond])
     )
   }
 
-  private async getFeuilleDeRouteParGouvernance(): Promise<Record<
-    string,
-    {
-      gouvernanceDepartementCode: string
-      nombreActions: number
-      nombreFeuillesDeRoute: number
-    }
-  >> {
-    const feuilles = await prisma.feuilleDeRouteRecord.findMany({
-      include: {
-        action: true,
-      },
-    })
-
-    return feuilles.reduce<Record<
+  private async getFeuilleDeRouteParGouvernance(): Promise<
+    Record<
       string,
       {
         gouvernanceDepartementCode: string
         nombreActions: number
         nombreFeuillesDeRoute: number
       }
-    >>(
-      (acc, feuilleDeRoute) => {
-        const code = feuilleDeRoute.gouvernanceDepartementCode
-        if (!(code in acc)) {
-          acc[code] = {
-            gouvernanceDepartementCode: code,
-            nombreActions: 0,
-            nombreFeuillesDeRoute: 0,
-          }
-        }
-
-        acc[code].nombreFeuillesDeRoute += 1
-        acc[code].nombreActions += feuilleDeRoute.action.length
-
-        return acc
+    >
+  > {
+    const feuilles = await prisma.feuilleDeRouteRecord.findMany({
+      include: {
+        action: true,
       },
-      {}
-    )
+    })
+
+    return feuilles.reduce<
+      Record<
+        string,
+        {
+          gouvernanceDepartementCode: string
+          nombreActions: number
+          nombreFeuillesDeRoute: number
+        }
+      >
+    >((acc, feuilleDeRoute) => {
+      const code = feuilleDeRoute.gouvernanceDepartementCode
+      if (!(code in acc)) {
+        acc[code] = {
+          gouvernanceDepartementCode: code,
+          nombreActions: 0,
+          nombreFeuillesDeRoute: 0,
+        }
+      }
+
+      acc[code].nombreFeuillesDeRoute += 1
+      acc[code].nombreActions += feuilleDeRoute.action.length
+
+      return acc
+    }, {})
   }
 
-  private async getMemberesParGouvernancess(): Promise<Record<string, { coporteur: number; membre: number }>> {
+  private async getMemberesParGouvernancess(): Promise<
+    Record<string, { coporteur: number; membre: number }>
+  > {
     const membres = await prisma.membreRecord.findMany({
       where: {
         statut: 'confirme',
       },
     })
-    return membres.reduce<Record<string, { coporteur: number; membre: number }>>(
-      (acc, membre) => {
-        const code = membre.gouvernanceDepartementCode
-        if (!(code in acc)) {
-          acc[code] = { coporteur: 0, membre: 0 }
-        }
-        acc[code].membre += 1
-        if (membre.isCoporteur) {
-          acc[code].coporteur += 1
-        }
-        return acc
-      },
-      {}
-    )
+    return membres.reduce<Record<string, { coporteur: number; membre: number }>>((acc, membre) => {
+      const code = membre.gouvernanceDepartementCode
+      if (!(code in acc)) {
+        acc[code] = { coporteur: 0, membre: 0 }
+      }
+      acc[code].membre += 1
+      if (membre.isCoporteur) {
+        acc[code].coporteur += 1
+      }
+      return acc
+    }, {})
   }
 
-  private async getMontantEngagerParGouvernance(): Promise<Record<string, number>>  {
+  private async getMontantEngagerParGouvernance(): Promise<Record<string, Array<number>>> {
     const demandes = await prisma.demandeDeSubventionRecord.findMany({
       include: {
         action: {
@@ -189,21 +173,20 @@ export class PrismaGouvernancesInfosLoader {
         statut: 'acceptee',
       },
     })
-    return demandes.reduce<Record<string, number>>(
-      (acc, demande) => {
-        const code = demande.action.feuilleDeRoute.gouvernanceDepartementCode
-        if (!code) {return acc}
-
-        const montant = (demande.subventionEtp ?? 0) + (demande.subventionPrestation ?? 0)
-
-        if (!acc[code]) {
-          acc[code] = 0
-        }
-
-        acc[code] += montant
+    return demandes.reduce<Record<string, Array<number>>>((acc, demande) => {
+      const code = demande.action.feuilleDeRoute.gouvernanceDepartementCode
+      if (!code) {
         return acc
-      },
-      {}
-    )
+      }
+
+      const montant = (demande.subventionEtp ?? 0) + (demande.subventionPrestation ?? 0)
+
+      if (!(code in acc)) {
+        acc[code] = []
+      }
+
+      acc[code].push(montant)
+      return acc
+    }, {})
   }
 }
