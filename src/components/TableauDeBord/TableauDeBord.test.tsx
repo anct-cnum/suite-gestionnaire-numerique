@@ -159,11 +159,11 @@ describe('tableau de bord', () => {
     expect(beneficiairesSousTitre).toBeInTheDocument()
     const beneficiairesLien = within(beneficiairesSection).getByRole('link', { name: 'Les conventions' })
     expect(beneficiairesLien).toHaveAttribute('href', '/gouvernance/69/beneficiaires')
-    const beneficiaireNombre = within(beneficiairesSection).getByText('66')
+    const beneficiaireNombre = within(beneficiairesSection).getByText('467')
     expect(beneficiaireNombre).toBeInTheDocument()
     const beneficiaireTitre = within(beneficiairesSection).getByText('Bénéficiaires')
     expect(beneficiaireTitre).toBeInTheDocument()
-    const beneficiaireSousTitre = within(beneficiairesSection).getByText('dont 1 256 collectivités')
+    const beneficiaireSousTitre = within(beneficiairesSection).getByText('dont 42 collectivités')
     expect(beneficiaireSousTitre).toBeInTheDocument()
     const beneficiairesParFinancements = within(beneficiairesSection).getByText('Nombre de bénéficiaires par financements')
     expect(beneficiairesParFinancements).toBeInTheDocument()
@@ -270,6 +270,14 @@ describe('tableau de bord', () => {
           },
           nombreTotal: '48476',
         }}
+        beneficiairesViewModel={{
+          collectivite: 42,
+          details: [],
+          graphique: {
+            backgroundColor: [],
+          },
+          total: 467,
+        }}
         departement="69"
         financementsViewModel={{
           budget: {
@@ -341,6 +349,35 @@ describe('tableau de bord', () => {
             labels: ['2024'],
           },
           nombreTotal: '48476',
+        }}
+        beneficiairesViewModel={{
+          collectivite: 42,
+          details: [
+            {
+              color: 'dot-purple-glycine-main-494',
+              label: 'Conseiller Numérique - 2024 - État',
+              total: 20,
+            },
+            {
+              color: 'dot-purple-glycine-850-200',
+              label: 'Conseiller Numérique - Plan France Relance - État',
+              total: 16,
+            },
+            {
+              color: 'dot-green-tilleul-verveine-925',
+              label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
+              total: 15,
+            },
+            {
+              color: 'dot-orange-terre-battue-850-200',
+              label: 'Ingénierie France Numérique Ensemble - 2024 - État',
+              total: 15,
+            },
+          ],
+          graphique: {
+            backgroundColor: ['#6a4c93', '#8b5cf6', '#84cc16', '#f97316'],
+          },
+          total: 467,
         }}
         departement="69"
         financementsViewModel={{

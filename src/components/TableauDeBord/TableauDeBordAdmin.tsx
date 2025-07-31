@@ -3,6 +3,7 @@
 import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } from 'chart.js'
 import { ReactElement, useContext } from 'react'
 
+import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import Financements from './Financements'
 import Gouvernance from './Gouvernance/Gouvernance'
@@ -11,6 +12,7 @@ import { clientContext } from '../shared/ClientContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
@@ -19,6 +21,7 @@ import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBord
 
 export default function TableauDeBordAdmin({
   accompagnementsRealisesViewModel,
+  beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
   indicesFragilite,
@@ -67,12 +70,17 @@ export default function TableauDeBordAdmin({
         conventionnement={financementsViewModel}
         lienFinancements={tableauDeBordViewModel.liens.financements}
       />
+      <Beneficiaires
+        beneficiairesViewModel={beneficiairesViewModel}
+        lienBeneficiaires={tableauDeBordViewModel.liens.beneficiaires}
+      />
     </>
   )
 }
 
 type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel

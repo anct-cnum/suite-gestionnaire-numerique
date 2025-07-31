@@ -9,11 +9,13 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
+import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
 import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
 import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
+import { beneficiairesPresenter } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { financementsPresenter } from '@/presenters/tableauDeBord/financementPresenter'
 import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
@@ -42,6 +44,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const indicesLoader = new PrismaIndicesDeFragiliteLoader()
   const financementsLoader = new PrismaFinancementsLoader()
   const gouvernanceLoader = new PrismaGouvernanceTableauDeBordLoader()
+  const beneficiairesLoader = new PrismaBeneficiairesLoader()
 
   // Si administrateur, charger les données pour la France entière
   if (utilisateur.role.type === 'administrateur_dispositif') {
@@ -81,11 +84,18 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       gouvernancePresenter
     )
 
+    const beneficiairesReadModel = await beneficiairesLoader.get('France')
+    const beneficiairesViewModel = handleReadModelOrError(
+      beneficiairesReadModel,
+      beneficiairesPresenter
+    )
+
     const tableauDeBordViewModel = tableauDeBordPresenter('France')
 
     return (
       <TableauDeBordAdmin
         accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        beneficiairesViewModel={beneficiairesViewModel}
         financementsViewModel={financementsViewModel}
         gouvernanceViewModel={gouvernanceViewModel}
         indicesFragilite={indicesFragilite}
@@ -135,11 +145,18 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     gouvernancePresenter
   )
 
+  const beneficiairesReadModel = await beneficiairesLoader.get(departementCode)
+  const beneficiairesViewModel = handleReadModelOrError(
+    beneficiairesReadModel,
+    beneficiairesPresenter
+  )
+
   const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
 
   return (
     <TableauDeBord 
       accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+      beneficiairesViewModel={beneficiairesViewModel}
       departement={departementCode}
       financementsViewModel={financementsViewModel}
       gouvernanceViewModel={gouvernanceViewModel}

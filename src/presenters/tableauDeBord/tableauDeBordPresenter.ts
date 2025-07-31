@@ -1,5 +1,3 @@
-import { formaterEnNombreFrancais } from '../shared/number'
-
 export function tableauDeBordPresenter(departementCode: string):  TableauDeBordViewModel {
   return {
     aidant: {
@@ -19,35 +17,6 @@ export function tableauDeBordPresenter(departementCode: string):  TableauDeBordV
         backgroundColor: ['#E2CF58', '#FCEEAC'],
       },
       total: 85,
-    },
-    beneficiaire: {
-      collectivite: formaterEnNombreFrancais(1_256),
-      details: [
-        {
-          color: 'dot-purple-glycine-main-494',
-          label: 'Conseiller Numérique - 2024 - État',
-          total: 20,
-        },
-        {
-          color: 'dot-purple-glycine-850-200',
-          label: 'Conseiller Numérique - Plan France Relance - État',
-          total: 16,
-        },
-        {
-          color: 'dot-green-tilleul-verveine-925',
-          label: 'Formation Aidant Numérique/Aidants Connect - 2024 - État',
-          total: 15,
-        },
-        {
-          color: 'dot-orange-terre-battue-850-200',
-          label: 'Ingénierie France Numérique Ensemble - 2024 - État',
-          total: 15,
-        },
-      ],
-      graphique: {
-        backgroundColor: ['#A558A0', '#FBB8F6', '#FBE769', '#fcc0b0'],
-      },
-      total: 66,
     },
     departement: departementCode,
     liens: {
@@ -110,18 +79,6 @@ export function tableauDeBordPresenter(departementCode: string):  TableauDeBordV
 
 export type TableauDeBordViewModel = Readonly<{
   aidant: Readonly<{
-    details: ReadonlyArray<{
-      color: string
-      label: string
-      total: number
-    }>
-    graphique: Readonly<{
-      backgroundColor: ReadonlyArray<string>
-    }>
-    total: number
-  }>
-  beneficiaire: Readonly<{
-    collectivite: string
     details: ReadonlyArray<{
       color: string
       label: string
