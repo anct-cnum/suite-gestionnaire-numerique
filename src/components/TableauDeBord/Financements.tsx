@@ -151,10 +151,10 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
                     style={{ position: 'relative', width: '6.25rem' }}
                     title={`${detail.pourcentageConsomme}% de l'enveloppe consommée`}
                   >
-                    <div style={{ backgroundColor: '#e3e3fd', borderRadius: '4px', height: '8px', width: '100%' }}>
+                    <div style={{ backgroundColor: 'var(--grey-900-175)', borderRadius: '4px', height: '8px', width: '100%' }}>
                       <div 
                         style={{ 
-                          backgroundColor: '#000091',
+                          backgroundColor: 'var(--blue-france-main-525)',
                           borderRadius: '4px',
                           height: '8px',
                           transition: 'width 0.3s ease',
