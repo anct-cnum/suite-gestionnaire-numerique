@@ -120,7 +120,7 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
           </div>
         </div>
       </div>
-      <div className="font-weight-500 fr-grid-row fr-grid-row--middle fr-mb-3w">
+      <div className="fr-text--md fr-grid-row fr-grid-row--middle fr-mb-3w">
         {conventionnement.nombreDeFinancementsEngagesParLEtat}
         {' '}
         financement(s) engagé(s) par l&apos;État
@@ -134,14 +134,13 @@ export default function Financements({ conventionnement, lienFinancements }: Pro
               key={detail.label}
               style={{ listStyle: 'none' }}
             >
-              <div className="fr-grid-row fr-grid-row--middle">
+              <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
                 <div style={{ flex: '1 1 auto', minWidth: 0 }}>
                   <Dot color={detail.color} />
                   {' '}
                   {detail.label}
                 </div>
                 <div 
-                  className="font-weight-700" 
                   style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
                 >
                   {detail.total}

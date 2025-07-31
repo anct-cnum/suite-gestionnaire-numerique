@@ -98,23 +98,28 @@ export default function Beneficiaires({
           )}
         </div>
         <div className="fr-col">
-          <div className="font-weight-500">
+          <div className="fr-text--md">
             Nombre de bénéficiaires par financements
           </div>
           <ul>
             {
               viewModel.details.map((detail) => (
                 <li
-                  className="fr-grid-row fr-btns-group--space-between fr-mb-1w"
+                  className="fr-mb-2w fr-mt-1w"
                   key={detail.label}
+                  style={{ listStyle: 'none' }}
                 >
-                  <div>
-                    <Dot color={detail.color} />
-                    {' '}
-                    {detail.label}
-                  </div>
-                  <div className="font-weight-700">
-                    {detail.total}
+                  <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
+                    <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                      <Dot color={detail.color} />
+                      {' '}
+                      {detail.label}
+                    </div>
+                    <div 
+                      style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
+                    >
+                      {detail.total}
+                    </div>
                   </div>
                 </li>
               ))
