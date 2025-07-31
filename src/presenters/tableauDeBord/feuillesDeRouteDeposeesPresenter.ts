@@ -3,13 +3,8 @@ import { FeuillesDeRouteDeposeesReadModel } from '@/use-cases/queries/RecupererF
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export type FeuillesDeRouteDeposeesViewModel = Readonly<{
+  nombreAvecDemandeSubvention : number
   nombreTotal: number
-  sansDemandeSubvention: {
-    backgroundColor: string
-    color: string
-    count: number
-    label: string
-  }
   ventilationParPerimetre: ReadonlyArray<{
     backgroundColor: string
     color: string
@@ -29,13 +24,8 @@ export function feuillesDeRouteDeposeesPresenter(
   }
 
   return {
+    nombreAvecDemandeSubvention: readModel.nombreAvecDemandeSubvention,
     nombreTotal: readModel.nombreTotal,
-    sansDemandeSubvention: {
-      backgroundColor: getBackgroundColor('dot-grey-sans-coporteur'),
-      color: 'dot-grey-sans-coporteur', // Réutilisation de la classe grise
-      count: readModel.nombreSansDemandeSubvention,
-      label: 'Sans demande de subvention',
-    },
     ventilationParPerimetre: readModel.ventilationParPerimetre.map((item) => {
       const color = getColorForPerimetre(item.perimetre)
       return {

@@ -100,7 +100,7 @@ export default function FeuillesDeRouteDeposees({
           dont
           {' '}
           <strong>
-            {feuillesDeRouteDeposees.nombreTotal - feuillesDeRouteDeposees.sansDemandeSubvention.count}
+            {feuillesDeRouteDeposees.nombreAvecDemandeSubvention}
             {' '}
             avec demandes de subvention
           </strong>

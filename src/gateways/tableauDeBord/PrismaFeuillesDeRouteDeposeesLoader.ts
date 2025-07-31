@@ -10,6 +10,7 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
   async get(): Promise<ErrorReadModel | FeuillesDeRouteDeposeesReadModel> {
     try {
       // Récupérer toutes les feuilles de route avec leurs actions et demandes de subvention
+      // en excluant le département 'zzz'
       const feuillesDeRoute = await prisma.feuilleDeRouteRecord.findMany({
         include: {
           action: {
@@ -18,17 +19,12 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
             },
           },
         },
+        where: {
+          gouvernanceDepartementCode: {
+            not: 'zzz',
+          },
+        },
       })
-
-      // Compter les feuilles de route sans demande de subvention (non déposées)
-      const feuillesDeRouteSansDemandeSubvention = feuillesDeRoute.filter(
-        (feuilleDeRoute) => {
-          const aTotalDemandesSubvention = feuilleDeRoute.action.some(
-            (action) => action.demandesDeSubvention.length > 0
-          )
-          return !aTotalDemandesSubvention
-        }
-      ).length
 
       // Compter seulement les feuilles de route déposées (avec au moins 1 demande de subvention)
       const feuillesDeRouteDeposees = feuillesDeRoute.filter(
@@ -42,7 +38,7 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
       // Regrouper les feuilles de route déposées par périmètre géographique
       const feuillesParPerimetre = new Map<string, number>()
 
-      feuillesDeRouteDeposees.forEach((feuilleDeRoute) => {
+      feuillesDeRoute.forEach((feuilleDeRoute) => {
         const perimetre = feuilleDeRoute.perimetreGeographique ?? 'Autre'
         feuillesParPerimetre.set(perimetre, (feuillesParPerimetre.get(perimetre) ?? 0) + 1)
       })
@@ -53,7 +49,7 @@ export class PrismaFeuillesDeRouteDeposeesLoader implements FeuillesDeRouteDepos
         .sort((itemA, itemB) => itemB.count - itemA.count)
 
       return {
-        nombreSansDemandeSubvention: feuillesDeRouteSansDemandeSubvention,
+        nombreAvecDemandeSubvention: feuillesDeRouteDeposees.length,
         nombreTotal: feuillesDeRoute.length,
         ventilationParPerimetre,
       }

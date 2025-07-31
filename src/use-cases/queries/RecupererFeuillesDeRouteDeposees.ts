@@ -5,7 +5,7 @@ export interface FeuillesDeRouteDeposeesLoader {
 }
 
 export type FeuillesDeRouteDeposeesReadModel = Readonly<{
-  nombreSansDemandeSubvention: number
+  nombreAvecDemandeSubvention: number
   nombreTotal: number
   ventilationParPerimetre: ReadonlyArray<{
     count: number
