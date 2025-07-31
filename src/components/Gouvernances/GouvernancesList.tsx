@@ -16,7 +16,6 @@ export default function GouvernancesList(props: GouvernancesViewModel): ReactEle
   const { details } = props
   const [detailsFiltrer, setDetailsFiltrer] = useState(details)
   const [infosFiltrer, setInfosFiltrer] = useState<InfosGouvernances>(() => getInfosFilrer(details))
-  // [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
   const [filterAvance, setFilterAvance] = useState<FilterType>(FilterType.NO_FILTRE)
   const [filtreGeographique, setFiltreGeographique] = useState<string>('')

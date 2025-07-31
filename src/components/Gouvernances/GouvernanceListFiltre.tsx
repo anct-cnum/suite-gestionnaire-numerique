@@ -30,6 +30,12 @@ export default function GouvernanceListFiltre({
     setTotalResults(nouveauDetails.length)
   }, [avance, geographique])
 
+  function handleReset(): void {
+    setAvance(FilterType.NO_FILTRE)
+    setGeographique('')
+    onResetAction()
+  }
+
   return (
     <div className="sidepanel__content">
       <div className="fr-mb-3w">
@@ -158,7 +164,7 @@ export default function GouvernanceListFiltre({
         <button
           aria-controls={drawerId}
           className="fr-btn fr-btn--secondary"
-          onClick={onResetAction}
+          onClick={handleReset}
           type="button"
         >
           Réinitialiser
