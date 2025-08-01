@@ -42,7 +42,7 @@ export class PrismaGouvernanceAdminLoader implements RecupererTableauDeBordGouve
 
       // Compter les gouvernances qui ont plus de 2 co-porteurs
       const nombreGouvernancesCoPortees = gouvernancesAvecCoPorteurs.filter(
-        (gov) => gov.nombreCoPorteurs > 2
+        (gov) => gov.nombreCoPorteurs >= 2
       ).length
 
       // Compter les feuilles de route et actions (France entière, excluant zzz)

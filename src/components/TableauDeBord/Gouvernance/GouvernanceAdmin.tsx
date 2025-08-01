@@ -25,7 +25,7 @@ export default function GouvernanceAdmin({
                 className="fr-h4 color-blue-france fr-m-0"
                 id="gouvernance"
               >
-                Gouvernance
+                Gouvernances
               </h2>
               <p
                 className="fr-m-0 fr-text--md"
@@ -97,7 +97,7 @@ export default function GouvernanceAdmin({
               className="fr-h4 color-blue-france fr-m-0"
               id="gouvernance"
             >
-              Gouvernance
+              Gouvernances
             </h2>
             <p
               className="fr-m-0 fr-text--md"
