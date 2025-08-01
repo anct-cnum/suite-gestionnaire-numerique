@@ -24,7 +24,7 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
                 Financements
               </h2>
               <p
-                className="fr-m-0 fr-text--md"
+                className="fr-m-0 fr-text--md fr-mb-0"
                 style={{ fontWeight: 500 }}
               >
                 Chiffres clés des enveloppes de financement
@@ -93,7 +93,7 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
             {financementViewModel.montantTotalEnveloppes}
           </div>
           <div
-            className="fr-text--md fr-grid-row fr-grid-row--middle"
+            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
             style={{ fontWeight: 500 }}
           >
             Montant global des enveloppes
@@ -117,7 +117,7 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
             {financementViewModel.creditsEngages}
           </div>
           <div
-            className="fr-text--md fr-grid-row fr-grid-row--middle"
+            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
             style={{ fontWeight: 500 }}
           >
             Crédits engagés par l&apos;État

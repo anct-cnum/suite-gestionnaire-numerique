@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react'
 
 import { matchWithoutMarkup, renderComponent } from '../testHelper'
 import TableauDeBord from './TableauDeBord'
-import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
+import { gouvernancePrefPresenter } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
 
 // Mock du composant Carte
@@ -254,7 +254,7 @@ describe('tableau de bord', () => {
   it('quand il y a une erreur dans les données de gouvernance, alors l\'erreur s\'affiche correctement', () => {
     // WHEN
     const tableauDeBordViewModel = tableauDeBordPresenter('69')
-    const gouvernanceViewModel = gouvernancePresenter({
+    const gouvernanceViewModel = gouvernancePrefPresenter({
       message: 'Erreur lors du chargement des données de gouvernance',
       type: 'error',
     })
@@ -323,7 +323,7 @@ describe('tableau de bord', () => {
 
   function afficherMonTableauDeBord(): void {
     const tableauDeBordViewModel = tableauDeBordPresenter('69')
-    const gouvernanceViewModel = gouvernancePresenter({
+    const gouvernanceViewModel = gouvernancePrefPresenter({
       collectivite: {
         membre: 9,
         total: 3,

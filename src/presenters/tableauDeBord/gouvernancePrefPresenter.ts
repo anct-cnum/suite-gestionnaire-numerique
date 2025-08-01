@@ -2,7 +2,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceReadModel } from '@/use-cases/queries/RecupererTableauDeBordGouvernance'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export function gouvernancePresenter(
+export function gouvernancePrefPresenter(
   readModel: ErrorReadModel | GouvernanceReadModel
 ): ErrorViewModel | GouvernanceViewModel {
   if (isErrorReadModel(readModel)) {
