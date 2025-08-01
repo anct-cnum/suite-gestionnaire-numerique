@@ -5,7 +5,7 @@ import { ReactElement, useContext } from 'react'
 
 import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
-import Financements from './Financements'
+import FinancementsAdmin from './FinancementsAdmin'
 import Gouvernance from './Gouvernance/Gouvernance'
 import { DepartementFragilite } from '../shared/Carte/CarteFranceAvecInsets'
 import { clientContext } from '../shared/ClientContext'
@@ -13,7 +13,7 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
-import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
+import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
@@ -66,8 +66,8 @@ export default function TableauDeBordAdmin({
         gouvernanceViewModel={gouvernanceViewModel}
         lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
       />
-      <Financements
-        conventionnement={financementsViewModel}
+      <FinancementsAdmin
+        financementViewModel={financementsViewModel}
         lienFinancements={tableauDeBordViewModel.liens.financements}
       />
       <Beneficiaires
@@ -81,7 +81,7 @@ export default function TableauDeBordAdmin({
 type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
-  financementsViewModel: ErrorViewModel | FinancementViewModel
+  financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel

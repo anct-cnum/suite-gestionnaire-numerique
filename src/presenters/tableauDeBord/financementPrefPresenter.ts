@@ -1,12 +1,11 @@
 import { obtenirCouleurEnveloppe } from '../shared/enveloppe'
-import { formatMontant, formatMontantEnMillions } from '../shared/number'
+import { formatMontant } from '../shared/number'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TableauDeBordLoaderFinancements } from '@/use-cases/queries/RecuperFinancements'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export function financementsPresenter(
-  readModel: ErrorReadModel | TableauDeBordLoaderFinancements,
-  contexte: ContexteFinancement = 'departement'
+export function financementsPrefPresenter(
+  readModel: ErrorReadModel | TableauDeBordLoaderFinancements
 ): ErrorViewModel | FinancementViewModel {
   if (isErrorReadModel(readModel)) {
     return {
@@ -14,18 +13,15 @@ export function financementsPresenter(
       type: 'error',
     }
   }
-
-  const formateurMontant =  contexte === 'admin' ? formatMontantEnMillions : formatMontant
   
   return {
     budget: {
       feuillesDeRouteWording: `${readModel.budget.feuillesDeRoute} feuille${readModel.budget.feuillesDeRoute > 1 ? 's' : ''} de route`,
-      total: formateurMontant(Number(readModel.budget.total)),
+      total: formatMontant(Number(readModel.budget.total)),
     },
-    contexte,
     credit: {
       pourcentage: readModel.credit.pourcentage,
-      total: formateurMontant(Number(readModel.credit.total)),
+      total: formatMontant(Number(readModel.credit.total)),
     },
     nombreDeFinancementsEngagesParLEtat: readModel.nombreDeFinancementsEngagesParLEtat,
     ventilationSubventionsParEnveloppe: readModel.ventilationSubventionsParEnveloppe.map(
@@ -38,7 +34,7 @@ export function financementsPresenter(
           color: obtenirCouleurEnveloppe(label),
           label,
           pourcentageConsomme,
-          total: formateurMontant(montantUtilise),
+          total: formatMontant(montantUtilise),
         }
       }
     ),
@@ -50,7 +46,6 @@ export type FinancementViewModel = Readonly<{
     feuillesDeRouteWording: string
     total: string
   }>
-  contexte: ContexteFinancement
   credit: Readonly<{
     pourcentage: number
     total: string
@@ -63,8 +58,6 @@ export type FinancementViewModel = Readonly<{
     total: string
   }>
 }>
-
-type ContexteFinancement = 'admin' | 'departement'
 
 function isErrorReadModel(readModel: ErrorReadModel | TableauDeBordLoaderFinancements): readModel is ErrorReadModel {
   return 'type' in readModel

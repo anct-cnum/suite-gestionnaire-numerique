@@ -10,13 +10,15 @@ import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernan
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
 import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
+import { PrismaFinancementsAdminLoader } from '@/gateways/tableauDeBord/PrismaFinancementsAdminLoader'
 import { PrismaFinancementsLoader } from '@/gateways/tableauDeBord/PrismaFinancementsLoader'
 import { PrismaIndicesDeFragiliteLoader } from '@/gateways/tableauDeBord/PrismaIndicesDeFragiliteLoader'
 import { PrismaLieuxInclusionNumeriqueLoader } from '@/gateways/tableauDeBord/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMediateursEtAidantsLoader } from '@/gateways/tableauDeBord/PrismaMediateursEtAidantsLoader'
 import { accompagnementsRealisesPresenter } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { beneficiairesPresenter } from '@/presenters/tableauDeBord/beneficiairesPresenter'
-import { financementsPresenter } from '@/presenters/tableauDeBord/financementPresenter'
+import { financementAdminPresenter } from '@/presenters/tableauDeBord/financementAdminPresenter'
+import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { gouvernancePresenter } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
@@ -72,10 +74,11 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       indiceFragiliteDepartementsPresenter
     )
 
-    const financementsReadModel = await financementsLoader.get('France')
+    const financementsAdminLoader = new PrismaFinancementsAdminLoader()
+    const financementsReadModel = await financementsAdminLoader.get()
     const financementsViewModel = handleReadModelOrError(
       financementsReadModel,
-      (readModel) => financementsPresenter(readModel, 'admin')
+      financementAdminPresenter
     )
 
     const gouvernanceReadModel = await gouvernanceLoader.get('France')
@@ -136,7 +139,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const financementsReadModel = await financementsLoader.get(departementCode)
   const financementsViewModel = handleReadModelOrError(
     financementsReadModel,
-    financementsPresenter
+    financementsPrefPresenter
   )
 
   const gouvernanceReadModel = await gouvernanceLoader.get(departementCode)

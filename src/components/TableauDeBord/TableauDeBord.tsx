@@ -7,7 +7,7 @@ import { ReactElement, useContext } from 'react'
 
 import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
-import Financements from './Financements'
+import FinancementsPref from './FinancementsPref'
 import Gouvernance from './Gouvernance/Gouvernance'
 import styles from './TableauDeBord.module.css'
 import { clientContext } from '../shared/ClientContext'
@@ -19,7 +19,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
-import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPresenter'
+import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
 import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
@@ -115,7 +115,7 @@ export default function TableauDeBord({
         gouvernanceViewModel={gouvernanceViewModel}
         lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
       />
-      <Financements
+      <FinancementsPref
         conventionnement={financementsViewModel}
         lienFinancements={tableauDeBordViewModel.liens.financements}
       />
