@@ -258,6 +258,10 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
       <div
         className={styles.mapWrapper}
         data-testid="carte-france-wrapper"
+        style={{
+          marginLeft: '12%', // Décaler la carte vers la droite pour compenser les insets DOM/TOM
+          width: '88%', // Réduire la largeur pour maintenir la carte dans les limites
+        }}
       >
         <div
           className={styles.mapContainer}
