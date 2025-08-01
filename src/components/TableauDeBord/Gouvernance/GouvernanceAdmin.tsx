@@ -4,11 +4,10 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
-import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
+import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 
-export default function Gouvernance({
+export default function GouvernanceAdmin({
   gouvernanceViewModel,
   lienGouvernance,
 }: Props): ReactElement {
@@ -26,15 +25,21 @@ export default function Gouvernance({
                 className="fr-h4 color-blue-france fr-m-0"
                 id="gouvernance"
               >
-                Gouvernances
+                Gouvernance
               </h2>
+              <p
+                className="fr-m-0 fr-text--md"
+                style={{ fontWeight: 500 }}
+              >
+                Acteurs de l&apos;inclusion numérique
+              </p>
             </div>
           </div>
           <Link
             className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
             href={lienGouvernance}
           >
-            La gouvernance
+            Les gouvernances
           </Link>
         </div>
         <div className="fr-grid-row">
@@ -46,23 +51,11 @@ export default function Gouvernance({
               />
               -
             </div>
-            <div className="font-weight-500">
-              Membres de la gouvernance
-            </div>
-            <div className="fr-text--xs color-blue-france fr-mb-0">
-              Erreur lors du chargement des données
-            </div>
-          </div>
-          <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
-            <div className="fr-h1 fr-m-0">
-              <TitleIcon
-                background="white"
-                icon="community-line"
-              />
-              -
-            </div>
-            <div className="font-weight-500">
-              Collectivité impliquées
+            <div
+              className="fr-text--md fr-mb-0"
+              style={{ fontWeight: 500 }}
+            >
+              Gouvernances
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">
               Erreur lors du chargement des données
@@ -76,7 +69,10 @@ export default function Gouvernance({
               />
               -
             </div>
-            <div className="font-weight-500">
+            <div
+              className="fr-text--md fr-mb-0"
+              style={{ fontWeight: 500 }}
+            >
               Feuilles de route déposées
             </div>
             <div className="fr-text--xs color-blue-france fr-mb-0">
@@ -101,15 +97,21 @@ export default function Gouvernance({
               className="fr-h4 color-blue-france fr-m-0"
               id="gouvernance"
             >
-              Gouvernances
+              Gouvernance
             </h2>
+            <p
+              className="fr-m-0 fr-text--md"
+              style={{ fontWeight: 500 }}
+            >
+              Acteurs de l&apos;inclusion numérique
+            </p>
           </div>
         </div>
         <Link
           className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
           href={lienGouvernance}
         >
-          La gouvernance
+          Les gouvernances
         </Link>
       </div>
       <div className="fr-grid-row">
@@ -119,39 +121,21 @@ export default function Gouvernance({
               background="white"
               icon="bank-line"
             />
-            {gouvernanceViewModel.membre.total}
+            {gouvernanceViewModel.nombreGouvernances}
           </div>
-          <div className="font-weight-500">
-            Membres de la gouvernance
+          <div
+            className="fr-text--md fr-mb-0"
+            style={{ fontWeight: 500 }}
+          >
+            Gouvernances
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             dont
             {' '}
-            <span className="font-weight-700">
-              {gouvernanceViewModel.membre.coporteur}
+            <span style={{ fontWeight: 700 }}>
+              {gouvernanceViewModel.nombreGouvernancesCoPortees}
               {' '}
-              coporteurs
-            </span>
-          </div>
-        </div>
-        <div className={`fr-col background-blue-france fr-p-4w fr-mr-4w ${styles.hidden}`}>
-          <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="community-line"
-            />
-            {gouvernanceViewModel.collectivite.total}
-          </div>
-          <div className="font-weight-500">
-            Collectivité impliquées
-          </div>
-          <div className="fr-text--xs color-blue-france fr-mb-0">
-            sur les
-            {' '}
-            <span className="font-weight-700">
-              {gouvernanceViewModel.collectivite.membre}
-              {' '}
-              membres
+              gouvernances co-portées
             </span>
           </div>
         </div>
@@ -163,13 +147,16 @@ export default function Gouvernance({
             />
             {gouvernanceViewModel.feuilleDeRoute.total}
           </div>
-          <div className="font-weight-500">
+          <div
+            className="fr-text--md fr-mb-0"
+            style={{ fontWeight: 500 }}
+          >
             Feuilles de route déposées
           </div>
           <div className="fr-text--xs color-blue-france fr-mb-0">
             comprenant
             {' '}
-            <span className="font-weight-700">
+            <span style={{ fontWeight: 700 }}>
               {gouvernanceViewModel.feuilleDeRoute.action}
               {' '}
               actions enregistrées
@@ -182,10 +169,10 @@ export default function Gouvernance({
 }
 
 type Props = Readonly<{
-  gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
+  gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
   lienGouvernance: string
 }>
 
-function isErrorViewModel(viewModel: ErrorViewModel | GouvernanceViewModel): viewModel is ErrorViewModel {
+function isErrorViewModel(viewModel: ErrorViewModel | GouvernanceAdminViewModel): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }

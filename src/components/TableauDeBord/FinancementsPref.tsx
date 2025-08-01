@@ -24,7 +24,7 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
                 Financements
               </h2>
               <p
-                className="fr-m-0 fr-text--md"
+                className="fr-m-0 fr-text--md fr-mb-0"
                 style={{ fontWeight: 500 }}
               >
                 Chiffres clés des budgets et financements
@@ -93,7 +93,7 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
             {conventionnement.budget.total}
           </div>
           <div
-            className="fr-text--md fr-grid-row fr-grid-row--middle"
+            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
             style={{ fontWeight: 500 }}
           >
             Budget global renseigné
@@ -115,7 +115,7 @@ export default function FinancementsPref({ conventionnement, lienFinancements }:
             {conventionnement.credit.total}
           </div>
           <div
-            className="fr-text--md fr-grid-row fr-grid-row--middle"
+            className="fr-text--md fr-mb-0 fr-grid-row fr-grid-row--middle"
             style={{ fontWeight: 500 }}
           >
             Financements engagés par l&apos;État

@@ -6,7 +6,7 @@ import { ReactElement, useContext } from 'react'
 import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import FinancementsAdmin from './FinancementsAdmin'
-import Gouvernance from './Gouvernance/Gouvernance'
+import GouvernanceAdmin from './Gouvernance/GouvernanceAdmin'
 import { DepartementFragilite } from '../shared/Carte/CarteFranceAvecInsets'
 import { clientContext } from '../shared/ClientContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
@@ -14,7 +14,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
-import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePresenter'
+import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -62,7 +62,7 @@ export default function TableauDeBordAdmin({
           type: 'France',
         }}
       /> 
-      <Gouvernance
+      <GouvernanceAdmin
         gouvernanceViewModel={gouvernanceViewModel}
         lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
       />
@@ -82,7 +82,7 @@ type Props = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
-  gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
+  gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
