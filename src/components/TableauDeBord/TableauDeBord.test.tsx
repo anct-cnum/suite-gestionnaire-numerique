@@ -284,7 +284,6 @@ describe('tableau de bord', () => {
             feuillesDeRouteWording: '1 feuille de route',
             total: '225 000 €',
           },
-          contexte: 'departement',
           credit: {
             pourcentage: 25,
             total: '118 000 €',
@@ -385,7 +384,6 @@ describe('tableau de bord', () => {
             feuillesDeRouteWording: '1 feuille de route',
             total: '225 000 €',
           },
-          contexte: 'departement',
           credit: {
             pourcentage: 25,
             total: '118 000 €',
