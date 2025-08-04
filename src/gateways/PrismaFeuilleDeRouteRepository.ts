@@ -13,9 +13,12 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
       data: {
         creation: feuilleDeRoute.state.dateDeCreation,
         derniereEdition: feuilleDeRoute.state.dateDeModification,
+        editeurUtilisateurId: feuilleDeRoute.state.uidEditeur,
         gouvernanceDepartementCode: feuilleDeRoute.state.uidGouvernance,
         nom: feuilleDeRoute.state.nom,
+        noteDeContextualisation: feuilleDeRoute.state.noteDeContextualisation ?? null,
         perimetreGeographique: feuilleDeRoute.state.perimetreGeographique,
+        pieceJointe: feuilleDeRoute.state.document?.chemin ?? null,
         porteurId: feuilleDeRoute.state.uidPorteur,
       },
     })
@@ -36,6 +39,10 @@ export class PrismaFeuilleDeRouteRepository implements FeuilleDeRouteRepository 
     const feuilleDeRoute = FeuilleDeRoute.create({
       dateDeCreation: record.creation,
       dateDeModification: record.derniereEdition ?? record.creation,
+      document: record.pieceJointe === null ? undefined : {
+        chemin: record.pieceJointe,
+        nom: record.pieceJointe.split('/').pop() ?? 'document',
+      },      
       nom: record.nom,
       noteDeContextualisation: record.noteDeContextualisation ?? undefined,
       perimetreGeographique: record.perimetreGeographique ?? 'departemental',
