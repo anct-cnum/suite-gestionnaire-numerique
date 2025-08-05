@@ -15,6 +15,7 @@ export default function LieuxInclusion(): ReactElement {
       <div className="fr-grid-row ">
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w"  >
           <GraphiqueDemiCercle
+            /* eslint-disable-next-line no-restricted-syntax */
             dateGeneration={new Date()}
             details={[
               { backgroundColor: '#900073', label: 'En Quartier Prioritaire de la ville', value: 110 },
@@ -26,11 +27,13 @@ export default function LieuxInclusion(): ReactElement {
             ]}
             indicateur={410}
             label="Lieux en territoires prioritaires"
+            /* eslint-disable-next-line @typescript-eslint/no-empty-function */
             onDownloadClick={() => {}}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-pl-1w"  >
           <GraphiqueDemiCercle
+            /* eslint-disable-next-line no-restricted-syntax */
             dateGeneration={new Date()}
             details={[
               { backgroundColor: '#00A95F', label: 'En Quartier Prioritaire de la ville', value: 110 },
@@ -42,6 +45,7 @@ export default function LieuxInclusion(): ReactElement {
             ]}
             indicateur={410}
             label="Lieux labellisés ou habilités"
+            /* eslint-disable-next-line @typescript-eslint/no-empty-function */
             onDownloadClick={() => {}}
           />
         </div>

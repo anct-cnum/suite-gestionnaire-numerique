@@ -2,10 +2,10 @@
 import React, { ReactElement } from 'react'
 
 import styles from '@/components/Gouvernances/Gouvernances.module.css'
-import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
+import GraphiqueBarList, { BarElement } from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
-const elements = [
+const elements: Array<BarElement> = [
   { label: 'Communes', value: 560 },
   { label: 'CCAS', value: 256 },
   { label: 'Associations', value: 242 },
@@ -18,6 +18,7 @@ const elements = [
   { label: 'Régions', value: 13 },
 ]
 
+// eslint-disable-next-line no-restricted-syntax
 const dateGeneration = new Date()
 
 export default function LieuxInclusionCategory(): ReactElement {
@@ -70,6 +71,7 @@ export default function LieuxInclusionCategory(): ReactElement {
               <div>
                 <button
                   className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
+                  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
                   onClick={() => {}/*handleDownload*/}
                   style={{
                     alignItems: 'center',
