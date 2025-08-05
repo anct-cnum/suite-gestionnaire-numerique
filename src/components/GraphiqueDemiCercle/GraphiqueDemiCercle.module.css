@@ -1,0 +1,25 @@
+.remonter-donnee {
+  margin-top: -5rem;
+  pointer-events: none;
+  position: relative;
+  z-index: -1;
+}
+
+.download-button::before {
+  font-size: 1rem !important;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dot-margin {
+  margin-right: 0.5em;
+}
+
+.item-type-padding {
+  padding-left: 0.1em;
+}
