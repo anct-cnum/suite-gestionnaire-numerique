@@ -1,4 +1,4 @@
-export function tableauDeBordPresenter(departementCode: string):  TableauDeBordViewModel {
+export function tableauDeBordPresenter(territoire: string):  TableauDeBordViewModel {
   return {
     aidant: {
       details: [
@@ -18,11 +18,11 @@ export function tableauDeBordPresenter(departementCode: string):  TableauDeBordV
       },
       total: 85,
     },
-    departement: departementCode,
+    departement: territoire,
     liens: {
-      beneficiaires: `/gouvernance/${departementCode}/beneficiaires`,
-      financements: `/gouvernance/${departementCode}/financements`,
-      gouvernance: `/gouvernance/${departementCode}`,
+      beneficiaires:  territoire === 'France' ? '/beneficiaires' : `/gouvernance/${territoire}/beneficiaires`,
+      financements: territoire === 'France' ? '/convetions' : `/gouvernance/${territoire}/financements`,
+      gouvernance: territoire === 'France' ? '/gouvernances' : `/gouvernance/${territoire}`,
     },
     mediateur: {
       details: [
