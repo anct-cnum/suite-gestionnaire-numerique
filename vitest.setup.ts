@@ -9,6 +9,7 @@ vi.mock('chart.js', () => ({
   Chart: {
     register: vi.fn(),
   },
+  Legend: {},
   LinearScale: {},
   Tooltip: {},
 }))

@@ -18,6 +18,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Gouvernances',
       url: '/gouvernances',
     },
+    {
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: '/aidants-mediateurs',
+    },
   ]
 
   const menusPilotage = [
@@ -44,7 +49,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
     {
       icon: 'group-line',
       label: 'Aidants et médiateurs',
-      url: '/aidants-et-mediateurs',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
     },
     {
       icon: 'map-pin-2-line',

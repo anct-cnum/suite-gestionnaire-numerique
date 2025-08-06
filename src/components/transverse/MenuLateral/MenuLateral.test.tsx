@@ -43,7 +43,7 @@ describe('menu lateral', () => {
   it.each([
     { index: 0, name: 'Financements', url: '/gouvernance/93/financements' },
     { index: 1, name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
-    { index: 2, name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
+    { index: 2, name: 'Aidants et médiateurs', url: '/gouvernance/93/aidants-mediateurs' },
     { index: 3, name: "Lieux d'inclusion", url: '/lieux-inclusion' },
   ])('étant un gestionnaire de département, quand j’affiche le menu latéral, alors il s’affiche avec le lien du menu $name', ({ index, name, url }) => {
     // WHEN
