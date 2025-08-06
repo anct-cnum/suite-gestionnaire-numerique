@@ -19,6 +19,7 @@ describe('feuille de route repository', () => {
     await creerUneRegion()
     await creerUnDepartement({ code: departementCode })
     await creerUneGouvernance({ departementCode })
+    await creerUnUtilisateur({ ssoId: uidEditeur })
     await creerUnContact({
       email: 'structure@example.com',
       fonction: 'Directeur',

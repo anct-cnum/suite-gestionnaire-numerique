@@ -139,3 +139,45 @@
 .dot-green-bourgeon-main-640 {
   background-color: var(--green-bourgeon-main-640);
 }
+
+/* Tilleul colors for accompagnements */
+.dot-tilleul-418 {
+  background-color: var(--green-tilleul-verveine-sun-418-moon-817);
+}
+
+.dot-tilleul-707 {
+  background-color: var(--green-tilleul-verveine-main-707);
+}
+
+.dot-tilleul-850 {
+  background-color: var(--green-tilleul-verveine-850-200);
+}
+
+.dot-tilleul-925 {
+  background-color: var(--green-tilleul-verveine-925-125);
+}
+
+.dot-neutre-900 {
+  background-color: var(--grey-900-175);
+}
+
+/* Macaron and glycine colors for formations */
+.dot-macaron-406 {
+  background-color: var(--pink-macaron-sun-406-moon-833);
+}
+
+.dot-macaron-689 {
+  background-color: var(--pink-macaron-main-689);
+}
+
+.dot-macaron-850 {
+  background-color: var(--pink-macaron-850-200);
+}
+
+.dot-glycine-950 {
+  background-color: var(--purple-glycine-950-100);
+}
+
+.dot-neutre-950 {
+  background-color: var(--grey-950-100);
+}
