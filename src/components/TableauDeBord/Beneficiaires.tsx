@@ -98,8 +98,7 @@ export default function Beneficiaires({
           )}
         </div>
         <div className="fr-col">
-          <div className="fr-text--md fr-mb-2w" 
-            style={{ fontWeight: 500 }}>
+          <div className="fr-text--md fr-mb-2w font-weight-500">
             Nombre de bénéficiaires par financements
           </div>
           <ul>
