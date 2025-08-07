@@ -1,33 +1,23 @@
 'use client'
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useRef } from 'react'
 
 import styles from '@/components/Gouvernances/Gouvernances.module.css'
-import GraphiqueBarList, { BarElement } from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
+import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
+import { handleDownload } from '@/shared/DownloadHelp'
 
-const elements: Array<BarElement> = [
-  { label: 'Communes', value: 560 },
-  { label: 'CCAS', value: 256 },
-  { label: 'Associations', value: 242 },
-  { label: 'Acteur privé', value: 124 },
-  { label: 'EPCI', value: 90 },
-  { label: 'Département', value: 89 },
-  { label: 'Agglomération', value: 32 },
-  { label: 'PETR', value: 21 },
-  { label: 'Métropole', value: 16 },
-  { label: 'Régions', value: 13 },
-]
-
-// eslint-disable-next-line no-restricted-syntax
-const dateGeneration = new Date()
-
-export default function LieuxInclusionCategory(): ReactElement {
+export default function LieuxInclusionCategory(props : Props): ReactElement {
+  const { dateGeneration, elements, nombreLieuxInclusion, nombreLieuxInclusionPublic } = props
+  const divCard = useRef<HTMLDivElement>(null)
   return (
     <section
       className="fr-p-3w fr-mb-2w fr-border-default--grey"
       style={{ borderRadius: '1rem' }}
     >
-      <div className="fr-card fr-card--no-border fr-p-1w">
+      <div
+        className="fr-card fr-card--no-border fr-p-1w"
+        ref={divCard}
+      >
         <div className="fr-grid-row">
           <div className="fr-col-12 fr-col-md-6 " >
             <div
@@ -37,13 +27,17 @@ export default function LieuxInclusionCategory(): ReactElement {
               <TitleIcon icon="map-pin-2-line" />
             </div>
             <p className="fr-display--lg fr-text--bold fr-mb-1v">
-              853
+              {nombreLieuxInclusion}
             </p>
             <p className="fr-text--xl fr-text--bold fr-mb-1v fr-text-default--grey">
               Lieux d’inclusion numérique
             </p>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">
-              dont 656 dans le secteur public
+              dont
+              {' '}
+              {nombreLieuxInclusionPublic}
+              {' '}
+              dans le secteur public
             </p>
           </div>
           <div
@@ -61,7 +55,7 @@ export default function LieuxInclusionCategory(): ReactElement {
               className="fr-grid-row fr-grid-row--middle "
               style={{ alignItems: 'center' }}
             >
-              <div style={{ flex: 1 }}>
+              <div style={{ display: 'none',  flex: 1  }}>
                 <p className="fr-text--sm fr-mb-0">
                   Données mises à jour le
                   {' '}
@@ -71,8 +65,7 @@ export default function LieuxInclusionCategory(): ReactElement {
               <div>
                 <button
                   className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
-                  /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-                  onClick={() => {}/*handleDownload*/}
+                  onClick={() => { void handleDownload(divCard,'Lieux d’inclusion numérique')}}
                   style={{
                     alignItems: 'center',
                     border: '1px solid var(--border-default-grey)',
@@ -98,3 +91,10 @@ export default function LieuxInclusionCategory(): ReactElement {
     </section>
   )
 }
+
+type Props = Readonly<{
+  dateGeneration: Date
+  elements : Array<{ label: string; value: number }>
+  nombreLieuxInclusion: number
+  nombreLieuxInclusionPublic: number
+}>

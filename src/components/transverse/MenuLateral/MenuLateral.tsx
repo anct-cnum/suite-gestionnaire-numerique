@@ -23,6 +23,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Aidants et médiateurs',
       url: '/aidants-mediateurs',
     },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Lieux d\'inclusion',
+      url: '/lieux-inclusion',
+    },
   ]
 
   const menusPilotage = [
@@ -32,6 +37,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'compass-3-line',
       label: 'Gouvernance',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
+    },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Lieux d\'inclusion',
+      url: '/lieux-inclusion',
     },
   ]
 
@@ -51,11 +61,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Aidants et médiateurs',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
     },
-    {
-      icon: 'map-pin-2-line',
-      label: 'Lieux d\'inclusion',
-      url: '/lieux-inclusion',
-    },
+
   ]
 
   const activeClass = pathname === '/tableau-de-bord' ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
@@ -72,8 +78,8 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
               const activeClass = pathname === menu.url ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
 
               return (
-                <li 
-                  className={`fr-sidemenu__item ${activeClass}`} 
+                <li
+                  className={`fr-sidemenu__item ${activeClass}`}
                   key={menu.url}
                 >
                   <Link
@@ -94,7 +100,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
         </>
       )
     }
-    
+
     if (sessionUtilisateurViewModel.displayLiensGouvernance) {
       return (
         <>
@@ -164,7 +170,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
         </>
       )
     }
-    
+
     return null
   }
 

@@ -6,29 +6,35 @@ import { ReactElement } from 'react'
 import GraphiqueDemiCercle from '@/components/GraphiqueDemiCercle/GraphiqueDemiCercle'
 import LieuxInclusionCategory from '@/components/LieuxInclusion/LieuxInclusionCategory'
 import LieuxInclusionHearder from '@/components/LieuxInclusion/LieuxInclusionHeader'
+import { LieuxInclusionNumeriqueViewModel } from '@/presenters/lieuxInclusionNumeriquePresenter'
 
-export default function LieuxInclusion(): ReactElement {
+export default function LieuxInclusion(props: Props): ReactElement {
+  const { viewModel } = props
+
   return (
     <div className="fr-mt-4w">
       <LieuxInclusionHearder />
-      <LieuxInclusionCategory  />
+      <LieuxInclusionCategory
+        dateGeneration={viewModel.categoryGenerationDate}
+        elements={viewModel.categoryElements}
+        nombreLieuxInclusion={viewModel.nombreLieuxInclusion}
+        nombreLieuxInclusionPublic={viewModel.nombreLieuxInclusionPublic}
+      />
       <div className="fr-grid-row ">
         <div className="fr-col-12 fr-col-md-6 fr-pr-1w"  >
           <GraphiqueDemiCercle
             /* eslint-disable-next-line no-restricted-syntax */
             dateGeneration={new Date()}
             details={[
-              { backgroundColor: '#900073', label: 'En Quartier Prioritaire de la ville', value: 110 },
-              { backgroundColor: '#710090', label: 'En Zone France Ruralités Revitailisation', value: 330 },
+              { backgroundColor: 'dot-purple-glycine-main-494', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
+              { backgroundColor: 'dot-purple-glycine-850-200', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
             ]}
             graphiqueInfos={[
-              { backgroundColor: '#900073', label: 'En Quartier Prioritaire de la ville', value: 110 },
-              { backgroundColor: '#710090', label: 'En Zone France Ruralités Revitailisation', value: 330 },
+              { backgroundColor: 'var(--purple-glycine-main-494)', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
+              { backgroundColor: 'var(--purple-glycine-850-200)', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
             ]}
-            indicateur={410}
+            indicateur={viewModel.territoriesPrioritaires}
             label="Lieux en territoires prioritaires"
-            /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-            onDownloadClick={() => {}}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-pl-1w"  >
@@ -36,23 +42,21 @@ export default function LieuxInclusion(): ReactElement {
             /* eslint-disable-next-line no-restricted-syntax */
             dateGeneration={new Date()}
             details={[
-              { backgroundColor: '#00A95F', label: 'En Quartier Prioritaire de la ville', value: 110 },
-              { backgroundColor: '#009081', label: 'En Zone France Ruralités Revitailisation', value: 330 },
+              { backgroundColor: 'dot-green-emeraude-main-632', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
+              { backgroundColor: 'dot-green-menthe-main-548', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             graphiqueInfos={[
-              { backgroundColor: '#00A95F', label: 'En Quartier Prioritaire de la ville', value: 110 },
-              { backgroundColor: '#009081', label: 'En Zone France Ruralités Revitailisation', value: 330 },
+              { backgroundColor: 'var(--green-emeraude-main-632)', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
+              { backgroundColor: 'var(--green-menthe-main-548)', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
-            indicateur={410}
+            indicateur={viewModel.nombreLabellisesOuHabilites}
             label="Lieux labellisés ou habilités"
-            /* eslint-disable-next-line @typescript-eslint/no-empty-function */
-            onDownloadClick={() => {}}
           />
         </div>
       </div>
       <div
         className="fr-grid-row  fr-mb-4w fr-border-default--grey"
-        style={{ borderRadius: '1rem', height: '256px' }}
+        style={{ borderRadius: '1rem', height: '20rem' }}
       >
         <div
           className="fr-col-12 fr-col-md-6 fr-pr-1w"
@@ -109,3 +113,6 @@ export default function LieuxInclusion(): ReactElement {
   )
 }
 
+type Props = Readonly<{
+  viewModel : LieuxInclusionNumeriqueViewModel
+}>
