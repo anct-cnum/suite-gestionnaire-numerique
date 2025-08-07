@@ -98,14 +98,15 @@ export default function Beneficiaires({
           )}
         </div>
         <div className="fr-col">
-          <div className="fr-text--md">
+          <div className="fr-text--md fr-mb-2w" 
+            style={{ fontWeight: 500 }}>
             Nombre de bénéficiaires par financements
           </div>
           <ul>
             {
               viewModel.details.map((detail) => (
                 <li
-                  className="fr-mb-2w fr-mt-1w"
+                  className="fr-mb-1w fr-mt-1w"
                   key={detail.label}
                   style={{ listStyle: 'none' }}
                 >
@@ -116,7 +117,7 @@ export default function Beneficiaires({
                       {detail.label}
                     </div>
                     <div 
-                      style={{ marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
+                      style={{ fontWeight: 700, marginLeft: '1rem', marginRight: '1rem', minWidth: '3rem', textAlign: 'right' }}
                     >
                       {detail.total}
                     </div>
