@@ -49,7 +49,7 @@ export default function EtapeConfirmationMembre({
                       Activité principale
                     </dt>
                     <dd className="font-weight-500">
-                      {data.entreprise.activitePrincipale}
+                      {data.entreprise.activitePrincipaleLibelle}
                     </dd>
                   </div>
                   <div className="fr-col-6">

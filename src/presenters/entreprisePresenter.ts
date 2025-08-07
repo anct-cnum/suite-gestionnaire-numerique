@@ -5,6 +5,7 @@ import { EntrepriseReadModel } from '@/use-cases/queries/RechercherUneEntreprise
 export function entreprisePresenter(readModel: EntrepriseReadModel): EntrepriseViewModel {
   return {
     activitePrincipale: readModel.activitePrincipale,
+    activitePrincipaleLibelle: readModel.activitePrincipaleLibelle ?? `Code NAF ${readModel.activitePrincipale}`,
     adresse: readModel.adresse,
     categorieJuridiqueCode: readModel.categorieJuridiqueCode,
     categorieJuridiqueLibelle: readModel.categorieJuridiqueLibelle ?? `Code ${readModel.categorieJuridiqueCode}`,

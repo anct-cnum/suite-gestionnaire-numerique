@@ -18,6 +18,7 @@ export interface SireneLoader {
 
 export type EntrepriseReadModel = Readonly<{
   activitePrincipale: string
+  activitePrincipaleLibelle?: string
   adresse: string
   categorieJuridiqueCode: string
   categorieJuridiqueLibelle?: string

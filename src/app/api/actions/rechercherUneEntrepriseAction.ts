@@ -25,7 +25,8 @@ export async function rechercherUneEntrepriseAction(
       return ['Aucune entreprise trouvée avec cet identifiant']
     }
 
-    const entrepriseEnrichie = await enrichirEntrepriseAvecCategorieJuridique(entreprise)
+    let entrepriseEnrichie = await enrichirEntrepriseAvecCategorieJuridique(entreprise)
+    entrepriseEnrichie = await enrichirEntrepriseAvecActivitePrincipale(entrepriseEnrichie)
     return entreprisePresenter(entrepriseEnrichie)
   } catch (error: unknown) {
     return gererErreurRecherche(error)
@@ -52,6 +53,29 @@ async function enrichirEntrepriseAvecCategorieJuridique(entreprise: EntrepriseRe
       return {
         ...entreprise,
         categorieJuridiqueLibelle: categorieJuridique.nom,
+      }
+    }
+  } catch {
+    // En cas d'erreur, on continue sans le libellé
+  }
+
+  return entreprise
+}
+
+async function enrichirEntrepriseAvecActivitePrincipale(entreprise: EntrepriseReadModel): Promise<EntrepriseReadModel> {
+  if (entreprise.activitePrincipaleLibelle !== undefined && entreprise.activitePrincipaleLibelle !== '') {
+    return entreprise
+  }
+
+  try {
+    const naf = await prisma.naf.findUnique({
+      where: { code: entreprise.activitePrincipale },
+    })
+    
+    if (naf) {
+      return {
+        ...entreprise,
+        activitePrincipaleLibelle: naf.intitule_court,
       }
     }
   } catch {
