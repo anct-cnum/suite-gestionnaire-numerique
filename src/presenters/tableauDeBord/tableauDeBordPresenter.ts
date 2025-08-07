@@ -20,8 +20,8 @@ export function tableauDeBordPresenter(territoire: string):  TableauDeBordViewMo
     },
     departement: territoire,
     liens: {
-      beneficiaires:  territoire === 'France' ? '/beneficiaires' : `/gouvernance/${territoire}/beneficiaires`,
-      financements: territoire === 'France' ? '/convetions' : `/gouvernance/${territoire}/financements`,
+      beneficiaires:  territoire === 'France' ? '/gouvernance/01/beneficiaires' : `/gouvernance/${territoire}/beneficiaires`,
+      financements: territoire === 'France' ? '/gouvernance/01/beneficiaires' : `/gouvernance/${territoire}/financements`,
       gouvernance: territoire === 'France' ? '/gouvernances' : `/gouvernance/${territoire}`,
     },
     mediateur: {
