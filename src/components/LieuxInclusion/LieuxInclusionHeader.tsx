@@ -30,6 +30,7 @@ export default function LieuxInclusionHearder(): ReactElement {
         </div>
         <button
           className="fr-btn fr-icon-arrow-right-line fr-btn--icon-right"
+          style={{ display: 'none' }}
           type="button"
         >
           Voir tous les lieux d&apos;inclusions

@@ -44,7 +44,7 @@ export default function GraphiqueBarList(props: Props): React.ReactElement {
   )
 }
 
-export type BarElement = {
+type BarElement = {
   label: string
   value: number
 }

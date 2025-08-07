@@ -4,9 +4,10 @@ import { ReactElement, useRef } from 'react'
 import styles from './GraphiqueDemiCercle.module.css'
 import Dot from '@/components/shared/Dot/Dot'
 import Doughnut from '@/components/shared/Doughnut/Doughnut'
+import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
-  const { dateGeneration, description = '',  details, graphiqueInfos,indicateur, label, onDownloadClick } = props
+  const { dateGeneration, description = '',  details, graphiqueInfos,indicateur, label } = props
   const componentRef = useRef<HTMLDivElement>(null)
   return (
     <section
@@ -70,12 +71,14 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
             </ul>
           </div>
         </div>
-        <hr className="fr-hr fr-mt-3w" />
+        <hr
+          className="fr-hr fr-mt-3w"
+        />
         <div
           className="fr-grid-row fr-grid-row--middle fr-mt-2w"
           style={{ alignItems: 'center' }}
         >
-          <div style={{ flex: 1 }}>
+          <div style={{ display: 'none' , flex: 1 }}>
             <p className="fr-text--sm fr-mb-0">
               Données mises à jour le
               {' '}
@@ -85,7 +88,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           <div>
             <button
               className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
-              onClick={onDownloadClick}
+              onClick={() => { void handleDownload(componentRef,label)}}
               style={{
                 alignItems: 'center',
                 border: '1px solid var(--border-default-grey)',
@@ -117,7 +120,6 @@ type Props = {
   graphiqueInfos: Array<Info>
   indicateur: number
   label: string
-  onDownloadClick(): void
 }
 
 type Info = {
