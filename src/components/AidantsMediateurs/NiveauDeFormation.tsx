@@ -119,17 +119,16 @@ export default function NiveauDeFormation({
           </div>
         </div>
         <div className="fr-col">
-          <div className="fr-text--md font-weight-700">
+          <div className="fr-text--md font-weight-700 fr-mb-2w">
             Dont
           </div>
           <ul>
             {niveauDeFormation.formations.map((formation) => (
               <li
-                className="fr-mb-2w fr-mt-1w"
                 key={formation.nom}
                 style={{ listStyle: 'none' }}
               >
-                <div className="fr-text--sm fr-grid-row fr-grid-row--middle">
+                <div className="fr-text--sm fr-grid-row fr-grid-row--middle fr-mb-1w">
                   <div style={{ flex: '1 1 auto', minWidth: 0 }}>
                     <Dot color={formation.couleur} />
                     {' '}

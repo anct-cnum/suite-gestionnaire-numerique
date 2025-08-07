@@ -101,11 +101,9 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Sur
             {' '}
-            <span style={{ fontWeight: 700 }}>
-              {financementViewModel.nombreEnveloppes}
-              {' '}
-              enveloppes de financement
-            </span>
+            {financementViewModel.nombreEnveloppes}
+            {' '}
+            enveloppes de financement
           </div>
         </div>
         <div className="fr-col background-blue-france fr-p-4w">
@@ -125,11 +123,9 @@ export default function FinancementsAdmin({ financementViewModel, lienFinancemen
           <div className="fr-text--xs color-blue-france fr-mb-0">
             Sur
             {' '}
-            <span style={{ fontWeight: 700 }}>
-              {financementViewModel.nombreEnveloppesUtilisees}
-              {' '}
-              enveloppes de financement
-            </span>
+            {financementViewModel.nombreEnveloppesUtilisees}
+            {' '}
+            enveloppes de financement
           </div>
         </div>
       </div>
