@@ -30,8 +30,8 @@ export default function LieuxInclusion(props: Props): ReactElement {
               { backgroundColor: 'dot-purple-glycine-850-200', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
             ]}
             graphiqueInfos={[
-              { backgroundColor: 'var(--purple-glycine-main-494)', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
-              { backgroundColor: 'var(--purple-glycine-850-200)', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
+              { backgroundColor: '#a558a0', label: 'En quartier prioritaire de la ville (QPV)', value: viewModel.territoriesQPV },
+              { backgroundColor: '#fbb8f6', label: 'En zone France Ruralités Revitalisation (FRR)', value: viewModel.territoriesFRR },
             ]}
             indicateur={viewModel.territoriesPrioritaires}
             label="Lieux en territoires prioritaires"
@@ -46,8 +46,8 @@ export default function LieuxInclusion(props: Props): ReactElement {
               { backgroundColor: 'dot-green-menthe-main-548', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             graphiqueInfos={[
-              { backgroundColor: 'var(--green-emeraude-main-632)', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
-              { backgroundColor: 'var(--green-menthe-main-548)', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
+              { backgroundColor: '#00a95f', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
+              { backgroundColor: '#009081', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             indicateur={viewModel.nombreLabellisesOuHabilites}
             label="Lieux labellisés ou habilités"
