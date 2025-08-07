@@ -80,7 +80,7 @@ export default function EtapeSelectionMembre({ donneesMembre, onContinuer }: Eta
                         {entreprise.denomination}
                       </h4>
                       <p className="fr-card__desc">
-                        {entreprise.activitePrincipale}
+                        {entreprise.activitePrincipaleLibelle}
                         <br />
                         {entreprise.categorieJuridiqueLibelle}
                         <br />
