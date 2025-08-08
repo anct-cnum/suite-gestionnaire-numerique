@@ -5,14 +5,13 @@ import { ReactElement } from 'react'
 
 import AccompagnementsRealises from './AccompagnementsRealises'
 import CarteFragiliteDepartement from './CarteFragiliteDepartement'
-import CarteFragiliteFrance from './CarteFragiliteFrance'
+import CarteIndicesFrance from './CarteIndicesFrance'
 import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
-import { DepartementFragilite } from '@/components/shared/Carte/CarteFranceAvecInsets'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { CommuneFragilite, DepartementConfiance, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
@@ -66,7 +65,8 @@ export default function EtatDesLieux({
       </div>
       <div className="fr-grid-row">
         {territoire.type === 'France' ? (
-          <CarteFragiliteFrance
+          <CarteIndicesFrance
+            departementsConfiance={territoire.indicesConfiance}
             departementsFragilite={territoire.indicesFragilite}
           />
         ) : (
@@ -90,5 +90,5 @@ type EtatDesLieuxProps = Readonly<{
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   territoire: { codeDepartement: string; indicesFragilite: Array<CommuneFragilite>; type: 'Departement' }
-     | { indicesFragilite: Array<DepartementFragilite>; type: 'France' }
+     | { indicesConfiance: Array<DepartementConfiance>; indicesFragilite: Array<DepartementFragilite>; type: 'France' }
 }>

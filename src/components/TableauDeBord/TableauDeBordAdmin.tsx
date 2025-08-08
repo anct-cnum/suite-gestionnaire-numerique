@@ -7,7 +7,6 @@ import Beneficiaires from './Beneficiaires'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import FinancementsAdmin from './FinancementsAdmin'
 import GouvernanceAdmin from './Gouvernance/GouvernanceAdmin'
-import { DepartementFragilite } from '../shared/Carte/CarteFranceAvecInsets'
 import { clientContext } from '../shared/ClientContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -15,6 +14,7 @@ import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/acc
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
+import { DepartementConfiance, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -24,6 +24,7 @@ export default function TableauDeBordAdmin({
   beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
+  indicesConfiance,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -58,6 +59,7 @@ export default function TableauDeBordAdmin({
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
         territoire={{
+          indicesConfiance: indicesConfiance as Array<DepartementConfiance>,
           indicesFragilite: indicesFragilite as Array<DepartementFragilite>,
           type: 'France',
         }}
@@ -83,6 +85,7 @@ type Props = Readonly<{
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
+  indicesConfiance: Array<DepartementConfiance> | ErrorViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel

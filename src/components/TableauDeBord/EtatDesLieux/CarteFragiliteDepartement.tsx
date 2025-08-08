@@ -4,7 +4,7 @@ import Carte from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
-import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 
 export default function CarteFragiliteDepartement({
   communesFragilite,

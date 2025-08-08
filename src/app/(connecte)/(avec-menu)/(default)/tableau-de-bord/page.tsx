@@ -22,7 +22,7 @@ import { financementAdminPresenter } from '@/presenters/tableauDeBord/financemen
 import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { gouvernanceAdminPresenter } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 import { gouvernancePrefPresenter } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
-import { indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { indiceConfianceDepartementsPresenter, indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -75,6 +75,10 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       indicesReadModel,
       indiceFragiliteDepartementsPresenter
     )
+    const indicesConfiance = handleReadModelOrError(
+      indicesReadModel,
+      indiceConfianceDepartementsPresenter
+    )
 
     const financementsAdminLoader = new PrismaFinancementsAdminLoader()
     const financementsReadModel = await financementsAdminLoader.get()
@@ -104,6 +108,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
         beneficiairesViewModel={beneficiairesViewModel}
         financementsViewModel={financementsViewModel}
         gouvernanceViewModel={gouvernanceViewModel}
+        indicesConfiance={indicesConfiance}
         indicesFragilite={indicesFragilite}
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}

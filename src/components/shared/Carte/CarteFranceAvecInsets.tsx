@@ -8,7 +8,7 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 
 import Legend from './Legend'
 import styles from './Map.module.css'
-import { FRAGILITE_COLORS } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
 const EMPTY_STYLE = {
   glyphs: 'https://openmaptiles.geo.data.gouv.fr/fonts/{fontstack}/{range}.pbf',
@@ -49,7 +49,7 @@ const DOM_TOM_CONFIG = {
   },
 }
 
-export default function CarteFranceAvecInsets({ departementsFragilite }: Props): ReactElement {
+export default function CarteFranceAvecInsets({ departementsFragilite, legendType = 'fragilite' }: Props): ReactElement {
   const mainMapContainer = useRef<HTMLDivElement>(null)
   const mainMap = useRef<Map | null>(null)
   const domTomMaps = useRef<Record<string, Map>>({})
@@ -61,10 +61,11 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
   function initializeMainMap(): void {
     if (!mainMap.current) {return}
 
-    const bounds = new LngLatBounds(
-      [-5.0, 41.0], // Sud-Ouest France métropolitaine
-      [10.0, 51.5]  // Nord-Est France métropolitaine
-    )
+    // Ajuster les bounds selon le type de légende pour remonter la France
+    const southWest: [number, number] = [-5.0, 39.5]  
+    const northEast: [number, number] = [10.0, 51.0]
+    
+    const bounds = new LngLatBounds(southWest, northEast)
     
     mainMap.current.fitBounds(bounds, {
       duration: 0,
@@ -141,13 +142,16 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
           // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
           const nomDepartement = domTomConfig && domTomConfig.name || (feature.properties.nom as string)
           
+          // Déterminer l'échelle selon le type de légende
+          const scale = legendType === 'confiance' ? '/5' : '/10'
+          
           // Popup simplifié pour les DOM-TOM
           if (isCurrentDomTom === true && departement) {
             popup.current
               .setLngLat(coordinates)
               .setHTML(`
                 <div style="font-size: 14px;">
-                  <strong>${departement.score}/10</strong>
+                  <strong>${departement.score}${scale}</strong>
                 </div>
               `)
               .addTo(map)
@@ -158,7 +162,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
               .setHTML(`
                 <div style="font-size: 14px;">
                   <div class="fr-text--bold fr-mb-1w">${nomDepartement}</div>
-                  ${departement ? `<div style="font-size: 14px;">${departement.score}/10</div>` : ''}
+                  ${departement ? `<div style="font-size: 14px;">${departement.score}${scale}</div>` : ''}
                 </div>
               `)
               .addTo(map)
@@ -259,21 +263,26 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
         className={styles.mapWrapper}
         data-testid="carte-france-wrapper"
         style={{
-          marginLeft: '12%', // Décaler la carte vers la droite pour compenser les insets DOM/TOM
-          width: '88%', // Réduire la largeur pour maintenir la carte dans les limites
+          height:  '100%',
+          marginLeft: '10%', 
+          width: '90%', 
         }}
       >
         <div
           className={styles.mapContainer}
           data-testid="carte-france-container"
           ref={mainMapContainer}
+          style={{ height: '100%' }}
         />
         <div
           className={styles.legendWrapper}
           data-testid="legend-wrapper"
-          style={{ width: '90%' }}
+          style={{ 
+            bottom: legendType === 'confiance' ? '1.5rem' : '3rem',
+            width: '90%',
+          }}
         >
-          <Legend />
+          <Legend type={legendType} />
         </div>
       </div>
 
@@ -282,13 +291,13 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: '460px',
+          height: '420px',
           justifyContent: 'space-between',
-          left: '2%',
+          left: '1%',
           position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: '15%',
+          top:  '40%',
+          transform: 'translateY(-40%)',
+          width: '14%',
         }}
       >
         {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {
@@ -334,21 +343,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite }: Props):
   )
 }
 
-export function getDepartementFragiliteColor(score: number): string {
-  const nombreDeCouleurs = Object.keys(FRAGILITE_COLORS).length
-  const nombreDIndice = 10
-
-  const indiceDeCouleur = Math.max(1, Math.ceil(score * nombreDeCouleurs / nombreDIndice))
-
-  return FRAGILITE_COLORS[indiceDeCouleur as keyof typeof FRAGILITE_COLORS] || '#ffffff'
-}
-
-export type DepartementFragilite = Readonly<{
-  codeDepartement: string
-  couleur: string
-  score: number
-}>
-
 type Props = Readonly<{
-  departementsFragilite: Array<DepartementFragilite>
+  departementsFragilite: Array<DepartementData>
+  legendType?: 'confiance' | 'fragilite'
 }>
