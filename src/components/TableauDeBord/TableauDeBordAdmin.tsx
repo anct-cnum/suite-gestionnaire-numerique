@@ -8,6 +8,7 @@ import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import FinancementsAdmin from './FinancementsAdmin'
 import GouvernanceAdmin from './Gouvernance/GouvernanceAdmin'
 import { DepartementFragilite } from '../shared/Carte/CarteFranceAvecInsets'
+import { DepartementConfiance } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { clientContext } from '../shared/ClientContext'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -24,6 +25,7 @@ export default function TableauDeBordAdmin({
   beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
+  indicesConfiance,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -58,6 +60,7 @@ export default function TableauDeBordAdmin({
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
         territoire={{
+          indicesConfiance: indicesConfiance as Array<DepartementConfiance>,
           indicesFragilite: indicesFragilite as Array<DepartementFragilite>,
           type: 'France',
         }}
@@ -83,6 +86,7 @@ type Props = Readonly<{
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
+  indicesConfiance: Array<DepartementConfiance> | ErrorViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel

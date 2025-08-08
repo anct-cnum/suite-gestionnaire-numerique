@@ -10,6 +10,7 @@ import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { DepartementFragilite } from '@/components/shared/Carte/CarteFranceAvecInsets'
+import { DepartementConfiance } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
 import { CommuneFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
@@ -68,6 +69,7 @@ export default function EtatDesLieux({
         {territoire.type === 'France' ? (
           <CarteFragiliteFrance
             departementsFragilite={territoire.indicesFragilite}
+            departementsConfiance={territoire.indicesConfiance}
           />
         ) : (
           <CarteFragiliteDepartement
@@ -90,5 +92,5 @@ type EtatDesLieuxProps = Readonly<{
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   territoire: { codeDepartement: string; indicesFragilite: Array<CommuneFragilite>; type: 'Departement' }
-     | { indicesFragilite: Array<DepartementFragilite>; type: 'France' }
+     | { indicesConfiance: Array<DepartementConfiance>; indicesFragilite: Array<DepartementFragilite>; type: 'France' }
 }>

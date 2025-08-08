@@ -8,25 +8,33 @@ export const FRAGILITE_COLORS = {
   7: '#D95C5E',
 }
 
+export const CONFIANCE_COLORS = {
+  1: '#009081', // Objectifs sécurisés
+  2: '#73E0CF', // Objectifs atteignables
+  3: '#E2CF58', // Appuis nécessaires
+  4: '#A558A0', // Objectifs compromis
+  5: '#CECECE', // Objectifs non enregistrés
+}
+
 export function indiceFragilitePresenter(ifnCommunes: ReadonlyArray<Readonly<{
   codeInsee: string
-  score: null | number
+  ifn: null | number
 }>>): Array<CommuneFragilite> {
   return ifnCommunes.map(commune => ({
     codeInsee: commune.codeInsee,
-    couleur: getCouleurFragilite(commune.score ?? 0),
-    indice: Number((commune.score ?? 0).toFixed(2)),
+    couleur: getCouleurFragilite(commune.ifn ?? 0),
+    indice: Number((commune.ifn ?? 0).toFixed(2)),
   }))
 }
 
 export function indiceFragiliteDepartementsPresenter(departements: ReadonlyArray<Readonly<{
   codeDepartement: string
-  score: number
+  ifn: number
 }>>): Array<DepartementFragilite> {
   return departements.map(departement => ({
     codeDepartement: departement.codeDepartement,
-    couleur: getCouleurFragilite(departement.score),
-    score: Number(departement.score.toFixed(2)),
+    couleur: getCouleurFragilite(departement.ifn),
+    score: Number(departement.ifn.toFixed(2)),
   }))
 }
 
@@ -41,6 +49,23 @@ export type DepartementFragilite = Readonly<{
   couleur: string
   score: number
 }>
+
+export type DepartementConfiance = Readonly<{
+  codeDepartement: string
+  couleur: string
+  indiceConfiance: number
+}>
+
+export function indiceConfianceDepartementsPresenter(departements: ReadonlyArray<Readonly<{
+  codeDepartement: string
+  indiceConfiance: number
+}>>): Array<DepartementConfiance> {
+  return departements.map(departement => ({
+    codeDepartement: departement.codeDepartement,
+    couleur: CONFIANCE_COLORS[departement.indiceConfiance as keyof typeof CONFIANCE_COLORS] || '#CECECE',
+    indiceConfiance: departement.indiceConfiance,
+  }))
+}
 
 // il y a 7 couleurs pour un indice de 0 à 10
 function getCouleurFragilite(indice: number): string {

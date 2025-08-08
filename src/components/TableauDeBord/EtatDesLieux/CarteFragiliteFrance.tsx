@@ -5,11 +5,14 @@ import CarteFranceAvecInsets, { getDepartementFragiliteColor } from '../../share
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import Information from '@/components/shared/Information/Information'
+import { CONFIANCE_COLORS } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
 
 export default function CarteFragiliteFrance({
   departementsFragilite,
+  departementsConfiance,
 }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
+  const [activeIndex, setActiveIndex] = useState<'fragilite' | 'confiance'>('confiance')
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -33,7 +36,9 @@ export default function CarteFragiliteFrance({
     }
   }, [])
 
-  if (isErrorViewModel(departementsFragilite)) {
+  const currentData = activeIndex === 'fragilite' ? departementsFragilite : (departementsConfiance || departementsFragilite)
+
+  if (isErrorViewModel(currentData)) {
     return (
       <div
         className="fr-col-8 background-blue-france"
@@ -49,15 +54,33 @@ export default function CarteFragiliteFrance({
             height: '100%',
           }}
         >
-          <div style={{ padding: '1rem' }}>
-            <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-              <div className="font-weight-700 color-blue-france">
-                <span>
-                  {' '}
-                  Indice de Fragilité numérique - France
-                </span>
-                <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+          <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
+            <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
+                <div className="fr-btns-group fr-btns-group--inline-sm" style={{ width: '100%' }}>
+                  <button
+                    className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
+                    onClick={() => setActiveIndex('confiance')}
+                    style={{ borderRadius: activeIndex === 'fragilite' ? '0.25rem 0 0 0.25rem' : '0.25rem', flex: 1 }}
+                    type="button"
+                  >
+                    Indice de confiance
+                  </button>
+                  <button
+                    className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
+                    onClick={() => setActiveIndex('fragilite')}
+                    style={{ borderLeft: 'none', borderRadius: activeIndex === 'confiance' ? '0 0.25rem 0.25rem 0' : '0.25rem', flex: 1 }}
+                    type="button"
+                  >
+                    Indice de fragilité numérique
+                  </button>
+                </div>
               </div>
+              {activeIndex === 'fragilite' && (
+                <div className="font-weight-700 color-blue-france">
+                  <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+                </div>
+              )}
             </div>
           </div>
           <div style={{ alignItems: 'center', display: 'flex', flex: 1, justifyContent: 'center' }}>
@@ -67,7 +90,7 @@ export default function CarteFragiliteFrance({
                 icon="error-warning-line"
               />
               <div className="fr-text--sm color-blue-france fr-mt-2w">
-                {departementsFragilite.message}
+                {currentData.message}
               </div>
             </div>
           </div>
@@ -77,11 +100,19 @@ export default function CarteFragiliteFrance({
   }
 
   // Transformer les données pour le composant CarteFrance
-  const departementsData = departementsFragilite.map(dept => ({
-    codeDepartement: dept.codeDepartement,
-    couleur: getDepartementFragiliteColor(dept.score),
-    score: dept.score,
-  }))
+  const departementsData = activeIndex === 'fragilite' 
+    ? (departementsFragilite as ReadonlyArray<DepartementFragilite>).map(dept => ({
+        codeDepartement: dept.codeDepartement,
+        couleur: getDepartementFragiliteColor(dept.score),
+        score: dept.score,
+      }))
+    : departementsConfiance && !isErrorViewModel(departementsConfiance)
+    ? (departementsConfiance as ReadonlyArray<DepartementConfiance>).map(dept => ({
+        codeDepartement: dept.codeDepartement,
+        couleur: CONFIANCE_COLORS[dept.indiceConfiance as keyof typeof CONFIANCE_COLORS] || '#CECECE',
+        score: dept.indiceConfiance,
+      }))
+    : []
 
   return (
     <div
@@ -98,14 +129,27 @@ export default function CarteFragiliteFrance({
           height: '100%',
         }}
       >
-        <div style={{ padding: '1rem' }}>
-          <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-            <div className="font-weight-700 color-blue-france">
-              <span>
-                {' '}
-                Indice de Fragilité numérique - France
-              </span>
-              <Information label="L'Indice de Fragilité Numérique est issu des données de la Mednum calculées en 2021" />
+        <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
+          <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
+              <div className="fr-btns-group fr-btns-group--inline-sm" style={{ width: '100%' }}>
+                <button
+                  className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
+                  onClick={() => setActiveIndex('confiance')}
+                  style={{ borderRadius: activeIndex === 'fragilite' ? '0.25rem 0 0 0.25rem' : '0.25rem', flex: 1 }}
+                  type="button"
+                >
+                  Indice de confiance
+                </button>
+                <button
+                  className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
+                  onClick={() => setActiveIndex('fragilite')}
+                  style={{ borderLeft: 'none', borderRadius: activeIndex === 'confiance' ? '0 0.25rem 0.25rem 0' : '0.25rem', flex: 1 }}
+                  type="button"
+                >
+                  Indice de fragilité numérique
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -114,6 +158,7 @@ export default function CarteFragiliteFrance({
           {isReady ?
             <CarteFranceAvecInsets
               departementsFragilite={departementsData}
+              legendType={activeIndex}
             /> : null}
         </div>
       </div>
@@ -121,7 +166,7 @@ export default function CarteFragiliteFrance({
   )
 }
 
-function isErrorViewModel(viewModel: ErrorViewModel | ReadonlyArray<DepartementFragilite>)
+function isErrorViewModel(viewModel: ErrorViewModel | ReadonlyArray<DepartementFragilite> | ReadonlyArray<DepartementConfiance>)
   :viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
@@ -131,6 +176,13 @@ type DepartementFragilite = Readonly<{
   score: number
 }>
 
+type DepartementConfiance = Readonly<{
+  codeDepartement: string
+  couleur: string
+  indiceConfiance: number
+}>
+
 type Props = Readonly<{
   departementsFragilite: ErrorViewModel | ReadonlyArray<DepartementFragilite>
+  departementsConfiance?: ErrorViewModel | ReadonlyArray<DepartementConfiance>
 }>
