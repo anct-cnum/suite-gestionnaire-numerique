@@ -56,7 +56,10 @@ export default function CarteIndicesFrance({
           <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
             <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-                <div className="fr-btns-group fr-btns-group--inline-sm" style={{ width: '100%' }}>
+                <div 
+                  className="fr-btns-group fr-btns-group--inline-sm" 
+                  style={{ width: '100%' }}
+                >
                   <button
                     className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
                     onClick={(): void => { setActiveIndex('confiance') }}
@@ -103,9 +106,7 @@ export default function CarteIndicesFrance({
 
   const departementsData = transformerDonneesCarteFrance(
     departementsFragilite as ReadonlyArray<DepartementFragilite>,
-    departementsConfiance && !isErrorViewModel(departementsConfiance)
-      ? departementsConfiance as ReadonlyArray<DepartementConfiance>
-      : undefined,
+    departementsConfiance as ReadonlyArray<DepartementConfiance>,
     activeIndex
   )
 
@@ -127,12 +128,15 @@ export default function CarteIndicesFrance({
         <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
           <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-              <div className="fr-btns-group fr-btns-group--inline-sm" style={{ width: '100%' }}>
+              <div 
+                className="fr-btns-group fr-btns-group--inline-sm"
+                style={{ width: '100%' }}
+              >
                 <button
                   className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
                   onClick={(): void => { setActiveIndex('confiance') }}
                   style={{
-                    borderRadius: activeIndex === 'fragilite' ? '0.25rem 0 0 0.25rem' : '0.25rem',
+                    borderRadius: '0.25rem 0 0 0.25rem',
                     flex: 1,
                   }}
                   type="button"
@@ -144,7 +148,7 @@ export default function CarteIndicesFrance({
                   onClick={(): void => { setActiveIndex('fragilite') }}
                   style={{
                     borderLeft: 'none',
-                    borderRadius: activeIndex === 'confiance' ? '0 0.25rem 0.25rem 0' : '0.25rem',
+                    borderRadius :'0 0.25rem 0.25rem 0',
                     flex: 1,
                   }}
                   type="button"
@@ -174,8 +178,11 @@ export default function CarteIndicesFrance({
   )
 }
 
-function isErrorViewModel(viewModel: ErrorViewModel | ReadonlyArray<DepartementFragilite> | ReadonlyArray<DepartementConfiance>)
-  :viewModel is ErrorViewModel {
+function isErrorViewModel(
+  viewModel: ErrorViewModel |
+  ReadonlyArray<DepartementConfiance> |
+  ReadonlyArray<DepartementFragilite>
+): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 

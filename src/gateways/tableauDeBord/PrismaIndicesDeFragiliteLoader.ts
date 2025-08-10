@@ -46,7 +46,8 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
       return departements.map((departement) => ({
         codeDepartement: departement.code,
         ifn: Number(departement.score),
-        indiceConfiance: Math.floor(Math.random() * 5) + 1,
+        // eslint-disable-next-line sonarjs/pseudo-random
+        indiceConfiance: Math.floor(Math.random() * 5) + 1, 
       }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {

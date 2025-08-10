@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @stylistic/quote-props */
 'use client'
-import { AddLayerObject, DataDrivenPropertyValueSpecification, LngLatBounds, Map, Popup } from 'maplibre-gl'
-import { ReactElement, useEffect, useRef, useState } from 'react'
+import { AddLayerObject, DataDrivenPropertyValueSpecification, LngLatBounds, Map, MapGeoJSONFeature, MapMouseEvent, Popup } from 'maplibre-gl'
+import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 import Legend from './Legend'
@@ -120,55 +120,10 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
       ? { ...baseConfig, filter: ['==', 'code', domTomCode] }
       : baseConfig
 
-    // Ajouter la couche
     map.addLayer(layerConfig as unknown as AddLayerObject)
 
-    // Événements de survol
     map.on('mousemove', 'departements-layer', (event) => {
-      if (event.features && event.features.length > 0) {
-        const canvas = map.getCanvas()
-        canvas.style.cursor = 'pointer'
-
-        const feature = event.features[0]
-        const coordinates = event.lngLat
-        const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
-
-        if (popup.current) {
-          const domTomConfig = DOM_TOM_CONFIG[feature.properties.code as keyof typeof DOM_TOM_CONFIG]
-          const isCurrentDomTom = isDomTom || domTomConfig
-           
-          //  @typescript-eslint/strict-boolean-expressions 
-          //  @typescript-eslint/no-unnecessary-condition
-          // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
-          const nomDepartement = domTomConfig && domTomConfig.name || (feature.properties.nom as string)
-          
-          // Déterminer l'échelle selon le type de légende
-          const scale = legendType === 'confiance' ? '/5' : '/10'
-          
-          // Popup simplifié pour les DOM-TOM
-          if (isCurrentDomTom === true && departement) {
-            popup.current
-              .setLngLat(coordinates)
-              .setHTML(`
-                <div style="font-size: 14px;">
-                  <strong>${departement.score}${scale}</strong>
-                </div>
-              `)
-              .addTo(map)
-          } else {
-            // Popup complet pour la métropole
-            popup.current
-              .setLngLat(coordinates)
-              .setHTML(`
-                <div style="font-size: 14px;">
-                  <div class="fr-text--bold fr-mb-1w">${nomDepartement}</div>
-                  ${departement ? `<div style="font-size: 14px;">${departement.score}${scale}</div>` : ''}
-                </div>
-              `)
-              .addTo(map)
-          }
-        }
-      }
+      affichePopup(event, map, departementsFragilite, popup, isDomTom, legendType)
     })
 
     map.on('mouseleave', 'departements-layer', () => {
@@ -347,3 +302,40 @@ type Props = Readonly<{
   departementsFragilite: Array<DepartementData>
   legendType?: 'confiance' | 'fragilite'
 }>
+
+function affichePopup(
+  event: { features?: Array<MapGeoJSONFeature> } & MapMouseEvent,
+  map: Map,
+  departementsFragilite: Array<DepartementData>,
+  popup: RefObject<null | Popup>,
+  isDomTom: boolean,
+  legendType: 'confiance' | 'fragilite'
+): void {
+  if (!event.features?.length || !popup.current) {return}
+
+  const canvas = map.getCanvas()
+  canvas.style.cursor = 'pointer'
+
+  const feature = event.features[0]
+  const coordinates = event.lngLat
+  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
+  
+  if (!departement) {return}
+
+  const domTomConfig = DOM_TOM_CONFIG[feature.properties.code as keyof typeof DOM_TOM_CONFIG]
+  const isCurrentDomTom = isDomTom || domTomConfig
+  const nomDepartement = domTomConfig?.name || feature.properties.nom as string
+  const scale = legendType === 'confiance' ? '/5' : '/10'
+
+  const htmlContent = isCurrentDomTom
+    ? `<div style="font-size: 14px;"><strong>${departement.score}${scale}</strong></div>`
+    : `<div style="font-size: 14px;">
+         <div class="fr-text--bold fr-mb-1w">${nomDepartement}</div>
+         <div style="font-size: 14px;">${departement.score}${scale}</div>
+       </div>`
+
+  popup.current
+    .setLngLat(coordinates)
+    .setHTML(htmlContent)
+    .addTo(map)
+}

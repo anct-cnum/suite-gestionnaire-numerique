@@ -8,11 +8,11 @@ import { CONFIANCE_COLORS, FRAGILITE_COLORS } from '@/presenters/tableauDeBord/i
 export default function Legend({ type = 'fragilite' }: LegendProps): ReactElement {
   if (type === 'confiance') {
     const objectifs = [
-      { count: 30, label: 'Objectifs sécurisés', color: CONFIANCE_COLORS[1] },
-      { count: 56, label: 'Objectifs atteignables', color: CONFIANCE_COLORS[2] },
-      { count: 2, label: 'Appuis nécessaires', color: CONFIANCE_COLORS[3] },
-      { count: 3, label: 'Objectifs compromis', color: CONFIANCE_COLORS[4] },
-      { count: 2, label: 'Objectifs non enregistrés', color: CONFIANCE_COLORS[5] },
+      {  color: CONFIANCE_COLORS[1],count: 30, label: 'Objectifs sécurisés' },
+      {  color: CONFIANCE_COLORS[2],count: 56, label: 'Objectifs atteignables' },
+      {  color: CONFIANCE_COLORS[3],count: 2, label: 'Appuis nécessaires' },
+      {  color: CONFIANCE_COLORS[4],count: 3, label: 'Objectifs compromis' },
+      {   color: CONFIANCE_COLORS[5],count: 2,label: 'Objectifs non enregistrés' },
     ]
 
     return (
@@ -26,7 +26,8 @@ export default function Legend({ type = 'fragilite' }: LegendProps): ReactElemen
           gridTemplateColumns: '1fr 1fr',
           rowGap: '0.5rem',
           width: '100%',
-        }}>
+        }}
+        >
           {objectifs.map((obj) => (
             <div
               key={obj.label}
@@ -54,7 +55,8 @@ export default function Legend({ type = 'fragilite' }: LegendProps): ReactElemen
                 fontSize: '14px',
                 fontWeight: 400,
                 lineHeight: '20px',
-              }}>
+              }}
+              >
                 {obj.label}
               </span>
               <span style={{ 
@@ -64,7 +66,8 @@ export default function Legend({ type = 'fragilite' }: LegendProps): ReactElemen
                 fontWeight: 700,
                 lineHeight: '20px',
                 marginLeft: '0.25rem',
-              }}>
+              }}
+              >
                 {obj.count}
               </span>
             </div>
