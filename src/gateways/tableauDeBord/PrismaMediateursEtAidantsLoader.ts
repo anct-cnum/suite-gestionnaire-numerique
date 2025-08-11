@@ -15,15 +15,18 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
             FROM main.personne p
             JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE a.departement != 'zzz'
+            WHERE s.structure_ac_id IS NOT NULL 
+              AND p.aidant_connect_id IS NOT NULL
+              AND a.departement != 'zzz'
           ),
           nb_acteurs_cn AS (
             SELECT COUNT(*) AS nb_acteurs_cn
             FROM main.personne p
-            JOIN main.personne_lieux_activites pl ON p.id = pl.personne_id
+            JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
             JOIN main.structure s2 ON s2.id = pl.structure_id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
-            WHERE a2.departement != 'zzz'
+            WHERE (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
+              AND a2.departement != 'zzz'
           )
           SELECT
             ac.nb_acteurs_ac,
@@ -37,15 +40,18 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
             FROM main.personne p
             JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE a.departement = ${territoire}
+            WHERE s.structure_ac_id IS NOT NULL 
+              AND p.aidant_connect_id IS NOT NULL
+              AND a.departement = ${territoire}
           ),
           nb_acteurs_cn AS (
             SELECT COUNT(*) AS nb_acteurs_cn
             FROM main.personne p
-            JOIN main.personne_lieux_activites pl ON p.id = pl.personne_id
+            JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
             JOIN main.structure s2 ON s2.id = pl.structure_id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
-            WHERE a2.departement = ${territoire}
+            WHERE (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
+              AND a2.departement = ${territoire}
           )
           SELECT
             ac.nb_acteurs_ac,

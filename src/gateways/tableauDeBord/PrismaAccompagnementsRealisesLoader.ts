@@ -118,18 +118,28 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       if (territoire === 'France') {
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           WITH all_activites_coop AS (
-            SELECT COUNT(*) AS nb_activites_coop
-            FROM main.activites_coop ac
-            JOIN main.structure s2 ON ac.structure_id = s2.id
-            JOIN main.adresse a2 ON s2.adresse_id = a2.id
-            WHERE a2.departement != 'zzz'
+            SELECT SUM(nb_activites_coop) AS nb_activites_coop
+            FROM (
+              SELECT a2.departement, COUNT(*) AS nb_activites_coop
+              FROM main.activites_coop ac
+              JOIN main.structure s2 ON ac.structure_id = s2.id
+              JOIN main.adresse a2 ON s2.adresse_id = a2.id
+              WHERE a2.departement != 'zzz'
+              GROUP BY a2.departement
+            ) AS grouped
           ),
           sum_accompagnements_ac AS (
-            SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
-            FROM main.personne p
-            JOIN main.structure s ON p.structure_id = s.id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE a.departement != 'zzz'
+            SELECT SUM(total_dep) AS total_accompagnements
+            FROM (
+              SELECT a.departement, SUM(p.nb_accompagnements_ac) AS total_dep
+              FROM main.personne p
+              JOIN main.structure s ON p.structure_id = s.id
+              JOIN main.adresse a ON s.adresse_id = a.id
+              WHERE s.structure_ac_id IS NOT NULL 
+                AND p.aidant_connect_id IS NOT NULL
+                AND a.departement != 'zzz'
+              GROUP BY a.departement
+            ) AS grouped
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
@@ -138,22 +148,27 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       } else {
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           WITH all_activites_coop AS (
-            SELECT COUNT(*) AS nb_activites_coop
+            SELECT a2.departement, COUNT(*) AS nb_activites_coop
             FROM main.activites_coop ac
             JOIN main.structure s2 ON ac.structure_id = s2.id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
             WHERE a2.departement = ${territoire}
+            GROUP BY a2.departement
           ),
           sum_accompagnements_ac AS (
-            SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
+            SELECT a.departement, SUM(p.nb_accompagnements_ac) AS total_accompagnements
             FROM main.personne p
             JOIN main.structure s ON p.structure_id = s.id
             JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE a.departement = ${territoire}
+            WHERE s.structure_ac_id IS NOT NULL 
+              AND p.aidant_connect_id IS NOT NULL
+              AND a.departement = ${territoire}
+            GROUP BY a.departement
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
-          FROM sum_accompagnements_ac, all_activites_coop
+          FROM sum_accompagnements_ac a
+          FULL OUTER JOIN all_activites_coop al ON a.departement = al.departement
         `
       }
 
