@@ -40,7 +40,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         COUNT(*)::int AS nb_lieux_inclusion_numerique
       FROM main.structure s
              INNER JOIN main.adresse ON main.adresse.id = s.adresse_id
-             JOIN reference.categories_juridiques cj ON s.categorie_juridique = cj.code
+             INNER JOIN reference.categories_juridiques cj ON s.categorie_juridique = cj.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
       GROUP BY categorie_finale
       ORDER BY nb_lieux_inclusion_numerique DESC;
@@ -49,8 +49,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresZonesPrioritaires: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'FRR' AND adresse.code_insee = zonage.code_insee)
           OR (type = 'QPV' AND public.st_contains(zonage.geom, adresse.geom))
       WHERE structure_cartographie_nationale_id IS NOT NULL;
@@ -59,8 +59,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresQPV: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'QPV' AND public.st_contains(zonage.geom, adresse.geom))
       WHERE structure_cartographie_nationale_id IS NOT NULL;
     `
@@ -68,8 +68,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresFRR: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'FRR' AND adresse.code_insee = zonage.code_insee)
       WHERE structure_cartographie_nationale_id IS NOT NULL;
     `
@@ -77,21 +77,21 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresAvecProgrammeNational: Array<{ count: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int
       FROM main.structure
-             LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+             INNER JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
       WHERE dispositif_programmes_nationaux IS NOT NULL;
     `
 
     const nombreStructuresAvecConseillersNumeriques: Array<{ count: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int
       FROM main.structure
-             LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+             INNER JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
       WHERE 'Conseillers numériques' = ANY(dispositif_programmes_nationaux);
     `
 
     const nombreStructuresAvecFranceServices: Array<{ count: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int
       FROM main.structure
-             LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+             INNER JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
       WHERE 'France Services' = ANY(dispositif_programmes_nationaux);
     `
 
@@ -143,7 +143,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
           END AS categorie_finale,
         COUNT(*)::int AS nb_lieux_inclusion_numerique
       FROM main.structure s
-             JOIN reference.categories_juridiques cj ON s.categorie_juridique = cj.code
+             INNER JOIN reference.categories_juridiques cj ON s.categorie_juridique = cj.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
       GROUP BY categorie_finale
       ORDER BY nb_lieux_inclusion_numerique DESC;
@@ -152,8 +152,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresZonesPrioritaires: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'FRR' AND adresse.code_insee = zonage.code_insee)
           OR (type = 'QPV' AND public.st_contains(zonage.geom, adresse.geom))
       WHERE structure_cartographie_nationale_id IS NOT NULL;
@@ -162,8 +162,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresQPV: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'QPV' AND public.st_contains(zonage.geom, adresse.geom))
       WHERE structure_cartographie_nationale_id IS NOT NULL;
     `
@@ -171,8 +171,8 @@ export class PrismaLieuxInclusionNumeriqueLoader {
     const nombreStructuresFRR: Array<{ nb_structures: number }> = await prisma.$queryRaw`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure
-             LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-             LEFT JOIN admin.zonage ON
+             INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+             INNER JOIN admin.zonage ON
         (type = 'FRR' AND adresse.code_insee = zonage.code_insee)
       WHERE structure_cartographie_nationale_id IS NOT NULL;
     `
