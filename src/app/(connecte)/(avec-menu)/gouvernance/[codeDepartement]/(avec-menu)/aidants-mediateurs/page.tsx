@@ -23,14 +23,14 @@ export default async function AidantsMediateursGouvernanceController({ params }:
   }
 
   const accompagnementsEtMediateursLoader = new PrismaAccompagnementsEtMediateursLoader()
-  const accompagnementsEtMediateursReadModel = accompagnementsEtMediateursLoader.get(codeDepartement)
+  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursLoader.get(codeDepartement)
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
     accompagnementsEtMediateursPresenter
   )
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
-  const niveauDeFormationReadModel = niveauDeFormationLoader.get(codeDepartement)
+  const niveauDeFormationReadModel = await niveauDeFormationLoader.get(codeDepartement)
   const niveauDeFormationViewModel = handleReadModelOrError(
     niveauDeFormationReadModel,
     niveauDeFormationPresenter

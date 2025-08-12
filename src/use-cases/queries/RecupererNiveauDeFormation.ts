@@ -1,3 +1,5 @@
+import { ErrorReadModel } from './shared/ErrorReadModel'
+
 export type NiveauDeFormationReadModel = Readonly<{
   aidantsEtMediateursFormes: number
   formations: Array<{
@@ -8,5 +10,5 @@ export type NiveauDeFormationReadModel = Readonly<{
 }>
 
 export interface NiveauDeFormationLoader {
-  get(territoire?: string): NiveauDeFormationReadModel
+  get(territoire?: string): Promise<NiveauDeFormationReadModel | ErrorReadModel>
 }

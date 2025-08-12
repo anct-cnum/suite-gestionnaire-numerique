@@ -2,7 +2,6 @@ import { AccompagnementsEtMediateursReadModel } from '@/use-cases/queries/Recupe
 
 export type AccompagnementsEtMediateursViewModel = Readonly<{
   accompagnementsRealises: string
-  beneficiairesAccompagnes: string
   metriques: Array<{
     chiffre: string
     sousTitre: string
@@ -46,7 +45,6 @@ export function accompagnementsEtMediateursPresenter(
 
   return {
     accompagnementsRealises: readModel.accompagnementsRealises.toLocaleString('fr-FR'),
-    beneficiairesAccompagnes: readModel.beneficiairesAccompagnes.toLocaleString('fr-FR'),
     metriques: [
       {
         chiffre: readModel.mediateursNumeriques.toLocaleString('fr-FR'),

@@ -1,6 +1,7 @@
+import { ErrorReadModel } from './shared/ErrorReadModel'
+
 export type AccompagnementsEtMediateursReadModel = Readonly<{
   accompagnementsRealises: number
-  beneficiairesAccompagnes: number
   conseillerNumeriques: number
   habilitesAidantsConnect: number
   mediateursFormes: number
@@ -15,6 +16,6 @@ export type AccompagnementsEtMediateursReadModel = Readonly<{
 }>
 
 export interface AccompagnementsEtMediateursLoader {
-  get(territoire?: string): AccompagnementsEtMediateursReadModel
+  get(territoire?: string): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel>
 }
 
