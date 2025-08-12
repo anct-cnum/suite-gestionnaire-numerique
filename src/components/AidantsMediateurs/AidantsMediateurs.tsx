@@ -118,25 +118,54 @@ export default function AidantsMediateurs({
           <div
             style={{
               background: 'white',
+              display: 'flex',
+              flexDirection: 'column',
               height: '100vh',
-              padding: '2rem',
               position: 'absolute',
               right: 0,
               width: '400px',
             }}
           >
-            <button
-              onClick={handleCloseDrawer}
-              style={{ float: 'right' }}
-              type="button"
+            <div
+              style={{
+                padding: '2rem 2rem 1rem 2rem',
+                borderBottom: '1px solid #E5E5E5',
+              }}
             >
-              ✕ Fermer
-            </button>
-            <h1>
-              Les aidants et médiateurs numériques
-            </h1>
+              <button
+                className="fr-btn fr-btn--tertiary-no-outline fr-icon-close-line"
+                onClick={handleCloseDrawer}
+                style={{ float: 'right' }}
+                title="Fermer"
+                type="button"
+              />
+              <div 
+                className="fr-icon-information-line fr-mb-2w"
+                style={{
+                  backgroundColor: 'var(--blue-france-975-75)',
+                  borderRadius: '0.5rem',
+                  color: 'var(--text-title-blue-france)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '72px',
+                  height: '60px',
+                  fontSize: '1.5rem',
+                }}
+              />
+              <h1 className="fr-h3 color-blue-france fr-mb-0">
+                Les aidants et médiateurs numériques
+              </h1>
+            </div>
             
-            <div className="fr-text--md">
+            <div 
+              className="fr-text--md"
+              style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '2rem',
+              }}
+            >
               <p className="fr-mb-3w">
                 <strong>
                   Médiateur numérique
