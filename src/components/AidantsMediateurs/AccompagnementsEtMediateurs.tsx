@@ -102,19 +102,10 @@ export default function AccompagnementsEtMediateurs({
               className="fr-display--sm fr-mb-0"
               style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
             >
-              {accompagnementsEtMediateurs.beneficiairesAccompagnes}
+              {accompagnementsEtMediateurs.accompagnementsRealises}
             </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Bénéficiaires accompagnés
-            </div>
-            <div className="color-blue-france fr-pb-4w separator">
-              Sur
-              {' '}
-              <strong>
-                {accompagnementsEtMediateurs.accompagnementsRealises}
-                {' '}
-                accompagnements réalisés
-              </strong>
+            <div className="fr-text--lg font-weight-700 fr-m-0 fr-pb-4w separator">
+              Accompagnements réalisés
             </div>
           </div>
           <div className="fr-mt-4w">

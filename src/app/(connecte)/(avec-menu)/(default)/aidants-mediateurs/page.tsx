@@ -31,14 +31,14 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
   }
 
   const accompagnementsEtMediateursLoader = new PrismaAccompagnementsEtMediateursLoader()
-  const accompagnementsEtMediateursReadModel = accompagnementsEtMediateursLoader.get()
+  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursLoader.get()
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
     accompagnementsEtMediateursPresenter
   )
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
-  const niveauDeFormationReadModel = niveauDeFormationLoader.get()
+  const niveauDeFormationReadModel = await niveauDeFormationLoader.get()
   const niveauDeFormationViewModel = handleReadModelOrError(
     niveauDeFormationReadModel,
     niveauDeFormationPresenter
