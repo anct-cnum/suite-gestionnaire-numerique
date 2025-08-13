@@ -8,6 +8,9 @@ export interface RecupererLieuxInclusionReadModel {
   limite: number
   page: number
   total: number
+  totalAidantNumerique: number
+  totalConseillerNumerique: number
+  totalLabellise: number
 }
 
 export interface LieuInclusionNumeriqueItem {
@@ -29,5 +32,5 @@ export interface LieuInclusionNumeriqueItem {
 }
 
 export interface RecupererLieuxInclusionPort {
-  getLieuxWithPagination(page: number, limite: number): Promise<RecupererLieuxInclusionReadModel>
+  getLieuxWithPagination(page: number, limite: number, codeDepartement?: string): Promise<RecupererLieuxInclusionReadModel>
 }

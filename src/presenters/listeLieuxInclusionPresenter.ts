@@ -21,6 +21,9 @@ export function listeLieuxInclusionPresenter(
     nombreDePages: Math.ceil(readModel.total / readModel.limite),
     page: readModel.page,
     total: readModel.total,
+    totalAidantNumerique: readModel.totalAidantNumerique,
+    totalConseillerNumerique: readModel.totalConseillerNumerique,
+    totalLabellise: readModel.totalLabellise,
   }
 }
 
@@ -42,10 +45,13 @@ export interface ListeLieuxInclusionViewModel {
   nombreDePages: number
   page: number
   total: number
+  totalAidantNumerique: number
+  totalConseillerNumerique: number
+  totalLabellise: number
 }
 
 interface Tag {
-  couleur: 'green-emeraude' | 'purple-glycine'
+  couleur: 'green-emeraude' | 'yellow-tournesol'
   libelle: string
 }
 
@@ -62,14 +68,14 @@ function formatAdresse(lieu: {
 
 function getTags(lieu: { est_frr: boolean; est_qpv: boolean }): Array<Tag> {
   const tags: Array<Tag> = []
-  
+
   if (lieu.est_frr) {
-    tags.push({ couleur: 'purple-glycine' as const, libelle: 'FRR' })
+    tags.push({ couleur: 'yellow-tournesol' as const, libelle: 'FRR' })
   }
-  
+
   if (lieu.est_qpv) {
     tags.push({ couleur: 'green-emeraude' as const, libelle: 'QPV' })
   }
-  
+
   return tags
 }
