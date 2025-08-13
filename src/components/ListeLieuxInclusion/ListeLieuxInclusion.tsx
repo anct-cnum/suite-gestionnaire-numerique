@@ -1,0 +1,129 @@
+'use client'
+
+import Link from 'next/link'
+import { ReactElement } from 'react'
+
+import Badge from '../shared/Badge/Badge'
+import PageTitle from '../shared/PageTitle/PageTitle'
+import Pagination from '../shared/Pagination/Pagination'
+import Table from '../shared/Table/Table'
+import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
+
+export default function ListeLieuxInclusion({
+  listeLieuxInclusionViewModel,
+}: Props): ReactElement {
+  if ('type' in listeLieuxInclusionViewModel) {
+    return (
+      <div className="fr-alert fr-alert--error">
+        <p>
+          {listeLieuxInclusionViewModel.message}
+        </p>
+      </div>
+    )
+  }
+
+  const viewModel = listeLieuxInclusionViewModel
+
+  return (
+    <>
+      <div className="fr-grid-row">
+        <PageTitle>
+          <TitleIcon icon="map-pin-2-line" />
+          Suivi des lieux d&apos;inclusion numérique
+        </PageTitle>
+      </div>
+
+      {viewModel.lieux.length === 0 ? (
+        <p>
+          Aucun lieu d&apos;inclusion numérique trouvé.
+        </p>
+      ) : (
+        <>
+          <ListeLieuxInclusionInfo infos={{
+            total: viewModel.total,
+            totalAidantNumerique: viewModel.totalAidantNumerique,
+            totalConseillerNumerique: viewModel.totalConseillerNumerique,
+            totalLabellise: viewModel.totalLabellise,
+          }}
+          />
+          <Table
+            enTetes={[
+              'Lieu',
+              'Adresse',
+              'Siret',
+              'FRR / QPV',
+              'Mandats AC',
+              'Nb Accompagnements',
+              'Action',
+            ]}
+            titre="Lieux d'inclusion numérique"
+          >
+            {viewModel.lieux.map((lieu) => (
+              <tr key={lieu.id}>
+                <td>
+                  <div>
+                    <strong>
+                      {lieu.nom}
+                    </strong>
+                    <br />
+                    <span className="fr-text--sm">
+                      {lieu.typeStructure}
+                    </span>
+                  </div>
+                </td>
+                <td>
+                  {lieu.adresse}
+                </td>
+                <td>
+                  {lieu.siret}
+                </td>
+                <td>
+                  <div className="fr-tags-group">
+                    {lieu.tags.map((tag) => (
+                      <Badge
+                        color={tag.couleur}
+                        key={`${lieu.id}-tag-${tag.libelle}`}
+                      >
+                        {tag.libelle}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+                <td className="fr-cell--center">
+                  {lieu.nbMandatsAC}
+                </td>
+                <td className="fr-cell--center">
+                  {lieu.nbAccompagnements}
+                </td>
+                <td className="fr-cell--center">
+                  <Link
+                    className="fr-btn fr-btn--secondary fr-btn--sm"
+                    href={`/lieu/${lieu.id}`}
+                  >
+                    Détail
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </Table>
+
+          {viewModel.displayPagination ? (
+            <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
+              <Pagination
+                pathname="/liste-lieux-inclusion"
+                totalUtilisateurs={viewModel.total}
+              />
+            </div>
+          ) : null}
+        </>
+      )}
+    </>
+  )
+}
+
+type Props = Readonly<{
+  listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
+}>

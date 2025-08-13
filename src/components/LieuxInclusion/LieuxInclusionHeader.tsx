@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
@@ -28,13 +29,12 @@ export default function LieuxInclusionHearder(): ReactElement {
           </div>
 
         </div>
-        <button
+        <Link
           className="fr-btn fr-icon-arrow-right-line fr-btn--icon-right"
-          style={{ display: 'none' }}
-          type="button"
+          href="/liste-lieux-inclusion"
         >
           Voir tous les lieux d&apos;inclusions
-        </button>
+        </Link>
       </div>
       <div>
         <span className="fr-text--sm fr-message">
