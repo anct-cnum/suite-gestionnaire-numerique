@@ -51,7 +51,7 @@ describe('menu lateral', () => {
   it.each([
     { name: 'Financements', url: '/gouvernance/93/financements' },
     { name: 'Bénéficiaires', url: '/gouvernance/93/beneficiaires' },
-    { name: 'Aidants et médiateurs', url: '/gouvernance/93/aidants-mediateurs' },
+    { name: 'Aidants et médiateurs', url: '/aidants-et-mediateurs' },
   ])('étant un gestionnaire de département, quand j\'affiche le menu latéral, alors il s\'affiche dans la section A VENIR avec le lien du menu $name', ({ name, url }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement()
