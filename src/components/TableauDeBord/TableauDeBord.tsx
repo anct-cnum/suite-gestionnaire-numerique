@@ -21,7 +21,7 @@ import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/acc
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
-import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indiceFragilitePresenter'
+import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'

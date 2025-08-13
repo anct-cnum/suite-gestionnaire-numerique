@@ -1,9 +1,9 @@
 import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
-import { CommuneReadModel, DepartementReadModel, IndicesDeFragiliteLoader } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
+import { CommuneReadModel, DepartementReadModel, IndicesLoader } from '@/use-cases/queries/RecupererMesIndicesDeFragilite'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
-export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader {
+export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
   async getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>> {
     try {
       const communes = await prisma.ifnCommune.findMany({
@@ -20,7 +20,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
 
       return communes.map((commune) => ({
         codeInsee: commune.codeInsee,
-        score: Number(commune.score),
+        ifn: Number(commune.score),
       }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
@@ -45,7 +45,9 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesDeFragiliteLoader 
 
       return departements.map((departement) => ({
         codeDepartement: departement.code,
-        score: Number(departement.score),
+        ifn: Number(departement.score),
+        // eslint-disable-next-line sonarjs/pseudo-random
+        indiceConfiance: Math.floor(Math.random() * 5) + 1, 
       }))
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
