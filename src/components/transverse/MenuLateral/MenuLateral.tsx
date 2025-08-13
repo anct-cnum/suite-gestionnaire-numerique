@@ -38,6 +38,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Gouvernance',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Lieux d\'inclusion',
+      url: '/lieux-inclusion',
+    },
   ]
 
   const menusAVenir = [
@@ -56,11 +61,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Aidants et médiateurs',
       url: '/aidants-et-mediateurs',
     },
-    {
-      icon: 'map-pin-2-line',
-      label: 'Lieux d\'inclusion',
-      url: '/lieux-inclusion',
-    },
+
   ]
 
   const activeClass = pathname === '/tableau-de-bord' ? `fr-sidemenu__item--active ${styles['element-selectionne']}` : ''
