@@ -27,17 +27,6 @@ export function listeLieuxInclusionPresenter(
   }
 }
 
-export interface LieuInclusionViewModel {
-  adresse: string
-  id: string
-  nbAccompagnements: number
-  nbMandatsAC: number
-  nom: string
-  siret: string
-  tags: Array<Tag>
-  typeStructure: string
-}
-
 export interface ListeLieuxInclusionViewModel {
   displayPagination: boolean
   lieux: Array<LieuInclusionViewModel>
@@ -48,6 +37,17 @@ export interface ListeLieuxInclusionViewModel {
   totalAidantNumerique: number
   totalConseillerNumerique: number
   totalLabellise: number
+}
+
+interface LieuInclusionViewModel {
+  adresse: string
+  id: string
+  nbAccompagnements: number
+  nbMandatsAC: number
+  nom: string
+  siret: string
+  tags: Array<Tag>
+  typeStructure: string
 }
 
 interface Tag {

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
+/* eslint-disable sonarjs/no-nested-template-literals */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+
 import { Prisma } from '@prisma/client'
 
 import prisma from '../../prisma/prismaClient'
@@ -80,7 +84,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}`
 
     const dispositif = dispositifResult[0]
-    const result = {
+    return {
       lieux,
       limite,
       page,
@@ -89,6 +93,5 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       totalConseillerNumerique: Number(dispositif.nb_conseillers ?? 0),
       totalLabellise: Number(dispositif.total ?? 0),
     }
-    return result
   }
 }

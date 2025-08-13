@@ -31,18 +31,16 @@ const CJ_CASE = Prisma.sql`
   END
 `
 
-/** Clause WHERE commune à toutes les requêtes : filtre département optionnel. */
-function whereAvecFiltreDept(codeDepartement?: string) : Prisma.Sql {
-  return codeDepartement
-    ? Prisma.sql`AND a.departement = ${codeDepartement}`
-    : Prisma.sql``
+function whereAvecFiltreDept(codeDepartement?: null | string) : Prisma.Sql {
+  if (codeDepartement === null) {
+    return Prisma.sql``
+  }
+  return Prisma.sql`AND a.departement = ${codeDepartement}`
 }
 
-/** Join adresse: LEFT partout pour cohérence. */
 const JOIN_ADRESSE = Prisma.sql`LEFT JOIN main.adresse a ON a.id = s.adresse_id`
 
 export class PrismaLieuxInclusionNumeriqueLoader {
-  // Wrappers compatibles avec ton API actuelle :
   async getDepartemental(codeDepartement: string) : Promise<LieuxInclusionNumeriqueReadModel> {
     return this.getStats({ codeDepartement })
   }
@@ -54,7 +52,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
   async getStats(params: { codeDepartement?: string }): Promise<LieuxInclusionNumeriqueReadModel> {
     const { codeDepartement } = params
 
-    // 1) Total des lieux
     const totalLieuxInclusionNumerique = await prisma.$queryRaw<
       Array<{ nb_lieux_inclusion_numerique: number }>
     >(Prisma.sql`
@@ -65,7 +62,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${whereAvecFiltreDept(codeDepartement)};
     `)
 
-    // 2) Lieux secteur public (code catégorie '7%')
     const lieuxInclusionNumeriqueSecteurPublic = await prisma.$queryRaw<
       Array<{ nb_lieux_inclusion_numerique_public: number }>
     >(Prisma.sql`
@@ -77,7 +73,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${whereAvecFiltreDept(codeDepartement)};
     `)
 
-    // 3) Répartition par catégorie (CASE unifié + LEFT JOIN CJ pour inclure NULL)
     const repartitionLieuxParCategorieJuridique = await prisma.$queryRaw<
       Array<{ categorie_finale: string; nb_lieux_inclusion_numerique: number }>
     >(Prisma.sql`
@@ -93,7 +88,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ORDER BY nb_lieux_inclusion_numerique DESC;
     `)
 
-    // 4) Zones prioritaires (FRR ∪ QPV)
     const nombreStructuresZonesPrioritaires = await prisma.$queryRaw<
       Array<{ nb_structures: number }>
     >(Prisma.sql`
@@ -107,7 +101,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${whereAvecFiltreDept(codeDepartement)};
     `)
 
-    // 5) QPV uniquement
     const nombreStructuresQPV = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure s
@@ -118,7 +111,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${whereAvecFiltreDept(codeDepartement)};
     `)
 
-    // 6) FRR uniquement
     const nombreStructuresFRR = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS nb_structures
       FROM main.structure s
@@ -129,7 +121,6 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${whereAvecFiltreDept(codeDepartement)};
     `)
 
-    // 7) Programmes nationaux (avec alias AS count partout)
     const nombreStructuresAvecProgrammeNational = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
       SELECT COUNT(*)::int AS count
       FROM main.structure s

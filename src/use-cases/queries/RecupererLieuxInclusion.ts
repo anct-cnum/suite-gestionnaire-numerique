@@ -1,8 +1,3 @@
-export interface RecupererLieuxInclusionQuery {
-  limite: number
-  page: number
-}
-
 export interface RecupererLieuxInclusionReadModel {
   lieux: Array<LieuInclusionNumeriqueItem>
   limite: number
@@ -32,5 +27,6 @@ export interface LieuInclusionNumeriqueItem {
 }
 
 export interface RecupererLieuxInclusionPort {
-  getLieuxWithPagination(page: number, limite: number, codeDepartement?: string): Promise<RecupererLieuxInclusionReadModel>
+  getLieuxWithPagination(page: number, limite: number, codeDepartement?: string)
+  : Promise<RecupererLieuxInclusionReadModel>
 }
