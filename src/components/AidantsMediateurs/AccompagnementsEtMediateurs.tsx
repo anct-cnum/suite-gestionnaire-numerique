@@ -99,7 +99,7 @@ export default function AccompagnementsEtMediateurs({
               />
             </div>
             <div
-              className="fr-display--sm fr-mb-0"
+              className="fr-display--xs fr-mb-0"
               style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
             >
               {accompagnementsEtMediateurs.accompagnementsRealises}
@@ -124,6 +124,15 @@ export default function AccompagnementsEtMediateurs({
                     </span>
                     <span className={gouvernancesStyles['item-type-padding']}>
                       {thematique.nom}
+                      {thematique.nombreThematiquesRestantes !== undefined 
+                      && thematique.nombreThematiquesRestantes > 0 && (
+                        <span>
+                          {' '}
+                          (
+                          {thematique.nombreThematiquesRestantes}
+                          )
+                        </span>
+                      )}
                     </span>
                   </div>
                   <div

@@ -9,7 +9,7 @@ export default function Metric({
 }: Props): ReactElement {
   return (
     <div className="fr-mb-3w">
-      <div className="fr-display--sm fr-mb-1w">
+      <div className="fr-display--xs fr-mb-1w">
         {prefix}
         {chiffre}
         {suffix}

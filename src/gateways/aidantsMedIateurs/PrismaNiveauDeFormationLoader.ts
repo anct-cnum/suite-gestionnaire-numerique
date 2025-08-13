@@ -1,4 +1,4 @@
-  import prisma from '../../../prisma/prismaClient'
+import prisma from '../../../prisma/prismaClient'
 import { reportLoaderError } from '../shared/sentryErrorReporter'
 import { 
   NiveauDeFormationLoader,
@@ -7,7 +7,7 @@ import {
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
-  async get(territoire = 'France'): Promise<NiveauDeFormationReadModel | ErrorReadModel> {
+  async get(territoire = 'France'): Promise<ErrorReadModel |NiveauDeFormationReadModel> {
     try {
       // Nombre total d'aidants et médiateurs
       const totalResult = territoire === 'France'
@@ -73,7 +73,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
 
       // Répartition par certification
       const certificationsResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ type_certification: string; total: bigint }>>`
+        ? await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
             SELECT
               CASE
                 WHEN f.label = 'CCP1' THEN 'CCP1'
@@ -90,7 +90,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
             GROUP BY type_certification
             ORDER BY total DESC
           `
-        : await prisma.$queryRaw<Array<{ type_certification: string; total: bigint }>>`
+        : await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
             SELECT
               CASE
                 WHEN f.label = 'CCP1' THEN 'CCP1'
@@ -124,7 +124,6 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
         totalAidantsEtMediateurs,
       }
     } catch (error) {
-      console.error('Erreur lors de la récupération des données de niveau de formation:', error)
       reportLoaderError(error, 'PrismaNiveauDeFormationLoader', {
         operation: 'get',
         territoire,
