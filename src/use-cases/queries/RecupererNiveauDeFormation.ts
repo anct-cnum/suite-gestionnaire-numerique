@@ -10,5 +10,5 @@ export type NiveauDeFormationReadModel = Readonly<{
 }>
 
 export interface NiveauDeFormationLoader {
-  get(territoire?: string): Promise<NiveauDeFormationReadModel | ErrorReadModel>
+  get(territoire?: string): Promise<ErrorReadModel | NiveauDeFormationReadModel>
 }

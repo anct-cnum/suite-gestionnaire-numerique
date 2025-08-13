@@ -128,8 +128,8 @@ export default function AidantsMediateurs({
           >
             <div
               style={{
-                padding: '2rem 2rem 1rem 2rem',
                 borderBottom: '1px solid #E5E5E5',
+                padding: '2rem 2rem 1rem 2rem',
               }}
             >
               <button
@@ -142,15 +142,15 @@ export default function AidantsMediateurs({
               <div 
                 className="fr-icon-information-line fr-mb-2w"
                 style={{
+                  alignItems: 'center',
                   backgroundColor: 'var(--blue-france-975-75)',
                   borderRadius: '0.5rem',
                   color: 'var(--text-title-blue-france)',
                   display: 'inline-flex',
-                  alignItems: 'center',
+                  fontSize: '1.5rem',
+                  height: '60px',
                   justifyContent: 'center',
                   width: '72px',
-                  height: '60px',
-                  fontSize: '1.5rem',
                 }}
               />
               <h1 className="fr-h3 color-blue-france fr-mb-0">

@@ -24,13 +24,16 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
           `
       const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
 
-      // Thématiques des accompagnements
+      // Thématiques des accompagnements avec comptage des thématiques distinctes
       const thematiquesResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint }>>`
+        ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
             WITH base AS (
-              SELECT id, accompagnements, unnest(thematiques) AS th
-              FROM main.activites_coop
-              WHERE accompagnements > 0 
+              SELECT ac.id, ac.accompagnements, unnest(ac.thematiques) AS th
+              FROM main.activites_coop ac
+              LEFT JOIN main.structure s ON ac.structure_id = s.id
+              LEFT JOIN main.adresse a ON s.adresse_id = a.id
+              WHERE ac.accompagnements > 0 
+                AND (a.departement IS NULL OR a.departement != 'zzz')
             ),
             norm AS (
               SELECT
@@ -41,15 +44,19 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
                   WHEN th ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
                   ELSE 'Autres thématiques'
                 END AS categorie,
-                accompagnements::bigint AS nb
+                accompagnements::bigint AS nb,
+                th AS thematique_originale
               FROM base
             )
-            SELECT categorie, SUM(nb) AS nb
+            SELECT 
+              categorie, 
+              SUM(nb) AS nb,
+              COUNT(DISTINCT thematique_originale) AS nb_distinctes
             FROM norm
             GROUP BY categorie
             ORDER BY nb DESC
           `
-        : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint }>>`
+        : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
             WITH base AS (
               SELECT ac.id, ac.accompagnements, unnest(ac.thematiques) AS th
               FROM main.activites_coop ac
@@ -66,20 +73,24 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
                   WHEN th ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
                   ELSE 'Autres thématiques'
                 END AS categorie,
-                accompagnements::bigint AS nb
+                accompagnements::bigint AS nb,
+                th AS thematique_originale
               FROM base
             )
-            SELECT categorie, SUM(nb) AS nb
+            SELECT 
+              categorie, 
+              SUM(nb) AS nb,
+              COUNT(DISTINCT thematique_originale) AS nb_distinctes
             FROM norm
             GROUP BY categorie
             ORDER BY nb DESC
           `
 
-      const totalThematiques = thematiquesResult.reduce((sum, t) => sum + Number(t.nb), 0)
-      const thematiques = thematiquesResult.map(t => ({
-        nom: t.categorie,
-        pourcentage: Math.round((Number(t.nb) / totalThematiques) * 100),
-        ...(t.categorie === 'Autres thématiques' ? { nombreThematiquesRestantes: 5 } : {}),
+      const totalThematiques = thematiquesResult.reduce((sum, thematique) => sum + Number(thematique.nb), 0)
+      const thematiques = thematiquesResult.map(thematique => ({
+        nom: thematique.categorie,
+        pourcentage: Math.round(Number(thematique.nb) / totalThematiques * 100),
+        ...thematique.categorie === 'Autres thématiques' && Number(thematique.nb_distinctes) > 0 ? { nombreThematiquesRestantes: Number(thematique.nb_distinctes) } : {},
       }))
 
       // Nombre de médiateurs numériques
@@ -135,9 +146,6 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
             WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
               AND a.departement = ${territoire}
           `
-
-  
-
       const mediateursFormes = Number(mediateursFormesResult[0]?.total_mediateurs_numeriques_formes || 0)
 
       // Nombre d'Aidants Connect actifs
@@ -162,7 +170,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
 
       // Calcul du pourcentage de médiateurs formés
       const pourcentageMediateursFormes = mediateursNumeriques > 0 
-        ? Math.round((mediateursFormes / mediateursNumeriques) * 100) 
+        ? Math.round(mediateursFormes / mediateursNumeriques * 100) 
         : 0
 
       return {
