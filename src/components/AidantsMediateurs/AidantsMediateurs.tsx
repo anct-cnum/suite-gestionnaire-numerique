@@ -5,6 +5,7 @@ import { ReactElement, useState } from 'react'
 
 import AccompagnementsEtMediateurs from './AccompagnementsEtMediateurs'
 import NiveauDeFormation from './NiveauDeFormation'
+import AlerteConstruction from '../shared/AlerteConstruction/AlerteConstruction'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
@@ -40,24 +41,14 @@ export default function AidantsMediateurs({
         <div className="fr-col-auto">
           <Link
             className="fr-btn fr-btn--icon-right fr-icon-arrow-right-line"
-            href="#"
+            href="/liste-aidants-mediateurs"
           >
             Suivi des médiateurs
           </Link>
         </div>
       </div>
 
-      <div className="fr-mb-4w">
-        <div className="fr-alert fr-alert--error fr-mb-4w">
-          <p className="fr-alert__title">
-            🚧 Page en construction
-          </p>
-          <p>
-            Cette page est actuellement en développement. Les données présentées ne correspondent pas à la 
-            réalité et sont uniquement à des fins de démonstration.
-          </p>
-        </div>
-      </div>
+      <AlerteConstruction />
 
       <div className="fr-mb-4w">
         <div className="fr-grid-row background-info fr-p-3w fr-grid-row--middle">
@@ -73,13 +64,13 @@ export default function AidantsMediateurs({
             <button
               className="fr-link"
               onClick={handleOpenDrawer}
-              style={{ 
-                background: 'none', 
-                border: 'none', 
+              style={{
+                background: 'none',
+                border: 'none',
                 color: '#000091',
                 cursor: 'pointer',
                 padding: 0,
-                textDecoration: 'underline', 
+                textDecoration: 'underline',
               }}
               type="button"
             >
@@ -139,7 +130,7 @@ export default function AidantsMediateurs({
                 title="Fermer"
                 type="button"
               />
-              <div 
+              <div
                 className="fr-icon-information-line fr-mb-2w"
                 style={{
                   alignItems: 'center',
@@ -157,8 +148,8 @@ export default function AidantsMediateurs({
                 Les aidants et médiateurs numériques
               </h1>
             </div>
-            
-            <div 
+
+            <div
               className="fr-text--md"
               style={{
                 flex: 1,
@@ -171,39 +162,39 @@ export default function AidantsMediateurs({
                   Médiateur numérique
                 </strong>
                 {' '}
-                : un médiateur numérique a pour cœur de métier d&apos;accompagner la montée en compétences 
+                : un médiateur numérique a pour cœur de métier d&apos;accompagner la montée en compétences
                 de ceux qui le souhaitent sur le numérique mais aussi d&apos;initier à la culture numérique.
               </p>
-              
+
               <p className="fr-mb-3w">
                 <strong>
                   Conseiller Numérique
                 </strong>
                 {' '}
-                : un médiateur numérique dont le poste est cofinancé par l&apos;État dans le cadre du dispositif 
+                : un médiateur numérique dont le poste est cofinancé par l&apos;État dans le cadre du dispositif
                 Conseiller numérique.
               </p>
-              
+
               <p className="fr-mb-3w">
                 <strong>
                   Aidant numérique
                 </strong>
                 {' '}
-                : la notion d&apos;aidant numérique recouvre une grande diversité d&apos;acteurs. 
-                Nous entendons par aidant numérique les professionnels en première ligne face aux usagers 
-                en difficultés avec le numérique alors même que l&apos;accompagnement des publics dans leurs 
-                usages numériques ne constitue pas toujours le cœur de leurs missions. Par exemple, les travailleurs 
-                sociaux, les agents d&apos;accueil en collectivité territoriale ou dans des agences de services 
+                : la notion d&apos;aidant numérique recouvre une grande diversité d&apos;acteurs.
+                Nous entendons par aidant numérique les professionnels en première ligne face aux usagers
+                en difficultés avec le numérique alors même que l&apos;accompagnement des publics dans leurs
+                usages numériques ne constitue pas toujours le cœur de leurs missions. Par exemple, les travailleurs
+                sociaux, les agents d&apos;accueil en collectivité territoriale ou dans des agences de services
                 publics (Pôle Emploi, CAF, etc), les animateurs jeunesse sont des aidants numériques.
               </p>
-              
+
               <p className="fr-mb-3w">
                 <strong>
                   Aidants Connect
                 </strong>
                 {' '}
-                : service public numérique qui permet à des aidants professionnels habilités de réaliser 
-                des démarches administratives en ligne de manière légale et sécurisée pour le compte de 
+                : service public numérique qui permet à des aidants professionnels habilités de réaliser
+                des démarches administratives en ligne de manière légale et sécurisée pour le compte de
                 personnes en difficulté avec les outils numériques.
               </p>
             </div>

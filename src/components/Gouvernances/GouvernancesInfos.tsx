@@ -2,6 +2,7 @@ import { ReactElement } from 'react'
 
 import { InfosGouvernances } from '@/components/Gouvernances/GouvernancesList'
 import { MontantPositif } from '@/components/shared/Montant/MontantPositif'
+import { parseTextWithBold } from '@/shared/textFormatting'
 
 export default function GouvernancesInfos(props: Props): ReactElement {
   const { infos } = props
@@ -17,13 +18,13 @@ export default function GouvernancesInfos(props: Props): ReactElement {
             description: 'Gouvernances territoriales',
             icon: 'bank-line',
             indicateur: String(infos.gouvernancesTerritoriales.gouvernancesCompte),
-            legends: `dont ${infos.gouvernancesTerritoriales.gouvernanceCoporterCompte} gouvernances co-portées`,
+            legends: `dont **${infos.gouvernancesTerritoriales.gouvernanceCoporterCompte} gouvernances co-portées**`,
           })}
           {renderGouvernanceInfoCart({
             description: 'Feuilles de route',
             icon: 'file-download-line',
             indicateur: String(infos.feuilleDeRoutes.feuilleDeRouteCompte),
-            legends: `pour ${infos.feuilleDeRoutes.actionsCompte} actions`,
+            legends: `dont **${infos.feuilleDeRoutes.actionsCompte} actions**`,
           })}
           {renderGouvernanceInfoCart({
             description: 'Crédits engagés par l’état',
@@ -32,7 +33,7 @@ export default function GouvernancesInfos(props: Props): ReactElement {
               .ofNumber(infos.creditEngager.creditEngagerGlobal)
               .orElse(MontantPositif.Zero)
               .format()} €`,
-            legends: `pour ${infos.creditEngager.subventionValiderCompte} demandes de subvention`,
+            legends: `pour **${infos.creditEngager.subventionValiderCompte} demandes de subvention**`,
           })}
         </div>
       </div>
@@ -79,11 +80,11 @@ function renderGouvernanceInfoCart({
           <div className="fr-h5 fr-text-title--blue-france fr-m-0">
             {indicateur}
           </div>
-          <div className="fr-text--sm fr-text--bold fr-m-0">
+          <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
             {description}
           </div>
-          <div className="fr-text--sm fr-m-0">
-            {legends}
+          <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
+            {parseTextWithBold(legends)}
           </div>
         </div>
       </div>
