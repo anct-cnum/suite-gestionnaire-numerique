@@ -118,28 +118,13 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       if (territoire === 'France') {
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           WITH all_activites_coop AS (
-            SELECT SUM(nb_activites_coop) AS nb_activites_coop
-            FROM (
-              SELECT a2.departement, COUNT(*) AS nb_activites_coop
-              FROM main.activites_coop ac
-              JOIN main.structure s2 ON ac.structure_id = s2.id
-              JOIN main.adresse a2 ON s2.adresse_id = a2.id
-              WHERE a2.departement != 'zzz'
-              GROUP BY a2.departement
-            ) AS grouped
+            SELECT SUM(ac.accompagnements) AS nb_activites_coop
+            FROM main.activites_coop ac
           ),
           sum_accompagnements_ac AS (
-            SELECT SUM(total_dep) AS total_accompagnements
-            FROM (
-              SELECT a.departement, SUM(p.nb_accompagnements_ac) AS total_dep
-              FROM main.personne p
-              JOIN main.structure s ON p.structure_id = s.id
-              JOIN main.adresse a ON s.adresse_id = a.id
-              WHERE s.structure_ac_id IS NOT NULL 
-                AND p.aidant_connect_id IS NOT NULL
-                AND a.departement != 'zzz'
-              GROUP BY a.departement
-            ) AS grouped
+            SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
+            FROM main.personne p
+            WHERE p.aidant_connect_id IS NOT NULL
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
@@ -148,7 +133,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
       } else {
         totalResult = await prisma.$queryRaw<Array<{ total_accompagnements: bigint }>>`
           WITH all_activites_coop AS (
-            SELECT a2.departement, COUNT(*) AS nb_activites_coop
+            SELECT a2.departement, SUM(ac.accompagnements) AS nb_activites_coop
             FROM main.activites_coop ac
             JOIN main.structure s2 ON ac.structure_id = s2.id
             JOIN main.adresse a2 ON s2.adresse_id = a2.id
@@ -189,12 +174,11 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
         repartitionResult = await prisma.$queryRaw<Array<{ mois: string; nombre: bigint }>>`
           SELECT
             TO_CHAR(ac.date, 'MM/YY') as mois,
-            COUNT(*) as nombre
+            SUM(ac.accompagnements) as nombre
           FROM main.activites_coop ac
           JOIN main.structure s ON ac.structure_id = s.id
           JOIN main.adresse a ON s.adresse_id = a.id
-          WHERE a.departement != 'zzz'
-            AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
+          WHERE ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '5 months')
             AND ac.date < DATE_TRUNC('month', CURRENT_DATE + INTERVAL '1 month')
           GROUP BY TO_CHAR(ac.date, 'MM/YY')
           ORDER BY mois
@@ -203,7 +187,7 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
         repartitionResult = await prisma.$queryRaw<Array<{ mois: string; nombre: bigint }>>`
           SELECT
             TO_CHAR(ac.date, 'MM/YY') as mois,
-            COUNT(*) as nombre
+            SUM(ac.accompagnements) as nombre
           FROM main.activites_coop ac
           JOIN main.structure s ON ac.structure_id = s.id
           JOIN main.adresse a ON s.adresse_id = a.id
