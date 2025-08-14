@@ -9,7 +9,7 @@ import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { AccompagnementsEtMediateursEnrichiViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
 import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 
 export default function AidantsMediateurs({
@@ -204,7 +204,7 @@ export default function AidantsMediateurs({
 }
 
 type Props = Readonly<{
-  accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
   dateGeneration: Date
   niveauDeFormationViewModel: ErrorViewModel | NiveauDeFormationViewModel
 }>

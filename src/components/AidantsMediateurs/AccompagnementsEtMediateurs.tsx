@@ -11,7 +11,7 @@ import Metric from '../shared/Metric/Metric'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { AccompagnementsEtMediateursEnrichiViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
 
 export default function AccompagnementsEtMediateurs({
   accompagnementsEtMediateurs,
@@ -102,10 +102,19 @@ export default function AccompagnementsEtMediateurs({
               className="fr-display--xs fr-mb-0"
               style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
             >
-              {accompagnementsEtMediateurs.accompagnementsRealises}
+              {accompagnementsEtMediateurs.beneficiairesAccompagnes}
             </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0 fr-pb-4w separator">
-              Accompagnements réalisés
+            <div className="fr-text--lg font-weight-700 fr-m-0">
+              Bénéficiaires accompagnés
+            </div>
+            <div className="color-blue-france fr-pb-4w">
+              Soit
+              {' '}
+              <strong>
+                {accompagnementsEtMediateurs.accompagnementsRealises}
+                {' '}
+                accompagnements réalisés
+              </strong>
             </div>
           </div>
           <div className="fr-mt-4w">
@@ -154,6 +163,11 @@ export default function AccompagnementsEtMediateurs({
                 {' '}
                 {dateGeneration.toLocaleDateString('fr-FR')}
               </p>
+              {accompagnementsEtMediateurs.avertissementApiCoop && (
+                <p className="fr-text--xs color-orange fr-mb-0 fr-mt-1v">
+                  ⚠️ {accompagnementsEtMediateurs.avertissementApiCoop}
+                </p>
+              )}
             </div>
             <div>
               <button
@@ -199,12 +213,12 @@ export default function AccompagnementsEtMediateurs({
 }
 
 function isErrorViewModel(
-  viewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  viewModel: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
 ): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 
 type Props = Readonly<{
-  accompagnementsEtMediateurs: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  accompagnementsEtMediateurs: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
   dateGeneration: Date
 }>

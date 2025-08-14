@@ -4,11 +4,13 @@ import { ReactElement } from 'react'
 
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { accompagnementsEtMediateursPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { accompagnementsEtMediateursEnrichiPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
 import { niveauDeFormationPresenter } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import { RecupererAccompagnementsEtMediateursEnrichi } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
 
 export const metadata: Metadata = {
   title: 'Aidants et médiateurs numériques',
@@ -22,11 +24,14 @@ export default async function AidantsMediateursGouvernanceController({ params }:
     redirect('/connexion')
   }
 
-  const accompagnementsEtMediateursLoader = new PrismaAccompagnementsEtMediateursLoader()
-  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursLoader.get(codeDepartement)
+  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateursEnrichi(
+    new PrismaAccompagnementsEtMediateursLoader(),
+    createApiCoopStatistiquesLoader()
+  )
+  const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({ territoire: codeDepartement })
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
-    accompagnementsEtMediateursPresenter
+    accompagnementsEtMediateursEnrichiPresenter
   )
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
