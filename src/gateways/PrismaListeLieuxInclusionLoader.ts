@@ -32,7 +32,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         s.id,
         s.nom,
         s.siret,
-        s.categorie_juridique,
+        ref.nom as categorie_juridique,
         a.numero_voie,
         a.nom_voie,
         a.code_postal,
@@ -67,6 +67,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         ) AS nb_accompagnements_ac
       FROM main.structure s
       INNER JOIN main.adresse a ON a.id = s.adresse_id
+      inner join reference.categories_juridiques ref on s.categorie_juridique = ref.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
       ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}
       ORDER BY s.nom ASC

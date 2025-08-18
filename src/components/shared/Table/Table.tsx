@@ -22,7 +22,7 @@ export default function Table({
             <table
               className="fr-table"
               id="table-sm"
-              style={{ margin:0, padding:0 }}
+              style={{ borderCollapse:'collapse', margin:0, padding:0 }}
             >
               <caption className="fr-sr-only">
                 {titre}

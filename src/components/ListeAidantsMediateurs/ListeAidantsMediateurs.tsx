@@ -9,10 +9,9 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import Information from '@/components/shared/Information/Information'
-import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
 export default function ListeAidantsMediateurs({
   listeAidantsMediateursViewModel,
@@ -53,7 +52,6 @@ export default function ListeAidantsMediateurs({
           <TitleIcon icon="group-line" />
           Suivi aidants et médiateurs
         </PageTitle>
-        <Information label="--" />
       </div>
       <AlerteConstruction />
       <>

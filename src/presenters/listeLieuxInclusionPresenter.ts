@@ -11,7 +11,7 @@ export function listeLieuxInclusionPresenter(
     nom: lieu.nom,
     siret: lieu.siret ?? 'Non renseigné',
     tags: getTags(lieu),
-    typeStructure: lieu.type_structure ?? 'Non renseigné',
+    typeStructure: lieu.categorie_juridique ?? 'Non renseigné',
   }))
 
   return {
