@@ -42,11 +42,11 @@ export default function LieuxInclusion(props: Props): ReactElement {
             /* eslint-disable-next-line no-restricted-syntax */
             dateGeneration={new Date()}
             details={[
-              { backgroundColor: 'dot-green-emeraude-main-632', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
+              { backgroundColor: 'dot-green-emeraude-main-632', label: 'Lieux accueillant des conseillers numériques', value: viewModel.lieuxConseillerNumeriques },
               { backgroundColor: 'dot-green-menthe-main-548', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             graphiqueInfos={[
-              { backgroundColor: '#00a95f', label: 'Lieux accueillant des conseillers numérique', value: viewModel.lieuxConseillerNumeriques },
+              { backgroundColor: '#00a95f', label: 'Lieux accueillant des conseillers numériques', value: viewModel.lieuxConseillerNumeriques },
               { backgroundColor: '#009081', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             indicateur={viewModel.nombreLabellisesOuHabilites}
