@@ -63,19 +63,36 @@ export default function ListeLieuxInclusion({
           >
             {viewModel.lieux.map((lieu) => (
               <tr key={lieu.id}>
-                <td>
-                  <div>
-                    <strong>
+                <td style={{ maxWidth: '25vw' }}>
+                  <div style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                  >
+                    <strong
+                      title={lieu.nom}
+                    >
                       {lieu.nom}
                     </strong>
                     <br />
-                    <span className="fr-text--sm">
+                    <span
+                      className="fr-text--sm"
+                      title={lieu.typeStructure}
+                    >
                       {lieu.typeStructure}
                     </span>
                   </div>
                 </td>
-                <td>
-                  {lieu.adresse}
+                <td style={{ maxWidth: '20vw' }}>
+                  <div style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
+                  >
+                    {lieu.adresse}
+                  </div>
                 </td>
                 <td>
                   {lieu.siret}

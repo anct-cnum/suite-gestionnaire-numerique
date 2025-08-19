@@ -22,7 +22,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       FROM main.structure s
       INNER JOIN main.adresse a ON a.id = s.adresse_id
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}
+      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}
     `
     const total = totalResult[0]?.total ?? 0
 
@@ -69,7 +69,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       INNER JOIN main.adresse a ON a.id = s.adresse_id
       inner join reference.categories_juridiques ref on s.categorie_juridique = ref.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}
+      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}
       ORDER BY s.nom ASC
       LIMIT ${limite}
       OFFSET ${offset}
@@ -82,7 +82,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     FROM main.structure AS s
     LEFT JOIN main.adresse a ON a.id = s.adresse_id
     WHERE dispositif_programmes_nationaux IS NOT NULL
-    ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}`
+    ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}`
 
     const dispositif = dispositifResult[0]
     return {

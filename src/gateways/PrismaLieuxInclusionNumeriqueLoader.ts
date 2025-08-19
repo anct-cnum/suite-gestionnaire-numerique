@@ -51,7 +51,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       FROM main.structure s
       ${JOIN_ADRESSE}
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const lieuxInclusionNumeriqueSecteurPublic = await prisma.$queryRaw<
@@ -62,7 +62,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       ${JOIN_ADRESSE}
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
         AND s.categorie_juridique LIKE '7%'
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const repartitionLieuxParCategorieJuridique = await prisma.$queryRaw<
@@ -75,7 +75,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         ${JOIN_ADRESSE}
         LEFT JOIN reference.categories_juridiques cj ON s.categorie_juridique = cj.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``}
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}
       GROUP BY categorie_finale
       ORDER BY nb_lieux_inclusion_numerique DESC;
     `)
@@ -90,7 +90,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
           ON (z.type = 'FRR' AND a.code_insee = z.code_insee)
           OR (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const nombreStructuresQPV = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
@@ -100,7 +100,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         INNER JOIN admin.zonage z
           ON (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const nombreStructuresFRR = await prisma.$queryRaw<Array<{ nb_structures: number }>>(Prisma.sql`
@@ -110,7 +110,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
         INNER JOIN admin.zonage z
           ON (z.type = 'FRR' AND a.code_insee = z.code_insee)
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const nombreStructuresAvecProgrammeNational = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
@@ -118,7 +118,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       FROM main.structure s
         ${JOIN_ADRESSE}
       WHERE s.dispositif_programmes_nationaux IS NOT NULL
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const nombreStructuresAvecConseillersNumeriques = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
@@ -126,7 +126,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       FROM main.structure s
         ${JOIN_ADRESSE}
       WHERE 'Conseillers numériques' = ANY(s.dispositif_programmes_nationaux)
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     const nombreStructuresAvecFranceServices = await prisma.$queryRaw<Array<{ count: number }>>(Prisma.sql`
@@ -134,7 +134,7 @@ export class PrismaLieuxInclusionNumeriqueLoader {
       FROM main.structure s
         ${JOIN_ADRESSE}
       WHERE 'France Services' = ANY(s.dispositif_programmes_nationaux)
-        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql``};
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`};
     `)
 
     return {
