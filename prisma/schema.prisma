@@ -463,6 +463,7 @@ model zonage {
   commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([code, code_insee], map: "zonage_ukey")
+  @@unique([code, code_insee], map: "zonage_code_ukey")
   @@index([code_insee])
   @@index([geom], type: Gist)
   @@schema("admin")
@@ -504,7 +505,6 @@ model adresse {
   geom         Unsupported("geometry")?
   clef_interop String?                  @db.VarChar(50)
   code_ban     String?                  @unique(map: "adresse_code_ban_ukey") @db.Uuid
-  departement  String?                  @db.VarChar(3)
   code_postal  String?                  @db.VarChar(5)
   code_insee   String?                  @db.VarChar(5)
   nom_commune  String?                  @db.VarChar(255)
@@ -513,6 +513,7 @@ model adresse {
   numero_voie  Int?                     @db.SmallInt
   created_at   DateTime?                @default(now()) @db.Timestamp(6)
   updated_at   DateTime?                @db.Timestamp(6)
+  departement  String?                  @default(dbgenerated("\nCASE\n    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN \"left\"((code_insee)::text, 3)\n    ELSE \"left\"((code_insee)::text, 2)\nEND")) @db.VarChar(3)
   structure    main_structure[]
 
   @@index([geom], type: Gist)
@@ -604,23 +605,24 @@ model personne_structures_emplois {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model poste {
-  id                Int             @id @default(autoincrement())
-  poste_conum_id    Int
-  structure_id      Int?
-  personne_id       Int?
-  etat_instruction  String?         @db.VarChar(30)
-  typologie         String?         @db.VarChar(6)
-  date_attribution  DateTime        @db.Date
-  date_rendu_poste  DateTime?       @db.Date
-  poste_renouvele   Boolean?
-  action_coselec    String?         @db.VarChar(255)
-  origine_transfert Int?
-  etat              String?         @db.VarChar(6)
-  created_at        DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at        DateTime?       @db.Timestamp(6)
-  personne          personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  structure         main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subvention        subvention[]
+  id                  Int             @id @default(autoincrement())
+  poste_conum_id      Int
+  structure_id        Int?
+  personne_id         Int?
+  typologie           String?         @db.VarChar(6)
+  date_attribution    DateTime        @db.Date
+  date_rendu_poste    DateTime?       @db.Date
+  poste_renouvele     Boolean?
+  action_coselec      String?         @db.VarChar(255)
+  origine_transfert   Int?
+  etat                String?         @db.VarChar(6)
+  created_at          DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?       @db.Timestamp(6)
+  etat_instruction_v1 String?         @db.VarChar
+  etat_instruction_v2 String?         @db.VarChar
+  personne            personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  structure           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subvention          subvention[]
 
   @@unique([poste_conum_id, structure_id, personne_id], map: "poste_ukey")
   @@schema("main")
@@ -751,6 +753,8 @@ model subvention {
   mois_utilises_poste               Int?      @db.SmallInt
   created_at                        DateTime? @default(now()) @db.Timestamp(6)
   updated_at                        DateTime? @db.Timestamp(6)
+  avoir                             BigInt?
+  cp_a_date                         BigInt?
   poste                             poste     @relation(fields: [poste_id], references: [id], onDelete: Cascade)
 
   @@schema("main")

@@ -1,4 +1,3 @@
-
 -- Name: citext; Type: EXTENSION; Schema: -; Owner: -
 
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA min;
@@ -437,7 +436,6 @@ CREATE TABLE main.adresse (
     geom public.geometry(Point,4326),
     clef_interop character varying(50),
     code_ban uuid,
-    departement character varying(3),
     code_postal character varying(5),
     code_insee character varying(5),
     nom_commune character varying(255),
@@ -445,11 +443,21 @@ CREATE TABLE main.adresse (
     repetition character varying(10),
     numero_voie smallint,
     created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    departement character varying(3) GENERATED ALWAYS AS (
+CASE
+    WHEN (((code_insee)::text ~ '^97'::text) OR ((code_insee)::text ~ '^98'::text)) THEN "left"((code_insee)::text, 3)
+    ELSE "left"((code_insee)::text, 2)
+END) STORED
 );
 
 
 ALTER TABLE main.adresse OWNER TO sonum;
+
+-- Name: COLUMN adresse.departement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.adresse.departement IS 'Code département, généré à partir du code_insee';
+
 
 -- Name: structure; Type: TABLE; Schema: main; Owner: sonum
 
@@ -668,7 +676,6 @@ CREATE TABLE main.poste (
     poste_conum_id integer NOT NULL,
     structure_id integer,
     personne_id integer,
-    etat_instruction character varying(30),
     typologie character varying(6),
     date_attribution date NOT NULL,
     date_rendu_poste date,
@@ -678,6 +685,8 @@ CREATE TABLE main.poste (
     etat character varying(6),
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone,
+    etat_instruction_v1 character varying,
+    etat_instruction_v2 character varying,
     CONSTRAINT poste_check CHECK ((NOT (((etat)::text = 'rendu'::text) AND (date_rendu_poste IS NULL)))),
     CONSTRAINT poste_etat_check CHECK (((etat)::text = ANY ((ARRAY['vacant'::character varying, 'occupe'::character varying, 'rendu'::character varying])::text[]))),
     CONSTRAINT poste_typologie_check CHECK (((typologie)::text = ANY ((ARRAY['conum'::character varying, 'coordo'::character varying, 'dns'::character varying])::text[])))
@@ -685,6 +694,82 @@ CREATE TABLE main.poste (
 
 
 ALTER TABLE main.poste OWNER TO sonum;
+
+-- Name: subvention; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.subvention (
+    id integer NOT NULL,
+    poste_id integer NOT NULL,
+    source_financement character varying(4),
+    date_debut_convention date,
+    date_debut_financement date,
+    date_fin_convention date,
+    date_fin_financement date,
+    montant_subvention bigint,
+    montant_bonification bigint,
+    versement_1 bigint,
+    versement_2 bigint,
+    versement_3 bigint,
+    date_versement_1 date,
+    date_versement_2 date,
+    date_versement_3 date,
+    is_territoire_prioritaire boolean,
+    mois_utilises_periode_financement smallint,
+    mois_utilises_poste smallint,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    avoir bigint,
+    cp_a_date bigint,
+    CONSTRAINT subvention_source_check CHECK (((source_financement)::text = ANY ((ARRAY['DGCL'::character varying, 'DGE'::character varying, 'DITP'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.subvention OWNER TO sonum;
+
+-- Name: COLUMN subvention.source_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.source_financement IS 'Origine des fonds reversés à la structure : DGCL (financement initial), DITP ou DGE (reconventionnement ou financement direct en phase 2)';
+
+
+-- Name: COLUMN subvention.date_debut_convention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_debut_convention IS 'Date de signature de la convention entre la structure employeuse et l’État. Marque le début de la relation contractuelle.';
+
+
+-- Name: COLUMN subvention.date_debut_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_debut_financement IS 'Date du premier versement de subvention effectué à la structure (début effectif du financement).';
+
+
+-- Name: COLUMN subvention.date_fin_convention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_fin_convention IS 'Date de fin prévisionnelle de la convention (généralement 2 à 3 ans après la signature, ajustée si des périodes de vacance existent).';
+
+
+-- Name: COLUMN subvention.date_fin_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.date_fin_financement IS 'Date de fin effective de la période de financement. En général, un an après le dernier versement sur le poste.';
+
+
+-- Name: COLUMN subvention.montant_subvention; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.montant_subvention IS 'Montant total de la subvention attribuée à la structure pour le poste concerné.';
+
+
+-- Name: COLUMN subvention.montant_bonification; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.montant_bonification IS 'Montant supplémentaire éventuellement accordé en complément de la subvention de base, attribuer en fonction de la priorité du territoire.';
+
+
+-- Name: COLUMN subvention.is_territoire_prioritaire; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.is_territoire_prioritaire IS 'Indique si le poste subventionné se situe dans un territoire prioritaire au sens de la politique publique, Exemple : QPV (Quartiers Prioritaires de la Ville) ou FRR (France Ruralités Revitalisation) ';
+
+
+-- Name: COLUMN subvention.mois_utilises_periode_financement; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.subvention.mois_utilises_periode_financement IS 'Nombre de mois réellement consommés sur la période de financement allouée.';
+
 
 -- Name: activites_coop_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
 
@@ -820,80 +905,6 @@ ALTER TABLE main.structure ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
     NO MAXVALUE
     CACHE 1
 );
-
-
--- Name: subvention; Type: TABLE; Schema: main; Owner: sonum
-
-CREATE TABLE main.subvention (
-    id integer NOT NULL,
-    poste_id integer NOT NULL,
-    source_financement character varying(4),
-    date_debut_convention date,
-    date_debut_financement date,
-    date_fin_convention date,
-    date_fin_financement date,
-    montant_subvention bigint,
-    montant_bonification bigint,
-    versement_1 bigint,
-    versement_2 bigint,
-    versement_3 bigint,
-    date_versement_1 date,
-    date_versement_2 date,
-    date_versement_3 date,
-    is_territoire_prioritaire boolean,
-    mois_utilises_periode_financement smallint,
-    mois_utilises_poste smallint,
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone,
-    CONSTRAINT subvention_source_check CHECK (((source_financement)::text = ANY ((ARRAY['DGCL'::character varying, 'DGE'::character varying, 'DITP'::character varying])::text[])))
-);
-
-
-ALTER TABLE main.subvention OWNER TO sonum;
-
--- Name: COLUMN subvention.source_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.source_financement IS 'Origine des fonds reversés à la structure : DGCL (financement initial), DITP ou DGE (reconventionnement ou financement direct en phase 2)';
-
-
--- Name: COLUMN subvention.date_debut_convention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_debut_convention IS 'Date de signature de la convention entre la structure employeuse et l’État. Marque le début de la relation contractuelle.';
-
-
--- Name: COLUMN subvention.date_debut_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_debut_financement IS 'Date du premier versement de subvention effectué à la structure (début effectif du financement).';
-
-
--- Name: COLUMN subvention.date_fin_convention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_fin_convention IS 'Date de fin prévisionnelle de la convention (généralement 2 à 3 ans après la signature, ajustée si des périodes de vacance existent).';
-
-
--- Name: COLUMN subvention.date_fin_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.date_fin_financement IS 'Date de fin effective de la période de financement. En général, un an après le dernier versement sur le poste.';
-
-
--- Name: COLUMN subvention.montant_subvention; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.montant_subvention IS 'Montant total de la subvention attribuée à la structure pour le poste concerné.';
-
-
--- Name: COLUMN subvention.montant_bonification; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.montant_bonification IS 'Montant supplémentaire éventuellement accordé en complément de la subvention de base, attribuer en fonction de la priorité du territoire.';
-
-
--- Name: COLUMN subvention.is_territoire_prioritaire; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.is_territoire_prioritaire IS 'Indique si le poste subventionné se situe dans un territoire prioritaire au sens de la politique publique, Exemple : QPV (Quartiers Prioritaires de la Ville) ou FRR (France Ruralités Revitalisation) ';
-
-
--- Name: COLUMN subvention.mois_utilises_periode_financement; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.subvention.mois_utilises_periode_financement IS 'Nombre de mois réellement consommés sur la période de financement allouée.';
 
 
 -- Name: subvention_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
@@ -1167,6 +1178,13 @@ GRANT SELECT ON TABLE main.poste TO min_scalingo;
 GRANT SELECT ON TABLE main.poste TO min_dev;
 
 
+-- Name: TABLE subvention; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.subvention TO app_python;
+GRANT SELECT ON TABLE main.subvention TO min_scalingo;
+GRANT SELECT ON TABLE main.subvention TO min_dev;
+
+
 -- Name: SEQUENCE activites_coop_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.activites_coop_id_seq TO app_python;
@@ -1224,14 +1242,16 @@ GRANT USAGE ON SEQUENCE main.poste_id_seq TO app_python;
 GRANT USAGE ON SEQUENCE main.structure_id_seq TO app_python;
 
 
--- Name: TABLE subvention; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.subvention TO app_python;
-
-
 -- Name: SEQUENCE subvention_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
+
+
+-- Name: TABLE naf; Type: ACL; Schema: reference; Owner: sonum
+
+GRANT SELECT ON TABLE reference.naf TO min_scalingo;
+GRANT SELECT ON TABLE reference.naf TO min_dev;
+
 
 
 -- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
@@ -1340,6 +1360,12 @@ ALTER TABLE ONLY admin.region
 
 ALTER TABLE ONLY admin.region
     ADD CONSTRAINT region_ukey UNIQUE (code);
+
+
+-- Name: zonage zonage_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.zonage
+    ADD CONSTRAINT zonage_code_ukey UNIQUE (code, code_insee);
 
 
 -- Name: zonage zonage_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
@@ -1565,7 +1591,6 @@ CREATE UNIQUE INDEX adresse_ukey ON main.adresse USING btree (code_postal, nom_c
 CREATE INDEX formation_personne_id_idx ON main.formation USING btree (personne_id);
 
 
-
 -- Name: commune commune_departement_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
 
 ALTER TABLE ONLY admin.commune
@@ -1596,10 +1621,10 @@ ALTER TABLE ONLY admin.zonage
     ADD CONSTRAINT zonage_code_insee_fkey FOREIGN KEY (code_insee) REFERENCES admin.commune(code_insee);
 
 
--- Name: activites_coop fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: activites_coop activites_coop_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.activites_coop
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT activites_coop_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
 -- Name: activites_coop activites_coop_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
@@ -1614,10 +1639,10 @@ ALTER TABLE ONLY main.contrat
     ADD CONSTRAINT contrat_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
--- Name: coordination_mediation fk_coodinateur_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: coordination_mediation coordination_mediation_coodinateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_coodinateur_id FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT coordination_mediation_coodinateur_id_fkey FOREIGN KEY (coordinateur_id) REFERENCES main.personne(id);
 
 
 -- Name: coordination_mediation coordination_mediation_coordinateur_coop_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
@@ -1632,10 +1657,10 @@ ALTER TABLE ONLY main.coordination_mediation
     ADD CONSTRAINT coordination_mediation_mediateur_coop_id_fkey FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
 
 
--- Name: coordination_mediation fk_mediateur_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: coordination_mediation coordination_mediation_mediateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.coordination_mediation
-    ADD CONSTRAINT fk_mediateur_id FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT coordination_mediation_mediateur_id_fkey FOREIGN KEY (mediateur_id) REFERENCES main.personne(id);
 
 
 -- Name: formation formation_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
@@ -1650,10 +1675,10 @@ ALTER TABLE ONLY main.personne_lieux_activites
     ADD CONSTRAINT personne_lieux_activites_mediateur_coop_id_fkey FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
 
 
--- Name: personne_lieux_activites fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: personne_lieux_activites personne_lieux_activites_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne_lieux_activites
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT personne_lieux_activites_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
 -- Name: personne personne_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
@@ -1668,10 +1693,10 @@ ALTER TABLE ONLY main.personne_structures_emplois
     ADD CONSTRAINT personne_structures_emplois_mediateur_coop_id_key FOREIGN KEY (mediateur_coop_id) REFERENCES main.personne(coop_id);
 
 
--- Name: personne_structures_emplois fk_personne_id; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+-- Name: personne_structures_emplois personne_structures_emplois_personne_id_key; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.personne_structures_emplois
-    ADD CONSTRAINT fk_personne_id FOREIGN KEY (personne_id) REFERENCES main.personne(id);
+    ADD CONSTRAINT personne_structures_emplois_personne_id_key FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
 -- Name: poste poste_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
@@ -1730,4 +1755,5 @@ REFRESH MATERIALIZED VIEW admin.coll_terr;
 
 
 -- PostgreSQL database dump complete
+
 
