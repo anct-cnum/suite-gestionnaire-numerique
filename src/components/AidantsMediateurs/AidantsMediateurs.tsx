@@ -5,7 +5,6 @@ import { ReactElement, useState } from 'react'
 
 import AccompagnementsEtMediateurs from './AccompagnementsEtMediateurs'
 import NiveauDeFormation from './NiveauDeFormation'
-import AlerteConstruction from '../shared/AlerteConstruction/AlerteConstruction'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
@@ -47,8 +46,6 @@ export default function AidantsMediateurs({
           </Link>
         </div>
       </div>
-
-      <AlerteConstruction />
 
       <div className="fr-mb-4w">
         <div className="fr-grid-row background-info fr-p-3w fr-grid-row--middle">
