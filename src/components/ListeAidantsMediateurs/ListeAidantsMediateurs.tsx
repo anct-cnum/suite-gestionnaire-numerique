@@ -57,12 +57,10 @@ export default function ListeAidantsMediateurs({
       <>
         <ListeAidantsMediateurInfos
           viewModel={{
-            total: viewModel.total,
             totalAccompagnements: viewModel.totalAccompagnements,
-            totalAidantsConnect: viewModel.totalAidantsConnect,
+            totalActeursNumerique: viewModel.totalActeursNumerique,
             totalBeneficiaires: viewModel.totalBeneficiaires,
-            totalConseillers: viewModel.totalConseillers,
-            totalMediateurs: viewModel.totalMediateurs,
+            totalConseillersNumerique: viewModel.totalConseillersNumerique,
           }}
         />
 
@@ -78,7 +76,10 @@ export default function ListeAidantsMediateurs({
           titre="Aidants et médiateurs numériques"
         >
           {viewModel.aidants.map((aidant) => (
-            <tr key={aidant.id}>
+            <tr
+              key={aidant.id}
+              style={{ height: '4rem' }}
+            >
               <td>
                 <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
                   {aidant.prenom}
@@ -87,9 +88,9 @@ export default function ListeAidantsMediateurs({
                   {getAidantIcon(aidant.labelisation) !== null && (
                     <img
                       alt=""
-                      height={16}
+                      height={24}
                       src={getAidantIcon(aidant.labelisation) ?? ''}
-                      width={16}
+                      width={24}
                     />
                   )}
                 </div>
@@ -100,6 +101,7 @@ export default function ListeAidantsMediateurs({
                     <Badge
                       color={roleItem === 'Coordinateur' ? 'info' : 'grey'}
                       key={`${aidant.id}-role-${roleItem}`}
+                      small={true}
                     >
                       {roleItem}
                     </Badge>
@@ -109,7 +111,7 @@ export default function ListeAidantsMediateurs({
               <td>
                 {aidant.labelisation ? (
                   <div
-                    className="fr-badge fr-badge--no-icon"
+                    className="fr-badge fr-badge--no-icon fr-badge--sm"
                     style={{
                       backgroundColor: 'transparent',
                       border: '1px solid var(--border-default-grey)',
@@ -127,7 +129,7 @@ export default function ListeAidantsMediateurs({
                 <div className="fr-grid-row fr-grid-row--gutters">
                   {aidant.formation.map((form) => (
                     <div
-                      className="fr-badge fr-badge--no-icon fr-mr-1v"
+                      className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
                       key={`${aidant.id}-formation-${form}`}
                       style={{
                         backgroundColor: 'transparent',

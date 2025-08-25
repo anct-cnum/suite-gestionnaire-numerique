@@ -1,4 +1,5 @@
 import { reportLoaderError } from './shared/sentryErrorReporter'
+import prisma from '../../prisma/prismaClient'
 import { AidantMediateurReadModel, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
@@ -9,14 +10,13 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const offset = page * limite
 
       // Récupération des aidants avec pagination
-      const [aidantsData, totalCount, statsData] = await Promise.all([
+      const [aidantsData, statsData] = await Promise.all([
         this.getAidantsPagines(territoire, limite, offset),
-        this.getTotalAidants(territoire),
         this.getStatistiques(territoire),
       ])
 
+      const totalCount = statsData.totalActeursNumerique
       const totalPages = Math.ceil(totalCount / limite)
-
       return {
         aidants: aidantsData,
         displayPagination: totalCount > limite,
@@ -24,10 +24,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         page,
         total: totalCount,
         totalAccompagnements: statsData.totalAccompagnements,
-        totalAidantsConnect: statsData.totalAidantsConnect,
-        totalBeneficiaires: statsData.totalBeneficiaires,
-        totalConseillers: statsData.totalConseillers,
-        totalMediateurs: statsData.totalMediateurs,
+        totalActeursNumerique: statsData.totalActeursNumerique,
+        totalConseillersNumerique: statsData.totalConseillersNumerique,
         totalPages,
       }
     } catch (error) {
@@ -44,243 +42,176 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getAidantsPagines(_territoire: string, limite: number, offset: number)
+  private async getAidantsPagines(territoire: string, limite: number, offset: number)
     : Promise<Array<AidantMediateurReadModel>> {
-    // Requête pour récupérer les aidants paginés
-    // Pour l'instant, on utilise des données mockées mais en production,
-    // cela devra être remplacé par une vraie requête SQL
-    const mockAidants: Array<AidantMediateurReadModel> = [
-      {
-        dateModification: '2024-01-15',
-        email: 'marie.dupont@example.com',
-        formation: ['PIX', 'CCP1'],
-        id: '1',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 25,
-        nom: 'Dupont',
-        nomComplet: 'Marie Dupont',
-        prenom: 'Marie',
-        role: ['Médiateur', 'Coordinateur'],
-        statut: 'Actif',
-        structureLocalisation: '75001 Paris',
-        structureNom: 'Maison de Services au Public',
-        telephone: '01 23 45 67 89',
-        typeAidantLibelle: 'Médiateur numérique',
-      },
-      {
-        dateModification: '2024-01-12',
-        email: 'jean.martin@example.com',
-        formation: ['CCP1'],
-        id: '2',
-        labelisation: 'Aidants Connect',
-        nbAccompagnements: 18,
-        nom: 'Martin',
-        nomComplet: 'Jean Martin',
-        prenom: 'Jean',
-        role: ['Aidant'],
-        statut: 'Actif',
-        structureLocalisation: '69000 Lyon',
-        structureNom: 'Centre Social Municipal',
-        telephone: '04 56 78 90 12',
-        typeAidantLibelle: 'Aidant numérique',
-      },
-      {
-        dateModification: '2024-01-10',
-        email: 'paul.bernard@example.com',
-        formation: ['REMN', 'PIX'],
-        id: '3',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 42,
-        nom: 'Bernard',
-        nomComplet: 'Paul Bernard',
-        prenom: 'Paul',
-        role: ['Coordinateur', 'Médiateur'],
-        statut: 'Actif',
-        structureLocalisation: '13000 Marseille',
-        structureNom: 'Centre Numérique',
-        telephone: '04 91 23 45 67',
-        typeAidantLibelle: 'Coordinateur',
-      },
-      {
-        dateModification: '2024-01-08',
-        email: 'claire.moreau@example.com',
-        formation: ['PIX'],
-        id: '4',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 31,
-        nom: 'Moreau',
-        nomComplet: 'Claire Moreau',
-        prenom: 'Claire',
-        role: ['Médiateur'],
-        statut: 'Actif',
-        structureLocalisation: '31000 Toulouse',
-        structureNom: 'Espace Public Numérique',
-        telephone: '05 34 56 78 90',
-        typeAidantLibelle: 'Médiateur numérique',
-      },
-      {
-        dateModification: '2024-01-05',
-        email: 'sophie.dubois@example.com',
-        formation: ['CCP2&CCP3'],
-        id: '5',
-        labelisation: 'Aidants Connect',
-        nbAccompagnements: 22,
-        nom: 'Dubois',
-        nomComplet: 'Sophie Dubois',
-        prenom: 'Sophie',
-        role: ['Aidant'],
-        statut: 'Actif',
-        structureLocalisation: '44000 Nantes',
-        structureNom: 'Mairie de Nantes',
-        telephone: '02 40 12 34 56',
-        typeAidantLibelle: 'Aidant numérique',
-      },
-      {
-        dateModification: '2024-01-03',
-        email: 'antoine.leroy@example.com',
-        formation: ['REMN', 'CCP2&CCP3'],
-        id: '6',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 38,
-        nom: 'Leroy',
-        nomComplet: 'Antoine Leroy',
-        prenom: 'Antoine',
-        role: ['Coordinateur'],
-        statut: 'Actif',
-        structureLocalisation: '59000 Lille',
-        structureNom: 'Centre Social Nord',
-        telephone: '03 20 45 67 89',
-        typeAidantLibelle: 'Coordinateur',
-      },
-      {
-        dateModification: '2023-12-28',
-        email: 'julie.petit@example.com',
-        formation: ['PIX'],
-        id: '7',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 29,
-        nom: 'Petit',
-        nomComplet: 'Julie Petit',
-        prenom: 'Julie',
-        role: ['Médiateur'],
-        statut: 'Actif',
-        structureLocalisation: '67000 Strasbourg',
-        structureNom: 'Bibliothèque Municipale',
-        telephone: '03 88 15 25 35',
-        typeAidantLibelle: 'Médiateur numérique',
-      },
-      {
-        dateModification: '2023-12-25',
-        email: 'thomas.roux@example.com',
-        formation: ['CCP1'],
-        id: '8',
-        labelisation: '',
-        nbAccompagnements: 16,
-        nom: 'Roux',
-        nomComplet: 'Thomas Roux',
-        prenom: 'Thomas',
-        role: ['Aidant'],
-        statut: 'Actif',
-        structureLocalisation: '06000 Nice',
-        structureNom: 'Association Numérique Pour Tous',
-        telephone: '04 93 78 90 12',
-        typeAidantLibelle: 'Aidant numérique',
-      },
-      {
-        dateModification: '2023-12-20',
-        email: 'marie.girard@example.com',
-        formation: ['REMN'],
-        id: '9',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 45,
-        nom: 'Girard',
-        nomComplet: 'Marie Girard',
-        prenom: 'Marie',
-        role: ['Coordinateur'],
-        statut: 'Actif',
-        structureLocalisation: '33000 Bordeaux',
-        structureNom: 'Maison de Quartier Sud',
-        telephone: '05 56 12 34 56',
-        typeAidantLibelle: 'Coordinateur',
-      },
-      {
-        dateModification: '2023-12-18',
-        email: 'laurent.simon@example.com',
-        formation: ['PIX'],
-        id: '10',
-        labelisation: 'Conseiller Numérique',
-        nbAccompagnements: 33,
-        nom: 'Simon',
-        nomComplet: 'Laurent Simon',
-        prenom: 'Laurent',
-        role: ['Médiateur'],
-        statut: 'Actif',
-        structureLocalisation: '35000 Rennes',
-        structureNom: 'Centre Culturel',
-        telephone: '02 99 87 65 43',
-        typeAidantLibelle: 'Médiateur numérique',
-      },
-      // Aidants supplémentaires pour tester la pagination
-      ...Array.from({ length: 25 }, (_, index) => ({
-        dateModification: `2023-12-${(15 - index).toString().padStart(2, '0')}`,
-        email: `aidant${11 + index}@example.com`,
-        formation: ['PIX'],
-        id: String(11 + index),
-        labelisation: index % 3 === 0 ?
-          'Conseiller Numérique'
-          : index % 2 === 0 ?
-            'Aidants Connect' :
-            '',
-        nbAccompagnements: Math.floor(Math.random() * 50) + 10,
-        nom: `Nom${11 + index}`,
-        nomComplet: `Prénom${11 + index} Nom${11 + index}`,
-        prenom: `Prénom${11 + index}`,
-        role: [
-          index % 3 === 0 ?
-            'Coordinateur' :
-            index % 2 === 0 ?
-              'Médiateur' :
-              'Aidant',
-        ],
-        statut: 'Actif',
-        structureLocalisation: `${(10000 + index * 1000).toString().slice(0, 5)} Ville${11 + index}`,
-        structureNom: `Structure ${11 + index}`,
-        telephone: `0${Math.floor(Math.random() * 5) + 1} ${Math.floor(Math.random() * 90) + 10}
-        ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 90) + 10}
-        ${Math.floor(Math.random() * 90) + 10}`,
-        typeAidantLibelle: index % 3 === 0 ?
-          'Coordinateur' :
-          index % 2 === 0 ?
-            'Médiateur numérique' :
-            'Aidant numérique',
-      })),
-    ]
+    try {
+      const personnes =
+        territoire === 'France'
+          ? await prisma.$queryRaw<Array<PersonneQueryResult>>`
+          SELECT
+            main.personne.id,
+            main.personne.nom,
+            main.personne.prenom,
+            is_mediateur as mediateur,
+            is_coordinateur as coordinateur,
+            is_active_ac as  aidants,
+            is_active_ac as  aidants_connect,
+            (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL) as conseiller_numerique,
+            array_agg(DISTINCT main.formation.label) AS formations,
+            BOOL_OR(main.formation.pix) AS pix,
+            BOOL_OR(main.formation.remn) AS remn,
+            COALESCE(SUM(main.activites_coop.accompagnements), 0) AS accompagnements,
+            COALESCE(main.personne.nb_accompagnements_ac, 0) AS accompagnements_ac
+          FROM main.personne
+                 LEFT JOIN main.structure
+                           ON main.personne.structure_id = main.structure.id
+                 LEFT JOIN main.adresse
+                           ON main.structure.adresse_id = main.adresse.id
+                 LEFT JOIN main.formation ON main.personne.id = main.formation.personne_id
+                 left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
+                WHERE main.adresse.departement IS DISTINCT FROM 'zzz'
+          group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
+          LIMIT ${limite} OFFSET ${offset};
+        `
+          : await prisma.$queryRaw<Array<PersonneQueryResult>>`
+            SELECT
+              main.personne.id,
+              main.personne.nom,
+              main.personne.prenom,
+              is_mediateur as mediateur,
+              is_coordinateur as coordinateur,
+              is_active_ac as  aidants,
+              is_active_ac as  aidants_connect,
+              (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL) as conseiller_numerique,
+              array_agg(DISTINCT main.formation.label) AS formations,
+              BOOL_OR(main.formation.pix) AS pix,
+              BOOL_OR(main.formation.remn) AS remn,
+              COALESCE(SUM(main.activites_coop.accompagnements), 0) AS accompagnements,
+              COALESCE(main.personne.nb_accompagnements_ac, 0) AS accompagnements_ac
+            FROM main.personne
+                   LEFT JOIN main.structure
+                             ON main.personne.structure_id = main.structure.id
+                   LEFT JOIN main.adresse
+                             ON main.structure.adresse_id = main.adresse.id
+                   LEFT JOIN main.formation  ON main.personne.id = main.formation.personne_id
+                   left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
+            where main.adresse.departement =  ${territoire}
+            group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
+            LIMIT ${limite} OFFSET ${offset};
+          `
+      return personnes.map(personne => {
+        const isCoordinateur = Boolean(personne.coordinateur)
+        const isMediateur = Boolean(personne.mediateur)
+        const hasAidantConnect = Boolean(personne.aidants_connect)
+        const hasConseillerNumerique = Boolean(personne.conseiller_numerique)
 
-    // Simulation de la pagination avec les données mockées
-    return mockAidants.slice(offset, offset + limite)
-  }
+        const roles: Array<string> = []
+        if (isCoordinateur) {roles.push('Coordinateur')}
+        if (isMediateur) {roles.push('Médiateur')}
+        if (hasAidantConnect) {roles.push('Aidant')}
 
-  private async getStatistiques(_territoire: string): Promise<{
-    totalAccompagnements: number
-    totalAidantsConnect: number
-    totalBeneficiaires: number
-    totalConseillers: number
-    totalMediateurs: number
-  }> {
-    // Pour l'instant, retourne des statistiques mockées
-    // En production, cela devra être calculé depuis la base de données
-    return {
-      totalAccompagnements: 1156,
-      totalAidantsConnect: 12,
-      totalBeneficiaires: 789,
-      totalConseillers: 18,
-      totalMediateurs: 12,
+        let labelisation = ''
+        if (hasConseillerNumerique) {
+          labelisation = 'Conseiller Numérique'
+        } else if (hasAidantConnect) {
+          labelisation = 'Aidants Connect'
+        }
+
+        return {
+          // eslint-disable-next-line
+          formation: personne.formations.filter(item => item !== null),
+          id: String(personne.id),
+          labelisation,
+          nbAccompagnements: Number(personne.accompagnements) + Number(personne.accompagnements_ac) ,
+          nom: personne.nom ?? '',
+          prenom: personne.prenom ?? '',
+          role: roles,
+        }
+      })
+    } catch (error) {
+      reportLoaderError(error, 'PrismaListeAidantsMediateursLoader.getAidantsPagines', {
+        limite,
+        offset,
+      })
+      return []
     }
   }
 
-  private async getTotalAidants(_territoire: string): Promise<number> {
-    // Pour l'instant, retourne un nombre fixe (10 initiaux + 25 supplémentaires)
-    // En production, cela devra être remplacé par une vraie requête de comptage
-    return 35
+  private async getStatistiques(territoire: string): Promise<{
+    totalAccompagnements: number
+    totalActeursNumerique: number
+    totalConseillersNumerique: number
+  }> {
+    // Nombre total d'accompagnements réalisés
+    const accompagnementsResult = territoire === 'France'
+      ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
+        SELECT SUM(accompagnements) AS total_accompagnements_realises
+        FROM main.activites_coop
+        WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days';
+          `
+      : await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
+            SELECT SUM(main.activites_coop.accompagnements) AS total_accompagnements_realises
+            FROM main.activites_coop
+            JOIN main.structure ON main.activites_coop.structure_id = main.structure.id
+            JOIN main.adresse ON main.structure.adresse_id = main.adresse.id
+            WHERE main.adresse.departement = ${territoire}
+              and main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
+          `
+    const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
+
+    // Nombre de conseillers numériques
+    const conseillersResult = territoire === 'France'
+      ? await prisma.$queryRaw<Array<{  total_conseillers_numeriques: bigint; total_personnes: bigint }>>`
+        SELECT
+          COUNT(*) AS total_personnes,
+          COUNT(*) FILTER (WHERE conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)
+          AS total_conseillers_numeriques
+        FROM main.personne;
+          `
+      : await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint; total_personnes: bigint }>>`
+        WITH p2s AS (
+          SELECT main.personne.id AS personne_id, pse.structure_id
+          FROM main.personne
+                 LEFT JOIN main.personne_structures_emplois pse
+                           ON pse.personne_id = main.personne.id
+          UNION
+          SELECT main.personne.id AS personne_id, main.personne.structure_id
+          FROM main.personne
+        )
+        SELECT
+          COUNT(DISTINCT main.personne.id) AS total_personnes,
+          COUNT(DISTINCT main.personne.id) FILTER
+          (WHERE (main.personne.conseiller_numerique_id IS NOT NULL OR main.personne.cn_pg_id IS NOT NULL))
+           AS total_conseillers_numeriques
+        FROM main.personne
+               LEFT JOIN p2s       ON p2s.personne_id = main.personne.id
+               LEFT JOIN main.structure ON main.structure.id = p2s.structure_id
+               LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+        WHERE main.adresse.departement =  ${territoire};
+          `
+    const totalConseillersNumeriques = Number(conseillersResult[0]?.total_conseillers_numeriques || 0)
+    const totalPersonnes = Number(conseillersResult[0]?.total_personnes || 0)
+
+    return {
+      totalAccompagnements: accompagnementsRealises,
+      totalActeursNumerique: totalPersonnes,
+      totalConseillersNumerique: totalConseillersNumeriques,
+    }
   }
+}
+
+interface PersonneQueryResult {
+  accompagnements: number
+  accompagnements_ac: number
+  aidants: boolean
+  aidants_connect: boolean
+  conseiller_numerique: boolean
+  coordinateur: boolean
+  formations: Array<string>
+  id: number
+  mediateur: boolean
+  nom: null | string
+  pix: boolean
+  prenom: null | string
+  remn: boolean
 }

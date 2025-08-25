@@ -1,6 +1,7 @@
 import { ReactElement, ReactNode } from 'react'
 
 import { parseTextWithBold } from '../../shared/textFormatting'
+import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
 export default function ListeAidantsMediateurInfos({ viewModel }: Props): ReactElement {
   function renderAidantsMediateursInfoCard({
@@ -46,20 +47,19 @@ export default function ListeAidantsMediateurInfos({ viewModel }: Props): ReactE
         <div className="fr-grid-row fr-grid-row--gutters">
           {renderAidantsMediateursInfoCard({
             description: 'Aidants et médiateurs numériques',
-            indicateur: String(viewModel.total),
-            legends: `dont **${viewModel.totalConseillers} conseillers numériques**`,
+            indicateur: formaterEnNombreFrancais(viewModel.totalActeursNumerique),
+            legends: `dont **${formaterEnNombreFrancais(viewModel.totalConseillersNumerique)} conseillers numériques**`,
           })}
           {renderAidantsMediateursInfoCard({
             description: 'Accompagnements',
-            indicateur: String(viewModel.totalAccompagnements ?? 0),
+            indicateur: formaterEnNombreFrancais(viewModel.totalAccompagnements),
             legends: 'sur les 30 derniers jours',
           })}
-          {renderAidantsMediateursInfoCard({
+          {/*renderAidantsMediateursInfoCard({
             description: 'Bénéficiaires accompagnés',
-            indicateur: String(viewModel.totalBeneficiaires ?? 0),
+            indicateur: formaterEnNombreFrancais(0),
             legends: 'sur les 30 derniers jours',
-          })}
-
+          })*/}
         </div>
       </div>
     </section>
@@ -74,11 +74,9 @@ type AidantsMediateursInfoCard = Readonly<{
 
 type Props = Readonly<{
   viewModel: {
-    total: number
-    totalAccompagnements?: number
-    totalAidantsConnect: number
-    totalBeneficiaires?: number
-    totalConseillers: number
-    totalMediateurs: number
+    totalAccompagnements: number
+    totalActeursNumerique: number
+    totalBeneficiaires: number
+    totalConseillersNumerique: number
   }
 }>
