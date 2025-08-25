@@ -44,7 +44,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getAidantsPagines(territoire: string, limite: number, offset: number)
+  private async getAidantsPagines(_territoire: string, limite: number, offset: number)
     : Promise<Array<AidantMediateurReadModel>> {
     // Requête pour récupérer les aidants paginés
     // Pour l'instant, on utilise des données mockées mais en production,
@@ -260,7 +260,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     return mockAidants.slice(offset, offset + limite)
   }
 
-  private async getStatistiques(territoire: string): Promise<{
+  private async getStatistiques(_territoire: string): Promise<{
     totalAccompagnements: number
     totalAidantsConnect: number
     totalBeneficiaires: number
@@ -278,7 +278,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getTotalAidants(territoire: string): Promise<number> {
+  private async getTotalAidants(_territoire: string): Promise<number> {
     // Pour l'instant, retourne un nombre fixe (10 initiaux + 25 supplémentaires)
     // En production, cela devra être remplacé par une vraie requête de comptage
     return 35
