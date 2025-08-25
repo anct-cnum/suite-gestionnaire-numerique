@@ -74,41 +74,53 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
       // Répartition par certification
       const certificationsResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
-            SELECT
-              CASE
-                WHEN f.label = 'CCP1' THEN 'CCP1'
-                WHEN f.label = 'CCP2' THEN 'CCP2'
-                WHEN f.label = 'CCP2 & CCP3' THEN 'CCP2 et CCP3'
-                WHEN f.pix THEN 'Pix'
-                WHEN f.remn THEN 'REMN'
-                ELSE 'Autres'
-              END AS type_certification,
-              COUNT(*) AS total
-            FROM main.personne p
-            LEFT JOIN main.formation f ON p.id = f.personne_id
-            WHERE p.aidant_connect_id IS NOT NULL OR p.is_mediateur
+            WITH certifications AS (
+                SELECT p.id,
+                       unnest(ARRAY[
+                           CASE WHEN f.label = 'CCP1' THEN 'CCP1' END,
+                           CASE WHEN f.label = 'CCP2' THEN 'CCP2' END,
+                           CASE WHEN f.label = 'CCP2 & CCP3' THEN 'CCP2 & CCP3' END,
+                           CASE WHEN f.pix IS TRUE THEN 'Pix' END,
+                           CASE WHEN f.remn IS TRUE THEN 'REMN' END,
+                           CASE WHEN f.label NOT IN ('CCP1','CCP2','CCP2 & CCP3')
+                                 AND f.pix IS NOT TRUE
+                                 AND f.remn IS NOT TRUE 
+                                 AND f.label IS NOT NULL THEN 'Autres' END
+                       ]) AS type_certification
+                FROM main.personne p
+                JOIN main.formation f ON p.id = f.personne_id
+            )
+            SELECT type_certification, COUNT(*) AS total
+            FROM certifications
+            WHERE type_certification IS NOT NULL
             GROUP BY type_certification
             ORDER BY total DESC
           `
         : await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
-            SELECT
-              CASE
-                WHEN f.label = 'CCP1' THEN 'CCP1'
-                WHEN f.label = 'CCP2' THEN 'CCP2'
-                WHEN f.label = 'CCP2 & CCP3' THEN 'CCP2 et CCP3'
-                WHEN f.pix THEN 'Pix'
-                WHEN f.remn THEN 'REMN'
-                ELSE 'Autres'
-              END AS type_certification,
-              COUNT(*) AS total
-            FROM main.personne p
-            LEFT JOIN main.formation f ON p.id = f.personne_id
-            LEFT JOIN main.structure s ON p.structure_id = s.id
-            LEFT JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
-            LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
-            LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
-            WHERE (p.aidant_connect_id IS NOT NULL OR p.is_mediateur)
-              AND a.departement = ${territoire}
+            WITH certifications AS (
+                SELECT p.id,
+                       unnest(ARRAY[
+                           CASE WHEN f.label = 'CCP1' THEN 'CCP1' END,
+                           CASE WHEN f.label = 'CCP2' THEN 'CCP2' END,
+                           CASE WHEN f.label = 'CCP2 & CCP3' THEN 'CCP2 & CCP3' END,
+                           CASE WHEN f.pix IS TRUE THEN 'Pix' END,
+                           CASE WHEN f.remn IS TRUE THEN 'REMN' END,
+                           CASE WHEN f.label NOT IN ('CCP1','CCP2','CCP2 & CCP3')
+                                 AND f.pix IS NOT TRUE
+                                 AND f.remn IS NOT TRUE 
+                                 AND f.label IS NOT NULL THEN 'Autres' END
+                       ]) AS type_certification
+                FROM main.personne p
+                LEFT JOIN main.formation f ON p.id = f.personne_id
+                LEFT JOIN main.structure s ON p.structure_id = s.id
+                LEFT JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+                LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
+                LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
+                WHERE a.departement = ${territoire}
+            )
+            SELECT type_certification, COUNT(*) AS total
+            FROM certifications
+            WHERE type_certification IS NOT NULL
             GROUP BY type_certification
             ORDER BY total DESC
           `
