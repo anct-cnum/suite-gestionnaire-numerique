@@ -30,10 +30,6 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
             WITH base AS (
               SELECT ac.id, ac.accompagnements, unnest(ac.thematiques) AS th
               FROM main.activites_coop ac
-              LEFT JOIN main.structure s ON ac.structure_id = s.id
-              LEFT JOIN main.adresse a ON s.adresse_id = a.id
-              WHERE ac.accompagnements > 0 
-                AND (a.departement IS NULL OR a.departement != 'zzz')
             ),
             norm AS (
               SELECT
