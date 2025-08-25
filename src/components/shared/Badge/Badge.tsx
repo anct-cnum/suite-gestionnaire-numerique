@@ -1,9 +1,9 @@
 import { PropsWithChildren, ReactElement } from 'react'
 
-export default function Badge({ children, color, icon = false }: Props): ReactElement {
+export default function Badge({ children, color, icon = false, small = false }: Props): ReactElement {
   return (
     <p
-      className={`fr-badge fr-badge--${color} ${icon ? '' : 'fr-badge--no-icon'} fr-m-1v`}
+      className={`fr-badge fr-badge--${color} ${icon ? '' : 'fr-badge--no-icon'} ${small ? 'fr-badge--sm' :''} fr-m-1v`}
     >
       {children}
     </p>
@@ -13,4 +13,5 @@ export default function Badge({ children, color, icon = false }: Props): ReactEl
 type Props = PropsWithChildren<Readonly<{
   color: string
   icon?: boolean
+  small?: boolean
 }>>

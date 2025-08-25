@@ -1,8 +1,11 @@
 import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
+import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 
 export const metadata: Metadata = {
@@ -17,12 +20,29 @@ export default async function ListeAidantsMediateursController({
   const resolvedSearchParams = await searchParams
   const page = Number(resolvedSearchParams.page ?? '1')
   const limite = 10
-  const territoire = 'France'
+
+  const session = await getSession()
+  if (!session) {
+    redirect('/connexion')
+  }
+  const utilisateurLoader = new PrismaUtilisateurLoader()
+  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  let territoire
+  if (utilisateur.role.type === 'administrateur_dispositif') {
+    territoire = 'France'
+  }
+  else{
+    const departementCode = utilisateur.departementCode
+    if(utilisateur.role.type !== 'gestionnaire_departement'
+      ||  departementCode === null || departementCode === '' ) {
+      redirect('/')
+    }
+    territoire = departementCode
+  }
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
-
   return (
     <ListeAidantsMediateurs
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
