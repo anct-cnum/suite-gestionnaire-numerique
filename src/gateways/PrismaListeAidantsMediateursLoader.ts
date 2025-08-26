@@ -63,13 +63,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             COALESCE(SUM(main.activites_coop.accompagnements), 0) AS accompagnements,
             COALESCE(main.personne.nb_accompagnements_ac, 0) AS accompagnements_ac
           FROM main.personne
-                 LEFT JOIN main.structure
-                           ON main.personne.structure_id = main.structure.id
-                 LEFT JOIN main.adresse
-                           ON main.structure.adresse_id = main.adresse.id
                  LEFT JOIN main.formation ON main.personne.id = main.formation.personne_id
                  left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-                WHERE main.adresse.departement IS DISTINCT FROM 'zzz'
+                 left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+          WHERE main.personne_structures_emplois.en_cours = true or main.personne.is_active_ac = true
           group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
           LIMIT ${limite} OFFSET ${offset};
         `
@@ -95,7 +92,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                              ON main.structure.adresse_id = main.adresse.id
                    LEFT JOIN main.formation  ON main.personne.id = main.formation.personne_id
                    left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-            where main.adresse.departement =  ${territoire}
+                   left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+            where main.adresse.departement =  ${territoire} and (main.personne_structures_emplois.en_cours = true or main.personne.is_active_ac = true)
             group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
             LIMIT ${limite} OFFSET ${offset};
           `
@@ -160,37 +158,33 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
 
     // Nombre de conseillers numériques
-    const conseillersResult = territoire === 'France'
-      ? await prisma.$queryRaw<Array<{  total_conseillers_numeriques: bigint; total_personnes: bigint }>>`
+    const conseillersResult =
+      territoire === 'France'
+        ? await prisma.$queryRaw<
+          Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(*) AS total_personnes,
-          COUNT(*) FILTER (WHERE conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)
-          AS total_conseillers_numeriques
-        FROM main.personne;
-          `
-      : await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint; total_personnes: bigint }>>`
-        WITH p2s AS (
-          SELECT main.personne.id AS personne_id, pse.structure_id
-          FROM main.personne
-                 LEFT JOIN main.personne_structures_emplois pse
-                           ON pse.personne_id = main.personne.id
-          UNION
-          SELECT main.personne.id AS personne_id, main.personne.structure_id
-          FROM main.personne
-        )
-        SELECT
-          COUNT(DISTINCT main.personne.id) AS total_personnes,
-          COUNT(DISTINCT main.personne.id) FILTER
-          (WHERE (main.personne.conseiller_numerique_id IS NOT NULL OR main.personne.cn_pg_id IS NOT NULL))
-           AS total_conseillers_numeriques
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
+          count(distinct main.personne.id) FILTER (where main.personne_structures_emplois.en_cours is null and (main.personne.is_active_ac = true)) as aidant_connect
         FROM main.personne
-               LEFT JOIN p2s       ON p2s.personne_id = main.personne.id
-               LEFT JOIN main.structure ON main.structure.id = p2s.structure_id
+               left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+          `
+        : await prisma.$queryRaw<
+          Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
+        SELECT
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
+          count(distinct main.personne.id) FILTER (where main.personne_structures_emplois.en_cours is null and (main.personne.is_active_ac = true)) as aidant_connect
+        FROM main.personne
+               left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+               LEFT JOIN main.structure ON main.structure.id = main.personne.structure_id
                LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
         WHERE main.adresse.departement =  ${territoire};
           `
-    const totalConseillersNumeriques = Number(conseillersResult[0]?.total_conseillers_numeriques || 0)
-    const totalPersonnes = Number(conseillersResult[0]?.total_personnes || 0)
+    const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
+    const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)
+      + Number(conseillersResult[0]?.aidant_connect || 0)
+      + Number(conseillersResult[0]?.mediateur || 0)
 
     return {
       totalAccompagnements: accompagnementsRealises,
