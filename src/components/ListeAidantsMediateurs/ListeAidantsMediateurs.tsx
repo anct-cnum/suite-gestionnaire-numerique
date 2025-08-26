@@ -24,7 +24,6 @@ export default function ListeAidantsMediateurs({
       </div>
     )
   }
-
   const viewModel = listeAidantsMediateursViewModel
 
   function getAidantIcon(aidant: string): null | string {
@@ -80,12 +79,13 @@ export default function ListeAidantsMediateurs({
             >
               <td>
                 <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
-                  {aidant.prenom}
-                  {' '}
                   {aidant.nom}
+                  {' '}
+                  {aidant.prenom}
                   {getAidantIcon(aidant.labelisation) !== null && (
                     <img
                       alt=""
+                      className="fr-ml-1w"
                       height={24}
                       src={getAidantIcon(aidant.labelisation) ?? ''}
                       width={24}
