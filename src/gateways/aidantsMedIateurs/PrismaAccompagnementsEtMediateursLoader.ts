@@ -27,57 +27,43 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       // Thématiques des accompagnements avec comptage des thématiques distinctes
       const thematiquesResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
-            WITH base AS (
-              SELECT ac.id, ac.accompagnements, unnest(ac.thematiques) AS th
-              FROM main.activites_coop ac
-            ),
-            norm AS (
-              SELECT
-                CASE
-                  WHEN th ILIKE '%internet%' THEN 'Internet'
-                  WHEN th ILIKE ANY (ARRAY['%courriel%','%email%','%mail%']) THEN 'Courriel'
-                  WHEN th ILIKE ANY (ARRAY['%materiel%','%équipement%','%equipement%']) THEN 'Équipement informatique'
-                  WHEN th ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
-                  ELSE 'Autres thématiques'
-                END AS categorie,
-                accompagnements::bigint AS nb,
-                th AS thematique_originale
-              FROM base
+            WITH thematiques AS (
+              SELECT unnest(thematiques) AS thematique, SUM(accompagnements) AS nb_accompagnements
+              FROM main.activites_coop
+              GROUP BY thematique
             )
-            SELECT 
-              categorie, 
-              SUM(nb) AS nb,
-              COUNT(DISTINCT thematique_originale) AS nb_distinctes
-            FROM norm
+            SELECT CASE
+              WHEN thematique ILIKE '%internet%' THEN 'Internet'
+              WHEN thematique ILIKE ANY (ARRAY['%courriel%','%email%','%mail%']) THEN 'Courriel'
+              WHEN thematique ILIKE ANY (ARRAY['%materiel%','%équipement%','%equipement%']) THEN 'Équipement informatique'
+              WHEN thematique ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
+              ELSE 'Autres thématiques'
+            END AS categorie, 
+            SUM(nb_accompagnements) AS nb, 
+            COUNT(DISTINCT thematique) AS nb_distinctes
+            FROM thematiques
             GROUP BY categorie
             ORDER BY nb DESC
           `
         : await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
-            WITH base AS (
-              SELECT ac.id, ac.accompagnements, unnest(ac.thematiques) AS th
+            WITH thematiques AS (
+              SELECT unnest(ac.thematiques) AS thematique, SUM(ac.accompagnements) AS nb_accompagnements
               FROM main.activites_coop ac
               JOIN main.structure s ON ac.structure_id = s.id
               JOIN main.adresse a ON s.adresse_id = a.id
               WHERE ac.accompagnements > 0 AND a.departement = ${territoire}
-            ),
-            norm AS (
-              SELECT
-                CASE
-                  WHEN th ILIKE '%internet%' THEN 'Internet'
-                  WHEN th ILIKE ANY (ARRAY['%courriel%','%email%','%mail%']) THEN 'Courriel'
-                  WHEN th ILIKE ANY (ARRAY['%materiel%','%équipement%','%equipement%']) THEN 'Équipement informatique'
-                  WHEN th ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
-                  ELSE 'Autres thématiques'
-                END AS categorie,
-                accompagnements::bigint AS nb,
-                th AS thematique_originale
-              FROM base
+              GROUP BY thematique
             )
-            SELECT 
-              categorie, 
-              SUM(nb) AS nb,
-              COUNT(DISTINCT thematique_originale) AS nb_distinctes
-            FROM norm
+            SELECT CASE
+              WHEN thematique ILIKE '%internet%' THEN 'Internet'
+              WHEN thematique ILIKE ANY (ARRAY['%courriel%','%email%','%mail%']) THEN 'Courriel'
+              WHEN thematique ILIKE ANY (ARRAY['%materiel%','%équipement%','%equipement%']) THEN 'Équipement informatique'
+              WHEN thematique ILIKE ANY (ARRAY['%démarche%','%demarche%','%en ligne%']) THEN 'Démarches en ligne'
+              ELSE 'Autres thématiques'
+            END AS categorie, 
+            SUM(nb_accompagnements) AS nb, 
+            COUNT(DISTINCT thematique) AS nb_distinctes
+            FROM thematiques
             GROUP BY categorie
             ORDER BY nb DESC
           `
