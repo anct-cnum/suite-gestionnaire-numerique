@@ -9,7 +9,6 @@ import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
-import AlerteConstruction from '@/components/shared/AlerteConstruction/AlerteConstruction'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
@@ -53,7 +52,6 @@ export default function ListeAidantsMediateurs({
           Suivi aidants et médiateurs
         </PageTitle>
       </div>
-      <AlerteConstruction />
       <>
         <ListeAidantsMediateurInfos
           viewModel={{
