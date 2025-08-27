@@ -2,13 +2,13 @@ import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters 
 
 export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
   private readonly baseUrl = 'https://coop-numerique.anct.gouv.fr/api/v1'
-  
+
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     try {
       const url = this.construireUrl(filtres)
       const reponse = await this.recupererAvecTentatives(url)
       const donnees = await this.gererReponse(reponse)
-      
+
       return this.transformerReponse(donnees)
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue'
@@ -18,7 +18,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
 
   private construireUrl(filtres?: StatistiquesFilters): string {
     const url = new URL(`${this.baseUrl}/statistiques`)
-    
+
     if (filtres) {
       if (filtres.du) url.searchParams.append('filter[du]', filtres.du)
       if (filtres.au) url.searchParams.append('filter[au]', filtres.au)
@@ -32,7 +32,7 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         url.searchParams.append('filter[conseiller_numerique]', filtres.conseillerNumerique ? '1' : '0')
       }
     }
-    
+
     return url.toString()
   }
 
@@ -45,9 +45,9 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     if (!process.env.COOP_TOKEN) {
       throw new Error('Token COOP_TOKEN non configuré')
     }
-    
+
     entetes['Authorization'] = `Bearer ${process.env.COOP_TOKEN}`
-    
+
     return entetes
   }
 
@@ -58,62 +58,62 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     for (let tentative = 1; tentative <= 3; tentative += 1) {
       try {
         const entetes = this.configurationEntetes()
-        
+
         // eslint-disable-next-line no-await-in-loop
         reponse = await fetch(url, {
           method: 'GET',
           headers: entetes,
           signal: AbortSignal.timeout(15000), // 15 secondes de timeout
         })
-        
+
         break
       } catch (erreur) {
         derniereErreur = erreur as Error
-        
+
         if (tentative === 3) {
           throw new Error(`Échec de connexion à l'API Coop après 3 tentatives: ${derniereErreur.message}`)
         }
-        
+
         // eslint-disable-next-line no-await-in-loop
         await new Promise(resolve => {
           setTimeout(resolve, tentative * 500)
         })
       }
     }
-    
+
     if (!reponse) {
       throw new Error(`Échec de connexion à l'API Coop: ${derniereErreur?.message}`)
     }
-    
+
     return reponse
   }
 
   private async gererReponse(reponse: Response): Promise<CoopApiResponse> {
     if (!reponse.ok) {
       const texteErreur = await reponse.text()
-      
+
       if (reponse.status === 401) {
         throw new Error('Token d\'authentification invalide ou expiré')
       }
-      
+
       if (reponse.status === 403) {
         throw new Error('Accès refusé aux statistiques')
       }
-      
+
       if (reponse.status === 429) {
         throw new Error('Trop de requêtes. Veuillez réessayer dans quelques instants.')
       }
-      
+
       throw new Error(`Erreur API Coop: ${reponse.status} - ${texteErreur}`)
     }
-    
+
     const donnees = await reponse.json()
-    
+
     // Debug: afficher la structure de la réponse
     if (process.env.NODE_ENV === 'development') {
       console.log('Réponse API Coop:', JSON.stringify(donnees, null, 2))
     }
-    
+
     return donnees as CoopApiResponse
   }
 
@@ -121,9 +121,9 @@ export class ApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     if (!donnees || !donnees.data || !donnees.data.attributes) {
       throw new Error('Réponse API invalide: structure de données manquante')
     }
-    
+
     const attributes = donnees.data.attributes
-    
+
     return {
       accompagnementsParJour: attributes.accompagnements_par_jour.map(item => ({
         label: item.label,

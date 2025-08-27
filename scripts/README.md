@@ -29,7 +29,7 @@ npx tsx scripts/test-cache-api-coop.ts
 ### Ce que teste le script
 
 1. **Cache MISS** : Premier appel lent (~7 secondes)
-2. **Cache HIT** : Appels répétés instantanés (0ms)  
+2. **Cache HIT** : Appels répétés instantanés (0ms)
 3. **Cache par département** : Chaque territoire a son cache séparé
 4. **Accélération** : Mesure l'amélioration de performance (>1000x)
 5. **Statistiques** : Affiche l'état du cache (nombre d'entrées, âge)

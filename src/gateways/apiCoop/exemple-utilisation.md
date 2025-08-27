@@ -47,20 +47,20 @@ CachedApiCoopStatistiquesLoader.forcerRafraichissement('dept_75')
 // Obtenir les statistiques du cache
 const stats = CachedApiCoopStatistiquesLoader.obtenirStatistiquesCache()
 console.log(`Entrées en cache: ${stats.taille}`)
-stats.detailsEntrees.forEach(entree => {
+stats.detailsEntrees.forEach((entree) => {
   console.log(`${entree.cle}: âge ${entree.age}s`)
 })
 ```
 
 ### Clés de cache générées
 
-| Filtre | Clé de cache |
-|--------|--------------|
-| France entière | `france_entiere` |
-| Paris (75) | `dept_75` |
-| Plusieurs départements | `dept_13_75_92` |
-| Avec dates | `dept_75__du_2024-01-01__au_2024-12-31` |
-| Types d'activités | `types_Collectif_Individuel` |
+| Filtre                 | Clé de cache                            |
+| ---------------------- | --------------------------------------- |
+| France entière         | `france_entiere`                        |
+| Paris (75)             | `dept_75`                               |
+| Plusieurs départements | `dept_13_75_92`                         |
+| Avec dates             | `dept_75__du_2024-01-01__au_2024-12-31` |
+| Types d'activités      | `types_Collectif_Individuel`            |
 
 ## Exemple d'utilisation dans l'application
 
@@ -75,9 +75,7 @@ export class TableauDeBordCoopUseCase {
 
   constructor() {
     // Utilise automatiquement le cache
-    this.statistiquesUseCase = new RecupererStatistiquesCoop(
-      createApiCoopStatistiquesLoader()
-    )
+    this.statistiquesUseCase = new RecupererStatistiquesCoop(createApiCoopStatistiquesLoader())
   }
 
   async recupererDonneesTableauDeBord() {
@@ -88,17 +86,17 @@ export class TableauDeBordCoopUseCase {
     const debutMois = new Date()
     debutMois.setDate(1)
     const finMois = new Date()
-    
+
     const statistiquesMois = await this.statistiquesUseCase.execute({
       filtres: {
         du: debutMois.toISOString().split('T')[0],
-        au: finMois.toISOString().split('T')[0]
-      }
+        au: finMois.toISOString().split('T')[0],
+      },
     })
 
     return {
       global: statistiquesGlobales,
-      moisCourant: statistiquesMois
+      moisCourant: statistiquesMois,
     }
   }
 }
@@ -118,9 +116,7 @@ export async function recupererStatistiquesCoopAction(filtres?: {
   departements?: string[]
 }) {
   // Le cache est activé par défaut via la factory
-  const useCase = new RecupererStatistiquesCoop(
-    createApiCoopStatistiquesLoader()
-  )
+  const useCase = new RecupererStatistiquesCoop(createApiCoopStatistiquesLoader())
 
   try {
     const statistiques = await useCase.execute({
@@ -128,15 +124,15 @@ export async function recupererStatistiquesCoopAction(filtres?: {
         du: filtres?.du,
         au: filtres?.au,
         departements: filtres?.departements,
-      }
+      },
     })
 
     return { success: true, data: statistiques }
   } catch (error) {
     console.error('Erreur récupération statistiques Coop:', error)
-    return { 
-      success: false, 
-      error: 'Impossible de récupérer les statistiques' 
+    return {
+      success: false,
+      error: 'Impossible de récupérer les statistiques',
     }
   }
 }
@@ -158,7 +154,7 @@ export function TableauDeBordCoop() {
   useEffect(() => {
     const chargerStatistiques = async () => {
       const result = await recupererStatistiquesCoopAction()
-      
+
       if (result.success) {
         setStatistiques(result.data)
       }
@@ -189,7 +185,7 @@ export function TableauDeBordCoop() {
           </div>
         </div>
       </div>
-      
+
       <div className="fr-col-12 fr-col-md-4">
         <div className="fr-card">
           <div className="fr-card__body">
@@ -232,12 +228,12 @@ L'API supporte plusieurs filtres :
 
 ```typescript
 const filtres = {
-  du: '2024-01-01',                        // Date de début
-  au: '2024-12-31',                        // Date de fin
-  types: ['Individuel', 'Collectif'],      // Types d'activités
-  departements: ['75', '92', '93'],        // Codes département
-  communes: ['75001', '92001'],            // Codes INSEE commune
-  conseillerNumerique: true,               // Dans le dispositif Conseiller Numérique
+  du: '2024-01-01', // Date de début
+  au: '2024-12-31', // Date de fin
+  types: ['Individuel', 'Collectif'], // Types d'activités
+  departements: ['75', '92', '93'], // Codes département
+  communes: ['75001', '92001'], // Codes INSEE commune
+  conseillerNumerique: true, // Dans le dispositif Conseiller Numérique
   // ... autres filtres (UUIDs)
 }
 ```

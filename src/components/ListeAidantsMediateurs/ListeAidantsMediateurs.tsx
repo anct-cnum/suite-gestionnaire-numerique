@@ -13,6 +13,7 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
 export default function ListeAidantsMediateurs({
+  beneficiaireViewModel,
   listeAidantsMediateursViewModel,
 }: Props): ReactElement {
   if ('type' in listeAidantsMediateursViewModel) {
@@ -56,7 +57,7 @@ export default function ListeAidantsMediateurs({
           viewModel={{
             totalAccompagnements: viewModel.totalAccompagnements,
             totalActeursNumerique: viewModel.totalActeursNumerique,
-            totalBeneficiaires: viewModel.totalBeneficiaires,
+            totalBeneficiaires: beneficiaireViewModel,
             totalConseillersNumerique: viewModel.totalConseillersNumerique,
           }}
         />
@@ -168,5 +169,6 @@ export default function ListeAidantsMediateurs({
 }
 
 type Props = Readonly<{
+  beneficiaireViewModel:  number
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
 }>

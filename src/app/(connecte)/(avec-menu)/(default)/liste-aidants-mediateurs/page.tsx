@@ -3,9 +3,11 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
+import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 
 export const metadata: Metadata = {
@@ -43,8 +45,21 @@ export default async function ListeAidantsMediateursController({
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
+
+  const loader = createApiCoopStatistiquesLoader()
+  const to = new Date()
+  const from  = new Date()
+  from.setDate(to.getDate() - 30)
+
+  const filtre = {
+    au: to.toISOString().split('T')[0],
+    departements: territoire === 'France' ? [] : [territoire],
+    du: from.toISOString().split('T')[0],
+  } as StatistiquesFilters
+  const result = await loader.recupererStatistiques(filtre)
   return (
     <ListeAidantsMediateurs
+      beneficiaireViewModel={result.totaux.beneficiaires.total}
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
     />
   )
