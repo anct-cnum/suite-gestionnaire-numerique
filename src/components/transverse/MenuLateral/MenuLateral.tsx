@@ -59,7 +59,7 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
     {
       icon: 'group-line',
       label: 'Aidants et médiateurs',
-      url: '/aidants-et-mediateurs',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
     },
 
   ]

@@ -60,7 +60,7 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
   }
 }
 
-export type RecupererAccompagnementsEtMediateursEnrichiQuery = Readonly<{
+type RecupererAccompagnementsEtMediateursEnrichiQuery = Readonly<{
   territoire?: string
 }>
 

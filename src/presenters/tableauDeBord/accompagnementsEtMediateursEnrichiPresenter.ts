@@ -28,7 +28,7 @@ export function accompagnementsEtMediateursEnrichiPresenter(
 
   // Couleurs dans l'ordre d'importance (du plus important au moins important)
   // Ces couleurs correspondent aux variables CSS du DSFR dans Dot.module.css
-  const couleursOrdrées = [
+  const couleursOrdonnees = [
     '#66673D', // var(--green-tilleul-verveine-sun-418-moon-817)
     '#B7A73F', // var(--green-tilleul-verveine-main-707)
     '#E2CF58', // var(--green-tilleul-verveine-850-200)
@@ -37,7 +37,7 @@ export function accompagnementsEtMediateursEnrichiPresenter(
   ]
 
   // Classes CSS pour les dots dans l'ordre d'importance
-  const classesCSSOrdrées = [
+  const classesCSSOrdonnees = [
     'dot-tilleul-418',
     'dot-tilleul-707',
     'dot-tilleul-850',
@@ -66,8 +66,8 @@ export function accompagnementsEtMediateursEnrichiPresenter(
       },
     ],
     thematiques: thematiquesTries.map((thematique, index) => ({
-      backgroundColor: couleursOrdrées[index] || '#CECECE',
-      couleur: classesCSSOrdrées[index] || 'dot-neutre-900',
+      backgroundColor: couleursOrdonnees[index] || '#CECECE',
+      couleur: classesCSSOrdonnees[index] || 'dot-neutre-900',
       nom: thematique.nom,
       nombreThematiquesRestantes: thematique.nombreThematiquesRestantes,
       pourcentage: thematique.pourcentage,

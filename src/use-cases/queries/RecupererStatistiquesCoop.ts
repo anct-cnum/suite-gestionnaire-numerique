@@ -1,15 +1,3 @@
-export class RecupererStatistiquesCoop {
-  constructor(private readonly loader: StatistiquesCoopLoader) {}
-
-  async execute(query: RecupererStatistiquesCoopQuery): Promise<StatistiquesCoopReadModel> {
-    return this.loader.recupererStatistiques(query.filtres)
-  }
-}
-
-export type RecupererStatistiquesCoopQuery = Readonly<{
-  filtres?: StatistiquesFilters
-}>
-
 export type StatistiquesFilters = Readonly<{
   du?: string // Date au format YYYY-MM-DD
   au?: string // Date au format YYYY-MM-DD

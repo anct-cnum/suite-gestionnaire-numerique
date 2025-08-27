@@ -1,6 +1,6 @@
 {
   "project": ["**/*.ts", "**/*.tsx"],
-  "ignore": ["src/components/shared/AlerteConstruction/AlerteConstruction.tsx"],
+  "ignore": ["scripts/*", "src/components/shared/AlerteConstruction/AlerteConstruction.tsx"],
   "rules": {
     "dependencies": "off",
     "unlisted": "off",

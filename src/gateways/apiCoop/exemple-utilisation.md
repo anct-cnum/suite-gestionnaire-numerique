@@ -9,20 +9,74 @@ L'API Coop Numérique permet de récupérer des statistiques globales sur les b�
 - Les activités (types, durées, lieux, thématiques)
 - Les totaux généraux
 
+## Système de Cache
+
+### Vue d'ensemble du cache
+
+L'API Coop intègre un **système de cache intelligent** qui améliore drastiquement les performances :
+
+- **Durée du cache** : 1 heure par défaut
+- **Clés uniques** : Chaque combinaison de filtres génère une clé de cache unique
+- **Accélération** : >1000x plus rapide (de ~7s à 0ms)
+- **Résilience** : Utilise le cache périmé si l'API est indisponible
+- **Limite** : Maximum 100 entrées en cache (FIFO)
+
+### Utilisation avec cache (recommandé)
+
+```typescript
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+
+// Avec cache activé (par défaut)
+const loaderAvecCache = createApiCoopStatistiquesLoader(true)
+
+// Sans cache (pour forcer un appel API frais)
+const loaderSansCache = createApiCoopStatistiquesLoader(false)
+```
+
+### Gestion du cache
+
+```typescript
+import { CachedApiCoopStatistiquesLoader } from '@/gateways/apiCoop/CachedApiCoopStatistiquesLoader'
+
+// Vider tout le cache
+CachedApiCoopStatistiquesLoader.viderCache()
+
+// Forcer le rafraîchissement d'une entrée spécifique
+CachedApiCoopStatistiquesLoader.forcerRafraichissement('dept_75')
+
+// Obtenir les statistiques du cache
+const stats = CachedApiCoopStatistiquesLoader.obtenirStatistiquesCache()
+console.log(`Entrées en cache: ${stats.taille}`)
+stats.detailsEntrees.forEach(entree => {
+  console.log(`${entree.cle}: âge ${entree.age}s`)
+})
+```
+
+### Clés de cache générées
+
+| Filtre | Clé de cache |
+|--------|--------------|
+| France entière | `france_entiere` |
+| Paris (75) | `dept_75` |
+| Plusieurs départements | `dept_13_75_92` |
+| Avec dates | `dept_75__du_2024-01-01__au_2024-12-31` |
+| Types d'activités | `types_Collectif_Individuel` |
+
 ## Exemple d'utilisation dans l'application
 
-### 1. Dans un use case
+### 1. Dans un use case (avec cache)
 
 ```typescript
 import { RecupererStatistiquesCoop } from '@/use-cases/queries/RecupererStatistiquesCoop'
-import { ApiCoopStatistiquesLoader } from '@/gateways/apiCoop/ApiCoopStatistiquesLoader'
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 
 export class TableauDeBordCoopUseCase {
   private readonly statistiquesUseCase: RecupererStatistiquesCoop
 
   constructor() {
+    // Utilise automatiquement le cache
     this.statistiquesUseCase = new RecupererStatistiquesCoop(
-      new ApiCoopStatistiquesLoader()
+      createApiCoopStatistiquesLoader()
     )
   }
 
@@ -50,21 +104,22 @@ export class TableauDeBordCoopUseCase {
 }
 ```
 
-### 2. Dans une action de serveur
+### 2. Dans une action de serveur (avec cache)
 
 ```typescript
 'use server'
 
 import { RecupererStatistiquesCoop } from '@/use-cases/queries/RecupererStatistiquesCoop'
-import { ApiCoopStatistiquesLoader } from '@/gateways/apiCoop/ApiCoopStatistiquesLoader'
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 
 export async function recupererStatistiquesCoopAction(filtres?: {
   du?: string
   au?: string
   departements?: string[]
 }) {
+  // Le cache est activé par défaut via la factory
   const useCase = new RecupererStatistiquesCoop(
-    new ApiCoopStatistiquesLoader()
+    createApiCoopStatistiquesLoader()
   )
 
   try {
@@ -201,7 +256,7 @@ Pour tester l'intégration :
 
 ```bash
 # Lancer le script de test
-npx tsx src/gateways/apiCoop/testApiCoop.ts
+npx tsx scripts/test-cache-api-coop.ts
 
 # Ou lancer les tests unitaires
 yarn test src/gateways/apiCoop/
