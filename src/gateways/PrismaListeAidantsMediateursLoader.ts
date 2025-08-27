@@ -65,8 +65,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           FROM main.personne
                  LEFT JOIN main.formation ON main.personne.id = main.formation.personne_id
                  left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-                 left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
-          WHERE main.personne_structures_emplois.en_cours = true or main.personne.is_active_ac = true
+                 left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
+          WHERE main.personne_affectations.suppression IS NULL or main.personne.is_active_ac = true
           group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
           LIMIT ${limite} OFFSET ${offset};
         `
@@ -92,8 +92,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                              ON main.structure.adresse_id = main.adresse.id
                    LEFT JOIN main.formation  ON main.personne.id = main.formation.personne_id
                    left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-                   left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
-            where main.adresse.departement =  ${territoire} and (main.personne_structures_emplois.en_cours = true or main.personne.is_active_ac = true)
+                   left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
+            where main.adresse.departement =  ${territoire} and (main.personne_affectations.suppression IS NULL or main.personne.is_active_ac = true)
             group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
             LIMIT ${limite} OFFSET ${offset};
           `
@@ -163,20 +163,20 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         ? await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
-          count(distinct main.personne.id) FILTER (where main.personne_structures_emplois.en_cours is null and (main.personne.is_active_ac = true)) as aidant_connect
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
+          count(distinct main.personne.id) FILTER (where main.personne_affectations.suppression IS NOT NULL and (main.personne.is_active_ac = true)) as aidant_connect
         FROM main.personne
-               left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+               left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
           `
         : await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_structures_emplois.en_cours = true and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
-          count(distinct main.personne.id) FILTER (where main.personne_structures_emplois.en_cours is null and (main.personne.is_active_ac = true)) as aidant_connect
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
+          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
+          count(distinct main.personne.id) FILTER (where main.personne_affectations.suppression IS NOT NULL and (main.personne.is_active_ac = true)) as aidant_connect
         FROM main.personne
-               left join main.personne_structures_emplois on main.personne.id = main.personne_structures_emplois.personne_id
+               left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
                LEFT JOIN main.structure ON main.structure.id = main.personne.structure_id
                LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
         WHERE main.adresse.departement =  ${territoire};
