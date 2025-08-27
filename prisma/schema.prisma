@@ -539,66 +539,33 @@ model coordination_mediation {
 }
 
 model personne {
-  id                                                                                  Int                           @id @default(autoincrement())
-  prenom                                                                              String?                       @db.VarChar(50)
-  nom                                                                                 String?                       @db.VarChar(50)
-  contact                                                                             Json?
-  structure_id                                                                        Int?
-  aidant_connect_id                                                                   Int?                          @unique(map: "personne_aidant_connect_id_ukey")
-  conseiller_numerique_id                                                             String?                       @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
-  cn_pg_id                                                                            Int?                          @unique(map: "personne_cn_pg_id_ukey")
-  coop_id                                                                             String?                       @unique(map: "personne_coop_id_ukey") @db.Uuid
-  is_coordinateur                                                                     Boolean?
-  is_mediateur                                                                        Boolean?
-  is_active_ac                                                                        Boolean?
-  formation_fne_ac                                                                    Boolean?
-  profession_ac                                                                       String?                       @db.VarChar
-  nb_accompagnements_ac                                                               Int?
-  created_at                                                                          DateTime?                     @default(now()) @db.Timestamp(6)
-  updated_at                                                                          DateTime?                     @db.Timestamp(6)
-  activites_coop                                                                      activites_coop[]
-  contrat                                                                             contrat[]
-  coordination_mediation_coordination_mediation_coordinateur_idTopersonne             coordination_mediation[]      @relation("coordination_mediation_coordinateur_idTopersonne")
-  coordination_mediation_coordination_mediation_coordinateur_coop_idTopersonne        coordination_mediation[]      @relation("coordination_mediation_coordinateur_coop_idTopersonne")
-  coordination_mediation_coordination_mediation_mediateur_coop_idTopersonne           coordination_mediation[]      @relation("coordination_mediation_mediateur_coop_idTopersonne")
-  coordination_mediation_coordination_mediation_mediateur_idTopersonne                coordination_mediation[]      @relation("coordination_mediation_mediateur_idTopersonne")
-  formation                                                                           formation[]
-  structure                                                                           main_structure?               @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  personne_lieux_activites_personne_lieux_activites_mediateur_coop_idTopersonne       personne_lieux_activites[]    @relation("personne_lieux_activites_mediateur_coop_idTopersonne")
-  personne_lieux_activites_personne_lieux_activites_personne_idTopersonne             personne_lieux_activites[]    @relation("personne_lieux_activites_personne_idTopersonne")
-  personne_structures_emplois_personne_structures_emplois_mediateur_coop_idTopersonne personne_structures_emplois[] @relation("personne_structures_emplois_mediateur_coop_idTopersonne")
-  personne_structures_emplois_personne_structures_emplois_personne_idTopersonne       personne_structures_emplois[] @relation("personne_structures_emplois_personne_idTopersonne")
-  poste                                                                               poste[]
-
-  @@schema("main")
-}
-
-model personne_lieux_activites {
-  id                                                            Int       @id @default(autoincrement())
-  personne_id                                                   Int
-  structure_id                                                  Int?
-  structure_coop_id                                             String?   @db.Uuid
-  mediateur_coop_id                                             String?   @db.Uuid
-  en_cours                                                      Boolean?
-  created_at                                                    DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                                                    DateTime? @db.Timestamp(6)
-  personne_personne_lieux_activites_mediateur_coop_idTopersonne personne? @relation("personne_lieux_activites_mediateur_coop_idTopersonne", fields: [mediateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
-  personne_personne_lieux_activites_personne_idTopersonne       personne  @relation("personne_lieux_activites_personne_idTopersonne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
-
-  @@schema("main")
-}
-
-model personne_structures_emplois {
-  id                                                               Int       @id @default(autoincrement())
-  personne_id                                                      Int
-  structure_id                                                     Int?
-  structure_coop_id                                                String?   @db.Uuid
-  mediateur_coop_id                                                String?   @db.Uuid
-  en_cours                                                         Boolean?
-  created_at                                                       DateTime? @default(now()) @db.Timestamp(6)
-  updated_at                                                       DateTime? @db.Timestamp(6)
-  personne_personne_structures_emplois_mediateur_coop_idTopersonne personne? @relation("personne_structures_emplois_mediateur_coop_idTopersonne", fields: [mediateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction, map: "personne_structures_emplois_mediateur_coop_id_key")
-  personne_personne_structures_emplois_personne_idTopersonne       personne  @relation("personne_structures_emplois_personne_idTopersonne", fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
+  id                                                                           Int                      @id @default(autoincrement())
+  prenom                                                                       String?                  @db.VarChar(50)
+  nom                                                                          String?                  @db.VarChar(50)
+  contact                                                                      Json?
+  structure_id                                                                 Int?
+  aidant_connect_id                                                            Int?                     @unique(map: "personne_aidant_connect_id_ukey")
+  conseiller_numerique_id                                                      String?                  @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
+  cn_pg_id                                                                     Int?                     @unique(map: "personne_cn_pg_id_ukey")
+  coop_id                                                                      String?                  @unique(map: "personne_coop_id_ukey") @db.Uuid
+  is_coordinateur                                                              Boolean?
+  is_mediateur                                                                 Boolean?
+  is_active_ac                                                                 Boolean?
+  formation_fne_ac                                                             Boolean?
+  profession_ac                                                                String?                  @db.VarChar
+  nb_accompagnements_ac                                                        Int?
+  created_at                                                                   DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                                                                   DateTime?                @db.Timestamp(6)
+  activites_coop                                                               activites_coop[]
+  contrat                                                                      contrat[]
+  coordination_mediation_coordination_mediation_coordinateur_idTopersonne      coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
+  coordination_mediation_coordination_mediation_coordinateur_coop_idTopersonne coordination_mediation[] @relation("coordination_mediation_coordinateur_coop_idTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_coop_idTopersonne    coordination_mediation[] @relation("coordination_mediation_mediateur_coop_idTopersonne")
+  coordination_mediation_coordination_mediation_mediateur_idTopersonne         coordination_mediation[] @relation("coordination_mediation_mediateur_idTopersonne")
+  formation                                                                    formation[]
+  structure                                                                    main_structure?          @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  personne_affectations                                                        personne_affectations[]
+  poste                                                                        poste[]
 
   @@schema("main")
 }
@@ -630,29 +597,29 @@ model poste {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model main_structure {
-  id                                  Int                    @id @default(autoincrement())
-  structure_coop_id                   String?                @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
-  structure_ac_id                     String?                @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
-  structure_tp_id                     Int?                   @unique(map: "structure_structure_tp_id_ukey")
-  nom                                 String                 @db.VarChar(255)
-  denomination_sirene                 String?                @db.VarChar
-  siret                               String?                @db.VarChar(14)
-  rna                                 String?                @db.VarChar(10)
+  id                                  Int                     @id @default(autoincrement())
+  structure_coop_id                   String?                 @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
+  structure_ac_id                     String?                 @unique(map: "structure_structure_ac_id_ukey") @db.Uuid
+  structure_tp_id                     Int?                    @unique(map: "structure_structure_tp_id_ukey")
+  nom                                 String                  @db.VarChar(255)
+  denomination_sirene                 String?                 @db.VarChar
+  siret                               String?                 @db.VarChar(14)
+  rna                                 String?                 @db.VarChar(10)
   adresse_id                          Int?
   contact                             Json?
-  etat_administratif                  String?                @db.VarChar
-  code_activite_principale            String?                @db.VarChar(6)
-  categorie_juridique                 String?                @db.VarChar(4)
+  etat_administratif                  String?                 @db.VarChar
+  code_activite_principale            String?                 @db.VarChar(6)
+  categorie_juridique                 String?                 @db.VarChar(4)
   nb_mandats_ac                       Int?
   publique                            Boolean?
-  structure_cartographie_nationale_id String?                @db.VarChar
+  structure_cartographie_nationale_id String?                 @db.VarChar
   visible_pour_cartographie_nationale Boolean?
   typologies                          String[]
   presentation_resume                 String?
   presentation_detail                 String?
-  horaires                            String?                @db.VarChar
-  prise_rdv                           String?                @db.VarChar
-  structure_parente                   String?                @db.Uuid
+  horaires                            String?                 @db.VarChar
+  prise_rdv                           String?                 @db.VarChar
+  structure_parente                   String?                 @db.Uuid
   services                            String[]
   publics_specifiquement_adresses     String[]
   prise_en_charge_specifique          String[]
@@ -665,15 +632,16 @@ model main_structure {
   modalites_accompagnement            String[]
   mediateurs_en_activite              Int?
   emplois                             Int?
-  source                              String?                @db.VarChar
-  last_sirene_enrich_at               DateTime?              @db.Date
-  created_at                          DateTime?              @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime?              @db.Timestamp(6)
+  source                              String?                 @db.VarChar
+  last_sirene_enrich_at               DateTime?               @db.Date
+  created_at                          DateTime?               @default(now()) @db.Timestamp(6)
+  updated_at                          DateTime?               @db.Timestamp(6)
   activites_coop                      activites_coop[]
   personne                            personne[]
+  personne_affectations               personne_affectations[]
   poste                               poste[]
-  adresse                             adresse?               @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
-  categories_juridiques               categories_juridiques? @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
+  adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
+  categories_juridiques               categories_juridiques?  @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@map("structure")
@@ -781,4 +749,25 @@ model categories_juridiques {
   structure  main_structure[]
 
   @@schema("reference")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model personne_affectations {
+  id                Int             @id @default(autoincrement())
+  personne_id       Int
+  structure_id      Int?
+  structure_coop_id String?         @db.Uuid
+  mediateur_coop_id String?         @db.Uuid
+  type              String          @db.VarChar
+  suppression       DateTime?       @db.Timestamptz(6)
+  created_at        DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?       @db.Timestamp(6)
+  personne          personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  structure         main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([structure_coop_id, mediateur_coop_id, type, suppression], map: "personne_affectations_ukey")
+  @@index([personne_id], map: "idx_personne_affectations_personne_id")
+  @@index([structure_id], map: "idx_personne_affectations_structure_id")
+  @@schema("main")
 }

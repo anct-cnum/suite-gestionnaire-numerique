@@ -20,7 +20,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
             SELECT COUNT(DISTINCT p.id) AS total_aidants_connect_et_mediateurs
             FROM main.personne p
             LEFT JOIN main.structure s ON p.structure_id = s.id
-            LEFT JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+            LEFT JOIN main.personne_affectations pl ON p.id = pl.personne_id
             LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
             LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
             WHERE (p.aidant_connect_id IS NOT NULL OR p.is_mediateur)
@@ -51,7 +51,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
               SELECT COUNT(*) AS total_mediateurs_formes
               FROM main.personne p
               JOIN main.formation ON p.id = formation.personne_id
-              JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+              JOIN main.personne_affectations pl ON p.id = pl.personne_id
               JOIN main.structure s ON s.id = pl.structure_id
               JOIN main.adresse a ON s.adresse_id = a.id
               WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
@@ -113,7 +113,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
                 FROM main.personne p
                 LEFT JOIN main.formation f ON p.id = f.personne_id
                 LEFT JOIN main.structure s ON p.structure_id = s.id
-                LEFT JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+                LEFT JOIN main.personne_affectations pl ON p.id = pl.personne_id
                 LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
                 LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
                 WHERE a.departement = ${territoire}

@@ -85,7 +85,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         : await prisma.$queryRaw<Array<{ total_mediateurs_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_mediateurs_numeriques
             FROM main.personne p
-            JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+            JOIN main.personne_affectations pl ON p.id = pl.personne_id
             JOIN main.structure s ON s.id = pl.structure_id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE p.is_mediateur AND a.departement = ${territoire}
@@ -102,7 +102,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         : await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_conseillers_numeriques
             FROM main.personne p
-            JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+            JOIN main.personne_affectations pl ON p.id = pl.personne_id
             JOIN main.structure s ON s.id = pl.structure_id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
@@ -122,7 +122,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
             SELECT COUNT(*) AS total_mediateurs_numeriques_formes
             FROM main.personne p
             JOIN main.formation ON p.id = formation.personne_id
-            JOIN main.personne_structures_emplois pl ON p.id = pl.personne_id
+            JOIN main.personne_affectations pl ON p.id = pl.personne_id
             JOIN main.structure s ON s.id = pl.structure_id
             JOIN main.adresse a ON s.adresse_id = a.id
             WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
