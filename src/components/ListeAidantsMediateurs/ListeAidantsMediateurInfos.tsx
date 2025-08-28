@@ -55,11 +55,11 @@ export default function ListeAidantsMediateurInfos({ viewModel }: Props): ReactE
             indicateur: formaterEnNombreFrancais(viewModel.totalAccompagnements),
             legends: 'sur les 30 derniers jours',
           })}
-          {/*renderAidantsMediateursInfoCard({
+          {renderAidantsMediateursInfoCard({
             description: 'Bénéficiaires accompagnés',
-            indicateur: formaterEnNombreFrancais(0),
+            indicateur: formaterEnNombreFrancais(viewModel.totalBeneficiaires),
             legends: 'sur les 30 derniers jours',
-          })*/}
+          })}
         </div>
       </div>
     </section>

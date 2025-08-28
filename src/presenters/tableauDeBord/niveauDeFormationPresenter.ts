@@ -16,7 +16,7 @@ export function niveauDeFormationPresenter(
 ): NiveauDeFormationViewModel {
   // Couleurs dans l'ordre (pas de tri nécessaire, les données arrivent dans l'ordre)
   // Ces couleurs correspondent aux variables CSS du DSFR dans Dot.module.css
-  const couleursOrdrées = [
+  const couleursOrdonnees = [
     '#8D533E', // var(--pink-macaron-sun-406-moon-833)
     '#E18B76', // var(--pink-macaron-main-689)
     '#FCC0B4', // var(--pink-macaron-850-200)
@@ -25,7 +25,7 @@ export function niveauDeFormationPresenter(
   ]
 
   // Classes CSS pour les dots dans l'ordre
-  const classesCSSOrdrées = [
+  const classesCSSOrdonnees = [
     'dot-macaron-406',
     'dot-macaron-689',
     'dot-macaron-850',
@@ -36,8 +36,8 @@ export function niveauDeFormationPresenter(
   return {
     aidantsEtMediateursFormes: readModel.aidantsEtMediateursFormes.toLocaleString('fr-FR'),
     formations: readModel.formations.map((formation, index) => ({
-      backgroundColor: couleursOrdrées[index] || '#EEEEEE',
-      couleur: classesCSSOrdrées[index] || 'dot-neutre-950',
+      backgroundColor: couleursOrdonnees[index] || '#EEEEEE',
+      couleur: classesCSSOrdonnees[index] || 'dot-neutre-950',
       nom: formation.nom,
       nombre: formation.nombre.toLocaleString('fr-FR'),
     })),

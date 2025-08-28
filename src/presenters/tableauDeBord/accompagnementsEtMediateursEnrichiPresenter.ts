@@ -1,7 +1,9 @@
-import { AccompagnementsEtMediateursReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
+import { AccompagnementsEtMediateursEnrichiReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
 
-export type AccompagnementsEtMediateursViewModel = Readonly<{
+export type AccompagnementsEtMediateursEnrichiViewModel = Readonly<{
   accompagnementsRealises: string
+  avertissementApiCoop?: string
+  beneficiairesAccompagnes: string
   metriques: Array<{
     chiffre: string
     sousTitre: string
@@ -16,9 +18,9 @@ export type AccompagnementsEtMediateursViewModel = Readonly<{
   }>
 }>
 
-export function accompagnementsEtMediateursPresenter(
-  readModel: AccompagnementsEtMediateursReadModel
-): AccompagnementsEtMediateursViewModel {
+export function accompagnementsEtMediateursEnrichiPresenter(
+  readModel: AccompagnementsEtMediateursEnrichiReadModel
+): AccompagnementsEtMediateursEnrichiViewModel {
   // Trier les thématiques par pourcentage décroissant
   const thematiquesTries = [...readModel.thematiques].sort(
     (thematique1, thematique2) => thematique2.pourcentage - thematique1.pourcentage
@@ -26,7 +28,7 @@ export function accompagnementsEtMediateursPresenter(
 
   // Couleurs dans l'ordre d'importance (du plus important au moins important)
   // Ces couleurs correspondent aux variables CSS du DSFR dans Dot.module.css
-  const couleursOrdrées = [
+  const couleursOrdonnees = [
     '#66673D', // var(--green-tilleul-verveine-sun-418-moon-817)
     '#B7A73F', // var(--green-tilleul-verveine-main-707)
     '#E2CF58', // var(--green-tilleul-verveine-850-200)
@@ -35,7 +37,7 @@ export function accompagnementsEtMediateursPresenter(
   ]
 
   // Classes CSS pour les dots dans l'ordre d'importance
-  const classesCSSOrdrées = [
+  const classesCSSOrdonnees = [
     'dot-tilleul-418',
     'dot-tilleul-707',
     'dot-tilleul-850',
@@ -45,6 +47,7 @@ export function accompagnementsEtMediateursPresenter(
 
   return {
     accompagnementsRealises: readModel.accompagnementsRealises.toLocaleString('fr-FR'),
+    beneficiairesAccompagnes: readModel.beneficiairesAccompagnes.toLocaleString('fr-FR'),
     metriques: [
       {
         chiffre: readModel.mediateursNumeriques.toLocaleString('fr-FR'),
@@ -63,11 +66,15 @@ export function accompagnementsEtMediateursPresenter(
       },
     ],
     thematiques: thematiquesTries.map((thematique, index) => ({
-      backgroundColor: couleursOrdrées[index] || '#CECECE',
-      couleur: classesCSSOrdrées[index] || 'dot-neutre-900',
+      backgroundColor: couleursOrdonnees[index] || '#CECECE',
+      couleur: classesCSSOrdonnees[index] || 'dot-neutre-900',
       nom: thematique.nom,
       nombreThematiquesRestantes: thematique.nombreThematiquesRestantes,
       pourcentage: thematique.pourcentage,
     })),
+    // Avertissement si erreur API Coop
+    ...readModel.erreurApiCoop !== null && readModel.erreurApiCoop !== '' ? {
+      avertissementApiCoop: 'Certaines données des bénéficiaires ne sont pas disponibles',
+    } : {},
   }
 }
