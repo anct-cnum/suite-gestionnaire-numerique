@@ -369,6 +369,7 @@ model PersonneEnrichieView {
   est_actuellement_aidant_connect_en_poste   Boolean
   est_actuellement_conseiller_numerique      Boolean
   est_actuellement_coordo_actif              Boolean
+  departement_employeur                      String?   @db.VarChar(3)
 
   @@map("personne_enrichie")
   @@schema("min")
