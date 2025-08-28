@@ -58,7 +58,7 @@ export function accompagnementsEtMediateursPresenter(
       },
       {
         chiffre: readModel.habilitesAidantsConnect.toLocaleString('fr-FR'),
-        sousTitre: `Au sein de ${readModel.structuresHabilitees.toLocaleString('fr-FR')} structures habilitées`,
+        sousTitre: '',//`Au sein de ${readModel.structuresHabilitees.toLocaleString('fr-FR')} structures habilitées`,
         titre: 'Habilités Aidants Connect',
       },
     ],

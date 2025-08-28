@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  previewFeatures = ["multiSchema", "views"]
 }
 
 generator json {
@@ -343,33 +343,33 @@ enum Role {
 
 /// Vue enrichie de la table personne avec typage des accompagnateurs
 /// Cette vue est créée par la migration 20250828071256_creation_vue_personne_enrichie
-model PersonneEnrichieView {
-  id                                          Int       @id
-  prenom                                      String?   @db.VarChar(50)
-  nom                                         String?   @db.VarChar(50)
-  contact                                     Json?
-  structure_id                                Int?
-  aidant_connect_id                           Int?
-  conseiller_numerique_id                     String?   @db.VarChar(50)
-  cn_pg_id                                   Int?
-  coop_id                                    String?   @db.Uuid
-  is_coordinateur                            Boolean?
-  is_mediateur                               Boolean?
-  is_active_ac                               Boolean?
-  formation_fne_ac                           Boolean?
-  profession_ac                              String?   @db.VarChar
-  nb_accompagnements_ac                      Int?
-  created_at                                 DateTime? @db.Timestamp(6)
-  updated_at                                 DateTime? @db.Timestamp(6)
-  
+view PersonneEnrichieView {
+  id                      Int       @unique
+  prenom                  String?   @db.VarChar(50)
+  nom                     String?   @db.VarChar(50)
+  contact                 Json?
+  structure_id            Int?
+  aidant_connect_id       Int?
+  conseiller_numerique_id String?   @db.VarChar(50)
+  cn_pg_id                Int?
+  coop_id                 String?   @db.Uuid
+  is_coordinateur         Boolean?
+  is_mediateur            Boolean?
+  is_active_ac            Boolean?
+  formation_fne_ac        Boolean?
+  profession_ac           String?   @db.VarChar
+  nb_accompagnements_ac   Int?
+  created_at              DateTime? @db.Timestamp(6)
+  updated_at              DateTime? @db.Timestamp(6)
+
   // Colonnes calculées de la vue
-  type_accompagnateur                        String    @db.VarChar
-  labellisation_aidant_connect               Boolean?
-  est_actuellement_mediateur_en_poste        Boolean
-  est_actuellement_aidant_connect_en_poste   Boolean
-  est_actuellement_conseiller_numerique      Boolean
-  est_actuellement_coordo_actif              Boolean
-  departement_employeur                      String?   @db.VarChar(3)
+  type_accompagnateur                      String   @db.VarChar
+  labellisation_aidant_connect             Boolean?
+  est_actuellement_mediateur_en_poste      Boolean
+  est_actuellement_aidant_connect_en_poste Boolean
+  est_actuellement_conseiller_numerique    Boolean
+  est_actuellement_coordo_actif            Boolean
+  departement_employeur                    String?  @db.VarChar(3)
 
   @@map("personne_enrichie")
   @@schema("min")
