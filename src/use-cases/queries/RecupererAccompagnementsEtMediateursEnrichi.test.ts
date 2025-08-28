@@ -1,5 +1,5 @@
-import { RecupererAccompagnementsEtMediateursEnrichi } from './RecupererAccompagnementsEtMediateursEnrichi'
 import { AccompagnementsEtMediateursLoader, AccompagnementsEtMediateursReadModel } from './RecupererAccompagnementsEtMediateurs'
+import { RecupererAccompagnementsEtMediateursEnrichi } from './RecupererAccompagnementsEtMediateursEnrichi'
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel } from './RecupererStatistiquesCoop'
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
@@ -7,18 +7,29 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 class MockAccompagnementsLoader implements AccompagnementsEtMediateursLoader {
   private mockResult: AccompagnementsEtMediateursReadModel | ErrorReadModel = {} as AccompagnementsEtMediateursReadModel
   
-  setMockResult(result: AccompagnementsEtMediateursReadModel | ErrorReadModel): void {
-    this.mockResult = result
+  async get(): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
+    return Promise.resolve(this.mockResult)
   }
   
-  async get(): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
-    return this.mockResult
+  setMockResult(result: AccompagnementsEtMediateursReadModel | ErrorReadModel): void {
+    this.mockResult = result
   }
 }
 
 class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
-  private mockResult: StatistiquesCoopReadModel | null = null
+  private mockError: Error = new Error('Mock error')
+  private mockResult: null | StatistiquesCoopReadModel = null
   private shouldThrow = false
+  
+  async recupererStatistiques(): Promise<StatistiquesCoopReadModel> {
+    if (this.shouldThrow) {
+      throw this.mockError
+    }
+    if (this.mockResult === null) {
+      throw new Error('Mock result not set')
+    }
+    return Promise.resolve(this.mockResult)
+  }
   
   setMockResult(result: StatistiquesCoopReadModel): void {
     this.mockResult = result
@@ -28,18 +39,9 @@ class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     this.shouldThrow = true
     this.mockError = error
   }
-  
-  private mockError: Error = new Error('Mock error')
-  
-  async recupererStatistiques(): Promise<StatistiquesCoopReadModel> {
-    if (this.shouldThrow) {
-      throw this.mockError
-    }
-    return this.mockResult as StatistiquesCoopReadModel
-  }
 }
 
-describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
+describe('recupererAccompagnementsEtMediateursEnrichi', () => {
   let useCase: RecupererAccompagnementsEtMediateursEnrichi
   let mockAccompagnementsLoader: MockAccompagnementsLoader
   let mockStatistiquesCoopLoader: MockStatistiquesCoopLoader
@@ -58,13 +60,13 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,
-      thematiques: [{ nom: 'Internet', pourcentage: 45 }],
-      mediateursNumeriques: 500,
       conseillerNumeriques: 300,
-      mediateursFormes: 200,
-      pourcentageMediateursFormes: 40,
       habilitesAidantsConnect: 150,
+      mediateursFormes: 200,
+      mediateursNumeriques: 500,
+      pourcentageMediateursFormes: 40,
       structuresHabilitees: 60,
+      thematiques: [{ nom: 'Internet', pourcentage: 45 }],
     }
 
     const mockStatistiquesCoop = {
@@ -76,13 +78,13 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     }
 
     mockAccompagnementsLoader.setMockResult(mockAccompagnementsData)
-    mockStatistiquesCoopLoader.setMockResult(mockStatistiquesCoop as any)
+    mockStatistiquesCoopLoader.setMockResult(mockStatistiquesCoop as StatistiquesCoopReadModel)
 
     // Act
     const result = await useCase.execute({ territoire: 'France' })
 
     // Assert
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       ...mockAccompagnementsData,
       beneficiairesAccompagnes: 25000,
       erreurApiCoop: null,
@@ -93,13 +95,13 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,
-      thematiques: [{ nom: 'Internet', pourcentage: 45 }],
-      mediateursNumeriques: 500,
       conseillerNumeriques: 300,
-      mediateursFormes: 200,
-      pourcentageMediateursFormes: 40,
       habilitesAidantsConnect: 150,
+      mediateursFormes: 200,
+      mediateursNumeriques: 500,
+      pourcentageMediateursFormes: 40,
       structuresHabilitees: 60,
+      thematiques: [{ nom: 'Internet', pourcentage: 45 }],
     }
 
     mockAccompagnementsLoader.setMockResult(mockAccompagnementsData)
@@ -109,7 +111,7 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     const result = await useCase.execute({ territoire: 'France' })
 
     // Assert
-    expect(result).toEqual({
+    expect(result).toStrictEqual({
       ...mockAccompagnementsData,
       beneficiairesAccompagnes: 0,
       erreurApiCoop: 'API Coop indisponible',
@@ -119,8 +121,8 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
   it('devrait retourner une erreur si les données Prisma échouent', async () => {
     // Arrange
     const mockError = {
-      type: 'error' as const,
       message: 'Erreur base de données',
+      type: 'error' as const,
     }
 
     mockAccompagnementsLoader.setMockResult(mockError)
@@ -129,26 +131,26 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     const result = await useCase.execute({ territoire: 'France' })
 
     // Assert
-    expect(result).toEqual(mockError)
+    expect(result).toStrictEqual(mockError)
   })
 
   it('devrait construire les filtres API Coop correctement pour un département', async () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 5000,
-      thematiques: [],
-      mediateursNumeriques: 100,
       conseillerNumeriques: 60,
-      mediateursFormes: 40,
-      pourcentageMediateursFormes: 40,
       habilitesAidantsConnect: 30,
+      mediateursFormes: 40,
+      mediateursNumeriques: 100,
+      pourcentageMediateursFormes: 40,
       structuresHabilitees: 12,
+      thematiques: [],
     }
 
     mockAccompagnementsLoader.setMockResult(mockAccompagnementsData)
     mockStatistiquesCoopLoader.setMockResult({
-      totaux: { beneficiaires: { total: 8000 } }
-    } as any)
+      totaux: { beneficiaires: { total: 8000 } },
+    } as StatistiquesCoopReadModel)
 
     // Act
     const result = await useCase.execute({ territoire: '75' })
@@ -164,19 +166,19 @@ describe('RecupererAccompagnementsEtMediateursEnrichi', () => {
     // Arrange
     const mockAccompagnementsData = {
       accompagnementsRealises: 15000,
-      thematiques: [],
-      mediateursNumeriques: 500,
       conseillerNumeriques: 300,
-      mediateursFormes: 200,
-      pourcentageMediateursFormes: 40,
       habilitesAidantsConnect: 150,
+      mediateursFormes: 200,
+      mediateursNumeriques: 500,
+      pourcentageMediateursFormes: 40,
       structuresHabilitees: 60,
+      thematiques: [],
     }
 
     mockAccompagnementsLoader.setMockResult(mockAccompagnementsData)
     mockStatistiquesCoopLoader.setMockResult({
-      totaux: { beneficiaires: { total: 25000 } }
-    } as any)
+      totaux: { beneficiaires: { total: 25000 } },
+    } as StatistiquesCoopReadModel)
 
     // Act
     const result = await useCase.execute({ territoire: 'France' })

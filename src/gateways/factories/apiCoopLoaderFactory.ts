@@ -5,9 +5,12 @@ import { StatistiquesCoopLoader } from '@/use-cases/queries/RecupererStatistique
 
 export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesCoopLoader {
   const coopToken = process.env.COOP_TOKEN
-  
+  if (coopToken === undefined) {
+    throw new Error('COOP_TOKEN is not set')
+  }
   // Si le token commence par "FAKE_TOKEN", utiliser le mock loader
-  if (coopToken?.startsWith('FAKE_TOKEN')) {
+  if (coopToken.startsWith('FAKE_TOKEN')) {
+    // eslint-disable-next-line no-console
     console.log('🎭 Mode FAKE_TOKEN activé - Utilisation des données simulées pour l\'API Coop')
     return new MockStatistiquesCoopLoader()
   }
@@ -16,6 +19,7 @@ export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesC
   const baseLoader = new ApiCoopStatistiquesLoader()
   
   if (avecCache) {
+    // eslint-disable-next-line no-console
     console.log('💾 Cache API Coop activé (durée: 1 heure)')
     return new CachedApiCoopStatistiquesLoader(baseLoader)
   }

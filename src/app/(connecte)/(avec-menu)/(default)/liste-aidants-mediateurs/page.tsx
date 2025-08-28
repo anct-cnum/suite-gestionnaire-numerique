@@ -5,10 +5,10 @@ import { ReactElement } from 'react'
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
+import { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et mdiateurs numriques',

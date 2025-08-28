@@ -1,8 +1,9 @@
 import { AccompagnementsEtMediateursEnrichiReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
 
 export type AccompagnementsEtMediateursEnrichiViewModel = Readonly<{
-  beneficiairesAccompagnes: string
   accompagnementsRealises: string
+  avertissementApiCoop?: string
+  beneficiairesAccompagnes: string
   metriques: Array<{
     chiffre: string
     sousTitre: string
@@ -15,7 +16,6 @@ export type AccompagnementsEtMediateursEnrichiViewModel = Readonly<{
     nombreThematiquesRestantes?: number
     pourcentage: number
   }>
-  avertissementApiCoop?: string
 }>
 
 export function accompagnementsEtMediateursEnrichiPresenter(
@@ -46,8 +46,8 @@ export function accompagnementsEtMediateursEnrichiPresenter(
   ]
 
   return {
-    beneficiairesAccompagnes: readModel.beneficiairesAccompagnes.toLocaleString('fr-FR'),
     accompagnementsRealises: readModel.accompagnementsRealises.toLocaleString('fr-FR'),
+    beneficiairesAccompagnes: readModel.beneficiairesAccompagnes.toLocaleString('fr-FR'),
     metriques: [
       {
         chiffre: readModel.mediateursNumeriques.toLocaleString('fr-FR'),
@@ -61,7 +61,7 @@ export function accompagnementsEtMediateursEnrichiPresenter(
       },
       {
         chiffre: readModel.habilitesAidantsConnect.toLocaleString('fr-FR'),
-        sousTitre: `Au sein de ${readModel.structuresHabilitees.toLocaleString('fr-FR')} structures habilitées`,
+        sousTitre: '',//`Au sein de ${readModel.structuresHabilitees.toLocaleString('fr-FR')} structures habilitées`,
         titre: 'Habilités Aidants Connect',
       },
     ],
@@ -73,8 +73,8 @@ export function accompagnementsEtMediateursEnrichiPresenter(
       pourcentage: thematique.pourcentage,
     })),
     // Avertissement si erreur API Coop
-    ...(readModel.erreurApiCoop ? {
-      avertissementApiCoop: 'Certaines données des bénéficiaires ne sont pas disponibles'
-    } : {})
+    ...readModel.erreurApiCoop !== null && readModel.erreurApiCoop !== '' ? {
+      avertissementApiCoop: 'Certaines données des bénéficiaires ne sont pas disponibles',
+    } : {},
   }
 }

@@ -8,271 +8,271 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     })
 
     // Données différentes selon le filtre géographique
-    const estDepartemental = filtres?.departements && filtres.departements.length > 0
+    const estDepartemental = filtres?.departements !== undefined && filtres.departements.length > 0
     const departement = estDepartemental ? filtres.departements[0] : null
 
     return {
       accompagnementsParJour: this.genererAccompagnementsParJour(),
       accompagnementsParMois: this.genererAccompagnementsParMois(),
-      beneficiaires: this.genererBeneficiaires(!!estDepartemental),
-      activites: this.genererActivites(!!estDepartemental),
-      totaux: this.genererTotaux(!!estDepartemental, departement),
+      activites: this.genererActivites(Boolean(estDepartemental)),
+      beneficiaires: this.genererBeneficiaires(Boolean(estDepartemental)),
+      totaux: this.genererTotaux(Boolean(estDepartemental), departement),
     }
   }
 
-  private genererAccompagnementsParJour() {
+  private genererAccompagnementsParJour(): StatistiquesCoopReadModel['accompagnementsParJour'] {
     return [
-      { label: '10/08', count: 2456 },
-      { label: '11/08', count: 2789 },
-      { label: '12/08', count: 2134 },
-      { label: '13/08', count: 2890 },
-      { label: '14/08', count: 3012 },
+      { count: 2456, label: '10/08' },
+      { count: 2789, label: '11/08' },
+      { count: 2134, label: '12/08' },
+      { count: 2890, label: '13/08' },
+      { count: 3012, label: '14/08' },
     ]
   }
 
-  private genererAccompagnementsParMois() {
+  private genererAccompagnementsParMois(): StatistiquesCoopReadModel['accompagnementsParMois'] {
     return [
-      { label: 'Jan.', count: 98450 },
-      { label: 'Fév.', count: 105230 },
-      { label: 'Mars', count: 112890 },
-      { label: 'Avr.', count: 98760 },
-      { label: 'Mai', count: 87430 },
-      { label: 'Juin', count: 94560 },
-      { label: 'Juil.', count: 76540 },
-      { label: 'Août', count: 45620 },
+      { count: 98450, label: 'Jan.' },
+      { count: 105230, label: 'Fév.' },
+      { count: 112890, label: 'Mars' },
+      { count: 98760, label: 'Avr.' },
+      { count: 87430, label: 'Mai' },
+      { count: 94560, label: 'Juin' },
+      { count: 76540, label: 'Juil.' },
+      { count: 45620, label: 'Août' },
     ]
   }
 
-  private genererBeneficiaires(estDepartemental: boolean) {
-    const facteur = estDepartemental ? 0.08 : 1 // 8% pour un département vs France entière
-    
-    return {
-      total: Math.round(850000 * facteur),
-      genres: [
-        {
-          value: 'Feminin',
-          label: 'Féminin',
-          count: Math.round(380000 * facteur),
-          proportion: 44.7,
-        },
-        {
-          value: 'Masculin', 
-          label: 'Masculin',
-          count: Math.round(320000 * facteur),
-          proportion: 37.6,
-        },
-        {
-          value: 'NonCommunique',
-          label: 'Non communiqué', 
-          count: Math.round(150000 * facteur),
-          proportion: 17.7,
-        },
-      ],
-      trancheAges: [
-        {
-          value: 'VingtCinqTrenteNeuf',
-          label: '25 - 39 ans',
-          count: Math.round(180000 * facteur),
-          proportion: 21.2,
-        },
-        {
-          value: 'QuaranteCinquanteNeuf',
-          label: '40 - 59 ans',
-          count: Math.round(220000 * facteur),
-          proportion: 25.9,
-        },
-        {
-          value: 'SoixanteSoixanteNeuf',
-          label: '60 - 69 ans',
-          count: Math.round(200000 * facteur),
-          proportion: 23.5,
-        },
-        {
-          value: 'SoixanteDixPlus',
-          label: '70 ans et plus',
-          count: Math.round(170000 * facteur),
-          proportion: 20.0,
-        },
-        {
-          value: 'DixHuitVingtQuatre',
-          label: '18 - 24 ans',
-          count: Math.round(80000 * facteur),
-          proportion: 9.4,
-        },
-      ],
-      statutsSocial: [
-        {
-          value: 'SansEmploi',
-          label: 'Sans emploi',
-          count: Math.round(280000 * facteur),
-          proportion: 32.9,
-        },
-        {
-          value: 'Retraite',
-          label: 'Retraité',
-          count: Math.round(230000 * facteur),
-          proportion: 27.1,
-        },
-        {
-          value: 'EnEmploi',
-          label: 'En emploi',
-          count: Math.round(180000 * facteur),
-          proportion: 21.2,
-        },
-        {
-          value: 'Autre',
-          label: 'Autre',
-          count: Math.round(160000 * facteur),
-          proportion: 18.8,
-        },
-      ],
-    }
-  }
-
-  private genererActivites(estDepartemental: boolean) {
+  private genererActivites(estDepartemental: boolean): StatistiquesCoopReadModel['activites'] {
     const facteur = estDepartemental ? 0.08 : 1
     
     return {
-      total: Math.round(950000 * facteur),
-      typeActivites: [
-        {
-          value: 'Individuel',
-          label: 'Accompagnement individuel',
-          count: Math.round(520000 * facteur),
-          proportion: 54.7,
-        },
-        {
-          value: 'Collectif',
-          label: 'Atelier collectif',
-          count: Math.round(280000 * facteur),
-          proportion: 29.5,
-        },
-        {
-          value: 'Demarche',
-          label: 'Aide aux démarches',
-          count: Math.round(150000 * facteur),
-          proportion: 15.8,
-        },
-      ],
       durees: [
         {
-          value: 'UneHeureTroisHeures',
-          label: '1h à 3h',
           count: Math.round(450000 * facteur),
+          label: '1h à 3h',
           proportion: 47.4,
+          value: 'UneHeureTroisHeures',
         },
         {
-          value: 'MoinsUneHeure',
+          count: Math.round(320000 * facteur),
           label: 'Moins d\'1h',
-          count: Math.round(320000 * facteur),
           proportion: 33.7,
+          value: 'MoinsUneHeure',
         },
         {
-          value: 'PlusTroisHeures',
+          count: Math.round(180000 * facteur),
           label: 'Plus de 3h',
-          count: Math.round(180000 * facteur),
           proportion: 18.9,
-        },
-      ],
-      typeLieu: [
-        {
-          value: 'ADistance',
-          label: 'À distance',
-          count: Math.round(380000 * facteur),
-          proportion: 40.0,
-        },
-        {
-          value: 'LieuActivite',
-          label: 'Dans un lieu dédié',
-          count: Math.round(320000 * facteur),
-          proportion: 33.7,
-        },
-        {
-          value: 'Domicile',
-          label: 'À domicile',
-          count: Math.round(250000 * facteur),
-          proportion: 26.3,
-        },
-      ],
-      thematiques: [
-        {
-          value: 'PriseEnMainOrdinateur',
-          label: 'Prise en main d\'un ordinateur',
-          count: Math.round(180000 * facteur),
-          proportion: 18.9,
-        },
-        {
-          value: 'NavigationInternet',
-          label: 'Navigation sur internet',
-          count: Math.round(170000 * facteur),
-          proportion: 17.9,
-        },
-        {
-          value: 'AideAuxDemarchesAdministratives',
-          label: 'Aide aux démarches administratives',
-          count: Math.round(160000 * facteur),
-          proportion: 16.8,
-        },
-        {
-          value: 'MessagerieElectronique',
-          label: 'Messagerie électronique',
-          count: Math.round(140000 * facteur),
-          proportion: 14.7,
-        },
-        {
-          value: 'CultureNumerique',
-          label: 'Culture numérique',
-          count: Math.round(120000 * facteur),
-          proportion: 12.6,
+          value: 'PlusTroisHeures',
         },
       ],
       materiels: [
         {
-          value: 'Ordinateur',
-          label: 'Ordinateur',
           count: Math.round(480000 * facteur),
+          label: 'Ordinateur',
           proportion: 50.5,
+          value: 'Ordinateur',
         },
         {
-          value: 'Telephone',
-          label: 'Téléphone',
           count: Math.round(320000 * facteur),
+          label: 'Téléphone',
           proportion: 33.7,
+          value: 'Telephone',
         },
         {
-          value: 'Tablette',
-          label: 'Tablette',
           count: Math.round(100000 * facteur),
+          label: 'Tablette',
           proportion: 10.5,
+          value: 'Tablette',
         },
         {
-          value: 'Autre',
-          label: 'Autre',
           count: Math.round(50000 * facteur),
+          label: 'Autre',
           proportion: 5.3,
+          value: 'Autre',
+        },
+      ],
+      thematiques: [
+        {
+          count: Math.round(180000 * facteur),
+          label: 'Prise en main d\'un ordinateur',
+          proportion: 18.9,
+          value: 'PriseEnMainOrdinateur',
+        },
+        {
+          count: Math.round(170000 * facteur),
+          label: 'Navigation sur internet',
+          proportion: 17.9,
+          value: 'NavigationInternet',
+        },
+        {
+          count: Math.round(160000 * facteur),
+          label: 'Aide aux démarches administratives',
+          proportion: 16.8,
+          value: 'AideAuxDemarchesAdministratives',
+        },
+        {
+          count: Math.round(140000 * facteur),
+          label: 'Messagerie électronique',
+          proportion: 14.7,
+          value: 'MessagerieElectronique',
+        },
+        {
+          count: Math.round(120000 * facteur),
+          label: 'Culture numérique',
+          proportion: 12.6,
+          value: 'CultureNumerique',
+        },
+      ],
+      total: Math.round(950000 * facteur),
+      typeActivites: [
+        {
+          count: Math.round(520000 * facteur),
+          label: 'Accompagnement individuel',
+          proportion: 54.7,
+          value: 'Individuel',
+        },
+        {
+          count: Math.round(280000 * facteur),
+          label: 'Atelier collectif',
+          proportion: 29.5,
+          value: 'Collectif',
+        },
+        {
+          count: Math.round(150000 * facteur),
+          label: 'Aide aux démarches',
+          proportion: 15.8,
+          value: 'Demarche',
+        },
+      ],
+      typeLieu: [
+        {
+          count: Math.round(380000 * facteur),
+          label: 'À distance',
+          proportion: 40.0,
+          value: 'ADistance',
+        },
+        {
+          count: Math.round(320000 * facteur),
+          label: 'Dans un lieu dédié',
+          proportion: 33.7,
+          value: 'LieuActivite',
+        },
+        {
+          count: Math.round(250000 * facteur),
+          label: 'À domicile',
+          proportion: 26.3,
+          value: 'Domicile',
         },
       ],
     }
   }
 
-  private genererTotaux(estDepartemental: boolean, departement: string | null) {
+  private genererBeneficiaires(estDepartemental: boolean): StatistiquesCoopReadModel['beneficiaires'] {
+    const facteur = estDepartemental ? 0.08 : 1 // 8% pour un département vs France entière
+    
+    return {
+      genres: [
+        {
+          count: Math.round(380000 * facteur),
+          label: 'Féminin',
+          proportion: 44.7,
+          value: 'Feminin',
+        },
+        {
+          count: Math.round(320000 * facteur), 
+          label: 'Masculin',
+          proportion: 37.6,
+          value: 'Masculin',
+        },
+        {
+          count: Math.round(150000 * facteur),
+          label: 'Non communiqué', 
+          proportion: 17.7,
+          value: 'NonCommunique',
+        },
+      ],
+      statutsSocial: [
+        {
+          count: Math.round(280000 * facteur),
+          label: 'Sans emploi',
+          proportion: 32.9,
+          value: 'SansEmploi',
+        },
+        {
+          count: Math.round(230000 * facteur),
+          label: 'Retraité',
+          proportion: 27.1,
+          value: 'Retraite',
+        },
+        {
+          count: Math.round(180000 * facteur),
+          label: 'En emploi',
+          proportion: 21.2,
+          value: 'EnEmploi',
+        },
+        {
+          count: Math.round(160000 * facteur),
+          label: 'Autre',
+          proportion: 18.8,
+          value: 'Autre',
+        },
+      ],
+      total: Math.round(850000 * facteur),
+      trancheAges: [
+        {
+          count: Math.round(180000 * facteur),
+          label: '25 - 39 ans',
+          proportion: 21.2,
+          value: 'VingtCinqTrenteNeuf',
+        },
+        {
+          count: Math.round(220000 * facteur),
+          label: '40 - 59 ans',
+          proportion: 25.9,
+          value: 'QuaranteCinquanteNeuf',
+        },
+        {
+          count: Math.round(200000 * facteur),
+          label: '60 - 69 ans',
+          proportion: 23.5,
+          value: 'SoixanteSoixanteNeuf',
+        },
+        {
+          count: Math.round(170000 * facteur),
+          label: '70 ans et plus',
+          proportion: 20.0,
+          value: 'SoixanteDixPlus',
+        },
+        {
+          count: Math.round(80000 * facteur),
+          label: '18 - 24 ans',
+          proportion: 9.4,
+          value: 'DixHuitVingtQuatre',
+        },
+      ],
+    }
+  }
+
+  private genererTotaux(estDepartemental: boolean, departement: null | string): StatistiquesCoopReadModel['totaux'] {
     const facteur = estDepartemental ? 0.08 : 1
     
     // Ajustements spécifiques par département pour plus de réalisme
     let facteurDept = facteur
-    if (departement) {
+    if (departement !== null && departement !== '') {
       switch (departement) {
-        case '75': // Paris
-          facteurDept = 0.12
-          break
         case '13': // Bouches-du-Rhône  
           facteurDept = 0.10
+          break
+        case '59': // Nord
+          facteurDept = 0.11
           break
         case '69': // Rhône
           facteurDept = 0.09
           break
-        case '59': // Nord
-          facteurDept = 0.11
+        case '75': // Paris
+          facteurDept = 0.12
           break
         default:
           facteurDept = 0.08
@@ -280,42 +280,42 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     }
     
     return {
-      activites: {
-        total: Math.round(620000 * facteurDept),
-        individuels: {
-          total: Math.round(380000 * facteurDept),
-          proportion: 61.3,
-        },
-        collectifs: {
-          total: Math.round(190000 * facteurDept),
-          proportion: 30.6,
-          participants: Math.round(850000 * facteurDept),
-        },
-        demarches: {
-          total: Math.round(50000 * facteurDept),
-          proportion: 8.1,
-        },
-      },
       accompagnements: {
-        total: Math.round(1280000 * facteurDept),
-        individuels: {
-          total: Math.round(380000 * facteurDept),
-          proportion: 29.7,
-        },
         collectifs: {
-          total: Math.round(850000 * facteurDept),
           proportion: 66.4,
+          total: Math.round(850000 * facteurDept),
         },
         demarches: {
-          total: Math.round(50000 * facteurDept),
           proportion: 3.9,
+          total: Math.round(50000 * facteurDept),
         },
+        individuels: {
+          proportion: 29.7,
+          total: Math.round(380000 * facteurDept),
+        },
+        total: Math.round(1280000 * facteurDept),
+      },
+      activites: {
+        collectifs: {
+          participants: Math.round(850000 * facteurDept),
+          proportion: 30.6,
+          total: Math.round(190000 * facteurDept),
+        },
+        demarches: {
+          proportion: 8.1,
+          total: Math.round(50000 * facteurDept),
+        },
+        individuels: {
+          proportion: 61.3,
+          total: Math.round(380000 * facteurDept),
+        },
+        total: Math.round(620000 * facteurDept),
       },
       beneficiaires: {
-        total: Math.round(925000 * facteurDept),
+        anonymes: Math.round(722000 * facteurDept),
         nouveaux: Math.round(125000 * facteurDept),
         suivis: Math.round(78000 * facteurDept),
-        anonymes: Math.round(722000 * facteurDept),
+        total: Math.round(925000 * facteurDept),
       },
     }
   }

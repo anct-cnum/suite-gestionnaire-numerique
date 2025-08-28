@@ -1,17 +1,46 @@
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
-interface CacheEntry {
-  data: StatistiquesCoopReadModel
-  timestamp: number
-  cacheKey: string
-}
-
 export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
-  private static cache: Map<string, CacheEntry> = new Map()
+  private static readonly cache = new Map<string, CacheEntry>()
   private static readonly CACHE_DURATION_MS = 60 * 60 * 1000 // 1 heure de cache
-  
-  constructor(private readonly baseLoader: StatistiquesCoopLoader) {}
+  private readonly baseLoader: StatistiquesCoopLoader
 
+  constructor(baseLoader: StatistiquesCoopLoader) {
+    this.baseLoader = baseLoader
+  }
+
+  static forcerRafraichissement(cacheKey: string): void {
+    this.cache.delete(cacheKey)
+    // eslint-disable-next-line no-console
+    console.log(`🔄 Cache forcé à se rafraîchir pour: ${cacheKey}`)
+  }
+  
+  static obtenirStatistiquesCache(): {
+    cles: Array<string>
+    detailsEntrees: Array<{ age: number; cle: string }>
+    taille: number
+  } {
+    const maintenant = Date.now()
+    const detailsEntrees = Array.from(this.cache.entries()).map(([cle, entree]) => ({
+      age: Math.round((maintenant - entree.timestamp) / 1000), // Age en secondes
+      cle,
+    }))
+    
+    return {
+      cles: Array.from(this.cache.keys()),
+      detailsEntrees,
+      taille: this.cache.size,
+    }
+  }
+  
+  // Méthodes utilitaires pour la gestion du cache
+  static viderCache(): void {
+    const taille = this.cache.size
+    this.cache.clear()
+    // eslint-disable-next-line no-console
+    console.log(`🗑️ Cache vidé (${taille} entrées supprimées)`)
+  }
+  
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     const cacheKey = this.genererCleCache(filtres)
     const maintenant = Date.now()
@@ -20,11 +49,13 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     const entreeCache = CachedApiCoopStatistiquesLoader.cache.get(cacheKey)
     
     if (entreeCache && this.estCacheValide(entreeCache, maintenant)) {
+      // eslint-disable-next-line no-console
       console.log(`📦 Cache HIT pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`)
       return entreeCache.data
     }
     
     // Si pas de cache ou cache expiré, appeler l'API
+    // eslint-disable-next-line no-console
     console.log(`🌐 Cache MISS pour: ${cacheKey} - Appel API en cours...`)
     
     try {
@@ -32,20 +63,21 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
       
       // Mettre en cache les nouvelles données
       CachedApiCoopStatistiquesLoader.cache.set(cacheKey, {
+        cacheKey,
         data: donnees,
         timestamp: maintenant,
-        cacheKey,
       })
       
       // Nettoyer les vieilles entrées du cache
       this.nettoyerCache(maintenant)
       
+      // eslint-disable-next-line no-console
       console.log(`✅ Données mises en cache pour: ${cacheKey}`)
       return donnees
-      
     } catch (error) {
       // En cas d'erreur API, essayer de retourner des données périmées si disponibles
       if (entreeCache) {
+        // eslint-disable-next-line no-console
         console.warn(`⚠️ Erreur API, utilisation du cache périmé pour: ${cacheKey} (âge: ${Math.round((maintenant - entreeCache.timestamp) / 1000)}s)`)
         return entreeCache.data
       }
@@ -55,32 +87,36 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     }
   }
   
+  private estCacheValide(entree: CacheEntry, maintenant: number): boolean {
+    return maintenant - entree.timestamp < CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS
+  }
+  
   private genererCleCache(filtres?: StatistiquesFilters): string {
     if (!filtres) {
       return 'france_entiere'
     }
     
     // Créer une clé unique basée sur les filtres
-    const elements: string[] = []
+    const elements: Array<string> = []
     
     if (filtres.departements && filtres.departements.length > 0) {
-      elements.push(`dept_${[...filtres.departements].sort().join('_')}`)
+      elements.push(`dept_${[...filtres.departements].sort((departementA, departementB) => departementA.localeCompare(departementB, 'fr')).join('_')}`)
     }
     
-    if (filtres.du) {
+    if (typeof filtres.du === 'string' && filtres.du.trim() !== '') {
       elements.push(`du_${filtres.du}`)
     }
     
-    if (filtres.au) {
+    if (typeof filtres.au === 'string' && filtres.au.trim() !== '') {
       elements.push(`au_${filtres.au}`)
     }
     
     if (filtres.communes && filtres.communes.length > 0) {
-      elements.push(`com_${[...filtres.communes].sort().join('_')}`)
+      elements.push(`com_${[...filtres.communes].sort((communeA, communeB) => communeA.localeCompare(communeB, 'fr')).join('_')}`)
     }
     
     if (filtres.types && filtres.types.length > 0) {
-      elements.push(`types_${[...filtres.types].sort().join('_')}`)
+      elements.push(`types_${[...filtres.types].sort((typeA, typeB) => typeA.localeCompare(typeB, 'fr')).join('_')}`)
     }
     
     if (filtres.conseillerNumerique !== undefined) {
@@ -90,17 +126,14 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
     return elements.length > 0 ? elements.join('__') : 'france_entiere'
   }
   
-  private estCacheValide(entree: CacheEntry, maintenant: number): boolean {
-    return (maintenant - entree.timestamp) < CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS
-  }
-  
   private nettoyerCache(maintenant: number): void {
     // Supprimer les entrées expirées depuis plus de 2x la durée du cache
-    const seuilSuppression = maintenant - (CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS * 2)
+    const seuilSuppression = maintenant - CachedApiCoopStatistiquesLoader.CACHE_DURATION_MS * 2
     
     for (const [cle, entree] of CachedApiCoopStatistiquesLoader.cache.entries()) {
       if (entree.timestamp < seuilSuppression) {
         CachedApiCoopStatistiquesLoader.cache.delete(cle)
+        // eslint-disable-next-line no-console
         console.log(`🗑️ Cache supprimé pour: ${cle} (trop ancien)`)
       }
     }
@@ -117,33 +150,14 @@ export class CachedApiCoopStatistiquesLoader implements StatistiquesCoopLoader {
         CachedApiCoopStatistiquesLoader.cache.set(cle, valeur)
       }
       
+      // eslint-disable-next-line no-console
       console.log('🧹 Cache réduit à 100 entrées')
     }
   }
-  
-  // Méthodes utilitaires pour la gestion du cache
-  static viderCache(): void {
-    const taille = this.cache.size
-    this.cache.clear()
-    console.log(`🗑️ Cache vidé (${taille} entrées supprimées)`)
-  }
-  
-  static obtenirStatistiquesCache(): { taille: number; cles: string[]; detailsEntrees: Array<{ cle: string; age: number }> } {
-    const maintenant = Date.now()
-    const detailsEntrees = Array.from(this.cache.entries()).map(([cle, entree]) => ({
-      cle,
-      age: Math.round((maintenant - entree.timestamp) / 1000), // Age en secondes
-    }))
-    
-    return {
-      taille: this.cache.size,
-      cles: Array.from(this.cache.keys()),
-      detailsEntrees,
-    }
-  }
-  
-  static forcerRafraichissement(cacheKey: string): void {
-    this.cache.delete(cacheKey)
-    console.log(`🔄 Cache forcé à se rafraîchir pour: ${cacheKey}`)
-  }
+}
+
+interface CacheEntry {
+  cacheKey: string
+  data: StatistiquesCoopReadModel
+  timestamp: number
 }

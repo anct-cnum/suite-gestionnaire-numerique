@@ -163,11 +163,12 @@ export default function AccompagnementsEtMediateurs({
                 {' '}
                 {dateGeneration.toLocaleDateString('fr-FR')}
               </p>
-              {accompagnementsEtMediateurs.avertissementApiCoop && (
+              {Boolean(accompagnementsEtMediateurs.avertissementApiCoop) && 
                 <p className="fr-text--xs color-orange fr-mb-0 fr-mt-1v">
-                  ⚠️ {accompagnementsEtMediateurs.avertissementApiCoop}
-                </p>
-              )}
+                  ⚠️ 
+                  {' '}
+                  {accompagnementsEtMediateurs.avertissementApiCoop}
+                </p>}
             </div>
             <div>
               <button
