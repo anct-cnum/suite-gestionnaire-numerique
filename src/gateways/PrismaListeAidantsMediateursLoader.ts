@@ -49,52 +49,47 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         territoire === 'France'
           ? await prisma.$queryRaw<Array<PersonneQueryResult>>`
           SELECT
-            main.personne.id,
-            main.personne.nom,
-            main.personne.prenom,
-            is_mediateur as mediateur,
-            is_coordinateur as coordinateur,
-            is_active_ac as  aidants,
-            is_active_ac as  aidants_connect,
-            (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL) as conseiller_numerique,
-            array_agg(DISTINCT main.formation.label) AS formations,
-            BOOL_OR(main.formation.pix) AS pix,
-            BOOL_OR(main.formation.remn) AS remn,
-            COALESCE(SUM(main.activites_coop.accompagnements), 0) AS accompagnements,
-            COALESCE(main.personne.nb_accompagnements_ac, 0) AS accompagnements_ac
-          FROM main.personne
-                 LEFT JOIN main.formation ON main.personne.id = main.formation.personne_id
-                 left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-                 left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
-          WHERE main.personne_affectations.suppression IS NULL or main.personne.is_active_ac = true
-          group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
+            pe.id,
+            pe.nom,
+            pe.prenom,
+            pe.is_mediateur as mediateur,
+            pe.is_coordinateur as coordinateur,
+            pe.labellisation_aidant_connect as aidants,
+            pe.labellisation_aidant_connect as aidants_connect,
+            pe.est_actuellement_conseiller_numerique as conseiller_numerique,
+            array_agg(DISTINCT f.label) AS formations,
+            BOOL_OR(f.pix) AS pix,
+            BOOL_OR(f.remn) AS remn,
+            COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
+            COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac
+          FROM min.personne_enrichie pe
+                 LEFT JOIN main.formation f ON pe.id = f.personne_id
+                 LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
+          WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+          GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
           LIMIT ${limite} OFFSET ${offset};
         `
           : await prisma.$queryRaw<Array<PersonneQueryResult>>`
             SELECT
-              main.personne.id,
-              main.personne.nom,
-              main.personne.prenom,
-              is_mediateur as mediateur,
-              is_coordinateur as coordinateur,
-              is_active_ac as  aidants,
-              is_active_ac as  aidants_connect,
-              (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL) as conseiller_numerique,
-              array_agg(DISTINCT main.formation.label) AS formations,
-              BOOL_OR(main.formation.pix) AS pix,
-              BOOL_OR(main.formation.remn) AS remn,
-              COALESCE(SUM(main.activites_coop.accompagnements), 0) AS accompagnements,
-              COALESCE(main.personne.nb_accompagnements_ac, 0) AS accompagnements_ac
-            FROM main.personne
-                   LEFT JOIN main.structure
-                             ON main.personne.structure_id = main.structure.id
-                   LEFT JOIN main.adresse
-                             ON main.structure.adresse_id = main.adresse.id
-                   LEFT JOIN main.formation  ON main.personne.id = main.formation.personne_id
-                   left join main.activites_coop on main.activites_coop.personne_id = main.personne.id
-                   left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
-            where main.adresse.departement =  ${territoire} and (main.personne_affectations.suppression IS NULL or main.personne.is_active_ac = true)
-            group by main.personne.id, main.personne.nom, main.personne.prenom, main.personne.is_mediateur, main.personne.is_coordinateur, main.personne.is_active_ac, main.personne.conseiller_numerique_id, main.personne.cn_pg_id
+              pe.id,
+              pe.nom,
+              pe.prenom,
+              pe.is_mediateur as mediateur,
+              pe.is_coordinateur as coordinateur,
+              pe.labellisation_aidant_connect as aidants,
+              pe.labellisation_aidant_connect as aidants_connect,
+              pe.est_actuellement_conseiller_numerique as conseiller_numerique,
+              array_agg(DISTINCT f.label) AS formations,
+              BOOL_OR(f.pix) AS pix,
+              BOOL_OR(f.remn) AS remn,
+              COALESCE(SUM(ac.accompagnements), 0) AS accompagnements,
+              COALESCE(pe.nb_accompagnements_ac, 0) AS accompagnements_ac
+            FROM min.personne_enrichie pe
+                   LEFT JOIN main.formation f ON pe.id = f.personne_id
+                   LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
+            WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+              AND pe.departement_employeur = ${territoire}
+            GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
             LIMIT ${limite} OFFSET ${offset};
           `
       return personnes.map(personne => {
@@ -157,29 +152,25 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           `
     const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
 
-    // Nombre de conseillers numériques
+    // Statistiques des personnes en poste
     const conseillersResult =
       territoire === 'France'
         ? await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
-          count(distinct main.personne.id) FILTER (where main.personne_affectations.suppression IS NOT NULL and (main.personne.is_active_ac = true)) as aidant_connect
-        FROM main.personne
-               left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
+          COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
+          COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true AND est_actuellement_conseiller_numerique = false) AS mediateur,
+          COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
+        FROM min.personne_enrichie
           `
         : await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)) AS conseillers_numeriques,
-          COUNT(Distinct main.personne.id) FILTER (WHERE main.personne_affectations.suppression IS NULL and (conseiller_numerique_id IS NULL and cn_pg_id IS NULL)) AS mediateur,
-          count(distinct main.personne.id) FILTER (where main.personne_affectations.suppression IS NOT NULL and (main.personne.is_active_ac = true)) as aidant_connect
-        FROM main.personne
-               left join main.personne_affectations on main.personne.id = main.personne_affectations.personne_id
-               LEFT JOIN main.structure ON main.structure.id = main.personne.structure_id
-               LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
-        WHERE main.adresse.departement =  ${territoire};
+          COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
+          COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true AND est_actuellement_conseiller_numerique = false) AS mediateur,
+          COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
+        FROM min.personne_enrichie
+        WHERE departement_employeur = ${territoire}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
     const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)

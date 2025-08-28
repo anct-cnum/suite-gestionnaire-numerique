@@ -75,80 +75,72 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         ...thematique.categorie === 'Autres thématiques' && Number(thematique.nb_distinctes) > 0 ? { nombreThematiquesRestantes: Number(thematique.nb_distinctes) } : {},
       }))
 
-      // Nombre de médiateurs numériques
+      // Nombre de médiateurs numériques (actuellement en poste)
       const mediateursResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_mediateurs_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_mediateurs_numeriques
-            FROM main.personne
-            WHERE is_mediateur
+            FROM min.personne_enrichie
+            WHERE est_actuellement_mediateur_en_poste = true
           `
         : await prisma.$queryRaw<Array<{ total_mediateurs_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_mediateurs_numeriques
-            FROM main.personne p
-            JOIN main.personne_affectations pl ON p.id = pl.personne_id
-            JOIN main.structure s ON s.id = pl.structure_id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE p.is_mediateur AND a.departement = ${territoire}
+            FROM min.personne_enrichie
+            WHERE est_actuellement_mediateur_en_poste = true
+              AND departement_employeur = ${territoire}
           `
       const mediateursNumeriques = Number(mediateursResult[0]?.total_mediateurs_numeriques || 0)
 
-      // Nombre de conseillers numériques
+      // Nombre de conseillers numériques (actuellement en poste avec financement état)
       const conseillersResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_conseillers_numeriques
-            FROM main.personne
-            WHERE is_mediateur AND (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)
+            FROM min.personne_enrichie
+            WHERE est_actuellement_conseiller_numerique = true
           `
         : await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint }>>`
             SELECT COUNT(*) AS total_conseillers_numeriques
-            FROM main.personne p
-            JOIN main.personne_affectations pl ON p.id = pl.personne_id
-            JOIN main.structure s ON s.id = pl.structure_id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
-              AND a.departement = ${territoire}
+            FROM min.personne_enrichie
+            WHERE est_actuellement_conseiller_numerique = true
+              AND departement_employeur = ${territoire}
           `
       const conseillerNumeriques = Number(conseillersResult[0]?.total_conseillers_numeriques || 0)
 
-      // Nombre de médiateurs formés
+      // Nombre de médiateurs numériques formés (en poste avec au moins 1 formation)
       const mediateursFormesResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_mediateurs_numeriques_formes: bigint }>>`
-            SELECT COUNT(*) AS total_mediateurs_numeriques_formes
-            FROM main.personne
-            JOIN main.formation ON personne.id = formation.personne_id
-            WHERE is_mediateur AND (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)
+            SELECT COUNT(DISTINCT pe.id) AS total_mediateurs_numeriques_formes
+            FROM min.personne_enrichie pe
+            JOIN main.formation f ON pe.id = f.personne_id
+            WHERE pe.est_actuellement_mediateur_en_poste = true
           `
         : await prisma.$queryRaw<Array<{ total_mediateurs_numeriques_formes: bigint }>>`
-            SELECT COUNT(*) AS total_mediateurs_numeriques_formes
-            FROM main.personne p
-            JOIN main.formation ON p.id = formation.personne_id
-            JOIN main.personne_affectations pl ON p.id = pl.personne_id
-            JOIN main.structure s ON s.id = pl.structure_id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
-              AND a.departement = ${territoire}
+            SELECT COUNT(DISTINCT pe.id) AS total_mediateurs_numeriques_formes
+            FROM min.personne_enrichie pe
+            JOIN main.formation f ON pe.id = f.personne_id
+            WHERE pe.est_actuellement_mediateur_en_poste = true
+              AND pe.departement_employeur = ${territoire}
           `
       const mediateursFormes = Number(mediateursFormesResult[0]?.total_mediateurs_numeriques_formes || 0)
 
-      // Nombre d'Aidants Connect actifs
+      // Habilités Aidants Connect (médiateurs ou aidants numériques en poste + labellisés AC)
       const aidantsConnectResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_aidants_connect: bigint }>>`
             SELECT COUNT(*) AS total_aidants_connect
-            FROM main.personne
-            WHERE aidant_connect_id IS NOT NULL AND is_active_ac
+            FROM min.personne_enrichie
+            WHERE (est_actuellement_aidant_numerique_en_poste = true OR est_actuellement_mediateur_en_poste = true)
+              AND labellisation_aidant_connect = true
           `
         : await prisma.$queryRaw<Array<{ total_aidants_connect: bigint }>>`
             SELECT COUNT(*) AS total_aidants_connect
-            FROM main.personne p
-            JOIN main.structure s ON p.structure_id = s.id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE p.aidant_connect_id IS NOT NULL AND p.is_active_ac
-              AND a.departement = ${territoire}
+            FROM min.personne_enrichie
+            WHERE (est_actuellement_aidant_numerique_en_poste = true OR est_actuellement_mediateur_en_poste = true)
+              AND labellisation_aidant_connect = true
+              AND departement_employeur = ${territoire}
           `
       const habilitesAidantsConnect = Number(aidantsConnectResult[0]?.total_aidants_connect || 0)
 
       // Nombre de structures habilitées (estimation basée sur les aidants)
-      const structuresHabilitees = Math.round(habilitesAidantsConnect / 2.5)
+      const structuresHabilitees = -1   
 
       // Calcul du pourcentage de médiateurs formés
       const pourcentageMediateursFormes = mediateursNumeriques > 0 

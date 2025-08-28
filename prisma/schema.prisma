@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  previewFeatures = ["multiSchema", "views"]
 }
 
 generator json {
@@ -341,6 +341,40 @@ enum Role {
   @@schema("min")
 }
 
+/// Vue enrichie de la table personne avec typage des accompagnateurs
+/// Cette vue est créée par la migration 20250828071256_creation_vue_personne_enrichie
+view PersonneEnrichieView {
+  id                      Int       @unique
+  prenom                  String?   @db.VarChar(50)
+  nom                     String?   @db.VarChar(50)
+  contact                 Json?
+  structure_id            Int?
+  aidant_connect_id       Int?
+  conseiller_numerique_id String?   @db.VarChar(50)
+  cn_pg_id                Int?
+  coop_id                 String?   @db.Uuid
+  is_coordinateur         Boolean?
+  is_mediateur            Boolean?
+  is_active_ac            Boolean?
+  formation_fne_ac        Boolean?
+  profession_ac           String?   @db.VarChar
+  nb_accompagnements_ac   Int?
+  created_at              DateTime? @db.Timestamp(6)
+  updated_at              DateTime? @db.Timestamp(6)
+
+  // Colonnes calculées de la vue
+  type_accompagnateur                      String   @db.VarChar
+  labellisation_aidant_connect             Boolean?
+  est_actuellement_mediateur_en_poste      Boolean
+  est_actuellement_aidant_connect_en_poste Boolean
+  est_actuellement_conseiller_numerique    Boolean
+  est_actuellement_coordo_actif            Boolean
+  departement_employeur                    String?  @db.VarChar(3)
+
+  @@map("personne_enrichie")
+  @@schema("min")
+}
+
 model commune {
   id             Int                     @id @default(autoincrement())
   geom           Unsupported("geometry")
@@ -492,7 +526,7 @@ model activites_coop {
   thematiques_demarche_administrative String[]
   created_at                          DateTime?       @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?       @db.Timestamp(6)
-  personne                            personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_personne_id")
+  personne                            personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
   structure                           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([lieu_code_insee])
@@ -530,10 +564,10 @@ model coordination_mediation {
   en_cours                                                       Boolean?
   created_at                                                     DateTime? @default(now()) @db.Timestamp(6)
   updated_at                                                     DateTime? @db.Timestamp(6)
-  personne_coordination_mediation_coordinateur_idTopersonne      personne  @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_coodinateur_id")
+  personne_coordination_mediation_coordinateur_idTopersonne      personne  @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_coodinateur_id_fkey")
   personne_coordination_mediation_coordinateur_coop_idTopersonne personne  @relation("coordination_mediation_coordinateur_coop_idTopersonne", fields: [coordinateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
   personne_coordination_mediation_mediateur_coop_idTopersonne    personne  @relation("coordination_mediation_mediateur_coop_idTopersonne", fields: [mediateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
-  personne_coordination_mediation_mediateur_idTopersonne         personne  @relation("coordination_mediation_mediateur_idTopersonne", fields: [mediateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_mediateur_id")
+  personne_coordination_mediation_mediateur_idTopersonne         personne  @relation("coordination_mediation_mediateur_idTopersonne", fields: [mediateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_mediateur_id_fkey")
 
   @@schema("main")
 }

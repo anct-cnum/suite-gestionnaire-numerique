@@ -122,9 +122,9 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             FROM main.activites_coop ac
           ),
           sum_accompagnements_ac AS (
-            SELECT SUM(p.nb_accompagnements_ac) AS total_accompagnements
-            FROM main.personne p
-            WHERE p.aidant_connect_id IS NOT NULL
+            SELECT SUM(pe.nb_accompagnements_ac) AS total_accompagnements
+            FROM min.personne_enrichie pe
+            WHERE pe.est_actuellement_aidant_numerique_en_poste = true
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
@@ -141,14 +141,11 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             GROUP BY a2.departement
           ),
           sum_accompagnements_ac AS (
-            SELECT a.departement, SUM(p.nb_accompagnements_ac) AS total_accompagnements
-            FROM main.personne p
-            JOIN main.structure s ON p.structure_id = s.id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE s.structure_ac_id IS NOT NULL 
-              AND p.aidant_connect_id IS NOT NULL
-              AND a.departement = ${territoire}
-            GROUP BY a.departement
+            SELECT pe.departement_employeur as departement, SUM(pe.nb_accompagnements_ac) AS total_accompagnements
+            FROM min.personne_enrichie pe
+            WHERE pe.est_actuellement_aidant_numerique_en_poste = true
+              AND pe.departement_employeur = ${territoire}
+            GROUP BY pe.departement_employeur
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements

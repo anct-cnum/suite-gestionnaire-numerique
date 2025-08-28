@@ -9,73 +9,53 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
   async get(territoire = 'France'): Promise<ErrorReadModel |NiveauDeFormationReadModel> {
     try {
-      // Nombre total d'aidants et médiateurs
+      // Nombre total d'aidants et médiateurs (actuellement en poste)
       const totalResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_aidants_connect_et_mediateurs: bigint }>>`
             SELECT COUNT(*) AS total_aidants_connect_et_mediateurs
-            FROM main.personne
-            WHERE aidant_connect_id IS NOT NULL OR is_mediateur
+            FROM min.personne_enrichie
+            WHERE est_actuellement_mediateur_en_poste = true 
+              OR est_actuellement_aidant_numerique_en_poste = true
           `
         : await prisma.$queryRaw<Array<{ total_aidants_connect_et_mediateurs: bigint }>>`
-            SELECT COUNT(DISTINCT p.id) AS total_aidants_connect_et_mediateurs
-            FROM main.personne p
-            LEFT JOIN main.structure s ON p.structure_id = s.id
-            LEFT JOIN main.personne_affectations pl ON p.id = pl.personne_id
-            LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
-            LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
-            WHERE (p.aidant_connect_id IS NOT NULL OR p.is_mediateur)
-              AND a.departement = ${territoire}
+            SELECT COUNT(*) AS total_aidants_connect_et_mediateurs
+            FROM min.personne_enrichie
+            WHERE (est_actuellement_mediateur_en_poste = true 
+              OR est_actuellement_aidant_numerique_en_poste = true)
+              AND departement_employeur = ${territoire}
           `
       const totalAidantsEtMediateurs = Number(totalResult[0]?.total_aidants_connect_et_mediateurs || 0)
 
-      // Nombre d'aidants et médiateurs formés  
+      // Nombre d'aidants et médiateurs formés (en poste avec au moins une formation)
       const formesResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total_aidants_connect_et_mediateurs_formes: bigint }>>`
-            WITH mediateur_formes AS (
-              SELECT COUNT(*) AS total_mediateurs_formes
-              FROM main.personne
-              JOIN main.formation ON personne.id = formation.personne_id
-              WHERE is_mediateur AND (conseiller_numerique_id IS NOT NULL OR cn_pg_id IS NOT NULL)
-            ),
-            aidants_connect_formes AS (
-              SELECT COUNT(*) AS total_aidants_connect_formes
-              FROM main.personne
-              WHERE aidant_connect_id IS NOT NULL AND formation_fne_ac
-            )
-            SELECT
-              (SELECT total_mediateurs_formes FROM mediateur_formes) +
-              (SELECT total_aidants_connect_formes FROM aidants_connect_formes) AS total_aidants_connect_et_mediateurs_formes
+            SELECT COUNT(DISTINCT pe.id) AS total_aidants_connect_et_mediateurs_formes
+            FROM min.personne_enrichie pe
+            WHERE (pe.est_actuellement_mediateur_en_poste = true 
+              OR pe.est_actuellement_aidant_numerique_en_poste = true)
+              AND EXISTS (
+                SELECT 1 FROM main.formation f 
+                WHERE f.personne_id = pe.id
+              )
           `
         : await prisma.$queryRaw<Array<{ total_aidants_connect_et_mediateurs_formes: bigint }>>`
-            WITH mediateur_formes AS (
-              SELECT COUNT(*) AS total_mediateurs_formes
-              FROM main.personne p
-              JOIN main.formation ON p.id = formation.personne_id
-              JOIN main.personne_affectations pl ON p.id = pl.personne_id
-              JOIN main.structure s ON s.id = pl.structure_id
-              JOIN main.adresse a ON s.adresse_id = a.id
-              WHERE p.is_mediateur AND (p.conseiller_numerique_id IS NOT NULL OR p.cn_pg_id IS NOT NULL)
-                AND a.departement = ${territoire}
-            ),
-            aidants_connect_formes AS (
-              SELECT COUNT(*) AS total_aidants_connect_formes
-              FROM main.personne p
-              JOIN main.structure s ON p.structure_id = s.id
-              JOIN main.adresse a ON s.adresse_id = a.id
-              WHERE p.aidant_connect_id IS NOT NULL AND p.formation_fne_ac
-                AND a.departement = ${territoire}
-            )
-            SELECT
-              (SELECT total_mediateurs_formes FROM mediateur_formes) +
-              (SELECT total_aidants_connect_formes FROM aidants_connect_formes) AS total_aidants_connect_et_mediateurs_formes
+            SELECT COUNT(DISTINCT pe.id) AS total_aidants_connect_et_mediateurs_formes
+            FROM min.personne_enrichie pe
+            WHERE (pe.est_actuellement_mediateur_en_poste = true 
+              OR pe.est_actuellement_aidant_numerique_en_poste = true)
+              AND pe.departement_employeur = ${territoire}
+              AND EXISTS (
+                SELECT 1 FROM main.formation f 
+                WHERE f.personne_id = pe.id
+              )
           `
       const aidantsEtMediateursFormes = Number(formesResult[0]?.total_aidants_connect_et_mediateurs_formes || 0)
 
-      // Répartition par certification
+      // Répartition par certification (pour les personnes en poste)
       const certificationsResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
             WITH certifications AS (
-                SELECT p.id,
+                SELECT pe.id,
                        unnest(ARRAY[
                            CASE WHEN f.label = 'CCP1' THEN 'CCP1' END,
                            CASE WHEN f.label = 'CCP2' THEN 'CCP2' END,
@@ -87,8 +67,10 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
                                  AND f.remn IS NOT TRUE 
                                  AND f.label IS NOT NULL THEN 'Autres' END
                        ]) AS type_certification
-                FROM main.personne p
-                JOIN main.formation f ON p.id = f.personne_id
+                FROM min.personne_enrichie pe
+                JOIN main.formation f ON pe.id = f.personne_id
+                WHERE (pe.est_actuellement_mediateur_en_poste = true 
+                  OR pe.est_actuellement_aidant_numerique_en_poste = true)
             )
             SELECT type_certification, COUNT(*) AS total
             FROM certifications
@@ -98,7 +80,7 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
           `
         : await prisma.$queryRaw<Array<{ total: bigint; type_certification: string }>>`
             WITH certifications AS (
-                SELECT p.id,
+                SELECT pe.id,
                        unnest(ARRAY[
                            CASE WHEN f.label = 'CCP1' THEN 'CCP1' END,
                            CASE WHEN f.label = 'CCP2' THEN 'CCP2' END,
@@ -110,13 +92,11 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
                                  AND f.remn IS NOT TRUE 
                                  AND f.label IS NOT NULL THEN 'Autres' END
                        ]) AS type_certification
-                FROM main.personne p
-                LEFT JOIN main.formation f ON p.id = f.personne_id
-                LEFT JOIN main.structure s ON p.structure_id = s.id
-                LEFT JOIN main.personne_affectations pl ON p.id = pl.personne_id
-                LEFT JOIN main.structure s2 ON s2.id = pl.structure_id
-                LEFT JOIN main.adresse a ON COALESCE(s.adresse_id, s2.adresse_id) = a.id
-                WHERE a.departement = ${territoire}
+                FROM min.personne_enrichie pe
+                JOIN main.formation f ON pe.id = f.personne_id
+                WHERE (pe.est_actuellement_mediateur_en_poste = true 
+                  OR pe.est_actuellement_aidant_numerique_en_poste = true)
+                  AND pe.departement_employeur = ${territoire}
             )
             SELECT type_certification, COUNT(*) AS total
             FROM certifications
