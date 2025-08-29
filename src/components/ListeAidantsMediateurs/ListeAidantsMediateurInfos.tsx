@@ -1,7 +1,7 @@
 import { ReactElement, ReactNode } from 'react'
 
-import { parseTextWithBold } from '../../shared/textFormatting'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
+import { parseTextWithBold } from '@/shared/textFormatting'
 
 export default function ListeAidantsMediateurInfos({ viewModel }: Props): ReactElement {
   function renderAidantsMediateursInfoCard({

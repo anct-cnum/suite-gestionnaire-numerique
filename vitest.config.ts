@@ -1,7 +1,7 @@
+/// <reference types="vitest/config" />
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
-
 export default defineConfig({
   plugins: [
     react(),
@@ -54,7 +54,9 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.test.ts?(x)'],
     reporters: ['verbose'],
-    sequence: { shuffle: true },
+    sequence: {
+      shuffle: true,
+    },
     server: {
       deps: {
         inline: ['next/cache'],
