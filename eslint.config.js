@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 import eslint from '@eslint/js'
 import stylistic from '@stylistic/eslint-plugin'
 import vitest from '@vitest/eslint-plugin'
@@ -359,4 +362,5 @@ export default [
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     },
   },
-]
+  ...storybook.configs["flat/recommended"]
+];

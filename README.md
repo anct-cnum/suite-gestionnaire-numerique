@@ -101,6 +101,50 @@ docker compose exec postgres-dev psql -U min -1 -c "update utilisateur set sso_e
 
 > **Note :** Le compte Pro-Connect de développement est `test@fia1.fr`
 
+## 📖 Storybook
+
+Storybook est utilisé pour développer et tester les composants UI de manière isolée.
+
+Pour lancer Storybook :
+
+```bash
+yarn storybook
+```
+
+Ouvrir le navigateur sur [http://localhost:6006](http://localhost:6006) pour voir les stories.
+
+### Créer une nouvelle story
+
+1. Créer un fichier `*.stories.ts` dans le répertoire `src/stories/`
+2. Importer le composant à documenter
+3. Définir les différents scénarios (stories) avec des props variées
+4. Utiliser les contrôles Storybook pour rendre les props interactives
+
+Exemple de structure d'une story :
+
+```typescript
+import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import MonComposant from '@/components/MonComposant'
+
+const meta: Meta<typeof MonComposant> = {
+  title: 'Components/MonComposant',
+  component: MonComposant,
+  parameters: {
+    layout: 'padded',
+  },
+}
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
+  args: {
+    prop1: 'valeur',
+    prop2: 123,
+  },
+}
+```
+
 ## 🧪 Tests
 
 Pour lancer les tests une fois :
