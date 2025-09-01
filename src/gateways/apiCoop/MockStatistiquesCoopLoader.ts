@@ -6,7 +6,11 @@ export interface MockConfig {
 }
 
 export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
-  constructor(private readonly config: MockConfig = { delaySeconds: 0.8, shouldFail: false }) {}
+  private readonly config: MockConfig
+  
+  constructor(config: MockConfig = { delaySeconds: 0.8, shouldFail: false }) {
+    this.config = config
+  }
 
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     // Simulation d'un délai d'API

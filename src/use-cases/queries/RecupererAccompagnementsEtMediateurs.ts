@@ -20,16 +20,21 @@ export interface AccompagnementsEtMediateursLoader {
 }
 
 export class RecupererAccompagnementsEtMediateurs {
+  private readonly accompagnementsLoader: AccompagnementsEtMediateursLoader
+  
   constructor(
-    private readonly accompagnementsLoader: AccompagnementsEtMediateursLoader
-  ) {}
+    accompagnementsLoader: AccompagnementsEtMediateursLoader
+  ) {
+    this.accompagnementsLoader = accompagnementsLoader
+  }
 
-  async execute(query: RecupererAccompagnementsEtMediateursQuery): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
+  async execute(query: RecupererAccompagnementsEtMediateursQuery): 
+  Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
     return this.accompagnementsLoader.get(query.territoire)
   }
 }
 
-export type RecupererAccompagnementsEtMediateursQuery = Readonly<{
+type RecupererAccompagnementsEtMediateursQuery = Readonly<{
   territoire?: string
 }>
 

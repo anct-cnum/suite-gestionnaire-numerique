@@ -2,18 +2,28 @@
 
 import { ReactElement, use } from 'react'
 
+import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
+
 export default function BeneficiairesAsyncLoader({ 
-  beneficiairesPromise,
+  totalBeneficiairesPromise,
 }: Props): ReactElement {
-  const beneficiaires = use(beneficiairesPromise)
+  const totalBeneficiaires = use(totalBeneficiairesPromise)
+  
+  if (isErrorViewModel(totalBeneficiaires)) {
+    return (
+      <div className="fr-display--xs fr-mb-0 color-orange">
+        -
+      </div>
+    )
+  }
   
   return (
     <div className="fr-display--xs fr-mb-0">
-      {beneficiaires.toLocaleString('fr-FR')}
+      {totalBeneficiaires.toLocaleString('fr-FR')}
     </div>
   )
 }
 
 type Props = Readonly<{
-  beneficiairesPromise: Promise<number>
+  totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

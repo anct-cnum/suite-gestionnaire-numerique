@@ -17,8 +17,8 @@ import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord
 
 export default function AccompagnementsEtMediateurs({
   accompagnementsEtMediateurs,
-  beneficiairesPromise,
   dateGeneration,
+  totalBeneficiairesPromise,
 }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
 
@@ -118,7 +118,7 @@ export default function AccompagnementsEtMediateurs({
                     </div>
                   }
                 >
-                  <BeneficiairesAsyncLoader beneficiairesPromise={beneficiairesPromise} />
+                  <BeneficiairesAsyncLoader totalBeneficiairesPromise={totalBeneficiairesPromise} />
                 </Suspense>
               </AsyncLoaderErrorBoundary>
             </div>
@@ -239,6 +239,6 @@ function isErrorViewModel(
 
 type Props = Readonly<{
   accompagnementsEtMediateurs: AccompagnementsEtMediateursViewModel | ErrorViewModel
-  beneficiairesPromise: Promise<number>
   dateGeneration: Date
+  totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

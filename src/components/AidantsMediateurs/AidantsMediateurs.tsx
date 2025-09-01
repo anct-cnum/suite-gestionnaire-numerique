@@ -14,9 +14,9 @@ import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeF
 
 export default function AidantsMediateurs({
   accompagnementsEtMediateursViewModel,
-  beneficiairesPromise,
   dateGeneration,
   niveauDeFormationViewModel,
+  totalBeneficiairesPromise,
 }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -81,8 +81,8 @@ export default function AidantsMediateurs({
       <div className="fr-mb-4w">
         <AccompagnementsEtMediateurs
           accompagnementsEtMediateurs={accompagnementsEtMediateursViewModel}
-          beneficiairesPromise={beneficiairesPromise}
           dateGeneration={dateGeneration}
+          totalBeneficiairesPromise={totalBeneficiairesPromise}
         />
       </div>
 
@@ -207,7 +207,7 @@ export default function AidantsMediateurs({
 
 type Props = Readonly<{
   accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
-  beneficiairesPromise: Promise<number>
   dateGeneration: Date
   niveauDeFormationViewModel: ErrorViewModel | NiveauDeFormationViewModel
+  totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

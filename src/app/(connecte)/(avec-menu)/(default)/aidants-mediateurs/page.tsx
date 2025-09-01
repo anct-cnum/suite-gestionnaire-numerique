@@ -4,13 +4,14 @@ import { ReactElement } from 'react'
 
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { accompagnementsEtMediateursPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
-import { niveauDeFormationPresenter } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
-import { fetchBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
 export const metadata: Metadata = {
@@ -39,26 +40,25 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
     accompagnementsEtMediateursPresenter
-  )
+  ) as AccompagnementsEtMediateursViewModel | ErrorViewModel
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
   const niveauDeFormationReadModel = await niveauDeFormationLoader.get()
   const niveauDeFormationViewModel = handleReadModelOrError(
     niveauDeFormationReadModel,
     niveauDeFormationPresenter
-  )
+  ) as ErrorViewModel | NiveauDeFormationViewModel
 
   const dateGeneration = new Date()
   
-  // Créer la promesse pour les bénéficiaires France (sera streamée au client)
-  const beneficiairesPromise = fetchBeneficiaires()
+  const totalBeneficiairesPromise = fetchTotalBeneficiaires()
   
   return (
     <AidantsMediateurs
       accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
-      beneficiairesPromise={beneficiairesPromise}
       dateGeneration={dateGeneration}
       niveauDeFormationViewModel={niveauDeFormationViewModel}
+      totalBeneficiairesPromise={totalBeneficiairesPromise}
     />
   )
 }

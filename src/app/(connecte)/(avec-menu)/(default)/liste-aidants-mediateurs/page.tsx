@@ -7,7 +7,7 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
-import { fetchBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et mdiateurs numriques',
@@ -45,13 +45,12 @@ export default async function ListeAidantsMediateursController({
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
 
-  // Créer la promesse pour les bénéficiaires (sera streamée au client)
-  const beneficiairesPromise = fetchBeneficiaires(territoire === 'France' ? undefined : territoire)
+  const totalBeneficiairesPromise = fetchTotalBeneficiaires(territoire === 'France' ? undefined : territoire)
   
   return (
     <ListeAidantsMediateurs
-      beneficiairesPromise={beneficiairesPromise}
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
+      totalBeneficiairesPromise={totalBeneficiairesPromise}
     />
   )
 }
