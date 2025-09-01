@@ -68,7 +68,7 @@ export class RecupererAccompagnementsEtMediateursEnrichi {
   }
 }
 
-export type AccompagnementsEtMediateursEnrichiReadModel = AccompagnementsEtMediateursReadModel & Readonly<{
+type AccompagnementsEtMediateursEnrichiReadModel = AccompagnementsEtMediateursReadModel & Readonly<{
   beneficiairesAccompagnes: number
   erreurApiCoop: null | string
 }>

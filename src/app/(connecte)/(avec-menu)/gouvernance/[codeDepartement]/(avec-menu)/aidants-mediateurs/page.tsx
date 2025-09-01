@@ -4,13 +4,14 @@ import { ReactElement } from 'react'
 
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { accompagnementsEtMediateursEnrichiPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
-import { niveauDeFormationPresenter } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
-import { RecupererAccompagnementsEtMediateursEnrichi } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
+import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
+import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
 export const metadata: Metadata = {
   title: 'Aidants et médiateurs numériques',
@@ -24,31 +25,33 @@ export default async function AidantsMediateursGouvernanceController({ params }:
     redirect('/connexion')
   }
 
-  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateursEnrichi(
-    new PrismaAccompagnementsEtMediateursLoader(),
-    createApiCoopStatistiquesLoader()
+  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
+    new PrismaAccompagnementsEtMediateursLoader()
   )
   const accompagnementsEtMediateursReadModel = 
     await accompagnementsEtMediateursUseCase.execute({ territoire: codeDepartement })
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
-    accompagnementsEtMediateursEnrichiPresenter
-  )
+    accompagnementsEtMediateursPresenter
+  ) as AccompagnementsEtMediateursViewModel | ErrorViewModel
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
   const niveauDeFormationReadModel = await niveauDeFormationLoader.get(codeDepartement)
   const niveauDeFormationViewModel = handleReadModelOrError(
     niveauDeFormationReadModel,
     niveauDeFormationPresenter
-  )
+  ) as ErrorViewModel | NiveauDeFormationViewModel
 
   const dateGeneration = new Date()
+  
+  const totalBeneficiairesPromise = fetchTotalBeneficiaires(codeDepartement)
     
   return (
     <AidantsMediateurs
       accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
       dateGeneration={dateGeneration}
       niveauDeFormationViewModel={niveauDeFormationViewModel}
+      totalBeneficiairesPromise={totalBeneficiairesPromise}
     />
   )
 }

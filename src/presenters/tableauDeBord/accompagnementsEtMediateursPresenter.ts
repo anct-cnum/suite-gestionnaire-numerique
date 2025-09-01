@@ -1,9 +1,8 @@
-import { AccompagnementsEtMediateursEnrichiReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
+import { AccompagnementsEtMediateursReadModel } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
-export type AccompagnementsEtMediateursEnrichiViewModel = Readonly<{
+export type AccompagnementsEtMediateursViewModel = Readonly<{
   accompagnementsRealises: string
   avertissementApiCoop?: string
-  beneficiairesAccompagnes: string
   metriques: Array<{
     chiffre: string
     sousTitre: string
@@ -18,9 +17,9 @@ export type AccompagnementsEtMediateursEnrichiViewModel = Readonly<{
   }>
 }>
 
-export function accompagnementsEtMediateursEnrichiPresenter(
-  readModel: AccompagnementsEtMediateursEnrichiReadModel
-): AccompagnementsEtMediateursEnrichiViewModel {
+export function accompagnementsEtMediateursPresenter(
+  readModel: AccompagnementsEtMediateursReadModel
+): AccompagnementsEtMediateursViewModel {
   // Trier les thématiques par pourcentage décroissant
   const thematiquesTries = [...readModel.thematiques].sort(
     (thematique1, thematique2) => thematique2.pourcentage - thematique1.pourcentage
@@ -47,7 +46,6 @@ export function accompagnementsEtMediateursEnrichiPresenter(
 
   return {
     accompagnementsRealises: readModel.accompagnementsRealises.toLocaleString('fr-FR'),
-    beneficiairesAccompagnes: readModel.beneficiairesAccompagnes.toLocaleString('fr-FR'),
     metriques: [
       {
         chiffre: readModel.mediateursNumeriques.toLocaleString('fr-FR'),
@@ -72,9 +70,5 @@ export function accompagnementsEtMediateursEnrichiPresenter(
       nombreThematiquesRestantes: thematique.nombreThematiquesRestantes,
       pourcentage: thematique.pourcentage,
     })),
-    // Avertissement si erreur API Coop
-    ...readModel.erreurApiCoop !== null && readModel.erreurApiCoop !== '' ? {
-      avertissementApiCoop: 'Certaines données des bénéficiaires ne sont pas disponibles',
-    } : {},
   }
 }

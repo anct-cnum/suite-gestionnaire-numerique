@@ -1,11 +1,27 @@
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
+export interface MockConfig {
+  delaySeconds: number
+  shouldFail: boolean
+}
+
 export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
+  private readonly config: MockConfig
+  
+  constructor(config: MockConfig = { delaySeconds: 0.8, shouldFail: false }) {
+    this.config = config
+  }
+
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     // Simulation d'un délai d'API
     await new Promise(resolve => {
-      setTimeout(resolve, 800)
+      setTimeout(resolve, this.config.delaySeconds * 1000)
     })
+
+    // Simulation d'erreur si configuré
+    if (this.config.shouldFail) {
+      throw new Error('API Coop simulée : Erreur de connexion')
+    }
 
     // Données différentes selon le filtre géographique
     const estDepartemental = filtres?.departements !== undefined && filtres.departements.length > 0

@@ -9,13 +9,14 @@ import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsEtMediateursEnrichiViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
+import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 import { NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 
 export default function AidantsMediateurs({
   accompagnementsEtMediateursViewModel,
   dateGeneration,
   niveauDeFormationViewModel,
+  totalBeneficiairesPromise,
 }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
@@ -81,6 +82,7 @@ export default function AidantsMediateurs({
         <AccompagnementsEtMediateurs
           accompagnementsEtMediateurs={accompagnementsEtMediateursViewModel}
           dateGeneration={dateGeneration}
+          totalBeneficiairesPromise={totalBeneficiairesPromise}
         />
       </div>
 
@@ -204,7 +206,8 @@ export default function AidantsMediateurs({
 }
 
 type Props = Readonly<{
-  accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
+  accompagnementsEtMediateursViewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
   dateGeneration: Date
   niveauDeFormationViewModel: ErrorViewModel | NiveauDeFormationViewModel
+  totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>
