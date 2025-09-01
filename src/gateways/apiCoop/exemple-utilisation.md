@@ -9,6 +9,8 @@ L'API Coop Numérique permet de récupérer des statistiques globales sur les b�
 - Les activités (types, durées, lieux, thématiques)
 - Les totaux généraux
 
+📖 **Documentation officielle de l'API** : [https://coop-numerique.anct.gouv.fr/api/v1/documentation#tag/statistiques](https://coop-numerique.anct.gouv.fr/api/v1/documentation#tag/statistiques)
+
 ## Système de Cache
 
 ### Vue d'ensemble du cache
@@ -238,12 +240,134 @@ const filtres = {
 }
 ```
 
+## Système de Mock pour le développement
+
+### Vue d'ensemble
+
+Le système de mock permet de simuler les réponses de l'API Coop pendant le développement sans dépendre du service externe. Il génère des données réalistes avec des paramètres configurables.
+
+### Activation du mock
+
+Le mock s'active automatiquement si la variable `COOP_TOKEN` commence par `FAKE_TOKEN`. Le format de configuration est :
+
+```
+FAKE_TOKEN_[RESPONSE_TYPE]_[DELAY_SECONDS]
+```
+
+Où :
+
+- `RESPONSE_TYPE` : `OK` (succès) ou `NOK` (erreur)
+- `DELAY_SECONDS` : temps de réponse simulé en secondes (0-30)
+
+### Exemples de configuration
+
+```bash
+# Mock répondant immédiatement avec succès
+COOP_TOKEN="FAKE_TOKEN_OK_0"
+
+# Mock répondant en 2 secondes avec succès
+COOP_TOKEN="FAKE_TOKEN_OK_2"
+
+# Mock répondant en 5 secondes avec une erreur
+COOP_TOKEN="FAKE_TOKEN_NOK_5"
+
+# Mock répondant après 10 secondes avec succès
+COOP_TOKEN="FAKE_TOKEN_OK_10"
+```
+
+### Données générées par le mock
+
+Le mock génère des statistiques cohérentes basées sur les filtres fournis :
+
+```typescript
+// Exemple de données générées pour la France entière
+{
+  totaux: {
+    beneficiaires: {
+      total: 2500000,
+      suivis: 1875000,
+      anonymes: 625000
+    },
+    accompagnements: {
+      total: 8750000,
+      individuels: { total: 6125000, proportion: 70 },
+      collectifs: { total: 2625000, proportion: 30 },
+      ateliersNumeriques: { total: 1750000, proportion: 20 }
+    },
+    activites: {
+      total: 12250000,
+      individuels: { total: 8575000, proportion: 70 },
+      collectifs: { total: 3675000, proportion: 30 }
+    }
+  },
+  // ... autres données
+}
+```
+
+### Filtres supportés par le mock
+
+Le mock adapte ses données selon les filtres fournis :
+
+- **Départements** : Ajuste les totaux selon le nombre de départements
+- **Dates** : Simule une évolution temporelle
+- **Types d'activités** : Filtre les statistiques par type
+
+```typescript
+// Exemple d'utilisation avec filtres
+const loader = createApiCoopStatistiquesLoader()
+const statistiques = await loader.recupererStatistiques({
+  departements: ['75'], // Paris - données ajustées pour un département
+  du: '2024-01-01',
+  au: '2024-03-31',
+})
+```
+
+### Script de test du mock
+
+Un script dédié permet de tester différentes configurations :
+
+```bash
+# Test avec succès instantané
+COOP_TOKEN=FAKE_TOKEN_OK_0 yarn tsx scripts/test-mock-api-coop.ts
+
+# Test avec erreur après 2 secondes
+COOP_TOKEN=FAKE_TOKEN_NOK_2 yarn tsx scripts/test-mock-api-coop.ts
+```
+
+### Intégration dans l'application
+
+Le mock est automatiquement utilisé par la factory :
+
+```typescript
+import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+
+// Si COOP_TOKEN commence par FAKE_TOKEN, retourne automatiquement le mock
+const loader = createApiCoopStatistiquesLoader()
+const stats = await loader.recupererStatistiques({})
+
+// Le composant ne sait pas s'il utilise le vrai service ou le mock
+```
+
 ## Configuration
 
-Assurez-vous que la variable d'environnement `COOP_TOKEN` est configurée dans votre fichier `.env.local` :
+### Production
+
+Assurez-vous que la variable d'environnement `COOP_TOKEN` est configurée avec un vrai token :
 
 ```bash
 COOP_TOKEN="votre_token_bearer_ici"
+```
+
+### Développement avec mock
+
+Pour utiliser le mock pendant le développement :
+
+```bash
+# Dans .env.local pour un mock rapide et fonctionnel
+COOP_TOKEN="FAKE_TOKEN_OK_0"
+
+# Ou pour tester les délais de chargement
+COOP_TOKEN="FAKE_TOKEN_OK_3"
 ```
 
 ## Tests
