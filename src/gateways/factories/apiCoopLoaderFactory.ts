@@ -1,33 +1,7 @@
 import { ApiCoopStatistiquesLoader } from '../apiCoop/ApiCoopStatistiquesLoader'
 import { CachedApiCoopStatistiquesLoader } from '../apiCoop/CachedApiCoopStatistiquesLoader'
-import { MockStatistiquesCoopLoader, MockConfig } from '../apiCoop/MockStatistiquesCoopLoader'
+import { MockConfig, MockStatistiquesCoopLoader } from '../apiCoop/MockStatistiquesCoopLoader'
 import { StatistiquesCoopLoader } from '@/use-cases/queries/RecupererStatistiquesCoop'
-
-/**
- * Parse le token FAKE_TOKEN pour extraire la configuration
- * Format: FAKE_TOKEN_[OK|NOK]_[delaySeconds]
- * Exemples:
- * - FAKE_TOKEN_OK_10 : répond OK après 10 secondes
- * - FAKE_TOKEN_NOK_0 : répond en erreur instantanément
- * - FAKE_TOKEN_OK_2 : répond OK après 2 secondes
- * - FAKE_TOKEN : comportement par défaut (OK après 0.8s)
- */
-function parseFakeToken(token: string): MockConfig {
-  const parts = token.split('_')
-  
-  // Format par défaut si pas de configuration
-  if (parts.length < 3) {
-    return { shouldFail: false, delaySeconds: 0.8 }
-  }
-  
-  const status = parts[2] // OK ou NOK
-  const delay = parts.length > 3 ? parseInt(parts[3], 10) : 0
-  
-  return {
-    shouldFail: status === 'NOK',
-    delaySeconds: isNaN(delay) ? 0 : delay
-  }
-}
 
 export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesCoopLoader {
   const coopToken = process.env.COOP_TOKEN
@@ -52,4 +26,30 @@ export function createApiCoopStatistiquesLoader(avecCache = true): StatistiquesC
   }
   
   return baseLoader
+}
+
+/**
+ * Parse le token FAKE_TOKEN pour extraire la configuration
+ * Format: FAKE_TOKEN_[OK|NOK]_[delaySeconds]
+ * Exemples:
+ * - FAKE_TOKEN_OK_10 : répond OK après 10 secondes
+ * - FAKE_TOKEN_NOK_0 : répond en erreur instantanément
+ * - FAKE_TOKEN_OK_2 : répond OK après 2 secondes
+ * - FAKE_TOKEN : comportement par défaut (OK après 0.8s)
+ */
+function parseFakeToken(token: string): MockConfig {
+  const parts = token.split('_')
+  
+  // Format par défaut si pas de configuration
+  if (parts.length < 3) {
+    return { delaySeconds: 0.8, shouldFail: false }
+  }
+  
+  const status = parts[2] // OK ou NOK
+  const delay = parts.length > 3 ? parseInt(parts[3], 10) : 0
+  
+  return {
+    delaySeconds: isNaN(delay) ? 0 : delay,
+    shouldFail: status === 'NOK',
+  }
 }

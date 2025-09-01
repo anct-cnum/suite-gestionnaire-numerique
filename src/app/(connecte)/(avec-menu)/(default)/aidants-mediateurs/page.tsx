@@ -6,12 +6,12 @@ import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { accompagnementsEtMediateursEnrichiPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
+import { accompagnementsEtMediateursPresenter } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 import { niveauDeFormationPresenter } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
-import { RecupererAccompagnementsEtMediateursEnrichi } from '@/use-cases/queries/RecupererAccompagnementsEtMediateursEnrichi'
+import { fetchBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
 export const metadata: Metadata = {
   title: 'Aidants et médiateurs numériques',
@@ -32,14 +32,13 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     redirect('/tableau-de-bord')
   }
 
-  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateursEnrichi(
-    new PrismaAccompagnementsEtMediateursLoader(),
-    createApiCoopStatistiquesLoader()
+  const accompagnementsEtMediateursUseCase = new RecupererAccompagnementsEtMediateurs(
+    new PrismaAccompagnementsEtMediateursLoader()
   )
   const accompagnementsEtMediateursReadModel = await accompagnementsEtMediateursUseCase.execute({ territoire: 'France' })
   const accompagnementsEtMediateursViewModel = handleReadModelOrError(
     accompagnementsEtMediateursReadModel,
-    accompagnementsEtMediateursEnrichiPresenter
+    accompagnementsEtMediateursPresenter
   )
 
   const niveauDeFormationLoader = new PrismaNiveauDeFormationLoader()
@@ -51,9 +50,13 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
 
   const dateGeneration = new Date()
   
+  // Créer la promesse pour les bénéficiaires France (sera streamée au client)
+  const beneficiairesPromise = fetchBeneficiaires()
+  
   return (
     <AidantsMediateurs
       accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+      beneficiairesPromise={beneficiairesPromise}
       dateGeneration={dateGeneration}
       niveauDeFormationViewModel={niveauDeFormationViewModel}
     />

@@ -19,3 +19,17 @@ export interface AccompagnementsEtMediateursLoader {
   get(territoire?: string): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel>
 }
 
+export class RecupererAccompagnementsEtMediateurs {
+  constructor(
+    private readonly accompagnementsLoader: AccompagnementsEtMediateursLoader
+  ) {}
+
+  async execute(query: RecupererAccompagnementsEtMediateursQuery): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
+    return this.accompagnementsLoader.get(query.territoire)
+  }
+}
+
+export type RecupererAccompagnementsEtMediateursQuery = Readonly<{
+  territoire?: string
+}>
+

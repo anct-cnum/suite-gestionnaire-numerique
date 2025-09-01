@@ -73,10 +73,10 @@ type AidantsMediateursInfoCard = Readonly<{
 }>
 
 type Props = Readonly<{
+  beneficiairesPromise: Promise<number>
   viewModel: {
     totalAccompagnements: number
     totalActeursNumerique: number
-    totalBeneficiaires: number
     totalConseillersNumerique: number
   }
 }>

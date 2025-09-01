@@ -3,12 +3,11 @@ import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
-import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
-import { StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
+import { fetchBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et mdiateurs numriques',
@@ -46,20 +45,12 @@ export default async function ListeAidantsMediateursController({
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
 
-  const loader = createApiCoopStatistiquesLoader()
-  const to = new Date()
-  const from  = new Date()
-  from.setDate(to.getDate() - 30)
-
-  const filtre = {
-    au: to.toISOString().split('T')[0],
-    departements: territoire === 'France' ? [] : [territoire],
-    du: from.toISOString().split('T')[0],
-  } as StatistiquesFilters
-  const result = await loader.recupererStatistiques(filtre)
+  // Créer la promesse pour les bénéficiaires (sera streamée au client)
+  const beneficiairesPromise = fetchBeneficiaires(territoire === 'France' ? undefined : territoire)
+  
   return (
     <ListeAidantsMediateurs
-      beneficiaireViewModel={result.totaux.beneficiaires.total}
+      beneficiairesPromise={beneficiairesPromise}
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
     />
   )

@@ -2,8 +2,10 @@
 
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
 import html2canvas from 'html2canvas'
-import { ReactElement, useRef } from 'react'
+import { ReactElement, Suspense, useRef } from 'react'
 
+import BeneficiairesAsyncLoader from './BeneficiairesAsyncLoader'
+import AsyncLoaderErrorBoundary from './GenericErrorBoundary'
 import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
@@ -11,10 +13,11 @@ import Metric from '../shared/Metric/Metric'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { AccompagnementsEtMediateursEnrichiViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursEnrichiPresenter'
+import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 
 export default function AccompagnementsEtMediateurs({
   accompagnementsEtMediateurs,
+  beneficiairesPromise,
   dateGeneration,
 }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
@@ -99,10 +102,25 @@ export default function AccompagnementsEtMediateurs({
               />
             </div>
             <div
-              className="fr-display--xs fr-mb-0"
               style={{ marginTop: '-3vw', pointerEvents: 'none', position: 'relative', zIndex: -1 }}
             >
-              {accompagnementsEtMediateurs.beneficiairesAccompagnes}
+              <AsyncLoaderErrorBoundary
+                fallback={
+                  <div className="fr-display--xs fr-mb-0">
+                    -
+                  </div>
+                }
+              >
+                <Suspense
+                  fallback={
+                    <div className="fr-display--xs fr-mb-0 color-grey">
+                      ...
+                    </div>
+                  }
+                >
+                  <BeneficiairesAsyncLoader beneficiairesPromise={beneficiairesPromise} />
+                </Suspense>
+              </AsyncLoaderErrorBoundary>
             </div>
             <div className="fr-text--lg font-weight-700 fr-m-0">
               Bénéficiaires accompagnés
@@ -214,12 +232,13 @@ export default function AccompagnementsEtMediateurs({
 }
 
 function isErrorViewModel(
-  viewModel: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
+  viewModel: AccompagnementsEtMediateursViewModel | ErrorViewModel
 ): viewModel is ErrorViewModel {
   return 'type' in viewModel
 }
 
 type Props = Readonly<{
-  accompagnementsEtMediateurs: AccompagnementsEtMediateursEnrichiViewModel | ErrorViewModel
+  accompagnementsEtMediateurs: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  beneficiairesPromise: Promise<number>
   dateGeneration: Date
 }>

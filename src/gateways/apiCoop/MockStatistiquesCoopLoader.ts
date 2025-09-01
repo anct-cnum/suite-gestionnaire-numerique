@@ -1,12 +1,12 @@
 import { StatistiquesCoopLoader, StatistiquesCoopReadModel, StatistiquesFilters } from '@/use-cases/queries/RecupererStatistiquesCoop'
 
 export interface MockConfig {
-  shouldFail: boolean
   delaySeconds: number
+  shouldFail: boolean
 }
 
 export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
-  constructor(private readonly config: MockConfig = { shouldFail: false, delaySeconds: 0.8 }) {}
+  constructor(private readonly config: MockConfig = { delaySeconds: 0.8, shouldFail: false }) {}
 
   async recupererStatistiques(filtres?: StatistiquesFilters): Promise<StatistiquesCoopReadModel> {
     // Simulation d'un délai d'API
