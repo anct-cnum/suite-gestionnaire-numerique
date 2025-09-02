@@ -26,13 +26,30 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     // Données différentes selon le filtre géographique
     const estDepartemental = filtres?.departements !== undefined && filtres.departements.length > 0
     const departement = estDepartemental ? filtres.departements[0] : null
+    
+    // Calculer un facteur temporel si des dates sont fournies
+    let facteurTemporel = 1
+    if (filtres?.du !== undefined && filtres.au !== undefined) {
+      const dateDebut = new Date(filtres.du)
+      const dateFin = new Date(filtres.au)
+      const joursEcoules = Math.round((dateFin.getTime() - dateDebut.getTime()) / (1000 * 60 * 60 * 24))
+      
+      // Si période de 30 jours ou moins, diviser par 100
+      // Si période entre 30 et 365 jours, ajuster proportionnellement
+      if (joursEcoules <= 30) {
+        facteurTemporel = 0.01 // Diviser par 100
+      } else if (joursEcoules <= 365) {
+        facteurTemporel = joursEcoules / 365 // Proportionnel à l'année
+      }
+      // Sinon garder facteur 1 (toutes les données)
+    }
 
     return {
       accompagnementsParJour: this.genererAccompagnementsParJour(),
       accompagnementsParMois: this.genererAccompagnementsParMois(),
-      activites: this.genererActivites(Boolean(estDepartemental)),
-      beneficiaires: this.genererBeneficiaires(Boolean(estDepartemental)),
-      totaux: this.genererTotaux(Boolean(estDepartemental), departement),
+      activites: this.genererActivites(Boolean(estDepartemental), facteurTemporel),
+      beneficiaires: this.genererBeneficiaires(Boolean(estDepartemental), facteurTemporel),
+      totaux: this.genererTotaux(Boolean(estDepartemental), departement, facteurTemporel),
     }
   }
 
@@ -59,8 +76,8 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     ]
   }
 
-  private genererActivites(estDepartemental: boolean): StatistiquesCoopReadModel['activites'] {
-    const facteur = estDepartemental ? 0.08 : 1
+  private genererActivites(estDepartemental: boolean, facteurTemporel = 1): StatistiquesCoopReadModel['activites'] {
+    const facteur = (estDepartemental ? 0.08 : 1) * facteurTemporel
     
     return {
       durees: [
@@ -185,8 +202,8 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     }
   }
 
-  private genererBeneficiaires(estDepartemental: boolean): StatistiquesCoopReadModel['beneficiaires'] {
-    const facteur = estDepartemental ? 0.08 : 1 // 8% pour un département vs France entière
+  private genererBeneficiaires(estDepartemental: boolean, facteurTemporel = 1): StatistiquesCoopReadModel['beneficiaires'] {
+    const facteur = (estDepartemental ? 0.08 : 1) * facteurTemporel // 8% pour un département vs France entière
     
     return {
       genres: [
@@ -271,7 +288,11 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
     }
   }
 
-  private genererTotaux(estDepartemental: boolean, departement: null | string): StatistiquesCoopReadModel['totaux'] {
+  private genererTotaux(
+    estDepartemental: boolean, 
+    departement: null | string, 
+    facteurTemporel = 1
+  ): StatistiquesCoopReadModel['totaux'] {
     const facteur = estDepartemental ? 0.08 : 1
     
     // Ajustements spécifiques par département pour plus de réalisme
@@ -294,6 +315,9 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           facteurDept = 0.08
       }
     }
+    
+    // Appliquer le facteur temporel
+    facteurDept *= facteurTemporel
     
     return {
       accompagnements: {
