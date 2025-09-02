@@ -45,7 +45,15 @@ export default async function ListeAidantsMediateursController({
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
 
-  const totalBeneficiairesPromise = fetchTotalBeneficiaires(territoire === 'France' ? undefined : territoire)
+  // Calculer la période de 30 jours pour les stats des bénéficiaires
+  const jusqua = new Date()
+  const depuis = new Date()
+  depuis.setDate(jusqua.getDate() - 30)
+  
+  const totalBeneficiairesPromise = fetchTotalBeneficiaires(
+    territoire === 'France' ? undefined : territoire,
+    { depuis, jusqua }
+  )
   
   return (
     <ListeAidantsMediateurs
