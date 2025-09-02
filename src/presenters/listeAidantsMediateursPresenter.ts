@@ -3,9 +3,9 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export type ListeAidantsMediateursViewModel = Readonly<{
   aidants: Array<{
-    formation: Array<string>
+    formations: Array<string>
     id: string
-    labelisation: string
+    labelisations: Array<'aidants connect' | 'conseiller numérique'>
     nbAccompagnements: number
     nom: string
     prenom: string

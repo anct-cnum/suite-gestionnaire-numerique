@@ -101,20 +101,28 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         const roles: Array<string> = []
         if (isCoordinateur) {roles.push('Coordinateur')}
         if (isMediateur) {roles.push('Médiateur')}
-        if (hasAidantConnect) {roles.push('Aidant')}
-
-        let labelisation = ''
+        else {roles.push('aidants connect')}
+        const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
         if (hasConseillerNumerique) {
-          labelisation = 'Conseiller Numérique'
-        } else if (hasAidantConnect) {
-          labelisation = 'Aidants Connect'
+          labelisations.push('conseiller numérique')
+        } 
+        if (hasAidantConnect) {
+          labelisations.push('aidants connect')
+        }
+
+        // Construction du tableau des formations avec PIX et REMN
+        const formations = [...personne.formations.filter(item => Boolean(item) && item.trim() !== '')]
+        if (personne.pix) {
+          formations.push('PIX')
+        }
+        if (personne.remn) {
+          formations.push('REMN')
         }
 
         return {
-          // eslint-disable-next-line
-          formation: personne.formations.filter(item => item !== null),
+          formations,
           id: String(personne.id),
-          labelisation,
+          labelisations,
           nbAccompagnements: Number(personne.accompagnements) + Number(personne.accompagnements_ac) ,
           nom: personne.nom ?? '',
           prenom: personne.prenom ?? '',
