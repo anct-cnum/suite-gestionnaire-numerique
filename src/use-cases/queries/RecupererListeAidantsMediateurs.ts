@@ -5,9 +5,9 @@ export interface ListeAidantsMediateursLoader {
 }
 
 export type AidantMediateurReadModel = Readonly<{
-  formation: Array<string>
+  formations: Array<string>
   id: string
-  labelisation: string
+  labelisations: Array<'aidants connect' | 'conseiller numérique'>
   nbAccompagnements: number
   nom: string
   prenom: string

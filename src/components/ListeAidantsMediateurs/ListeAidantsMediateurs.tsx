@@ -27,21 +27,18 @@ export default function ListeAidantsMediateurs({
   }
   const viewModel = listeAidantsMediateursViewModel
 
-  function getAidantIcon(aidant: string): null | string {
-    const isConseillerNumerique =
-      aidant.toLowerCase().includes('conseiller')
-    if (isConseillerNumerique) {
-      return '/conum.svg'
+  function getAidantIcons(labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> {
+    const icons: Array<{ alt: string; src: string }> = []
+    
+    if (labelisations.includes('conseiller numérique')) {
+      icons.push({ alt: 'Conseiller numérique', src: '/conum.svg' })
     }
 
-    const isAidantConnect =
-      aidant.toLowerCase().includes('aidants')
-
-    if (isAidantConnect) {
-      return '/aidant-numerique.svg'
+    if (labelisations.includes('aidants connect')) {
+      icons.push({ alt: 'Aidant numérique', src: '/aidant-numerique.svg' })
     }
 
-    return null
+    return icons
   }
 
   return (
@@ -83,15 +80,16 @@ export default function ListeAidantsMediateurs({
                   {aidant.nom}
                   {' '}
                   {aidant.prenom}
-                  {getAidantIcon(aidant.labelisation) !== null && (
+                  {getAidantIcons(aidant.labelisations).map((icon) => (
                     <img
-                      alt=""
+                      alt={icon.alt}
                       className="fr-ml-1w"
                       height={24}
-                      src={getAidantIcon(aidant.labelisation) ?? ''}
+                      key={`${aidant.id}-${icon.src}`}
+                      src={icon.src}
                       width={24}
                     />
-                  )}
+                  ))}
                 </div>
               </td>
               <td>
@@ -108,15 +106,20 @@ export default function ListeAidantsMediateurs({
                 </div>
               </td>
               <td>
-                {aidant.labelisation ? (
-                  <div
-                    className="fr-badge fr-badge--no-icon fr-badge--sm"
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: '1px solid var(--border-default-grey)',
-                      color: 'var(--text-default-grey)' }}
-                  >
-                    {aidant.labelisation}
+                {aidant.labelisations.length > 0 ? (
+                  <div className="fr-grid-row fr-grid-row--gutters">
+                    {aidant.labelisations.map((labelisation) => (
+                      <div
+                        className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
+                        key={`${aidant.id}-labelisation-${labelisation}`}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: '1px solid var(--border-default-grey)',
+                          color: 'var(--text-default-grey)' }}
+                      >
+                        {labelisation}
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <span>
@@ -125,20 +128,26 @@ export default function ListeAidantsMediateurs({
                 )}
               </td>
               <td>
-                <div className="fr-grid-row fr-grid-row--gutters">
-                  {aidant.formation.map((form) => (
-                    <div
-                      className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
-                      key={`${aidant.id}-formation-${form}`}
-                      style={{
-                        backgroundColor: 'transparent',
-                        border: '1px solid var(--border-default-grey)',
-                        color: 'var(--text-default-grey)' }}
-                    >
-                      {form}
-                    </div>
-                  ))}
-                </div>
+                {typeof aidant.formations === 'object' && aidant.formations.length > 0 ? (
+                  <div className="fr-grid-row fr-grid-row--gutters">
+                    {aidant.formations.map((form) => (
+                      <div
+                        className="fr-badge fr-badge--no-icon fr-badge--sm fr-mr-1v"
+                        key={`${aidant.id}-formation-${form}`}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: '1px solid var(--border-default-grey)',
+                          color: 'var(--text-default-grey)' }}
+                      >
+                        {form}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span>
+                    -
+                  </span>
+                )}
               </td>
               <td className="fr-cell--center">
                 {aidant.nbAccompagnements}
