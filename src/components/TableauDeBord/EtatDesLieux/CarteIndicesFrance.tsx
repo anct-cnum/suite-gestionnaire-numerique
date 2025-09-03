@@ -55,35 +55,57 @@ export default function CarteIndicesFrance({
         >
           <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
             <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-                <div 
-                  className="fr-btns-group fr-btns-group--inline-sm" 
-                  style={{ width: '100%' }}
+              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                <fieldset 
+                  className="fr-segmented"
+                  style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
                 >
-                  <button
-                    className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
-                    onClick={(): void => { setActiveIndex('confiance') }}
-                    style={{
-                      borderRadius: activeIndex === 'fragilite' ? '0.25rem 0 0 0.25rem' : '0.25rem',
-                      flex: 1,
-                    }}
-                    type="button"
+                  <div 
+                    className="fr-segmented__elements"
+                    style={{ display: 'flex', justifyContent: 'center', width: '80%' }}
                   >
-                    Indice de confiance
-                  </button>
-                  <button
-                    className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
-                    onClick={(): void => { setActiveIndex('fragilite') }}
-                    style={{
-                      borderLeft: 'none',
-                      borderRadius: activeIndex === 'confiance' ? '0 0.25rem 0.25rem 0' : '0.25rem',
-                      flex: 1,
-                    }}
-                    type="button"
-                  >
-                    Indice de fragilité numérique
-                  </button>
-                </div>
+                    <div
+                      className="fr-segmented__element"
+                      style={{ width: '40%' }}
+                    >
+                      <input 
+                        checked={activeIndex === 'confiance'} 
+                        id="segmented-confiance" 
+                        name="indice-selection" 
+                        onChange={(): void => { setActiveIndex('confiance') }}
+                        type="radio"
+                        value="confiance"
+                      />
+                      <label
+                        className="fr-label"
+                        htmlFor="segmented-confiance"
+                        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                      >
+                        Indice de confiance
+                      </label>
+                    </div>
+                    <div
+                      className="fr-segmented__element"
+                      style={{ width: '40%' }}
+                    >
+                      <input 
+                        checked={activeIndex === 'fragilite'} 
+                        id="segmented-fragilite" 
+                        name="indice-selection" 
+                        onChange={(): void => { setActiveIndex('fragilite') }}
+                        type="radio"
+                        value="fragilite"
+                      />
+                      <label
+                        className="fr-label"
+                        htmlFor="segmented-fragilite"
+                        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                      >
+                        Indice de fragilité numérique
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
               </div>
  
             </div>
@@ -125,37 +147,60 @@ export default function CarteIndicesFrance({
           height: '100%',
         }}
       >
+        {/* Contrôle Segementé du DSFR */}
         <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
-          <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-              <div 
-                className="fr-btns-group fr-btns-group--inline-sm"
-                style={{ width: '100%' }}
+          <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <fieldset
+                className="fr-segmented"
+                style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
               >
-                <button
-                  className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
-                  onClick={(): void => { setActiveIndex('confiance') }}
-                  style={{
-                    borderRadius: '0.25rem 0 0 0.25rem',
-                    flex: 1,
-                  }}
-                  type="button"
+                <div
+                  className="fr-segmented__elements"
+                  style={{ display: 'flex', justifyContent: 'center', width: '90%' }}
                 >
-                  Indice de confiance
-                </button>
-                <button
-                  className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
-                  onClick={(): void => { setActiveIndex('fragilite') }}
-                  style={{
-                    borderLeft: 'none',
-                    borderRadius :'0 0.25rem 0.25rem 0',
-                    flex: 1,
-                  }}
-                  type="button"
-                >
-                  Indice de fragilité numérique
-                </button>
-              </div>
+                  <div
+                    className="fr-segmented__element"
+                    style={{ width: '50%' }}
+                  >
+                    <input 
+                      checked={activeIndex === 'confiance'} 
+                      id="segmented-confiance-main" 
+                      name="indice-selection-main" 
+                      onChange={(): void => { setActiveIndex('confiance') }}
+                      type="radio"
+                      value="confiance"
+                    />
+                    <label
+                      className="fr-label"
+                      htmlFor="segmented-confiance-main"
+                      style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                    >
+                      Indice de confiance
+                    </label>
+                  </div>
+                  <div
+                    className="fr-segmented__element"
+                    style={{ width: '50%' }}
+                  >
+                    <input 
+                      checked={activeIndex === 'fragilite'} 
+                      id="segmented-fragilite-main" 
+                      name="indice-selection-main" 
+                      onChange={(): void => { setActiveIndex('fragilite') }}
+                      type="radio"
+                      value="fragilite"
+                    />
+                    <label
+                      className="fr-label"
+                      htmlFor="segmented-fragilite-main"
+                      style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                    >
+                      Indice de fragilité numérique
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
             </div>
             {activeIndex === 'confiance' && (
               <div className="font-weight-700 color-red">
