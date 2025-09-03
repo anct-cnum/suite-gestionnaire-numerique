@@ -35,7 +35,7 @@ export default function AidantsMediateurs({
             Aidants et médiateurs numériques
           </PageTitle>
           <p className="fr-text--lg fr-mb-0">
-            L&apos;ensemble des personnes dont le rôle et de faire de la médiation numérique
+            L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
           </p>
         </div>
         <div className="fr-col-auto">
