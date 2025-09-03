@@ -57,32 +57,55 @@ export default function CarteIndicesFrance({
             <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
                 <div 
-                  className="fr-btns-group fr-btns-group--inline-sm" 
-                  style={{ width: '100%' }}
+                  style={{ 
+                    border: '1px solid #666666',
+                    borderRadius: '0.25rem',
+                    display: 'flex',
+                    overflow: 'hidden',
+                    width: '100%',
+                  }}
                 >
-                  <button
-                    className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
+                  <div
                     onClick={(): void => { setActiveIndex('confiance') }}
-                    style={{
-                      borderRadius: activeIndex === 'fragilite' ? '0.25rem 0 0 0.25rem' : '0.25rem',
-                      flex: 1,
+                    onMouseEnter={(e): void => {
+                      e.currentTarget.style.backgroundColor = activeIndex === 'confiance' ? '#e3f2fd' : '#f5f5f5'
                     }}
-                    type="button"
+                    onMouseLeave={(e): void => {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                    style={{
+                      backgroundColor: 'transparent',
+                      borderRight: '1px solid #666666',
+                      color: activeIndex === 'confiance' ? '#000091' : '#666666',
+                      cursor: 'pointer',
+                      flex: 1,
+                      padding: '0.75rem 1rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease',
+                    }}
                   >
                     Indice de confiance
-                  </button>
-                  <button
-                    className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
+                  </div>
+                  <div
                     onClick={(): void => { setActiveIndex('fragilite') }}
-                    style={{
-                      borderLeft: 'none',
-                      borderRadius: activeIndex === 'confiance' ? '0 0.25rem 0.25rem 0' : '0.25rem',
-                      flex: 1,
+                    onMouseEnter={(e): void => {
+                      e.currentTarget.style.backgroundColor = activeIndex === 'fragilite' ? '#e3f2fd' : '#f5f5f5'
                     }}
-                    type="button"
+                    onMouseLeave={(e): void => {
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: activeIndex === 'fragilite' ? '#000091' : '#666666',
+                      cursor: 'pointer',
+                      flex: 1,
+                      padding: '0.75rem 1rem',
+                      textAlign: 'center',
+                      transition: 'all 0.2s ease',
+                    }}
                   >
                     Indice de fragilité numérique
-                  </button>
+                  </div>
                 </div>
               </div>
  
@@ -126,35 +149,58 @@ export default function CarteIndicesFrance({
         }}
       >
         <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
-          <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
               <div 
-                className="fr-btns-group fr-btns-group--inline-sm"
-                style={{ width: '100%' }}
+                style={{ 
+                  border: '1px solid #666666',
+                  borderRadius: '0.25rem',
+                  display: 'flex',
+                  overflow: 'hidden',
+                  width: '100%',
+                }}
               >
-                <button
-                  className={`fr-btn ${activeIndex === 'confiance' ? '' : 'fr-btn--secondary'}`}
+                <div
                   onClick={(): void => { setActiveIndex('confiance') }}
-                  style={{
-                    borderRadius: '0.25rem 0 0 0.25rem',
-                    flex: 1,
+                  onMouseEnter={(e): void => {
+                    e.currentTarget.style.backgroundColor = activeIndex === 'confiance' ? '#e3f2fd' : '#f5f5f5'
                   }}
-                  type="button"
+                  onMouseLeave={(e): void => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    borderRight: '1px solid #666666',
+                    color: activeIndex === 'confiance' ? '#000091' : '#666666',
+                    cursor: 'pointer',
+                    flex: 1,
+                    padding: '0.75rem 1rem',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
                   Indice de confiance
-                </button>
-                <button
-                  className={`fr-btn ${activeIndex === 'fragilite' ? '' : 'fr-btn--secondary'}`}
+                </div>
+                <div
                   onClick={(): void => { setActiveIndex('fragilite') }}
-                  style={{
-                    borderLeft: 'none',
-                    borderRadius :'0 0.25rem 0.25rem 0',
-                    flex: 1,
+                  onMouseEnter={(e): void => {
+                    e.currentTarget.style.backgroundColor = activeIndex === 'fragilite' ? '#e3f2fd' : '#f5f5f5'
                   }}
-                  type="button"
+                  onMouseLeave={(e): void => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: activeIndex === 'fragilite' ? '#000091' : '#666666',
+                    cursor: 'pointer',
+                    flex: 1,
+                    padding: '0.75rem 1rem',
+                    textAlign: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
                 >
                   Indice de fragilité numérique
-                </button>
+                </div>
               </div>
             </div>
             {activeIndex === 'confiance' && (
