@@ -55,58 +55,57 @@ export default function CarteIndicesFrance({
         >
           <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
             <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-                <div 
-                  style={{ 
-                    border: '1px solid #666666',
-                    borderRadius: '0.25rem',
-                    display: 'flex',
-                    overflow: 'hidden',
-                    width: '100%',
-                  }}
+              <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                <fieldset 
+                  className="fr-segmented"
+                  style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
                 >
-                  <div
-                    onClick={(): void => { setActiveIndex('confiance') }}
-                    onMouseEnter={(e): void => {
-                      e.currentTarget.style.backgroundColor = activeIndex === 'confiance' ? '#e3f2fd' : '#f5f5f5'
-                    }}
-                    onMouseLeave={(e): void => {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
-                    style={{
-                      backgroundColor: 'transparent',
-                      borderRight: '1px solid #666666',
-                      color: activeIndex === 'confiance' ? '#000091' : '#666666',
-                      cursor: 'pointer',
-                      flex: 1,
-                      padding: '0.75rem 1rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s ease',
-                    }}
+                  <div 
+                    className="fr-segmented__elements"
+                    style={{ display: 'flex', justifyContent: 'center', width: '80%' }}
                   >
-                    Indice de confiance
+                    <div
+                      className="fr-segmented__element"
+                      style={{ width: '40%' }}
+                    >
+                      <input 
+                        checked={activeIndex === 'confiance'} 
+                        id="segmented-confiance" 
+                        name="indice-selection" 
+                        onChange={(): void => { setActiveIndex('confiance') }}
+                        type="radio"
+                        value="confiance"
+                      />
+                      <label
+                        className="fr-label"
+                        htmlFor="segmented-confiance"
+                        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                      >
+                        Indice de confiance
+                      </label>
+                    </div>
+                    <div
+                      className="fr-segmented__element"
+                      style={{ width: '40%' }}
+                    >
+                      <input 
+                        checked={activeIndex === 'fragilite'} 
+                        id="segmented-fragilite" 
+                        name="indice-selection" 
+                        onChange={(): void => { setActiveIndex('fragilite') }}
+                        type="radio"
+                        value="fragilite"
+                      />
+                      <label
+                        className="fr-label"
+                        htmlFor="segmented-fragilite"
+                        style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                      >
+                        Indice de fragilité numérique
+                      </label>
+                    </div>
                   </div>
-                  <div
-                    onClick={(): void => { setActiveIndex('fragilite') }}
-                    onMouseEnter={(e): void => {
-                      e.currentTarget.style.backgroundColor = activeIndex === 'fragilite' ? '#e3f2fd' : '#f5f5f5'
-                    }}
-                    onMouseLeave={(e): void => {
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
-                    style={{
-                      backgroundColor: 'transparent',
-                      color: activeIndex === 'fragilite' ? '#000091' : '#666666',
-                      cursor: 'pointer',
-                      flex: 1,
-                      padding: '0.75rem 1rem',
-                      textAlign: 'center',
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
-                    Indice de fragilité numérique
-                  </div>
-                </div>
+                </fieldset>
               </div>
  
             </div>
@@ -148,60 +147,60 @@ export default function CarteIndicesFrance({
           height: '100%',
         }}
       >
+        {/* Contrôle Segementé du DSFR */}
         <div style={{ padding: '1rem', paddingTop: '2rem', position: 'relative', zIndex: 10 }}>
           <div style={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', width: '80%' }}>
-              <div 
-                style={{ 
-                  border: '1px solid #666666',
-                  borderRadius: '0.25rem',
-                  display: 'flex',
-                  overflow: 'hidden',
-                  width: '100%',
-                }}
+            <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+              <fieldset
+                className="fr-segmented"
+                style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
               >
                 <div
-                  onClick={(): void => { setActiveIndex('confiance') }}
-                  onMouseEnter={(e): void => {
-                    e.currentTarget.style.backgroundColor = activeIndex === 'confiance' ? '#e3f2fd' : '#f5f5f5'
-                  }}
-                  onMouseLeave={(e): void => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                  }}
-                  style={{
-                    backgroundColor: 'transparent',
-                    borderRight: '1px solid #666666',
-                    color: activeIndex === 'confiance' ? '#000091' : '#666666',
-                    cursor: 'pointer',
-                    flex: 1,
-                    padding: '0.75rem 1rem',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                  }}
+                  className="fr-segmented__elements"
+                  style={{ display: 'flex', justifyContent: 'center', width: '90%' }}
                 >
-                  Indice de confiance
+                  <div
+                    className="fr-segmented__element"
+                    style={{ width: '50%' }}
+                  >
+                    <input 
+                      checked={activeIndex === 'confiance'} 
+                      id="segmented-confiance-main" 
+                      name="indice-selection-main" 
+                      onChange={(): void => { setActiveIndex('confiance') }}
+                      type="radio"
+                      value="confiance"
+                    />
+                    <label
+                      className="fr-label"
+                      htmlFor="segmented-confiance-main"
+                      style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                    >
+                      Indice de confiance
+                    </label>
+                  </div>
+                  <div
+                    className="fr-segmented__element"
+                    style={{ width: '50%' }}
+                  >
+                    <input 
+                      checked={activeIndex === 'fragilite'} 
+                      id="segmented-fragilite-main" 
+                      name="indice-selection-main" 
+                      onChange={(): void => { setActiveIndex('fragilite') }}
+                      type="radio"
+                      value="fragilite"
+                    />
+                    <label
+                      className="fr-label"
+                      htmlFor="segmented-fragilite-main"
+                      style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', textAlign: 'center', width: '100%' }}
+                    >
+                      Indice de fragilité numérique
+                    </label>
+                  </div>
                 </div>
-                <div
-                  onClick={(): void => { setActiveIndex('fragilite') }}
-                  onMouseEnter={(e): void => {
-                    e.currentTarget.style.backgroundColor = activeIndex === 'fragilite' ? '#e3f2fd' : '#f5f5f5'
-                  }}
-                  onMouseLeave={(e): void => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                  }}
-                  style={{
-                    backgroundColor: 'transparent',
-                    color: activeIndex === 'fragilite' ? '#000091' : '#666666',
-                    cursor: 'pointer',
-                    flex: 1,
-                    padding: '0.75rem 1rem',
-                    textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  Indice de fragilité numérique
-                </div>
-              </div>
+              </fieldset>
             </div>
             {activeIndex === 'confiance' && (
               <div className="font-weight-700 color-red">
