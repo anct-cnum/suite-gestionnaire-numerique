@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import TableauDeBordAdmin from '@/components/TableauDeBord/TableauDeBordAdmin'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
@@ -22,7 +22,7 @@ import { financementAdminPresenter } from '@/presenters/tableauDeBord/financemen
 import { financementsPrefPresenter } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { gouvernanceAdminPresenter } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
 import { gouvernancePrefPresenter } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
-import { indiceConfianceDepartementsPresenter, indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
+import { indiceConfianceDepartementsAvecStatsPresenter, indiceFragiliteDepartementsPresenter, indiceFragilitePresenter } from '@/presenters/tableauDeBord/indicesPresenter'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -71,14 +71,25 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     )
 
     const indicesReadModel = await indicesLoader.getForFrance()
-    const indicesFragilite = handleReadModelOrError(
-      indicesReadModel,
-      indiceFragiliteDepartementsPresenter
-    )
-    const indicesConfiance = handleReadModelOrError(
-      indicesReadModel,
-      indiceConfianceDepartementsPresenter
-    )
+    
+    let indicesFragilite
+    let indicesConfianceAvecStats
+    
+    if (isErrorReadModel(indicesReadModel)) {
+      // Cas d'erreur
+      indicesFragilite = {
+        message: indicesReadModel.message,
+        type: 'error' as const,
+      }
+      indicesConfianceAvecStats = {
+        message: indicesReadModel.message,
+        type: 'error' as const,
+      }
+    } else {
+      // Le nouveau format avec statistiques
+      indicesFragilite = indiceFragiliteDepartementsPresenter(indicesReadModel.departements)
+      indicesConfianceAvecStats = indiceConfianceDepartementsAvecStatsPresenter(indicesReadModel)
+    }
 
     const financementsAdminLoader = new PrismaFinancementsAdminLoader()
     const financementsReadModel = await financementsAdminLoader.get()
@@ -108,7 +119,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
         beneficiairesViewModel={beneficiairesViewModel}
         financementsViewModel={financementsViewModel}
         gouvernanceViewModel={gouvernanceViewModel}
-        indicesConfiance={indicesConfiance}
+        indicesConfianceAvecStats={indicesConfianceAvecStats}
         indicesFragilite={indicesFragilite}
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}

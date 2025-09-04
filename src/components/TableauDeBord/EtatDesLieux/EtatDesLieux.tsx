@@ -4,22 +4,19 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import AccompagnementsRealises from './AccompagnementsRealises'
-import CarteFragiliteDepartement from './CarteFragiliteDepartement'
-import CarteIndicesFrance from './CarteIndicesFrance'
 import LieuxInclusionNumerique from './LieuxInclusionNumerique'
 import MediateursEtAidants from './MediateursEtAidants'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/accompagnementsRealisesPresenter'
-import { CommuneFragilite, DepartementConfiance, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 
 export default function EtatDesLieux({
   accompagnementsRealisesViewModel,
+  carte,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
-  territoire,
 }: EtatDesLieuxProps): ReactElement {
   return (
     <section
@@ -64,17 +61,7 @@ export default function EtatDesLieux({
 
       </div>
       <div className="fr-grid-row">
-        {territoire.type === 'France' ? (
-          <CarteIndicesFrance
-            departementsConfiance={territoire.indicesConfiance}
-            departementsFragilite={territoire.indicesFragilite}
-          />
-        ) : (
-          <CarteFragiliteDepartement
-            communesFragilite={territoire.indicesFragilite}
-            departement={territoire.codeDepartement}
-          />
-        )}
+        {carte}
         <div className="fr-col-4">
           <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
           <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
@@ -87,8 +74,7 @@ export default function EtatDesLieux({
 
 type EtatDesLieuxProps = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  carte: ReactElement
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
-  territoire: { codeDepartement: string; indicesFragilite: Array<CommuneFragilite>; type: 'Departement' }
-     | { indicesConfiance: Array<DepartementConfiance>; indicesFragilite: Array<DepartementFragilite>; type: 'France' }
 }>

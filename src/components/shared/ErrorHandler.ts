@@ -15,6 +15,6 @@ export function handleReadModelOrError<T, U>(
   return presenter(readModel)
 }
 
-function isErrorReadModel(readModel: unknown): readModel is ErrorReadModel {
+export function isErrorReadModel(readModel: unknown): readModel is ErrorReadModel {
   return typeof readModel === 'object' && readModel !== null && 'type' in readModel && readModel.type === 'error'
 }

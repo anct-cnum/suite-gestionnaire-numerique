@@ -6,7 +6,6 @@ import { AddLayerObject, DataDrivenPropertyValueSpecification, LngLatBounds, Map
 import { ReactElement, RefObject, useEffect, useRef, useState } from 'react'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-import Legend from './Legend'
 import styles from './Map.module.css'
 import { DepartementData } from '@/presenters/tableauDeBord/indicesPresenter'
 
@@ -49,7 +48,7 @@ const DOM_TOM_CONFIG = {
   },
 }
 
-export default function CarteFranceAvecInsets({ departementsFragilite, legendType = 'fragilite' }: Props): ReactElement {
+export default function CarteFranceAvecInsets({ donneesDepartements, legend }: Props): ReactElement {
   const mainMapContainer = useRef<HTMLDivElement>(null)
   const mainMap = useRef<Map | null>(null)
   const domTomMaps = useRef<Record<string, Map>>({})
@@ -101,7 +100,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
         'fill-color': [
           'match',
           ['get', 'code'],
-          ...departementsFragilite.flatMap((dept) => [
+          ...donneesDepartements.flatMap((dept) => [
             dept.codeDepartement,
             dept.couleur,
           ]),
@@ -123,7 +122,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
     map.addLayer(layerConfig as unknown as AddLayerObject)
 
     map.on('mousemove', 'departements-layer', (event) => {
-      affichePopup(event, map, departementsFragilite, popup, isDomTom, legendType)
+      affichePopup(event, map, donneesDepartements, popup, isDomTom)
     })
 
     map.on('mouseleave', 'departements-layer', () => {
@@ -209,7 +208,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
       mainMap.current?.remove()
       Object.values(domTomMaps.current).forEach(map => { map.remove() })
     }
-  }, [departementsFragilite])
+  }, [donneesDepartements])
 
   return (
     <div style={{ height: '100%', position: 'relative', width: '100%' }}>
@@ -229,15 +228,16 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
           ref={mainMapContainer}
           style={{ height: '100%' }}
         />
+      
         <div
           className={styles.legendWrapper}
           data-testid="legend-wrapper"
           style={{ 
-            bottom: legendType === 'confiance' ? '1.5rem' : '3rem',
+            bottom: '2rem',
             width: '90%',
           }}
         >
-          <Legend type={legendType} />
+          {legend}
         </div>
       </div>
 
@@ -299,8 +299,8 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
 }
 
 type Props = Readonly<{
-  departementsFragilite: Array<DepartementData>
-  legendType?: 'confiance' | 'fragilite'
+  donneesDepartements: Array<DepartementData>
+  legend: ReactElement
 }>
 
 function affichePopup(
@@ -308,30 +308,33 @@ function affichePopup(
   map: Map,
   departementsFragilite: Array<DepartementData>,
   popup: RefObject<null | Popup>,
-  isDomTom: boolean,
-  legendType: 'confiance' | 'fragilite'
+  isDomTom: boolean
 ): void {
   if (!event.features?.length || !popup.current) {return}
+
+  const feature = event.features[0]
+  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
+  
+  if (!departement?.popup) {
+    // Pas de popup à afficher
+    const canvas = map.getCanvas()
+    canvas.style.cursor = ''
+    return
+  }
 
   const canvas = map.getCanvas()
   canvas.style.cursor = 'pointer'
 
-  const feature = event.features[0]
   const coordinates = event.lngLat
-  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
-  
-  if (!departement) {return}
-
   const domTomConfig = DOM_TOM_CONFIG[feature.properties.code as keyof typeof DOM_TOM_CONFIG]
   const isCurrentDomTom = isDomTom || domTomConfig
   const nomDepartement = domTomConfig?.name || feature.properties.nom as string
-  const scale = legendType === 'confiance' ? '/5' : '/10'
 
   const htmlContent = isCurrentDomTom
-    ? `<div style="font-size: 14px;"><strong>${departement.score}${scale}</strong></div>`
+    ? `<div style="font-size: 14px;"><strong>${departement.popup}</strong></div>`
     : `<div style="font-size: 14px;">
          <div class="fr-text--bold fr-mb-1w">${nomDepartement}</div>
-         <div style="font-size: 14px;">${departement.score}${scale}</div>
+         <div style="font-size: 14px;">${departement.popup}</div>
        </div>`
 
   popup.current

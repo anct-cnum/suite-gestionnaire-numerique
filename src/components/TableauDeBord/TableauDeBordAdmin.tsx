@@ -4,6 +4,7 @@ import { ArcElement, BarElement, CategoryScale, Chart as ChartJS, LinearScale, T
 import { ReactElement, useContext } from 'react'
 
 import Beneficiaires from './Beneficiaires'
+import CarteIndicesFrance from './EtatDesLieux/CarteIndicesFrance'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import FinancementsAdmin from './FinancementsAdmin'
 import GouvernanceAdmin from './Gouvernance/GouvernanceAdmin'
@@ -14,7 +15,7 @@ import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/acc
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
-import { DepartementConfiance, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
+import { DepartementFragilite, DepartementsConfianceAvecStats } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -24,7 +25,7 @@ export default function TableauDeBordAdmin({
   beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
-  indicesConfiance,
+  indicesConfianceAvecStats,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -56,13 +57,14 @@ export default function TableauDeBordAdmin({
       <hr className="fr-hr" />
       <EtatDesLieux
         accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        carte={
+          <CarteIndicesFrance
+            departementsConfiance={indicesConfianceAvecStats}
+            departementsFragilite={indicesFragilite}
+          />
+        }
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-        territoire={{
-          indicesConfiance: indicesConfiance as Array<DepartementConfiance>,
-          indicesFragilite: indicesFragilite as Array<DepartementFragilite>,
-          type: 'France',
-        }}
       /> 
       <GouvernanceAdmin
         gouvernanceViewModel={gouvernanceViewModel}
@@ -85,7 +87,7 @@ type Props = Readonly<{
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
-  indicesConfiance: Array<DepartementConfiance> | ErrorViewModel
+  indicesConfianceAvecStats: DepartementsConfianceAvecStats | ErrorViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel

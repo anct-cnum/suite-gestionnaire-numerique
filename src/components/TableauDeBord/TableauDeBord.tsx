@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ReactElement, useContext } from 'react'
 
 import Beneficiaires from './Beneficiaires'
+import CarteFragiliteDepartement from './EtatDesLieux/CarteFragiliteDepartement'
 import EtatDesLieux from './EtatDesLieux/EtatDesLieux'
 import FinancementsPref from './FinancementsPref'
 import GouvernancePref from './Gouvernance/GouvernancePref'
@@ -21,7 +22,7 @@ import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/acc
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementViewModel } from '@/presenters/tableauDeBord/financementPrefPresenter'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
-import { CommuneFragilite, DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
+import { CommuneFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -103,13 +104,14 @@ export default function TableauDeBord({
       <hr className="fr-hr" />
       <EtatDesLieux
         accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        carte={
+          <CarteFragiliteDepartement
+            communesFragilite={indicesFragilite as Array<CommuneFragilite>}
+            departement={departement}
+          />
+        }
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-        territoire={{
-          codeDepartement: departement,
-          indicesFragilite: indicesFragilite as Array<CommuneFragilite>,
-          type: 'Departement',
-        }}
       /> 
       <GouvernancePref
         gouvernanceViewModel={gouvernanceViewModel}
@@ -313,7 +315,7 @@ type Props = Readonly<{
   departement: string
   financementsViewModel: ErrorViewModel | FinancementViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
-  indicesFragilite: Array<CommuneFragilite> | Array<DepartementFragilite> | ErrorViewModel
+  indicesFragilite: Array<CommuneFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   tableauDeBordViewModel: TableauDeBordViewModel

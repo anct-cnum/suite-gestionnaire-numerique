@@ -497,7 +497,6 @@ model zonage {
   updated_at  DateTime?                @db.Timestamp(6)
   commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([code, code_insee], map: "zonage_ukey")
   @@unique([code, code_insee], map: "zonage_code_ukey")
   @@index([code_insee])
   @@index([geom], type: Gist)
@@ -788,6 +787,7 @@ model categories_juridiques {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model personne_affectations {
   id                Int             @id @default(autoincrement())
   personne_id       Int
@@ -801,8 +801,18 @@ model personne_affectations {
   personne          personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   structure         main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([structure_coop_id, mediateur_coop_id, type, suppression], map: "personne_affectations_ukey")
   @@index([personne_id], map: "idx_personne_affectations_personne_id")
   @@index([structure_id], map: "idx_personne_affectations_structure_id")
   @@schema("main")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model icp_departement {
+  id         Int       @id @default(autoincrement())
+  code       String    @unique(map: "icp_departement_code_ukey") @db.VarChar(3)
+  label      String?   @db.VarChar
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @db.Timestamp(6)
+
+  @@schema("admin")
 }

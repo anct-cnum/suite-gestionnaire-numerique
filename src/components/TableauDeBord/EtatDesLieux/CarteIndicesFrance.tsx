@@ -2,6 +2,7 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import CarteFranceAvecInsets from '../../shared/Carte/CarteFranceAvecInsets'
+import Legend from '../../shared/Carte/Legend'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { DepartementConfiance, DepartementFragilite, transformerDonneesCarteFrance } from '@/presenters/tableauDeBord/indicesPresenter'
@@ -35,9 +36,17 @@ export default function CarteIndicesFrance({
     }
   }, [])
 
-  const currentData = activeIndex === 'fragilite' ? departementsFragilite : departementsConfiance ?? departementsFragilite
+  const isFragiliteError = activeIndex === 'fragilite' && isErrorViewModel(departementsFragilite)
+  const isConfianceErrorActive = activeIndex === 'confiance' && (!departementsConfiance || isConfianceError(departementsConfiance))
+  const hasError = isFragiliteError || isConfianceErrorActive
 
-  if (isErrorViewModel(currentData)) {
+  if (hasError) {
+    let errorMessage = 'Erreur de chargement'
+    if (isFragiliteError) {
+      errorMessage = departementsFragilite.message
+    } else if (activeIndex === 'confiance' && isConfianceError(departementsConfiance)) {
+      errorMessage = departementsConfiance.message
+    }
     return (
       <div
         className="fr-col-8 background-blue-france"
@@ -66,7 +75,7 @@ export default function CarteIndicesFrance({
                   >
                     <div
                       className="fr-segmented__element"
-                      style={{ width: '40%' }}
+                      style={{ width: '50%' }}
                     >
                       <input 
                         checked={activeIndex === 'confiance'} 
@@ -86,7 +95,7 @@ export default function CarteIndicesFrance({
                     </div>
                     <div
                       className="fr-segmented__element"
-                      style={{ width: '40%' }}
+                      style={{ width: '50%' }}
                     >
                       <input 
                         checked={activeIndex === 'fragilite'} 
@@ -117,7 +126,7 @@ export default function CarteIndicesFrance({
                 icon="error-warning-line"
               />
               <div className="fr-text--sm color-blue-france fr-mt-2w">
-                {currentData.message}
+                {errorMessage}
               </div>
             </div>
           </div>
@@ -126,9 +135,17 @@ export default function CarteIndicesFrance({
     )
   }
 
-  const departementsData = transformerDonneesCarteFrance(
+  // Extraire les données de confiance et statistiques
+  const departementsConfianceData = departementsConfiance && !isConfianceError(departementsConfiance) 
+    ? departementsConfiance.departements 
+    : undefined
+  const statistiquesConfiance = departementsConfiance && !isConfianceError(departementsConfiance) 
+    ? departementsConfiance.statistiques 
+    : undefined
+
+  const departementsViewModel = transformerDonneesCarteFrance(
     departementsFragilite as ReadonlyArray<DepartementFragilite>,
-    departementsConfiance as ReadonlyArray<DepartementConfiance>,
+    departementsConfianceData,
     activeIndex
   )
 
@@ -202,20 +219,23 @@ export default function CarteIndicesFrance({
                 </div>
               </fieldset>
             </div>
-            {activeIndex === 'confiance' && (
-              <div className="font-weight-700 color-red">
-                L&apos;Indice de confiance est en cours de construction. Les données présentées
-                ne correspondent pas à la réalité et sont uniquement à des fins de démonstration.
-              </div>
-            )}
           </div>
         </div>
         <div style={{ flex: 1 }}>
           {/* On attend que le composant chart soit prêt avant de charger la carte */}
           {isReady ?
             <CarteFranceAvecInsets
-              departementsFragilite={departementsData}
-              legendType={activeIndex}
+              donneesDepartements={departementsViewModel}
+              legend={
+                activeIndex === 'confiance' && statistiquesConfiance ? (
+                  <Legend
+                    statistiques={statistiquesConfiance}
+                    type="confiance"
+                  />
+                ) : (
+                  <Legend type="fragilite" />
+                )
+              }
             /> : null}
         </div>
       </div>
@@ -231,9 +251,31 @@ function isErrorViewModel(
   return 'type' in viewModel
 }
 
+function isConfianceError(
+  data: ErrorViewModel | Readonly<{
+    departements: ReadonlyArray<DepartementConfiance>
+    statistiques: Readonly<{
+      appuinecessaire: number
+      atteignable: number
+      compromis: number
+      nonenregistres: number
+      securise: number
+    }>
+  }> | undefined
+): data is ErrorViewModel {
+  return data !== undefined && 'type' in data
+}
+
 type Props = Readonly<{
-  departementsConfiance?: ErrorViewModel |
-    ReadonlyArray<DepartementConfiance>
-  departementsFragilite: ErrorViewModel |
-    ReadonlyArray<DepartementFragilite>
+  departementsConfiance?: ErrorViewModel | Readonly<{
+    departements: ReadonlyArray<DepartementConfiance>
+    statistiques: Readonly<{
+      appuinecessaire: number
+      atteignable: number
+      compromis: number
+      nonenregistres: number
+      securise: number
+    }>
+  }>
+  departementsFragilite: ErrorViewModel | ReadonlyArray<DepartementFragilite>
 }>

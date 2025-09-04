@@ -53,24 +53,37 @@ export type DepartementFragilite = Readonly<{
 export type DepartementConfiance = Readonly<{
   codeDepartement: string
   couleur: string
-  indiceConfiance: number
+  indiceConfiance: null | string
 }>
 
 export type DepartementData = Readonly<{
   codeDepartement: string
   couleur: string
-  score: number
+  popup?: string
 }>
 
-export function indiceConfianceDepartementsPresenter(departements: ReadonlyArray<Readonly<{
-  codeDepartement: string
-  indiceConfiance: number
-}>>): Array<DepartementConfiance> {
-  return departements.map(departement => ({
-    codeDepartement: departement.codeDepartement,
-    couleur: CONFIANCE_COLORS[departement.indiceConfiance as keyof typeof CONFIANCE_COLORS] || '#CECECE',
-    indiceConfiance: departement.indiceConfiance,
-  }))
+export type DepartementsConfianceAvecStats = Readonly<{
+  departements: Array<DepartementConfiance>
+  statistiques: StatistiquesConfiance
+}>
+
+export function indiceConfianceDepartementsAvecStatsPresenter(data: Readonly<{
+  departements: Array<Readonly<{
+    codeDepartement: string
+    indiceConfiance: null | string
+  }>>
+  statistiquesicp: {
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+    securise: number
+  }
+}>): DepartementsConfianceAvecStats {
+  return {
+    departements: indiceConfianceDepartementsPresenter(data.departements),
+    statistiques: data.statistiquesicp,
+  }
 }
 
 export function transformerDonneesCarteFrance(
@@ -82,19 +95,83 @@ export function transformerDonneesCarteFrance(
     return departementsFragilite.map(dept => ({
       codeDepartement: dept.codeDepartement,
       couleur: dept.couleur,
-      score: dept.score,
+      popup: `${dept.score}/10`,
     }))
   }
   
   if (departementsConfiance) {
-    return departementsConfiance.map(dept => ({
-      codeDepartement: dept.codeDepartement,
-      couleur: dept.couleur,
-      score: dept.indiceConfiance,
-    }))
+    return departementsConfiance.map(dept => {
+      let popup: string | undefined
+      // Pas de popup pour les DOM/TOM
+      if (!dept.codeDepartement.startsWith('97')) {
+        popup = getPopupTextConfiance(dept.indiceConfiance)
+      }
+      const departementData: DepartementData = {
+        codeDepartement: dept.codeDepartement,
+        couleur: dept.couleur,
+        popup,
+      }
+      
+      return departementData
+    })
   }
   
   return []
+}
+
+type StatistiquesConfiance = Readonly<{
+  appuinecessaire: number
+  atteignable: number
+  compromis: number
+  nonenregistres: number
+  securise: number
+}>
+
+function indiceConfianceDepartementsPresenter(departements: ReadonlyArray<Readonly<{
+  codeDepartement: string
+  indiceConfiance: null | string
+}>>): Array<DepartementConfiance> {
+  return departements.map(departement => {
+    const couleur = getCouleurConfiance(departement.indiceConfiance)
+    
+    return {
+      codeDepartement: departement.codeDepartement,
+      couleur,
+      indiceConfiance: departement.indiceConfiance,
+    }
+  })
+}
+
+function getCouleurConfiance(indiceConfiance: null | string): string {
+  switch (indiceConfiance) {
+    case 'appuis nécessaires':
+      return CONFIANCE_COLORS[3]
+    case 'objectifs atteignables':
+      return CONFIANCE_COLORS[2]
+    case 'objectifs compromis':
+      return CONFIANCE_COLORS[4]
+    case 'objectifs sécurisés':
+      return CONFIANCE_COLORS[1]
+    case null:
+    default:
+      return CONFIANCE_COLORS[5]
+  }
+}
+
+function getPopupTextConfiance(indiceConfiance: null | string): string {
+  switch (indiceConfiance) {
+    case 'appuis nécessaires':
+      return 'Appuis nécessaires'
+    case 'objectifs atteignables':
+      return 'Atteignables'
+    case 'objectifs compromis':
+      return 'Compromis'
+    case 'objectifs sécurisés':
+      return 'Sécurisés'
+    case null:
+    default:
+      return 'Non enregistrés'
+  }
 }
 
 // il y a 7 couleurs pour un indice de 0 à 10
