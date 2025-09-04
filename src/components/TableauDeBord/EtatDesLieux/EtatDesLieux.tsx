@@ -68,6 +68,7 @@ export default function EtatDesLieux({
           <CarteIndicesFrance
             departementsConfiance={territoire.indicesConfiance}
             departementsFragilite={territoire.indicesFragilite}
+            statistiquesConfiance={territoire.statistiquesConfiance}
           />
         ) : (
           <CarteFragiliteDepartement
@@ -90,5 +91,16 @@ type EtatDesLieuxProps = Readonly<{
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
   territoire: { codeDepartement: string; indicesFragilite: Array<CommuneFragilite>; type: 'Departement' }
-     | { indicesConfiance: Array<DepartementConfiance>; indicesFragilite: Array<DepartementFragilite>; type: 'France' }
+     | { 
+        indicesConfiance: Array<DepartementConfiance> | ErrorViewModel; 
+        indicesFragilite: Array<DepartementFragilite> | ErrorViewModel; 
+        statistiquesConfiance?: Readonly<{
+          securise: number
+          appuinecessaire: number
+          atteignable: number
+          compromis: number
+          nonenregistres: number
+        }>;
+        type: 'France' 
+      }
 }>

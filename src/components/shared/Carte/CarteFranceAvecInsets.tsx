@@ -49,7 +49,7 @@ const DOM_TOM_CONFIG = {
   },
 }
 
-export default function CarteFranceAvecInsets({ departementsFragilite, legendType = 'fragilite' }: Props): ReactElement {
+export default function CarteFranceAvecInsets({ departementsFragilite, legendType = 'fragilite', statistiquesConfiance }: Props): ReactElement {
   const mainMapContainer = useRef<HTMLDivElement>(null)
   const mainMap = useRef<Map | null>(null)
   const domTomMaps = useRef<Record<string, Map>>({})
@@ -237,7 +237,7 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
             width: '90%',
           }}
         >
-          <Legend type={legendType} />
+          <Legend statistiques={statistiquesConfiance} type={legendType} />
         </div>
       </div>
 
@@ -301,6 +301,13 @@ export default function CarteFranceAvecInsets({ departementsFragilite, legendTyp
 type Props = Readonly<{
   departementsFragilite: Array<DepartementData>
   legendType?: 'confiance' | 'fragilite'
+  statistiquesConfiance?: Readonly<{
+    securise: number
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+  }>
 }>
 
 function affichePopup(

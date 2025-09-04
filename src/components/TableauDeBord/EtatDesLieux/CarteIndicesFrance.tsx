@@ -9,6 +9,7 @@ import { DepartementConfiance, DepartementFragilite, transformerDonneesCarteFran
 export default function CarteIndicesFrance({
   departementsConfiance,
   departementsFragilite,
+  statistiquesConfiance,
 }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
   const [activeIndex, setActiveIndex] = useState<'confiance' | 'fragilite'>('fragilite')
@@ -216,6 +217,7 @@ export default function CarteIndicesFrance({
             <CarteFranceAvecInsets
               departementsFragilite={departementsData}
               legendType={activeIndex}
+              statistiquesConfiance={statistiquesConfiance}
             /> : null}
         </div>
       </div>
@@ -236,4 +238,11 @@ type Props = Readonly<{
     ReadonlyArray<DepartementConfiance>
   departementsFragilite: ErrorViewModel |
     ReadonlyArray<DepartementFragilite>
+  statistiquesConfiance?: Readonly<{
+    securise: number
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+  }>
 }>

@@ -5,14 +5,14 @@ import { ReactElement } from 'react'
 import styles from './Legend.module.css'
 import { CONFIANCE_COLORS, FRAGILITE_COLORS } from '@/presenters/tableauDeBord/indicesPresenter'
 
-export default function Legend({ type = 'fragilite' }: LegendProps): ReactElement {
+export default function Legend({ statistiques, type = 'fragilite' }: LegendProps): ReactElement {
   if (type === 'confiance') {
     const objectifs = [
-      {  color: CONFIANCE_COLORS[1],count: 30, label: 'Objectifs sécurisés' },
-      {  color: CONFIANCE_COLORS[2],count: 56, label: 'Objectifs atteignables' },
-      {  color: CONFIANCE_COLORS[3],count: 2, label: 'Appuis nécessaires' },
-      {  color: CONFIANCE_COLORS[4],count: 3, label: 'Objectifs compromis' },
-      {   color: CONFIANCE_COLORS[5],count: 2,label: 'Objectifs non enregistrés' },
+      { color: CONFIANCE_COLORS[1], count: statistiques?.securise ?? 0, label: 'Objectifs sécurisés' },
+      { color: CONFIANCE_COLORS[2], count: statistiques?.atteignable ?? 0, label: 'Objectifs atteignables' },
+      { color: CONFIANCE_COLORS[3], count: statistiques?.appuinecessaire ?? 0, label: 'Appuis nécessaires' },
+      { color: CONFIANCE_COLORS[4], count: statistiques?.compromis ?? 0, label: 'Objectifs compromis' },
+      { color: CONFIANCE_COLORS[5], count: statistiques?.nonenregistres ?? 0, label: 'Objectifs non enregistrés' },
     ]
 
     return (
@@ -107,5 +107,12 @@ export default function Legend({ type = 'fragilite' }: LegendProps): ReactElemen
 }
 
 type LegendProps = Readonly<{
+  statistiques?: Readonly<{
+    securise: number
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+  }>
   type?: 'confiance' | 'fragilite'
 }>

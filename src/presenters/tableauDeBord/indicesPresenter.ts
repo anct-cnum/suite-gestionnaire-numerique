@@ -53,7 +53,7 @@ export type DepartementFragilite = Readonly<{
 export type DepartementConfiance = Readonly<{
   codeDepartement: string
   couleur: string
-  indiceConfiance: number
+  indiceConfiance: string | null
 }>
 
 export type DepartementData = Readonly<{
@@ -62,15 +62,68 @@ export type DepartementData = Readonly<{
   score: number
 }>
 
+export type StatistiquesConfiance = Readonly<{
+  securise: number
+  appuinecessaire: number
+  atteignable: number
+  compromis: number
+  nonenregistres: number
+}>
+
+export type DepartementsConfianceAvecStats = Readonly<{
+  statistiques: StatistiquesConfiance
+  departements: Array<DepartementConfiance>
+}>
+
+export function indiceConfianceDepartementsAvecStatsPresenter(data: Readonly<{
+  statistiquesicp: {
+    securise: number
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+  }
+  departements: Array<Readonly<{
+    codeDepartement: string
+    indiceConfiance: string | null
+  }>>
+}>): DepartementsConfianceAvecStats {
+  return {
+    statistiques: data.statistiquesicp,
+    departements: indiceConfianceDepartementsPresenter(data.departements),
+  }
+}
+
 export function indiceConfianceDepartementsPresenter(departements: ReadonlyArray<Readonly<{
   codeDepartement: string
-  indiceConfiance: number
+  indiceConfiance: string | null
 }>>): Array<DepartementConfiance> {
-  return departements.map(departement => ({
-    codeDepartement: departement.codeDepartement,
-    couleur: CONFIANCE_COLORS[departement.indiceConfiance as keyof typeof CONFIANCE_COLORS] || '#CECECE',
-    indiceConfiance: departement.indiceConfiance,
-  }))
+  return departements.map(departement => {
+    let couleur = CONFIANCE_COLORS[5] // Par défaut : non enregistré
+    
+    switch (departement.indiceConfiance) {
+      case 'objectifs sécurisés':
+        couleur = CONFIANCE_COLORS[1]
+        break
+      case 'objectifs atteignables':
+        couleur = CONFIANCE_COLORS[2]
+        break
+      case 'appuis nécessaires':
+        couleur = CONFIANCE_COLORS[3]
+        break
+      case 'objectifs compromis':
+        couleur = CONFIANCE_COLORS[4]
+        break
+      default:
+        couleur = CONFIANCE_COLORS[5]
+    }
+    
+    return {
+      codeDepartement: departement.codeDepartement,
+      couleur,
+      indiceConfiance: departement.indiceConfiance,
+    }
+  })
 }
 
 export function transformerDonneesCarteFrance(
@@ -87,11 +140,30 @@ export function transformerDonneesCarteFrance(
   }
   
   if (departementsConfiance) {
-    return departementsConfiance.map(dept => ({
-      codeDepartement: dept.codeDepartement,
-      couleur: dept.couleur,
-      score: dept.indiceConfiance,
-    }))
+    return departementsConfiance.map(dept => {
+      // Map le label vers un score numérique pour l'affichage
+      let score = 5 // Par défaut : non enregistré
+      switch (dept.indiceConfiance) {
+        case 'objectifs sécurisés':
+          score = 1
+          break
+        case 'objectifs atteignables':
+          score = 2
+          break
+        case 'appuis nécessaires':
+          score = 3
+          break
+        case 'objectifs compromis':
+          score = 4
+          break
+      }
+      
+      return {
+        codeDepartement: dept.codeDepartement,
+        couleur: dept.couleur,
+        score,
+      }
+    })
   }
   
   return []

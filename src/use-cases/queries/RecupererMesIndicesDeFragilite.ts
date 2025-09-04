@@ -2,7 +2,7 @@ import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface IndicesLoader {
   getForDepartement(codeDepartement: string): Promise<ErrorReadModel | ReadonlyArray<CommuneReadModel>>
-  getForFrance(): Promise<ErrorReadModel | ReadonlyArray<DepartementReadModel>>
+  getForFrance(): Promise<ErrorReadModel | DepartementsReadModel>
 }
 
 export type CommuneReadModel = Readonly<{
@@ -13,5 +13,18 @@ export type CommuneReadModel = Readonly<{
 export type DepartementReadModel = Readonly<{
   codeDepartement: string
   ifn: number
-  indiceConfiance: number
+  indiceConfiance: string | null
+}>
+
+
+
+export type DepartementsReadModel = Readonly<{
+  statistiquesicp: {
+    securise: number
+    appuinecessaire: number
+    atteignable: number
+    compromis: number
+    nonenregistres: number
+  }
+  departements: Array<DepartementReadModel>
 }>
