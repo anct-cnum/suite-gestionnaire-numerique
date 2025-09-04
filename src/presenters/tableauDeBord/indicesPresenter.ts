@@ -59,7 +59,7 @@ export type DepartementConfiance = Readonly<{
 export type DepartementData = Readonly<{
   codeDepartement: string
   couleur: string
-  popup: string
+  popup?: string
 }>
 
 export type DepartementsConfianceAvecStats = Readonly<{
@@ -101,13 +101,18 @@ export function transformerDonneesCarteFrance(
   
   if (departementsConfiance) {
     return departementsConfiance.map(dept => {
-      const popup = getPopupTextConfiance(dept.indiceConfiance)
-      
-      return {
+      let popup: string | undefined
+      // Pas de popup pour les DOM/TOM
+      if (!dept.codeDepartement.startsWith('97')) {
+        popup = getPopupTextConfiance(dept.indiceConfiance)
+      }
+      const departementData: DepartementData = {
         codeDepartement: dept.codeDepartement,
         couleur: dept.couleur,
         popup,
       }
+      
+      return departementData
     })
   }
   

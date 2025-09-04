@@ -312,15 +312,20 @@ function affichePopup(
 ): void {
   if (!event.features?.length || !popup.current) {return}
 
+  const feature = event.features[0]
+  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
+  
+  if (!departement?.popup) {
+    // Pas de popup à afficher
+    const canvas = map.getCanvas()
+    canvas.style.cursor = ''
+    return
+  }
+
   const canvas = map.getCanvas()
   canvas.style.cursor = 'pointer'
 
-  const feature = event.features[0]
   const coordinates = event.lngLat
-  const departement = departementsFragilite.find((dept) => dept.codeDepartement === feature.properties.code)
-  
-  if (!departement) {return}
-
   const domTomConfig = DOM_TOM_CONFIG[feature.properties.code as keyof typeof DOM_TOM_CONFIG]
   const isCurrentDomTom = isDomTom || domTomConfig
   const nomDepartement = domTomConfig?.name || feature.properties.nom as string
