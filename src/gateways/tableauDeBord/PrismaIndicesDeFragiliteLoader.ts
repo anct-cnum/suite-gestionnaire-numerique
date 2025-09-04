@@ -34,7 +34,7 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
     }
   }
 
-  async getForFrance(): Promise<ErrorReadModel | DepartementsReadModel> {
+  async getForFrance(): Promise<DepartementsReadModel | ErrorReadModel> {
     try {
       const [departements, icpDepartements] = await Promise.all([
         prisma.ifn_departement.findMany({
@@ -51,35 +51,38 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
         }),
       ])
 
-      const icpMap = new Map(icpDepartements.map((icp) => [icp.code, icp.label]))
+      const icpMap = new Map(
+        icpDepartements.map((icp: { code: string; label: null | string }) => [icp.code, icp.label])
+      )
       
       const statistiquesicp = {
-        securise: 0,
         appuinecessaire: 0,
         atteignable: 0,
         compromis: 0,
         nonenregistres: 0,
+        securise: 0,
       }
 
       const departementsWithIcp = departements.map((departement) => {
         const label = icpMap.get(departement.code)
         
         switch (label) {
-          case 'objectifs sécurisés':
-            statistiquesicp.securise++
-            break
           case 'appuis nécessaires':
-            statistiquesicp.appuinecessaire++
+            statistiquesicp.appuinecessaire += 1
             break
           case 'objectifs atteignables':
-            statistiquesicp.atteignable++
+            statistiquesicp.atteignable += 1
             break
           case 'objectifs compromis':
-            statistiquesicp.compromis++
+            statistiquesicp.compromis += 1
+            break
+          case 'objectifs sécurisés':
+            statistiquesicp.securise += 1
             break
           case null:
           case undefined:
-            statistiquesicp.nonenregistres++
+          default:
+            statistiquesicp.nonenregistres += 1
             break
         }
 
@@ -91,8 +94,8 @@ export class PrismaIndicesDeFragiliteLoader implements IndicesLoader {
       })
 
       return {
-        statistiquesicp,
         departements: departementsWithIcp,
+        statistiquesicp,
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaIndicesDeFragiliteLoader', {
