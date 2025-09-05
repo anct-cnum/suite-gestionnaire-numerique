@@ -47,9 +47,13 @@ export default function AidantDetailsStructureEmployeuse(props: Props): ReactEle
             Raison sociale
           </p>
           <div className="fr-tags-group">
-            <p className="fr-tag">
+            <button
+              className="fr-tag"
+              style={{ cursor: 'default' }}
+              type="button"
+            >
               {nomStructure}
-            </p>
+            </button>
           </div>
         </div>
         <div className="fr-col-12 fr-col-md-6">
@@ -99,7 +103,7 @@ export default function AidantDetailsStructureEmployeuse(props: Props): ReactEle
         </div>
       </div>
 
-      <AidantDetailsStructureReferente 
+      <AidantDetailsStructureReferente
         email={referent.email}
         nom={referent.nom}
         post={referent.post}

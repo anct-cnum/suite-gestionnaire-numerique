@@ -55,6 +55,15 @@ export default function AccompagnementsRealises({
         <Bar
           backgroundColor={viewModel.graphique.backgroundColor}
           data={viewModel.graphique.data}
+          header={(
+            <div className="font-weight-500">
+              <span>
+                {' '}
+                Accompagnements des 6 derniers mois
+              </span>
+              <Information label="Accompagnements saisis sur La Coop" />
+            </div>
+          )}
           labels={viewModel.graphique.labels}
         />
       </div>

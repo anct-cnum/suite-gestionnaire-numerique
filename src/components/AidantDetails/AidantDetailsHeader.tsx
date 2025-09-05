@@ -48,18 +48,17 @@ export default function AidantDetailsHeader(props: Props): ReactElement {
           </div>
         </div>
         <div className="fr-col-auto">
-          <p className="fr-text--sm fr-mb-0">
+          <p
+            className="fr-text--sm fr-mb-0"
+            style={{ display: 'none' }}
+          >
             Modifiée le
             {' '}
             {modificationDate}
-            {modificationAuther && modificationAuther.trim() !== '' ? (
-              <>
-                {' '}
-                par
-                {' '}
-                {modificationAuther}
-              </>
-            ) : null}
+            {' '}
+            -
+            {' '}
+            {modificationAuther}
           </p>
         </div>
       </div>

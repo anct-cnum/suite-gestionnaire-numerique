@@ -97,35 +97,43 @@ export default function AidantDetailsActivites(props: Props): ReactElement {
               </h3>
             </div>
 
-            {/* Boutons de bascule Par mois / Par jours */}
-            <div
-              className="fr-mb-3w"
-              style={{ display: 'flex', gap: '0' }}
-            >
-              <button
-                className={`fr-btn fr-btn--sm ${currentPeriode === 'mensuel' ? 'fr-btn--primary' : 'fr-btn--secondary'}`}
-                onClick={() => { handlePeriodeChange('mensuel') }}
-                style={{
-                  border: currentPeriode === 'mensuel' ? '1px solid #000091' : '1px solid #929292',
-                  borderRadius: '0.25rem 0 0 0.25rem',
-                }}
-                type="button"
-              >
-                Par mois
-              </button>
-              <button
-                className={`fr-btn fr-btn--sm ${currentPeriode === 'journalier' ? 'fr-btn--primary' : 'fr-btn--secondary'}`}
-                onClick={() => { handlePeriodeChange('journalier') }}
-                style={{
-                  border: currentPeriode === 'journalier' ? '1px solid #000091' : '1px solid #929292',
-                  borderRadius: '0 0.25rem 0.25rem 0',
-                  marginLeft: '-1px',
-                }}
-                type="button"
-              >
-                Par jours
-              </button>
-            </div>
+            {/* Sélecteur segmenté DSFR Par mois / Par jours */}
+            <fieldset className="fr-segmented fr-segmented--sm fr-mb-3w">
+              <div className="fr-segmented__elements">
+                <div className="fr-segmented__element">
+                  <input
+                    checked={currentPeriode === 'mensuel'}
+                    id="periode-mensuel"
+                    name="periode"
+                    onChange={() => { handlePeriodeChange('mensuel') }}
+                    type="radio"
+                    value="mensuel"
+                  />
+                  <label
+                    className="fr-label"
+                    htmlFor="periode-mensuel"
+                  >
+                    Par mois
+                  </label>
+                </div>
+                <div className="fr-segmented__element">
+                  <input
+                    checked={currentPeriode === 'journalier'}
+                    id="periode-journalier"
+                    name="periode"
+                    onChange={() => { handlePeriodeChange('journalier') }}
+                    type="radio"
+                    value="journalier"
+                  />
+                  <label
+                    className="fr-label"
+                    htmlFor="periode-journalier"
+                  >
+                    Par jours
+                  </label>
+                </div>
+              </div>
+            </fieldset>
 
             <Bar
               backgroundColor={statistiques?.graphique.backgroundColor ?? ['#009099']}

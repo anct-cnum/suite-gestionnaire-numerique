@@ -1,18 +1,24 @@
-import { ReactElement } from 'react'
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  LinearScale,
+  Tooltip,
+} from 'chart.js'
+import { ReactElement, ReactNode } from 'react'
 import { Bar as ReactBar } from 'react-chartjs-2'
 
-import Information from '@/components/shared/Information/Information'
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Tooltip
+)
 
-export default function Bar({ backgroundColor, data, labels }: Props): ReactElement {
+export default function Bar({ backgroundColor, data, header, labels }: Props): ReactElement {
   return (
     <>
-      <div className="font-weight-500">
-        <span>
-          {' '}
-          Accompagnements des 6 derniers mois
-        </span>
-        <Information label="Accompagnements saisis sur La Coop" />
-      </div>
+      {header}
       <ReactBar
         data={{
           datasets: [
@@ -78,5 +84,6 @@ export default function Bar({ backgroundColor, data, labels }: Props): ReactElem
 type Props = Readonly<{
   backgroundColor: ReadonlyArray<string>
   data: ReadonlyArray<number>
+  header?: ReactNode
   labels: Array<string>
 }>

@@ -1,81 +1,87 @@
-import { 
+import type {
   AidantDetailsData,
   AidantDetailsHeaderData,
   InformationsPersonnellesData,
   LieuActiviteData,
   StatistiquesActivitesData,
-  StructureEmployeuseData, 
+  StructureEmployeuseData,
 } from '@/components/AidantDetails/AidantDetails'
 
 export function createDefaultHeaderData(): AidantDetailsHeaderData {
   return {
-    modificationAuther: 'Jean Martin',
-    modificationDate: '15/12/2024 14:30',
-    nom: 'Dupont',
-    prenom: 'Marie',
-    tags: ['Médiateur numérique', 'Actif', 'Formation certifiée'],
+    modificationAuther: 'Marie Dupont',
+    modificationDate: '15/03/2024',
+    nom: 'Martin',
+    prenom: 'Jean',
+    tags: ['Aidant Connect', 'France Services', 'ANCT'],
   }
 }
 
 export function createDefaultInformationsPersonnellesData(): InformationsPersonnellesData {
   return {
-    email: 'marie.dupont@mairie01.paris.fr',
-    nom: 'Dupont',
-    prenom: 'Marie',
-    telephone: '06 12 34 56 78',
+    email: 'jean.martin@example.com',
+    nom: 'Martin',
+    prenom: 'Jean',
+    telephone: '01 23 45 67 89',
   }
 }
 
 export function createDefaultStatistiquesActivitesData(): StatistiquesActivitesData {
   return {
     accompagnements: {
-      avecAidantsConnect: 5,
-      total: 120,
+      avecAidantsConnect: 45,
+      total: 127,
     },
     beneficiaires: {
-      anonymes: 15,
+      anonymes: 82,
       suivis: 45,
-      total: 60,
+      total: 127,
     },
     graphique: {
-      backgroundColor: ['#009099', '#009099', '#009099', '#009099', '#009099', '#009099', '#009099', '#009099', '#009099'],
-      data: [24, 93, 31, 75, 71, 60, 82, 90, 80],
-      labels: ['Avr.', 'Mai', 'Juin', 'Juillet', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+      backgroundColor: ['#000091', '#e1000f', '#ff8d7e', '#ffb7ae'],
+      data: [45, 35, 30, 17],
+      labels: ['Numérique', 'Démarches administratives', 'Mobilité', 'Insertion professionnelle'],
     },
   }
 }
 
 export function createDefaultStructureEmployeuseData(): StructureEmployeuseData {
   return {
-    adresse: '10 Place de la Mairie, 75001 Paris',
-    departement: 'Paris (75)',
-    nom: 'Mairie du 1er arrondissement',
+    adresse: '123 Rue de la République, 75001 Paris',
+    departement: 'Paris',
+    nom: 'Mairie de Paris 1er',
     referent: {
-      email: 'jean.martin@mairie01.paris.fr',
-      nom: 'Martin',
-      post: 'Coordinateur inclusion numérique',
-      prenom: 'Jean',
+      email: 'marie.dupont@paris.fr',
+      nom: 'Dupont',
+      post: 'Responsable numérique',
+      prenom: 'Marie',
       telephone: '01 42 76 40 40',
     },
     region: 'Île-de-France',
-    siret: '12345678912345',
+    siret: '12345678901234',
     type: 'Collectivité territoriale',
   }
 }
 
-export function createDefaultLieuxActiviteData(): Array<LieuActiviteData> {
+export function createDefaultLieuxActiviteData(): ReadonlyArray<LieuActiviteData> {
   return [
     {
-      adresse: '19 Rue Proudhon, 01500 Belleville',
-      nom: 'Association Connect 01',
-      nombreAccompagnements: 5,
-      nombreAccompagnementsTotal: 30,
+      adresse: '123 Rue de la République, 75001 Paris',
+      nom: 'Mairie de Paris 1er',
+      nombreAccompagnements: 67,
+      nombreAccompagnementsTotal: 127,
     },
     {
-      adresse: '19 Rue Proudhon, 01500 Belleville',
-      nom: 'CD de l\'Ain',
-      nombreAccompagnements: 20,
-      nombreAccompagnementsTotal: 30,
+      adresse: '45 Avenue des Champs-Élysées, 75008 Paris',
+      nom: 'France Services Champs-Élysées',
+      nombreAccompagnements: 35,
+      nombreAccompagnementsTotal: 127,
+    },
+    {
+      adresse: '78 Rue de Rivoli, 75004 Paris',
+      nom: 'Point Numérique Rivoli',
+      nombreAccompagnements: 25,
+      nombreAccompagnementsTotal: 127,
     },
   ]
 }

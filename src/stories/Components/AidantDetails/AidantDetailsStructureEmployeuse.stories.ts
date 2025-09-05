@@ -45,8 +45,8 @@ export const Default: Story = {
 export const AvecCallbackEdit: Story = {
   args: {
     data: createDefaultStructureEmployeuseData(),
-    onEdit(): void { 
-      // Mock callback pour édition 
+    onEdit(): void {
+      // Mock callback pour édition
     },
   },
 }
