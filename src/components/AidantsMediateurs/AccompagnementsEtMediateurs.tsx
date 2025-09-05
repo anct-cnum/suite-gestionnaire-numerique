@@ -9,6 +9,7 @@ import AsyncLoaderErrorBoundary from './GenericErrorBoundary'
 import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
+import { DownloadButton } from '../shared/Download/DownloadButton'
 import Metric from '../shared/Metric/Metric'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
@@ -188,28 +189,10 @@ export default function AccompagnementsEtMediateurs({
                   {accompagnementsEtMediateurs.avertissementApiCoop}
                 </p>}
             </div>
-            <div>
-              <button
-                className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${gouvernancesStyles['download-button']}`}
-                onClick={handleDownload}
-                style={{ 
-                  alignItems: 'center',
-                  border: '1px solid var(--border-default-grey)',
-                  color: 'var(--text-mention-grey)',
-                  display: 'flex',
-                  height: '32px',
-                  justifyContent: 'center',
-                  minHeight: '32px',
-                  width: '32px',
-                }}
-                title="Télécharger le graphique"
-                type="button"
-              >
-                <span className="fr-sr-only">
-                  Télécharger le graphique
-                </span>
-              </button>
-            </div>
+            <DownloadButton 
+              onClick={handleDownload}
+              title="Accompagnements et Médiateurs"
+            />
           </div>
         </div>
         <div className="fr-col-12 fr-col-md-6 fr-pl-4w">
