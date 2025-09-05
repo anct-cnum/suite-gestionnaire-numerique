@@ -12,7 +12,7 @@ export default function CarteIndicesFrance({
   departementsFragilite,
 }: Props): ReactElement {
   const [isReady, setIsReady] = useState(false)
-  const [activeIndex, setActiveIndex] = useState<'confiance' | 'fragilite'>('fragilite')
+  const [activeIndex, setActiveIndex] = useState<'confiance' | 'fragilite'>('confiance')
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
