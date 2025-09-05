@@ -43,6 +43,11 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       label: 'Lieux d\'inclusion',
       url: '/lieux-inclusion',
     },
+    {
+      icon: 'group-line',
+      label: 'Aidants et médiateurs',
+      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
+    },
   ]
 
   const menusAVenir = [
@@ -55,11 +60,6 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       icon: 'community-line',
       label: 'Bénéficiaires',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/beneficiaires`,
-    },
-    {
-      icon: 'group-line',
-      label: 'Aidants et médiateurs',
-      url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
     },
 
   ]
