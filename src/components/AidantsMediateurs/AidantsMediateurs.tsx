@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 
 import AccompagnementsEtMediateurs from './AccompagnementsEtMediateurs'
 import NiveauDeFormation from './NiveauDeFormation'
@@ -19,6 +19,18 @@ export default function AidantsMediateurs({
   totalBeneficiairesPromise,
 }: Props): ReactElement {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    if (isDrawerOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isDrawerOpen])
 
   function handleOpenDrawer(): void {
     setIsDrawerOpen(true)
