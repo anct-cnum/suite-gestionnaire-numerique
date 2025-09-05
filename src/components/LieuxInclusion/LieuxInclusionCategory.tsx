@@ -1,7 +1,7 @@
 'use client'
 import React, { ReactElement, useRef } from 'react'
 
-import styles from '@/components/Gouvernances/Gouvernances.module.css'
+import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 import { handleDownload } from '@/shared/DownloadHelp'
@@ -62,28 +62,10 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
                   {dateGeneration.toLocaleDateString('fr-FR') }
                 </p>
               </div>
-              <div>
-                <button
-                  className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
-                  onClick={() => { void handleDownload(divCard,'Lieux d’inclusion numérique')}}
-                  style={{
-                    alignItems: 'center',
-                    border: '1px solid var(--border-default-grey)',
-                    color: 'var(--text-mention-grey)',
-                    display: 'flex',
-                    height: '32px',
-                    justifyContent: 'center',
-                    minHeight: '32px',
-                    width: '32px',
-                  }}
-                  title="Télécharger le graphique"
-                  type="button"
-                >
-                  <span className="fr-sr-only">
-                    Télécharger le graphique
-                  </span>
-                </button>
-              </div>
+              <DownloadButton 
+                onClick={() => { void handleDownload(divCard,'Lieux d’inclusion numérique')}}
+                title="Lieux d’inclusion numérique"
+              />
             </div>
           </div>
         </div>

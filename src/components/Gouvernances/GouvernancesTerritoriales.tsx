@@ -7,6 +7,7 @@ import { ReactElement, useRef } from 'react'
 import styles from './Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
+import { DownloadButton } from '../shared/Download/DownloadButton'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernancesTerritorialesViewModel } from '@/presenters/tableauDeBord/gouvernancesTerritorialesPresenter'
@@ -151,28 +152,10 @@ export default function GouvernancesTerritoriales({
             {dateGeneration.toLocaleDateString('fr-FR')}
           </p>
         </div>
-        <div>
-          <button
-            className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
-            onClick={handleDownload}
-            style={{ 
-              alignItems: 'center',
-              border: '1px solid var(--border-default-grey)',
-              color: 'var(--text-mention-grey)',
-              display: 'flex',
-              height: '32px',
-              justifyContent: 'center',
-              minHeight: '32px',
-              width: '32px',
-            }}
-            title="Télécharger le graphique"
-            type="button"
-          >
-            <span className="fr-sr-only">
-              Télécharger le graphique
-            </span>
-          </button>
-        </div>
+        <DownloadButton 
+          onClick={handleDownload}
+          title="Gouvernances territoriales"
+        />
       </div>
     </section>
   )

@@ -4,6 +4,7 @@ import { ReactElement, useRef } from 'react'
 import styles from './GraphiqueDemiCercle.module.css'
 import Dot from '@/components/shared/Dot/Dot'
 import Doughnut from '@/components/shared/Doughnut/Doughnut'
+import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
@@ -85,28 +86,10 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
               {dateGeneration.toLocaleDateString('fr-FR')}
             </p>
           </div>
-          <div>
-            <button
-              className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${styles['download-button']}`}
-              onClick={() => { void handleDownload(componentRef,label)}}
-              style={{
-                alignItems: 'center',
-                border: '1px solid var(--border-default-grey)',
-                color: 'var(--text-mention-grey)',
-                display: 'flex',
-                height: '32px',
-                justifyContent: 'center',
-                minHeight: '32px',
-                width: '32px',
-              }}
-              title="Télécharger le graphique"
-              type="button"
-            >
-              <span className="fr-sr-only">
-                Télécharger le graphique
-              </span>
-            </button>
-          </div>
+          <DownloadButton 
+            onClick={() => { void handleDownload(componentRef,label)}}
+            title={label}
+          />
         </div>
       </div>
     </section>

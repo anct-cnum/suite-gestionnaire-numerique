@@ -4,9 +4,9 @@ import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
 import html2canvas from 'html2canvas'
 import { ReactElement, useRef } from 'react'
 
-import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
+import { DownloadButton } from '../shared/Download/DownloadButton'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
@@ -161,28 +161,10 @@ export default function NiveauDeFormation({
             {dateGeneration.toLocaleDateString('fr-FR')}
           </p>
         </div>
-        <div>
-          <button
-            className={`fr-btn fr-btn--tertiary fr-btn--icon-only fr-icon-download-line fr-icon--xs ${gouvernancesStyles['download-button']}`}
-            onClick={handleDownload}
-            style={{ 
-              alignItems: 'center',
-              border: '1px solid var(--border-default-grey)',
-              color: 'var(--text-mention-grey)',
-              display: 'flex',
-              height: '32px',
-              justifyContent: 'center',
-              minHeight: '32px',
-              width: '32px',
-            }}
-            title="Télécharger le graphique"
-            type="button"
-          >
-            <span className="fr-sr-only">
-              Télécharger le graphique
-            </span>
-          </button>
-        </div>
+        <DownloadButton 
+          onClick={handleDownload}
+          title="Niveau de formation"
+        />
       </div>
     </section>
   )
