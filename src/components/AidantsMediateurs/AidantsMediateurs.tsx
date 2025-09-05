@@ -27,7 +27,7 @@ export default function AidantsMediateurs({
       document.body.style.overflow = ''
     }
 
-    return () => {
+    return (): void => {
       document.body.style.overflow = ''
     }
   }, [isDrawerOpen])
