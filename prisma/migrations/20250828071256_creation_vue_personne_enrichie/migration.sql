@@ -1,7 +1,7 @@
--- Supprimer la vue existante si elle existe
+-- Supprimer la vue existante
 DROP VIEW IF EXISTS min.personne_enrichie;
 
--- Créer la nouvelle vue avec CTE pour éviter la duplication de logique
+-- Recréer la vue avec structure_employeuse_id au lieu de id_adresse_employeuse et departement_employeur
 CREATE VIEW min.personne_enrichie AS
 WITH personne_avec_status AS (
   SELECT 
@@ -58,26 +58,21 @@ SELECT
     ELSE false
   END AS est_actuellement_coordo_actif,
   
-  -- Département de l'employeur (basé sur le type)
+  -- ID de la structure employeuse (basé sur le type)
   CASE
-    -- Pour un médiateur, prendre le département de la structure dans personne_affectations
+    -- Pour un médiateur, prendre l'id de la structure dans personne_affectations
     WHEN type_accompagnateur = 'mediateur' THEN (
-      SELECT a.departement
+      SELECT pa.structure_id
       FROM main.personne_affectations pa
-      JOIN main.structure s ON s.id = pa.structure_id
-      LEFT JOIN main.adresse a ON a.id = s.adresse_id
       WHERE pa.personne_id = personne_avec_status.id 
       AND pa.type = 'structure_emploi'
       AND pa.suppression IS NULL
+      ORDER BY pa.structure_id ASC -- Ordre déterministe pour les cas de doublons
       LIMIT 1
     )
-    -- Pour un aidant numérique, prendre le département de la structure directe
-    WHEN type_accompagnateur = 'aidant_numerique' AND personne_avec_status.structure_id IS NOT NULL THEN (
-      SELECT a.departement
-      FROM main.structure s
-      LEFT JOIN main.adresse a ON a.id = s.adresse_id
-      WHERE s.id = personne_avec_status.structure_id
-    )
+    -- Pour un aidant numérique, prendre l'id de la structure directe
+    WHEN type_accompagnateur = 'aidant_numerique' THEN personne_avec_status.structure_id
     ELSE NULL
-  END AS departement_employeur
+  END AS structure_employeuse_id
+  
 FROM personne_avec_status;

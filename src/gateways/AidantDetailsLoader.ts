@@ -35,12 +35,12 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           admin.region.nom as employeur_region
 
         FROM min.personne_enrichie
-               LEFT JOIN main.structure ON main.structure.id = min.personne_enrichie.structure_id
+               LEFT JOIN main.structure ON main.structure.id = min.personne_enrichie.structure_employeuse_id
                LEFT JOIN reference.categories_juridiques
                          ON reference.categories_juridiques.code = main.structure.categorie_juridique
-               left join main.adresse on main.adresse.id = min.personne_enrichie.id_adresse_employeuse
-               left join admin.departement on admin.departement.code = min.personne_enrichie.departement_employeur
-               left join admin.region on admin.region.id = admin.departement.region_id
+               LEFT JOIN main.adresse ON main.adresse.id = main.structure.adresse_id
+               LEFT JOIN admin.departement ON admin.departement.code = main.adresse.departement
+               LEFT JOIN admin.region ON admin.region.id = admin.departement.region_id
         WHERE min.personne_enrichie.id = ${personneId}
       `
       if (personneResult.length === 0) {
