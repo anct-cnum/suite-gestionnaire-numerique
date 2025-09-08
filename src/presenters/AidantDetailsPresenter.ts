@@ -17,7 +17,12 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel): AidantD
       prenom: readModel.prenom,
       telephone: readModel.telephone || undefined,
     },
-    lieuxActivite: [],
+    lieuxActivite: readModel.lieuxActivite.map(lieu => ({
+      adresse: lieu.adresse,
+      idCoopCarto: lieu.idCoopCarto,
+      nom: lieu.nom,
+      nombreAccompagnements: lieu.nombreAccompagnements.toString(),
+    })),
     statistiquesActivites: {
       accompagnements: {
         avecAidantsConnect: readModel.accompagnements.avecAidantsConnect,

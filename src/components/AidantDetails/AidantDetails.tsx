@@ -3,6 +3,7 @@ import { ReactElement } from 'react'
 import AidantDetailsActivites from '@/components/AidantDetails/AidantDetailsActivites'
 import AidantDetailsHeader from '@/components/AidantDetails/AidantDetailsHeader'
 import InformationsPersonnellesCard from '@/components/AidantDetails/AidantDetailsInformationsPersonnelles'
+import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetailsLieuxActivite'
 import AidantDetailsSideMenu, { SideMenuSection } from '@/components/AidantDetails/AidantDetailsSideMenu'
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
 
@@ -56,9 +57,9 @@ export type StructureEmployeuseData = Readonly<{
 
 export type LieuActiviteData = Readonly<{
   adresse: string
+  idCoopCarto: null | string
   nom: string
   nombreAccompagnements: number
-  nombreAccompagnementsTotal: number
 }>
 
 export type AidantDetailsData = Readonly<{
@@ -76,7 +77,7 @@ export default function AidantDetails(props: Props): ReactElement {
     { id: 'informations-personnelles', label: 'Informations personnelles' },
     { id: 'structures-employeuses', label: 'Structures employeuses' },
     { id: 'activites', label: 'Activités' },
-    // { id: 'lieux-activite', label: 'Lieux d\'activité' },
+    { id: 'lieux-activite', label: 'Lieux d\'activité' },
   ]
 
   return (
@@ -107,9 +108,9 @@ export default function AidantDetails(props: Props): ReactElement {
             <AidantDetailsActivites data={data.statistiquesActivites} />
           </div>
 
-          {/*<div id="lieux-activite">*/}
-          {/*  <AidantDetailsLieuxActivite data={data.lieuxActivite} />*/}
-          {/*</div>*/}
+          <div id="lieux-activite">
+            <AidantDetailsLieuxActivite data={data.lieuxActivite} />
+          </div>
         </div>
       </div>
     </div>
