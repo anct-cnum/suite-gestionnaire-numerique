@@ -67,6 +67,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                  LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
           WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
           GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
+          ORDER BY pe.nom, pe.prenom
           LIMIT ${limite} OFFSET ${offset};
         `
           : await prisma.$queryRaw<Array<PersonneQueryResult>>`
@@ -90,6 +91,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
               AND pe.departement_employeur = ${territoire}
             GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
+            ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
           `
       return personnes.map(personne => {
