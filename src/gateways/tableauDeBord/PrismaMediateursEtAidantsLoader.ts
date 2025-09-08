@@ -14,22 +14,22 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
           where: {
             OR: [
               { est_actuellement_aidant_numerique_en_poste: true },
-              { est_actuellement_mediateur_en_poste: true }
-            ]
-          }
+              { est_actuellement_mediateur_en_poste: true },
+            ],
+          },
         })
       } else {
         // Récupérer les IDs des structures dans le département
         const structuresInDepartment = await prisma.main_structure.findMany({
+          select: { id: true },
           where: {
             adresse: {
-              departement: territoire
-            }
+              departement: territoire,
+            },
           },
-          select: { id: true }
         })
         
-        const structureIds = structuresInDepartment.map(s => s.id)
+        const structureIds = structuresInDepartment.map(structure => structure.id)
         
         // Compter les personnes en poste dans ces structures
         total = await prisma.personneEnrichieView.count({
@@ -38,14 +38,14 @@ export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoade
               {
                 OR: [
                   { est_actuellement_aidant_numerique_en_poste: true },
-                  { est_actuellement_mediateur_en_poste: true }
-                ]
+                  { est_actuellement_mediateur_en_poste: true },
+                ],
               },
               {
-                structure_employeuse_id: { in: structureIds }
-              }
-            ]
-          }
+                structure_employeuse_id: { in: structureIds },
+              },
+            ],
+          },
         })
       }
 

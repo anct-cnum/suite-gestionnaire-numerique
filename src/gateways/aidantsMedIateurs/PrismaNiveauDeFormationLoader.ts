@@ -11,74 +11,79 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
     try {
       // Récupérer toutes les personnes en poste avec leurs structures employeuses
       const personnesEnPoste = await prisma.personneEnrichieView.findMany({
+        select: {
+          id: true,
+          structure_employeuse_id: true,
+        },
         where: {
           OR: [
             { est_actuellement_mediateur_en_poste: true },
-            { est_actuellement_aidant_numerique_en_poste: true }
-          ]
+            { est_actuellement_aidant_numerique_en_poste: true },
+          ],
         },
-        select: {
-          id: true,
-          structure_employeuse_id: true
-        }
       })
 
       // Si on filtre par territoire, récupérer les départements des structures
-      let personnesIds = personnesEnPoste.map(p => p.id)
+      let personnesIds = personnesEnPoste.map(personne => personne.id)
       
       if (territoire !== 'France') {
         const structureIds = [...new Set(personnesEnPoste
-          .filter(p => p.structure_employeuse_id)
-          .map(p => p.structure_employeuse_id!))]
+          .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
+            personne.structure_employeuse_id !== null)
+          .map(personne => personne.structure_employeuse_id))]
         
         const structures = await prisma.main_structure.findMany({
-          where: { id: { in: structureIds } },
           select: {
+            adresse_id: true,
             id: true,
-            adresse_id: true
-          }
+          },
+          where: { id: { in: structureIds } },
         })
 
         const adresseIds = structures
-          .filter(s => s.adresse_id)
-          .map(s => s.adresse_id!)
+          .filter((structure): structure is { adresse_id: number } & typeof structure => 
+            structure.adresse_id !== null)
+          .map(structure => structure.adresse_id)
 
         const adresses = await prisma.adresse.findMany({
-          where: { 
-            id: { in: adresseIds },
-            departement: territoire
-          },
           select: {
-            id: true
-          }
+            id: true,
+          },
+          where: { 
+            departement: territoire,
+            id: { in: adresseIds },
+          },
         })
 
-        const adresseIdSet = new Set(adresses.map(a => a.id))
+        const adresseIdSet = new Set(adresses.map(adresse => adresse.id))
         const structuresInTerritoire = structures
-          .filter(s => s.adresse_id && adresseIdSet.has(s.adresse_id))
-          .map(s => s.id)
+          .filter((structure): structure is { adresse_id: number } & typeof structure => 
+            structure.adresse_id !== null && adresseIdSet.has(structure.adresse_id))
+          .map(structure => structure.id)
 
         personnesIds = personnesEnPoste
-          .filter(p => p.structure_employeuse_id && structuresInTerritoire.includes(p.structure_employeuse_id))
-          .map(p => p.id)
+          .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
+            personne.structure_employeuse_id !== null && 
+          structuresInTerritoire.includes(personne.structure_employeuse_id))
+          .map(personne => personne.id)
       }
 
       const totalAidantsEtMediateurs = personnesIds.length
 
       // Nombre d'aidants et médiateurs formés (en poste avec au moins une formation)
       const formations = await prisma.formation.findMany({
-        where: {
-          personne_id: { in: personnesIds }
-        },
         select: {
-          personne_id: true,
           label: true,
+          personne_id: true,
           pix: true,
-          remn: true
-        }
+          remn: true,
+        },
+        where: {
+          personne_id: { in: personnesIds },
+        },
       })
 
-      const personnesAvecFormation = new Set(formations.map(f => f.personne_id))
+      const personnesAvecFormation = new Set(formations.map(formation => formation.personne_id))
       const aidantsEtMediateursFormes = personnesAvecFormation.size
 
       // Répartition par certification (pour les personnes en poste)
@@ -86,16 +91,16 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
       
       formations.forEach((formation: typeof formations[0]) => {
         // Traiter chaque formation pour catégoriser les certifications
-        const certifications: string[] = []
+        const certifications: Array<string> = []
         
-        if (formation.label === 'CCP1') certifications.push('CCP1')
-        if (formation.label === 'CCP2') certifications.push('CCP2')
-        if (formation.label === 'CCP2 & CCP3') certifications.push('CCP2 & CCP3')
-        if (formation.pix === true) certifications.push('Pix')
-        if (formation.remn === true) certifications.push('REMN')
+        if (formation.label === 'CCP1') {certifications.push('CCP1')}
+        if (formation.label === 'CCP2') {certifications.push('CCP2')}
+        if (formation.label === 'CCP2 & CCP3') {certifications.push('CCP2 & CCP3')}
+        if (formation.pix === true) {certifications.push('Pix')}
+        if (formation.remn === true) {certifications.push('REMN')}
         
         // Si la formation a un label qui n'est pas CCP et pas de pix/remn
-        if (formation.label && 
+        if (formation.label !== null && 
             !['CCP1', 'CCP2', 'CCP2 & CCP3'].includes(formation.label) &&
             formation.pix !== true && 
             formation.remn !== true) {
@@ -103,14 +108,14 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
         }
         
         // Incrémenter les compteurs pour chaque certification
-        certifications.forEach(cert => {
-          certificationCounts.set(cert, (certificationCounts.get(cert) || 0) + 1)
+        certifications.forEach(certification => {
+          certificationCounts.set(certification, (certificationCounts.get(certification) ?? 0) + 1)
         })
       })
 
       const formationsFormatees = Array.from(certificationCounts.entries())
         .map(([nom, nombre]) => ({ nom, nombre }))
-        .sort((a, b) => b.nombre - a.nombre)
+        .sort((premier, second) => second.nombre - premier.nombre)
 
       return {
         aidantsEtMediateursFormes,

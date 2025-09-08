@@ -338,6 +338,12 @@ export default [
     ...testingLibrary.configs['flat/react'],
   },
   {
+    files: ['**/gateways/**/Prisma*.ts'],
+    rules: {
+      'camelcase': 'off',
+    },
+  },
+  {
     files: ['**/*'],
     ignores: ['src/app/**/*'],
     rules: {
