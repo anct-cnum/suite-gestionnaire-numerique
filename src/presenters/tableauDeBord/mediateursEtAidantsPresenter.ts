@@ -4,15 +4,11 @@ import { MediateursEtAidantsReadModel } from '@/use-cases/queries/RecupererMedia
 export function mediateursEtAidantsPresenter(readModel: MediateursEtAidantsReadModel): MediateursEtAidantsViewModel {
   return {
     departement: readModel.departement,
-    nombreAidants: formaterEnNombreFrancais(readModel.nombreAidants),
-    nombreMediateurs: formaterEnNombreFrancais(readModel.nombreMediateurs),
-    total: formaterEnNombreFrancais(readModel.nombreMediateurs + readModel.nombreAidants),
+    total: formaterEnNombreFrancais(readModel.total),
   }
 }
 
 export type MediateursEtAidantsViewModel = Readonly<{
   departement: string
-  nombreAidants: string
-  nombreMediateurs: string
   total: string
 }> 

@@ -88,8 +88,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             FROM min.personne_enrichie pe
                    LEFT JOIN main.formation f ON pe.id = f.personne_id
                    LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
+                   LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+                   LEFT JOIN main.adresse a ON a.id = s.adresse_id
             WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
-              AND pe.departement_employeur = ${territoire}
+              AND a.departement = ${territoire}
             GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
@@ -176,11 +178,13 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         : await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
-          COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
-          COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true AND est_actuellement_conseiller_numerique = false) AS mediateur,
-          COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
-        FROM min.personne_enrichie
-        WHERE departement_employeur = ${territoire}
+          COUNT(*) FILTER (WHERE pe.est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
+          COUNT(*) FILTER (WHERE pe.est_actuellement_mediateur_en_poste = true AND pe.est_actuellement_conseiller_numerique = false) AS mediateur,
+          COUNT(*) FILTER (WHERE pe.est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
+        FROM min.personne_enrichie pe
+        LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+        LEFT JOIN main.adresse a ON a.id = s.adresse_id
+        WHERE a.departement = ${territoire}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
     const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)

@@ -48,7 +48,6 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     niveauDeFormationReadModel,
     niveauDeFormationPresenter
   ) as ErrorViewModel | NiveauDeFormationViewModel
-
   const dateGeneration = new Date()
   
   const totalBeneficiairesPromise = fetchTotalBeneficiaires()

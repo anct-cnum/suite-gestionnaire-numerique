@@ -76,68 +76,46 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       }))
 
       // Nombre de médiateurs numériques (actuellement en poste)
-      const mediateursResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ total_mediateurs_numeriques: bigint }>>`
-            SELECT COUNT(*) AS total_mediateurs_numeriques
-            FROM min.personne_enrichie
-            WHERE est_actuellement_mediateur_en_poste = true
-          `
-        : await prisma.$queryRaw<Array<{ total_mediateurs_numeriques: bigint }>>`
-            SELECT COUNT(*) AS total_mediateurs_numeriques
-            FROM min.personne_enrichie
-            WHERE est_actuellement_mediateur_en_poste = true
-              AND departement_employeur = ${territoire}
-          `
-      const mediateursNumeriques = Number(mediateursResult[0]?.total_mediateurs_numeriques || 0)
+      const mediateurs = await prisma.personneEnrichieView.findMany({
+        select: { id: true, structure_employeuse_id: true },
+        where: { est_actuellement_mediateur_en_poste: true },
+      })
+      const mediateursIds = await this.getPersonnesInTerritoire(mediateurs, territoire)
+      const mediateursNumeriques = mediateursIds.length
 
       // Nombre de conseillers numériques (actuellement en poste avec financement état)
-      const conseillersResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint }>>`
-            SELECT COUNT(*) AS total_conseillers_numeriques
-            FROM min.personne_enrichie
-            WHERE est_actuellement_conseiller_numerique = true
-          `
-        : await prisma.$queryRaw<Array<{ total_conseillers_numeriques: bigint }>>`
-            SELECT COUNT(*) AS total_conseillers_numeriques
-            FROM min.personne_enrichie
-            WHERE est_actuellement_conseiller_numerique = true
-              AND departement_employeur = ${territoire}
-          `
-      const conseillerNumeriques = Number(conseillersResult[0]?.total_conseillers_numeriques || 0)
+      const conseillers = await prisma.personneEnrichieView.findMany({
+        select: { id: true, structure_employeuse_id: true },
+        where: { est_actuellement_conseiller_numerique: true },
+      })
+      const conseillersIds = await this.getPersonnesInTerritoire(conseillers, territoire)
+      const conseillerNumeriques = conseillersIds.length
 
       // Nombre de médiateurs numériques formés (en poste avec au moins 1 formation)
-      const mediateursFormesResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ total_mediateurs_numeriques_formes: bigint }>>`
-            SELECT COUNT(DISTINCT pe.id) AS total_mediateurs_numeriques_formes
-            FROM min.personne_enrichie pe
-            JOIN main.formation f ON pe.id = f.personne_id
-            WHERE pe.est_actuellement_mediateur_en_poste = true
-          `
-        : await prisma.$queryRaw<Array<{ total_mediateurs_numeriques_formes: bigint }>>`
-            SELECT COUNT(DISTINCT pe.id) AS total_mediateurs_numeriques_formes
-            FROM min.personne_enrichie pe
-            JOIN main.formation f ON pe.id = f.personne_id
-            WHERE pe.est_actuellement_mediateur_en_poste = true
-              AND pe.departement_employeur = ${territoire}
-          `
-      const mediateursFormes = Number(mediateursFormesResult[0]?.total_mediateurs_numeriques_formes || 0)
+      const formations = await prisma.formation.findMany({
+        distinct: ['personne_id'],
+        select: { personne_id: true },
+        where: { personne_id: { in: mediateursIds } },
+      })
+      const mediateursFormes = formations.length
 
       // Habilités Aidants Connect (médiateurs ou aidants numériques en poste + labellisés AC)
-      const aidantsConnectResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ total_aidants_connect: bigint }>>`
-            SELECT COUNT(*) AS total_aidants_connect
-            FROM min.personne_enrichie
-            WHERE (est_actuellement_aidant_numerique_en_poste = true OR est_actuellement_mediateur_en_poste = true)
-              AND labellisation_aidant_connect = true
-          `
-        : await prisma.$queryRaw<Array<{ total_aidants_connect: bigint }>>`
-            SELECT COUNT(*) AS total_aidants_connect
-            FROM min.personne_enrichie
-            WHERE (est_actuellement_aidant_numerique_en_poste = true OR est_actuellement_mediateur_en_poste = true)
-              AND labellisation_aidant_connect = true
-              AND departement_employeur = ${territoire}
-          `
-      const habilitesAidantsConnect = Number(aidantsConnectResult[0]?.total_aidants_connect || 0)
+      const aidantsConnect = await prisma.personneEnrichieView.findMany({
+        select: { id: true, structure_employeuse_id: true },
+        where: {
+          AND: [
+            {
+              OR: [
+                { est_actuellement_aidant_numerique_en_poste: true },
+                { est_actuellement_mediateur_en_poste: true },
+              ],
+            },
+            { labellisation_aidant_connect: true },
+          ],
+        },
+      })
+      const aidantsConnectIds = await this.getPersonnesInTerritoire(aidantsConnect, territoire)
+      const habilitesAidantsConnect = aidantsConnectIds.length
 
       // Nombre de structures habilitées (estimation basée sur les aidants)
       const structuresHabilitees = -1   
@@ -167,5 +145,37 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         type: 'error',
       }
     }
+  }
+
+  private async getPersonnesInTerritoire(
+    personnes: Array<{ id: number; structure_employeuse_id: null | number }>,
+    territoire: string
+  ): Promise<Array<number>> {
+    if (territoire === 'France') {
+      return personnes.map(personne => personne.id)
+    }
+
+    const structureIds = [...new Set(personnes
+      .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
+        personne.structure_employeuse_id !== null)
+      .map(personne => personne.structure_employeuse_id))]
+    
+    const structures = await prisma.main_structure.findMany({
+      select: { id: true },
+      where: { 
+        adresse: {
+          departement: territoire,
+        },
+        id: { in: structureIds },
+      },
+    })
+    
+    const structuresInTerritoire = new Set(structures.map(structure => structure.id))
+    
+    return personnes
+      .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
+        personne.structure_employeuse_id !== null && 
+      structuresInTerritoire.has(personne.structure_employeuse_id))
+      .map(personne => personne.id)
   }
 }

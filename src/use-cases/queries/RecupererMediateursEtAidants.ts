@@ -6,6 +6,5 @@ export interface MediateursEtAidantsLoader {
 
 export type MediateursEtAidantsReadModel = Readonly<{
   departement: string
-  nombreAidants: number
-  nombreMediateurs: number
+  total: number
 }>

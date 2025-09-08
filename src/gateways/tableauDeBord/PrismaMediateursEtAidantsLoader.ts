@@ -6,33 +6,52 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaMediateursEtAidantsLoader implements MediateursEtAidantsLoader {
   async get(territoire: string): Promise<ErrorReadModel | MediateursEtAidantsReadModel> {
     try {
-      let result: Array<{ nb_acteurs_ac: bigint; nb_acteurs_mediateur: bigint }>
+      let total: number
 
       if (territoire === 'France') {
-        result = await prisma.$queryRaw<Array<{ nb_acteurs_ac: bigint; nb_acteurs_mediateur: bigint }>>`
-          SELECT
-            COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS nb_acteurs_ac,
-            COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true) AS nb_acteurs_mediateur
-          FROM min.personne_enrichie
-        `
+        // Pour la France, on peut compter directement
+        total = await prisma.personneEnrichieView.count({
+          where: {
+            OR: [
+              { est_actuellement_aidant_numerique_en_poste: true },
+              { est_actuellement_mediateur_en_poste: true },
+            ],
+          },
+        })
       } else {
-        result = await prisma.$queryRaw<Array<{ nb_acteurs_ac: bigint; nb_acteurs_mediateur: bigint }>>`
-          SELECT
-            COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS nb_acteurs_ac,
-            COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true) AS nb_acteurs_mediateur
-          FROM min.personne_enrichie
-          WHERE departement_employeur = ${territoire}
-        `
+        // Récupérer les IDs des structures dans le département
+        const structuresInDepartment = await prisma.main_structure.findMany({
+          select: { id: true },
+          where: {
+            adresse: {
+              departement: territoire,
+            },
+          },
+        })
+        
+        const structureIds = structuresInDepartment.map(structure => structure.id)
+        
+        // Compter les personnes en poste dans ces structures
+        total = await prisma.personneEnrichieView.count({
+          where: {
+            AND: [
+              {
+                OR: [
+                  { est_actuellement_aidant_numerique_en_poste: true },
+                  { est_actuellement_mediateur_en_poste: true },
+                ],
+              },
+              {
+                structure_employeuse_id: { in: structureIds },
+              },
+            ],
+          },
+        })
       }
-
-      const row = result[0]
-      const nbActeursAc = Number(row.nb_acteurs_ac)
-      const nbActeursMediateur = Number(row.nb_acteurs_mediateur)
 
       return {
         departement: territoire,
-        nombreAidants: nbActeursAc,
-        nombreMediateurs: nbActeursMediateur,
+        total,
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaMediateursEtAidantsLoader', {

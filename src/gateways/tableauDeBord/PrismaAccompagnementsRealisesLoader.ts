@@ -141,11 +141,13 @@ export class PrismaAccompagnementsRealisesLoader implements AccompagnementsReali
             GROUP BY a2.departement
           ),
           sum_accompagnements_ac AS (
-            SELECT pe.departement_employeur as departement, SUM(pe.nb_accompagnements_ac) AS total_accompagnements
+            SELECT a.departement, SUM(pe.nb_accompagnements_ac) AS total_accompagnements
             FROM min.personne_enrichie pe
+            LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
+            LEFT JOIN main.adresse a ON a.id = s.adresse_id
             WHERE pe.type_accompagnateur = 'aidant_numerique'   
-              AND pe.departement_employeur = ${territoire}
-            GROUP BY pe.departement_employeur
+              AND a.departement = ${territoire}
+            GROUP BY a.departement
           )
           SELECT
             COALESCE(total_accompagnements, 0) + COALESCE(nb_activites_coop, 0) AS total_accompagnements
