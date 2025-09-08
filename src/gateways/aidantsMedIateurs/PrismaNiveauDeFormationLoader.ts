@@ -33,33 +33,16 @@ export class PrismaNiveauDeFormationLoader implements NiveauDeFormationLoader {
           .map(personne => personne.structure_employeuse_id))]
         
         const structures = await prisma.main_structure.findMany({
-          select: {
-            adresse_id: true,
-            id: true,
-          },
-          where: { id: { in: structureIds } },
-        })
-
-        const adresseIds = structures
-          .filter((structure): structure is { adresse_id: number } & typeof structure => 
-            structure.adresse_id !== null)
-          .map(structure => structure.adresse_id)
-
-        const adresses = await prisma.adresse.findMany({
-          select: {
-            id: true,
-          },
+          select: { id: true },
           where: { 
-            departement: territoire,
-            id: { in: adresseIds },
+            adresse: {
+              departement: territoire,
+            },
+            id: { in: structureIds },
           },
         })
 
-        const adresseIdSet = new Set(adresses.map(adresse => adresse.id))
-        const structuresInTerritoire = structures
-          .filter((structure): structure is { adresse_id: number } & typeof structure => 
-            structure.adresse_id !== null && adresseIdSet.has(structure.adresse_id))
-          .map(structure => structure.id)
+        const structuresInTerritoire = structures.map(structure => structure.id)
 
         personnesIds = personnesEnPoste
           .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
