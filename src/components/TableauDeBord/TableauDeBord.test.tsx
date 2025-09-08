@@ -297,8 +297,6 @@ describe('tableau de bord', () => {
         }}
         mediateursEtAidantsViewModel={{
           departement: '69',
-          nombreAidants: '85',
-          nombreMediateurs: '63',
           total: '148',
         }}
         tableauDeBordViewModel={tableauDeBordViewModel}
@@ -422,8 +420,6 @@ describe('tableau de bord', () => {
         }}
         mediateursEtAidantsViewModel={{
           departement: '69',
-          nombreAidants: '85',
-          nombreMediateurs: '63',
           total: '148',
         }}
         tableauDeBordViewModel={tableauDeBordViewModel}

@@ -146,7 +146,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
           AND: [
             {
               OR: [
-                { est_actuellement_aidant_connect_en_poste: true },
+                { est_actuellement_aidant_numerique_en_poste: true },
                 { est_actuellement_mediateur_en_poste: true }
               ]
             },

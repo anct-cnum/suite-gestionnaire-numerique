@@ -363,13 +363,13 @@ view PersonneEnrichieView {
   updated_at              DateTime? @db.Timestamp(6)
 
   // Colonnes calculées de la vue
-  type_accompagnateur                      String   @db.VarChar
-  labellisation_aidant_connect             Boolean?
-  est_actuellement_mediateur_en_poste      Boolean
-  est_actuellement_aidant_connect_en_poste Boolean
-  est_actuellement_conseiller_numerique    Boolean
-  est_actuellement_coordo_actif            Boolean
-  structure_employeuse_id                  Int?
+  type_accompagnateur                        String   @db.VarChar
+  labellisation_aidant_connect               Boolean?
+  est_actuellement_mediateur_en_poste        Boolean
+  est_actuellement_aidant_numerique_en_poste Boolean
+  est_actuellement_conseiller_numerique      Boolean
+  est_actuellement_coordo_actif              Boolean
+  structure_employeuse_id                    Int?
 
   @@map("personne_enrichie")
   @@schema("min")
