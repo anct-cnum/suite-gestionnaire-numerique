@@ -67,21 +67,21 @@ export function createDefaultLieuxActiviteData(): ReadonlyArray<LieuActiviteData
   return [
     {
       adresse: '123 Rue de la République, 75001 Paris',
+      idCoopCarto: null,
       nom: 'Mairie de Paris 1er',
       nombreAccompagnements: 67,
-      nombreAccompagnementsTotal: 127,
     },
     {
       adresse: '45 Avenue des Champs-Élysées, 75008 Paris',
+      idCoopCarto: 'testCarto',
       nom: 'France Services Champs-Élysées',
       nombreAccompagnements: 35,
-      nombreAccompagnementsTotal: 127,
     },
     {
       adresse: '78 Rue de Rivoli, 75004 Paris',
+      idCoopCarto: null,
       nom: 'Point Numérique Rivoli',
       nombreAccompagnements: 25,
-      nombreAccompagnementsTotal: 127,
     },
   ]
 }

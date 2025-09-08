@@ -7,6 +7,7 @@ export type AidantDetailsReadModel = Readonly<{
   coopId: string
   email: string
   graphiqueAccompagnements: ReadonlyArray<GraphiqueAccompagnementReadModel>
+  lieuxActivite: ReadonlyArray<LieuActiviteReadModel>
   nom: string
   prenom: string
   structureEmployeuse: StructureEmployeuseReadModel
@@ -35,6 +36,13 @@ type AccompagnementsReadModel = Readonly<{
 type GraphiqueAccompagnementReadModel = Readonly<{
   date: string
   totalAccompagnements: number
+}>
+
+type LieuActiviteReadModel = Readonly<{
+  adresse: string
+  idCoopCarto: null | string
+  nom: string
+  nombreAccompagnements: number
 }>
 
 type StructureEmployeuseReadModel = Readonly<{

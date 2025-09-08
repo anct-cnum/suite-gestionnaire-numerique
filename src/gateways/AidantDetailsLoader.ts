@@ -1,8 +1,8 @@
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
-import { 
-  AidantDetailsErrorReadModel, 
-  AidantDetailsLoader, 
+import {
+  AidantDetailsErrorReadModel,
+  AidantDetailsLoader,
   AidantDetailsReadModel,
   ContactReferentReadModel,
 } from '@/use-cases/queries/RecupererAidantDetails'
@@ -105,12 +105,54 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         }))
       }
 
+      // Récupérer les lieux d'activité
+      const lieuxActiviteResult = await prisma.$queryRaw<Array<LieuActiviteResult>>`
+        SELECT
+          main.activites_coop.structure_id,
+          main.structure.nom,
+          COALESCE(
+            SUM(main.activites_coop.accompagnements) FILTER (
+            WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
+              ), 0) AS total_accompagnements,
+          main.structure.structure_cartographie_nationale_id,
+          main.adresse.numero_voie,
+          main.adresse.nom_voie,
+          main.adresse.code_postal,
+          main.adresse.nom_commune
+        FROM main.personne_affectations
+               LEFT JOIN main.activites_coop
+                         ON main.activites_coop.structure_id = main.personne_affectations.structure_id
+               LEFT JOIN main.structure
+                         ON main.structure.id = main.activites_coop.structure_id
+               LEFT JOIN main.adresse
+                         ON main.adresse.id = main.structure.adresse_id
+        WHERE
+          main.personne_affectations.personne_id = ${personneId}
+          AND main.personne_affectations.suppression IS NULL
+          AND main.personne_affectations.type = 'lieu_activite'
+        GROUP BY
+          main.activites_coop.structure_id,
+          main.structure.nom,
+          main.structure.structure_cartographie_nationale_id,
+          main.adresse.numero_voie,
+          main.adresse.nom_voie,
+          main.adresse.code_postal,
+          main.adresse.nom_commune
+        ORDER BY total_accompagnements DESC;
+      `
+console.log(lieuxActiviteResult)
       const totalAccompagnementsCoop = accompagnementsCoopResult.length > 0 ?
         Number(accompagnementsCoopResult[0].total_accompagnements) : 0
       const totalAccompagnementsAc = accompagnementsAcResult.length > 0 ?
         Number(accompagnementsAcResult[0].total_accompagnements_ac) : 0
 
-      return this.mapToReadModel(personne, totalAccompagnementsCoop, totalAccompagnementsAc, graphiqueData)
+      return this.mapToReadModel(
+        personne,
+        totalAccompagnementsCoop,
+        totalAccompagnementsAc,
+        graphiqueData,
+        lieuxActiviteResult
+      )
     } catch (error) {
       reportLoaderError(error, 'PrismaAidantDetailsLoader', {
         id,
@@ -166,7 +208,8 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     personne: PersonneEnrichieResult,
     totalAccompagnementsCoop: number,
     totalAccompagnementsAc: number,
-    graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>
+    graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>,
+    lieuxActiviteData: ReadonlyArray<LieuActiviteResult>
   ): AidantDetailsReadModel {
     // Extraire les informations de contact depuis le JSON
     const contact = (personne.aidant_contact as null | Record<string, unknown>) ?? {}
@@ -179,6 +222,17 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       coopId: personne.aidant_coop_uid ?? '',
       email: ((contact.courriels as Record<string, unknown>).mail_pro as string) || '',
       graphiqueAccompagnements: graphiqueData,
+      lieuxActivite: lieuxActiviteData.map(lieu => ({
+        adresse: this.formatAdresse({
+          codePostal: lieu.code_postal,
+          nomCommune: lieu.nom_commune,
+          nomVoie: lieu.nom_voie,
+          numeroVoie: lieu.numero_voie,
+        }),
+        idCoopCarto: lieu.structure_cartographie_nationale_id,
+        nom: lieu.nom ?? 'Structure inconnue',
+        nombreAccompagnements: Number(lieu.total_accompagnements),
+      })),
       nom: personne.aidant_nom ?? '',
       prenom: personne.aidant_prenom ?? '',
       structureEmployeuse: {
@@ -222,6 +276,17 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     }
   }
 }
+
+type LieuActiviteResult = Readonly<{
+  code_postal: null | string
+  nom: null | string
+  nom_commune: null | string
+  nom_voie: null | string
+  numero_voie: null | number
+  structure_cartographie_nationale_id: null | string
+  structure_id: null | number
+  total_accompagnements: number
+}>
 
 type PersonneEnrichieResult = Readonly<{
   aidant_contact: unknown
