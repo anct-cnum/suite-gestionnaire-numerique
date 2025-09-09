@@ -104,12 +104,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         select: { id: true, structure_employeuse_id: true },
         where: {
           AND: [
-            {
-              OR: [
-                { est_actuellement_aidant_numerique_en_poste: true },
-                { est_actuellement_mediateur_en_poste: true },
-              ],
-            },
+            { est_actuellement_mediateur_en_poste: true },
             { labellisation_aidant_connect: true },
           ],
         },
