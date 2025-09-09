@@ -21,7 +21,6 @@ export function listeLieuxInclusionPresenter(
     nombreDePages: Math.ceil(readModel.total / readModel.limite),
     page: readModel.page,
     total: readModel.total,
-    totalAidantNumerique: readModel.totalAidantNumerique,
     totalConseillerNumerique: readModel.totalConseillerNumerique,
     totalLabellise: readModel.totalLabellise,
   }
@@ -34,7 +33,6 @@ export interface ListeLieuxInclusionViewModel {
   nombreDePages: number
   page: number
   total: number
-  totalAidantNumerique: number
   totalConseillerNumerique: number
   totalLabellise: number
 }

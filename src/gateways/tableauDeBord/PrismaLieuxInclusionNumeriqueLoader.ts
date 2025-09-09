@@ -9,19 +9,21 @@ export class PrismaLieuxInclusionNumeriqueLoader implements LieuxInclusionNumeri
       let result: Array<{ nb_lieux: bigint }>
 
       if (territoire === 'France') {
+        // le inner join pour garder la cohérence avec les chiffres de la page Lieux Inclusion Numerique
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
           SELECT
             COUNT(*) AS nb_lieux
           FROM main.structure
-          WHERE structure_cartographie_nationale_id IS NOT NULL;
+          INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+          WHERE structure_cartographie_nationale_id IS NOT NULL
         `
       } else {
         result = await prisma.$queryRaw<Array<{ nb_lieux: bigint }>>`
           SELECT
             COUNT(*) AS nb_lieux
           FROM main.structure
-                 LEFT JOIN main.adresse ON structure.adresse_id = adresse.id
-          WHERE structure_cartographie_nationale_id IS NOT NULL and main.adresse.departement = ${territoire}
+          INNER JOIN main.adresse ON structure.adresse_id = adresse.id
+          WHERE structure_cartographie_nationale_id IS NOT NULL AND adresse.departement = ${territoire}
         `
       }
 

@@ -44,7 +44,6 @@ export default function ListeLieuxInclusion({
         <>
           <ListeLieuxInclusionInfo infos={{
             total: viewModel.total,
-            totalAidantNumerique: viewModel.totalAidantNumerique,
             totalConseillerNumerique: viewModel.totalConseillerNumerique,
             totalLabellise: viewModel.totalLabellise,
           }}

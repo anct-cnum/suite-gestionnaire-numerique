@@ -19,7 +19,7 @@ export default function ListeLieuxInclusionInfo(props: Props): ReactElement {
           {renderLieuxInclusionInfoCard({
             description: 'Lieux labellisés ou habilités',
             indicateur: String(infos.totalLabellise),
-            legends: `Dont ${infos.totalConseillerNumerique} conseillers numériques, ${infos.totalAidantNumerique} Aidants Connect`,
+            legends: `Dont ${infos.totalConseillerNumerique} conseillers numériques`,
           })}
           <div
             className="fr-col-12 fr-col-md-4"
@@ -119,7 +119,6 @@ type LieuxInclusionInfoCard = Readonly<{
 
 type LieuxInclusionInfoData = Readonly<{
   total: number
-  totalAidantNumerique: number
   totalConseillerNumerique: number
   totalLabellise: number
 }>
