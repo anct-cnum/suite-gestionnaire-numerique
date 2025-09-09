@@ -24,9 +24,9 @@ const CJ_CASE = Prisma.sql`
     WHEN cj.nom = 'Communauté d''agglomération' THEN cj.nom
     WHEN cj.nom ILIKE '%Pôle d''équilibre territorial et rural%' THEN cj.nom
     WHEN cj.nom = 'Région' THEN cj.nom
-    WHEN cj.code NOT LIKE '7%' THEN 'Acteur privés'
+    WHEN cj.code NOT LIKE '7%' THEN 'Acteur privé'
     WHEN cj.code IS NULL THEN 'Inconnue'
-    ELSE 'Autres'
+    ELSE 'Autre'
   END
 `
 
