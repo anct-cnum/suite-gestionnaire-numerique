@@ -80,7 +80,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
                             </div>
                           </td>
                           <td style={{ padding: '1rem 0.5rem', textAlign: 'right' }}>
-                            {isNullish(lieu.idCoopCarto) ? (
+                            {isNullish(lieu.idCoopCarto) ? null : (
                               <a
                                 className="fr-btn fr-btn--secondary fr-btn--sm"
                                 href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCoopCarto}/details`}
@@ -89,7 +89,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
                               >
                                 Voir sur la carte
                               </a>
-                            ) : null}
+                            ) }
                           </td>
                         </tr>
                       ))}
