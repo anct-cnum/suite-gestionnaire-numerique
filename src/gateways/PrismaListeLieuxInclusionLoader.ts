@@ -22,7 +22,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       FROM main.structure s
       INNER JOIN main.adresse a ON a.id = s.adresse_id
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}
+      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.empty}
     `
     const total = totalResult[0]?.total ?? 0
 
@@ -69,20 +69,19 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       INNER JOIN main.adresse a ON a.id = s.adresse_id
       inner join reference.categories_juridiques ref on s.categorie_juridique = ref.code
       WHERE s.structure_cartographie_nationale_id IS NOT NULL
-      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}
+      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.empty}
       ORDER BY s.nom ASC
       LIMIT ${limite}
       OFFSET ${offset}
     `
 
-    const dispositifResult : Array<{ nb_conseillers: bigint; nb_france_services: bigint; total: bigint }>= await prisma.$queryRaw`SELECT
+    const dispositifResult : Array<{ nb_conseillers: bigint; total: bigint }>= await prisma.$queryRaw`SELECT
     COUNT(*) AS total,
-      SUM(CASE WHEN 'France Services' = ANY(s.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_france_services,
       SUM(CASE WHEN 'Conseillers numériques' = ANY(s.dispositif_programmes_nationaux) THEN 1 ELSE 0 END) AS nb_conseillers
     FROM main.structure AS s
     LEFT JOIN main.adresse a ON a.id = s.adresse_id
     WHERE dispositif_programmes_nationaux IS NOT NULL
-    ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.sql`AND a.departement != 'zzz'`}`
+    ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.empty}`
 
     const dispositif = dispositifResult[0]
     return {
