@@ -21,7 +21,7 @@ export function presentAidantDetails(readModel: AidantDetailsReadModel): AidantD
       adresse: lieu.adresse,
       idCoopCarto: lieu.idCoopCarto,
       nom: lieu.nom,
-      nombreAccompagnements: lieu.nombreAccompagnements.toString(),
+      nombreAccompagnements: Number(lieu.nombreAccompagnements),
     })),
     statistiquesActivites: {
       accompagnements: {

@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
 import { LieuActiviteData } from './AidantDetails'
+import { isNullish } from '@/shared/lang'
 
 export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
   const { data: lieuxActivite } = props
@@ -79,7 +80,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
                             </div>
                           </td>
                           <td style={{ padding: '1rem 0.5rem', textAlign: 'right' }}>
-                            {lieu.idCoopCarto ? (
+                            {isNullish(lieu.idCoopCarto) ? (
                               <a
                                 className="fr-btn fr-btn--secondary fr-btn--sm"
                                 href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCoopCarto}/details`}
