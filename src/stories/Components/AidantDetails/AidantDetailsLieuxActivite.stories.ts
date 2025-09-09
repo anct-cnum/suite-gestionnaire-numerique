@@ -30,9 +30,9 @@ export const LieuUnique: Story = {
     data: [
       {
         adresse: '8 place de la Bastille, 75011 Paris',
+        idCoopCarto: 'idCoopCarto',
         nom: 'Médiathèque Marguerite Duras',
         nombreAccompagnements: 12,
-        nombreAccompagnementsTotal: 30,
       },
     ],
   },
@@ -49,27 +49,27 @@ export const PlusieursLieuxActivite: Story = {
     data: [
       {
         adresse: '12 rue de la République, 75001 Paris',
+        idCoopCarto: 'idCoopCarto',
         nom: 'Mairie du 1er arrondissement',
         nombreAccompagnements: 15,
-        nombreAccompagnementsTotal: 30,
       },
       {
         adresse: '45 avenue des Champs-Élysées, 75008 Paris',
+        idCoopCarto: '',
         nom: 'Centre communautaire des Champs',
         nombreAccompagnements: 8,
-        nombreAccompagnementsTotal: 30,
       },
       {
         adresse: '8 place de la Bastille, 75011 Paris',
+        idCoopCarto: 'idCoopCarto',
         nom: 'Médiathèque Marguerite Duras',
         nombreAccompagnements: 22,
-        nombreAccompagnementsTotal: 30,
       },
       {
         adresse: '23 boulevard Saint-Germain, 75005 Paris',
+        idCoopCarto: 'idCoopCarto',
         nom: 'Espace numérique du 5ème',
         nombreAccompagnements: 6,
-        nombreAccompagnementsTotal: 30,
       },
     ],
   },

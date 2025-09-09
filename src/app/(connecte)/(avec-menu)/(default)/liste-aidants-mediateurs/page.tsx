@@ -10,7 +10,7 @@ import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediat
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
 
 export const metadata: Metadata = {
-  title: 'Liste des aidants et mdiateurs numriques',
+  title: 'Liste des aidants et médiateurs numriques',
 }
 
 export default async function ListeAidantsMediateursController({
@@ -49,12 +49,12 @@ export default async function ListeAidantsMediateursController({
   const jusqua = new Date()
   const depuis = new Date()
   depuis.setDate(jusqua.getDate() - 30)
-  
+
   const totalBeneficiairesPromise = fetchTotalBeneficiaires(
     territoire === 'France' ? undefined : territoire,
     { depuis, jusqua }
   )
-  
+
   return (
     <ListeAidantsMediateurs
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}

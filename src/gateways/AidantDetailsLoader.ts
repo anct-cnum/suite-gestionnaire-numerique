@@ -140,7 +140,6 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           main.adresse.nom_commune
         ORDER BY total_accompagnements DESC;
       `
-console.log(lieuxActiviteResult)
       const totalAccompagnementsCoop = accompagnementsCoopResult.length > 0 ?
         Number(accompagnementsCoopResult[0].total_accompagnements) : 0
       const totalAccompagnementsAc = accompagnementsAcResult.length > 0 ?
@@ -220,7 +219,8 @@ console.log(lieuxActiviteResult)
         total: totalAccompagnementsCoop + totalAccompagnementsAc,
       },
       coopId: personne.aidant_coop_uid ?? '',
-      email: ((contact.courriels as Record<string, unknown>).mail_pro as string) || '',
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      email: ((contact.courriels as Record<string, unknown>)?.mail_pro as string) || '',
       graphiqueAccompagnements: graphiqueData,
       lieuxActivite: lieuxActiviteData.map(lieu => ({
         adresse: this.formatAdresse({

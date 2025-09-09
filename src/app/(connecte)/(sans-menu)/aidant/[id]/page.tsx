@@ -1,9 +1,14 @@
+import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import AidantDetails from '@/components/AidantDetails/AidantDetails'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import PrismaAidantDetailsLoader from '@/gateways/AidantDetailsLoader'
 import { presentAidantDetails } from '@/presenters/AidantDetailsPresenter'
+
+export const metadata: Metadata = {
+  title: 'Détails aidants et médiateurs numériques',
+}
 
 async function AidantPage({ params, searchParams }: Props) : Promise<ReactElement>{
   const { id } = await params
@@ -19,7 +24,6 @@ async function AidantPage({ params, searchParams }: Props) : Promise<ReactElemen
   const aidantLoader = new PrismaAidantDetailsLoader()
 
   const aidantResult = await aidantLoader.findById(id, periode)
-
   // Si aidantResult est une erreur, pas besoin de récupérer les stats
   if (isError(aidantResult)) {
     return (
@@ -35,7 +39,6 @@ async function AidantPage({ params, searchParams }: Props) : Promise<ReactElemen
 
   // Transformer les données via le presenteur
   const presentedData = presentAidantDetails(aidantResult)
-
   return (
     <AidantDetails data={presentedData} />
   )
