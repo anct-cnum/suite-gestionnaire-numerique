@@ -39,14 +39,14 @@ export default function MenuLateral({ children }: Readonly<PropsWithChildren>): 
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}`,
     },
     {
-      icon: 'map-pin-2-line',
-      label: 'Lieux d\'inclusion',
-      url: '/lieux-inclusion',
-    },
-    {
       icon: 'group-line',
       label: 'Aidants et médiateurs',
       url: `/gouvernance/${sessionUtilisateurViewModel.codeDepartement}/aidants-mediateurs`,
+    },
+    {
+      icon: 'map-pin-2-line',
+      label: 'Lieux d\'inclusion',
+      url: '/lieux-inclusion',
     },
   ]
 
