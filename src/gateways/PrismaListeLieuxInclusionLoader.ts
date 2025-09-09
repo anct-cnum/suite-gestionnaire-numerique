@@ -90,7 +90,6 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       limite,
       page,
       total,
-      totalAidantNumerique: Number(dispositif.nb_france_services ?? 0),
       totalConseillerNumerique: Number(dispositif.nb_conseillers ?? 0),
       totalLabellise: Number(dispositif.total ?? 0),
     }

@@ -3,7 +3,6 @@ export interface RecupererLieuxInclusionReadModel {
   limite: number
   page: number
   total: number
-  totalAidantNumerique: number
   totalConseillerNumerique: number
   totalLabellise: number
 }
