@@ -52,11 +52,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             pe.id,
             pe.nom,
             pe.prenom,
-            pe.is_mediateur as mediateur,
             pe.is_coordinateur as coordinateur,
-            pe.labellisation_aidant_connect as aidants,
             pe.labellisation_aidant_connect as aidants_connect,
             pe.est_actuellement_conseiller_numerique as conseiller_numerique,
+            pe.est_actuellement_mediateur_en_poste as est_actuellement_mediateur_en_poste,
             array_agg(DISTINCT f.label) AS formations,
             BOOL_OR(f.pix) AS pix,
             BOOL_OR(f.remn) AS remn,
@@ -66,7 +65,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                  LEFT JOIN main.formation f ON pe.id = f.personne_id
                  LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
           WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
-          GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
+          GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur,pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
           ORDER BY pe.nom, pe.prenom
           LIMIT ${limite} OFFSET ${offset};
         `
@@ -75,11 +74,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
               pe.id,
               pe.nom,
               pe.prenom,
-              pe.is_mediateur as mediateur,
               pe.is_coordinateur as coordinateur,
-              pe.labellisation_aidant_connect as aidants,
               pe.labellisation_aidant_connect as aidants_connect,
               pe.est_actuellement_conseiller_numerique as conseiller_numerique,
+              pe.est_actuellement_mediateur_en_poste as est_actuellement_mediateur_en_poste,
               array_agg(DISTINCT f.label) AS formations,
               BOOL_OR(f.pix) AS pix,
               BOOL_OR(f.remn) AS remn,
@@ -92,20 +90,20 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                    LEFT JOIN main.adresse a ON a.id = s.adresse_id
             WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
               AND a.departement = ${territoire}
-            GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
+            GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
           `
       return personnes.map(personne => {
         const isCoordinateur = Boolean(personne.coordinateur)
-        const isMediateur = Boolean(personne.mediateur)
+        const isMediateur = Boolean(personne.est_actuellement_mediateur_en_poste)
         const hasAidantConnect = Boolean(personne.aidants_connect)
         const hasConseillerNumerique = Boolean(personne.conseiller_numerique)
 
         const roles: Array<string> = []
         if (isCoordinateur) {roles.push('Coordinateur')}
         if (isMediateur) {roles.push('Médiateur')}
-        else {roles.push('aidants connect')}
+        else {roles.push('aidant')}
         const labelisations: Array<'aidants connect' | 'conseiller numérique'> = []
         if (hasConseillerNumerique) {
           labelisations.push('conseiller numérique')
@@ -202,13 +200,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 interface PersonneQueryResult {
   accompagnements: number
   accompagnements_ac: number
-  aidants: boolean
   aidants_connect: boolean
   conseiller_numerique: boolean
   coordinateur: boolean
+  est_actuellement_mediateur_en_poste: boolean
   formations: Array<string>
   id: number
-  mediateur: boolean
   nom: null | string
   pix: boolean
   prenom: null | string
