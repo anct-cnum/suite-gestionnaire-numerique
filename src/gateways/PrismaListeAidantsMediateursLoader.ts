@@ -9,11 +9,26 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     try {
       const offset = page * limite
 
+      // Monitoring des performances
+      const startTotal = Date.now()
+      const startAidants = Date.now()
+      
       // Récupération des aidants avec pagination
-      const [aidantsData, statsData] = await Promise.all([
-        this.getAidantsPagines(territoire, limite, offset),
-        this.getStatistiques(territoire),
-      ])
+      const aidantsData = await this.getAidantsPagines(territoire, limite, offset)
+      const aidantsTime = Date.now() - startAidants
+      
+      const startStats = Date.now()
+      const statsData = await this.getStatistiques(territoire)
+      const statsTime = Date.now() - startStats
+      
+      const totalTime = Date.now() - startTotal
+      
+      // Log des performances
+      console.log(`[PrismaListeAidantsMediateursLoader] Performance:
+        - getAidantsPagines: ${aidantsTime}ms
+        - getStatistiques: ${statsTime}ms
+        - Total: ${totalTime}ms
+        - Territoire: ${territoire}, Page: ${page}, Limite: ${limite}`)
 
       const totalCount = statsData.totalActeursNumerique
       const totalPages = Math.ceil(totalCount / limite)
@@ -45,6 +60,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   private async getAidantsPagines(territoire: string, limite: number, offset: number)
     : Promise<Array<AidantMediateurReadModel>> {
     try {
+      const queryStart = Date.now()
       const personnes =
         territoire === 'France'
           ? await prisma.$queryRaw<Array<PersonneQueryResult>>`
@@ -94,7 +110,11 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
           `
-      return personnes.map(personne => {
+      
+      const queryTime = Date.now() - queryStart
+      const mappingStart = Date.now()
+      
+      const result = personnes.map(personne => {
         const isCoordinateur = Boolean(personne.coordinateur)
         const isMediateur = Boolean(personne.est_actuellement_mediateur_en_poste)
         const hasAidantConnect = Boolean(personne.aidants_connect)
@@ -131,6 +151,16 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           role: roles,
         }
       })
+      
+      const mappingTime = Date.now() - mappingStart
+      
+      console.log(`[getAidantsPagines] Performance:
+        - Query: ${queryTime}ms
+        - Mapping: ${mappingTime}ms
+        - Total: ${queryTime + mappingTime}ms
+        - Results: ${personnes.length} rows`)
+      
+      return result
     } catch (error) {
       reportLoaderError(error, 'PrismaListeAidantsMediateursLoader.getAidantsPagines', {
         limite,
@@ -145,7 +175,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
+    const statsStart = Date.now()
+    
     // Nombre total d'accompagnements réalisés
+    const accompStart = Date.now()
     const accompagnementsResult = territoire === 'France'
       ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
         SELECT SUM(accompagnements) AS total_accompagnements_realises
@@ -161,8 +194,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
               and main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
           `
     const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
+    const accompTime = Date.now() - accompStart
 
     // Statistiques des personnes en poste
+    const conseillerStart = Date.now()
     const conseillersResult =
       territoire === 'France'
         ? await prisma.$queryRaw<
@@ -188,6 +223,14 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)
       + Number(conseillersResult[0]?.aidant_connect || 0)
       + Number(conseillersResult[0]?.mediateur || 0)
+    
+    const conseillerTime = Date.now() - conseillerStart
+    const totalStatsTime = Date.now() - statsStart
+    
+    console.log(`[getStatistiques] Performance:
+      - Accompagnements query: ${accompTime}ms
+      - Conseillers query: ${conseillerTime}ms
+      - Total: ${totalStatsTime}ms`)
 
     return {
       totalAccompagnements: accompagnementsRealises,
