@@ -8,7 +8,7 @@ export default function DernierePage({
   urlAvecParametres,
   utilisateursParPage,
 }: Props): ReactElement {
-  urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat, utilisateursParPage) - 1))
+  urlAvecParametres.searchParams.set('page', String(nombreDePage(nombreDeResultat, utilisateursParPage)))
 
   return (
     <Link

@@ -1,26 +1,29 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement, memo, useMemo, useCallback } from 'react'
+import { memo, ReactElement, useCallback, useMemo } from 'react'
 
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
 import Badge from '../shared/Badge/Badge'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
+import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
 // Composant mémorisé pour chaque ligne d'aidant
 const AidantRow = memo(({ 
   aidant, 
+  badgeStyle, 
   getAidantIcons, 
-  badgeStyle 
 }: {
-  aidant: ListeAidantsMediateursViewModel['aidants'][0]
-  getAidantIcons: (labelisations: Array<'aidants connect' | 'conseiller numérique'>) => Array<{ alt: string; src: string }>
-  badgeStyle: React.CSSProperties
+  readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
+  readonly badgeStyle: React.CSSProperties
+  // eslint-disable-next-line @typescript-eslint/method-signature-style
+  readonly getAidantIcons: (labelisations: Array<'aidants connect' | 'conseiller numérique'>) => Array<{ alt: string; src: string }>
 }) => {
   const icons = useMemo(() => getAidantIcons(aidant.labelisations), [aidant.labelisations, getAidantIcons])
   
@@ -28,7 +31,9 @@ const AidantRow = memo(({
     <tr style={{ height: '4rem' }}>
       <td>
         <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
-          {aidant.nom} {aidant.prenom}
+          {aidant.nom} 
+          {' '}
+          {aidant.prenom}
           {icons.map((icon) => (
             <img
               alt={icon.alt}
@@ -68,7 +73,9 @@ const AidantRow = memo(({
             ))}
           </div>
         ) : (
-          <span>-</span>
+          <span>
+            -
+          </span>
         )}
       </td>
       <td>
@@ -85,7 +92,9 @@ const AidantRow = memo(({
             ))}
           </div>
         ) : (
-          <span>-</span>
+          <span>
+            -
+          </span>
         )}
       </td>
       <td className="fr-cell--center">
@@ -109,6 +118,7 @@ export default function ListeAidantsMediateurs({
   listeAidantsMediateursViewModel,
   totalBeneficiairesPromise,
 }: Props): ReactElement {
+  const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
   if ('type' in listeAidantsMediateursViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -138,7 +148,7 @@ export default function ListeAidantsMediateurs({
   const badgeStyle = useMemo(() => ({
     backgroundColor: 'transparent',
     border: '1px solid var(--border-default-grey)',
-    color: 'var(--text-default-grey)'
+    color: 'var(--text-default-grey)',
   }), [])
 
   return (
@@ -149,6 +159,30 @@ export default function ListeAidantsMediateurs({
           Suivi aidants et médiateurs
         </PageTitle>
       </div>
+      
+      {/* Overlay de loading pendant la navigation */}
+      {isPageLoading ? (
+        <div 
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            left: 0,
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            zIndex: 9999,
+          }}
+        >
+          <SpinnerSimple
+            size="large"
+            text="Chargement..."
+          />
+        </div>
+      ) : null}
+      
       <>
         <ListeAidantsMediateurInfos
           totalBeneficiairesPromise={totalBeneficiairesPromise}
