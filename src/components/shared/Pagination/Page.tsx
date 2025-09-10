@@ -10,7 +10,8 @@ export default function Page({
   utilisateursParPage,
 }: Props): ReadonlyArray<ReactElement> {
   return pages(nombreDeResultat, pageCourante, utilisateursParPage).map((page): ReactElement => {
-    if (pageCourante === page - 1) {
+    // pageCourante et page utilisent maintenant base 1
+    if (pageCourante === page) {
       return (
         <li key={page}>
           <Link
@@ -26,7 +27,8 @@ export default function Page({
     }
 
     const cloneUrlAvecParametres = new URL(urlAvecParametres)
-    cloneUrlAvecParametres.searchParams.set('page', String(page - 1))
+    // Générer l'URL avec base 1 (page 1, page 2, etc.)
+    cloneUrlAvecParametres.searchParams.set('page', String(page))
 
     return (
       <li key={page}>

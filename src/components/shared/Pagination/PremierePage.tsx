@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 export default function PremierePage({ urlAvecParametres }: Props): ReactElement {
-  urlAvecParametres.searchParams.delete('page')
+  urlAvecParametres.searchParams.set('page', '1')
 
   return (
     <Link

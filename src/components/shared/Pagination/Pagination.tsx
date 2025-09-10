@@ -23,7 +23,7 @@ export default function Pagination({ pathname, totalUtilisateurs }: Props): Reac
         </li>
         <Page
           nombreDeResultat={totalUtilisateurs}
-          pageCourante={Number(searchParams.get('page') ?? 0)}
+          pageCourante={Number(searchParams.get('page') ?? 1)}
           urlAvecParametres={urlAvecParametres}
           utilisateursParPage={utilisateursParPage}
         />

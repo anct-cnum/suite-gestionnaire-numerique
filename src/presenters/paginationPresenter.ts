@@ -1,5 +1,5 @@
 export function nombreDePage(nombreDeResultat: number, utilisateursParPage: number): number {
-  return Math.trunc(nombreDeResultat / utilisateursParPage + 1)
+  return Math.ceil(nombreDeResultat / utilisateursParPage)
 }
 
 export function pages(
@@ -12,18 +12,19 @@ export function pages(
   return Array
     .from({ length: nombreDePages }, (_, index) => index + 1)
     .filter((page): boolean => {
-      const isDebutDePagination = pageCourante < 3
-      const isFinDePagination = pageCourante > nombreDePages - 4
+      const isDebutDePagination = pageCourante <= 3
+      const isFinDePagination = pageCourante >= nombreDePages - 3
 
       if (isDebutDePagination) {
         return page < 6
       }
 
       if (isFinDePagination) {
-        return page >= nombreDePages - 4
+        return page > nombreDePages - 5
       }
 
-      return page >= pageCourante - 1 && page <= pageCourante + 3
+      // Centrer la page courante : 2 pages avant, page courante, 2 pages après
+      return page >= pageCourante - 2 && page <= pageCourante + 2
     })
 }
 

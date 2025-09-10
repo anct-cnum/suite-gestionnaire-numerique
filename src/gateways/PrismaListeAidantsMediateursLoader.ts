@@ -7,13 +7,15 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   async get(territoire: string, page: number, limite: number)
     : Promise<ErrorReadModel | ListeAidantsMediateursReadModel> {
     try {
-      const offset = page * limite
+      // Page commence à 1 dans le controller, mais offset doit commencer à 0
+      const safePage = Math.max(1, page) // Garantir que page >= 1
+      const offset = (safePage - 1) * limite // offset = 0 pour page 1
 
       // Récupération des aidants avec pagination
-      const [aidantsData, statsData] = await Promise.all([
-        this.getAidantsPagines(territoire, limite, offset),
-        this.getStatistiques(territoire),
-      ])
+      const aidantsData = await this.getAidantsPagines(territoire, limite, offset)
+      
+      // Récupération des statistiques
+      const statsData = await this.getStatistiques(territoire)
 
       const totalCount = statsData.totalActeursNumerique
       const totalPages = Math.ceil(totalCount / limite)
@@ -94,7 +96,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
           `
-      return personnes.map(personne => {
+      
+      const result = personnes.map(personne => {
         const isCoordinateur = Boolean(personne.coordinateur)
         const isMediateur = Boolean(personne.est_actuellement_mediateur_en_poste)
         const hasAidantConnect = Boolean(personne.aidants_connect)
@@ -131,6 +134,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           role: roles,
         }
       })
+      
+      return result
     } catch (error) {
       reportLoaderError(error, 'PrismaListeAidantsMediateursLoader.getAidantsPagines', {
         limite,
