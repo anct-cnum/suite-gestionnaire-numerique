@@ -12,6 +12,7 @@ export function useNavigationLoading(): boolean {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+  const targetUrlRef = useRef<string | null>(null)
 
   useEffect(() => {
     // Intercepter les clics sur tous les liens de pagination
@@ -28,12 +29,17 @@ export function useNavigationLoading(): boolean {
         const newUrl = link.href
         
         if (currentUrl !== newUrl && !link.href.includes('#')) {
+          // Stocker l'URL cible
+          const url = new URL(newUrl)
+          targetUrlRef.current = `${url.pathname}?${url.searchParams.toString()}`
+          
           setIsLoading(true)
           
           // Timeout de sécurité au cas où la navigation prendrait trop de temps
           timeoutRef.current = setTimeout(() => {
             setIsLoading(false)
-          }, 3000)
+            targetUrlRef.current = null
+          }, 30000) // 30 secondes pour les chargements lents
         }
       }
     }
@@ -49,15 +55,25 @@ export function useNavigationLoading(): boolean {
     }
   }, [])
 
-  // Désactiver le spinner quand la page change vraiment
+  // Observer les changements d'URL pour détecter quand on arrive sur la page cible
   useEffect(() => {
-    if (isLoading) {
-      setIsLoading(false)
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+    const currentUrl = `${pathname}?${searchParams.toString()}`
+    
+    // Si on charge et qu'on arrive sur l'URL cible
+    if (isLoading && targetUrlRef.current && currentUrl === targetUrlRef.current) {
+      // Attendre un peu pour que le contenu se charge
+      const renderTimeout = setTimeout(() => {
+        setIsLoading(false)
+        targetUrlRef.current = null
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current)
+        }
+      }, 500) // 500ms pour laisser le temps au contenu de se rendre
+      
+      return () => clearTimeout(renderTimeout)
     }
-  }, [pathname, searchParams])
+    return undefined
+  }, [pathname, searchParams, isLoading])
 
   return isLoading
 }
