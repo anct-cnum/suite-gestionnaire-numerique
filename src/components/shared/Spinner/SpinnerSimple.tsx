@@ -31,9 +31,11 @@ function SpinnerSimple({
             width: currentSize.width,
           }}
         />
-        <p className="fr-text--sm">
+        <span 
+          className="fr-text--sm fr-mb-0"
+        >
           {text}
-        </p>
+        </span>
       </div>
       <style>
         {`
