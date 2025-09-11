@@ -28,51 +28,57 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
 
     // Récupération des lieux avec leurs informations
     const lieux: Array<LieuInclusionNumeriqueItem> = await prisma.$queryRaw`
+      WITH structures AS (
+        SELECT s.id, s.nom, s.siret, s.categorie_juridique, s.nb_mandats_ac, a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
+        FROM main.structure s
+        INNER JOIN main.adresse a ON a.id = s.adresse_id
+        WHERE s.structure_cartographie_nationale_id IS NOT NULL
+        ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.empty}
+        ORDER BY s.nom ASC
+        OFFSET ${offset}
+        FETCH NEXT ${limite} ROWS ONLY
+      ),
+      accompagnements_ac AS (
+        SELECT aff.structure_id, SUM(p.nb_accompagnements_ac)::int AS nbr
+        FROM structures
+        INNER JOIN main.personne_affectations aff ON structures.id = aff.structure_id
+        INNER JOIN main.personne p ON p.id = aff.personne_id
+        WHERE p.nb_accompagnements_ac IS NOT NULL
+        GROUP BY aff.structure_id
+      )
       SELECT
         s.id,
         s.nom,
         s.siret,
         ref.nom as categorie_juridique,
-        a.numero_voie,
-        a.nom_voie,
-        a.code_postal,
-        a.nom_commune,
-        a.code_insee,
+        s.numero_voie,
+        s.nom_voie,
+        s.code_postal,
+        s.nom_commune,
+        s.code_insee,
         CASE
           WHEN EXISTS (
             SELECT 1 FROM admin.zonage z
-            WHERE z.type = 'FRR' AND z.code_insee = a.code_insee
+            WHERE z.type = 'FRR' AND z.code_insee = s.code_insee
           ) THEN true
           ELSE false
         END AS est_frr,
         CASE
           WHEN EXISTS (
             SELECT 1 FROM admin.zonage z
-            WHERE z.type = 'QPV' AND public.st_contains(z.geom, a.geom)
+            WHERE z.type = 'QPV' AND public.st_contains(z.geom, s.geom)
           ) THEN true
           ELSE false
         END AS est_qpv,
         COALESCE(s.nb_mandats_ac, 0) AS nb_mandats_ac,
-        COALESCE(
-          (SELECT SUM(ac.accompagnements)::int
-           FROM main.activites_coop ac
-           WHERE ac.structure_id = s.id),
-          0
-        ) AS nb_accompagnements_coop,
-        COALESCE(
-          (SELECT SUM(p.nb_accompagnements_ac)::int
-           FROM main.personne p
-           WHERE p.structure_id = s.id AND p.nb_accompagnements_ac IS NOT NULL),
-          0
-        ) AS nb_accompagnements_ac
-      FROM main.structure s
-      INNER JOIN main.adresse a ON a.id = s.adresse_id
+        COALESCE(SUM(act.accompagnements)::int, 0) AS nb_accompagnements_coop,
+        COALESCE(acc.nbr, 0) AS nb_accompagnements_ac
+      FROM structures s
       LEFT join reference.categories_juridiques ref on s.categorie_juridique = ref.code
-      WHERE s.structure_cartographie_nationale_id IS NOT NULL
-      ${codeDepartement ? Prisma.sql`AND a.departement = ${codeDepartement}` : Prisma.empty}
+      LEFT JOIN main.activites_coop act ON act.structure_id = s.id
+      LEFT JOIN accompagnements_ac acc ON acc.structure_id = s.id
+      GROUP BY s.id, s.nom, s.siret, ref.nom, s.numero_voie, s.nom_voie, s.code_postal, s.nom_commune, s.code_insee, s.nb_mandats_ac, s.geom, acc.nbr
       ORDER BY s.nom ASC
-      LIMIT ${limite}
-      OFFSET ${offset}
     `
 
     const dispositifResult : Array<{ nb_conseillers: bigint; total: bigint }>= await prisma.$queryRaw`SELECT
