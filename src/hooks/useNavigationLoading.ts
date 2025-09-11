@@ -12,7 +12,7 @@ export function useNavigationLoading(): boolean {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
-  const targetUrlRef = useRef<string | null>(null)
+  const targetUrlRef = useRef<null | string>(null)
 
   useEffect(() => {
     // Intercepter les clics sur tous les liens de pagination
@@ -60,7 +60,7 @@ export function useNavigationLoading(): boolean {
     const currentUrl = `${pathname}?${searchParams.toString()}`
     
     // Si on charge et qu'on arrive sur l'URL cible
-    if (isLoading && targetUrlRef.current && currentUrl === targetUrlRef.current) {
+    if (isLoading && targetUrlRef.current !== null && currentUrl === targetUrlRef.current) {
       // Attendre un peu pour que le contenu se charge
       const renderTimeout = setTimeout(() => {
         setIsLoading(false)
@@ -70,7 +70,7 @@ export function useNavigationLoading(): boolean {
         }
       }, 500) // 500ms pour laisser le temps au contenu de se rendre
       
-      return () => clearTimeout(renderTimeout)
+      return (): void => { clearTimeout(renderTimeout) }
     }
     return undefined
   }, [pathname, searchParams, isLoading])
