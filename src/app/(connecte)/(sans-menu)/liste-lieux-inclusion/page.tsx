@@ -34,7 +34,7 @@ export default async function ListeLieuxInclusionController({
 
   const searchParamsAwaited = await searchParams
   const pageAwaited = searchParamsAwaited.page
-  const page = isNullishOrEmpty(pageAwaited) ? 0 : Number(pageAwaited)
+  const page = isNullishOrEmpty(pageAwaited) ? 0 : Number(pageAwaited) - 1
   const limite = 10
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
