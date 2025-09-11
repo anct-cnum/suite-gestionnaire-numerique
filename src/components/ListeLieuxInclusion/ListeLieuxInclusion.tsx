@@ -6,15 +6,19 @@ import { ReactElement } from 'react'
 import Badge from '../shared/Badge/Badge'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
+import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
 
 export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
 }: Props): ReactElement {
+  const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
+  
   if ('type' in listeLieuxInclusionViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -29,6 +33,28 @@ export default function ListeLieuxInclusion({
 
   return (
     <>
+      {isPageLoading ? (
+        <div
+          style={{
+            alignItems: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            bottom: 0,
+            display: 'flex',
+            justifyContent: 'center',
+            left: 0,
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            zIndex: 9999,
+          }}
+        >
+          <SpinnerSimple
+            size="large"
+            text="Chargement..."
+          />
+        </div>
+      ) : null}
+      
       <div className="fr-grid-row">
         <PageTitle>
           <TitleIcon icon="map-pin-2-line" />
