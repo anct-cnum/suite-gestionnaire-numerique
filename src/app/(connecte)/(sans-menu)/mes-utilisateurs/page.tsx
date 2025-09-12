@@ -19,7 +19,7 @@ export default async function MesUtilisateursController({ searchParams }: Props)
   const sub = await getSessionSub()
   const searchParamsAwaited = await searchParams
   const pageAwaited = searchParamsAwaited.page
-  const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) }
+  const pageCourante = isNullishOrEmpty(pageAwaited) ? {} : { pageCourante: Number(pageAwaited) - 1 }
   const utilisateursActives = Boolean(searchParamsAwaited.utilisateursActives)
   const codeDepartement = isNullishOrEmpty(searchParamsAwaited.codeDepartement)
     ? {}
