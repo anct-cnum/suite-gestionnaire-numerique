@@ -120,7 +120,16 @@ export default function ListeLieuxInclusion({
                   </div>
                 </td>
                 <td>
-                  {lieu.siret}
+                  {lieu.siret === null ? 'Non renseigné' :
+                    (
+                      <a
+                        href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${lieu.siret}`}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        {lieu.siret}
+                      </a>
+                    ) }
                 </td>
                 <td>
                   <div className="fr-tags-group">

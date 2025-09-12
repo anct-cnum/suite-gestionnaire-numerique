@@ -9,7 +9,7 @@ export function listeLieuxInclusionPresenter(
     nbAccompagnements: lieu.nb_accompagnements_coop + lieu.nb_accompagnements_ac,
     nbMandatsAC: lieu.nb_mandats_ac,
     nom: lieu.nom,
-    siret: lieu.siret ?? 'Non renseigné',
+    siret: lieu.siret,
     tags: getTags(lieu),
     typeStructure: lieu.categorie_juridique ?? 'Non renseigné',
   }))
@@ -43,7 +43,7 @@ interface LieuInclusionViewModel {
   nbAccompagnements: number
   nbMandatsAC: number
   nom: string
-  siret: string
+  siret: null | string
   tags: Array<Tag>
   typeStructure: string
 }
