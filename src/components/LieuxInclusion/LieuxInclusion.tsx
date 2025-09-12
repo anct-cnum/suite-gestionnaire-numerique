@@ -50,6 +50,7 @@ export default function LieuxInclusion(props: Props): ReactElement {
               { backgroundColor: '#009081', label: 'Points d’accueil labellisés France services', value: viewModel.lieuxFranceService },
             ]}
             indicateur={viewModel.nombreLabellisesOuHabilites}
+            information="Un lieu peut accueillir des médiateurs de plusieurs dispositifs, il est alors comptabilisé dans chaque catégorie"
             label="Lieux labellisés ou habilités"
           />
         </div>

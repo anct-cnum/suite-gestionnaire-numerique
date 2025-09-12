@@ -2,13 +2,14 @@
 import { ReactElement, useRef } from 'react'
 
 import styles from './GraphiqueDemiCercle.module.css'
+import Information from '../shared/Information/Information'
 import Dot from '@/components/shared/Dot/Dot'
 import Doughnut from '@/components/shared/Doughnut/Doughnut'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import { handleDownload } from '@/shared/DownloadHelp'
 
 export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElement {
-  const { dateGeneration, description = '',  details, graphiqueInfos,indicateur, label } = props
+  const { dateGeneration, description = '',  details, graphiqueInfos,indicateur, information, label } = props
   const componentRef = useRef<HTMLDivElement>(null)
   return (
     <section
@@ -35,6 +36,9 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
           </div>
           <div className="fr-text--lg font-weight-700 fr-m-0" >
             {label}
+            {information === undefined ? null :
+            // eslint-disable-next-line @stylistic/indent
+            <Information label={information} />}
           </div>
           { description === '' ? null :
             (
@@ -102,6 +106,7 @@ type Props = {
   details: Array<Info>
   graphiqueInfos: Array<Info>
   indicateur: number
+  information?: string
   label: string
 }
 
