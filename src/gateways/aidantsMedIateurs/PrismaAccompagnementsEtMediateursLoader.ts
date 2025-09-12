@@ -112,8 +112,21 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       const aidantsConnectIds = await this.getPersonnesInTerritoire(aidantsConnect, territoire)
       const habilitesAidantsConnect = aidantsConnectIds.length
 
-      // Nombre de structures habilitées (estimation basée sur les aidants)
-      const structuresHabilitees = -1   
+      // Nombre de structures habilitées
+      const structuresHabiliteesList = territoire === 'France'
+        ? await prisma.$queryRaw<Array<{ count: bigint }>>`
+            SELECT COUNT(DISTINCT s.id) AS count
+            FROM main.structure s
+            WHERE s.structure_ac_id IS NOT NULL
+          `
+        : await prisma.$queryRaw<Array<{ count: bigint }>>`
+            SELECT COUNT(DISTINCT s.id) AS count
+            FROM main.structure s
+            JOIN main.adresse a ON s.adresse_id = a.id
+            WHERE s.structure_ac_id IS NOT NULL
+              AND a.departement = ${territoire}
+          `
+      const structuresHabilitees = Number(structuresHabiliteesList[0]?.count || 0)   
 
       // Calcul du pourcentage de médiateurs formés
       const pourcentageMediateursFormes = mediateursNumeriques > 0 
