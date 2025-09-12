@@ -29,7 +29,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
     // Récupération des lieux avec leurs informations
     const lieux: Array<LieuInclusionNumeriqueItem> = await prisma.$queryRaw`
       WITH structures AS (
-        SELECT s.id, s.nom, s.siret, s.categorie_juridique, s.nb_mandats_ac, a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
+        SELECT s.id, s.nom, s.siret, s.categorie_juridique, s.nb_mandats_ac, s.structure_cartographie_nationale_id, a.geom, a.numero_voie, a.nom_voie, a.code_postal, a.nom_commune, a.code_insee
         FROM main.structure s
         INNER JOIN main.adresse a ON a.id = s.adresse_id
         WHERE s.structure_cartographie_nationale_id IS NOT NULL
@@ -50,6 +50,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
         s.id,
         s.nom,
         s.siret,
+        s.structure_cartographie_nationale_id,
         ref.nom as categorie_juridique,
         s.numero_voie,
         s.nom_voie,
@@ -77,7 +78,7 @@ export class PrismaListeLieuxInclusionLoader implements RecupererLieuxInclusionP
       LEFT join reference.categories_juridiques ref on s.categorie_juridique = ref.code
       LEFT JOIN main.activites_coop act ON act.structure_id = s.id
       LEFT JOIN accompagnements_ac acc ON acc.structure_id = s.id
-      GROUP BY s.id, s.nom, s.siret, ref.nom, s.numero_voie, s.nom_voie, s.code_postal, s.nom_commune, s.code_insee, s.nb_mandats_ac, s.geom, acc.nbr
+      GROUP BY s.id, s.nom, s.siret, s.structure_cartographie_nationale_id, ref.nom, s.numero_voie, s.nom_voie, s.code_postal, s.nom_commune, s.code_insee, s.nb_mandats_ac, s.geom, acc.nbr
       ORDER BY s.nom ASC
     `
 
