@@ -74,21 +74,29 @@ describe('menu lateral', () => {
   })
 
   it.each([
-    { itemIndex: 0, listIndex: 0,  name: 'Tableau de bord', pathname: '/tableau-de-bord' },
-    { itemIndex: 0, listIndex: 1,  name: 'Gouvernance', pathname: '/gouvernance/93' },
-    { itemIndex: 0, listIndex: 2,  name: 'Membres', pathname: '/gouvernance/93/membres' },
-    { itemIndex: 3, listIndex: 1,  name: "Lieux d'inclusion", pathname: '/lieux-inclusion' },
-
-  ])('étant un utilisateur, quand je clique sur un lien du menu, alors je vois qu\'il est sélectionné', ({ itemIndex, listIndex,  name, pathname }) => {
+    { itemIndex: 0, listIndex: 0, name: 'Tableau de bord', pathname: '/tableau-de-bord' },
+    { itemIndex: 0, listIndex: 1, name: 'Gouvernance', pathname: '/gouvernance/93' },
+    { itemIndex: 0, listIndex: 2, name: 'Membres', pathname: '/gouvernance/93/membres' },
+    { itemIndex: 1, listIndex: 2, name: 'Feuilles de route', pathname: '/gouvernance/93/feuilles-de-route' },
+    { itemIndex: 3, listIndex: 1, name: 'Aidants et médiateurs', pathname: '/gouvernance/93/aidants-mediateurs' },
+    { itemIndex: 6, listIndex: 1, name: 'Lieux d\'inclusion', pathname: '/lieux-inclusion' },
+    { itemIndex: 0, listIndex: 5, name: 'Financements', pathname: '/gouvernance/93/financements' },
+    { itemIndex: 1, listIndex: 5, name: 'Bénéficiaires', pathname: '/gouvernance/93/beneficiaires' },
+  ])('étant un utilisateur, quand j\'accède à l\'URL $pathname, alors l\'item $name du menu a le focus', ({ itemIndex, listIndex, name, pathname }) => {
     // WHEN
     afficherMenuLateralGestionnaireDepartement(pathname)
 
     // THEN
     const menus = screen.getAllByRole('list')
     const menuItems = within(menus[listIndex]).getAllByRole('listitem')
+    
+    // Vérifier que l'item a la classe active
     expect(menuItems[itemIndex]).toHaveClass(`fr-sidemenu__item--active ${styles['element-selectionne']}`)
+    
+    // Vérifier que le lien a l'attribut aria-current="page"
     const element = within(menuItems[itemIndex]).getByRole('link', { current: 'page', name })
     expect(element).toBeInTheDocument()
+    expect(element).toHaveAttribute('aria-current', 'page')
   })
 
   it('étant un utilisateur autre que gestionnaire de département, quand j\'affiche le menu latéral, alors il ne s\'affiche pas avec le lien de la gouvernance', () => {
