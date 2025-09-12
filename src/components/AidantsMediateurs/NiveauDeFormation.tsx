@@ -7,6 +7,7 @@ import { ReactElement, useRef } from 'react'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import { DownloadButton } from '../shared/Download/DownloadButton'
+import Information from '../shared/Information/Information'
 import InformationLogo from '../shared/InformationLogo/InformationLogo'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
@@ -78,6 +79,7 @@ export default function NiveauDeFormation({
             id="niveau-de-formation"
           >
             Niveau de formation des aidants et médiateurs numériques
+            <Information label=" Les indicateurs sur les formations concernent les médiateurs numériques inscrits sur la Coop de la médiation ainsi que les conseillers numériques de votre territoire" />
           </h2>
         </div>
       </div>

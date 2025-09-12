@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import Information from '../shared/Information/Information'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
 
 export default function LieuxInclusionHearder(): ReactElement {
@@ -24,6 +25,7 @@ export default function LieuxInclusionHearder(): ReactElement {
               className="fr-h2 fr-text-label--blue-france"
             >
               Lieux d&apos;inclusion numérique
+              <Information label="Nombre de lieux affichés sur la cartographie nationale des lieux d’inclusion numérique" />
             </span>
 
           </div>

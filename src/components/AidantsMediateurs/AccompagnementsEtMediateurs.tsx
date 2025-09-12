@@ -10,6 +10,7 @@ import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
 import Doughnut from '../shared/Doughnut/Doughnut'
 import { DownloadButton } from '../shared/Download/DownloadButton'
+import Information from '../shared/Information/Information'
 import Metric from '../shared/Metric/Metric'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
@@ -82,6 +83,8 @@ export default function AccompagnementsEtMediateurs({
             id="accompagnements-et-mediateurs"
           >
             Accompagnements et Médiateurs numériques
+            <Information label=" Les indicateurs affichés concernent les médiateurs numériques inscrits sur la Coop de la médiation ainsi que les conseillers numériques de votre territoire" />
+
           </h2>
         </div>
       </div>
