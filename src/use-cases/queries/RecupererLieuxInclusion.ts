@@ -22,6 +22,7 @@ export interface LieuInclusionNumeriqueItem {
   nom_voie: null | string
   numero_voie: null | string
   siret: null | string
+  structure_cartographie_nationale_id: null | string
   type_structure: null | string
 }
 

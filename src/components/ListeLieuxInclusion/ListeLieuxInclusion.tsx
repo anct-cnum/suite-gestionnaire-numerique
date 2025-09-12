@@ -116,7 +116,17 @@ export default function ListeLieuxInclusion({
                     whiteSpace: 'nowrap',
                   }}
                   >
-                    {lieu.adresse}
+                    {lieu.idCartographieNationale === null ? 
+                      lieu.adresse
+                      : (
+                        <a
+                          href={`https://cartographie.societenumerique.gouv.fr/cartographie/${lieu.idCartographieNationale}/details`}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          {lieu.adresse}
+                        </a>
+                      )}
                   </div>
                 </td>
                 <td>
