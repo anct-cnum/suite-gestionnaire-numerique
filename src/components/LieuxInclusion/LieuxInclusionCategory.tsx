@@ -1,6 +1,7 @@
 'use client'
 import React, { ReactElement, useRef } from 'react'
 
+import Information from '../shared/Information/Information'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
 import TitleIcon from '@/components/shared/TitleIcon/TitleIcon'
@@ -31,6 +32,7 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
             </p>
             <p className="fr-text--xl fr-text--bold fr-mb-1v fr-text-default--grey">
               Lieux d’inclusion numérique
+              <Information label="Nombre de lieux affichés sur la cartographie nationale des lieux d’inclusion numérique" />
             </p>
             <p className="fr-text--sm fr-mb-0 fr-text-label--blue-france">
               dont
