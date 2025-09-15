@@ -4,7 +4,6 @@ import AidantDetailsActivites from '@/components/AidantDetails/AidantDetailsActi
 import AidantDetailsHeader from '@/components/AidantDetails/AidantDetailsHeader'
 import InformationsPersonnellesCard from '@/components/AidantDetails/AidantDetailsInformationsPersonnelles'
 import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetailsLieuxActivite'
-import AidantDetailsSideMenu, { SideMenuSection } from '@/components/AidantDetails/AidantDetailsSideMenu'
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
 
 export type AidantDetailsHeaderData = Readonly<{
@@ -73,47 +72,33 @@ export type AidantDetailsData = Readonly<{
 export default function AidantDetails(props: Props): ReactElement {
   const { data } = props
 
-  const sections: ReadonlyArray<SideMenuSection> = [
-    { id: 'informations-personnelles', label: 'Informations personnelles' },
-    { id: 'structures-employeuses', label: 'Structures employeuses' },
-    { id: 'activites', label: 'Activités' },
-    { id: 'lieux-activite', label: 'Lieux d\'activité' },
-  ]
-
   return (
-    <div className="fr-container fr-py-4w">
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-3">
-          <AidantDetailsSideMenu sections={sections} />
-        </div>
-        <div className="fr-col-12 fr-col-md-9">
-          <div id="header">
-            <AidantDetailsHeader data={data.header} />
-          </div>
-
-          <div id="informations-personnelles">
-            <InformationsPersonnellesCard data={data.informationsPersonnelles} />
-          </div>
-
-          <div id="structures-employeuses">
-            {data.structuresEmployeuses.map((structure) => (
-              <AidantDetailsStructureEmployeuse
-                data={structure}
-                key={structure.nom}
-              />
-            ))}
-          </div>
-
-          <div id="activites">
-            <AidantDetailsActivites data={data.statistiquesActivites} />
-          </div>
-
-          <div id="lieux-activite">
-            <AidantDetailsLieuxActivite data={data.lieuxActivite} />
-          </div>
-        </div>
+    <>
+      <div id="header">
+        <AidantDetailsHeader data={data.header} />
       </div>
-    </div>
+
+      <div id="informations-personnelles">
+        <InformationsPersonnellesCard data={data.informationsPersonnelles} />
+      </div>
+
+      <div id="structures-employeuses">
+        {data.structuresEmployeuses.map((structure) => (
+          <AidantDetailsStructureEmployeuse
+            data={structure}
+            key={structure.nom}
+          />
+        ))}
+      </div>
+
+      <div id="activites">
+        <AidantDetailsActivites data={data.statistiquesActivites} />
+      </div>
+
+      <div id="lieux-activite">
+        <AidantDetailsLieuxActivite data={data.lieuxActivite} />
+      </div>
+    </>
   )
 }
 

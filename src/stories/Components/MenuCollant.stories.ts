@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/nextjs-vite'
 
-import AidantDetailsSideMenu from '@/components/AidantDetails/AidantDetailsSideMenu'
+import MenuCollant from '@/components/AidantDetails/MenuCollant'
 
-const meta: Meta<typeof AidantDetailsSideMenu> = {
-  component: AidantDetailsSideMenu,
+const meta: Meta<typeof MenuCollant> = {
+  component: MenuCollant,
   parameters: {
     layout: 'fullscreen',
   },
   tags: ['autodoc'],
-  title: 'Components/AidantDetails/AidantDetailsSideMenu',
+  title: 'Shared/MenuCollant',
 }
 
 export default meta
