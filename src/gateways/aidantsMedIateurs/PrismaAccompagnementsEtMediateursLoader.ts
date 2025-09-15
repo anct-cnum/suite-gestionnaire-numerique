@@ -80,16 +80,17 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         select: { id: true, structure_employeuse_id: true },
         where: { est_actuellement_mediateur_en_poste: true },
       })
-      const mediateursIds = await this.getPersonnesInTerritoire(mediateurs, territoire)
-      const mediateursNumeriques = mediateursIds.length
+      const mediateursData = await this.getPersonnesInTerritoire(mediateurs, territoire)
+      const mediateursIds = mediateursData.map(mediateur => mediateur.personneId)
+      const mediateursNumeriques = mediateursData.length
 
       // Nombre de conseillers numériques (actuellement en poste avec financement état)
       const conseillers = await prisma.personneEnrichieView.findMany({
         select: { id: true, structure_employeuse_id: true },
         where: { est_actuellement_conseiller_numerique: true },
       })
-      const conseillersIds = await this.getPersonnesInTerritoire(conseillers, territoire)
-      const conseillerNumeriques = conseillersIds.length
+      const conseillersData = await this.getPersonnesInTerritoire(conseillers, territoire)
+      const conseillerNumeriques = conseillersData.length
 
       // Nombre de médiateurs numériques formés (en poste avec au moins 1 formation)
       const formations = await prisma.formation.findMany({
@@ -99,7 +100,7 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       })
       const mediateursFormes = formations.length
 
-      // Habilités Aidants Connect (médiateurs ou aidants numériques en poste + labellisés AC)
+      // Médiateurs Habilités Aidants Connect
       const aidantsConnect = await prisma.personneEnrichieView.findMany({
         select: { id: true, structure_employeuse_id: true },
         where: {
@@ -109,23 +110,22 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
           ],
         },
       })
-      const aidantsConnectIds = await this.getPersonnesInTerritoire(aidantsConnect, territoire)
-      const habilitesAidantsConnect = aidantsConnectIds.length
+      const aidantsConnectData = await this.getPersonnesInTerritoire(aidantsConnect, territoire)
+      const habilitesAidantsConnect = aidantsConnectData.length
 
-      // Nombre de structures habilitées
-      const structuresHabiliteesList = territoire === 'France'
+      // Structures employeuses des médiateurs labellisés Aidants Connect
+      const structureEmployeuseIds = [...new Set(aidantsConnectData
+        .map(aidant => aidant.structureId)
+        .filter((id): id is number => id !== null))]
+      
+      const structuresHabiliteesList = structureEmployeuseIds.length > 0
         ? await prisma.$queryRaw<Array<{ count: bigint }>>`
             SELECT COUNT(DISTINCT s.id) AS count
             FROM main.structure s
             WHERE s.structure_ac_id IS NOT NULL
+              AND s.id = ANY(${structureEmployeuseIds}::bigint[])
           `
-        : await prisma.$queryRaw<Array<{ count: bigint }>>`
-            SELECT COUNT(DISTINCT s.id) AS count
-            FROM main.structure s
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE s.structure_ac_id IS NOT NULL
-              AND a.departement = ${territoire}
-          `
+        : [{ count: 0n }]
       const structuresHabilitees = Number(structuresHabiliteesList[0]?.count || 0)   
 
       // Calcul du pourcentage de médiateurs formés
@@ -158,9 +158,12 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
   private async getPersonnesInTerritoire(
     personnes: Array<{ id: number; structure_employeuse_id: null | number }>,
     territoire: string
-  ): Promise<Array<number>> {
+  ): Promise<Array<{ personneId: number; structureId: null | number }>> {
     if (territoire === 'France') {
-      return personnes.map(personne => personne.id)
+      return personnes.map(personne => ({ 
+        personneId: personne.id, 
+        structureId: personne.structure_employeuse_id, 
+      }))
     }
 
     const structureIds = [...new Set(personnes
@@ -184,6 +187,9 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       .filter((personne): personne is { structure_employeuse_id: number } & typeof personne => 
         personne.structure_employeuse_id !== null && 
       structuresInTerritoire.has(personne.structure_employeuse_id))
-      .map(personne => personne.id)
+      .map(personne => ({ 
+        personneId: personne.id, 
+        structureId: personne.structure_employeuse_id, 
+      }))
   }
 }
