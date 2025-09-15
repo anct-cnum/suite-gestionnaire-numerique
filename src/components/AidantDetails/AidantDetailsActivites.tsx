@@ -23,7 +23,7 @@ export default function AidantDetailsActivites(props: Props): ReactElement {
       params.set('periode', nouvellePeriode)
     }
     const newUrl = params.toString() ? `?${params.toString()}` : ''
-    router.push(window.location.pathname + newUrl)
+    router.push(`${window.location.pathname + newUrl }#activites`)
   }
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
