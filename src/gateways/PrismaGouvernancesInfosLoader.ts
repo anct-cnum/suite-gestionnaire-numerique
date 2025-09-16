@@ -9,6 +9,7 @@ export class PrismaGouvernancesInfosLoader {
     const dotationsEtat = await this.getDotationEtatParGouvernance()
     const montantEngager = await this.getMontantEngagerParGouvernance()
     const cofinancement = await this.getCofinancementParGouvernance()
+    const indicesDeConfiance = await this.getIndicesDeConfianceParDepartement()
     const details = Array.from(gouvernances).map((gouvernance) => {
       const gouvernanceCode = gouvernance.code
       const membre = membres[gouvernanceCode]
@@ -16,6 +17,7 @@ export class PrismaGouvernancesInfosLoader {
       const dotationsEtatGouvernance = dotationsEtat[gouvernanceCode]
       const montantEngagerGouvernance = montantEngager[gouvernanceCode]
       const cofinancementGouvernance = cofinancement[gouvernanceCode]
+      const indiceDeConfiance = indicesDeConfiance[gouvernanceCode]
       return {
         /* eslint-disable */
         actionCount: feuilleDeRoute?.nombreActions ?? 0,
@@ -28,6 +30,7 @@ export class PrismaGouvernancesInfosLoader {
         dotationEtatMontant:
           dotationsEtatGouvernance !== null ? dotationsEtatGouvernance : 0,
         feuilleDeRouteCount: feuilleDeRoute?.nombreFeuillesDeRoute ?? 0,
+        indiceDeConfiance: this.formatIndiceDeConfiance(indiceDeConfiance),
         membreCount: membre?.membre ?? 0,
         montantEngager: montantEngagerGouvernance ?? [],
         /* eslint-enable */
@@ -37,6 +40,21 @@ export class PrismaGouvernancesInfosLoader {
     return {
       details,
     }
+  }
+
+  private formatIndiceDeConfiance(label: null | string | undefined): string {
+    if (label === null || label === undefined) {
+      return 'non enregistré'
+    }
+
+    const labelMapping: Record<string, string> = {
+      'appuis nécessaires': 'appuis nécessaires',
+      'objectifs atteignables': 'objectifs atteignables',
+      'objectifs compromis': 'objectifs compromis',
+      'objectifs sécurisés': 'objectifs sécurisés',
+    }
+
+    return labelMapping[label] ?? 'non enregistré'
   }
 
   private async getCofinancementParGouvernance(): Promise<Record<string, number>> {
@@ -137,6 +155,19 @@ export class PrismaGouvernancesInfosLoader {
 
       return acc
     }, {})
+  }
+
+  private async getIndicesDeConfianceParDepartement(): Promise<Record<string, null | string>> {
+    const indices = await prisma.icp_departement.findMany({
+      select: {
+        code: true,
+        label: true,
+      },
+    })
+
+    return Object.fromEntries(
+      indices.map((indice) => [indice.code, indice.label])
+    )
   }
 
   private async getMemberesParGouvernancess(): Promise<
