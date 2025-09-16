@@ -13,10 +13,28 @@ export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel) : Go
         departementRegion: detail.departementRegion,
         dotationEtatMontant: detail.dotationEtatMontant,
         feuilleDeRouteCount: detail.feuilleDeRouteCount,
+        indiceDeConfiance: detail.indiceDeConfiance,
+        indiceDeConfianceClass: getIndiceDeConfianceClass(detail.indiceDeConfiance),
         membreCount: detail.membreCount,
         montantEngager: detail.montantEngager,
       }
     } ),
+  }
+}
+
+function getIndiceDeConfianceClass(indice: string): string {
+  switch (indice) {
+    case 'appuis nécessaires':
+      return 'fr-badge--green-tilleul-verveine'
+    case 'objectifs atteignables':
+      return 'fr-badge--green-menthe'
+    case 'objectifs compromis':
+      return 'fr-badge--purple-glycine'
+    case 'objectifs sécurisés':
+      return 'fr-badge--green-emeraude'
+    case 'non enregistré':
+    default:
+      return 'fr-badge--grey'
   }
 }
 
@@ -33,6 +51,8 @@ export interface GouvernanceDetails {
   departementRegion: string
   dotationEtatMontant: number
   feuilleDeRouteCount: number
+  indiceDeConfiance: string
+  indiceDeConfianceClass: string
   membreCount: number
   montantEngager: Array<number>
 }
