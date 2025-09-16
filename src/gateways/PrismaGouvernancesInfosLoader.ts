@@ -42,6 +42,21 @@ export class PrismaGouvernancesInfosLoader {
     }
   }
 
+  private formatIndiceDeConfiance(label: null | string | undefined): string {
+    if (label === null || label === undefined) {
+      return 'non enregistré'
+    }
+
+    const labelMapping: Record<string, string> = {
+      'appuis nécessaires': 'appuis nécessaires',
+      'objectifs atteignables': 'objectifs atteignables',
+      'objectifs compromis': 'objectifs compromis',
+      'objectifs sécurisés': 'objectifs sécurisés',
+    }
+
+    return labelMapping[label] ?? 'non enregistré'
+  }
+
   private async getCofinancementParGouvernance(): Promise<Record<string, number>> {
     const cofinancements = await prisma.coFinancementRecord.findMany({
       include: {
@@ -142,6 +157,19 @@ export class PrismaGouvernancesInfosLoader {
     }, {})
   }
 
+  private async getIndicesDeConfianceParDepartement(): Promise<Record<string, null | string>> {
+    const indices = await prisma.icp_departement.findMany({
+      select: {
+        code: true,
+        label: true,
+      },
+    })
+
+    return Object.fromEntries(
+      indices.map((indice) => [indice.code, indice.label])
+    )
+  }
+
   private async getMemberesParGouvernancess(): Promise<
     Record<string, { coporteur: number; membre: number }>
   > {
@@ -191,33 +219,5 @@ export class PrismaGouvernancesInfosLoader {
       acc[code].push(montant)
       return acc
     }, {})
-  }
-
-  private async getIndicesDeConfianceParDepartement(): Promise<Record<string, null | string>> {
-    const indices = await prisma.icp_departement.findMany({
-      select: {
-        code: true,
-        label: true,
-      },
-    })
-
-    return Object.fromEntries(
-      indices.map((indice) => [indice.code, indice.label])
-    )
-  }
-
-  private formatIndiceDeConfiance(label: null | string | undefined): string {
-    if (label === null || label === undefined) {
-      return 'non enregistré'
-    }
-
-    const labelMapping: Record<string, string> = {
-      'appuis nécessaires': 'appuis nécessaires',
-      'objectifs atteignables': 'objectifs atteignables',
-      'objectifs compromis': 'objectifs compromis',
-      'objectifs sécurisés': 'objectifs sécurisés',
-    }
-
-    return labelMapping[label] ?? 'non enregistré'
   }
 }

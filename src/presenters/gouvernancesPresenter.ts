@@ -22,22 +22,6 @@ export function gouvernancePresenter(viewModel: GouvernancesInfosReadModel) : Go
   }
 }
 
-function getIndiceDeConfianceClass(indice: string): string {
-  switch (indice) {
-    case 'appuis nécessaires':
-      return 'fr-badge--green-tilleul-verveine'
-    case 'objectifs atteignables':
-      return 'fr-badge--green-menthe'
-    case 'objectifs compromis':
-      return 'fr-badge--purple-glycine'
-    case 'objectifs sécurisés':
-      return 'fr-badge--green-emeraude'
-    case 'non enregistré':
-    default:
-      return 'fr-badge--grey'
-  }
-}
-
 export type GouvernancesViewModel = Readonly<{
   details: Array<GouvernanceDetails>
 }>
@@ -55,4 +39,20 @@ export interface GouvernanceDetails {
   indiceDeConfianceClass: string
   membreCount: number
   montantEngager: Array<number>
+}
+
+function getIndiceDeConfianceClass(indice: string): string {
+  switch (indice) {
+    case 'appuis nécessaires':
+      return 'fr-badge--green-tilleul-verveine'
+    case 'objectifs atteignables':
+      return 'fr-badge--green-menthe'
+    case 'objectifs compromis':
+      return 'fr-badge--purple-glycine'
+    case 'objectifs sécurisés':
+      return 'fr-badge--green-emeraude'
+    case 'non enregistré':
+    default:
+      return 'fr-badge--grey'
+  }
 }
