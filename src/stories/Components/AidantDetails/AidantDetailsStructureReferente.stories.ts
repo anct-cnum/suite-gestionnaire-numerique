@@ -24,7 +24,7 @@ const meta: Meta<typeof AidantDetailsStructureReferente> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsStructureReferente',
+  title: 'Components/AidantDetails/structureReferente',
 }
 
 export default meta

@@ -1,12 +1,12 @@
 import { ReactElement } from 'react'
 
-import { AidantDetailsHeaderData } from './AidantDetails'
+import { LieuInclusionDetailsHeaderData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
 import Menu from '@/components/shared/Menu/Menu'
 import Tag from '@/components/shared/Tag/Tag'
 
-export default function AidantDetailsHeader(props: Props): ReactElement {
+export default function LieuInclusionDetailsHeader(props: Props): ReactElement {
   const { data } = props
-  const { modificationAutheur, modificationDate, nom, tags } = data
+  const { modificationAuteur, modificationDate, nom, tags } = data
 
   return (
     <section
@@ -56,7 +56,7 @@ export default function AidantDetailsHeader(props: Props): ReactElement {
             {' '}
             -
             {' '}
-            {modificationAutheur}
+            {modificationAuteur}
           </p>
         </div>
       </div>
@@ -65,5 +65,5 @@ export default function AidantDetailsHeader(props: Props): ReactElement {
 }
 
 type Props = Readonly<{
-  data: AidantDetailsHeaderData
+  data: LieuInclusionDetailsHeaderData
 }>

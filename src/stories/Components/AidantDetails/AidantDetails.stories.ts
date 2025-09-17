@@ -10,10 +10,19 @@ const meta: Meta<typeof AidantDetails> = {
   },
   component: AidantDetails,
   parameters: {
-    layout: 'fullscreen',
+    layout: 'padded',
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/aidant/123',
+        query: {
+          periode: 'mensuel',
+        },
+      },
+    },
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetails',
+  title: 'Components/AidantDetails',
 }
 
 export default meta

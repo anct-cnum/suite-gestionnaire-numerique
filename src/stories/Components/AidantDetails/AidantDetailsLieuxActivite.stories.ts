@@ -13,7 +13,7 @@ const meta: Meta<typeof AidantDetailsLieuxActivite> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsLieuxActivite',
+  title: 'Components/AidantDetails/LieuxActivite',
 }
 
 export default meta

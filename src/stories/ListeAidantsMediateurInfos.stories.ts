@@ -12,7 +12,7 @@ const meta: Meta<typeof ListeAidantsMediateurInfos> = {
   parameters: {
     layout: 'padded',
   },
-  title: 'Components/ListeAidantsMediateurInfos',
+  title: 'Components/ListeAidantsMediateur/Infos',
 }
 
 export default meta

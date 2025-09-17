@@ -11,9 +11,18 @@ const meta: Meta<typeof AidantDetailsActivites> = {
   component: AidantDetailsActivites,
   parameters: {
     layout: 'padded',
+    nextjs: {
+      appDirectory: true,
+      navigation: {
+        pathname: '/aidant/123',
+        query: {
+          periode: 'mensuel',
+        },
+      },
+    },
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsActivites',
+  title: 'Components/AidantDetails/Activites',
 }
 
 export default meta

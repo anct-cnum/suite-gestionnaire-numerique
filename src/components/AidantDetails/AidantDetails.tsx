@@ -7,10 +7,9 @@ import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetails
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
 
 export type AidantDetailsHeaderData = Readonly<{
-  modificationAuther?: string
+  modificationAutheur?: string
   modificationDate?: string
   nom: string
-  prenom: string
   tags: ReadonlyArray<string>
 }>
 

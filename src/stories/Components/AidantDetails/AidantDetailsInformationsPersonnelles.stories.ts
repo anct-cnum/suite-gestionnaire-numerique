@@ -16,7 +16,7 @@ const meta: Meta<typeof InformationsPersonnellesCard> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsInformationsPersonnelles',
+  title: 'Components/AidantDetails/InformationsPersonnelles',
 }
 
 export default meta
