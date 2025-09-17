@@ -58,21 +58,15 @@ SELECT
     ELSE false
   END AS est_actuellement_coordo_actif,
   
-  -- ID de la structure employeuse (basé sur le type)
-  CASE
-    -- Pour un médiateur, prendre l'id de la structure dans personne_affectations
-    WHEN type_accompagnateur = 'mediateur' THEN (
-      SELECT pa.structure_id
-      FROM main.personne_affectations pa
-      WHERE pa.personne_id = personne_avec_status.id 
-      AND pa.type = 'structure_emploi'
-      AND pa.suppression IS NULL
-      ORDER BY pa.structure_id ASC -- Ordre déterministe pour les cas de doublons
-      LIMIT 1
-    )
-    -- Pour un aidant numérique, prendre l'id de la structure directe
-    WHEN type_accompagnateur = 'aidant_numerique' THEN personne_avec_status.structure_id
-    ELSE NULL
-  END AS structure_employeuse_id
+  -- ID de la structure employeuse (depuis personne_affectations)
+  (
+    SELECT pa.structure_id
+    FROM main.personne_affectations pa
+    WHERE pa.personne_id = personne_avec_status.id 
+    AND pa.type = 'structure_emploi'
+    AND pa.suppression IS NULL
+    ORDER BY pa.structure_id ASC -- Ordre déterministe pour les cas de doublons
+    LIMIT 1
+  ) AS structure_employeuse_id
   
 FROM personne_avec_status;

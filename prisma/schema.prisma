@@ -496,7 +496,7 @@ model zonage {
   updated_at  DateTime?                @db.Timestamp(6)
   commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([code, code_insee], map: "zonage_code_ukey")
+  @@unique([code, code_insee], map: "zonage_ukey")
   @@index([code_insee])
   @@index([geom], type: Gist)
   @@schema("admin")
@@ -576,7 +576,6 @@ model personne {
   prenom                                                                       String?                  @db.VarChar(50)
   nom                                                                          String?                  @db.VarChar(50)
   contact                                                                      Json?
-  structure_id                                                                 Int?
   aidant_connect_id                                                            Int?                     @unique(map: "personne_aidant_connect_id_ukey")
   conseiller_numerique_id                                                      String?                  @unique(map: "personne_conseiller_numerique_id_ukey") @db.VarChar(50)
   cn_pg_id                                                                     Int?                     @unique(map: "personne_cn_pg_id_ukey")
@@ -596,7 +595,6 @@ model personne {
   coordination_mediation_coordination_mediation_mediateur_coop_idTopersonne    coordination_mediation[] @relation("coordination_mediation_mediateur_coop_idTopersonne")
   coordination_mediation_coordination_mediation_mediateur_idTopersonne         coordination_mediation[] @relation("coordination_mediation_mediateur_idTopersonne")
   formation                                                                    formation[]
-  structure                                                                    main_structure?          @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   personne_affectations                                                        personne_affectations[]
   poste                                                                        poste[]
 
@@ -670,7 +668,6 @@ model main_structure {
   created_at                          DateTime?               @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?               @db.Timestamp(6)
   activites_coop                      activites_coop[]
-  personne                            personne[]
   personne_affectations               personne_affectations[]
   poste                               poste[]
   adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
