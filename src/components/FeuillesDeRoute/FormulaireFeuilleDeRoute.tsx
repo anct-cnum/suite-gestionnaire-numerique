@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, PropsWithChildren, ReactElement, useId, useState } from 'react'
+import { FormEvent, PropsWithChildren, ReactElement, useEffect, useId, useState } from 'react'
 
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import RadioGroup from '../shared/Radio/RadioGroup'
@@ -17,14 +17,21 @@ export default function FormulaireFeuilleDeRoute({
   nom,
   perimetreActuel,
   perimetres,
+  resetPerimetre,
   validerFormulaire,
 }: Props): ReactElement {
   const nomId = useId()
   const [perimetreSelectionne, setPerimetreSelectionne] = useState(perimetreActuel ?? '')
 
+  useEffect(() => {
+    setPerimetreSelectionne(perimetreActuel ?? '')
+  }, [perimetreActuel])
+
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     validerFormulaire(event)
-    setPerimetreSelectionne('')
+    if (resetPerimetre === true) {
+      setPerimetreSelectionne('')
+    }
   }
   return (
     <>
@@ -102,5 +109,6 @@ type Props = PropsWithChildren<Readonly<{
   nom: string
   perimetreActuel?: string
   perimetres: ReadonlyArray<LabelValue>
+  resetPerimetre?: boolean
   validerFormulaire(event: FormEvent<HTMLFormElement>): void
 }>>

@@ -52,6 +52,7 @@ export default function AjouterUneFeuilleDeRoute({
           membres={membres}
           nom=""
           perimetres={perimetres}
+          resetPerimetre={true}
           validerFormulaire={ajouterUneFeuilleDeRoute}
         >
           <SubmitButton isDisabled={isDisabled}>
