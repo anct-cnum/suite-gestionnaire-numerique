@@ -16,7 +16,7 @@ const meta: Meta<typeof AidantDetailsStructureEmployeuse> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsStructureEmployeuse',
+  title: 'Components/AidantDetails/StructureEmployeuse',
 }
 
 export default meta

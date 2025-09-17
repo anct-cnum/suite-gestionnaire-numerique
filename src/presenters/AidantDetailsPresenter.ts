@@ -5,10 +5,9 @@ import { AidantDetailsReadModel } from '@/use-cases/queries/RecupererAidantDetai
 export function presentAidantDetails(readModel: AidantDetailsReadModel): AidantDetailsData {
   return {
     header: {
-      modificationAuther: '-',
+      modificationAutheur: '-',
       modificationDate: '-',
       nom: readModel.nom,
-      prenom: readModel.prenom,
       tags: readModel.tags,
     },
     informationsPersonnelles: {

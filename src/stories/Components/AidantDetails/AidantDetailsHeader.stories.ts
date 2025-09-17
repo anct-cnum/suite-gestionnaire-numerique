@@ -13,7 +13,7 @@ const meta: Meta<typeof AidantDetailsHeader> = {
     layout: 'padded',
   },
   tags: ['autodocs'],
-  title: 'Components/AidantDetails/AidantDetailsHeader',
+  title: 'Components/AidantDetails/Header',
 }
 
 export default meta
@@ -28,10 +28,9 @@ export const Default: Story = {
 export const AvecPlusieursStatuts: Story = {
   args: {
     data: {
-      modificationAuther: 'Jean Dupont',
+      modificationAutheur: 'Jean Dupont',
       modificationDate: '20/04/2024',
       nom: 'Durand',
-      prenom: 'Pierre',
       tags: ['Médiateur numérique', 'Aidant Connect', 'Animateur'],
     },
   },
@@ -40,10 +39,9 @@ export const AvecPlusieursStatuts: Story = {
 export const SansTag: Story = {
   args: {
     data: {
-      modificationAuther: 'Admin Système',
+      modificationAutheur: 'Admin Système',
       modificationDate: '10/05/2024',
       nom: 'Leroy',
-      prenom: 'Marie',
       tags: [],
     },
   },
@@ -52,10 +50,9 @@ export const SansTag: Story = {
 export const TagUnique: Story = {
   args: {
     data: {
-      modificationAuther: 'Responsable RH',
+      modificationAutheur: 'Responsable RH',
       modificationDate: '28/02/2024',
       nom: 'Bernard',
-      prenom: 'Luc',
       tags: ['Conseiller numérique'],
     },
   },
