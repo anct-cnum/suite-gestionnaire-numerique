@@ -1,7 +1,21 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
+export type FiltreGeographique = Readonly<{
+  code: string
+  type: 'region' | 'departement'
+}>
+
+export type FiltresListeAidants = Readonly<{
+  geographique?: FiltreGeographique
+  pagination: Readonly<{
+    limite: number
+    page: number
+  }>
+  territoire: string
+}>
+
 export interface ListeAidantsMediateursLoader {
-  get(territoire: string, page: number, limite: number): Promise<ErrorReadModel | ListeAidantsMediateursReadModel>
+  get(filtres: FiltresListeAidants): Promise<ErrorReadModel | ListeAidantsMediateursReadModel>
 }
 
 export type AidantMediateurReadModel = Readonly<{

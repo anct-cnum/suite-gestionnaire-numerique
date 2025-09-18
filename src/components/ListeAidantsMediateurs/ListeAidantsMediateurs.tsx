@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { memo, ReactElement, useCallback, useId, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
 
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
+import ListeAidantsMediateursFiltre from './ListeAidantsMediateursFiltre'
 import Badge from '../shared/Badge/Badge'
 import Drawer from '../shared/Drawer/Drawer'
-import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
@@ -17,10 +18,10 @@ import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
 // Composant mémorisé pour chaque ligne d'aidant
-const AidantRow = memo(({ 
-  aidant, 
-  badgeStyle, 
-  getAidantIcons, 
+const AidantRow = memo(({
+  aidant,
+  badgeStyle,
+  getAidantIcons,
 }: {
   readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
   readonly badgeStyle: React.CSSProperties
@@ -118,10 +119,14 @@ AidantRow.displayName = 'AidantRow'
 
 export default function ListeAidantsMediateurs({
   listeAidantsMediateursViewModel,
+  searchParams,
   totalBeneficiairesPromise,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
+  const router = useRouter()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isFilterLoading, setIsFilterLoading] = useState(false)
+  const [filtreParams, setFiltreParams] = useState<URLSearchParams>(new URLSearchParams())
   const drawerId = 'drawerFiltreAidants'
   const labelId = useId()
   if ('type' in listeAidantsMediateursViewModel) {
@@ -134,6 +139,56 @@ export default function ListeAidantsMediateurs({
     )
   }
   const viewModel = listeAidantsMediateursViewModel
+
+  // Initialiser les filtres à partir des searchParams
+  useEffect(() => {
+    setFiltreParams(new URLSearchParams(searchParams.toString()))
+    setIsFilterLoading(false)
+  }, [listeAidantsMediateursViewModel, searchParams])
+
+  // Fonction de filtrage
+  function onFilter(params: URLSearchParams): void {
+    setFiltreParams(params)
+    setIsDrawerOpen(false)
+    setIsFilterLoading(true)
+
+    // Convertir les noms de paramètres pour correspondre au controller
+    const convertedParams = new URLSearchParams()
+    const region = params.get('region')
+    const departement = params.get('departement')
+
+    if (region !== null && region !== '') {
+      convertedParams.set('codeRegion', region)
+    }
+    if (departement !== null && departement !== '') {
+      convertedParams.set('codeDepartement', departement)
+    }
+
+    // Naviguer avec les nouveaux paramètres
+    const url = new URL(window.location.href)
+    url.search = convertedParams.toString()
+    router.push(url.pathname + url.search)
+  }
+
+  // Fonction de réinitialisation
+  function onReset(): void {
+    setFiltreParams(new URLSearchParams())
+    setIsFilterLoading(true)
+    router.push('/liste-aidants-mediateurs')
+  }
+
+  // Déterminer le label du filtre actif
+  function getFiltreLabel(): string {
+    const codeRegion = filtreParams.get('codeRegion')
+    const codeDepartement = filtreParams.get('codeDepartement')
+    if (codeDepartement !== null && codeDepartement !== '') {
+      return `Département: ${codeDepartement}`
+    }
+    if (codeRegion !== null && codeRegion !== '') {
+      return `Région: ${codeRegion}`
+    }
+    return ''
+  }
 
   const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
     const icons: Array<{ alt: string; src: string }> = []
@@ -165,7 +220,7 @@ export default function ListeAidantsMediateurs({
             Suivi aidants et médiateurs
           </PageTitle>
         </div>
-        <div className="fr-col-auto">
+        <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <button
             aria-controls={drawerId}
             className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
@@ -177,11 +232,23 @@ export default function ListeAidantsMediateurs({
           >
             Filtres
           </button>
+          {getFiltreLabel() ? (
+            <button
+              aria-label={`Retirer le filtre ${getFiltreLabel()}`}
+              className="fr-tag fr-icon-close-line fr-tag--icon-left"
+              onClick={() => {
+                onReset()
+              }}
+              type="button"
+            >
+              {getFiltreLabel()}
+            </button>
+          ) : null}
         </div>
       </div>
       
       {/* Overlay de loading pendant la navigation */}
-      {isPageLoading ? (
+      {isPageLoading || isFilterLoading ? (
         <div 
           style={{
             alignItems: 'center',
@@ -254,19 +321,15 @@ export default function ListeAidantsMediateurs({
         isOpen={isDrawerOpen}
         labelId={labelId}
       >
-        <DrawerTitle id={labelId}>
-          <TitleIcon
-            background="blue"
-            icon="filter-line"
-          />
-          <br />
-          Filtrer les aidants et médiateurs
-        </DrawerTitle>
-        <div className="fr-p-2w">
-          <p>
-            Filtres à venir...
-          </p>
-        </div>
+        <ListeAidantsMediateursFiltre
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
+          id={drawerId}
+          labelId={labelId}
+          onFilterAction={onFilter}
+          onResetAction={onReset}
+        />
       </Drawer>
     </>
   )
@@ -274,5 +337,6 @@ export default function ListeAidantsMediateurs({
 
 type Props = Readonly<{
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
+  searchParams: URLSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

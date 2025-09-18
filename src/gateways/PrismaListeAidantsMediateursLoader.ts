@@ -1,29 +1,34 @@
+import { Prisma } from '@prisma/client'
+
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
-import { AidantMediateurReadModel, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import departements from '../../ressources/departements.json'
+import { AidantMediateurReadModel, FiltreGeographique, FiltresListeAidants, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateursLoader {
-  async get(territoire: string, page: number, limite: number)
+  async get(filtres: FiltresListeAidants)
     : Promise<ErrorReadModel | ListeAidantsMediateursReadModel> {
     try {
+      const { territoire, pagination, geographique } = filtres
+
       // Page commence à 1 dans le controller, mais offset doit commencer à 0
-      const safePage = Math.max(1, page) // Garantir que page >= 1
-      const offset = (safePage - 1) * limite // offset = 0 pour page 1
+      const safePage = Math.max(1, pagination.page) // Garantir que page >= 1
+      const offset = (safePage - 1) * pagination.limite // offset = 0 pour page 1
 
       // Récupération des aidants avec pagination
-      const aidantsData = await this.getAidantsPagines(territoire, limite, offset)
-      
+      const aidantsData = await this.getAidantsPagines(territoire, pagination.limite, offset, geographique)
+
       // Récupération des statistiques
-      const statsData = await this.getStatistiques(territoire)
+      const statsData = await this.getStatistiques(territoire, geographique)
 
       const totalCount = statsData.totalActeursNumerique
-      const totalPages = Math.ceil(totalCount / limite)
+      const totalPages = Math.ceil(totalCount / pagination.limite)
       return {
         aidants: aidantsData,
-        displayPagination: totalCount > limite,
-        limite,
-        page,
+        displayPagination: totalCount > pagination.limite,
+        limite: pagination.limite,
+        page: pagination.page,
         total: totalCount,
         totalAccompagnements: statsData.totalAccompagnements,
         totalActeursNumerique: statsData.totalActeursNumerique,
@@ -32,10 +37,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       }
     } catch (error) {
       reportLoaderError(error, 'PrismaListeAidantsMediateursLoader', {
-        limite,
+        filtres,
         operation: 'get',
-        page,
-        territoire,
       })
       return {
         message: 'Impossible de récupérer la liste des aidants et médiateurs numériques',
@@ -44,11 +47,28 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getAidantsPagines(territoire: string, limite: number, offset: number)
+  private async getAidantsPagines(territoire: string, limite: number, offset: number, filtreGeo?: FiltreGeographique)
     : Promise<Array<AidantMediateurReadModel>> {
     try {
+      // Déterminer les conditions de filtre géographique
+      let departementsFilter: Array<string> = []
+
+      if (filtreGeo) {
+        if (filtreGeo.type === 'region') {
+          // Récupérer tous les départements de la région
+          departementsFilter = departements
+            .filter(dept => dept.regionCode === filtreGeo.code)
+            .map(dept => dept.code)
+        } else {
+          // C'est un code département
+          departementsFilter = [filtreGeo.code]
+        }
+      } else if (territoire !== 'France') {
+        departementsFilter = [territoire]
+      }
+
       const personnes =
-        territoire === 'France'
+        territoire === 'France' && !filtreGeo
           ? await prisma.$queryRaw<Array<PersonneQueryResult>>`
           SELECT
             pe.id,
@@ -91,7 +111,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                    LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
                    LEFT JOIN main.adresse a ON a.id = s.adresse_id
             WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
-              AND a.departement = ${territoire}
+              ${departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty}
             GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
@@ -145,13 +165,30 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getStatistiques(territoire: string): Promise<{
+  private async getStatistiques(territoire: string, filtreGeo?: FiltreGeographique): Promise<{
     totalAccompagnements: number
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
+    // Déterminer les conditions de filtre géographique
+    let departementsFilter: Array<string> = []
+
+    if (filtreGeo) {
+      if (filtreGeo.type === 'region') {
+        // Récupérer tous les départements de la région
+        departementsFilter = departements
+          .filter(dept => dept.regionCode === filtreGeo.code)
+          .map(dept => dept.code)
+      } else {
+        // C'est un code département
+        departementsFilter = [filtreGeo.code]
+      }
+    } else if (territoire !== 'France') {
+      departementsFilter = [territoire]
+    }
+
     // Nombre total d'accompagnements réalisés
-    const accompagnementsResult = territoire === 'France'
+    const accompagnementsResult = territoire === 'France' && !filtreGeo
       ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
         SELECT SUM(accompagnements) AS total_accompagnements_realises
         FROM main.activites_coop
@@ -162,14 +199,14 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
             FROM main.activites_coop
             JOIN main.structure ON main.activites_coop.structure_id = main.structure.id
             JOIN main.adresse ON main.structure.adresse_id = main.adresse.id
-            WHERE main.adresse.departement = ${territoire}
-              and main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
+            WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
+              ${departementsFilter.length > 0 ? Prisma.sql`AND main.adresse.departement = ANY(${departementsFilter})` : Prisma.empty}
           `
     const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
 
     // Statistiques des personnes en poste
     const conseillersResult =
-      territoire === 'France'
+      territoire === 'France' && !filtreGeo
         ? await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
@@ -187,7 +224,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         FROM min.personne_enrichie pe
         LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
-        WHERE a.departement = ${territoire}
+        WHERE 1=1
+        ${departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
     const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)

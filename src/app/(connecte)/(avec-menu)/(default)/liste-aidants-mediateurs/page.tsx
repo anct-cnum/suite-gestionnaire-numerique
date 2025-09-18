@@ -8,6 +8,7 @@ import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidant
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { FiltreGeographique, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et médiateurs numriques',
@@ -16,10 +17,15 @@ export const metadata: Metadata = {
 export default async function ListeAidantsMediateursController({
   searchParams,
 }: {
-  readonly searchParams: Promise<{ page?: string }>
+  readonly searchParams: Promise<{
+    codeDepartement?: string
+    codeRegion?: string
+    page?: string
+  }>
 }): Promise<ReactElement> {
   const resolvedSearchParams = await searchParams
   const page = Number(resolvedSearchParams.page ?? '1')
+  const { codeDepartement, codeRegion } = resolvedSearchParams
   const limite = 10
 
   const session = await getSession()
@@ -41,8 +47,32 @@ export default async function ListeAidantsMediateursController({
     territoire = departementCode
   }
 
+  // Construction du filtre géographique
+  let filtreGeographique: FiltreGeographique | undefined
+  if (codeDepartement !== undefined && codeDepartement !== '') {
+    filtreGeographique = {
+      code: codeDepartement,
+      type: 'departement',
+    }
+  } else if (codeRegion !== undefined && codeRegion !== '') {
+    filtreGeographique = {
+      code: codeRegion,
+      type: 'region',
+    }
+  }
+
+  // Construction de l'objet filtres
+  const filtres: FiltresListeAidants = {
+    geographique: filtreGeographique,
+    pagination: {
+      limite,
+      page,
+    },
+    territoire,
+  }
+
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
-  const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
+  const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
 
   // Calculer la période de 30 jours pour les stats des bénéficiaires
@@ -55,9 +85,22 @@ export default async function ListeAidantsMediateursController({
     { depuis, jusqua }
   )
 
+  // Passer les paramètres actuels pour l'affichage des filtres actifs
+  const currentSearchParams = new URLSearchParams()
+  if (resolvedSearchParams.page !== undefined && resolvedSearchParams.page !== '') {
+    currentSearchParams.set('page', resolvedSearchParams.page)
+  }
+  if (codeDepartement !== undefined && codeDepartement !== '') {
+    currentSearchParams.set('codeDepartement', codeDepartement)
+  }
+  if (codeRegion !== undefined && codeRegion !== '') {
+    currentSearchParams.set('codeRegion', codeRegion)
+  }
+
   return (
     <ListeAidantsMediateurs
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
+      searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
     />
   )
