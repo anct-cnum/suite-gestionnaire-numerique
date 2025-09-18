@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { memo, ReactElement, useCallback, useMemo } from 'react'
+import { memo, ReactElement, useCallback, useId, useMemo, useState } from 'react'
 
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
 import Badge from '../shared/Badge/Badge'
+import Drawer from '../shared/Drawer/Drawer'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
@@ -119,6 +121,9 @@ export default function ListeAidantsMediateurs({
   totalBeneficiairesPromise,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerId = 'drawerFiltreAidants'
+  const labelId = useId()
   if ('type' in listeAidantsMediateursViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -153,11 +158,26 @@ export default function ListeAidantsMediateurs({
 
   return (
     <>
-      <div className="fr-grid-row">
-        <PageTitle>
-          <TitleIcon icon="group-line" />
-          Suivi aidants et médiateurs
-        </PageTitle>
+      <div className="fr-grid-row fr-grid-row--middle">
+        <div className="fr-col">
+          <PageTitle>
+            <TitleIcon icon="group-line" />
+            Suivi aidants et médiateurs
+          </PageTitle>
+        </div>
+        <div className="fr-col-auto">
+          <button
+            aria-controls={drawerId}
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
+            data-fr-opened="false"
+            onClick={() => {
+              setIsDrawerOpen(true)
+            }}
+            type="button"
+          >
+            Filtres
+          </button>
+        </div>
       </div>
       
       {/* Overlay de loading pendant la navigation */}
@@ -223,6 +243,31 @@ export default function ListeAidantsMediateurs({
           </div>
         ) : null}
       </>
+
+      <Drawer
+        boutonFermeture="Fermer les filtres"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
+        id={drawerId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+      >
+        <DrawerTitle id={labelId}>
+          <TitleIcon
+            background="blue"
+            icon="filter-line"
+          />
+          <br />
+          Filtrer les aidants et médiateurs
+        </DrawerTitle>
+        <div className="fr-p-2w">
+          <p>
+            Filtres à venir...
+          </p>
+        </div>
+      </Drawer>
     </>
   )
 }
