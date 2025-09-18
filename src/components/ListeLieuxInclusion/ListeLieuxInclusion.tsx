@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { ReactElement } from 'react'
+import { ReactElement, useId, useState } from 'react'
 
 import Badge from '../shared/Badge/Badge'
+import Drawer from '../shared/Drawer/Drawer'
+import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
@@ -18,6 +20,9 @@ export default function ListeLieuxInclusion({
   listeLieuxInclusionViewModel,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const drawerId = 'drawerFiltreLieux'
+  const labelId = useId()
   
   if ('type' in listeLieuxInclusionViewModel) {
     return (
@@ -55,11 +60,24 @@ export default function ListeLieuxInclusion({
         </div>
       ) : null}
       
-      <div className="fr-grid-row">
-        <PageTitle>
-          <TitleIcon icon="map-pin-2-line" />
-          Suivi des lieux d&apos;inclusion numérique
-        </PageTitle>
+      <div className="fr-grid-row fr-grid-row--middle">
+        <div className="fr-col">
+          <PageTitle>
+            <TitleIcon icon="map-pin-2-line" />
+            Suivi des lieux d&apos;inclusion numérique
+          </PageTitle>
+        </div>
+        <div className="fr-col-auto">
+          <button
+            aria-controls={drawerId}
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
+            data-fr-opened="false"
+            onClick={() => setIsDrawerOpen(true)}
+            type="button"
+          >
+            Filtres
+          </button>
+        </div>
       </div>
 
       {viewModel.lieux.length === 0 ? (
@@ -184,6 +202,27 @@ export default function ListeLieuxInclusion({
           ) : null}
         </>
       )}
+
+      <Drawer
+        boutonFermeture="Fermer les filtres"
+        closeDrawer={() => setIsDrawerOpen(false)}
+        id={drawerId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+      >
+        <DrawerTitle id={labelId}>
+          <TitleIcon
+            background="blue"
+            icon="filter-line"
+          />
+          <br />
+          Filtrer les lieux
+        </DrawerTitle>
+        <div className="fr-p-2w">
+          <p>Filtres à venir...</p>
+        </div>
+      </Drawer>
     </>
   )
 }
