@@ -24,7 +24,7 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
       const headerElement: HTMLElement | null = document.querySelector(headerSelector)
       const headerHeight = headerElement ? headerElement.offsetHeight : 200
 
-      const newTopPosition = Math.max(0, headerHeight - scrollPosition)
+      const newTopPosition = Math.max(0, headerHeight - scrollPosition) + 40
       setTopPosition(`${newTopPosition}px`)
     }
 

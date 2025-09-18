@@ -70,3 +70,16 @@ export const AssociationRurale: Story = {
     },
   },
 }
+
+export const SansReferent: Story = {
+  args: {
+    data: {
+      adresse: '10 avenue de la Liberté, 69000 Lyon',
+      departement: 'Rhône (69)',
+      nom: 'Centre Social du Quartier',
+      region: 'Auvergne-Rhône-Alpes',
+      siret: '12345678901234',
+      type: 'Association',
+    },
+  },
+}

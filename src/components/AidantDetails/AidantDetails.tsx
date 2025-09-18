@@ -41,7 +41,7 @@ export type StructureEmployeuseData = Readonly<{
   adresse: string
   departement?: string
   nom: string
-  referent: Readonly<{
+  referent?: Readonly<{
     email: string
     nom: string
     post: string
@@ -91,11 +91,19 @@ export default function AidantDetails(props: Props): ReactElement {
       </div>
 
       <div id="activites">
-        <AidantDetailsActivites data={data.statistiquesActivites} />
+        <AidantDetailsActivites
+          data={data.statistiquesActivites}
+          nom={data.informationsPersonnelles.nom}
+          prenom={data.informationsPersonnelles.prenom}
+        />
       </div>
 
       <div id="lieux-activite">
-        <AidantDetailsLieuxActivite data={data.lieuxActivite} />
+        <AidantDetailsLieuxActivite
+          data={data.lieuxActivite}
+          nom={data.informationsPersonnelles.nom}
+          prenom={data.informationsPersonnelles.prenom}
+        />
       </div>
     </>
   )
