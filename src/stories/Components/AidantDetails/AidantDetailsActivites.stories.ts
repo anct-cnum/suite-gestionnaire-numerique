@@ -7,6 +7,12 @@ const meta: Meta<typeof AidantDetailsActivites> = {
     data: {
       description: 'Données des statistiques d\'activités',
     },
+    nom: {
+      description: 'Nom de l\'aidant',
+    },
+    prenom: {
+      description: 'Prénom de l\'aidant',
+    },
   },
   component: AidantDetailsActivites,
   parameters: {
@@ -31,12 +37,16 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     data: createDefaultStatistiquesActivitesData(),
+    nom: 'Dupont',
+    prenom: 'Marie',
   },
 }
 
 export const SansStatistiques: Story = {
   args: {
     data: undefined,
+    nom: 'Martin',
+    prenom: 'Paul',
   },
 }
 
@@ -54,5 +64,31 @@ export const StatistiquesElevees: Story = {
         total: 600,
       },
     },
+    nom: 'Bernard',
+    prenom: 'Sophie',
+  },
+}
+
+export const AucuneActivite: Story = {
+  args: {
+    data: {
+      ...createDefaultStatistiquesActivitesData(),
+      accompagnements: {
+        avecAidantsConnect: 0,
+        total: 0,
+      },
+      beneficiaires: {
+        anonymes: 0,
+        suivis: 0,
+        total: 0,
+      },
+      graphique: {
+        backgroundColor: ['#009099'],
+        data: [0],
+        labels: ['Aucune donnée'],
+      },
+    },
+    nom: 'Durand',
+    prenom: 'Julien',
   },
 }

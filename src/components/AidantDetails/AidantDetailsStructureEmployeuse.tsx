@@ -56,6 +56,18 @@ export default function AidantDetailsStructureEmployeuse(props: Props): ReactEle
             </button>
           </div>
         </div>
+
+      </div>
+
+      <div className="fr-grid-row fr-grid-row--gutters fr-mb-3w">
+        <div className="fr-col-12 fr-col-md-6">
+          <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
+            Numéro de SIRET
+          </p>
+          <p className="fr-mb-0">
+            {siret}
+          </p>
+        </div>
         <div className="fr-col-12 fr-col-md-6">
           <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
             Typologie
@@ -64,15 +76,6 @@ export default function AidantDetailsStructureEmployeuse(props: Props): ReactEle
             {typeStructure}
           </p>
         </div>
-      </div>
-
-      <div className="fr-mb-3w">
-        <p className="fr-text--sm fr-text-mention--grey fr-mb-0">
-          Numéro de SIRET
-        </p>
-        <p className="fr-mb-0">
-          {siret}
-        </p>
       </div>
 
       <div className="fr-mb-3w">
@@ -103,13 +106,7 @@ export default function AidantDetailsStructureEmployeuse(props: Props): ReactEle
         </div>
       </div>
 
-      <AidantDetailsStructureReferente
-        email={referent.email}
-        nom={referent.nom}
-        post={referent.post}
-        prenom={referent.prenom}
-        telephone={referent.telephone}
-      />
+      <AidantDetailsStructureReferente referent={referent} />
     </section>
   )
 }

@@ -7,6 +7,12 @@ const meta: Meta<typeof AidantDetailsLieuxActivite> = {
     data: {
       description: 'Liste des lieux d\'activité de l\'aidant',
     },
+    nom: {
+      description: 'Nom de l\'aidant',
+    },
+    prenom: {
+      description: 'Prénom de l\'aidant',
+    },
   },
   component: AidantDetailsLieuxActivite,
   parameters: {
@@ -22,6 +28,8 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   args: {
     data: createDefaultLieuxActiviteData(),
+    nom: 'Dupont',
+    prenom: 'Marie',
   },
 }
 
@@ -35,12 +43,16 @@ export const LieuUnique: Story = {
         nombreAccompagnements: 12,
       },
     ],
+    nom: 'Martin',
+    prenom: 'Paul',
   },
 }
 
 export const AucunLieu: Story = {
   args: {
     data: [],
+    nom: 'Bernard',
+    prenom: 'Sophie',
   },
 }
 
@@ -72,5 +84,7 @@ export const PlusieursLieuxActivite: Story = {
         nombreAccompagnements: 6,
       },
     ],
+    nom: 'Durand',
+    prenom: 'Julien',
   },
 }
