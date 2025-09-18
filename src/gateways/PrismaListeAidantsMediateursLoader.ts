@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client'
 import { reportLoaderError } from './shared/sentryErrorReporter'
 import prisma from '../../prisma/prismaClient'
 import departements from '../../ressources/departements.json'
-import { AidantMediateurReadModel, FiltreGeographique, FiltresListeAidants, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import { AidantMediateurReadModel, FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants, ListeAidantsMediateursLoader, ListeAidantsMediateursReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateursLoader {
@@ -17,10 +17,10 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       const offset = (safePage - 1) * pagination.limite // offset = 0 pour page 1
 
       // Récupération des aidants avec pagination
-      const aidantsData = await this.getAidantsPagines(territoire, pagination.limite, offset, geographique)
+      const aidantsData = await this.getAidantsPagines(territoire, pagination.limite, offset, filtres)
 
       // Récupération des statistiques
-      const statsData = await this.getStatistiques(territoire, geographique)
+      const statsData = await this.getStatistiques(territoire, filtres)
 
       const totalCount = statsData.totalActeursNumerique
       const totalPages = Math.ceil(totalCount / pagination.limite)
@@ -47,28 +47,32 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getAidantsPagines(territoire: string, limite: number, offset: number, filtreGeo?: FiltreGeographique)
+  private async getAidantsPagines(territoire: string, limite: number, offset: number, filtres: FiltresListeAidants)
     : Promise<Array<AidantMediateurReadModel>> {
     try {
+      const { geographique, roles, habilitations, formations } = filtres
       // Déterminer les conditions de filtre géographique
       let departementsFilter: Array<string> = []
 
-      if (filtreGeo) {
-        if (filtreGeo.type === 'region') {
+      if (geographique) {
+        if (geographique.type === 'region') {
           // Récupérer tous les départements de la région
           departementsFilter = departements
-            .filter(dept => dept.regionCode === filtreGeo.code)
+            .filter(dept => dept.regionCode === geographique.code)
             .map(dept => dept.code)
         } else {
           // C'est un code département
-          departementsFilter = [filtreGeo.code]
+          departementsFilter = [geographique.code]
         }
       } else if (territoire !== 'France') {
         departementsFilter = [territoire]
       }
 
+      // Construction des conditions WHERE pour les nouveaux filtres
+      const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
+
       const personnes =
-        territoire === 'France' && !filtreGeo
+        territoire === 'France' && !geographique
           ? await prisma.$queryRaw<Array<PersonneQueryResult>>`
           SELECT
             pe.id,
@@ -87,6 +91,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                  LEFT JOIN main.formation f ON pe.id = f.personne_id
                  LEFT JOIN main.activites_coop ac ON pe.id = ac.personne_id
           WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+            ${whereConditions}
           GROUP BY pe.id, pe.nom, pe.prenom, pe.is_mediateur,pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
           ORDER BY pe.nom, pe.prenom
           LIMIT ${limite} OFFSET ${offset};
@@ -112,6 +117,7 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
                    LEFT JOIN main.adresse a ON a.id = s.adresse_id
             WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
               ${departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty}
+              ${whereConditions}
             GROUP BY pe.id, pe.nom, pe.prenom, pe.est_actuellement_mediateur_en_poste, pe.is_coordinateur, pe.labellisation_aidant_connect, pe.est_actuellement_conseiller_numerique, pe.nb_accompagnements_ac
             ORDER BY pe.nom, pe.prenom
             LIMIT ${limite} OFFSET ${offset};
@@ -165,30 +171,34 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
     }
   }
 
-  private async getStatistiques(territoire: string, filtreGeo?: FiltreGeographique): Promise<{
+  private async getStatistiques(territoire: string, filtres: FiltresListeAidants): Promise<{
     totalAccompagnements: number
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
+    const { geographique, roles, habilitations, formations } = filtres
     // Déterminer les conditions de filtre géographique
     let departementsFilter: Array<string> = []
 
-    if (filtreGeo) {
-      if (filtreGeo.type === 'region') {
+    if (geographique) {
+      if (geographique.type === 'region') {
         // Récupérer tous les départements de la région
         departementsFilter = departements
-          .filter(dept => dept.regionCode === filtreGeo.code)
+          .filter(dept => dept.regionCode === geographique.code)
           .map(dept => dept.code)
       } else {
         // C'est un code département
-        departementsFilter = [filtreGeo.code]
+        departementsFilter = [geographique.code]
       }
     } else if (territoire !== 'France') {
       departementsFilter = [territoire]
     }
 
+    // Construction des conditions WHERE pour les nouveaux filtres
+    const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
+
     // Nombre total d'accompagnements réalisés
-    const accompagnementsResult = territoire === 'France' && !filtreGeo
+    const accompagnementsResult = territoire === 'France' && !geographique
       ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
         SELECT SUM(accompagnements) AS total_accompagnements_realises
         FROM main.activites_coop
@@ -206,14 +216,17 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
     // Statistiques des personnes en poste
     const conseillersResult =
-      territoire === 'France' && !filtreGeo
+      territoire === 'France' && !geographique
         ? await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
         SELECT
           COUNT(*) FILTER (WHERE est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
           COUNT(*) FILTER (WHERE est_actuellement_mediateur_en_poste = true AND est_actuellement_conseiller_numerique = false) AS mediateur,
           COUNT(*) FILTER (WHERE est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
-        FROM min.personne_enrichie
+        FROM min.personne_enrichie pe
+        LEFT JOIN main.formation f ON pe.id = f.personne_id
+        WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
+          ${whereConditions}
           `
         : await prisma.$queryRaw<
           Array<{ aidant_connect: bigint; conseillers_numeriques: bigint; mediateur: bigint }>>`
@@ -222,10 +235,12 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
           COUNT(*) FILTER (WHERE pe.est_actuellement_mediateur_en_poste = true AND pe.est_actuellement_conseiller_numerique = false) AS mediateur,
           COUNT(*) FILTER (WHERE pe.est_actuellement_aidant_numerique_en_poste = true) AS aidant_connect
         FROM min.personne_enrichie pe
+        LEFT JOIN main.formation f ON pe.id = f.personne_id
         LEFT JOIN main.structure s ON s.id = pe.structure_employeuse_id
         LEFT JOIN main.adresse a ON a.id = s.adresse_id
-        WHERE 1=1
+        WHERE (pe.est_actuellement_mediateur_en_poste = true OR pe.est_actuellement_aidant_numerique_en_poste = true)
         ${departementsFilter.length > 0 ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` : Prisma.empty}
+        ${whereConditions}
           `
     const totalConseillersNumeriques = Number(conseillersResult[0]?.conseillers_numeriques || 0)
     const totalPersonnes = Number(conseillersResult[0]?.conseillers_numeriques || 0)
@@ -237,6 +252,73 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       totalActeursNumerique: totalPersonnes,
       totalConseillersNumerique: totalConseillersNumeriques,
     }
+  }
+  private buildWhereConditions(roles?: FiltreRoles, habilitations?: FiltreHabilitations, formations?: FiltreFormations): Prisma.Sql {
+    const conditions: Array<Prisma.Sql> = []
+
+    // Filtre par rôles
+    if (roles && roles.length > 0) {
+      const roleConditions: Array<Prisma.Sql> = []
+
+      if (roles.includes('Médiateur')) {
+        roleConditions.push(Prisma.sql`pe.est_actuellement_mediateur_en_poste = true`)
+      }
+      if (roles.includes('Coordinateur')) {
+        roleConditions.push(Prisma.sql`pe.is_coordinateur = true`)
+      }
+      if (roles.includes('Aidant')) {
+        roleConditions.push(Prisma.sql`(pe.est_actuellement_aidant_numerique_en_poste = true AND pe.est_actuellement_mediateur_en_poste = false)`)
+      }
+
+      if (roleConditions.length > 0) {
+        conditions.push(Prisma.sql`(${Prisma.join(roleConditions, ' OR ')})`)
+      }
+    }
+
+    // Filtre par habilitations
+    if (habilitations && habilitations.length > 0) {
+      const habilitationConditions: Array<Prisma.Sql> = []
+
+      if (habilitations.includes('Conseiller numérique')) {
+        habilitationConditions.push(Prisma.sql`pe.est_actuellement_conseiller_numerique = true`)
+      }
+      if (habilitations.includes('Aidants Connect')) {
+        habilitationConditions.push(Prisma.sql`pe.labellisation_aidant_connect = true`)
+      }
+
+      if (habilitationConditions.length > 0) {
+        conditions.push(Prisma.sql`(${Prisma.join(habilitationConditions, ' OR ')})`)
+      }
+    }
+
+    // Filtre par formations
+    if (formations && formations.length > 0) {
+      const formationConditions: Array<Prisma.Sql> = []
+
+      if (formations.includes('PIX')) {
+        formationConditions.push(Prisma.sql`f.pix = true`)
+      }
+      if (formations.includes('REMN')) {
+        formationConditions.push(Prisma.sql`f.remn = true`)
+      }
+      if (formations.includes('CCP1')) {
+        formationConditions.push(Prisma.sql`f.label = 'CCP1'`)
+      }
+      if (formations.includes('CCP2 et CCP3')) {
+        formationConditions.push(Prisma.sql`f.label = 'CCP2 et CCP3'`)
+      }
+
+      if (formationConditions.length > 0) {
+        conditions.push(Prisma.sql`(${Prisma.join(formationConditions, ' OR ')})`)
+      }
+    }
+
+    // Joindre toutes les conditions avec AND
+    if (conditions.length > 0) {
+      return Prisma.sql`AND ${Prisma.join(conditions, ' AND ')}`
+    }
+
+    return Prisma.empty
   }
 }
 

@@ -8,7 +8,7 @@ import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidant
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
-import { FiltreGeographique, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import { FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et médiateurs numriques',
@@ -20,12 +20,15 @@ export default async function ListeAidantsMediateursController({
   readonly searchParams: Promise<{
     codeDepartement?: string
     codeRegion?: string
+    formations?: string
+    habilitations?: string
     page?: string
+    roles?: string
   }>
 }): Promise<ReactElement> {
   const resolvedSearchParams = await searchParams
   const page = Number(resolvedSearchParams.page ?? '1')
-  const { codeDepartement, codeRegion } = resolvedSearchParams
+  const { codeDepartement, codeRegion, formations, habilitations, roles } = resolvedSearchParams
   const limite = 10
 
   const session = await getSession()
@@ -63,11 +66,14 @@ export default async function ListeAidantsMediateursController({
 
   // Construction de l'objet filtres
   const filtres: FiltresListeAidants = {
+    formations: formations ? formations.split(',') as FiltreFormations : undefined,
     geographique: filtreGeographique,
+    habilitations: habilitations ? habilitations.split(',') as FiltreHabilitations : undefined,
     pagination: {
       limite,
       page,
     },
+    roles: roles ? roles.split(',') as FiltreRoles : undefined,
     territoire,
   }
 
@@ -95,6 +101,15 @@ export default async function ListeAidantsMediateursController({
   }
   if (codeRegion !== undefined && codeRegion !== '') {
     currentSearchParams.set('codeRegion', codeRegion)
+  }
+  if (roles !== undefined && roles !== '') {
+    currentSearchParams.set('roles', roles)
+  }
+  if (habilitations !== undefined && habilitations !== '') {
+    currentSearchParams.set('habilitations', habilitations)
+  }
+  if (formations !== undefined && formations !== '') {
+    currentSearchParams.set('formations', formations)
   }
 
   return (

@@ -154,6 +154,8 @@ export default function ListeAidantsMediateurs({
 
     // Convertir les noms de paramètres pour correspondre au controller
     const convertedParams = new URLSearchParams()
+
+    // Filtre géographique
     const region = params.get('region')
     const departement = params.get('departement')
 
@@ -162,6 +164,21 @@ export default function ListeAidantsMediateurs({
     }
     if (departement !== null && departement !== '') {
       convertedParams.set('codeDepartement', departement)
+    }
+
+    // Autres filtres
+    const roles = params.get('roles')
+    const habilitations = params.get('habilitations')
+    const formations = params.get('formations')
+
+    if (roles !== null && roles !== '') {
+      convertedParams.set('roles', roles)
+    }
+    if (habilitations !== null && habilitations !== '') {
+      convertedParams.set('habilitations', habilitations)
+    }
+    if (formations !== null && formations !== '') {
+      convertedParams.set('formations', formations)
     }
 
     // Naviguer avec les nouveaux paramètres
@@ -177,17 +194,70 @@ export default function ListeAidantsMediateurs({
     router.push('/liste-aidants-mediateurs')
   }
 
+  // Fonction d'export CSV
+  function handleExportCSV(): void {
+    const exportParams = new URLSearchParams()
+
+    // Copier tous les paramètres de filtre actuels (sans pagination)
+    const region = filtreParams.get('region')
+    const departement = filtreParams.get('departement')
+    const roles = filtreParams.get('roles')
+    const habilitations = filtreParams.get('habilitations')
+    const formations = filtreParams.get('formations')
+
+    if (region !== null && region !== '') {
+      exportParams.set('codeRegion', region)
+    }
+    if (departement !== null && departement !== '') {
+      exportParams.set('codeDepartement', departement)
+    }
+    if (roles !== null && roles !== '') {
+      exportParams.set('roles', roles)
+    }
+    if (habilitations !== null && habilitations !== '') {
+      exportParams.set('habilitations', habilitations)
+    }
+    if (formations !== null && formations !== '') {
+      exportParams.set('formations', formations)
+    }
+
+    // Déclencher le téléchargement
+    const url = `/api/export/aidants-mediateurs-csv?${exportParams.toString()}`
+    window.open(url, '_blank')
+  }
+
   // Déterminer le label du filtre actif
   function getFiltreLabel(): string {
-    const codeRegion = filtreParams.get('codeRegion')
-    const codeDepartement = filtreParams.get('codeDepartement')
-    if (codeDepartement !== null && codeDepartement !== '') {
-      return `Département: ${codeDepartement}`
+    const labels: Array<string> = []
+
+    const region = filtreParams.get('region')
+    const departement = filtreParams.get('departement')
+    const roles = filtreParams.get('roles')
+    const habilitations = filtreParams.get('habilitations')
+    const formations = filtreParams.get('formations')
+
+    if (departement !== null && departement !== '') {
+      labels.push(`Dép: ${departement}`)
+    } else if (region !== null && region !== '') {
+      labels.push(`Rég: ${region}`)
     }
-    if (codeRegion !== null && codeRegion !== '') {
-      return `Région: ${codeRegion}`
+
+    if (roles !== null && roles !== '') {
+      const rolesCount = roles.split(',').length
+      labels.push(`${rolesCount} rôle${rolesCount > 1 ? 's' : ''}`)
     }
-    return ''
+
+    if (habilitations !== null && habilitations !== '') {
+      const habilitationsCount = habilitations.split(',').length
+      labels.push(`${habilitationsCount} habilitation${habilitationsCount > 1 ? 's' : ''}`)
+    }
+
+    if (formations !== null && formations !== '') {
+      const formationsCount = formations.split(',').length
+      labels.push(`${formationsCount} formation${formationsCount > 1 ? 's' : ''}`)
+    }
+
+    return labels.join(', ')
   }
 
   const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
@@ -221,6 +291,13 @@ export default function ListeAidantsMediateurs({
           </PageTitle>
         </div>
         <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+          <button
+            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
+            onClick={handleExportCSV}
+            type="button"
+          >
+            Export
+          </button>
           <button
             aria-controls={drawerId}
             className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
