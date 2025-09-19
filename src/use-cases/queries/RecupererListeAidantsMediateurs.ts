@@ -1,7 +1,30 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
+export type FiltreGeographique = Readonly<{
+  code: string
+  type: 'departement' | 'region'
+}>
+
+export type FiltreRoles = ReadonlyArray<'Aidant' | 'Coordinateur' | 'Médiateur'>
+
+export type FiltreHabilitations = ReadonlyArray<'Aidants Connect' | 'Conseiller numérique'>
+
+export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN'>
+
+export type FiltresListeAidants = Readonly<{
+  formations?: FiltreFormations
+  geographique?: FiltreGeographique
+  habilitations?: FiltreHabilitations
+  pagination: Readonly<{
+    limite: number
+    page: number
+  }>
+  roles?: FiltreRoles
+  territoire: string
+}>
+
 export interface ListeAidantsMediateursLoader {
-  get(territoire: string, page: number, limite: number): Promise<ErrorReadModel | ListeAidantsMediateursReadModel>
+  get(filtres: FiltresListeAidants): Promise<ErrorReadModel | ListeAidantsMediateursReadModel>
 }
 
 export type AidantMediateurReadModel = Readonly<{

@@ -7,6 +7,7 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
+import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
 
 export const metadata: Metadata = {
@@ -16,11 +17,16 @@ export const metadata: Metadata = {
 export default async function ListeAidantsMediateursController({
   searchParams,
 }: {
-  readonly searchParams: Promise<{ page?: string }>
+  readonly searchParams: Promise<{
+    codeDepartement?: string
+    codeRegion?: string
+    formations?: string
+    habilitations?: string
+    page?: string
+    roles?: string
+  }>
 }): Promise<ReactElement> {
   const resolvedSearchParams = await searchParams
-  const page = Number(resolvedSearchParams.page ?? '1')
-  const limite = 10
 
   const session = await getSession()
   if (!session) {
@@ -41,8 +47,15 @@ export default async function ListeAidantsMediateursController({
     territoire = departementCode
   }
 
+  // Utiliser la fonction utilitaire pour construire les filtres
+  const filtres = buildFiltresListeAidants(
+    resolvedSearchParams,
+    territoire,
+    utilisateur.role.type
+  )
+
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
-  const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(territoire, page, limite)
+  const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
 
   // Calculer la période de 30 jours pour les stats des bénéficiaires
@@ -55,10 +68,38 @@ export default async function ListeAidantsMediateursController({
     { depuis, jusqua }
   )
 
+  // Passer les paramètres actuels pour l'affichage des filtres actifs
+  const currentSearchParams = new URLSearchParams()
+  const { codeDepartement, codeRegion, formations, habilitations, page, roles } = resolvedSearchParams
+  setSearchParams()
+
   return (
     <ListeAidantsMediateurs
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
+      searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
+      utilisateurRole={utilisateur.role.type}
     />
   )
+
+  function setSearchParams(): void {
+    if (page !== undefined && page !== '') {
+      currentSearchParams.set('page', page)
+    }
+    if (codeDepartement !== undefined && codeDepartement !== '') {
+      currentSearchParams.set('codeDepartement', codeDepartement)
+    }
+    if (codeRegion !== undefined && codeRegion !== '') {
+      currentSearchParams.set('codeRegion', codeRegion)
+    }
+    if (roles !== undefined && roles !== '') {
+      currentSearchParams.set('roles', roles)
+    }
+    if (habilitations !== undefined && habilitations !== '') {
+      currentSearchParams.set('habilitations', habilitations)
+    }
+    if (formations !== undefined && formations !== '') {
+      currentSearchParams.set('formations', formations)
+    }
+  }
 }

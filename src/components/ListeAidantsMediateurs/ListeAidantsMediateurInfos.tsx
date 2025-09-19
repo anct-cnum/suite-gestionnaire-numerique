@@ -6,8 +6,9 @@ import AsyncLoaderErrorBoundary from '../AidantsMediateurs/GenericErrorBoundary'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
-export default function ListeAidantsMediateurInfos({ 
-  totalBeneficiairesPromise, 
+export default function ListeAidantsMediateurInfos({
+  hasActiveFilters,
+  totalBeneficiairesPromise,
   viewModel,
 }: Props): ReactElement {
   function renderAidantsMediateursInfoCard({
@@ -119,7 +120,10 @@ export default function ListeAidantsMediateurInfos({
                 </div>
               }
             >
-              <BeneficiairesAsyncCard totalBeneficiairesPromise={totalBeneficiairesPromise} />
+              <BeneficiairesAsyncCard
+                hasActiveFilters={hasActiveFilters}
+                totalBeneficiairesPromise={totalBeneficiairesPromise}
+              />
             </Suspense>
           </AsyncLoaderErrorBoundary>
         </div>
@@ -135,6 +139,7 @@ type AidantsMediateursInfoCard = Readonly<{
 }>
 
 type Props = Readonly<{
+  hasActiveFilters: boolean
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
   viewModel: {
     totalAccompagnements: number

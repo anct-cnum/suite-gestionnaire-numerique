@@ -6,12 +6,13 @@ import { parseTextWithBold } from '../../shared/textFormatting'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
-export default function BeneficiairesAsyncCard({ 
+export default function BeneficiairesAsyncCard({
+  hasActiveFilters,
   totalBeneficiairesPromise,
 }: Props): ReactElement {
   const beneficiaires = use(totalBeneficiairesPromise)
-  
-  if (isErrorViewModel(beneficiaires)) {
+
+  if (isErrorViewModel(beneficiaires) || hasActiveFilters) {
     return (
       <div
         className="fr-col-12 fr-col-md-4"
@@ -71,5 +72,6 @@ export default function BeneficiairesAsyncCard({
 }
 
 type Props = Readonly<{
+  hasActiveFilters: boolean
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

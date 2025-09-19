@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { memo, ReactElement, useCallback, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
 
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
+import ListeAidantsMediateursFiltre from './ListeAidantsMediateursFiltre'
 import Badge from '../shared/Badge/Badge'
+import Drawer from '../shared/Drawer/Drawer'
 import PageTitle from '../shared/PageTitle/PageTitle'
 import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
@@ -13,12 +16,26 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
+import { buildURLSearchParamsFromFilters, getActiveFilters, parseURLParamsToFiltresInternes, removeFilterFromParams } from '@/shared/filtresAidantsMediateursUtils'
+
+// Type pour les searchParams sérialisés depuis le serveur
+type SerializedSearchParams = Array<[string, string]> | URLSearchParams
+
+// Fonction utilitaire pour normaliser les searchParams
+function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams {
+  // Si c'est déjà un URLSearchParams, le retourner tel quel
+  if (params instanceof URLSearchParams) {
+    return params
+  }
+  // Si c'est un tableau de paires [clé, valeur], le convertir
+  return new URLSearchParams(params)
+}
 
 // Composant mémorisé pour chaque ligne d'aidant
-const AidantRow = memo(({ 
-  aidant, 
-  badgeStyle, 
-  getAidantIcons, 
+const AidantRow = memo(({
+  aidant,
+  badgeStyle,
+  getAidantIcons,
 }: {
   readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
   readonly badgeStyle: React.CSSProperties
@@ -116,9 +133,19 @@ AidantRow.displayName = 'AidantRow'
 
 export default function ListeAidantsMediateurs({
   listeAidantsMediateursViewModel,
+  searchParams,
   totalBeneficiairesPromise,
+  utilisateurRole,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
+  const router = useRouter()
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isFilterLoading, setIsFilterLoading] = useState(false)
+  const drawerId = 'drawerFiltreAidants'
+  const labelId = useId()
+
+  // Normaliser searchParams une fois pour toute l'utilisation
+  const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
   if ('type' in listeAidantsMediateursViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -129,6 +156,78 @@ export default function ListeAidantsMediateurs({
     )
   }
   const viewModel = listeAidantsMediateursViewModel
+
+  // Réinitialiser le loading quand la page se charge
+  useEffect(() => {
+    setIsFilterLoading(false)
+  }, [listeAidantsMediateursViewModel])
+
+  // Fonction de filtrage
+  function onFilter(params: URLSearchParams): void {
+    setIsDrawerOpen(false)
+    setIsFilterLoading(true)
+
+    // Utiliser la fonction utilitaire pour convertir les paramètres
+    const convertedParams = buildURLSearchParamsFromFilters(params)
+
+    // Naviguer avec les nouveaux paramètres
+    const url = new URL(window.location.href)
+    url.search = convertedParams.toString()
+    router.push(url.pathname + url.search)
+  }
+
+  // Fonction de réinitialisation
+  function onReset(): void {
+    setIsFilterLoading(true)
+    router.push('/liste-aidants-mediateurs')
+  }
+
+  // Fonction d'export CSV
+  function handleExportCSV(): void {
+    const exportParams = new URLSearchParams()
+
+    // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
+    const codeRegion = normalizedSearchParams.get('codeRegion')
+    const codeDepartement = normalizedSearchParams.get('codeDepartement')
+    const roles = normalizedSearchParams.get('roles')
+    const habilitations = normalizedSearchParams.get('habilitations')
+    const formations = normalizedSearchParams.get('formations')
+
+    if (codeRegion !== null && codeRegion !== '') {
+      exportParams.set('codeRegion', codeRegion)
+    }
+    if (codeDepartement !== null && codeDepartement !== '') {
+      exportParams.set('codeDepartement', codeDepartement)
+    }
+    if (roles !== null && roles !== '') {
+      exportParams.set('roles', roles)
+    }
+    if (habilitations !== null && habilitations !== '') {
+      exportParams.set('habilitations', habilitations)
+    }
+    if (formations !== null && formations !== '') {
+      exportParams.set('formations', formations)
+    }
+
+    // Déclencher le téléchargement
+    const url = `/api/export/aidants-mediateurs-csv?${exportParams.toString()}`
+    window.open(url, '_blank')
+  }
+
+  // Obtenir la liste des filtres actifs individuels
+  function getFiltresActifs(): Array<{ label: string; paramKey: string; paramValue: string }> {
+    return getActiveFilters(normalizedSearchParams)
+  }
+
+  // Fonction pour supprimer un filtre spécifique
+  function supprimerFiltre(paramKey: string, paramValue: string): void {
+    const newParams = removeFilterFromParams(normalizedSearchParams, paramKey, paramValue)
+
+    setIsFilterLoading(true)
+    const url = new URL(window.location.href)
+    url.search = newParams.toString()
+    router.push(url.pathname + url.search)
+  }
 
   const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
     const icons: Array<{ alt: string; src: string }> = []
@@ -153,15 +252,66 @@ export default function ListeAidantsMediateurs({
 
   return (
     <>
-      <div className="fr-grid-row">
-        <PageTitle>
-          <TitleIcon icon="group-line" />
-          Suivi aidants et médiateurs
-        </PageTitle>
+      <div className="fr-grid-row fr-grid-row--middle">
+        <div className="fr-col">
+          <PageTitle>
+            <TitleIcon icon="group-line" />
+            Suivi aidants et médiateurs
+          </PageTitle>
+        </div>
+        <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
+          <div className="fr-col-auto">
+            <button
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
+              onClick={handleExportCSV}
+              type="button"
+            >
+              Export
+            </button>
+          </div>
+          <div className="fr-col-auto">
+            <button
+              aria-controls={drawerId}
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
+              data-fr-opened="false"
+              onClick={() => {
+                setIsDrawerOpen(true)
+              }}
+              type="button"
+            >
+              Filtres
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Indicateur de filtres actifs */}
+      {getFiltresActifs().length > 0 ? (
+        <div className="fr-mb-2w">
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {getFiltresActifs().map((filtre) => (
+              <div
+                className="fr-col-auto"
+                key={`${filtre.paramKey}-${filtre.paramValue}`}
+              >
+                <button
+                  aria-label={`Retirer le filtre ${filtre.label}`}
+                  className="fr-tag fr-icon-close-line fr-tag--icon-left"
+                  onClick={() => {
+                    supprimerFiltre(filtre.paramKey, filtre.paramValue)
+                  }}
+                  type="button"
+                >
+                  {filtre.label}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
       
       {/* Overlay de loading pendant la navigation */}
-      {isPageLoading ? (
+      {isPageLoading || isFilterLoading ? (
         <div 
           style={{
             alignItems: 'center',
@@ -185,6 +335,7 @@ export default function ListeAidantsMediateurs({
       
       <>
         <ListeAidantsMediateurInfos
+          hasActiveFilters={getFiltresActifs().length > 0}
           totalBeneficiairesPromise={totalBeneficiairesPromise}
           viewModel={{
             totalAccompagnements: viewModel.totalAccompagnements,
@@ -223,11 +374,36 @@ export default function ListeAidantsMediateurs({
           </div>
         ) : null}
       </>
+
+      <Drawer
+        boutonFermeture="Fermer les filtres"
+        closeDrawer={() => {
+          setIsDrawerOpen(false)
+        }}
+        id={drawerId}
+        isFixedWidth={false}
+        isOpen={isDrawerOpen}
+        labelId={labelId}
+      >
+        <ListeAidantsMediateursFiltre
+          closeDrawer={() => {
+            setIsDrawerOpen(false)
+          }}
+          currentFilters={parseURLParamsToFiltresInternes(normalizedSearchParams)}
+          id={drawerId}
+          labelId={labelId}
+          onFilterAction={onFilter}
+          onResetAction={onReset}
+          utilisateurRole={utilisateurRole}
+        />
+      </Drawer>
     </>
   )
 }
 
 type Props = Readonly<{
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
+  searchParams: SerializedSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
+  utilisateurRole: string
 }>
