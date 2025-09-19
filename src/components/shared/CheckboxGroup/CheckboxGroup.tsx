@@ -7,12 +7,13 @@ export default function CheckboxGroup({
   name,
   onChange,
   options,
-  selectedValues = [],
+  selectedValues,
 }: Props): ReactElement {
   function handleChange(value: string, checked: boolean): void {
+    const currentValues = selectedValues ?? []
     const newValues = checked
-      ? [...selectedValues, value]
-      : selectedValues.filter(v => v !== value)
+      ? [...currentValues, value]
+      : currentValues.filter(_value => _value !== value)
     onChange(newValues)
   }
 
@@ -28,10 +29,10 @@ export default function CheckboxGroup({
             key={option.value}
           >
             <input
-              checked={selectedValues.includes(option.value)}
+              checked={(selectedValues ?? []).includes(option.value)}
               id={`${name}-${option.value}`}
               name={name}
-              onChange={(e) => handleChange(option.value, e.target.checked)}
+              onChange={(element) => { handleChange(option.value, element.target.checked) }}
               type="checkbox"
               value={option.value}
             />
@@ -56,7 +57,7 @@ type CheckboxOption = Readonly<{
 type Props = Readonly<{
   legend: string
   name: string
-  onChange: (values: Array<string>) => void
+  onChange(values: Array<string>): void
   options: ReadonlyArray<CheckboxOption>
   selectedValues?: Array<string>
 }>

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
-import { FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import { buildFiltresForExport, FiltresURLParams } from '@/shared/filtresAidantsMediateursUtils'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -30,45 +30,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // Récupération des paramètres de filtre
     const searchParams = request.nextUrl.searchParams
-    const codeDepartement = searchParams.get('codeDepartement')
-    const codeRegion = searchParams.get('codeRegion')
-    const roles = searchParams.get('roles')
-    const habilitations = searchParams.get('habilitations')
-    const formations = searchParams.get('formations')
-
-
-    // Construction du filtre géographique - seulement pour les administrateurs
-    let filtreGeographique: FiltreGeographique | undefined
-
-    // Seuls les administrateur_dispositif peuvent utiliser le filtre géographique
-    if (utilisateur.role.type === 'administrateur_dispositif') {
-      if (codeDepartement !== null && codeDepartement !== '') {
-        filtreGeographique = {
-          code: codeDepartement,
-          type: 'departement',
-        }
-      } else if (codeRegion !== null && codeRegion !== '') {
-        filtreGeographique = {
-          code: codeRegion,
-          type: 'region',
-        }
-      }
+    const params: FiltresURLParams = {
+      codeDepartement: searchParams.get('codeDepartement') ?? undefined,
+      codeRegion: searchParams.get('codeRegion') ?? undefined,
+      formations: searchParams.get('formations') ?? undefined,
+      habilitations: searchParams.get('habilitations') ?? undefined,
+      roles: searchParams.get('roles') ?? undefined,
     }
-    // Pour les autres utilisateurs, ignorer les filtres géographiques dans l'URL
 
-    // Construction de l'objet filtres (sans pagination pour récupérer tous les résultats)
-    const filtres: FiltresListeAidants = {
-      formations: formations ? formations.split(',') as FiltreFormations : undefined,
-      geographique: filtreGeographique,
-      habilitations: habilitations ? habilitations.split(',') as FiltreHabilitations : undefined,
-      pagination: {
-        limite: 999999, // Limite très élevée pour récupérer tous les résultats
-        page: 1,
-      },
-      roles: roles ? roles.split(',') as FiltreRoles : undefined,
+    // Utiliser la fonction utilitaire pour construire les filtres
+    const filtres = buildFiltresForExport(
+      params,
       territoire,
-    }
-
+      utilisateur.role.type
+    )
 
     // Récupération des données
     const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
@@ -91,8 +66,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         'Content-Type': 'text/csv; charset=utf-8',
       },
     })
-
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Erreur lors de l\'export CSV:', error)
     return NextResponse.json({ error: 'Erreur interne du serveur' }, { status: 500 })
   }
@@ -106,7 +81,7 @@ function generateCSV(aidants: Array<{
   nom: string
   prenom: string
   role: Array<string>
-}>): string {
+}>): string  {
   // En-têtes CSV
   const headers = [
     'ID',
@@ -115,11 +90,11 @@ function generateCSV(aidants: Array<{
     'Rôles',
     'Labelisations',
     'Formations',
-    'Nb Accompagnements'
+    'Nb Accompagnements',
   ]
 
   // Fonction pour échapper les valeurs CSV
-  const escapeCSV = (value: string): string => {
+  function escapeCSV(value: string): string {
     if (value.includes(',') || value.includes('"') || value.includes('\n')) {
       return `"${value.replace(/"/g, '""')}"`
     }
@@ -134,10 +109,10 @@ function generateCSV(aidants: Array<{
     escapeCSV(aidant.role.join(', ')),
     escapeCSV(aidant.labelisations.join(', ')),
     escapeCSV(aidant.formations.join(', ')),
-    aidant.nbAccompagnements.toString()
+    aidant.nbAccompagnements.toString(),
   ])
 
   // Assemblage final avec BOM UTF-8 pour Excel
   const csvLines = [headers.join(','), ...rows.map(row => row.join(','))]
-  return '\uFEFF' + csvLines.join('\n')
+  return `\uFEFF${  csvLines.join('\n')}`
 }

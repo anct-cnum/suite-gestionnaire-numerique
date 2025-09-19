@@ -16,6 +16,7 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
+import { buildURLSearchParamsFromFilters, getActiveFilters, parseURLParamsToFiltresInternes, removeFilterFromParams } from '@/shared/filtresAidantsMediateursUtils'
 
 // Type pour les searchParams sérialisés depuis le serveur
 type SerializedSearchParams = Array<[string, string]> | URLSearchParams
@@ -166,34 +167,8 @@ export default function ListeAidantsMediateurs({
     setIsDrawerOpen(false)
     setIsFilterLoading(true)
 
-    // Convertir les noms de paramètres pour correspondre au controller
-    const convertedParams = new URLSearchParams()
-
-    // Filtre géographique
-    const region = params.get('region')
-    const departement = params.get('departement')
-
-    if (region !== null && region !== '') {
-      convertedParams.set('codeRegion', region)
-    }
-    if (departement !== null && departement !== '') {
-      convertedParams.set('codeDepartement', departement)
-    }
-
-    // Autres filtres
-    const roles = params.get('roles')
-    const habilitations = params.get('habilitations')
-    const formations = params.get('formations')
-
-    if (roles !== null && roles !== '') {
-      convertedParams.set('roles', roles)
-    }
-    if (habilitations !== null && habilitations !== '') {
-      convertedParams.set('habilitations', habilitations)
-    }
-    if (formations !== null && formations !== '') {
-      convertedParams.set('formations', formations)
-    }
+    // Utiliser la fonction utilitaire pour convertir les paramètres
+    const convertedParams = buildURLSearchParamsFromFilters(params)
 
     // Naviguer avec les nouveaux paramètres
     const url = new URL(window.location.href)
@@ -241,99 +216,16 @@ export default function ListeAidantsMediateurs({
 
   // Obtenir la liste des filtres actifs individuels
   function getFiltresActifs(): Array<{ label: string; paramKey: string; paramValue: string }> {
-    const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
-
-    // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
-    const codeRegion = normalizedSearchParams.get('codeRegion')
-    const codeDepartement = normalizedSearchParams.get('codeDepartement')
-    const roles = normalizedSearchParams.get('roles')
-    const habilitations = normalizedSearchParams.get('habilitations')
-    const formations = normalizedSearchParams.get('formations')
-
-    // Filtre géographique
-    if (codeDepartement !== null && codeDepartement !== '') {
-      filtres.push({ label: `Dép: ${codeDepartement}`, paramKey: 'codeDepartement', paramValue: codeDepartement })
-    } else if (codeRegion !== null && codeRegion !== '') {
-      filtres.push({ label: `Rég: ${codeRegion}`, paramKey: 'codeRegion', paramValue: codeRegion })
-    }
-
-    // Filtres rôles
-    if (roles !== null && roles !== '') {
-      roles.split(',').forEach(role => {
-        filtres.push({ label: role, paramKey: 'roles', paramValue: role })
-      })
-    }
-
-    // Filtres habilitations
-    if (habilitations !== null && habilitations !== '') {
-      habilitations.split(',').forEach(habilitation => {
-        filtres.push({ label: habilitation, paramKey: 'habilitations', paramValue: habilitation })
-      })
-    }
-
-    // Filtres formations
-    if (formations !== null && formations !== '') {
-      formations.split(',').forEach(formation => {
-        filtres.push({ label: formation, paramKey: 'formations', paramValue: formation })
-      })
-    }
-
-    return filtres
+    return getActiveFilters(normalizedSearchParams)
   }
 
   // Fonction pour supprimer un filtre spécifique
   function supprimerFiltre(paramKey: string, paramValue: string): void {
-    const params = new URLSearchParams(normalizedSearchParams)
-
-    if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
-      // Pour les filtres géographiques, supprimer complètement
-      params.delete('codeRegion')
-      params.delete('codeDepartement')
-    } else {
-      // Pour les autres filtres, retirer la valeur spécifique
-      const currentValue = params.get(paramKey)
-      if (currentValue) {
-        const values = currentValue.split(',').filter(v => v !== paramValue)
-        if (values.length > 0) {
-          params.set(paramKey, values.join(','))
-        } else {
-          params.delete(paramKey)
-        }
-      }
-    }
-
-    // Convertir en format attendu par le controller
-    const convertedParams = new URLSearchParams()
-
-    // Filtre géographique
-    const region = params.get('codeRegion')
-    const departement = params.get('codeDepartement')
-
-    if (region !== null && region !== '') {
-      convertedParams.set('codeRegion', region)
-    }
-    if (departement !== null && departement !== '') {
-      convertedParams.set('codeDepartement', departement)
-    }
-
-    // Autres filtres
-    const rolesParam = params.get('roles')
-    const habilitationsParam = params.get('habilitations')
-    const formationsParam = params.get('formations')
-
-    if (rolesParam !== null && rolesParam !== '') {
-      convertedParams.set('roles', rolesParam)
-    }
-    if (habilitationsParam !== null && habilitationsParam !== '') {
-      convertedParams.set('habilitations', habilitationsParam)
-    }
-    if (formationsParam !== null && formationsParam !== '') {
-      convertedParams.set('formations', formationsParam)
-    }
+    const newParams = removeFilterFromParams(normalizedSearchParams, paramKey, paramValue)
 
     setIsFilterLoading(true)
     const url = new URL(window.location.href)
-    url.search = convertedParams.toString()
+    url.search = newParams.toString()
     router.push(url.pathname + url.search)
   }
 
@@ -497,13 +389,7 @@ export default function ListeAidantsMediateurs({
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
-          currentFilters={{
-            codeRegion: normalizedSearchParams.get('codeRegion'),
-            codeDepartement: normalizedSearchParams.get('codeDepartement'),
-            roles: normalizedSearchParams.get('roles')?.split(',') ?? [],
-            habilitations: normalizedSearchParams.get('habilitations')?.split(',') ?? [],
-            formations: normalizedSearchParams.get('formations')?.split(',') ?? [],
-          }}
+          currentFilters={parseURLParamsToFiltresInternes(normalizedSearchParams)}
           id={drawerId}
           labelId={labelId}
           onFilterAction={onFilter}

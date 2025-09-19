@@ -1,4 +1,3 @@
-/* eslint-disable complexity */
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
@@ -8,8 +7,8 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
+import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
-import { FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et médiateurs numriques',
@@ -28,9 +27,6 @@ export default async function ListeAidantsMediateursController({
   }>
 }): Promise<ReactElement> {
   const resolvedSearchParams = await searchParams
-  const page = Number(resolvedSearchParams.page ?? '1')
-  const { codeDepartement, codeRegion, formations, habilitations, roles } = resolvedSearchParams
-  const limite = 10
 
   const session = await getSession()
   if (!session) {
@@ -51,37 +47,12 @@ export default async function ListeAidantsMediateursController({
     territoire = departementCode
   }
 
-  // Construction du filtre géographique - seulement pour les administrateurs
-  let filtreGeographique: FiltreGeographique | undefined
-
-  // Seuls les administrateur_dispositif peuvent utiliser le filtre géographique
-  if (utilisateur.role.type === 'administrateur_dispositif') {
-    if (codeDepartement !== undefined && codeDepartement !== '') {
-      filtreGeographique = {
-        code: codeDepartement,
-        type: 'departement',
-      }
-    } else if (codeRegion !== undefined && codeRegion !== '') {
-      filtreGeographique = {
-        code: codeRegion,
-        type: 'region',
-      }
-    }
-  }
-  // Pour les autres utilisateurs, ignorer les filtres géographiques dans l'URL
-
-  // Construction de l'objet filtres
-  const filtres: FiltresListeAidants = {
-    formations: formations ? formations.split(',') as FiltreFormations : undefined,
-    geographique: filtreGeographique,
-    habilitations: habilitations ? habilitations.split(',') as FiltreHabilitations : undefined,
-    pagination: {
-      limite,
-      page,
-    },
-    roles: roles ? roles.split(',') as FiltreRoles : undefined,
+  // Utiliser la fonction utilitaire pour construire les filtres
+  const filtres = buildFiltresListeAidants(
+    resolvedSearchParams,
     territoire,
-  }
+    utilisateur.role.type
+  )
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
@@ -99,24 +70,8 @@ export default async function ListeAidantsMediateursController({
 
   // Passer les paramètres actuels pour l'affichage des filtres actifs
   const currentSearchParams = new URLSearchParams()
-  if (resolvedSearchParams.page !== undefined && resolvedSearchParams.page !== '') {
-    currentSearchParams.set('page', resolvedSearchParams.page)
-  }
-  if (codeDepartement !== undefined && codeDepartement !== '') {
-    currentSearchParams.set('codeDepartement', codeDepartement)
-  }
-  if (codeRegion !== undefined && codeRegion !== '') {
-    currentSearchParams.set('codeRegion', codeRegion)
-  }
-  if (roles !== undefined && roles !== '') {
-    currentSearchParams.set('roles', roles)
-  }
-  if (habilitations !== undefined && habilitations !== '') {
-    currentSearchParams.set('habilitations', habilitations)
-  }
-  if (formations !== undefined && formations !== '') {
-    currentSearchParams.set('formations', formations)
-  }
+  const { codeDepartement, codeRegion, formations, habilitations, page, roles } = resolvedSearchParams
+  setSearchParams()
 
   return (
     <ListeAidantsMediateurs
@@ -126,4 +81,25 @@ export default async function ListeAidantsMediateursController({
       utilisateurRole={utilisateur.role.type}
     />
   )
+
+  function setSearchParams(): void {
+    if (page !== undefined && page !== '') {
+      currentSearchParams.set('page', page)
+    }
+    if (codeDepartement !== undefined && codeDepartement !== '') {
+      currentSearchParams.set('codeDepartement', codeDepartement)
+    }
+    if (codeRegion !== undefined && codeRegion !== '') {
+      currentSearchParams.set('codeRegion', codeRegion)
+    }
+    if (roles !== undefined && roles !== '') {
+      currentSearchParams.set('roles', roles)
+    }
+    if (habilitations !== undefined && habilitations !== '') {
+      currentSearchParams.set('habilitations', habilitations)
+    }
+    if (formations !== undefined && formations !== '') {
+      currentSearchParams.set('formations', formations)
+    }
+  }
 }
