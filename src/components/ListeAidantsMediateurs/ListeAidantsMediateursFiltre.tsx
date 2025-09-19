@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactElement, useRef, useState } from 'react'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
@@ -10,16 +10,28 @@ import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams }
 
 export default function ListeAidantsMediateursFiltre({
   closeDrawer,
+  currentFilters,
   id,
   labelId,
   onFilterAction,
   onResetAction,
+  utilisateurRole,
 }: Props): ReactElement {
   const ref = useRef<SelectInstance>(null)
   const [selectedZone, setSelectedZone] = useState<null | ZoneGeographique>(null)
   const [selectedRoles, setSelectedRoles] = useState<Array<string>>([])
   const [selectedHabilitations, setSelectedHabilitations] = useState<Array<string>>([])
   const [selectedFormations, setSelectedFormations] = useState<Array<string>>([])
+
+  // Synchroniser l'état du filtre avec les filtres actuels
+  useEffect(() => {
+    setSelectedRoles(currentFilters.roles.filter(Boolean))
+    setSelectedHabilitations(currentFilters.habilitations.filter(Boolean))
+    setSelectedFormations(currentFilters.formations.filter(Boolean))
+
+    // Pour la zone géographique, on pourrait aussi la synchroniser si nécessaire
+    // mais c'est plus complexe car il faut reconstruire l'objet ZoneGeographique
+  }, [currentFilters])
 
   function handleZoneGeographiqueChange(zoneGeographique: ZoneGeographique): void {
     setSelectedZone(zoneGeographique)
@@ -38,8 +50,8 @@ export default function ListeAidantsMediateursFiltre({
   function appliquerFiltre(): void {
     const params = new URLSearchParams()
 
-    // Filtre géographique
-    if (selectedZone) {
+    // Filtre géographique - seulement pour les administrateur_dispositif
+    if (utilisateurRole === 'administrateur_dispositif' && selectedZone) {
       const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
       geoParams.forEach((value, key) => {
         params.set(key, value)
@@ -71,12 +83,16 @@ export default function ListeAidantsMediateursFiltre({
         Filtrer les aidants et médiateurs
       </DrawerTitle>
       <div className="sidepanel__content">
-        <FiltrerParZonesGeographiques
-          ref={ref}
-          setZoneGeographique={handleZoneGeographiqueChange}
-        />
+        {utilisateurRole === 'administrateur_dispositif' && (
+          <>
+            <FiltrerParZonesGeographiques
+              ref={ref}
+              setZoneGeographique={handleZoneGeographiqueChange}
+            />
 
-        <hr className="fr-hr" />
+            <hr className="fr-hr" />
+          </>
+        )}
 
         <CheckboxGroup
           legend="Par rôle"
@@ -108,7 +124,7 @@ export default function ListeAidantsMediateursFiltre({
           options={[
             { label: 'PIX', value: 'PIX' },
             { label: 'REMN', value: 'REMN' },
-            { label: 'CCP2 et CCP3', value: 'CCP2 et CCP3' },
+            { label: 'CCP2 & CCP3', value: 'CCP2 & CCP3' },
             { label: 'CCP1', value: 'CCP1' },
           ]}
           selectedValues={selectedFormations}
@@ -138,8 +154,16 @@ export default function ListeAidantsMediateursFiltre({
 
 type Props = Readonly<{
   closeDrawer(): void
+  currentFilters: {
+    codeDepartement: null | string
+    codeRegion: null | string
+    formations: Array<string>
+    habilitations: Array<string>
+    roles: Array<string>
+  }
   id: string
   labelId: string
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
+  utilisateurRole: string
 }>

@@ -134,6 +134,7 @@ export default function ListeAidantsMediateurs({
   listeAidantsMediateursViewModel,
   searchParams,
   totalBeneficiairesPromise,
+  utilisateurRole,
 }: Props): ReactElement {
   const isPageLoading = useNavigationLoading() // Spinner immédiat au clic
   const router = useRouter()
@@ -238,9 +239,9 @@ export default function ListeAidantsMediateurs({
     window.open(url, '_blank')
   }
 
-  // Déterminer le label du filtre actif
-  function getFiltreLabel(): string {
-    const labels: Array<string> = []
+  // Obtenir la liste des filtres actifs individuels
+  function getFiltresActifs(): Array<{ label: string; paramKey: string; paramValue: string }> {
+    const filtres: Array<{ label: string; paramKey: string; paramValue: string }> = []
 
     // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
     const codeRegion = normalizedSearchParams.get('codeRegion')
@@ -249,28 +250,91 @@ export default function ListeAidantsMediateurs({
     const habilitations = normalizedSearchParams.get('habilitations')
     const formations = normalizedSearchParams.get('formations')
 
+    // Filtre géographique
     if (codeDepartement !== null && codeDepartement !== '') {
-      labels.push(`Dép: ${codeDepartement}`)
+      filtres.push({ label: `Dép: ${codeDepartement}`, paramKey: 'codeDepartement', paramValue: codeDepartement })
     } else if (codeRegion !== null && codeRegion !== '') {
-      labels.push(`Rég: ${codeRegion}`)
+      filtres.push({ label: `Rég: ${codeRegion}`, paramKey: 'codeRegion', paramValue: codeRegion })
     }
 
+    // Filtres rôles
     if (roles !== null && roles !== '') {
-      const rolesCount = roles.split(',').length
-      labels.push(`${rolesCount} rôle${rolesCount > 1 ? 's' : ''}`)
+      roles.split(',').forEach(role => {
+        filtres.push({ label: role, paramKey: 'roles', paramValue: role })
+      })
     }
 
+    // Filtres habilitations
     if (habilitations !== null && habilitations !== '') {
-      const habilitationsCount = habilitations.split(',').length
-      labels.push(`${habilitationsCount} habilitation${habilitationsCount > 1 ? 's' : ''}`)
+      habilitations.split(',').forEach(habilitation => {
+        filtres.push({ label: habilitation, paramKey: 'habilitations', paramValue: habilitation })
+      })
     }
 
+    // Filtres formations
     if (formations !== null && formations !== '') {
-      const formationsCount = formations.split(',').length
-      labels.push(`${formationsCount} formation${formationsCount > 1 ? 's' : ''}`)
+      formations.split(',').forEach(formation => {
+        filtres.push({ label: formation, paramKey: 'formations', paramValue: formation })
+      })
     }
 
-    return labels.join(', ')
+    return filtres
+  }
+
+  // Fonction pour supprimer un filtre spécifique
+  function supprimerFiltre(paramKey: string, paramValue: string): void {
+    const params = new URLSearchParams(normalizedSearchParams)
+
+    if (paramKey === 'codeRegion' || paramKey === 'codeDepartement') {
+      // Pour les filtres géographiques, supprimer complètement
+      params.delete('codeRegion')
+      params.delete('codeDepartement')
+    } else {
+      // Pour les autres filtres, retirer la valeur spécifique
+      const currentValue = params.get(paramKey)
+      if (currentValue) {
+        const values = currentValue.split(',').filter(v => v !== paramValue)
+        if (values.length > 0) {
+          params.set(paramKey, values.join(','))
+        } else {
+          params.delete(paramKey)
+        }
+      }
+    }
+
+    // Convertir en format attendu par le controller
+    const convertedParams = new URLSearchParams()
+
+    // Filtre géographique
+    const region = params.get('codeRegion')
+    const departement = params.get('codeDepartement')
+
+    if (region !== null && region !== '') {
+      convertedParams.set('codeRegion', region)
+    }
+    if (departement !== null && departement !== '') {
+      convertedParams.set('codeDepartement', departement)
+    }
+
+    // Autres filtres
+    const rolesParam = params.get('roles')
+    const habilitationsParam = params.get('habilitations')
+    const formationsParam = params.get('formations')
+
+    if (rolesParam !== null && rolesParam !== '') {
+      convertedParams.set('roles', rolesParam)
+    }
+    if (habilitationsParam !== null && habilitationsParam !== '') {
+      convertedParams.set('habilitations', habilitationsParam)
+    }
+    if (formationsParam !== null && formationsParam !== '') {
+      convertedParams.set('formations', formationsParam)
+    }
+
+    setIsFilterLoading(true)
+    const url = new URL(window.location.href)
+    url.search = convertedParams.toString()
+    router.push(url.pathname + url.search)
   }
 
   const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
@@ -326,20 +390,33 @@ export default function ListeAidantsMediateurs({
               Filtres
             </button>
           </div>
-          {getFiltreLabel() ? (
-            <button
-              aria-label={`Retirer le filtre ${getFiltreLabel()}`}
-              className="fr-tag fr-icon-close-line fr-tag--icon-left"
-              onClick={() => {
-                onReset()
-              }}
-              type="button"
-            >
-              {getFiltreLabel()}
-            </button>
-          ) : null}
         </div>
       </div>
+
+      {/* Indicateur de filtres actifs */}
+      {getFiltresActifs().length > 0 ? (
+        <div className="fr-mb-2w">
+          <div className="fr-grid-row fr-grid-row--gutters">
+            {getFiltresActifs().map((filtre) => (
+              <div
+                className="fr-col-auto"
+                key={`${filtre.paramKey}-${filtre.paramValue}`}
+              >
+                <button
+                  aria-label={`Retirer le filtre ${filtre.label}`}
+                  className="fr-tag fr-icon-close-line fr-tag--icon-left"
+                  onClick={() => {
+                    supprimerFiltre(filtre.paramKey, filtre.paramValue)
+                  }}
+                  type="button"
+                >
+                  {filtre.label}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
       
       {/* Overlay de loading pendant la navigation */}
       {isPageLoading || isFilterLoading ? (
@@ -366,6 +443,7 @@ export default function ListeAidantsMediateurs({
       
       <>
         <ListeAidantsMediateurInfos
+          hasActiveFilters={getFiltresActifs().length > 0}
           totalBeneficiairesPromise={totalBeneficiairesPromise}
           viewModel={{
             totalAccompagnements: viewModel.totalAccompagnements,
@@ -419,10 +497,18 @@ export default function ListeAidantsMediateurs({
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
+          currentFilters={{
+            codeRegion: normalizedSearchParams.get('codeRegion'),
+            codeDepartement: normalizedSearchParams.get('codeDepartement'),
+            roles: normalizedSearchParams.get('roles')?.split(',') ?? [],
+            habilitations: normalizedSearchParams.get('habilitations')?.split(',') ?? [],
+            formations: normalizedSearchParams.get('formations')?.split(',') ?? [],
+          }}
           id={drawerId}
           labelId={labelId}
           onFilterAction={onFilter}
           onResetAction={onReset}
+          utilisateurRole={utilisateurRole}
         />
       </Drawer>
     </>
@@ -433,4 +519,5 @@ type Props = Readonly<{
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
   searchParams: SerializedSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
+  utilisateurRole: string
 }>

@@ -123,6 +123,7 @@ export default async function ListeAidantsMediateursController({
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
       searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
+      utilisateurRole={utilisateur.role.type}
     />
   )
 }

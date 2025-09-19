@@ -44,7 +44,7 @@ export function regionsEtDepartements(): ReadonlyArray<ZoneGeographique> {
 
   regions.forEach((region) => {
     regionsEtDepartements.push({
-      label: `(${region.code}) ${region.nom}`,
+      label: region.nom,
       type: 'region',
       value: `${region.code}${regionDepartementSeparator}${codeDepartementParDefautDuneRegion}`,
     })

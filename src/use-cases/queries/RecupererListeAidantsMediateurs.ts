@@ -9,7 +9,7 @@ export type FiltreRoles = ReadonlyArray<'Aidant' | 'Coordinateur' | 'Médiateur'
 
 export type FiltreHabilitations = ReadonlyArray<'Aidants Connect' | 'Conseiller numérique'>
 
-export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 et CCP3' | 'PIX' | 'REMN'>
+export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN'>
 
 export type FiltresListeAidants = Readonly<{
   formations?: FiltreFormations

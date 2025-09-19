@@ -304,8 +304,8 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       if (formations.includes('CCP1')) {
         formationConditions.push(Prisma.sql`f.label = 'CCP1'`)
       }
-      if (formations.includes('CCP2 et CCP3')) {
-        formationConditions.push(Prisma.sql`f.label = 'CCP2 et CCP3'`)
+      if (formations.includes('CCP2 & CCP3')) {
+        formationConditions.push(Prisma.sql`f.label = 'CCP2 & CCP3'`)
       }
 
       if (formationConditions.length > 0) {
