@@ -36,19 +36,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const habilitations = searchParams.get('habilitations')
     const formations = searchParams.get('formations')
 
-    // Construction du filtre géographique
+
+    // Construction du filtre géographique - seulement pour les administrateurs
     let filtreGeographique: FiltreGeographique | undefined
-    if (codeDepartement !== null && codeDepartement !== '') {
-      filtreGeographique = {
-        code: codeDepartement,
-        type: 'departement',
-      }
-    } else if (codeRegion !== null && codeRegion !== '') {
-      filtreGeographique = {
-        code: codeRegion,
-        type: 'region',
+
+    // Seuls les administrateur_dispositif peuvent utiliser le filtre géographique
+    if (utilisateur.role.type === 'administrateur_dispositif') {
+      if (codeDepartement !== null && codeDepartement !== '') {
+        filtreGeographique = {
+          code: codeDepartement,
+          type: 'departement',
+        }
+      } else if (codeRegion !== null && codeRegion !== '') {
+        filtreGeographique = {
+          code: codeRegion,
+          type: 'region',
+        }
       }
     }
+    // Pour les autres utilisateurs, ignorer les filtres géographiques dans l'URL
 
     // Construction de l'objet filtres (sans pagination pour récupérer tous les résultats)
     const filtres: FiltresListeAidants = {
@@ -62,6 +68,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       roles: roles ? roles.split(',') as FiltreRoles : undefined,
       territoire,
     }
+
 
     // Récupération des données
     const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()

@@ -17,6 +17,19 @@ import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 
+// Type pour les searchParams sérialisés depuis le serveur
+type SerializedSearchParams = Array<[string, string]> | URLSearchParams
+
+// Fonction utilitaire pour normaliser les searchParams
+function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams {
+  // Si c'est déjà un URLSearchParams, le retourner tel quel
+  if (params instanceof URLSearchParams) {
+    return params
+  }
+  // Si c'est un tableau de paires [clé, valeur], le convertir
+  return new URLSearchParams(params)
+}
+
 // Composant mémorisé pour chaque ligne d'aidant
 const AidantRow = memo(({
   aidant,
@@ -126,9 +139,11 @@ export default function ListeAidantsMediateurs({
   const router = useRouter()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isFilterLoading, setIsFilterLoading] = useState(false)
-  const [filtreParams, setFiltreParams] = useState<URLSearchParams>(new URLSearchParams())
   const drawerId = 'drawerFiltreAidants'
   const labelId = useId()
+
+  // Normaliser searchParams une fois pour toute l'utilisation
+  const normalizedSearchParams = useMemo(() => normalizeSearchParams(searchParams), [searchParams])
   if ('type' in listeAidantsMediateursViewModel) {
     return (
       <div className="fr-alert fr-alert--error">
@@ -140,15 +155,13 @@ export default function ListeAidantsMediateurs({
   }
   const viewModel = listeAidantsMediateursViewModel
 
-  // Initialiser les filtres à partir des searchParams
+  // Réinitialiser le loading quand la page se charge
   useEffect(() => {
-    setFiltreParams(new URLSearchParams(searchParams.toString()))
     setIsFilterLoading(false)
-  }, [listeAidantsMediateursViewModel, searchParams])
+  }, [listeAidantsMediateursViewModel])
 
   // Fonction de filtrage
   function onFilter(params: URLSearchParams): void {
-    setFiltreParams(params)
     setIsDrawerOpen(false)
     setIsFilterLoading(true)
 
@@ -189,7 +202,6 @@ export default function ListeAidantsMediateurs({
 
   // Fonction de réinitialisation
   function onReset(): void {
-    setFiltreParams(new URLSearchParams())
     setIsFilterLoading(true)
     router.push('/liste-aidants-mediateurs')
   }
@@ -198,18 +210,18 @@ export default function ListeAidantsMediateurs({
   function handleExportCSV(): void {
     const exportParams = new URLSearchParams()
 
-    // Copier tous les paramètres de filtre actuels (sans pagination)
-    const region = filtreParams.get('region')
-    const departement = filtreParams.get('departement')
-    const roles = filtreParams.get('roles')
-    const habilitations = filtreParams.get('habilitations')
-    const formations = filtreParams.get('formations')
+    // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
+    const codeRegion = normalizedSearchParams.get('codeRegion')
+    const codeDepartement = normalizedSearchParams.get('codeDepartement')
+    const roles = normalizedSearchParams.get('roles')
+    const habilitations = normalizedSearchParams.get('habilitations')
+    const formations = normalizedSearchParams.get('formations')
 
-    if (region !== null && region !== '') {
-      exportParams.set('codeRegion', region)
+    if (codeRegion !== null && codeRegion !== '') {
+      exportParams.set('codeRegion', codeRegion)
     }
-    if (departement !== null && departement !== '') {
-      exportParams.set('codeDepartement', departement)
+    if (codeDepartement !== null && codeDepartement !== '') {
+      exportParams.set('codeDepartement', codeDepartement)
     }
     if (roles !== null && roles !== '') {
       exportParams.set('roles', roles)
@@ -230,16 +242,17 @@ export default function ListeAidantsMediateurs({
   function getFiltreLabel(): string {
     const labels: Array<string> = []
 
-    const region = filtreParams.get('region')
-    const departement = filtreParams.get('departement')
-    const roles = filtreParams.get('roles')
-    const habilitations = filtreParams.get('habilitations')
-    const formations = filtreParams.get('formations')
+    // Utiliser normalizedSearchParams qui est déjà un URLSearchParams valide
+    const codeRegion = normalizedSearchParams.get('codeRegion')
+    const codeDepartement = normalizedSearchParams.get('codeDepartement')
+    const roles = normalizedSearchParams.get('roles')
+    const habilitations = normalizedSearchParams.get('habilitations')
+    const formations = normalizedSearchParams.get('formations')
 
-    if (departement !== null && departement !== '') {
-      labels.push(`Dép: ${departement}`)
-    } else if (region !== null && region !== '') {
-      labels.push(`Rég: ${region}`)
+    if (codeDepartement !== null && codeDepartement !== '') {
+      labels.push(`Dép: ${codeDepartement}`)
+    } else if (codeRegion !== null && codeRegion !== '') {
+      labels.push(`Rég: ${codeRegion}`)
     }
 
     if (roles !== null && roles !== '') {
@@ -291,24 +304,28 @@ export default function ListeAidantsMediateurs({
           </PageTitle>
         </div>
         <div className="fr-col-auto fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
-          <button
-            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
-            onClick={handleExportCSV}
-            type="button"
-          >
-            Export
-          </button>
-          <button
-            aria-controls={drawerId}
-            className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
-            data-fr-opened="false"
-            onClick={() => {
-              setIsDrawerOpen(true)
-            }}
-            type="button"
-          >
-            Filtres
-          </button>
+          <div className="fr-col-auto">
+            <button
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-download-line"
+              onClick={handleExportCSV}
+              type="button"
+            >
+              Export
+            </button>
+          </div>
+          <div className="fr-col-auto">
+            <button
+              aria-controls={drawerId}
+              className="fr-btn fr-btn--secondary fr-btn--icon-left fr-fi-filter-line"
+              data-fr-opened="false"
+              onClick={() => {
+                setIsDrawerOpen(true)
+              }}
+              type="button"
+            >
+              Filtres
+            </button>
+          </div>
           {getFiltreLabel() ? (
             <button
               aria-label={`Retirer le filtre ${getFiltreLabel()}`}
@@ -414,6 +431,6 @@ export default function ListeAidantsMediateurs({
 
 type Props = Readonly<{
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
-  searchParams: URLSearchParams
+  searchParams: SerializedSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>

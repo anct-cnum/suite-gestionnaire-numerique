@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
@@ -50,19 +51,24 @@ export default async function ListeAidantsMediateursController({
     territoire = departementCode
   }
 
-  // Construction du filtre géographique
+  // Construction du filtre géographique - seulement pour les administrateurs
   let filtreGeographique: FiltreGeographique | undefined
-  if (codeDepartement !== undefined && codeDepartement !== '') {
-    filtreGeographique = {
-      code: codeDepartement,
-      type: 'departement',
-    }
-  } else if (codeRegion !== undefined && codeRegion !== '') {
-    filtreGeographique = {
-      code: codeRegion,
-      type: 'region',
+
+  // Seuls les administrateur_dispositif peuvent utiliser le filtre géographique
+  if (utilisateur.role.type === 'administrateur_dispositif') {
+    if (codeDepartement !== undefined && codeDepartement !== '') {
+      filtreGeographique = {
+        code: codeDepartement,
+        type: 'departement',
+      }
+    } else if (codeRegion !== undefined && codeRegion !== '') {
+      filtreGeographique = {
+        code: codeRegion,
+        type: 'region',
+      }
     }
   }
+  // Pour les autres utilisateurs, ignorer les filtres géographiques dans l'URL
 
   // Construction de l'objet filtres
   const filtres: FiltresListeAidants = {
