@@ -1,7 +1,3 @@
-
-
--- Name: citext; Type: EXTENSION; Schema: -; Owner: -
-
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA min;
 
 
@@ -570,6 +566,41 @@ CREATE TABLE reference.categories_juridiques (
 
 ALTER TABLE reference.categories_juridiques OWNER TO sonum;
 
+-- Name: activites_coop; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.activites_coop (
+    id integer NOT NULL,
+    coop_id uuid,
+    structure_id integer,
+    personne_id integer NOT NULL,
+    type character varying(100) NOT NULL,
+    date date NOT NULL,
+    duree integer NOT NULL,
+    lieu_code_insee character varying(5),
+    type_lieu character varying(100) NOT NULL,
+    autonomie character varying(100),
+    structure_de_redirection character varying(255),
+    oriente_vers_structure boolean,
+    precisions_demarche text,
+    degre_de_finalisation_demarche character varying(50),
+    titre_atelier character varying(255),
+    niveau_atelier character varying(50),
+    accompagnements integer DEFAULT 0 NOT NULL,
+    thematiques text[],
+    materiels text[],
+    thematiques_demarche_administrative text[],
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE main.activites_coop OWNER TO sonum;
+
+-- Name: COLUMN activites_coop.duree; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.activites_coop.duree IS 'Valeur en minutes';
+
+
 -- Name: personne; Type: TABLE; Schema: main; Owner: sonum
 
 CREATE TABLE main.personne (
@@ -577,7 +608,6 @@ CREATE TABLE main.personne (
     prenom character varying(50),
     nom character varying(50),
     contact jsonb,
-    structure_id integer,
     aidant_connect_id integer,
     conseiller_numerique_id character varying(50),
     cn_pg_id integer,
@@ -626,41 +656,6 @@ COMMENT ON COLUMN main.personne_affectations.type IS 'Type d''affectation person
 -- Name: COLUMN personne_affectations.suppression; Type: COMMENT; Schema: main; Owner: sonum
 
 COMMENT ON COLUMN main.personne_affectations.suppression IS 'Date de suppression de l''affectation (NULL si en cours).';
-
-
--- Name: activites_coop; Type: TABLE; Schema: main; Owner: sonum
-
-CREATE TABLE main.activites_coop (
-    id integer NOT NULL,
-    coop_id uuid,
-    structure_id integer,
-    personne_id integer NOT NULL,
-    type character varying(100) NOT NULL,
-    date date NOT NULL,
-    duree integer NOT NULL,
-    lieu_code_insee character varying(5),
-    type_lieu character varying(100) NOT NULL,
-    autonomie character varying(100),
-    structure_de_redirection character varying(255),
-    oriente_vers_structure boolean,
-    precisions_demarche text,
-    degre_de_finalisation_demarche character varying(50),
-    titre_atelier character varying(255),
-    niveau_atelier character varying(50),
-    accompagnements integer DEFAULT 0 NOT NULL,
-    thematiques text[],
-    materiels text[],
-    thematiques_demarche_administrative text[],
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone
-);
-
-
-ALTER TABLE main.activites_coop OWNER TO sonum;
-
--- Name: COLUMN activites_coop.duree; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.activites_coop.duree IS 'Valeur en minutes';
 
 
 -- Name: formation; Type: TABLE; Schema: main; Owner: sonum
@@ -1179,6 +1174,13 @@ GRANT SELECT ON TABLE reference.categories_juridiques TO min_scalingo;
 GRANT SELECT ON TABLE reference.categories_juridiques TO min_dev;
 
 
+-- Name: TABLE activites_coop; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.activites_coop TO app_python;
+GRANT SELECT ON TABLE main.activites_coop TO min_scalingo;
+GRANT SELECT ON TABLE main.activites_coop TO min_dev;
+
+
 -- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne TO app_python;
@@ -1191,13 +1193,6 @@ GRANT SELECT ON TABLE main.personne TO min_dev;
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations TO app_python;
 GRANT SELECT ON TABLE main.personne_affectations TO min_scalingo;
 GRANT SELECT ON TABLE main.personne_affectations TO min_dev;
-
-
--- Name: TABLE activites_coop; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.activites_coop TO app_python;
-GRANT SELECT ON TABLE main.activites_coop TO min_scalingo;
-GRANT SELECT ON TABLE main.activites_coop TO min_dev;
 
 
 -- Name: TABLE formation; Type: ACL; Schema: main; Owner: sonum
@@ -1289,9 +1284,6 @@ GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
 
 GRANT SELECT ON TABLE reference.naf TO min_scalingo;
 GRANT SELECT ON TABLE reference.naf TO min_dev;
-
-
--- PostgreSQL database dump complete
 
 
 
@@ -1415,16 +1407,16 @@ ALTER TABLE ONLY admin.region
     ADD CONSTRAINT region_ukey UNIQUE (code);
 
 
--- Name: zonage zonage_code_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
-
-ALTER TABLE ONLY admin.zonage
-    ADD CONSTRAINT zonage_code_ukey UNIQUE (code, code_insee);
-
-
 -- Name: zonage zonage_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
 
 ALTER TABLE ONLY admin.zonage
     ADD CONSTRAINT zonage_pkey PRIMARY KEY (id);
+
+
+-- Name: zonage zonage_ukey; Type: CONSTRAINT; Schema: admin; Owner: sonum
+
+ALTER TABLE ONLY admin.zonage
+    ADD CONSTRAINT zonage_ukey UNIQUE (code, code_insee);
 
 
 -- Name: activites_coop activites_coop_coop_id_ukey; Type: CONSTRAINT; Schema: main; Owner: sonum
@@ -1602,6 +1594,11 @@ CREATE INDEX ifn_departement_code_dept_idx ON admin.ifn_departement USING btree 
 CREATE INDEX zonage_code_insee_idx ON admin.zonage USING btree (code_insee);
 
 
+-- Name: zonage_frr_ukey; Type: INDEX; Schema: admin; Owner: sonum
+
+CREATE UNIQUE INDEX zonage_frr_ukey ON admin.zonage USING btree (code_insee) WHERE ((type)::text = 'FRR'::text);
+
+
 -- Name: zonage_geom_idx; Type: INDEX; Schema: admin; Owner: sonum
 
 CREATE INDEX zonage_geom_idx ON admin.zonage USING gist (geom);
@@ -1645,6 +1642,7 @@ CREATE INDEX idx_personne_affectations_structure_id ON main.personne_affectation
 -- Name: personne_affectations_ukey; Type: INDEX; Schema: main; Owner: sonum
 
 CREATE UNIQUE INDEX personne_affectations_ukey ON main.personne_affectations USING btree (structure_coop_id, mediateur_coop_id, type, COALESCE(suppression, '1234-01-02 03:04:05+00'::timestamp with time zone));
+
 
 -- Name: commune commune_departement_id; Type: FK CONSTRAINT; Schema: admin; Owner: sonum
 
@@ -1736,12 +1734,6 @@ ALTER TABLE ONLY main.personne_affectations
     ADD CONSTRAINT personne_affectations_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
 
 
--- Name: personne personne_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
-
-ALTER TABLE ONLY main.personne
-    ADD CONSTRAINT personne_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
-
-
 -- Name: poste poste_personne_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.poste
@@ -1808,3 +1800,5 @@ REFRESH MATERIALIZED VIEW admin.coll_terr;
 
 
 -- PostgreSQL database dump complete
+
+
