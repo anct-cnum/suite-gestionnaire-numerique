@@ -1,0 +1,61 @@
+import { Prisma } from '@prisma/client'
+
+export function buildWhereClause(
+  baseConditions: Array<Prisma.Sql>,
+  standardFilters: StandardFilters = {},
+  zonageFilters: ZonageFilters = {}
+): Prisma.Sql {
+  const conditions = [...baseConditions]
+
+  // Filtres standards
+  if (standardFilters.codeDepartement !== undefined && standardFilters.codeDepartement !== '') {
+    conditions.push(Prisma.sql`a.departement = ${standardFilters.codeDepartement}`)
+  }
+
+  if (standardFilters.codeRegion !== undefined && standardFilters.codeRegion !== '') {
+    conditions.push(Prisma.sql`a.region = ${standardFilters.codeRegion}`)
+  }
+
+  if (standardFilters.typeStructure !== undefined && standardFilters.typeStructure !== '') {
+    conditions.push(Prisma.sql`LEFT(s.categorie_juridique, 2) = ${standardFilters.typeStructure}`)
+  }
+
+  // Filtres de zonage
+  if (zonageFilters.qpv === true) {
+    conditions.push(Prisma.sql`EXISTS (
+      SELECT 1 FROM admin.zonage z
+      WHERE z.type = 'QPV' AND public.st_contains(z.geom, a.geom)
+    )`)
+  }
+
+  if (zonageFilters.frr === true) {
+    conditions.push(Prisma.sql`EXISTS (
+      SELECT 1 FROM admin.zonage z
+      WHERE z.type = 'FRR' AND z.code_insee = a.code_insee
+    )`)
+  }
+
+  if (zonageFilters.horsZonePrioritaire === true) {
+    conditions.push(Prisma.sql`NOT EXISTS (
+      SELECT 1 FROM admin.zonage z
+      WHERE (z.type = 'QPV' AND public.st_contains(z.geom, a.geom))
+         OR (z.type = 'FRR' AND z.code_insee = a.code_insee)
+    )`)
+  }
+
+  return conditions.length > 0
+    ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
+    : Prisma.empty
+}
+
+interface ZonageFilters {
+  frr?: boolean
+  horsZonePrioritaire?: boolean
+  qpv?: boolean
+}
+
+interface StandardFilters {
+  codeDepartement?: string
+  codeRegion?: string
+  typeStructure?: string
+}

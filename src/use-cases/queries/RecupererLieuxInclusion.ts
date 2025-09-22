@@ -27,6 +27,15 @@ export interface LieuInclusionNumeriqueItem {
 }
 
 export interface RecupererLieuxInclusionPort {
-  getLieuxWithPagination(page: number, limite: number, codeDepartement?: string)
-  : Promise<RecupererLieuxInclusionReadModel>
+  getLieuxWithPagination(
+    page: number,
+    limite: number,
+    codeDepartement?: string,
+    typeStructure?: string,
+    qpv?: boolean,
+    frr?: boolean,
+    codeRegion?: string,
+    horsZonePrioritaire?: boolean
+  ): Promise<RecupererLieuxInclusionReadModel>
+  getTypesStructure(): Promise<Array<{ code: string; nom: string }>>
 }
