@@ -14,7 +14,7 @@ WITH personne_avec_status AS (
     END AS type_accompagnateur,
     
     -- Labellisation aidant connect (un médiateur peut être labellisé AC)
-    p.is_active_ac AS labellisation_aidant_connect,
+    COALESCE(p.is_active_ac, false) AS labellisation_aidant_connect,
     
     -- Est actuellement en poste en tant que médiateur
     CASE

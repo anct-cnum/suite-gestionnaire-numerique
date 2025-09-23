@@ -7,9 +7,9 @@ export type FiltreGeographique = Readonly<{
 
 export type FiltreRoles = ReadonlyArray<'Aidant' | 'Coordinateur' | 'Médiateur'>
 
-export type FiltreHabilitations = ReadonlyArray<'Aidants Connect' | 'Conseiller numérique'>
+export type FiltreHabilitations = ReadonlyArray<'Aidants Connect' | 'Conseiller numérique' | 'Sans habilitation/labellisation'>
 
-export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN'>
+export type FiltreFormations = ReadonlyArray<'CCP1' | 'CCP2 & CCP3' | 'PIX' | 'REMN' | 'Sans formation'>
 
 export type FiltresListeAidants = Readonly<{
   formations?: FiltreFormations
@@ -31,10 +31,13 @@ export type AidantMediateurReadModel = Readonly<{
   formations: Array<string>
   id: string
   labelisations: Array<'aidants connect' | 'conseiller numérique'>
-  nbAccompagnements: number
   nom: string
   prenom: string
   role: Array<string>
+}>
+
+export type AidantMediateurAvecAccompagnementReadModel = AidantMediateurReadModel & Readonly<{
+  nbAccompagnements: number
 }>
 
 export type ListeAidantsMediateursReadModel = Readonly<{

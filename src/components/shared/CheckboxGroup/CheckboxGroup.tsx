@@ -25,7 +25,7 @@ export default function CheckboxGroup({
       <div className="fr-fieldset__content">
         {options.map((option) => (
           <div
-            className="fr-checkbox-group"
+            className="fr-checkbox-group fr-mb-0w"
             key={option.value}
           >
             <input

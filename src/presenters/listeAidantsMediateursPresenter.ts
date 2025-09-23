@@ -6,7 +6,6 @@ export type ListeAidantsMediateursViewModel = Readonly<{
     formations: Array<string>
     id: string
     labelisations: Array<'aidants connect' | 'conseiller numérique'>
-    nbAccompagnements: number
     nom: string
     prenom: string
     role: Array<string>

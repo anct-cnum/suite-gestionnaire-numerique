@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
 
+import AccompagnementsTableCell from './AccompagnementsTableCell'
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
 import ListeAidantsMediateursFiltre from './ListeAidantsMediateursFiltre'
 import Badge from '../shared/Badge/Badge'
@@ -33,10 +34,12 @@ function normalizeSearchParams(params: SerializedSearchParams): URLSearchParams 
 
 // Composant mémorisé pour chaque ligne d'aidant
 const AidantRow = memo(({
+  accompagnementsPromise,
   aidant,
   badgeStyle,
   getAidantIcons,
 }: {
+  readonly accompagnementsPromise: Promise<Map<string, number>>
   readonly aidant: ListeAidantsMediateursViewModel['aidants'][0]
   readonly badgeStyle: React.CSSProperties
   // eslint-disable-next-line @typescript-eslint/method-signature-style
@@ -115,7 +118,10 @@ const AidantRow = memo(({
         )}
       </td>
       <td className="fr-cell--center">
-        {aidant.nbAccompagnements}
+        <AccompagnementsTableCell
+          accompagnementsPromise={accompagnementsPromise}
+          aidantId={aidant.id}
+        />
       </td>
       <td className="fr-cell--center">
         <Link
@@ -132,6 +138,7 @@ const AidantRow = memo(({
 AidantRow.displayName = 'AidantRow'
 
 export default function ListeAidantsMediateurs({
+  accompagnementsPromise,
   listeAidantsMediateursViewModel,
   searchParams,
   totalBeneficiairesPromise,
@@ -181,7 +188,7 @@ export default function ListeAidantsMediateurs({
     setIsFilterLoading(true)
     router.push('/liste-aidants-mediateurs')
   }
-
+  
   // Fonction d'export CSV
   function handleExportCSV(): void {
     const exportParams = new URLSearchParams()
@@ -357,6 +364,7 @@ export default function ListeAidantsMediateurs({
         >
           {viewModel.aidants.map((aidant) => (
             <AidantRow
+              accompagnementsPromise={accompagnementsPromise}
               aidant={aidant}
               badgeStyle={badgeStyle}
               getAidantIcons={getAidantIcons}
@@ -402,6 +410,7 @@ export default function ListeAidantsMediateurs({
 }
 
 type Props = Readonly<{
+  accompagnementsPromise: Promise<Map<string, number>>
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
   searchParams: SerializedSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>

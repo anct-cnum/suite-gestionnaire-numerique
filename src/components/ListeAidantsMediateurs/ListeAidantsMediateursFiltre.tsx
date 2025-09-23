@@ -113,6 +113,7 @@ export default function ListeAidantsMediateursFiltre({
           options={[
             { label: 'Conseiller numérique', value: 'Conseiller numérique' },
             { label: 'Aidants Connect', value: 'Aidants Connect' },
+            { label: 'Sans habilitation/labellisation', value: 'Sans habilitation/labellisation' },
           ]}
           selectedValues={selectedHabilitations}
         />
@@ -126,6 +127,7 @@ export default function ListeAidantsMediateursFiltre({
             { label: 'REMN', value: 'REMN' },
             { label: 'CCP2 & CCP3', value: 'CCP2 & CCP3' },
             { label: 'CCP1', value: 'CCP1' },
+            { label: 'Sans formation', value: 'Sans formation' },
           ]}
           selectedValues={selectedFormations}
         />

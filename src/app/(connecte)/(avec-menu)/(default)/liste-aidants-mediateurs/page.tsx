@@ -34,7 +34,7 @@ export default async function ListeAidantsMediateursController({
   }
   const utilisateurLoader = new PrismaUtilisateurLoader()
   const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
-  let territoire
+  let territoire: string
   if (utilisateur.role.type === 'administrateur_dispositif') {
     territoire = 'France'
   }
@@ -51,12 +51,26 @@ export default async function ListeAidantsMediateursController({
   const filtres = buildFiltresListeAidants(
     resolvedSearchParams,
     territoire,
-    utilisateur.role.type
+    utilisateur.role.type as string
   )
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
   const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
   const listeAidantsMediateursViewModel = listeAidantsMediateursPresenter(listeAidantsMediateursReadModel)
+
+  // Créer la promesse pour les accompagnements
+  let accompagnementsPromise: Promise<Map<string, number>>
+  if ('type' in listeAidantsMediateursViewModel) {
+    // En cas d'erreur, retourner une Map vide
+    accompagnementsPromise = Promise.resolve(new Map<string, number>())
+  } else {
+    // Extraire les IDs des aidants pour charger leurs accompagnements
+    const viewModel = listeAidantsMediateursViewModel as {
+      aidants: Array<{ id: string }>
+    }
+    const aidantIds = viewModel.aidants.map(aidant => aidant.id)
+    accompagnementsPromise = listeAidantsMediateursLoader.getAccompagnementsForPersonnes(aidantIds)
+  }
 
   // Calculer la période de 30 jours pour les stats des bénéficiaires
   const jusqua = new Date()
@@ -75,6 +89,7 @@ export default async function ListeAidantsMediateursController({
 
   return (
     <ListeAidantsMediateurs
+      accompagnementsPromise={accompagnementsPromise}
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
       searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}

@@ -4,6 +4,7 @@ import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { buildFiltresForExport, FiltresURLParams } from '@/shared/filtresAidantsMediateursUtils'
+import { AidantMediateurAvecAccompagnementReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -45,16 +46,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       utilisateur.role.type
     )
 
-    // Récupération des données
+    // Récupération des données avec accompagnements pour l'export
     const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
-    const listeAidantsMediateursReadModel = await listeAidantsMediateursLoader.get(filtres)
+    const aidantsForExport = await listeAidantsMediateursLoader.getForExport(filtres)
 
-    if ('type' in listeAidantsMediateursReadModel) {
+    if ('type' in aidantsForExport) {
       return NextResponse.json({ error: 'Erreur lors de la récupération des données' }, { status: 500 })
     }
 
     // Génération du CSV
-    const csvContent = generateCSV(listeAidantsMediateursReadModel.aidants)
+    const csvContent = generateCSV(aidantsForExport)
 
     // Nom du fichier avec timestamp
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:.]/g, '-')
@@ -73,15 +74,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-function generateCSV(aidants: Array<{
-  formations: Array<string>
-  id: string
-  labelisations: Array<'aidants connect' | 'conseiller numérique'>
-  nbAccompagnements: number
-  nom: string
-  prenom: string
-  role: Array<string>
-}>): string  {
+function generateCSV(aidants: Array<AidantMediateurAvecAccompagnementReadModel>): string  {
   // En-têtes CSV
   const headers = [
     'ID',
