@@ -59,7 +59,7 @@ export default function ListeAidantsMediateurInfos({
           })}
           {renderAidantsMediateursInfoCard({
             description: 'Accompagnements',
-            indicateur: formaterEnNombreFrancais(viewModel.totalAccompagnements),
+            indicateur: hasActiveFilters ? '-' : formaterEnNombreFrancais(viewModel.totalAccompagnements),
             legends: 'sur les 30 derniers jours',
           })}
           <AsyncLoaderErrorBoundary
