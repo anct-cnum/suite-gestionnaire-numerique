@@ -61,8 +61,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
   }, [membresViewModel.membres, statutInitial])
 
+  function nestPasUnePrefecture(membre: MembreViewModel): boolean {
+    return membre.typologie.simple.value !== 'Préfecture départementale'
+  }
+
   function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
-    return [
+    const menuItems = [
       <MenuItem
         iconClass="fr-icon-user-line"
         key={`ajout-${membre.uid}`}
@@ -71,19 +75,26 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await retirerUnCoPorteur(membre)
         }}
       />,
-      <MenuItem
-        iconClass="fr-icon-delete-line"
-        key={`delete-${membre.uid}`}
-        label="Retirer ce membre"
-        onClick={async () => {
-          await supprimerUnMembreOuCandidat(membre)
-        }}
-      />,
     ]
+
+    if (nestPasUnePrefecture(membre)) {
+      menuItems.push(
+        <MenuItem
+          iconClass="fr-icon-delete-line"
+          key={`delete-${membre.uid}`}
+          label="Retirer ce membre"
+          onClick={async () => {
+            await supprimerUnMembreOuCandidat(membre)
+          }}
+        />
+      )
+    }
+
+    return menuItems
   }
 
   function getMenuMembreNonCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
-    return [
+    const menuItems = [
       <MenuItem
         iconClass="fr-icon-user-star-line"
         key={`ajout-${membre.uid}`}
@@ -92,15 +103,22 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await definirUnCoPorteur(membre)
         }}
       />,
-      <MenuItem
-        iconClass="fr-icon-delete-line"
-        key={`delete-${membre.uid}`}
-        label="Retirer ce membre"
-        onClick={async () => {
-          await supprimerUnMembreOuCandidat(membre)
-        }}
-      />,
     ]
+
+    if (nestPasUnePrefecture(membre)) {
+      menuItems.push(
+        <MenuItem
+          iconClass="fr-icon-delete-line"
+          key={`delete-${membre.uid}`}
+          label="Retirer ce membre"
+          onClick={async () => {
+            await supprimerUnMembreOuCandidat(membre)
+          }}
+        />
+      )
+    }
+
+    return menuItems
   }
 
   function getMenuCandidat(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>>{
