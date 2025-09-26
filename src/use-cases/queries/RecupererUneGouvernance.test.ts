@@ -4,6 +4,7 @@ import { gouvernanceReadModelFactory } from '../testHelper'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { epochTime } from '@/shared/testHelper'
+import { Membre } from '@/gateways/shared/MembresGouvernance'
 
 describe('recupérer une gouvernance', () => {
   beforeEach(() => {
@@ -369,6 +370,10 @@ class GouvernanceLoaderSpy implements UneGouvernanceLoader {
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
     return Promise.resolve(uneGouvernance)
+  }
+
+  async getMembres(): Promise<ReadonlyArray<Membre>> {
+    return Promise.resolve([])
   }
 }
 

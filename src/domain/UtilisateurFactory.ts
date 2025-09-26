@@ -60,6 +60,7 @@ export class UtilisateurFactory {
 
   // eslint-disable-next-line @typescript-eslint/consistent-return
   create(role: TypologieRole, codeOrganisation = ''): Utilisateur {
+    console.log('[UtilisateurFactory.create] Création utilisateur:', role, codeOrganisation)
     //Suppression du default car tous les cas sont gérés et vérifiés par TypeScript
     // eslint-disable-next-line default-case
     switch (role) {

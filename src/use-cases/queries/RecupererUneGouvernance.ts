@@ -2,6 +2,8 @@ import { GetUtilisateurRepository } from '../commands/shared/UtilisateurReposito
 import { QueryHandler } from '../QueryHandler'
 import { MembreAvecRoleDansLaGouvernance } from './RecupererLesFeuillesDeRoute'
 import { Gouvernance } from '@/domain/Gouvernance'
+import { isCoporteur, Membre } from '@/gateways/shared/MembresGouvernance'
+import prisma from '../../../prisma/prismaClient'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
@@ -24,10 +26,16 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
             .map(toMembreDetailIntitulerReadModel),
         },
       }))
+
+    // Récupérer les membres pour extraire les co-porteurs avec SIRET
+    const membres = await this.#loader.getMembres(query.codeDepartement)
+    const membresCoporteurs = await createMembresCoporteurs(membres)
+    console.log('[RecupererUneGouvernance] Membres co-porteurs trouvés:', membresCoporteurs)
+
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid)
-
+    const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid, membresCoporteurs)
+    console.log('[RecupererUneGouvernance] peutGererGouvernance:', peutGererGouvernance)
     // Met les dates des comites à undefined si elles sont dans le passé
     const comites = readModel.comites?.map((comite) => ({
       ...comite,
@@ -45,6 +53,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 
 export interface UneGouvernanceLoader {
   get(codeDepartement: string): Promise<UneGouvernanceLoaderReadModel>
+  getMembres(codeDepartement: string): Promise<ReadonlyArray<Membre>>
 }
 
 export type UneGouvernanceLoaderReadModel = Readonly<{
@@ -179,4 +188,37 @@ function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): Cop
 }
 function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolean {
   return coporteur.type === 'Préfecture départementale'
+}
+
+async function createMembresCoporteurs(membres: ReadonlyArray<Membre>): Promise<Array<{ structureUid: number; isCoporteur: boolean }>> {
+  const coporteurs = membres.filter(isCoporteur)
+  const structureUids = await Promise.all(
+    coporteurs.map(membre => getStructureUidFromMembre(membre))
+  )
+
+  return structureUids
+    .filter((structureUid): structureUid is number => structureUid !== null)
+    .map(structureUid => ({ structureUid, isCoporteur: true }))
+}
+
+async function getStructureUidFromMembre(membre: Membre): Promise<number | null> {
+  if (!membre.siretRidet) {
+    console.log('[getStructureUidFromMembre] Pas de SIRET pour le membre:', membre.id)
+    return null
+  }
+
+  // Solution temporaire : chercher la structure par identifiant_etablissement
+  const structure = await prisma.structureRecord.findFirst({
+    where: {
+      identifiantEtablissement: membre.siretRidet
+    }
+  })
+
+  if (!structure) {
+    console.log('[getStructureUidFromMembre] Structure non trouvée pour SIRET:', membre.siretRidet)
+    return null
+  }
+
+  console.log('[getStructureUidFromMembre] Structure trouvée:', structure.id, 'pour membre:', membre.id)
+  return structure.id
 }

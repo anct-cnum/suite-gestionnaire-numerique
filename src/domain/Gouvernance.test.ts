@@ -13,8 +13,13 @@ describe('gouvernance', () => {
       intention: 'un gestionnaire département ayant le même département que celui de la gouvernance peut la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '75', role: 'Gestionnaire département' }),
     },
-    
-  ])('$intention', ({ utilisateur }) => {
+    {
+      intention: 'un gestionnaire structure dont la structure est membre co-porteur de la gouvernance peut la gérer',
+      utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
+      membresCoporteurs: [{ structureUid: 79227291600034, isCoporteur: true }],
+    },
+
+  ])('$intention', ({ utilisateur, membresCoporteurs }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({
       departement: {
@@ -25,6 +30,7 @@ describe('gouvernance', () => {
       noteDeContexte: undefined,
       notePrivee: undefined,
       uid: 'gouvernanceFooId',
+      membresCoporteurs,
     })
 
     // WHEN
@@ -36,8 +42,19 @@ describe('gouvernance', () => {
 
   it.each([
     {
-      intention: 'un gestionnaire structure ne peut pas la gérer',
-      utilisateur: utilisateurFactory({ codeOrganisation: '', role: 'Gestionnaire structure' }),
+      intention: 'un gestionnaire structure dont la structure n\'est pas membre de la gouvernance ne peut pas la gérer',
+      utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
+      membresCoporteurs: [],
+    },
+    {
+      intention: 'un gestionnaire structure dont la structure est membre mais pas co-porteur (isCoporteur: false) ne peut pas la gérer',
+      utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
+      membresCoporteurs: [{ structureUid: 79227291600034, isCoporteur: false }],
+    },
+    {
+      intention: 'un gestionnaire structure dont la structure est membre mais isCoporteur non défini (= false par défaut) ne peut pas la gérer',
+      utilisateur: utilisateurFactory({ codeOrganisation: '79227291600034', role: 'Gestionnaire structure' }),
+      membresCoporteurs: [{ structureUid: 79227291600034 }],
     },
     {
       intention: 'un gestionnaire groupement ne peut pas la gérer',
@@ -47,7 +64,7 @@ describe('gouvernance', () => {
       intention: 'un gestionnaire région dont le département de la gouvernance appartient à celle-ci ne peut pas la gérer',
       utilisateur: utilisateurFactory({ codeOrganisation: '11', role: 'Gestionnaire région' }),
     },
-  ])('$intention', ({ utilisateur }) => {
+  ])('$intention', ({ utilisateur, membresCoporteurs }) => {
     // GIVEN
     const gouvernance = Gouvernance.create({
       departement: {
@@ -58,6 +75,7 @@ describe('gouvernance', () => {
       noteDeContexte: undefined,
       notePrivee: undefined,
       uid: 'gouvernanceFooId',
+      membresCoporteurs,
     })
 
     // WHEN

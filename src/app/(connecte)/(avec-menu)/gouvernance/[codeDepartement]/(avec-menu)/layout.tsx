@@ -18,13 +18,17 @@ export default async function Layout({
 }: Props): Promise<ReactElement> {
   try {
     const session = await getSession()
+    console.log('[Layout Gouvernance] Session existe:', !!session)
 
     if (!session) {
       redirect('/connexion')
     }
     const codeDepartement = (await params).codeDepartement
+    console.log('[Layout Gouvernance] Code département:', codeDepartement)
+
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+    console.log('[Layout Gouvernance] Utilisateur récupéré - rôle:', utilisateur.role.nom)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
       new PrismaUtilisateurRepository(prisma.utilisateurRecord),
@@ -35,6 +39,7 @@ export default async function Layout({
     })
 
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModel, new Date())
+    console.log('[Layout Gouvernance] peutGererGouvernance:', gouvernanceReadModel.peutGererGouvernance)
 
     const afficherSousMenuMembre = gouvernanceViewModel.sectionMembres.coporteurs.length > 0
     const afficherSousMenuFeuilleDeRoute = Number(gouvernanceViewModel.sectionFeuillesDeRoute.total) > 0

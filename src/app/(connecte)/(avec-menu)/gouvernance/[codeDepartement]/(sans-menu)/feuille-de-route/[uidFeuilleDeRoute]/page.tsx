@@ -15,7 +15,10 @@ import { etablirSyntheseFinanciereGouvernance } from '@/use-cases/services/Etabl
 export default async function FeuilleDeRouteController({ params }: Props): Promise<ReactElement> {
   try {
     const { codeDepartement, uidFeuilleDeRoute } = await params
+    console.log('[Page FeuilleDeRoute] Paramètres:', codeDepartement, uidFeuilleDeRoute)
+
     const session = await getSession()
+    console.log('[Page FeuilleDeRoute] Session existe:', !!session)
 
     if (!session) {
       redirect('/connexion')
@@ -24,6 +27,8 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
     const feuilleDeRouteReadModel = await new PrismaUneFeuilleDeRouteLoader(
       etablirSyntheseFinanciereGouvernance
     ).get(uidFeuilleDeRoute)
+    console.log('[Page FeuilleDeRoute] Vérification gouvernance:',
+      feuilleDeRouteReadModel.uidGouvernance, '===', codeDepartement)
 
     if (feuilleDeRouteReadModel.uidGouvernance !== codeDepartement) {
       notFound()
@@ -31,6 +36,8 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
   
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+    console.log('[Page FeuilleDeRoute] Utilisateur rôle:', utilisateur.role.nom)
+
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
       new PrismaUtilisateurRepository(prisma.utilisateurRecord),
@@ -39,11 +46,13 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,
     })
+    console.log('[Page FeuilleDeRoute] peutGererGouvernance:', gouvernanceReadModel.peutGererGouvernance)
 
     return (
       <FeuilleDeRoute viewModel={feuilleDeRoutePresenter(feuilleDeRouteReadModel, gouvernanceReadModel)} />
     )
-  } catch{
+  } catch(error) {
+    console.error('[Page FeuilleDeRoute] Erreur:', error)
     notFound()
   }
 }

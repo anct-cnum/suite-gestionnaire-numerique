@@ -18,6 +18,26 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
     this.#etablisseurSynthese = etablisseurSynthese
   }
 
+  async getMembres(codeDepartement: string): Promise<ReadonlyArray<Membre>> {
+    const membreConfirmesGouvernance = await this.#membreDao.findMany({
+      include: membreInclude,
+      where: {
+        AND: [
+          {
+            statut: {
+              equals: 'confirme',
+            },
+          },
+          {
+            gouvernanceDepartementCode: codeDepartement,
+          },
+        ],
+      },
+    })
+
+    return toMembres(membreConfirmesGouvernance)
+  }
+
   async get(codeDepartement: string): Promise<UneGouvernanceLoaderReadModel> {
     const gouvernanceRecord = await this.#dataResource.findUniqueOrThrow({
       include,
