@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client'
+
 import { membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
@@ -5,14 +7,14 @@ import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
 import { ContactData, EntrepriseData, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
-  readonly #membreDataResource = prisma.membreRecord
-
   async create(
     membre: Membre,
+    entrepriseData: EntrepriseData,
     contactData?: ContactData,
     contactTechniqueData?: ContactData,
-    entrepriseData?: EntrepriseData
+    tx?: Prisma.TransactionClient
   ): Promise<void> {
+    const client = tx ?? prisma
     let email: string
     let contactTechniqueEmail: string | undefined
 
@@ -61,9 +63,9 @@ export class PrismaMembreRepository implements MembreRepository {
       contactTechniqueEmail = contactTechniqueData.email
     }
 
-    await this.#membreDataResource.create({
+    await client.membreRecord.create({
       data: {
-        categorieMembre : entrepriseData?.categorieJuridiqueCode,
+        categorieMembre : entrepriseData.categorieJuridiqueCode,
         contact: email,
         contactTechnique: contactTechniqueEmail,
         gouvernanceDepartementCode: membre.state.uidGouvernance.value,
@@ -71,20 +73,26 @@ export class PrismaMembreRepository implements MembreRepository {
         isCoporteur: membre.state.roles.includes('coporteur'),
         nom: membre.state.nom,
         oldUUID: crypto.randomUUID(),
-        siretRidet: entrepriseData?.siret,
+        siretRidet: entrepriseData.siret,
         statut: membre.state.statut,
-        type : entrepriseData?.categorieJuridiqueUniteLegale,
+        structureId: membre.state.uidStructure?.value,
+        type : entrepriseData.categorieJuridiqueUniteLegale,
       },
     })
   }
 
-  async get(uid: MembreState['uid']['value']): Promise<Membre> {
-    const record = await this.#membreDataResource.findUniqueOrThrow({
+  async get(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<Membre> {
+    const client = tx ?? prisma
+    const record = await client.membreRecord.findUniqueOrThrow({
       include: membreInclude,
       where: {
         id: uid,
       },
     })
+
+    if (!record.structureId) {
+      throw new Error(`Membre ${uid} n'a pas de structure associée`)
+    }
 
     const membre = toMembre(record)
 
@@ -98,11 +106,13 @@ export class PrismaMembreRepository implements MembreRepository {
       uidGouvernance: {
         value: record.gouvernanceDepartementCode,
       },
+      uidStructure: { value: record.structureId },
     }) as Membre
   }
 
-  async update(membre: Membre): Promise<void> {
-    await this.#membreDataResource.update({
+  async update(membre: Membre, tx?: Prisma.TransactionClient): Promise<void> {
+    const client = tx ?? prisma
+    await client.membreRecord.update({
       data: {
         dateSuppression: membre.state.dateSuppression,
         isCoporteur: membre.state.roles.includes('coporteur'),

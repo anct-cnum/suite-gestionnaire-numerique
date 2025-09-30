@@ -136,7 +136,7 @@ export class UtilisateurFactory {
   }
 
   #createGestionnaireStructure(structureUidValue: number): Utilisateur {
-    const structureUid = new StructureUid({ value: this.#structureUid ?? structureUidValue })
+    const structureUid = new StructureUid(this.#structureUid ?? structureUidValue)
     return new GestionnaireStructure(
       this.#uid,
       this.#nom,

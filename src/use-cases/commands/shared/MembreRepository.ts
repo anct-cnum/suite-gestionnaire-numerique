@@ -1,19 +1,22 @@
+import { Prisma } from '@prisma/client'
+
 import { Membre, MembreState } from '@/domain/Membre'
 
 export interface GetMembreRepository {
-  get(uid: MembreState['uid']['value']): Promise<Membre>
+  get(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<Membre>
 }
 
 export interface UpdateMembreRepository {
-  update(membre: Membre): Promise<void>
+  update(membre: Membre, tx?: Prisma.TransactionClient): Promise<void>
 }
 
 export interface CreateMembreRepository {
   create(
-    membre: Membre, 
-    contactData?: ContactData, 
-    contactTechniqueData?: ContactData, 
-    entrepriseData?: EntrepriseData
+    membre: Membre,
+    entrepriseData: EntrepriseData,
+    contactData?: ContactData,
+    contactTechniqueData?: ContactData,
+    tx?: Prisma.TransactionClient
   ): Promise<void>
 }
 

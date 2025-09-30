@@ -77,11 +77,14 @@ export default function AjouterUnMembrePage({ codeDepartement }: AjouterUnMembre
         contact: donneesMembre.contact,
         contactTechnique: donneesMembre.contactSecondaire ?? undefined,
         entreprise: {
+          adresse: donneesMembre.entreprise.adresse,
           categorieJuridiqueCode: donneesMembre.entreprise.categorieJuridiqueCode,
           categorieJuridiqueUniteLegale: donneesMembre.entreprise.categorieJuridiqueLibelle,
+          codePostal: donneesMembre.entreprise.codePostal,
+          commune: donneesMembre.entreprise.commune,
+          nom: donneesMembre.entreprise.denomination,
           siret: donneesMembre.entreprise.identifiant,
         },
-        nomEntreprise: donneesMembre.entreprise.denomination,
         path: pathname,
       })
 

@@ -124,6 +124,9 @@ export function membrePotentielFactory(override?: Partial<Parameters<typeof memb
     uidGouvernance: {
       value: 'gouvernanceFooId',
     },
+    uidStructure: {
+      value: 1,
+    },
     ...override,
   }) as Membre
 }
@@ -138,6 +141,9 @@ export function membreConfirmeFactory(override?: Partial<Parameters<typeof membr
     },
     uidGouvernance: {
       value: 'gouvernanceFooId',
+    },
+    uidStructure: {
+      value: 1,
     },
     ...override,
   }) as Membre

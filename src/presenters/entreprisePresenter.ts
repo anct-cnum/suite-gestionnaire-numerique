@@ -9,6 +9,8 @@ export function entreprisePresenter(readModel: EntrepriseReadModel): EntrepriseV
     adresse: readModel.adresse,
     categorieJuridiqueCode: readModel.categorieJuridiqueCode,
     categorieJuridiqueLibelle: readModel.categorieJuridiqueLibelle ?? `Code ${readModel.categorieJuridiqueCode}`,
+    codePostal: readModel.codePostal,
+    commune: readModel.commune,
     denomination: readModel.denomination,
     identifiant: readModel.identifiant,
   }

@@ -1,5 +1,6 @@
 import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { Entity, Uid, ValueObject } from './shared/Model'
+import { StructureUid, StructureUidState } from './Structure'
 import { Result } from '@/shared/lang'
 
 export abstract class Membre extends Entity<MembreState> {
@@ -11,6 +12,7 @@ export abstract class Membre extends Entity<MembreState> {
       statut: this.statut.state.value,
       uid: this.uid.state,
       uidGouvernance: this.uidGouvernance.state,
+      uidStructure: this.uidStructure.state,
     }
   }
 
@@ -19,6 +21,7 @@ export abstract class Membre extends Entity<MembreState> {
   protected readonly roles: ReadonlyArray<Role>
   protected readonly statut: Statut
   protected readonly uidGouvernance: GouvernanceUid
+  protected readonly uidStructure: StructureUid
 
   constructor(
     uid: MembreUid,
@@ -26,7 +29,8 @@ export abstract class Membre extends Entity<MembreState> {
     roles: ReadonlyArray<Role>,
     uidGouvernance: GouvernanceUid,
     statut: Statut,
-    dateSuppression: Date | undefined
+    dateSuppression: Date | undefined,
+    uidStructure: StructureUid
   ) {
     super(uid)
     this.uidGouvernance = uidGouvernance
@@ -34,6 +38,7 @@ export abstract class Membre extends Entity<MembreState> {
     this.roles = roles
     this.statut = statut
     this.dateSuppression = dateSuppression
+    this.uidStructure = uidStructure
   }
 
   appartientALaGouvernance(uidGouvernance: string): boolean {
@@ -69,6 +74,7 @@ export type MembreState = Readonly<{
   statut: string
   uid: UidState
   uidGouvernance: GouvernanceUidState
+  uidStructure: StructureUidState
 }>
 
 export type MembreFailure = 'membreDejaConfirme' | 'membreSupprimer'
