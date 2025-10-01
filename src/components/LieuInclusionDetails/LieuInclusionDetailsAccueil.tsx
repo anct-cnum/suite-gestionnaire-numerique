@@ -11,10 +11,14 @@ export default function LieuInclusionDetailsAccueil(props: Props): ReactElement 
   return (
     <div>
       <LieuInclusionDetailsAccueilHeader />
-      <hr className="fr-hr fr-mt-3w" />
-      <LieuInclusionDetailsAccueilDescription data={data} />
-      <hr className="fr-hr fr-mt-3w" />
-      <LieuInclusionDetailsAccueilInformationsPratique data={data} />
+      <hr className="fr-hr" />
+      <div id="lieu-detail-description">
+        <LieuInclusionDetailsAccueilDescription data={data} />
+      </div>
+      <hr className="fr-hr" />
+      <div id="lieu-information-pratique">
+        <LieuInclusionDetailsAccueilInformationsPratique data={data} />
+      </div>
     </div>
   )
 }

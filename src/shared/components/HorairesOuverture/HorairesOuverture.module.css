@@ -1,0 +1,24 @@
+.horairesTable table,
+.horairesTable tbody,
+.horairesTable tr,
+.horairesTable td,
+.horairesTable th {
+  border: none !important;
+  border-bottom: none !important;
+  border-collapse: collapse !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+}
+
+.horairesTable tr {
+  background-color: transparent !important;
+}
+
+.horairesTable tr:nth-child(even) {
+  background-color: transparent !important;
+}
+
+.horairesTable tr:nth-child(odd) {
+  background-color: transparent !important;
+}

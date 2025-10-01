@@ -257,7 +257,7 @@ export default function ListeLieuxInclusion({
               'FRR / QPV',
               'Mandats AC',
               'Nb Accompagnements',
-              //'Action',
+              'Action',
             ]}
             titre="Lieux d'inclusion numérique"
           >
@@ -336,7 +336,6 @@ export default function ListeLieuxInclusion({
                 </td>
                 <td
                   className="fr-cell--center"
-                  style={{ display: 'none' }}
                 >
                   <Link
                     className="fr-btn fr-btn--secondary fr-btn--sm"

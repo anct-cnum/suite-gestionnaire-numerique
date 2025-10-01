@@ -2,7 +2,7 @@ import { ReactElement } from 'react'
 
 export default function LieuInclusionDetailsServicesHeader(): ReactElement {
   return (
-    <div className="fr-grid-row fr-grid-row--middle fr-p-4w">
+    <div className="fr-grid-row fr-grid-row--middle fr-px-4w fr-pb-2w">
       <div className="fr-col">
         <div className="fr-mb-1w">
           <span

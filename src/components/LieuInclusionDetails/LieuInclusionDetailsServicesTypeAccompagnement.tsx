@@ -16,7 +16,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
   ]
 
   return (
-    <div className="fr-p-4w">
+    <div className="fr-px-4w fr-pb-2w">
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
         <div className="fr-col fr-col-12 fr-col-md-8">
           <h4 className="fr-h6 fr-mb-1v">
@@ -58,8 +58,9 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
         <div className="fr-tags-group">
           {typeAccompagnementLabels.map((label) => (
             <span
-              className="fr-tag fr-tag--sm"
+              className="fr-tag fr-text--xl"
               key={label}
+              style={{ backgroundColor: 'var(--blue-france-975-75)' }}
             >
               <span className="fr-icon-user-line fr-icon--xl fr-mr-1v" />
               {label}

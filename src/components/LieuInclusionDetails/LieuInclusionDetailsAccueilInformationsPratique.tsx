@@ -1,17 +1,11 @@
 import { ReactElement } from 'react'
 
 import { LieuAccueilPublicData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import HorairesOuverture from '@/shared/components/HorairesOuverture/HorairesOuverture'
 
-// @ts-ignore
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function LieuInclusionDetailsAccueilInformationsPratique(props: Props): ReactElement {
-  const horairesList = [
-    { heures: '09h30 - 13h00 / 13h30 - 17h00', jour: 'Lun.' },
-    { heures: '09h30 - 13h00 / 13h30 - 17h00', jour: 'Mar.' },
-    { heures: '09h30 - 13h00 / Fermé', jour: 'Mer.' },
-    { heures: '09h30 - 13h00 / 13h30 - 17h00', jour: 'Jeu.' },
-    { heures: 'Fermé / 09h30 - 13h00', jour: 'Ven.' },
-  ]
+  const { data } = props
+  const { horaires, itinerance, priseRdvUrl, websiteUrl } = data
 
   return (
     <div className="fr-p-4w">
@@ -27,27 +21,44 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
         <div className="fr-col-auto" />
       </div>
 
-      <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
-          Site internet du lieu
-        </p>
-        <a
-          className="fr-link"
-          href="https://"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          nombase.fr
-        </a>
-      </div>
+      {websiteUrl !== undefined && websiteUrl !== '' ? (
+        <div className="fr-mb-2w">
+          <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
+            Site internet du lieu
+          </p>
+          <a
+            className="fr-link"
+            href={websiteUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {websiteUrl}
+          </a>
+        </div>
+      ) : null}
 
-      <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-icon-car-line fr-text--icon-left">
-          Lieu itinérant
-        </p>
-      </div>
+      {itinerance !== undefined && itinerance.length > 0 && (
+        <div className="fr-mb-2w">
+          <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
+            Itinérance
+          </p>
+          <div className="fr-tags-group">
+            {itinerance.map((item) => (
+              <span
+                className="fr-tag fr-tag--sm"
+                key={item}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
-      <div className="fr-mb-2w">
+      <div
+        className="fr-mb-2w"
+        style={{ display: 'none' }}
+      >
         <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
           Accessibilité
         </p>
@@ -61,44 +72,23 @@ export default function LieuInclusionDetailsAccueilInformationsPratique(props: P
         </a>
       </div>
 
-      <div className="fr-mb-2w">
-        <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
-          Prise de rendez-vous en ligne
-        </p>
-        <a
-          className="fr-link"
-          href="https://"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Prendre rendez-vous en ligne via ce lien
-        </a>
-      </div>
-
-      <div>
-        <p className="fr-text--sm fr-mb-2w fr-text-mention--grey">
-          Horaires d&apos;ouverture du lieu
-        </p>
-        <div className="fr-table fr-table--no-caption">
-          <table>
-            <tbody>
-              {horairesList.map((horaire) => (
-                <tr key={horaire.heures+horaire.jour}>
-                  <td className="fr-text--sm fr-text--bold">
-                    {horaire.jour}
-                  </td>
-                  <td className="fr-text--sm">
-                    {horaire.heures}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {priseRdvUrl !== undefined && priseRdvUrl !== '' && (
+        <div className="fr-mb-2w">
+          <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
+            Prise de rendez-vous en ligne
+          </p>
+          <a
+            className="fr-link"
+            href={priseRdvUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Prendre rendez-vous en ligne via ce lien
+          </a>
         </div>
-        <p className="fr-text--xs fr-text-mention--grey fr-mt-1w">
-          Sauf les jours fériés et les period de fermeture exceptionnelle
-        </p>
-      </div>
+      )}
+
+      <HorairesOuverture horaires={horaires} />
     </div>
   )
 }

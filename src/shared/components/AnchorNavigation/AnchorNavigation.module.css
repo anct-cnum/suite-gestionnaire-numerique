@@ -3,3 +3,8 @@
   left: 0;
   position: fixed;
 }
+
+.sousMenu {
+  font-size: 0.875rem;
+  margin-left: 1rem;
+}
