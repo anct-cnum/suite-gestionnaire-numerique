@@ -55,18 +55,19 @@ model StructureRecord {
   id Int @id @default(autoincrement())
 
   adresse                  String
-  codePostal               String @map("code_postal")
+  codePostal               String  @map("code_postal")
   commune                  String
   /// [Contact]
   contact                  Json
-  departementCode          String @map("departement_code")
+  departementCode          String  @map("departement_code")
   // SIRET ou RIDET
-  identifiantEtablissement String @map("identifiant_etablissement")
+  identifiantEtablissement String  @map("identifiant_etablissement")
   // TODO: à supprimer après la migration finale
-  idMongo                  String @map("id_mongo")
-  nom                      String @db.Citext
+  idMongo                  String  @map("id_mongo")
+  nom                      String  @db.Citext
   statut                   String
   type                     String
+  categorieJuridique       String? @map("categorie_juridique") @db.VarChar(4)
 
   utilisateurs UtilisateurRecord[]
   membres      MembreRecord[]

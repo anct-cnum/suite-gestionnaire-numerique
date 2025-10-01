@@ -52,6 +52,8 @@ export class AjouterUnMembre implements CommandHandler<Command> {
         // Créer une nouvelle structure dans la transaction
         const nouvelleStructure = await this.#structureRepository.create({
           adresse: command.entreprise.adresse,
+          categorieJuridique: command.entreprise.categorieJuridiqueCode,
+          categorieJuridiqueLibelle: command.entreprise.categorieJuridiqueUniteLegale,
           codePostal: command.entreprise.codePostal,
           commune: command.entreprise.commune,
           departementCode: gouvernance.state.departement.code,

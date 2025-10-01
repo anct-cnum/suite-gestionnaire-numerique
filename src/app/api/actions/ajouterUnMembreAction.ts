@@ -19,6 +19,15 @@ export async function ajouterUnMembreAction(
   const validationResult = validator.safeParse(actionParams)
 
   if (validationResult.error) {
+    // Vérifier si l'erreur concerne les données de l'entreprise
+    const hasEntrepriseError = validationResult.error.issues.some(
+      issue => issue.path[0] === 'entreprise'
+    )
+
+    if (hasEntrepriseError) {
+      return ['Un problème est survenu en récupérant les informations de l\'entreprise. Contactez le support ANCT.']
+    }
+
     return validationResult.error.issues.map(({ message }) => message)
   }
 
@@ -87,8 +96,8 @@ const validator = z.object({
     categorieJuridiqueUniteLegale: z.string().min(1, { message: 'La catégorie juridique doit être renseignée' }),
     codePostal: z.string().min(1, { message: 'Le code postal doit être renseigné' }),
     commune: z.string().min(1, { message: 'La commune doit être renseignée' }),
-    nomEntreprise: z.string().min(1, { message: 'Le nom de l\'entreprise doit être renseigné' }),
+    nom: z.string().min(1, { message: 'Le nom de l\'entreprise doit être renseigné' }),
     siret: z.string().min(1, { message: 'Le SIRET doit être renseigné' }),
-  }).optional(),
+  }),
   path: z.string().min(1, { message: 'Le chemin doit être renseigné' }),
 })

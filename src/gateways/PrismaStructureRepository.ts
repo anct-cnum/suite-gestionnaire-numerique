@@ -10,6 +10,7 @@ export class PrismaStructureRepository implements StructureRepository {
     const structure = await client.structureRecord.create({
       data: {
         adresse: data.adresse,
+        categorieJuridique: data.categorieJuridique,
         codePostal: data.codePostal,
         commune: data.commune,
         contact: {
@@ -24,7 +25,7 @@ export class PrismaStructureRepository implements StructureRepository {
         idMongo: crypto.randomUUID(),
         nom: data.nom,
         statut: 'active',
-        type: 'Association',
+        type: data.categorieJuridiqueLibelle,
       },
     })
 

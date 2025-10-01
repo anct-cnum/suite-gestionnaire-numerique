@@ -12,6 +12,8 @@ export interface CreateStructureRepository {
 
 export type StructureData = Readonly<{
   adresse: string
+  categorieJuridique?: string
+  categorieJuridiqueLibelle: string
   codePostal: string
   commune: string
   departementCode: string

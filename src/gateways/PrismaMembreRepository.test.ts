@@ -101,8 +101,8 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ id: 5, departementCode: '69', nom: 'Structure Paris' })
-    await creerUneStructure({ id: 6, departementCode: '93', nom: 'Structure 93' })
+    await creerUneStructure({ departementCode: '69', id: 5, nom: 'Structure Paris' })
+    await creerUneStructure({ departementCode: '93', id: 6, nom: 'Structure 93' })
     await creerUnMembre({ id: 'commune-69-69', nom: 'Paris', statut: 'confirme', structureId: 5 })
     await creerUnMembre({ id: 'commune-93-93', statut: 'confirme', structureId: 6 })
 
@@ -134,8 +134,8 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ id: 7, departementCode: '69', nom: 'Structure Bordeaux Métropole' })
-    await creerUneStructure({ id: 8, departementCode: '93', nom: 'Structure EPCI 93' })
+    await creerUneStructure({ departementCode: '69', id: 7, nom: 'Structure Bordeaux Métropole' })
+    await creerUneStructure({ departementCode: '93', id: 8, nom: 'Structure EPCI 93' })
     await creerUnMembre({ id: 'epci-69-69', nom: 'Bordeaux Métropole', statut: 'confirme', structureId: 7 })
     await creerUnMembre({ id: 'epci-93-93', statut: 'confirme', structureId: 8 })
 
@@ -167,8 +167,8 @@ describe('membre repository', () => {
     await creerUnDepartement({ code: '93', regionCode: '84' })
     await creerUneGouvernance({ departementCode: '69' })
     await creerUnContact()
-    await creerUneStructure({ id: 9, departementCode: '69', nom: 'HUBIKOOP' })
-    await creerUneStructure({ id: 10, departementCode: '93', nom: 'Structure 93' })
+    await creerUneStructure({ departementCode: '69', id: 9, nom: 'HUBIKOOP' })
+    await creerUneStructure({ departementCode: '93', id: 10, nom: 'Structure 93' })
     await creerUnMembre({ id: 'structure-69-69', nom: 'HUBIKOOP', statut: 'candidat', structureId: 9 })
     await creerUnMembre({ id: 'structure-93-93', statut: 'confirme', structureId: 10 })
 

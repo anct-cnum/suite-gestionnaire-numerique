@@ -75,7 +75,7 @@ export class PrismaMembreRepository implements MembreRepository {
         oldUUID: crypto.randomUUID(),
         siretRidet: entrepriseData.siret,
         statut: membre.state.statut,
-        structureId: membre.state.uidStructure?.value,
+        structureId: membre.state.uidStructure.value,
         type : entrepriseData.categorieJuridiqueUniteLegale,
       },
     })
@@ -90,7 +90,7 @@ export class PrismaMembreRepository implements MembreRepository {
       },
     })
 
-    if (!record.structureId) {
+    if (record.structureId === null) {
       throw new Error(`Membre ${uid} n'a pas de structure associée`)
     }
 
