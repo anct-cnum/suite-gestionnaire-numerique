@@ -36,6 +36,7 @@ export const PersonneUnique: Story = {
     data: [
       {
         email: 'sophie.bernard@exemple.fr',
+        id: 1,
         nom: 'Bernard',
         prenom: 'Sophie',
         role: 'Conseiller numérique',
@@ -49,6 +50,7 @@ export const PersonneSansContact: Story = {
   args: {
     data: [
       {
+        id: 2,
         nom: 'Moreau',
         prenom: 'Julien',
         role: 'Médiateur numérique',
@@ -62,6 +64,7 @@ export const PersonneAvecEmailSeulement: Story = {
     data: [
       {
         email: 'claire.martin@exemple.fr',
+        id: 3,
         nom: 'Martin',
         prenom: 'Claire',
         role: 'Coordinatrice',
@@ -74,6 +77,7 @@ export const PersonneAvecTelephoneSeulement: Story = {
   args: {
     data: [
       {
+        id: 4,
         nom: 'Petit',
         prenom: 'Lucas',
         role: 'Agent d\'accueil',
@@ -88,6 +92,7 @@ export const PersonneSansRole: Story = {
     data: [
       {
         email: 'thomas.dubois@exemple.fr',
+        id: 5,
         nom: 'Dubois',
         prenom: 'Thomas',
         telephone: '01 11 22 33 44',
@@ -101,6 +106,7 @@ export const PlusieursPersonnes: Story = {
     data: [
       {
         email: 'jean.martin@franceservices.gouv.fr',
+        id: 6,
         nom: 'Martin',
         prenom: 'Jean',
         role: 'Conseiller numérique',
@@ -108,18 +114,21 @@ export const PlusieursPersonnes: Story = {
       },
       {
         email: 'marie.durand@franceservices.gouv.fr',
+        id: 7,
         nom: 'Durand',
         prenom: 'Marie',
         role: 'Médiateur numérique',
         telephone: '01 23 45 67 90',
       },
       {
+        id: 8,
         nom: 'Leroy',
         prenom: 'Pierre',
         role: 'Agent d\'accueil',
       },
       {
         email: 'sophie.bernard@exemple.fr',
+        id: 9,
         nom: 'Bernard',
         prenom: 'Sophie',
         role: 'Coordinatrice territoriale',
@@ -127,11 +136,13 @@ export const PlusieursPersonnes: Story = {
       },
       {
         email: 'paul.moreau@exemple.fr',
+        id: 10,
         nom: 'Moreau',
         prenom: 'Paul',
         role: 'Formateur numérique',
       },
       {
+        id: 11,
         nom: 'Petit',
         prenom: 'Emma',
         role: 'Assistante administrative',
@@ -146,6 +157,7 @@ export const NomsTresLongs: Story = {
     data: [
       {
         email: 'jean-christophe.martin-durand@franceservices.gouv.fr',
+        id: 12,
         nom: 'Martin-Durand de la Fontaine',
         prenom: 'Jean-Christophe',
         role: 'Conseiller numérique spécialisé en accompagnement des seniors',
@@ -153,6 +165,7 @@ export const NomsTresLongs: Story = {
       },
       {
         email: 'marie-claire.dubois-bernard@exemple.fr',
+        id: 13,
         nom: 'Dubois-Bernard',
         prenom: 'Marie-Claire',
         role: 'Coordinatrice territoriale et responsable de la médiation numérique',

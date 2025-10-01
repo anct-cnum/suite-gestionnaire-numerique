@@ -4,7 +4,12 @@ import { LieuAccueilPublicData } from '@/components/LieuInclusionDetails/LieuInc
 
 export default function LieuInclusionDetailsAccueilDescription(props: Props): ReactElement {
   const { data } = props
-  const { modalitesAccueil } = data
+  const { modalitesAccueil, presentationDetail, presentationResume, typologies } = data
+
+  let typologieLabel = 'Non renseigné'
+  if (typologies && typologies.length > 0) {
+    typologieLabel = typologies.includes('ASSO') ? 'Association' : typologies[0]
+  }
 
   return (
     <div className="fr-p-4w">
@@ -17,14 +22,7 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
             Décrivez ici le lieu et les activités qu&apos;il propose.
           </p>
         </div>
-        <div className="fr-col-auto">
-          <button
-            className="fr-btn fr-btn--sm fr-btn--secondary fr-icon-edit-line fr-btn--icon-left"
-            type="button"
-          >
-            Modifier
-          </button>
-        </div>
+        <div className="fr-col-auto" />
       </div>
 
       <div className="fr-mb-2w">
@@ -32,16 +30,27 @@ export default function LieuInclusionDetailsAccueilDescription(props: Props): Re
           Typologie
         </p>
         <p className="fr-mb-0">
-          Association
+          {typologieLabel}
         </p>
       </div>
+
+      {presentationDetail !== undefined && presentationDetail !== '' && (
+        <div className="fr-mb-2w">
+          <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
+            Présentation
+          </p>
+          <p className="fr-mb-0">
+            {presentationDetail}
+          </p>
+        </div>
+      )}
 
       <div className="fr-mb-2w">
         <p className="fr-text--sm fr-mb-1v fr-text-mention--grey">
           Résumé
         </p>
         <p className="fr-mb-0">
-          {modalitesAccueil}
+          {presentationResume ?? modalitesAccueil ?? 'Aucune description disponible'}
         </p>
       </div>
     </div>

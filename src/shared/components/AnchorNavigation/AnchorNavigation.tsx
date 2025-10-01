@@ -82,6 +82,29 @@ export default function AnchorNavigation(props: AnchorNavigationProps): ReactEle
                 >
                   {section.label}
                 </button>
+                {section.sousMenus && section.sousMenus.length > 0 ? (
+                  <ul className="fr-sidemenu__list">
+                    {section.sousMenus.map((sousMenu) => (
+                      <li
+                        className={`fr-sidemenu__item ${styles.sousMenu}`}
+                        key={sousMenu.id}
+                      >
+                        <button
+                          aria-current={activeSection === sousMenu.id ? 'page' : undefined}
+                          className={`fr-sidemenu__link ${
+                            activeSection === sousMenu.id ? 'fr-sidemenu__link--active' : ''
+                          }`}
+                          onClick={(): void => {
+                            anchorNavigation.scrollToSection(sousMenu.id)
+                          }}
+                          type="button"
+                        >
+                          {sousMenu.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           </ul>

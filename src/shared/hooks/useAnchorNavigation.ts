@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 export type AnchorSection = Readonly<{
   id: string
   label: string
+  sousMenus?: ReadonlyArray<AnchorSection>
 }>
 
 export type AnchorNavigationOptions = Readonly<{
@@ -54,7 +55,9 @@ export default function useAnchorNavigation(options: AnchorNavigationOptions): {
   useEffect(() => {
     function scrollToHashOnLoad(): void {
       const hash = window.location.hash.replace('#', '')
-      if (hash && sections.some(section => section.id === hash)) {
+      const allSectionIds = sections.flatMap(section =>
+        [section.id, ...section.sousMenus?.map(sousMenu => sousMenu.id) ?? []])
+      if (hash && allSectionIds.includes(hash)) {
         setTimeout(() => {
           scrollToSection(hash, 'instant')
         }, 100)
@@ -73,8 +76,11 @@ export default function useAnchorNavigation(options: AnchorNavigationOptions): {
 
       let currentActiveSection = sections[0]?.id ?? ''
 
-      for (let index = 0; index < sections.length; index += 1) {
-        const section = sections[index]
+      const allSectionsFlat = sections.flatMap(section =>
+        [section, ...section.sousMenus ?? []])
+
+      for (let index = 0; index < allSectionsFlat.length; index += 1) {
+        const section = allSectionsFlat[index]
         const element = document.getElementById(section.id)
 
         if (element) {
@@ -88,7 +94,7 @@ export default function useAnchorNavigation(options: AnchorNavigationOptions): {
             break
           }
 
-          if (index === sections.length - 1 && viewportMiddle >= sectionTop) {
+          if (index === allSectionsFlat.length - 1 && viewportMiddle >= sectionTop) {
             currentActiveSection = section.id
           }
         }

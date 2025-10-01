@@ -1,6 +1,7 @@
 import { ReactElement } from 'react'
 
-export default function LieuInclusionDetailsServicesTypePublic(): ReactElement {
+export default function LieuInclusionDetailsServicesTypePublic(props: Props): ReactElement {
+  const { priseEnChargeSpecifique } = props
   return (
     <div className="fr-p-4w">
       <div className="fr-grid-row fr-grid-row--gutters">
@@ -21,8 +22,8 @@ export default function LieuInclusionDetailsServicesTypePublic(): ReactElement {
         <h5 className="fr-text--md fr-mb-2w">
           Précisez les publics accueillis dans ce lieu
         </h5>
-        <span className="fr-tag fr-tag--sm">
-          <span className="fr-icon-user-line fr-icon--sm fr-mr-1w"  />
+        <span className="fr-tag fr-tag--mg">
+          <span className="fr-icon-user-line fr-icon--mg fr-mr-1w"  />
           {' '}
           Tout public
         </span>
@@ -36,24 +37,27 @@ export default function LieuInclusionDetailsServicesTypePublic(): ReactElement {
           Indiquez si le lieu est en mesure d&apos;accompagner et soutenir des publics ayant des besoins particuliers.
         </p>
 
-        <div className="fr-tags-group">
-          <span className="fr-tag fr-tag--sm">
-            Surdité
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Handicaps moteurs
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Handicaps mentaux
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Langues étrangères (anglais)
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Langues étrangères (autres)
-          </span>
-        </div>
+        {priseEnChargeSpecifique && priseEnChargeSpecifique.length > 0 ? (
+          <div className="fr-tags-group">
+            {priseEnChargeSpecifique.map((priseEnCharge) => (
+              <span
+                className="fr-tag fr-tag--mg"
+                key={priseEnCharge}
+              >
+                {priseEnCharge}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="fr-text--sm">
+            Aucune prise en charge spécifique renseignée.
+          </p>
+        )}
       </div>
     </div>
   )
 }
+
+type Props = Readonly<{
+  priseEnChargeSpecifique?: ReadonlyArray<string>
+}>

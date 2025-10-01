@@ -20,6 +20,7 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
   return [
     {
       email: 'jean.martin@franceservices.gouv.fr',
+      id: 1,
       nom: 'Martin',
       prenom: 'Jean',
       role: 'Conseiller numérique',
@@ -27,12 +28,14 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
     },
     {
       email: 'marie.durand@franceservices.gouv.fr',
+      id: 2,
       nom: 'Durand',
       prenom: 'Marie',
       role: 'Médiateur numérique',
       telephone: '01 23 45 67 90',
     },
     {
+      id: 3,
       nom: 'Leroy',
       prenom: 'Pierre',
       role: 'Agent d\'accueil',

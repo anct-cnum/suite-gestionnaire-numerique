@@ -1,16 +1,7 @@
 import { ReactElement } from 'react'
 
-import { ServiceInclusionNumeriqueData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
-
 export default function LieuInclusionDetailsServicesModalite(props: Props): ReactElement {
-  const { data } = props
-
-  const allModalites = data.flatMap(service => service.modalites)
-  const uniqueModalites = [...new Set(allModalites)]
-
-  const hasPresentielSurPlace = uniqueModalites.includes('Se présenter sur place')
-  const hasTelephone = uniqueModalites.includes('Téléphone')
-  const hasEmail = uniqueModalites.includes('Contacter par mail')
+  const { fraisACharge, modalitesAcces, telephone } = props
 
   return (
     <div className="fr-p-4w" >
@@ -37,37 +28,35 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
         </p>
 
         <div className="fr-tags-group">
-          {hasPresentielSurPlace ?
-            <span className="fr-tag fr-tag--sm">
-              <span className="fr-icon-map-pin-2-line fr-icon--sm fr-mr-1v" />
-              {' '}
-              Se présenter sur place
-            </span> : null}
-
-          {hasTelephone ?
-            <span className="fr-tag fr-tag--sm">
-              <span className="fr-icon-phone-line fr-icon--sm fr-mr-1v" />
-              {' '}
-              Téléphone
-            </span> : null}
-
-          {hasEmail ?
-            <span className="fr-tag fr-tag--sm">
-              <span className="fr-icon-mail-line fr-icon--sm fr-mr-1v" />
-              {' '}
-              Contacter par mail
-            </span> : null}
+          {modalitesAcces && modalitesAcces.length > 0 ?
+            modalitesAcces.map((modalite) => (
+              <span
+                className="fr-tag fr-tag--mg"
+                key={modalite}
+              >
+                {modalite}
+              </span>
+            )) : (
+              <span className="fr-tag fr-tag--mg">
+                Non renseigné
+              </span>
+            )}
         </div>
       </div>
 
-      <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
-          Téléphone de contact
-        </h5>
-        <p className="fr-text--md">
-          05 50 59 43 14
-        </p>
-      </div>
+      {typeof telephone === 'string' && telephone.length > 0 ? (
+        <div className="fr-mb-3w">
+          <h5 className="fr-text--md fr-mb-1w">
+            Téléphone de contact
+          </h5>
+          <a
+            className="fr-link fr-text--md"
+            href={`tel:${telephone}`}
+          >
+            {telephone}
+          </a>
+        </div>
+      ) : null}
 
       <div className="fr-mb-3w">
         <h5 className="fr-text--md fr-mb-1w">
@@ -90,15 +79,14 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
         </p>
 
         <div className="fr-tags-group">
-          <span className="fr-tag fr-tag--sm">
-            Gratuit
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Gratuit sous condition
-          </span>
-          <span className="fr-tag fr-tag--sm">
-            Payant
-          </span>
+          {(fraisACharge && fraisACharge.length > 0 ? fraisACharge : ['Non renseigné']).map((frais) => (
+            <span
+              className="fr-tag fr-tag--mg"
+              key={frais}
+            >
+              {frais}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -106,5 +94,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
 }
 
 type Props = Readonly<{
-  data: ReadonlyArray<ServiceInclusionNumeriqueData>
+  fraisACharge?: ReadonlyArray<string>
+  modalitesAcces?: ReadonlyArray<string>
+  telephone?: string
 }>

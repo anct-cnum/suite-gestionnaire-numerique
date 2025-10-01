@@ -15,6 +15,7 @@ export type LieuInclusionDetailsHeaderData = Readonly<{
 
 export type PersonneTravaillantData = Readonly<{
   email?: string
+  id: number
   nom: string
   prenom: string
   role?: string
@@ -25,8 +26,19 @@ export type LieuAccueilPublicData = Readonly<{
   accessibilite?: string
   conseillerNumeriqueLabellePhase2?: boolean
   conseillerNumeriqueLabellePhase3?: boolean
+  fraisACharge?: ReadonlyArray<string>
   horaires?: string
+  itinerance?: ReadonlyArray<string>
+  modalitesAcces?: ReadonlyArray<string>
   modalitesAccueil?: string
+  presentationDetail?: string
+  presentationResume?: string
+  priseEnChargeSpecifique?: ReadonlyArray<string>
+  priseRdvUrl?: string
+  publicsSpecifiquementAdresses?: ReadonlyArray<string>
+  telephone?: string
+  typologies?: ReadonlyArray<string>
+  websiteUrl?: string
 }>
 
 export type InformationsGeneralesData = Readonly<{
@@ -67,13 +79,16 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
       <div id="personnes-travaillant">
         <LieuInclusionDetailsPersonnes data={data.personnesTravaillant} />
       </div>
-      <section className="fr-mb-4w grey-border border-radius ">
+      <section className="grey-border border-radius ">
         <div id="lieu-accueil-public">
           <LieuInclusionDetailsAccueil data={data.lieuAccueilPublic} />
         </div>
-        <hr className="fr-hr fr-mt-3w" />
+        <hr className="fr-hr " />
         <div id="services-inclusion-numerique">
-          <LieuInclusionDetailsServices data={data.servicesInclusionNumerique} />
+          <LieuInclusionDetailsServices
+            data={data.servicesInclusionNumerique}
+            lieuAccueilPublic={data.lieuAccueilPublic}
+          />
         </div>
       </section>
 

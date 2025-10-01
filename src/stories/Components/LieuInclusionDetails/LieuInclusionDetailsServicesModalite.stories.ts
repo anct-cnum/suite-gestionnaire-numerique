@@ -1,11 +1,10 @@
-import { createDefaultServicesInclusionNumeriqueData } from './LieuInclusionDetailsTestData'
 import LieuInclusionDetailsServicesModalite from '@/components/LieuInclusionDetails/LieuInclusionDetailsServicesModalite'
 import type { Meta, StoryObj } from '@storybook/nextjs-vite'
 
 const meta: Meta<typeof LieuInclusionDetailsServicesModalite> = {
   argTypes: {
-    data: {
-      description: 'Données des services d\'inclusion numérique pour les modalités',
+    modalitesAcces: {
+      description: 'Modalités d\'accès depuis la base de données',
     },
   },
   component: LieuInclusionDetailsServicesModalite,
@@ -21,32 +20,24 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    data: createDefaultServicesInclusionNumeriqueData(),
+    modalitesAcces: ['Se présenter sur place', 'Téléphone', 'Contacter par mail'],
   },
 }
 
 export const UniquementPresentiel: Story = {
   args: {
-    data: [
-      {
-        description: 'Service uniquement en présentiel',
-        modalites: ['Se présenter sur place'],
-        nom: 'Service présentiel',
-        thematiques: ['Formation'],
-      },
-    ],
+    modalitesAcces: ['Se présenter sur place'],
   },
 }
 
 export const UniquementADistance: Story = {
   args: {
-    data: [
-      {
-        description: 'Service uniquement à distance',
-        modalites: ['Téléphone', 'Contacter par mail'],
-        nom: 'Service à distance',
-        thematiques: ['Support'],
-      },
-    ],
+    modalitesAcces: ['Téléphone', 'Contacter par mail'],
+  },
+}
+
+export const AucuneModalite: Story = {
+  args: {
+    modalitesAcces: [],
   },
 }
