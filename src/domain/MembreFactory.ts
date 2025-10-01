@@ -2,6 +2,7 @@ import { GouvernanceUid, GouvernanceUidState } from './Gouvernance'
 import { Membre, MembreFailure, MembreState, MembreUid, Role, Statut } from './Membre'
 import { MembreCandidat } from './MembreCandidat'
 import { MembreConfirme } from './MembreConfirme'
+import { StructureUid, StructureUidState } from './Structure'
 import { Result } from '@/shared/lang'
 
 export function membreFactory({
@@ -10,6 +11,7 @@ export function membreFactory({
   statut,
   uid,
   uidGouvernance,
+  uidStructure,
 }: FactoryParams): Result<MembreFailure, Membre> {
   if (statut === 'confirme') {
     return new MembreConfirme(
@@ -17,7 +19,8 @@ export function membreFactory({
       nom,
       roles.map((role) => new Role(role)),
       new GouvernanceUid(uidGouvernance.value),
-      new Statut(statut)
+      new Statut(statut),
+      new StructureUid(uidStructure.value)
     )
   }
 
@@ -25,7 +28,8 @@ export function membreFactory({
     new MembreUid(uid.value),
     nom,
     new GouvernanceUid(uidGouvernance.value),
-    new Statut(statut)
+    new Statut(statut),
+    new StructureUid(uidStructure.value)
   )
 }
 
@@ -37,4 +41,5 @@ type FactoryParams = Readonly<{
   statut: StatutFactory
   uid: MembreState['uid']
   uidGouvernance: GouvernanceUidState
+  uidStructure: StructureUidState
 }>

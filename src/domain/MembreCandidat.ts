@@ -1,12 +1,17 @@
 import { GouvernanceUid } from './Gouvernance'
 import { Membre, MembreFailure, MembreUid, Role, Statut } from './Membre'
 import { membreFactory } from './MembreFactory'
+import { StructureUid } from './Structure'
 import { MembreSupprimer } from '@/domain/MembreSupprimer'
 import { Result } from '@/shared/lang'
 
 export class MembreCandidat extends Membre {
-  constructor(uid: MembreUid, nom: string, uidGouvernance: GouvernanceUid, statut: Statut) {
-    super(uid, nom, [new Role('observateur')], uidGouvernance, statut, undefined)
+  constructor(uid: MembreUid,
+    nom: string,
+    uidGouvernance: GouvernanceUid,
+    statut: Statut,
+    uidStructure: StructureUid) {
+    super(uid, nom, [new Role('observateur')], uidGouvernance, statut, undefined, uidStructure)
   }
 
   confirmer(): Result<MembreFailure, Membre> {
@@ -16,6 +21,7 @@ export class MembreCandidat extends Membre {
       statut: 'confirme',
       uid: this.uid.state,
       uidGouvernance: this.uidGouvernance.state,
+      uidStructure: this.uidStructure.state,
     })
   }
 
@@ -26,7 +32,8 @@ export class MembreCandidat extends Membre {
       this.state.roles.filter( role=> role !== 'coporteur').map(role => new Role(role)),
       this.uidGouvernance,
       new Statut('supprimer'),
-      date
+      date,
+      this.uidStructure
     )
   }
 }

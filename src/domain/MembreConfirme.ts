@@ -1,4 +1,5 @@
 import { Membre, MembreFailure, MembreUid, Role, Statut } from './Membre'
+import { StructureUid } from './Structure'
 import { GouvernanceUid } from '@/domain/Gouvernance'
 import { MembreSupprimer } from '@/domain/MembreSupprimer'
 import { Result } from '@/shared/lang'
@@ -9,9 +10,10 @@ export class MembreConfirme extends Membre {
     nom: string,
     roles: ReadonlyArray<Role>,
     uidGouvernance: GouvernanceUid,
-    statut: Statut
+    statut: Statut,
+    uidStructure: StructureUid
   ) {
-    super(uid, nom, roles, uidGouvernance, statut, undefined)
+    super(uid, nom, roles, uidGouvernance, statut, undefined, uidStructure)
   }
 
   override confirmer(): Result<MembreFailure, Membre> {
@@ -25,7 +27,8 @@ export class MembreConfirme extends Membre {
       this.state.roles.filter( role=> role !== 'coporteur').map(role => new Role(role)),
       this.uidGouvernance,
       new Statut('supprimer'),
-      date
+      date,
+      this.uidStructure
     )
   }
 }

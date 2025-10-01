@@ -55,20 +55,22 @@ model StructureRecord {
   id Int @id @default(autoincrement())
 
   adresse                  String
-  codePostal               String @map("code_postal")
+  codePostal               String  @map("code_postal")
   commune                  String
   /// [Contact]
   contact                  Json
-  departementCode          String @map("departement_code")
+  departementCode          String  @map("departement_code")
   // SIRET ou RIDET
-  identifiantEtablissement String @map("identifiant_etablissement")
+  identifiantEtablissement String  @map("identifiant_etablissement")
   // TODO: à supprimer après la migration finale
-  idMongo                  String @map("id_mongo")
-  nom                      String @db.Citext
+  idMongo                  String  @map("id_mongo")
+  nom                      String  @db.Citext
   statut                   String
   type                     String
+  categorieJuridique       String? @map("categorie_juridique") @db.VarChar(4)
 
   utilisateurs UtilisateurRecord[]
+  membres      MembreRecord[]
 
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
@@ -203,12 +205,14 @@ model MembreRecord {
   nom                        String?   @map("nom")
   siretRidet                 String?   @map("siret_ridet")
   dateSuppression            DateTime? @map("date_suppression")
+  structureId                Int?      @map("structure_id")
 
   oldUUID String @map("old_uuid") @db.Uuid
 
   relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
+  relationStructure        StructureRecord?                @relation(fields: [structureId], references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
