@@ -17,6 +17,7 @@ export type Membre = Readonly<{
   nom: string
   roles: ReadonlyArray<Role>
   statut: string
+  structureId?: number
   type: string
 }>
 
@@ -117,6 +118,7 @@ function toMembre(membre: MembreRecord): Membre {
     nom: nomMembre,
     roles,
     statut: membre.statut,
+    structureId: membre.structureId ?? undefined,
     type: membre.type ?? '',
   }
 

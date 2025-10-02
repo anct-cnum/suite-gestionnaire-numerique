@@ -23,6 +23,7 @@ export default async function Layout({
       redirect('/connexion')
     }
     const codeDepartement = (await params).codeDepartement
+
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
     const gouvernanceReadModel = await new RecupererUneGouvernance(
