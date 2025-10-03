@@ -14,6 +14,7 @@ import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeLieuxInclusionViewModel } from '@/presenters/listeLieuxInclusionPresenter'
 import { buildURLSearchParamsFromLieuxInclusionFilters, getActiveLieuxInclusionFilters, parseURLParamsToFiltresLieuxInclusionInternes, removeLieuxInclusionFilterFromParams } from '@/shared/filtresLieuxInclusionUtils'
@@ -402,5 +403,5 @@ type Props = Readonly<{
   listeLieuxInclusionViewModel: ErrorViewModel | ListeLieuxInclusionViewModel
   searchParams: SerializedSearchParams
   typesStructure: Array<{ code: string; nom: string }>
-  utilisateurRole: string
+  utilisateurRole: TypologieRole
 }>

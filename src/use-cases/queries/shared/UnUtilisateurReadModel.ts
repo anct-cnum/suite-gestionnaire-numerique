@@ -8,6 +8,7 @@ export type RoleUtilisateur =
 export type UnUtilisateurReadModel = Readonly<{
   departementCode: null | string
   derniereConnexion: Date
+  displayMenusPilotage: boolean
   email: string
   groupementId: null | number
   inviteLe: Date

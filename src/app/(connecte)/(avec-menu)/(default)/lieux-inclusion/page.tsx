@@ -2,14 +2,17 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import LieuxInclusion from '@/components/LieuxInclusion/LieuxInclusion'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import {
   LieuxInclusionNumeriqueReadModel,
   PrismaLieuxInclusionNumeriqueLoader,
 } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/lieuxInclusionNumeriquePresenter'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
   title: 'Lieux d’inclusion',
@@ -21,20 +24,21 @@ export default async function LieuxInclusionController(): Promise<ReactElement> 
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoire = await territoireUseCase.handle(utilisateur)
+
   const loader = new PrismaLieuxInclusionNumeriqueLoader()
   let result: LieuxInclusionNumeriqueReadModel
-  if (utilisateur.role.type === 'administrateur_dispositif') {
+
+  if (territoire.type === 'france') {
     result = await loader.getNational()
-  }
-  else{
-    const departementCode = utilisateur.departementCode
-    if(utilisateur.role.type !== 'gestionnaire_departement'
-      ||  departementCode === null || departementCode === '' ) {
-      redirect('/')
-    }
-    result= await loader.getDepartemental(departementCode)
+  } else if (territoire.codes.length > 0) {
+    result = await loader.getDepartemental(territoire.codes[0])
+  } else {
+    redirect('/')
   }
 
   const viewModel = lieuxInclusionNumeriquePresenter(result)

@@ -1,5 +1,6 @@
 import { Departement, DepartementState } from './Departement'
 import { GestionnaireDepartement } from './GestionnaireDepartement'
+import { GestionnaireStructure } from './GestionnaireStructure'
 import { Entity, Uid, ValueObject } from './shared/Model'
 import { Utilisateur, UtilisateurUid } from './Utilisateur'
 import { Result } from '@/shared/lang'
@@ -8,6 +9,7 @@ export class Gouvernance extends Entity<State> {
   override get state(): State {
     return {
       departement: this.#departement.state,
+      membresCoporteurs: this.#membresCoporteurs,
       noteDeContexte: this.#noteDeContexte?.state,
       notePrivee: this.#notePrivee?.state,
       uid: this.uid.state,
@@ -15,6 +17,7 @@ export class Gouvernance extends Entity<State> {
   }
 
   readonly #departement: Departement
+  readonly #membresCoporteurs: Array<MembreCoporteur>
   #noteDeContexte?: NoteDeContexte
   #notePrivee?: NotePrivee
 
@@ -22,16 +25,19 @@ export class Gouvernance extends Entity<State> {
     uid: GouvernanceUid,
     departement: Departement,
     noteDeContexte?: NoteDeContexte,
-    notePrivee?: NotePrivee
+    notePrivee?: NotePrivee,
+    membresCoporteurs: Array<MembreCoporteur> = []
   ) {
     super(uid)
     this.#departement = departement
     this.#noteDeContexte = noteDeContexte
     this.#notePrivee = notePrivee
+    this.#membresCoporteurs = membresCoporteurs
   }
 
   static create({
     departement,
+    membresCoporteurs = [],
     noteDeContexte,
     notePrivee,
     uid,
@@ -56,7 +62,8 @@ export class Gouvernance extends Entity<State> {
       new GouvernanceUid(uid),
       new Departement(departement),
       noteDeContexteAjoutee,
-      notePriveeAjoutee
+      notePriveeAjoutee,
+      membresCoporteurs
     )
   }
 
@@ -65,9 +72,32 @@ export class Gouvernance extends Entity<State> {
       && codeDepartementGouvernance === utilisateur.state.departement.code
   }
 
-  static peutEtreGereePar(utilisateur: Utilisateur, codeDepartement: string): boolean {
-    return utilisateur.isSuperAdmin || utilisateur.isAdmin
-      || codeDepartement === utilisateur.state.departement?.code
+  static peutEtreGereePar(utilisateur: Utilisateur,
+    codeDepartement: string,
+    membresCoporteurs: Array<MembreCoporteur> = [])
+    : boolean {
+    // Administrateurs peuvent toujours gérer
+    if (utilisateur.isSuperAdmin || utilisateur.isAdmin) {
+      return true
+    }
+
+    // Gestionnaire département du même département peut gérer
+    if (utilisateur instanceof GestionnaireDepartement && codeDepartement === utilisateur.state.departement.code) {
+      return true
+    }
+
+    // Gestionnaire structure dont la structure est co-porteur peut gérer
+    if (utilisateur instanceof GestionnaireStructure) {
+      const structureUid = utilisateur.state.structureUid.value
+      const membreCoporteur = membresCoporteurs.find(membre =>
+        membre.structureUid === structureUid)
+      // isCoporteur doit être explicitement true (undefined = false par défaut)
+      if (membreCoporteur && membreCoporteur.isCoporteur === true) {
+        return true
+      }
+    }
+
+    return false
   }
 
   ajouterNoteDeContexte(noteDeContexte: NoteDeContexte): Result<GouvernanceFailure> {
@@ -110,7 +140,7 @@ export class Gouvernance extends Entity<State> {
   }
 
   peutEtreGereePar(utilisateur: Utilisateur): boolean {
-    return Gouvernance.peutEtreGereePar(utilisateur, this.#departement.state.code)
+    return Gouvernance.peutEtreGereePar(utilisateur, this.#departement.state.code, this.#membresCoporteurs)
   }
 
   supprimerNoteDeContexte(): void {
@@ -161,12 +191,18 @@ export type GouvernanceUidState = Readonly<{ value: string }>
 
 export type GouvernanceFailure = 'noteDeContexteDejaExistante' | 'noteDeContexteInexistante' | 'notePriveeDejaExistante' | 'notePriveeInexistante'
 
+type MembreCoporteur = Readonly<{
+  isCoporteur?: boolean
+  structureUid: number
+}>
+
 type GouvernanceFactoryParams = Readonly<{
   departement: {
     code: string
     codeRegion: string
     nom: string
   }
+  membresCoporteurs?: Array<MembreCoporteur>
   noteDeContexte?: Readonly<{
     contenu: string
     dateDeModification: Date
@@ -182,6 +218,7 @@ type GouvernanceFactoryParams = Readonly<{
 
 type State = Readonly<{
   departement: DepartementState
+  membresCoporteurs: Array<MembreCoporteur>
   noteDeContexte?: NoteDeContexteState
   notePrivee?: NotePriveeState
   uid: GouvernanceUidState

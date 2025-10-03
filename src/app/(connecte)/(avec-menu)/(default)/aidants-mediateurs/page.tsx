@@ -2,13 +2,15 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import AidantsMediateurs from '@/components/AidantsMediateurs/AidantsMediateurs'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { Administrateur } from '@/domain/Administrateur'
 import { PrismaAccompagnementsEtMediateursLoader } from '@/gateways/aidantsMedIateurs/PrismaAccompagnementsEtMediateursLoader'
 import { PrismaNiveauDeFormationLoader } from '@/gateways/aidantsMedIateurs/PrismaNiveauDeFormationLoader'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
@@ -25,11 +27,11 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
 
   // Vérifier que l'utilisateur est bien administrateur_dispositif
-  if (utilisateur.role.type !== 'administrateur_dispositif') {
+  if (!(utilisateur instanceof Administrateur)) {
     redirect('/tableau-de-bord')
   }
 

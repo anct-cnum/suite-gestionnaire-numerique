@@ -15,6 +15,7 @@ import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { ListeAidantsMediateursViewModel } from '@/presenters/listeAidantsMediateursPresenter'
 import { buildURLSearchParamsFromFilters, getActiveFilters, parseURLParamsToFiltresInternes, removeFilterFromParams } from '@/shared/filtresAidantsMediateursUtils'
@@ -414,5 +415,5 @@ type Props = Readonly<{
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
   searchParams: SerializedSearchParams
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
-  utilisateurRole: string
+  utilisateurRole: TypologieRole
 }>

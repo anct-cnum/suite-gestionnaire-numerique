@@ -6,6 +6,7 @@ import { SelectInstance } from 'react-select'
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import CheckboxGroup from '../shared/CheckboxGroup/CheckboxGroup'
 import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
+import { TypologieRole } from '@/domain/Role'
 import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 
 export default function ListeAidantsMediateursFiltre({
@@ -51,7 +52,7 @@ export default function ListeAidantsMediateursFiltre({
     const params = new URLSearchParams()
 
     // Filtre géographique - seulement pour les administrateur_dispositif
-    if (utilisateurRole === 'administrateur_dispositif' && selectedZone) {
+    if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
       const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
       geoParams.forEach((value, key) => {
         params.set(key, value)
@@ -83,7 +84,7 @@ export default function ListeAidantsMediateursFiltre({
         Filtrer les aidants et médiateurs
       </DrawerTitle>
       <div className="sidepanel__content">
-        {utilisateurRole === 'administrateur_dispositif' && (
+        {utilisateurRole === 'Administrateur dispositif' && (
           <>
             <FiltrerParZonesGeographiques
               ref={ref}
@@ -167,5 +168,5 @@ type Props = Readonly<{
   labelId: string
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
-  utilisateurRole: string
+  utilisateurRole: TypologieRole
 }>

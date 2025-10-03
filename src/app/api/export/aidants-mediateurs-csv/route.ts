@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import prisma from '../../../../../prisma/prismaClient'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { buildFiltresForExport, FiltresURLParams } from '@/shared/filtresAidantsMediateursUtils'
 import { AidantMediateurAvecAccompagnementReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -14,19 +17,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+    const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+    const utilisateur = await utilisateurLoader.get(await getSessionSub())
+
+    const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+    const territoireResult = await territoireUseCase.handle(utilisateur)
 
     let territoire: string
-    if (utilisateur.role.type === 'administrateur_dispositif') {
+    if (territoireResult.type === 'france') {
       territoire = 'France'
+    } else if (territoireResult.codes.length > 0) {
+      territoire = territoireResult.codes[0]
     } else {
-      const departementCode = utilisateur.departementCode
-      if (utilisateur.role.type !== 'gestionnaire_departement' ||
-          departementCode === null || departementCode === '') {
-        return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
-      }
-      territoire = departementCode
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
     // Récupération des paramètres de filtre
@@ -43,7 +46,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const filtres = buildFiltresForExport(
       params,
       territoire,
-      utilisateur.role.type
+      utilisateur.state.role.nom
     )
 
     // Récupération des données avec accompagnements pour l'export

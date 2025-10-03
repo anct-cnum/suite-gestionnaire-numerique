@@ -2,13 +2,16 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
   title: 'Liste des aidants et médiateurs numriques',
@@ -32,26 +35,26 @@ export default async function ListeAidantsMediateursController({
   if (!session) {
     redirect('/connexion')
   }
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoireResult = await territoireUseCase.handle(utilisateur)
+
   let territoire: string
-  if (utilisateur.role.type === 'administrateur_dispositif') {
+  if (territoireResult.type === 'france') {
     territoire = 'France'
-  }
-  else{
-    const departementCode = utilisateur.departementCode
-    if(utilisateur.role.type !== 'gestionnaire_departement'
-      ||  departementCode === null || departementCode === '' ) {
-      redirect('/')
-    }
-    territoire = departementCode
+  } else if (territoireResult.codes.length > 0) {
+    territoire = territoireResult.codes[0]
+  } else {
+    redirect('/')
   }
 
   // Utiliser la fonction utilitaire pour construire les filtres
   const filtres = buildFiltresListeAidants(
     resolvedSearchParams,
     territoire,
-    utilisateur.role.type as string
+    utilisateur.state.role.nom
   )
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
@@ -93,7 +96,7 @@ export default async function ListeAidantsMediateursController({
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
       searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
-      utilisateurRole={utilisateur.role.type}
+      utilisateurRole={utilisateur.state.role.nom}
     />
   )
 

@@ -6,7 +6,7 @@ export function createSessionUtilisateurPresenter(
   const role = utilisateurReadModel.role
   return {
     codeDepartement: utilisateurReadModel.departementCode,
-    displayLiensGouvernance: utilisateurReadModel.isGestionnaireDepartement,
+    displayLiensGouvernance: utilisateurReadModel.displayMenusPilotage,
     email: utilisateurReadModel.email,
     nom: utilisateurReadModel.nom,
     peutChangerDeRole: utilisateurReadModel.isSuperAdmin,

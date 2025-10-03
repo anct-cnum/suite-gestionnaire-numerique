@@ -2,11 +2,12 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../prisma/prismaClient'
 import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxInclusion'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { listeLieuxInclusionPresenter } from '@/presenters/listeLieuxInclusionPresenter'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 
@@ -32,12 +33,12 @@ export default async function ListeLieuxInclusionController({
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
 
   let territoireDepartement: string | undefined
-  if(utilisateur.role.type === 'gestionnaire_departement' && utilisateur.departementCode !== null) {
-    territoireDepartement = utilisateur.departementCode
+  if(utilisateur.state.departement?.code !== undefined && utilisateur.state.departement.code !== '') {
+    territoireDepartement = utilisateur.state.departement.code
   }
 
   const resolvedSearchParams = await searchParams
@@ -80,7 +81,7 @@ export default async function ListeLieuxInclusionController({
       listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
       searchParams={currentSearchParams}
       typesStructure={typesStructure}
-      utilisateurRole={utilisateur.role.type}
+      utilisateurRole={utilisateur.state.role.nom}
     />
   )
 
