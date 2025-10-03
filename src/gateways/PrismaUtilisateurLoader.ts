@@ -176,9 +176,15 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     }
   })()
 
+  // Pour un gestionnaire de structure, récupérer le code département depuis la structure
+  const departementCode = role.nom === 'Gestionnaire structure'
+    ? utilisateurRecord.relationStructure?.departementCode ?? null
+    : utilisateurRecord.departementCode
+
   return {
-    departementCode: utilisateurRecord.departementCode,
+    departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
+    displayMenusPilotage: role.nom === 'Gestionnaire département' || role.nom === 'Gestionnaire structure',
     email: utilisateurRecord.emailDeContact,
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,

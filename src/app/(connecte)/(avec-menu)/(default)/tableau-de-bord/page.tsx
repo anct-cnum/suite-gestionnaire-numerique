@@ -2,13 +2,15 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import TableauDeBordAdmin from '@/components/TableauDeBord/TableauDeBordAdmin'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { Administrateur } from '@/domain/Administrateur'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
 import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
 import { PrismaFinancementsAdminLoader } from '@/gateways/tableauDeBord/PrismaFinancementsAdminLoader'
@@ -27,6 +29,7 @@ import { indiceConfianceDepartementsAvecStatsPresenter, indiceFragiliteDeparteme
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -39,8 +42,8 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
 
   // Chargement des données communes
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
@@ -52,7 +55,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
 
   // Si administrateur, charger les données pour la France entière
-  if (utilisateur.role.type === 'administrateur_dispositif') {
+  if (utilisateur instanceof Administrateur) {
     const lieuxInclusionReadModel = await lieuxInclusionLoader.get('France')
     const lieuxInclusionViewModel = handleReadModelOrError(
       lieuxInclusionReadModel,
@@ -128,20 +131,11 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       />
     )
   }
-  let departementCode: null | string = null
-  // Gestion du gestionnaire de structure
-  if (utilisateur.role.type === 'gestionnaire_structure') {
-    const structureId = utilisateur.structureId
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoire = await territoireUseCase.handle(utilisateur)
 
-    if (structureId !== null) {
-      // Chercher le département de la gouvernance auquel la structure appartient
-      const membreLoader = new PrismaMembreLoader()
-      departementCode = await membreLoader.getDepartementCodeByStructureId(structureId)
-    }
-  } else if (utilisateur.role.type === 'gestionnaire_departement') {
-    departementCode = utilisateur.departementCode
-  }
-  if (departementCode !== null) {
+  if (territoire.type === 'departement' && territoire.codes.length > 0) {
+    const departementCode = territoire.codes[0]
     // Charger les données du tableau de bord pour ce département
     const lieuxInclusionReadModel = await lieuxInclusionLoader.get(departementCode)
     const lieuxInclusionViewModel = handleReadModelOrError(

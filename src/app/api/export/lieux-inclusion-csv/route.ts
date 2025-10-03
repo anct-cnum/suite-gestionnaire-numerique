@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import prisma from '../../../../../prisma/prismaClient'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -13,12 +16,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const utilisateurLoader = new PrismaUtilisateurLoader()
-    const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+    const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+    const utilisateur = await utilisateurLoader.get(await getSessionSub())
+
+    const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+    const territoireResult = await territoireUseCase.handle(utilisateur)
 
     let territoireDepartement: string | undefined
-    if (utilisateur.role.type === 'gestionnaire_departement' && utilisateur.departementCode !== null) {
-      territoireDepartement = utilisateur.departementCode
+    if (territoireResult.type === 'france') {
+      territoireDepartement = undefined
+    } else if (territoireResult.codes.length > 0) {
+      territoireDepartement = territoireResult.codes[0]
+    } else {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
     // Récupération des paramètres de filtre depuis l'URL

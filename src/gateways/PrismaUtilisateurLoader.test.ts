@@ -15,6 +15,7 @@ describe('prisma utilisateur query', () => {
   describe('chercher un utilisateur', () => {
     it.each([
       {
+        displayMenusPilotage: false,
         isGestionnaireDepartement: false,
         role: 'administrateur_dispositif',
         roleReadModel: {
@@ -27,6 +28,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        displayMenusPilotage: true,
         isGestionnaireDepartement: true,
         role: 'gestionnaire_departement',
         roleReadModel: {
@@ -39,6 +41,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        displayMenusPilotage: false,
         isGestionnaireDepartement: false,
         role: 'gestionnaire_groupement',
         roleReadModel: {
@@ -51,6 +54,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        displayMenusPilotage: false,
         isGestionnaireDepartement: false,
         role: 'gestionnaire_region',
         roleReadModel: {
@@ -63,6 +67,7 @@ describe('prisma utilisateur query', () => {
         },
       },
       {
+        displayMenusPilotage: true,
         isGestionnaireDepartement: false,
         role: 'gestionnaire_structure',
         roleReadModel: {
@@ -74,7 +79,7 @@ describe('prisma utilisateur query', () => {
           type: 'gestionnaire_structure',
         },
       },
-    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ isGestionnaireDepartement, role, roleReadModel }) => {
+    ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ displayMenusPilotage, isGestionnaireDepartement, role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await creerUneRegion()
@@ -97,6 +102,7 @@ describe('prisma utilisateur query', () => {
       expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
         departementCode: '75',
         derniereConnexion: epochTime,
+        displayMenusPilotage,
         email: 'martin.tartempion@example.net',
         groupementId: 10,
         inviteLe: epochTime,
@@ -190,6 +196,7 @@ describe('prisma utilisateur query', () => {
           {
             departementCode: '75',
             derniereConnexion: epochTime,
+            displayMenusPilotage: true,
             email: 'martin.tartempion@example.net',
             groupementId: null,
             inviteLe: epochTime,
@@ -214,6 +221,7 @@ describe('prisma utilisateur query', () => {
           {
             departementCode: null,
             derniereConnexion: epochTime,
+            displayMenusPilotage: false,
             email: 'martin.tartempion@example.net',
             groupementId: null,
             inviteLe: epochTime,
@@ -531,8 +539,8 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement({ code: '75' })
       await creerUneStructure({ departementCode: '75' })
       await creerUneStructure({ departementCode: codeDepartement, id: 11 })
-      await creerUnUtilisateur({ departementCode: codeDepartement, nom: 'a', ssoId })
-      await creerUnUtilisateur({ departementCode: '75', nom: 'b', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ departementCode: codeDepartement, nom: 'a', role: 'gestionnaire_departement', ssoId })
+      await creerUnUtilisateur({ departementCode: '75', nom: 'b', role: 'gestionnaire_departement', ssoEmail: 'nicolas.james@example.com', ssoId: '123456' })
       await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.net', ssoId: '1234567', structureId: 10 })
       await creerUnUtilisateur({ ssoEmail: 'nicolas.james@example.org', ssoId: '1234568', structureId: 11 })
 
@@ -568,10 +576,10 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement({ code: '10', regionCode: '21' })
       await creerUneStructure({ departementCode: '75' })
       await creerUneStructure({ departementCode: '10', id: 11 })
-      await creerUnUtilisateur({ nom: 'a', regionCode: codeRegion, ssoId })
-      await creerUnUtilisateur({ nom: 'b', regionCode: '21', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' })
-      await creerUnUtilisateur({ departementCode: '75', nom: 'c', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' })
-      await creerUnUtilisateur({ departementCode: '10', nom: 'D', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' })
+      await creerUnUtilisateur({ nom: 'a', regionCode: codeRegion, role: 'gestionnaire_region', ssoId })
+      await creerUnUtilisateur({ nom: 'b', regionCode: '21', role: 'gestionnaire_region', ssoEmail: 'kevin.durand@example.com', ssoId: '123456' })
+      await creerUnUtilisateur({ departementCode: '75', nom: 'c', role: 'gestionnaire_departement', ssoEmail: 'jean.lebrun@example.com', ssoId: '67890' })
+      await creerUnUtilisateur({ departementCode: '10', nom: 'D', role: 'gestionnaire_departement', ssoEmail: 'anthony.parquet@example.com', ssoId: 'azerty' })
       await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.net', ssoId: 'uiopq', structureId: 10 })
       await creerUnUtilisateur({ ssoEmail: 'anthony.parquet@example.org', ssoId: 'sdfghj', structureId: 11 })
 
