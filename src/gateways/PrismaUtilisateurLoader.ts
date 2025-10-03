@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { PrismaMembreLoader } from './PrismaMembreLoader'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
@@ -43,7 +44,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         throw new Error('Utilisateur non trouvé')
       }
     }
-    return transform(utilisateurRecord as UtilisateurEtSesRelationsRecord)
+    return await transformAsync(utilisateurRecord as UtilisateurEtSesRelationsRecord)
   }
 
   async mesUtilisateursEtLeTotal(
@@ -155,12 +156,12 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 
     return {
       total,
-      utilisateursCourants: utilisateursRecord.map(transform),
+      utilisateursCourants: await Promise.all(utilisateursRecord.map(transformAsync)),
     }
   }
 }
 
-function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
+async function transformAsync(utilisateurRecord: UtilisateurEtSesRelationsRecord): Promise<UnUtilisateurReadModel> {
   const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
 
   const roleType: RoleUtilisateur = ((): RoleUtilisateur => {
@@ -176,10 +177,14 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     }
   })()
 
-  // Pour un gestionnaire de structure, récupérer le code département depuis la structure
-  const departementCode = role.nom === 'Gestionnaire structure'
-    ? utilisateurRecord.relationStructure?.departementCode ?? null
-    : utilisateurRecord.departementCode
+  // Pour un gestionnaire de structure, récupérer le code département depuis la gouvernance
+  let departementCode: null | string
+  if (role.nom === 'Gestionnaire structure' && utilisateurRecord.structureId) {
+    const membreLoader = new PrismaMembreLoader()
+    departementCode = await membreLoader.getDepartementCodeByStructureId(utilisateurRecord.structureId)
+  } else {
+    departementCode = utilisateurRecord.departementCode
+  }
 
   return {
     departementCode,

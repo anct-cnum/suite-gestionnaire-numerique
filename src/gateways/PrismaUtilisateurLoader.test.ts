@@ -1,5 +1,5 @@
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
-import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnUtilisateur } from './testHelper'
+import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnUtilisateur, creerUneGouvernance, creerUnMembre, creerUnContact } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -86,6 +86,14 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement()
       await creerUneStructure()
       await creerUnGroupement()
+
+      // Pour un gestionnaire structure, créer un membre de gouvernance
+      if (role === 'gestionnaire_structure') {
+        await creerUneGouvernance({ departementCode: '75' })
+        await creerUnContact({ email: 'contact@example.com' })
+        await creerUnMembre({ contact: 'contact@example.com', gouvernanceDepartementCode: '75', statut: 'confirme', structureId: 10 })
+      }
+
       await creerUnUtilisateur({
         departementCode: '75',
         groupementId: 10,
