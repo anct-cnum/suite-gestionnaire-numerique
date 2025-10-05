@@ -1,5 +1,5 @@
 import { PrismaUtilisateurLoader } from './PrismaUtilisateurLoader'
-import { creerUnDepartement, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnUtilisateur, creerUneGouvernance, creerUnMembre, creerUnContact } from './testHelper'
+import { creerUnContact, creerUnDepartement, creerUneGouvernance, creerUneRegion, creerUneStructure, creerUnGroupement, creerUnMembre, creerUnUtilisateur } from './testHelper'
 import prisma from '../../prisma/prismaClient'
 import { Roles } from '@/domain/Role'
 import { epochTime } from '@/shared/testHelper'
@@ -66,19 +66,6 @@ describe('prisma utilisateur query', () => {
           type: 'gestionnaire_region',
         },
       },
-      {
-        displayMenusPilotage: true,
-        isGestionnaireDepartement: false,
-        role: 'gestionnaire_structure',
-        roleReadModel: {
-          categorie: 'structure',
-          doesItBelongToGroupeAdmin: false,
-          nom: 'Gestionnaire structure',
-          organisation: 'Solidarnum',
-          rolesGerables: ['Gestionnaire structure'],
-          type: 'gestionnaire_structure',
-        },
-      },
     ] as const)('quand je cherche un utilisateur $roleReadModel.nom qui existe par son ssoId alors je le trouve', async ({ displayMenusPilotage, isGestionnaireDepartement, role, roleReadModel }) => {
       // GIVEN
       const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
@@ -86,14 +73,6 @@ describe('prisma utilisateur query', () => {
       await creerUnDepartement()
       await creerUneStructure()
       await creerUnGroupement()
-
-      // Pour un gestionnaire structure, créer un membre de gouvernance
-      if (role === 'gestionnaire_structure') {
-        await creerUneGouvernance({ departementCode: '75' })
-        await creerUnContact({ email: 'contact@example.com' })
-        await creerUnMembre({ contact: 'contact@example.com', gouvernanceDepartementCode: '75', statut: 'confirme', structureId: 10 })
-      }
-
       await creerUnUtilisateur({
         departementCode: '75',
         groupementId: 10,
@@ -127,7 +106,57 @@ describe('prisma utilisateur query', () => {
       })
     })
 
-    it('quand je cherche un utilisateur qui n’existe pas par son ssoId alors je ne le trouve pas', async () => {
+    it('quand je cherche un utilisateur Gestionnaire structure qui existe par son ssoId alors je le trouve avec le département de sa gouvernance', async () => {
+      // GIVEN
+      const ssoIdExistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
+      await creerUneRegion()
+      await creerUnDepartement()
+      await creerUneStructure()
+      await creerUnGroupement()
+      await creerUneGouvernance({ departementCode: '75' })
+      await creerUnContact({ email: 'contact@example.com' })
+      await creerUnMembre({ contact: 'contact@example.com', gouvernanceDepartementCode: '75', statut: 'confirme', structureId: 10 })
+      await creerUnUtilisateur({
+        departementCode: '75',
+        groupementId: 10,
+        regionCode: '11',
+        role: 'gestionnaire_structure',
+        ssoId: ssoIdExistant,
+        structureId: 10,
+      })
+
+      // WHEN
+      const utilisateurReadModel = await new PrismaUtilisateurLoader().findByUid(ssoIdExistant)
+
+      // THEN
+      expect(utilisateurReadModel).toStrictEqual<UnUtilisateurReadModel>({
+        departementCode: '75',
+        derniereConnexion: epochTime,
+        displayMenusPilotage: true,
+        email: 'martin.tartempion@example.net',
+        groupementId: 10,
+        inviteLe: epochTime,
+        isActive: true,
+        isGestionnaireDepartement: false,
+        isSuperAdmin: false,
+        nom: 'Tartempion',
+        prenom: 'Martin',
+        regionCode: '11',
+        role: {
+          categorie: 'structure',
+          doesItBelongToGroupeAdmin: false,
+          nom: 'Gestionnaire structure',
+          organisation: 'Solidarnum',
+          rolesGerables: ['Gestionnaire structure'],
+          type: 'gestionnaire_structure',
+        },
+        structureId: 10,
+        telephone: '0102030405',
+        uid: ssoIdExistant,
+      })
+    })
+
+    it('quand je cherche un utilisateur qui n\'existe pas par son ssoId alors je ne le trouve pas', async () => {
       // GIVEN
       const ssoIdInexistant = '7396c91e-b9f2-4f9d-8547-5e7b3302725b'
       await creerUnUtilisateur({ ssoId: '1234567890' })

@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client'
 
 import { organisation, toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
-import { PrismaMembreLoader } from './PrismaMembreLoader'
 import prisma from '../../prisma/prismaClient'
 import { Role } from '@/domain/Role'
 import { MesUtilisateursLoader, UtilisateursCourantsEtTotalReadModel } from '@/use-cases/queries/RechercherMesUtilisateurs'
@@ -16,7 +15,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructure: {
+          include: {
+            membres: {
+              select: {
+                gouvernanceDepartementCode: true,
+              },
+              take: 1,
+              where: {
+                statut: 'confirme',
+              },
+            },
+          },
+        },
       },
       where: {
         isSupprime: false,
@@ -30,7 +41,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
             relationDepartement: true,
             relationGroupement: true,
             relationRegion: true,
-            relationStructure: true,
+            relationStructure: {
+              include: {
+                membres: {
+                  select: {
+                    gouvernanceDepartementCode: true,
+                  },
+                  take: 1,
+                  where: {
+                    statut: 'confirme',
+                  },
+                },
+              },
+            },
           },
           where: {
             isSupprime: false,
@@ -44,7 +67,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         throw new Error('Utilisateur non trouvé')
       }
     }
-    return await transformAsync(utilisateurRecord as UtilisateurEtSesRelationsRecord)
+    return transform(utilisateurRecord as UtilisateurAvecMembresRecord)
   }
 
   async mesUtilisateursEtLeTotal(
@@ -141,7 +164,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructure: {
+          include: {
+            membres: {
+              select: {
+                gouvernanceDepartementCode: true,
+              },
+              take: 1,
+              where: {
+                statut: 'confirme',
+              },
+            },
+          },
+        },
       },
       orderBy: {
         nom: 'asc',
@@ -156,12 +191,18 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
 
     return {
       total,
-      utilisateursCourants: await Promise.all(utilisateursRecord.map(transformAsync)),
+      utilisateursCourants: utilisateursRecord.map(transform),
     }
   }
 }
 
-async function transformAsync(utilisateurRecord: UtilisateurEtSesRelationsRecord): Promise<UnUtilisateurReadModel> {
+type UtilisateurAvecMembresRecord = {
+  relationStructure: ({
+    membres: ReadonlyArray<{ gouvernanceDepartementCode: string }>
+  } & UtilisateurEtSesRelationsRecord['relationStructure']) | null
+} & Omit<UtilisateurEtSesRelationsRecord, 'relationStructure'>
+
+function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisateurReadModel {
   const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
 
   const roleType: RoleUtilisateur = ((): RoleUtilisateur => {
@@ -177,14 +218,10 @@ async function transformAsync(utilisateurRecord: UtilisateurEtSesRelationsRecord
     }
   })()
 
-  // Pour un gestionnaire de structure, récupérer le code département depuis la gouvernance
-  let departementCode: null | string
-  if (role.nom === 'Gestionnaire structure' && utilisateurRecord.structureId) {
-    const membreLoader = new PrismaMembreLoader()
-    departementCode = await membreLoader.getDepartementCodeByStructureId(utilisateurRecord.structureId)
-  } else {
-    departementCode = utilisateurRecord.departementCode
-  }
+  // Pour un gestionnaire de structure, récupérer le code département depuis les membres de gouvernance
+  const departementCode = role.nom === 'Gestionnaire structure'
+    ? utilisateurRecord.relationStructure?.membres[0]?.gouvernanceDepartementCode ?? null
+    : utilisateurRecord.departementCode
 
   return {
     departementCode,
@@ -212,3 +249,4 @@ async function transformAsync(utilisateurRecord: UtilisateurEtSesRelationsRecord
     uid: utilisateurRecord.ssoId,
   }
 }
+

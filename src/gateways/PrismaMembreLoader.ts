@@ -11,7 +11,6 @@ export class PrismaMembreLoader {
         structureId,
       },
     })
-
     return membre?.gouvernanceDepartementCode ?? null
   }
 }
