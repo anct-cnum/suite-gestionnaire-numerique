@@ -3,6 +3,7 @@ import { GetUtilisateurRepository } from '../commands/shared/UtilisateurReposito
 import { gouvernanceReadModelFactory } from '../testHelper'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
+import { Membre } from '@/gateways/shared/MembresGouvernance'
 import { epochTime } from '@/shared/testHelper'
 
 describe('recupérer une gouvernance', () => {
@@ -369,6 +370,10 @@ class GouvernanceLoaderSpy implements UneGouvernanceLoader {
   async get(codeDepartement: string): Promise<UneGouvernanceReadModel> {
     spiedCodeDepartement = codeDepartement
     return Promise.resolve(uneGouvernance)
+  }
+
+  async getMembres(): Promise<ReadonlyArray<Membre>> {
+    return Promise.resolve([])
   }
 }
 

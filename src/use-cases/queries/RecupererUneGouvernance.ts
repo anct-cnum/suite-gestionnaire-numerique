@@ -2,6 +2,7 @@ import { GetUtilisateurRepository } from '../commands/shared/UtilisateurReposito
 import { QueryHandler } from '../QueryHandler'
 import { MembreAvecRoleDansLaGouvernance } from './RecupererLesFeuillesDeRoute'
 import { Gouvernance } from '@/domain/Gouvernance'
+import { isCoporteur, Membre } from '@/gateways/shared/MembresGouvernance'
 
 export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernanceReadModel> {
   readonly #loader: UneGouvernanceLoader
@@ -24,10 +25,14 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
             .map(toMembreDetailIntitulerReadModel),
         },
       }))
+
+    // Récupérer les membres pour extraire les co-porteurs via FK structure_id
+    const membres = await this.#loader.getMembres(query.codeDepartement)
+    const membresCoporteurs = createMembresCoporteurs(membres)
+
     const utilisateurCourant = await this.#repository.get(query.uidUtilisateurCourant)
     const peutVoirNotePrivee = Gouvernance.laNotePriveePeutEtreGereePar(utilisateurCourant, readModel.uid)
-    const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid)
-
+    const peutGererGouvernance = Gouvernance.peutEtreGereePar(utilisateurCourant, readModel.uid, membresCoporteurs)
     // Met les dates des comites à undefined si elles sont dans le passé
     const comites = readModel.comites?.map((comite) => ({
       ...comite,
@@ -45,6 +50,7 @@ export class RecupererUneGouvernance implements QueryHandler<Query, UneGouvernan
 
 export interface UneGouvernanceLoader {
   get(codeDepartement: string): Promise<UneGouvernanceLoaderReadModel>
+  getMembres(codeDepartement: string): Promise<ReadonlyArray<Membre>>
 }
 
 export type UneGouvernanceLoaderReadModel = Readonly<{
@@ -179,4 +185,15 @@ function toMembreDetailIntitulerReadModel(membre: CoporteurDetailReadModel): Cop
 }
 function isPrefectureDepartementale(coporteur: CoporteurDetailReadModel): boolean {
   return coporteur.type === 'Préfecture départementale'
+}
+
+function createMembresCoporteurs(membres: ReadonlyArray<Membre>):
+Array<{ isCoporteur: boolean; structureUid: number }> {
+  return membres
+    .filter(isCoporteur)
+    .filter((membre): membre is { structureId: number } & Membre => membre.structureId !== undefined)
+    .map(membre => ({
+      isCoporteur: true,
+      structureUid: membre.structureId,
+    }))
 }

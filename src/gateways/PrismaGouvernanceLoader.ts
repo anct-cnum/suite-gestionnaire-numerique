@@ -45,6 +45,26 @@ export class PrismaGouvernanceLoader implements UneGouvernanceLoader {
     return this.#transform(gouvernanceRecord, membreConfirmesGouvernance)
   }
 
+  async getMembres(codeDepartement: string): Promise<ReadonlyArray<Membre>> {
+    const membreConfirmesGouvernance = await this.#membreDao.findMany({
+      include: membreInclude,
+      where: {
+        AND: [
+          {
+            statut: {
+              equals: 'confirme',
+            },
+          },
+          {
+            gouvernanceDepartementCode: codeDepartement,
+          },
+        ],
+      },
+    })
+
+    return toMembres(membreConfirmesGouvernance)
+  }
+
   #transform(
     gouvernanceRecord: Prisma.GouvernanceRecordGetPayload<{ include: typeof include }>,
     membresConfirmesGouvernance: ReadonlyArray<Prisma.MembreRecordGetPayload<{ include: typeof membreInclude }>>

@@ -2,12 +2,15 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import prisma from '../../../../../../prisma/prismaClient'
 import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import TableauDeBord from '@/components/TableauDeBord/TableauDeBord'
 import TableauDeBordAdmin from '@/components/TableauDeBord/TableauDeBordAdmin'
-import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { Administrateur } from '@/domain/Administrateur'
+import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceTableauDeBordLoader } from '@/gateways/PrismaGouvernanceTableauDeBordLoader'
-import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
+import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { PrismaAccompagnementsRealisesLoader } from '@/gateways/tableauDeBord/PrismaAccompagnementsRealisesLoader'
 import { PrismaBeneficiairesLoader } from '@/gateways/tableauDeBord/PrismaBeneficiairesLoader'
 import { PrismaFinancementsAdminLoader } from '@/gateways/tableauDeBord/PrismaFinancementsAdminLoader'
@@ -26,6 +29,7 @@ import { indiceConfianceDepartementsAvecStatsPresenter, indiceFragiliteDeparteme
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { mediateursEtAidantsPresenter } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { tableauDeBordPresenter } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
   title: 'Mon tableau de bord',
@@ -38,8 +42,8 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurLoader()
-  const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
+  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
+  const utilisateur = await utilisateurLoader.get(await getSessionSub())
 
   // Chargement des données communes
   const lieuxInclusionLoader = new PrismaLieuxInclusionNumeriqueLoader()
@@ -51,7 +55,7 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
   const beneficiairesLoader = new PrismaBeneficiairesLoader()
 
   // Si administrateur, charger les données pour la France entière
-  if (utilisateur.role.type === 'administrateur_dispositif') {
+  if (utilisateur instanceof Administrateur) {
     const lieuxInclusionReadModel = await lieuxInclusionLoader.get('France')
     const lieuxInclusionViewModel = handleReadModelOrError(
       lieuxInclusionReadModel,
@@ -127,65 +131,74 @@ export default async function TableauDeBordController(): Promise<ReactElement> {
       />
     )
   }
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoire = await territoireUseCase.handle(utilisateur)
 
-  // Tableau de bord du gestionnaire de département
-  const departementCode = utilisateur.departementCode ?? ''
+  if (territoire.type === 'departement' && territoire.codes.length > 0) {
+    const departementCode = territoire.codes[0]
+    // Charger les données du tableau de bord pour ce département
+    const lieuxInclusionReadModel = await lieuxInclusionLoader.get(departementCode)
+    const lieuxInclusionViewModel = handleReadModelOrError(
+      lieuxInclusionReadModel,
+      lieuxInclusionNumeriquePresenter
+    )
+
+    const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(departementCode)
+    const mediateursEtAidantsViewModel = handleReadModelOrError(
+      mediateursEtAidantsReadModel,
+      mediateursEtAidantsPresenter
+    )
+
+    const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(departementCode)
+    const accompagnementsRealisesViewModel = handleReadModelOrError(
+      accompagnementsRealisesReadModel,
+      accompagnementsRealisesPresenter
+    )
+
+    const indicesReadModel = await indicesLoader.getForDepartement(departementCode)
+    const indicesFragilite = handleReadModelOrError(
+      indicesReadModel,
+      indiceFragilitePresenter
+    )
+
+    const financementsReadModel = await financementsLoader.get(departementCode)
+    const financementsViewModel = handleReadModelOrError(
+      financementsReadModel,
+      financementsPrefPresenter
+    )
+
+    const gouvernanceReadModel = await gouvernanceLoader.get(departementCode)
+    const gouvernanceViewModel = handleReadModelOrError(
+      gouvernanceReadModel,
+      gouvernancePrefPresenter
+    )
+
+    const beneficiairesReadModel = await beneficiairesLoader.get(departementCode)
+    const beneficiairesViewModel = handleReadModelOrError(
+      beneficiairesReadModel,
+      beneficiairesPresenter
+    )
+
+    const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
+
+    return (
+      <TableauDeBord
+        accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
+        beneficiairesViewModel={beneficiairesViewModel}
+        departement={departementCode}
+        financementsViewModel={financementsViewModel}
+        gouvernanceViewModel={gouvernanceViewModel}
+        indicesFragilite={indicesFragilite}
+        lieuxInclusionViewModel={lieuxInclusionViewModel}
+        mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
+        tableauDeBordViewModel={tableauDeBordViewModel}
+      />
+    )
+  }
   
-  const lieuxInclusionReadModel = await lieuxInclusionLoader.get(departementCode)
-  const lieuxInclusionViewModel = handleReadModelOrError(
-    lieuxInclusionReadModel,
-    lieuxInclusionNumeriquePresenter
-  )
-
-  const mediateursEtAidantsReadModel = await mediateursEtAidantsLoader.get(departementCode)
-  const mediateursEtAidantsViewModel = handleReadModelOrError(
-    mediateursEtAidantsReadModel,
-    mediateursEtAidantsPresenter
-  )
-
-  const accompagnementsRealisesReadModel = await accompagnementsRealisesLoader.get(departementCode)
-  const accompagnementsRealisesViewModel = handleReadModelOrError(
-    accompagnementsRealisesReadModel,
-    accompagnementsRealisesPresenter
-  )
-
-  const indicesReadModel = await indicesLoader.getForDepartement(departementCode)
-  const indicesFragilite = handleReadModelOrError(
-    indicesReadModel,
-    indiceFragilitePresenter
-  )
-
-  const financementsReadModel = await financementsLoader.get(departementCode)
-  const financementsViewModel = handleReadModelOrError(
-    financementsReadModel,
-    financementsPrefPresenter
-  )
-
-  const gouvernanceReadModel = await gouvernanceLoader.get(departementCode)
-  const gouvernanceViewModel = handleReadModelOrError(
-    gouvernanceReadModel,
-    gouvernancePrefPresenter
-  )
-
-  const beneficiairesReadModel = await beneficiairesLoader.get(departementCode)
-  const beneficiairesViewModel = handleReadModelOrError(
-    beneficiairesReadModel,
-    beneficiairesPresenter
-  )
-
-  const tableauDeBordViewModel = tableauDeBordPresenter(departementCode)
-
   return (
-    <TableauDeBord 
-      accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
-      beneficiairesViewModel={beneficiairesViewModel}
-      departement={departementCode}
-      financementsViewModel={financementsViewModel}
-      gouvernanceViewModel={gouvernanceViewModel}
-      indicesFragilite={indicesFragilite}
-      lieuxInclusionViewModel={lieuxInclusionViewModel}
-      mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-      tableauDeBordViewModel={tableauDeBordViewModel}
-    />
+    <div>
+      Rôle incorrect
+    </div>
   )
 }

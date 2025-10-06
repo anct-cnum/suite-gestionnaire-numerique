@@ -1,3 +1,4 @@
+import { TypologieRole } from '@/domain/Role'
 import { FiltreFormations, FiltreGeographique, FiltreHabilitations, FiltreRoles, FiltresListeAidants } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 
 // Types pour les paramètres d'URL
@@ -29,7 +30,7 @@ export function parseURLParamsToFiltresInternes(params: URLSearchParams): Filtre
 export function buildFiltresListeAidants(
   params: FiltresURLParams,
   territoire: string,
-  utilisateurRole: string,
+  utilisateurRole: TypologieRole,
   limite = 10
 ): FiltresListeAidants {
   const { codeDepartement, codeRegion, formations, habilitations, page, roles } = params
@@ -37,7 +38,7 @@ export function buildFiltresListeAidants(
   // Construction du filtre géographique - seulement pour les administrateurs
   let filtreGeographique: FiltreGeographique | undefined
 
-  if (utilisateurRole === 'administrateur_dispositif') {
+  if (utilisateurRole === 'Administrateur dispositif') {
     if (codeDepartement !== undefined && codeDepartement !== '') {
       filtreGeographique = {
         code: codeDepartement,
@@ -76,7 +77,7 @@ export function buildFiltresListeAidants(
 export function buildFiltresForExport(
   params: FiltresURLParams,
   territoire: string,
-  utilisateurRole: string
+  utilisateurRole: TypologieRole
 ): FiltresListeAidants {
   const filtres = buildFiltresListeAidants(params, territoire, utilisateurRole)
   return {

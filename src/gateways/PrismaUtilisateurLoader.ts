@@ -15,7 +15,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructure: {
+          include: {
+            membres: {
+              select: {
+                gouvernanceDepartementCode: true,
+              },
+              take: 1,
+              where: {
+                statut: 'confirme',
+              },
+            },
+          },
+        },
       },
       where: {
         isSupprime: false,
@@ -29,7 +41,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
             relationDepartement: true,
             relationGroupement: true,
             relationRegion: true,
-            relationStructure: true,
+            relationStructure: {
+              include: {
+                membres: {
+                  select: {
+                    gouvernanceDepartementCode: true,
+                  },
+                  take: 1,
+                  where: {
+                    statut: 'confirme',
+                  },
+                },
+              },
+            },
           },
           where: {
             isSupprime: false,
@@ -43,7 +67,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         throw new Error('Utilisateur non trouvé')
       }
     }
-    return transform(utilisateurRecord as UtilisateurEtSesRelationsRecord)
+    return transform(utilisateurRecord as UtilisateurAvecMembresRecord)
   }
 
   async mesUtilisateursEtLeTotal(
@@ -140,7 +164,19 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructure: {
+          include: {
+            membres: {
+              select: {
+                gouvernanceDepartementCode: true,
+              },
+              take: 1,
+              where: {
+                statut: 'confirme',
+              },
+            },
+          },
+        },
       },
       orderBy: {
         nom: 'asc',
@@ -160,7 +196,13 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   }
 }
 
-function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilisateurReadModel {
+type UtilisateurAvecMembresRecord = {
+  relationStructure: ({
+    membres: ReadonlyArray<{ gouvernanceDepartementCode: string }>
+  } & UtilisateurEtSesRelationsRecord['relationStructure']) | null
+} & Omit<UtilisateurEtSesRelationsRecord, 'relationStructure'>
+
+function transform(utilisateurRecord: UtilisateurAvecMembresRecord): UnUtilisateurReadModel {
   const role = new Role(toTypologieRole(utilisateurRecord.role), organisation(utilisateurRecord)).state
 
   const roleType: RoleUtilisateur = ((): RoleUtilisateur => {
@@ -176,9 +218,15 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     }
   })()
 
+  // Pour un gestionnaire de structure, récupérer le code département depuis les membres de gouvernance
+  const departementCode = role.nom === 'Gestionnaire structure'
+    ? utilisateurRecord.relationStructure?.membres[0]?.gouvernanceDepartementCode ?? null
+    : utilisateurRecord.departementCode
+
   return {
-    departementCode: utilisateurRecord.departementCode,
+    departementCode,
     derniereConnexion: utilisateurRecord.derniereConnexion ?? new Date(0),
+    displayMenusPilotage: role.nom === 'Gestionnaire département' || role.nom === 'Gestionnaire structure',
     email: utilisateurRecord.emailDeContact,
     groupementId: utilisateurRecord.groupementId,
     inviteLe: utilisateurRecord.inviteLe,
@@ -201,3 +249,4 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): UnUtilis
     uid: utilisateurRecord.ssoId,
   }
 }
+

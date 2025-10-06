@@ -17,6 +17,7 @@ export function utilisateurReadModelFactory(
   return {
     departementCode: null,
     derniereConnexion: epochTime,
+    displayMenusPilotage: false,
     email: 'martin.tartempion@example.net',
     groupementId: null,
     inviteLe: epochTime,

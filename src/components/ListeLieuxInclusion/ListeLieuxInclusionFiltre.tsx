@@ -6,6 +6,7 @@ import { SelectInstance } from 'react-select'
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import Select from '../shared/Select/Select'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import { TypologieRole } from '@/domain/Role'
 import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
 import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUtils'
@@ -48,7 +49,7 @@ export default function ListeLieuxInclusionFiltre({
     const params = new URLSearchParams()
 
     // Filtre géographique - seulement pour les administrateur_dispositif
-    if (utilisateurRole === 'administrateur_dispositif' && selectedZone) {
+    if (utilisateurRole === 'Administrateur dispositif' && selectedZone) {
       const geoParams = zoneGeographiqueToURLSearchParams(selectedZone)
       geoParams.forEach((value, key) => {
         // Adapter les clés pour correspondre à notre système
@@ -107,7 +108,7 @@ export default function ListeLieuxInclusionFiltre({
         Filtrer les lieux
       </h1>
       <div className="fr-p-2w">
-        {utilisateurRole === 'administrateur_dispositif' && (
+        {utilisateurRole ===  'Administrateur dispositif' && (
           <>
             <FiltrerParZonesGeographiques
               ref={ref}
@@ -212,5 +213,5 @@ type Props = Readonly<{
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
   typesStructure: Array<{ code: string; nom: string }>
-  utilisateurRole: string
+  utilisateurRole: TypologieRole
 }>
