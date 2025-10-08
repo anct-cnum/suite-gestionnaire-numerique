@@ -22,8 +22,8 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
         <h5 className="fr-text--md fr-mb-2w">
           Précisez les publics accueillis dans ce lieu
         </h5>
-        <span className="fr-tag fr-tag--mg">
-          <span className="fr-icon-user-line fr-icon--mg fr-mr-1w"  />
+        <span className="fr-tag fr-tag--sm">
+          <span className="fr-icon-user-heart-line fr-icon--mg fr-mr-1w"  />
           {' '}
           Tout public
         </span>

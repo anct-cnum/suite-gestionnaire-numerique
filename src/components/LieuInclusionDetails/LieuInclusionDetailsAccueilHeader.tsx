@@ -8,6 +8,13 @@ export default function LieuInclusionDetailsAccueilHeader(): ReactElement {
           <span
             aria-hidden="true"
             className="fr-icon-map-pin-2-line fr-icon--xl fr-mr-1w fr-text-label--blue-france "
+            style={{
+              backgroundColor: 'var(--blue-france-975-75)',
+              borderRadius: '0.5rem',
+              height: '0.5rem',
+              padding: '0.5rem',
+              width: '0.5rem',
+            }}
           />
         </div>
         <h2 className="fr-h4 fr-mb-1w fr-text-label--blue-france">

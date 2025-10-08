@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { ReactElement, useState } from 'react'
 
 import { PersonneTravaillantData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
@@ -17,7 +18,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
         <h2 className="fr-h5 fr-text-title--blue-france fr-mb-0">
           <span
             aria-hidden="true"
-            className="fr-icon-user-line fr-icon--sm fr-mr-1w"
+            className="fr-icon-account-circle-line fr-icon--sm fr-mr-1w"
           />
           {' '}
           Personnes identifiées travaillant dans ce lieu
@@ -35,7 +36,14 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
       <h2 className="fr-h5 fr-text-title--blue-france fr-m-0">
         <span
           aria-hidden="true"
-          className="fr-icon-user-line fr-icon--sm fr-mr-1w"
+          className="fr-icon-account-circle-line fr-icon--md fr-mr-1w fr-text-title--blue-france"
+          style={{
+            backgroundColor: 'var(--blue-france-975-75)',
+            borderRadius: '0.5rem',
+            height: '0.5rem',
+            padding: '0.5rem',
+            width: '0.5rem',
+          }}
         />
         Personnes identifiées travaillant dans ce lieu
         ·
@@ -55,13 +63,14 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
             </h3>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-text--sm">
               {typeof personne.role === 'string' && (
-                <div className="fr-col-auto">
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-user-line fr-icon--sm fr-mr-1v"
-                    style={{ color: 'var(--red-marianne-main-472)' }}
+                <div className="fr-col-auto fr-grid-row fr-grid-row--middle">
+                  <Image
+                    alt=""
+                    height={25}
+                    src={`${process.env.NEXT_PUBLIC_HOST}/conum.svg`}
+                    width={25}
                   />
-                  <span className="fr-text--sm">
+                  <span className="fr-text--sm fr-ml-1v fr-mb-0">
                     {personne.role}
                   </span>
                 </div>
@@ -73,7 +82,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
                     aria-hidden="true"
                     className="fr-icon-mail-line fr-icon--sm fr-mr-1v"
                   />
-                  <span className="fr-text--sm">
+                  <span className="fr-text--sm fr-ml-1v">
                     {personne.email}
                   </span>
                 </div>

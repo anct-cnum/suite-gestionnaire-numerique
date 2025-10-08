@@ -8,11 +8,23 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
   const allThematiques = data.flatMap(service => service.thematiques)
   const uniqueThematiques = [...new Set(allThematiques)]
 
-  const typeAccompagnementLabels = [
-    'Accompagnement individuel',
-    'Atelier collectif',
-    'En autonomie',
-    'À distance',
+  const typeAccompagnements = [
+    {
+      icon: 'fr-icon-user-line',
+      label: 'Accompagnement individuel',
+    },
+    {
+      icon: 'fr-icon-team-line',
+      label: 'Atelier collectif',
+    },
+    {
+      icon: 'fr-icon-checkbox-circle-line',
+      label: 'En autonomie',
+    },
+    {
+      icon: 'fr-icon-computer-line',
+      label: 'À distance',
+    },
   ]
 
   return (
@@ -22,7 +34,10 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
           <h4 className="fr-h6 fr-mb-1v">
             Services & types d&apos;accompagnement
           </h4>
-          <p className="fr-text--sm fr-mb-2w">
+          <p
+            className="fr-text--sm fr-mb-2w"
+            style={{ color: 'var(--grey-425-625)' }}
+          >
             Renseigner les les services et les types d&apos;accompagnements proposés dans ce lieu.
           </p>
         </div>
@@ -52,19 +67,29 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
       </div>
 
       <div>
-        <h5 className="fr-text--md fr-mb-1w">
+        <h5
+          className="fr-text--md fr-mb-1w"
+          style={{ color: 'var(--grey-50-1000)' }}
+        >
           Types d&apos;accompagnements proposés
         </h5>
         <div className="fr-tags-group">
-          {typeAccompagnementLabels.map((label) => (
-            <span
-              className="fr-tag fr-text--xl"
-              key={label}
-              style={{ backgroundColor: 'var(--blue-france-975-75)' }}
+          {typeAccompagnements.map((type) => (
+            <div
+              className="fr-tag"
+              key={type.label}
+              style={{
+                backgroundColor: 'var(--blue-france-975-75)',
+                fontSize: '1.125rem',
+                padding: '0.75rem 1rem',
+              }}
             >
-              <span className="fr-icon-user-line fr-icon--xl fr-mr-1v" />
-              {label}
-            </span>
+              <span
+                className={`${type.icon} fr-icon--lg fr-mr-1v`}
+                style={{ color: 'var(--blue-france-sun-113-625)' }}
+              />
+              {type.label}
+            </div>
           ))}
         </div>
       </div>
