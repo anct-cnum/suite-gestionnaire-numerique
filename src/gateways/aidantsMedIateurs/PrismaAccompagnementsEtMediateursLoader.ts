@@ -114,18 +114,32 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
       const habilitesAidantsConnect = aidantsConnectData.length
 
       // Structures employeuses des médiateurs labellisés Aidants Connect
-      const structureEmployeuseIds = [...new Set(aidantsConnectData
-        .map(aidant => aidant.structureId)
-        .filter((id): id is number => id !== null))]
-      
-      const structuresHabiliteesList = structureEmployeuseIds.length > 0
+      // Récupère toutes les structures employeuses actuelles (pas seulement celle de la vue)
+      const structuresHabiliteesList = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ count: bigint }>>`
             SELECT COUNT(DISTINCT s.id) AS count
-            FROM main.structure s
-            WHERE s.structure_ac_id IS NOT NULL
-              AND s.id = ANY(${structureEmployeuseIds}::bigint[])
+            FROM main.personne p
+            JOIN main.personne_affectations pa ON pa.personne_id = p.id
+            JOIN main.structure s ON pa.structure_id = s.id
+            WHERE pa.type = 'structure_emploi'
+              AND pa.suppression IS NULL
+              AND p.is_active_ac = true
+              AND p.is_mediateur = true
+              AND s.structure_ac_id IS NOT NULL
           `
-        : [{ count: 0n }]
+        : await prisma.$queryRaw<Array<{ count: bigint }>>`
+            SELECT COUNT(DISTINCT s.id) AS count
+            FROM main.personne p
+            JOIN main.personne_affectations pa ON pa.personne_id = p.id
+            JOIN main.structure s ON pa.structure_id = s.id
+            JOIN main.adresse a ON s.adresse_id = a.id
+            WHERE pa.type = 'structure_emploi'
+              AND pa.suppression IS NULL
+              AND p.is_active_ac = true
+              AND p.is_mediateur = true
+              AND s.structure_ac_id IS NOT NULL
+              AND a.departement = ${territoire}
+          `
       const structuresHabilitees = Number(structuresHabiliteesList[0]?.count || 0)   
 
       // Calcul du pourcentage de médiateurs formés
