@@ -45,24 +45,44 @@ export default function ListeAidantsMediateurInfos({
     )
   }
 
-  return (
-    <section
-      aria-labelledby="ListeAidantsMediateursInfo"
-      className="fr-pb-3w"
-    >
-      <div className="fr-container-fluid">
-        <div className="fr-grid-row fr-grid-row--gutters">
-          {renderAidantsMediateursInfoCard({
-            description: 'Aidants et médiateurs numériques',
-            indicateur: formaterEnNombreFrancais(viewModel.totalActeursNumerique),
-            legends: `dont **${formaterEnNombreFrancais(viewModel.totalConseillersNumerique)} conseillers numériques**`,
-          })}
-          {renderAidantsMediateursInfoCard({
-            description: 'Accompagnements',
-            indicateur: hasActiveFilters ? '-' : formaterEnNombreFrancais(viewModel.totalAccompagnements),
-            legends: 'sur les 30 derniers jours',
-          })}
-          <AsyncLoaderErrorBoundary
+  function getFilterInfos(): ReactElement {
+    return (
+      <>
+        {renderAidantsMediateursInfoCard({
+          description: 'Accompagnements',
+          indicateur: hasActiveFilters ? '-' : formaterEnNombreFrancais(viewModel.totalAccompagnements),
+          legends: 'sur les 30 derniers jours',
+        })}
+        <AsyncLoaderErrorBoundary
+          fallback={
+            <div
+              className="fr-col-12 fr-col-md-4"
+              style={{
+                height: '7rem',
+              }}
+            >
+              <div
+                className="fr-background-alt--blue-france fr-p-2w"
+                style={{
+                  borderRadius: '1rem',
+                  gap: '1rem',
+                  height: '7rem',
+                }}
+              >
+                <div className="fr-h5 fr-text-title--blue-france fr-m-0">
+                  -
+                </div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
+                  Bénéficiaires accompagnés
+                </div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
+                  sur les 30 derniers jours
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <Suspense
             fallback={
               <div
                 className="fr-col-12 fr-col-md-4"
@@ -79,7 +99,7 @@ export default function ListeAidantsMediateurInfos({
                   }}
                 >
                   <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                    -
+                    ...
                   </div>
                   <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
                     Bénéficiaires accompagnés
@@ -91,41 +111,29 @@ export default function ListeAidantsMediateurInfos({
               </div>
             }
           >
-            <Suspense
-              fallback={
-                <div
-                  className="fr-col-12 fr-col-md-4"
-                  style={{
-                    height: '7rem',
-                  }}
-                >
-                  <div
-                    className="fr-background-alt--blue-france fr-p-2w"
-                    style={{
-                      borderRadius: '1rem',
-                      gap: '1rem',
-                      height: '7rem',
-                    }}
-                  >
-                    <div className="fr-h5 fr-text-title--blue-france fr-m-0">
-                      ...
-                    </div>
-                    <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
-                      Bénéficiaires accompagnés
-                    </div>
-                    <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
-                      sur les 30 derniers jours
-                    </div>
-                  </div>
-                </div>
-              }
-            >
-              <BeneficiairesAsyncCard
-                hasActiveFilters={hasActiveFilters}
-                totalBeneficiairesPromise={totalBeneficiairesPromise}
-              />
-            </Suspense>
-          </AsyncLoaderErrorBoundary>
+            <BeneficiairesAsyncCard
+              hasActiveFilters={hasActiveFilters}
+              totalBeneficiairesPromise={totalBeneficiairesPromise}
+            />
+          </Suspense>
+        </AsyncLoaderErrorBoundary>
+      </>
+    )
+  }
+
+  return (
+    <section
+      aria-labelledby="ListeAidantsMediateursInfo"
+      className="fr-pb-3w"
+    >
+      <div className="fr-container-fluid">
+        <div className="fr-grid-row fr-grid-row--gutters">
+          {renderAidantsMediateursInfoCard({
+            description: 'Aidants et médiateurs numériques',
+            indicateur: formaterEnNombreFrancais(viewModel.totalActeursNumerique),
+            legends: `dont **${formaterEnNombreFrancais(viewModel.totalConseillersNumerique)} conseillers numériques**`,
+          })}
+          {!hasActiveFilters && getFilterInfos()}
         </div>
       </div>
     </section>
