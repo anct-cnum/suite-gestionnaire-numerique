@@ -69,9 +69,6 @@ model StructureRecord {
   type                     String
   categorieJuridique       String? @map("categorie_juridique") @db.VarChar(4)
 
-  utilisateurs UtilisateurRecord[]
-  membres      MembreRecord[]
-
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
   @@map("structure")
@@ -98,7 +95,7 @@ model UtilisateurRecord {
   ssoEmail          String    @unique @map("sso_email")
   telephone         String    @db.VarChar(13)
 
-  relationStructure   StructureRecord?   @relation(fields: [structureId], references: [id])
+  relationStructure   main_structure?    @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
   relationGroupement  GroupementRecord?  @relation(fields: [groupementId], references: [id])
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
@@ -212,7 +209,7 @@ model MembreRecord {
   relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
-  relationStructure        StructureRecord?                @relation(fields: [structureId], references: [id])
+  relationStructure        main_structure?                 @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
@@ -674,6 +671,8 @@ model main_structure {
   activites_coop                      activites_coop[]
   personne_affectations               personne_affectations[]
   poste                               poste[]
+  utilisateurs                        UtilisateurRecord[]
+  membres                             MembreRecord[]
   adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
   categories_juridiques               categories_juridiques?  @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
 
