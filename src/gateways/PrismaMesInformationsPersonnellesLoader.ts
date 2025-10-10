@@ -1,4 +1,6 @@
-import { toTypologieRole, UtilisateurEtSesRelationsRecord } from './shared/RoleMapper'
+import { Prisma } from '@prisma/client'
+
+import { toTypologieRole } from './shared/RoleMapper'
 import prisma from '../../prisma/prismaClient'
 import { MesInformationsPersonnellesLoader, MesInformationsPersonnellesReadModel } from '@/use-cases/queries/RecupererMesInformationsPersonnelles'
 
@@ -11,7 +13,11 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
         relationDepartement: true,
         relationGroupement: true,
         relationRegion: true,
-        relationStructure: true,
+        relationStructure: {
+          include: {
+            adresse: true,
+          },
+        },
       },
       where: {
         ssoId: uid,
@@ -22,7 +28,20 @@ export class PrismaMesInformationsPersonnellesLoader implements MesInformationsP
   }
 }
 
-function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInformationsPersonnellesReadModel {
+type UtilisateurAvecStructureEtAdresse = Prisma.UtilisateurRecordGetPayload<{
+  include: {
+    relationDepartement: true
+    relationGroupement: true
+    relationRegion: true
+    relationStructure: {
+      include: {
+        adresse: true
+      }
+    }
+  }
+}>
+
+function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInformationsPersonnellesReadModel {
   let mesInformationsPersonnelles: MesInformationsPersonnellesReadModel = {
     emailDeContact: utilisateurRecord.emailDeContact,
     nom: utilisateurRecord.nom,
@@ -32,20 +51,38 @@ function transform(utilisateurRecord: UtilisateurEtSesRelationsRecord): MesInfor
   }
 
   if (utilisateurRecord.relationStructure) {
-    const { adresse, codePostal, commune } = utilisateurRecord.relationStructure
+    const structure = utilisateurRecord.relationStructure
+
+    // Construire l'adresse depuis la relation adresse uniquement
+    const adresseComplete = structure.adresse
+      ? `${structure.adresse.nom_voie ?? ''} ${structure.adresse.code_postal ?? ''} ${structure.adresse.nom_commune ?? ''}`.trim()
+      : ''
+
+    // Lire le contact JSON au format:
+    // { nom, prenom, courriels: { mail_gestionnaire } }
+    const contact = structure.contact as {
+      courriels?: {
+        mail_gestionnaire?: string
+      }
+      nom?: string
+      prenom?: string
+    } | null
+
+    const email = contact?.courriels?.mail_gestionnaire ?? ''
+
     mesInformationsPersonnelles = {
       ...mesInformationsPersonnelles,
       structure: {
-        adresse: `${adresse}, ${codePostal} ${commune}`,
+        adresse: adresseComplete,
         contact: {
-          email: utilisateurRecord.relationStructure.contact.email,
-          fonction: utilisateurRecord.relationStructure.contact.fonction,
-          nom: utilisateurRecord.relationStructure.contact.nom,
-          prenom: utilisateurRecord.relationStructure.contact.prenom,
+          email,
+          fonction: '',
+          nom: contact?.nom ?? '',
+          prenom: contact?.prenom ?? '',
         },
-        numeroDeSiret: utilisateurRecord.relationStructure.identifiantEtablissement,
-        raisonSociale: utilisateurRecord.relationStructure.nom,
-        typeDeStructure: utilisateurRecord.relationStructure.type,
+        numeroDeSiret: structure.siret ?? '',
+        raisonSociale: structure.nom,
+        typeDeStructure: structure.typologies?.[0] ?? '',
       },
     }
   }

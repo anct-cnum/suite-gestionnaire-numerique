@@ -89,6 +89,7 @@ export class AjouterUnMembre implements CommandHandler<Command> {
   }
 }
 
+
 type Failure = 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
 
 type Command = Readonly<{
