@@ -75,6 +75,13 @@ export abstract class Utilisateur extends Entity<UtilisateurState> {
     this.#inviteLe = new ValidDate(inviteLe, 'dateDInvitationInvalide')
   }
 
+  changerDepartement(): Result<UtilisateurFailure> {
+    if (this.#isSuperAdmin) {
+      return 'OK'
+    }
+    return 'utilisateurNonAutoriseAChangerSonDepartement'
+  }
+
   changerEmail(email: string): Result<UtilisateurFailure> {
     return Exception.toResult<UtilisateurFailure>(() => {
       this.#emailDeContact = new Email(email)
@@ -141,6 +148,7 @@ export type UtilisateurFailure =
   | 'nomAbsent'
   | 'prenomAbsent'
   | 'telephoneInvalide'
+  | 'utilisateurNonAutoriseAChangerSonDepartement'
   | 'utilisateurNonAutoriseAChangerSonRole'
 
 export class Nom extends ValueObject<AttributUtilisateurState> {
