@@ -13,6 +13,7 @@ import { ajouterUneNoteDeContexteAction } from '@/app/api/actions/ajouterUneNote
 import { ajouterUneNoteDeContextualisationAction } from '@/app/api/actions/ajouterUneNoteDeContextualisationAction'
 import { ajouterUneNotePriveeAction } from '@/app/api/actions/ajouterUneNotePriveeAction'
 import { ajouterUnMembreAction } from '@/app/api/actions/ajouterUnMembreAction'
+import { changerMonDepartementAction } from '@/app/api/actions/changerMonDepartementAction'
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
@@ -57,6 +58,7 @@ export default function ClientContext({
       ajouterUneNoteDeContextualisationAction,
       ajouterUneNotePriveeAction,
       ajouterUnMembreAction,
+      changerMonDepartementAction,
       changerMonRoleAction,
       definirUnCoPorteurAction,
       inviterUnUtilisateurAction,
@@ -107,6 +109,7 @@ export type ClientContextProviderValue = Readonly<{
   ajouterUneNoteDeContextualisationAction: typeof ajouterUneNoteDeContextualisationAction
   ajouterUneNotePriveeAction: typeof ajouterUneNotePriveeAction
   ajouterUnMembreAction: typeof ajouterUnMembreAction
+  changerMonDepartementAction: typeof changerMonDepartementAction
   changerMonRoleAction: typeof changerMonRoleAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction

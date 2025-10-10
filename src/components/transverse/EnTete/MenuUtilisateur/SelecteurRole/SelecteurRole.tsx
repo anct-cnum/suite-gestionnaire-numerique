@@ -14,12 +14,14 @@ export default function SelecteurRole({ ariaControlsId }: Props): ReactElement {
       id="role"
       name="role"
       onChange={changerDeRole}
-      options={roles.map((role) => ({
-        id: role,
-        isSelected: role === sessionUtilisateurViewModel.role.nom,
-        label: role,
-        value: role,
-      }))}
+      options={roles
+        .filter((role) => role !== 'Gestionnaire groupement' && role !== 'Gestionnaire région')
+        .map((role) => ({
+          id: role,
+          isSelected: role === sessionUtilisateurViewModel.role.nom,
+          label: role,
+          value: role,
+        }))}
     >
       Rôle
     </Select>
