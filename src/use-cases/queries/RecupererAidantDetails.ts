@@ -30,6 +30,9 @@ export type AidantDetailsErrorReadModel = Readonly<{
 
 type AccompagnementsReadModel = Readonly<{
   avecAidantsConnect: number
+  individuels: number
+  nombreAteliers: number
+  participationsAteliers: number
   total: number
 }>
 

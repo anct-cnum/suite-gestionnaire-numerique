@@ -56,6 +56,9 @@ export const StatistiquesElevees: Story = {
       ...createDefaultStatistiquesActivitesData(),
       accompagnements: {
         avecAidantsConnect: 150,
+        individuels: 800,
+        nombreAteliers: 50,
+        participationsAteliers: 450,
         total: 1250,
       },
       beneficiaires: {
@@ -75,6 +78,9 @@ export const AucuneActivite: Story = {
       ...createDefaultStatistiquesActivitesData(),
       accompagnements: {
         avecAidantsConnect: 0,
+        individuels: 0,
+        nombreAteliers: 0,
+        participationsAteliers: 0,
         total: 0,
       },
       beneficiaires: {

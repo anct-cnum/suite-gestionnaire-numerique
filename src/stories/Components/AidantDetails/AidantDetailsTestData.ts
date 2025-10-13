@@ -29,6 +29,9 @@ export function createDefaultStatistiquesActivitesData(): StatistiquesActivitesD
   return {
     accompagnements: {
       avecAidantsConnect: 45,
+      individuels: 82,
+      nombreAteliers: 15,
+      participationsAteliers: 45,
       total: 127,
     },
     beneficiaires: {
