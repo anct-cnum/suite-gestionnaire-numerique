@@ -23,6 +23,9 @@ export type InformationsPersonnellesData = Readonly<{
 export type StatistiquesActivitesData = Readonly<{
   accompagnements: Readonly<{
     avecAidantsConnect: number
+    individuels: number
+    nombreAteliers: number
+    participationsAteliers: number
     total: number
   }>
   beneficiaires: Readonly<{

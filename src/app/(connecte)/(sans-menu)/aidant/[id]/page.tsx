@@ -38,7 +38,7 @@ async function AidantPage({ params, searchParams }: Props) : Promise<ReactElemen
   }
 
   // Transformer les données via le presenteur
-  const presentedData = presentAidantDetails(aidantResult)
+  const presentedData = presentAidantDetails(aidantResult, new Date())
   return (
     <AidantDetails data={presentedData} />
   )

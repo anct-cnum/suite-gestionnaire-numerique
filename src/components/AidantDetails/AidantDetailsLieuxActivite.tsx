@@ -5,7 +5,8 @@ import { isNullish } from '@/shared/lang'
 
 export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
   const { data: lieuxActivite, nom, prenom } = props
-
+  const lieux = lieuxActivite
+    .filter(lieu => lieu.nom !== 'Structure inconnue')
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
       <h2 className="fr-h3 fr-mb-1w">
@@ -15,7 +16,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
         Les lieux d&apos;activités du médiateur
       </p>
 
-      {lieuxActivite.length === 0 ? (
+      {lieux.length === 0 ? (
         <div
           style={{ backgroundColor: 'var(--blue-france-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
         >
@@ -37,7 +38,7 @@ export default function AidantDetailsLieuxActivite(props: Props): ReactElement {
       ) : (
         <>
           <hr className="fr-hr " />
-          {lieuxActivite.map((lieu, index) => (
+          {lieux.map((lieu, index) => (
             <React.Fragment key={lieu.nom}>
               <div className="fr-grid-row fr-grid-row--middle fr-mb-2w">
                 <div className="fr-col-12 fr-col-md-10">

@@ -59,6 +59,25 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         WHERE main.activites_coop.personne_id = ${personneId}
         GROUP BY main.activites_coop.personne_id
       `
+      // Récupérer les accompagnements individuels
+      const accompagnementsIndividuelsResult = await prisma.$queryRaw<Array<{ total_individuels: number }>>`
+        SELECT
+          COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_individuels
+        FROM main.activites_coop
+        WHERE main.activites_coop.personne_id = ${personneId}
+          AND main.activites_coop.type = 'individuel'
+        GROUP BY main.activites_coop.personne_id
+      `
+      // Récupérer les ateliers collectifs
+      const ateliersResult = await prisma.$queryRaw<Array<{ nombre_ateliers: number; total_participations: number }>>`
+        SELECT
+          COALESCE(COUNT(*), 0) as nombre_ateliers,
+          COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_participations
+        FROM main.activites_coop
+        WHERE main.activites_coop.personne_id = ${personneId}
+          AND main.activites_coop.type = 'collectif'
+        GROUP BY main.activites_coop.personne_id
+      `
       // Récupérer les accompagnements AidantConnect
       const accompagnementsAcResult = await prisma.$queryRaw<Array<{ total_accompagnements_ac: number }>>`
         SELECT
@@ -70,13 +89,14 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       let graphiqueData: Array<{ date: string; totalAccompagnements: number }>
 
       if (graphiquePeriode === 'journalier') {
-        // Requête par jour
+        // Requête par jour - 30 derniers jours uniquement
         const graphiqueJourResult = await prisma.$queryRaw<Array<{ date: string; total_accompagnements: number }>>`
           SELECT
             main.activites_coop.date::text as date,
             COALESCE(SUM(main.activites_coop.accompagnements), 0) as total_accompagnements
           FROM main.activites_coop
           WHERE main.activites_coop.personne_id = ${personneId}
+            AND main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
           GROUP BY main.activites_coop.date
           ORDER BY main.activites_coop.date
         `
@@ -86,7 +106,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           totalAccompagnements: Number(row.total_accompagnements),
         }))
       } else {
-        // Requête par mois (par défaut)
+        // Requête par mois (par défaut) - 12 derniers mois uniquement
         const graphiqueMoisResult = await prisma.$queryRaw<Array<{ mois: string; total_accompagnements: number }>>`
           SELECT
             TO_CHAR(DATE_TRUNC('month', ac.date), 'YYYY-MM') AS mois,
@@ -95,6 +115,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           LEFT JOIN main.activites_coop ac
             ON ac.personne_id = p.id
           WHERE p.id = ${personneId}
+            AND ac.date >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '12 months')
           GROUP BY DATE_TRUNC('month', ac.date)
           ORDER BY DATE_TRUNC('month', ac.date)
         `
@@ -144,11 +165,20 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
         Number(accompagnementsCoopResult[0].total_accompagnements) : 0
       const totalAccompagnementsAc = accompagnementsAcResult.length > 0 ?
         Number(accompagnementsAcResult[0].total_accompagnements_ac) : 0
+      const totalIndividuels = accompagnementsIndividuelsResult.length > 0 ?
+        Number(accompagnementsIndividuelsResult[0].total_individuels) : 0
+      const nombreAteliers = ateliersResult.length > 0 ?
+        Number(ateliersResult[0].nombre_ateliers) : 0
+      const totalParticipationsAteliers = ateliersResult.length > 0 ?
+        Number(ateliersResult[0].total_participations) : 0
 
       return this.mapToReadModel(
         personne,
         totalAccompagnementsCoop,
         totalAccompagnementsAc,
+        totalIndividuels,
+        nombreAteliers,
+        totalParticipationsAteliers,
         graphiqueData,
         lieuxActiviteResult
       )
@@ -207,6 +237,9 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     personne: PersonneEnrichieResult,
     totalAccompagnementsCoop: number,
     totalAccompagnementsAc: number,
+    totalIndividuels: number,
+    nombreAteliers: number,
+    totalParticipationsAteliers: number,
     graphiqueData: ReadonlyArray<Readonly<{ date: string; totalAccompagnements: number }>>,
     lieuxActiviteData: ReadonlyArray<LieuActiviteResult>
   ): AidantDetailsReadModel {
@@ -216,6 +249,9 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
     return {
       accompagnements: {
         avecAidantsConnect: totalAccompagnementsAc,
+        individuels: totalIndividuels,
+        nombreAteliers,
+        participationsAteliers: totalParticipationsAteliers,
         total: totalAccompagnementsCoop + totalAccompagnementsAc,
       },
       coopId: personne.aidant_coop_uid ?? '',
