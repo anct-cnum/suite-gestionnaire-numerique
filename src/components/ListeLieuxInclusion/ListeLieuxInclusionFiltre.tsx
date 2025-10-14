@@ -4,8 +4,8 @@ import { ReactElement, useEffect, useId, useRef, useState } from 'react'
 import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
+import Checkbox from '../shared/Checkbox/Checkbox'
 import Select from '../shared/Select/Select'
-import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { TypologieRole } from '@/domain/Role'
 import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 import { LabelValue } from '@/presenters/shared/labels'
@@ -14,7 +14,6 @@ import { FiltresLieuxInclusionInternes } from '@/shared/filtresLieuxInclusionUti
 export default function ListeLieuxInclusionFiltre({
   closeDrawer,
   currentFilters,
-  labelId,
   onFilterAction,
   onResetAction,
   typesStructure,
@@ -32,6 +31,18 @@ export default function ListeLieuxInclusionFiltre({
   const qpvCheckboxId = useId()
   const frrCheckboxId = useId()
   const horsZonePrioritaireCheckboxId = useId()
+
+  const typologiesTerritoire = [
+    { checked: isQpvSelected, id: qpvCheckboxId, label: 'QPV', name: 'qpv', onChange: setIsQpvSelected },
+    { checked: isFrrSelected, id: frrCheckboxId, label: 'FRR', name: 'frr', onChange: setIsFrrSelected },
+    {
+      checked: isHorsZonePrioritaireSelected,
+      id: horsZonePrioritaireCheckboxId,
+      label: 'Hors zone prioritaire',
+      name: 'horsZonePrioritaire',
+      onChange: setIsHorsZonePrioritaireSelected,
+    },
+  ]
 
   // Synchroniser l'état du filtre avec les filtres actuels
   useEffect(() => {
@@ -99,108 +110,60 @@ export default function ListeLieuxInclusionFiltre({
   ]
 
   return (
-    <div className="fr-modal__content">
-      <h1
-        className="fr-modal__title"
-        id={labelId}
+    <div >
+      {utilisateurRole ===  'Administrateur dispositif' && (
+        <>
+          <FiltrerParZonesGeographiques
+            ref={ref}
+            setZoneGeographique={handleZoneGeographiqueChange}
+          />
+          <hr className="fr-hr" />
+        </>
+      )}
+
+      <Select<string>
+        id={structureTypeSelectId}
+        name="typeStructure"
+        onChange={(event) => { setSelectedStructureType(event.target.value) }}
+        options={typesStructureOptions}
+        placeholder="Choisir un type"
       >
-        <TitleIcon icon="filter-line" />
-        Filtrer les lieux
-      </h1>
-      <div className="fr-p-2w">
-        {utilisateurRole ===  'Administrateur dispositif' && (
-          <>
-            <FiltrerParZonesGeographiques
-              ref={ref}
-              setZoneGeographique={handleZoneGeographiqueChange}
-            />
+        Par typologie de structure
+      </Select>
 
-            <hr className="fr-hr" />
-          </>
-        )}
+      <div className="fr-fieldset">
+        <legend className="fr-fieldset__legend fr-text--regular">
+          Typologie de territoire
+        </legend>
+        {typologiesTerritoire.map(({ checked, id, label, name, onChange }) => (
+          <Checkbox
+            id={id}
+            isSelected={checked}
+            key={name}
+            label={name}
+            onChange={(event) => { onChange(event.target.checked) }}
+            value={name}
+          >
+            {label}
+          </Checkbox>
+        ))}
+      </div>
 
-        <Select<string>
-          id={structureTypeSelectId}
-          name="typeStructure"
-          onChange={(event) => { setSelectedStructureType(event.target.value) }}
-          options={typesStructureOptions}
-          placeholder="Choisir un type"
+      <div className="fr-btns-group fr-mt-3w">
+        <button
+          className="fr-btn"
+          onClick={handleApplyFilters}
+          type="button"
         >
-          Par typologie de structure
-        </Select>
-
-        <div className="fr-fieldset">
-          <legend className="fr-fieldset__legend fr-text--regular">
-            Typologie de territoire
-          </legend>
-          <div className="fr-fieldset__content">
-            <div className="fr-checkbox-group">
-              <input
-                checked={isQpvSelected}
-                id={qpvCheckboxId}
-                name="qpv"
-                onChange={(event) => { setIsQpvSelected(event.target.checked) }}
-                type="checkbox"
-                value="qpv"
-              />
-              <label
-                className="fr-label"
-                htmlFor={qpvCheckboxId}
-              >
-                QPV
-              </label>
-            </div>
-            <div className="fr-checkbox-group">
-              <input
-                checked={isFrrSelected}
-                id={frrCheckboxId}
-                name="frr"
-                onChange={(event) => { setIsFrrSelected(event.target.checked) }}
-                type="checkbox"
-                value="frr"
-              />
-              <label
-                className="fr-label"
-                htmlFor={frrCheckboxId}
-              >
-                FRR
-              </label>
-            </div>
-            <div className="fr-checkbox-group">
-              <input
-                checked={isHorsZonePrioritaireSelected}
-                id={horsZonePrioritaireCheckboxId}
-                name="horsZonePrioritaire"
-                onChange={(event) => { setIsHorsZonePrioritaireSelected(event.target.checked) }}
-                type="checkbox"
-                value="horsZonePrioritaire"
-              />
-              <label
-                className="fr-label"
-                htmlFor={horsZonePrioritaireCheckboxId}
-              >
-                Hors zone prioritaire
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="fr-btns-group fr-mt-3w">
-          <button
-            className="fr-btn"
-            onClick={handleApplyFilters}
-            type="button"
-          >
-            Afficher les lieux
-          </button>
-          <button
-            className="fr-btn fr-btn--secondary"
-            onClick={handleReset}
-            type="button"
-          >
-            Réinitialiser
-          </button>
-        </div>
+          Afficher les lieux
+        </button>
+        <button
+          className="fr-btn fr-btn--secondary"
+          onClick={handleReset}
+          type="button"
+        >
+          Réinitialiser
+        </button>
       </div>
     </div>
   )
@@ -209,7 +172,6 @@ export default function ListeLieuxInclusionFiltre({
 type Props = Readonly<{
   closeDrawer(): void
   currentFilters: FiltresLieuxInclusionInternes
-  labelId: string
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
   typesStructure: Array<{ code: string; nom: string }>

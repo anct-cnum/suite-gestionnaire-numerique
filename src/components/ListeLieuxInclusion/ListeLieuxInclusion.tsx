@@ -13,6 +13,7 @@ import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import ListeLieuxInclusionInfo from '@/components/ListeLieuxInclusion/ListeLieuxInclusionInfo'
+import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
@@ -156,7 +157,6 @@ export default function ListeLieuxInclusion({
 
   return (
     <>
-
       <div className="fr-grid-row fr-grid-row--middle">
         <div className="fr-col">
           <PageTitle>
@@ -370,12 +370,18 @@ export default function ListeLieuxInclusion({
         isOpen={isDrawerOpen}
         labelId={labelId}
       >
+        <DrawerTitle id={labelId}>
+          <TitleIcon
+            icon="filter-line"
+          />
+          <br />
+          Filtrer les lieux
+        </DrawerTitle>
         <ListeLieuxInclusionFiltre
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
           currentFilters={parseURLParamsToFiltresLieuxInclusionInternes(normalizedSearchParams)}
-          labelId={labelId}
           onFilterAction={onFilter}
           onResetAction={onReset}
           typesStructure={typesStructure}

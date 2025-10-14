@@ -5,7 +5,6 @@ import { SelectInstance } from 'react-select'
 
 import FiltrerParZonesGeographiques from '../MesUtilisateurs/FiltrerParZonesGeographiques'
 import CheckboxGroup from '../shared/CheckboxGroup/CheckboxGroup'
-import DrawerTitle from '../shared/DrawerTitle/DrawerTitle'
 import { TypologieRole } from '@/domain/Role'
 import { toutesLesRegions, ZoneGeographique, zoneGeographiqueToURLSearchParams } from '@/presenters/filtresUtilisateurPresenter'
 
@@ -13,7 +12,6 @@ export default function ListeAidantsMediateursFiltre({
   closeDrawer,
   currentFilters,
   id,
-  labelId,
   onFilterAction,
   onResetAction,
   utilisateurRole,
@@ -79,79 +77,75 @@ export default function ListeAidantsMediateursFiltre({
   }
 
   return (
-    <>
-      <DrawerTitle id={labelId}>
-        Filtrer les aidants et médiateurs
-      </DrawerTitle>
-      <div className="sidepanel__content">
-        {utilisateurRole === 'Administrateur dispositif' && (
-          <>
-            <FiltrerParZonesGeographiques
-              ref={ref}
-              setZoneGeographique={handleZoneGeographiqueChange}
-            />
+    <div className="sidepanel__content">
+      {utilisateurRole === 'Administrateur dispositif' && (
+        <>
+          <FiltrerParZonesGeographiques
+            ref={ref}
+            setZoneGeographique={handleZoneGeographiqueChange}
+          />
 
-            <hr className="fr-hr" />
-          </>
-        )}
+          <hr className="fr-hr" />
+        </>
+      )}
 
-        <CheckboxGroup
-          legend="Par rôle"
-          name="roles"
-          onChange={setSelectedRoles}
-          options={[
-            { label: 'Médiateur', value: 'Médiateur' },
-            { label: 'Coordinateur', value: 'Coordinateur' },
-            { label: 'Aidant', value: 'Aidant' },
-          ]}
-          selectedValues={selectedRoles}
-        />
+      <CheckboxGroup
+        legend="Par rôle"
+        name="roles"
+        onChange={setSelectedRoles}
+        options={[
+          { label: 'Médiateur', value: 'Médiateur' },
+          { label: 'Coordinateur', value: 'Coordinateur' },
+          { label: 'Aidant', value: 'Aidant' },
+        ]}
+        selectedValues={selectedRoles}
+      />
 
-        <CheckboxGroup
-          legend="Par habilitation/labellisation"
-          name="habilitations"
-          onChange={setSelectedHabilitations}
-          options={[
-            { label: 'Conseiller numérique', value: 'Conseiller numérique' },
-            { label: 'Aidants Connect', value: 'Aidants Connect' },
-            { label: 'Sans habilitation/labellisation', value: 'Sans habilitation/labellisation' },
-          ]}
-          selectedValues={selectedHabilitations}
-        />
+      <CheckboxGroup
+        legend="Par habilitation/labellisation"
+        name="habilitations"
+        onChange={setSelectedHabilitations}
+        options={[
+          { label: 'Conseiller numérique', value: 'Conseiller numérique' },
+          { label: 'Aidants Connect', value: 'Aidants Connect' },
+          { label: 'Sans habilitation/labellisation', value: 'Sans habilitation/labellisation' },
+        ]}
+        selectedValues={selectedHabilitations}
+      />
 
-        <CheckboxGroup
-          legend="Par formation"
-          name="formations"
-          onChange={setSelectedFormations}
-          options={[
-            { label: 'PIX', value: 'PIX' },
-            { label: 'REMN', value: 'REMN' },
-            { label: 'CCP2 & CCP3', value: 'CCP2 & CCP3' },
-            { label: 'CCP1', value: 'CCP1' },
-            { label: 'Sans formation', value: 'Sans formation' },
-          ]}
-          selectedValues={selectedFormations}
-        />
+      <CheckboxGroup
+        legend="Par formation"
+        name="formations"
+        onChange={setSelectedFormations}
+        options={[
+          { label: 'PIX', value: 'PIX' },
+          { label: 'REMN', value: 'REMN' },
+          { label: 'CCP2 & CCP3', value: 'CCP2 & CCP3' },
+          { label: 'CCP1', value: 'CCP1' },
+          { label: 'Sans formation', value: 'Sans formation' },
+        ]}
+        selectedValues={selectedFormations}
+      />
 
-        <div className="fr-btns-group fr-btns-group--space-between fr-mt-3w">
-          <button
-            className="fr-btn fr-btn--secondary fr-col-5"
-            onClick={reinitialiser}
-            type="button"
-          >
-            Réinitialiser
-          </button>
-          <button
-            aria-controls={id}
-            className="fr-btn fr-col-5"
-            onClick={appliquerFiltre}
-            type="button"
-          >
-            Appliquer
-          </button>
-        </div>
+      <div className="fr-btns-group fr-mt-3w">
+        <button
+          aria-controls={id}
+          className="fr-btn"
+          onClick={appliquerFiltre}
+          type="button"
+        >
+          Afficher
+        </button>
+        <button
+          className="fr-btn fr-btn--secondary"
+          onClick={reinitialiser}
+          type="button"
+        >
+          Réinitialiser
+        </button>
+
       </div>
-    </>
+    </div>
   )
 }
 
@@ -165,7 +159,6 @@ type Props = Readonly<{
     roles: Array<string>
   }
   id: string
-  labelId: string
   onFilterAction(params: URLSearchParams): void
   onResetAction(): void
   utilisateurRole: TypologieRole

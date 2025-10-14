@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactElement } from 'react'
+import React, { ChangeEvent, PropsWithChildren, ReactElement } from 'react'
 
 import { LabelValue } from '@/presenters/shared/labels'
 
@@ -7,6 +7,7 @@ export default function Checkbox({
   id,
   isSelected,
   label,
+  onChange,
   value,
 }: Props): ReactElement {
   return (
@@ -16,6 +17,7 @@ export default function Checkbox({
           defaultChecked={isSelected}
           id={id}
           name={label}
+          onChange={onChange}
           type="checkbox"
           value={value}
         />
@@ -30,4 +32,7 @@ export default function Checkbox({
   )
 }
 
-type Props = PropsWithChildren<LabelValue & Readonly<{ id: string }>>
+type Props = PropsWithChildren<LabelValue & Readonly<{
+  id: string
+  onChange?(event: ChangeEvent<HTMLInputElement>): void
+}>>
