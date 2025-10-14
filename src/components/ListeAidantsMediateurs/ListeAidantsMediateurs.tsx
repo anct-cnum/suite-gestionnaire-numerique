@@ -14,6 +14,7 @@ import Pagination from '../shared/Pagination/Pagination'
 import SpinnerSimple from '../shared/Spinner/SpinnerSimple'
 import Table from '../shared/Table/Table'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
+import DrawerTitle from '@/components/shared/DrawerTitle/DrawerTitle'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { TypologieRole } from '@/domain/Role'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
@@ -47,12 +48,12 @@ const AidantRow = memo(({
   readonly getAidantIcons: (labelisations: Array<'aidants connect' | 'conseiller numérique'>) => Array<{ alt: string; src: string }>
 }) => {
   const icons = useMemo(() => getAidantIcons(aidant.labelisations), [aidant.labelisations, getAidantIcons])
-  
+
   return (
     <tr style={{ height: '4rem' }}>
       <td>
         <div className="fr-grid-row fr-text--bold fr-grid-row--middle">
-          {aidant.nom} 
+          {aidant.nom}
           {' '}
           {aidant.prenom}
           {icons.map((icon) => (
@@ -189,7 +190,7 @@ export default function ListeAidantsMediateurs({
     setIsFilterLoading(true)
     router.push('/liste-aidants-mediateurs')
   }
-  
+
   // Fonction d'export CSV
   function handleExportCSV(): void {
     const exportParams = new URLSearchParams()
@@ -239,7 +240,7 @@ export default function ListeAidantsMediateurs({
 
   const getAidantIcons = useCallback((labelisations: Array<'aidants connect' | 'conseiller numérique'>): Array<{ alt: string; src: string }> => {
     const icons: Array<{ alt: string; src: string }> = []
-    
+
     if (labelisations.includes('conseiller numérique')) {
       icons.push({ alt: 'Conseiller numérique', src: '/conum.svg' })
     }
@@ -250,7 +251,7 @@ export default function ListeAidantsMediateurs({
 
     return icons
   }, [])
-  
+
   // Styles constants mémorisés
   const badgeStyle = useMemo(() => ({
     backgroundColor: 'transparent',
@@ -317,10 +318,10 @@ export default function ListeAidantsMediateurs({
           </div>
         </div>
       ) : null}
-      
+
       {/* Overlay de loading pendant la navigation */}
       {isPageLoading || isFilterLoading ? (
-        <div 
+        <div
           style={{
             alignItems: 'center',
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
@@ -340,7 +341,7 @@ export default function ListeAidantsMediateurs({
           />
         </div>
       ) : null}
-      
+
       <>
         <ListeAidantsMediateurInfos
           hasActiveFilters={getFiltresActifs().length > 0}
@@ -394,13 +395,19 @@ export default function ListeAidantsMediateurs({
         isOpen={isDrawerOpen}
         labelId={labelId}
       >
+        <DrawerTitle id={labelId}>
+          <TitleIcon
+            icon="filter-line"
+          />
+          <br />
+          Filtrer les aidants et médiateurs
+        </DrawerTitle>
         <ListeAidantsMediateursFiltre
           closeDrawer={() => {
             setIsDrawerOpen(false)
           }}
           currentFilters={parseURLParamsToFiltresInternes(normalizedSearchParams)}
           id={drawerId}
-          labelId={labelId}
           onFilterAction={onFilter}
           onResetAction={onReset}
           utilisateurRole={utilisateurRole}

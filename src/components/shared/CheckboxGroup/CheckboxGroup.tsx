@@ -2,6 +2,8 @@
 
 import { ReactElement } from 'react'
 
+import Checkbox from '../Checkbox/Checkbox'
+
 export default function CheckboxGroup({
   legend,
   name,
@@ -18,33 +20,22 @@ export default function CheckboxGroup({
   }
 
   return (
-    <fieldset className="fr-fieldset fr-mb-3w">
+    <fieldset className="fr-fieldset fr-mb-1w">
       <legend className="fr-fieldset__legend fr-text--regular">
         {legend}
       </legend>
-      <div className="fr-fieldset__content">
-        {options.map((option) => (
-          <div
-            className="fr-checkbox-group fr-mb-0w"
-            key={option.value}
-          >
-            <input
-              checked={(selectedValues ?? []).includes(option.value)}
-              id={`${name}-${option.value}`}
-              name={name}
-              onChange={(element) => { handleChange(option.value, element.target.checked) }}
-              type="checkbox"
-              value={option.value}
-            />
-            <label
-              className="fr-label"
-              htmlFor={`${name}-${option.value}`}
-            >
-              {option.label}
-            </label>
-          </div>
-        ))}
-      </div>
+      {options.map((option) => (
+        <Checkbox
+          id={`${name}-${option.value}`}
+          isSelected={(selectedValues ?? []).includes(option.value)}
+          key={option.value}
+          label={name}
+          onChange={(element) => { handleChange(option.value, element.target.checked) }}
+          value={option.value}
+        >
+          {option.label}
+        </Checkbox>
+      ))}
     </fieldset>
   )
 }
