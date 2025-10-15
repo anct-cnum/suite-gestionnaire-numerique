@@ -23,20 +23,42 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
     const territoireResult = await territoireUseCase.handle(utilisateur)
 
+    // Récupération des paramètres de filtre
+    const searchParams = request.nextUrl.searchParams
+    const codeDepartementDemande = searchParams.get('codeDepartement') ?? undefined
+    const codeRegionDemande = searchParams.get('codeRegion') ?? undefined
+
     let territoire: string
+    let codeDepartementFinal: string | undefined
+    let codeRegionFinal: string | undefined
+
     if (territoireResult.type === 'france') {
+      // Administrateur : peut filtrer par département ou région demandé
       territoire = 'France'
+      codeDepartementFinal = codeDepartementDemande
+      codeRegionFinal = codeRegionDemande
     } else if (territoireResult.codes.length > 0) {
+      // Gestionnaire département ou structure : limité à son département
       territoire = territoireResult.codes[0]
+
+      // Vérifier que le filtre demandé correspond bien au scope de l'utilisateur
+      if (codeDepartementDemande !== undefined && codeDepartementDemande !== territoire) {
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez exporter que les données de votre département' }, { status: 403 })
+      }
+      if (codeRegionDemande !== undefined) {
+        return NextResponse.json({ error: 'Accès refusé : vous ne pouvez pas filtrer par région' }, { status: 403 })
+      }
+
+      // Force le département de l'utilisateur
+      codeDepartementFinal = undefined // Le territoire sera utilisé par buildFiltresForExport
+      codeRegionFinal = undefined
     } else {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
     }
 
-    // Récupération des paramètres de filtre
-    const searchParams = request.nextUrl.searchParams
     const params: FiltresURLParams = {
-      codeDepartement: searchParams.get('codeDepartement') ?? undefined,
-      codeRegion: searchParams.get('codeRegion') ?? undefined,
+      codeDepartement: codeDepartementFinal,
+      codeRegion: codeRegionFinal,
       formations: searchParams.get('formations') ?? undefined,
       habilitations: searchParams.get('habilitations') ?? undefined,
       roles: searchParams.get('roles') ?? undefined,
