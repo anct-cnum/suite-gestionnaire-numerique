@@ -19,7 +19,6 @@ interface GouvernanceDetails {
   departementRegion: string
   dotationEtatMontant: number
   feuilleDeRouteCount: number
-  indiceDeConfiance: string
   membreCount: number
   montantEngager: Array<number>
 }
