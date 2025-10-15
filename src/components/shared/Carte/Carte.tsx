@@ -320,7 +320,7 @@ export default function Carte({ communesFragilite, departement }: Props): ReactE
         data-testid="legend-wrapper"
         style={{ width: '90%'  }}
       >
-        <Legend type="fragilite" />
+        <Legend />
       </div>
     </div>
   )

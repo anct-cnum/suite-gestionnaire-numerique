@@ -10,7 +10,7 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
       aria-labelledby="tableau"
     >
       <Table
-        enTetes={['Département', 'Membres', 'Feuille de route', 'Dotation État', 'Montant engagé', 'Co-finan. (i)', 'Montant total', 'Indice de confiance', '']}
+        enTetes={['Département', 'Membres', 'Feuille de route', 'Dotation État', 'Montant engagé', 'Co-finan. (i)', 'Montant total', '']}
         titre="Membres"
       >
         {details.map((detail: GouvernanceDetails) => {
@@ -90,11 +90,6 @@ export default function GouvernancesDetails({ details }: Props): ReactElement {
                 </span>
               </td>
               <td>
-                <span className={`fr-badge ${detail.indiceDeConfianceClass}`}>
-                  {detail.indiceDeConfiance}
-                </span>
-              </td>
-              <td>
                 <div style={{ textAlign: 'right' }}>
                   <Link
                     className="fr-btn fr-btn--secondary"
@@ -125,8 +120,6 @@ type GouvernanceDetails = {
   departementRegion: string
   dotationEtatMontant: number
   feuilleDeRouteCount: number
-  indiceDeConfiance: string
-  indiceDeConfianceClass: string
   membreCount: number
   montantEngager: Array<number>
 }

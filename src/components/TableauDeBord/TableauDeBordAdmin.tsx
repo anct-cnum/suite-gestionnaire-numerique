@@ -15,7 +15,7 @@ import { AccompagnementsRealisesViewModel } from '@/presenters/tableauDeBord/acc
 import { BeneficiairesViewModel } from '@/presenters/tableauDeBord/beneficiairesPresenter'
 import { FinancementAdminViewModel } from '@/presenters/tableauDeBord/financementAdminPresenter'
 import { GouvernanceAdminViewModel } from '@/presenters/tableauDeBord/gouvernanceAdminPresenter'
-import { DepartementFragilite, DepartementsConfianceAvecStats } from '@/presenters/tableauDeBord/indicesPresenter'
+import { DepartementFragilite } from '@/presenters/tableauDeBord/indicesPresenter'
 import { LieuxInclusionNumeriqueViewModel } from '@/presenters/tableauDeBord/lieuxInclusionNumeriquePresenter'
 import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediateursEtAidantsPresenter'
 import { TableauDeBordViewModel } from '@/presenters/tableauDeBord/tableauDeBordPresenter'
@@ -25,7 +25,6 @@ export default function TableauDeBordAdmin({
   beneficiairesViewModel,
   financementsViewModel,
   gouvernanceViewModel,
-  indicesConfianceAvecStats,
   indicesFragilite,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -59,13 +58,12 @@ export default function TableauDeBordAdmin({
         accompagnementsRealisesViewModel={accompagnementsRealisesViewModel}
         carte={
           <CarteIndicesFrance
-            departementsConfiance={indicesConfianceAvecStats}
             departementsFragilite={indicesFragilite}
           />
         }
         lieuxInclusionViewModel={lieuxInclusionViewModel}
         mediateursEtAidantsViewModel={mediateursEtAidantsViewModel}
-      /> 
+      />
       <GouvernanceAdmin
         gouvernanceViewModel={gouvernanceViewModel}
         lienGouvernance={tableauDeBordViewModel.liens.gouvernance}
@@ -87,7 +85,6 @@ type Props = Readonly<{
   beneficiairesViewModel: BeneficiairesViewModel | ErrorViewModel
   financementsViewModel: ErrorViewModel | FinancementAdminViewModel
   gouvernanceViewModel: ErrorViewModel | GouvernanceAdminViewModel
-  indicesConfianceAvecStats: DepartementsConfianceAvecStats | ErrorViewModel
   indicesFragilite:  Array<DepartementFragilite> | ErrorViewModel
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel
