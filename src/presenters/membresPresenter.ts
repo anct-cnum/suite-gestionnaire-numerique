@@ -32,6 +32,7 @@ export type MembresViewModel = Readonly<{
 export type MembreViewModel = Readonly<{
   adresse: string
   contactReferent: {
+    email: string
     intitule: string
     intituleCourt: string
   }
@@ -67,6 +68,7 @@ function toMembreViewModel(membre: MembreReadModel, uidGouvernance: string): Mem
   return {
     ...membre,
     contactReferent: {
+      email: contactReferent.email,
       intitule: `${nomComplet}, ${contactReferent.fonction} ${contactReferent.email}`,
       intituleCourt: nomComplet,
     },

@@ -339,6 +339,9 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
               <p className="fr-text--sm fr-text-mention--grey">
                 {membre.contactReferent.intituleCourt}
               </p>
+              <p className="fr-text--sm fr-text-mention--grey">
+                {membre.contactReferent.email}
+              </p>
             </td>
             <td>
               <div
