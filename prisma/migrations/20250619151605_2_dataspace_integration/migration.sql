@@ -1,4 +1,5 @@
 
+
 -- Name: EXTENSION citext; Type: COMMENT; Schema: -; Owner: 
 
 COMMENT ON EXTENSION citext IS 'data type for case-insensitive character strings';
@@ -57,6 +58,479 @@ ALTER FUNCTION admin.refresh_coll_terr() OWNER TO sonum;
 
 COMMENT ON FUNCTION admin.refresh_coll_terr() IS 'Fonction permettant de rafraichir la MV admin.coll_terr sans droits de propriétaire';
 
+
+-- Name: merge_structure(integer, integer); Type: FUNCTION; Schema: main; Owner: sonum
+
+CREATE FUNCTION main.merge_structure(v_winner integer, v_loser integer) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+  v_zero          timestamptz := '1234-01-02 03:04:05+00'::timestamptz; -- sentinelle UNIQUE
+  v_loser_coop    uuid;
+  v_winner_coop   uuid;
+  v_loser_carto   text;   -- structure_cartographie_nationale_id (texte composite)
+  v_winner_carto  text;
+BEGIN
+  ---------------------------------------------------------------------------
+  -- 0) Verrouiller + lire identifiants du loser & winner
+  ---------------------------------------------------------------------------
+  SELECT structure_coop_id, structure_cartographie_nationale_id
+    INTO v_loser_coop, v_loser_carto
+  FROM main.structure
+  WHERE id = v_loser
+  FOR UPDATE;
+
+  SELECT structure_coop_id, structure_cartographie_nationale_id
+    INTO v_winner_coop, v_winner_carto
+  FROM main.structure
+  WHERE id = v_winner
+  FOR UPDATE;
+
+  ---------------------------------------------------------------------------
+  -- 1) TRANSFERTS D’UNICITÉ (loser -> NULL ; winner <- valeurs loser)
+  ---------------------------------------------------------------------------
+  UPDATE main.structure
+  SET structure_coop_id                   = NULL,
+      structure_cartographie_nationale_id = NULL
+  WHERE id = v_loser;
+
+  IF v_loser_coop IS NOT NULL THEN
+    UPDATE main.structure SET structure_coop_id = v_loser_coop
+    WHERE id = v_winner;
+  END IF;
+
+  IF v_loser_carto IS NOT NULL THEN
+    UPDATE main.structure SET structure_cartographie_nationale_id = v_loser_carto
+    WHERE id = v_winner;
+  END IF;
+
+  SELECT structure_coop_id, structure_cartographie_nationale_id
+    INTO v_winner_coop, v_winner_carto
+  FROM main.structure
+  WHERE id = v_winner;
+
+  ---------------------------------------------------------------------------
+  -- 2) Fusionner champs informatifs (loser -> winner)
+  ---------------------------------------------------------------------------
+  UPDATE main.structure w
+  SET
+    denomination_sirene = COALESCE(w.denomination_sirene, l.denomination_sirene),
+    siret               = COALESCE(w.siret, l.siret),
+    rna                 = COALESCE(w.rna, l.rna),
+    adresse_id          = COALESCE(w.adresse_id, l.adresse_id),
+    etat_administratif  = COALESCE(w.etat_administratif, l.etat_administratif),
+    code_activite_principale = COALESCE(w.code_activite_principale, l.code_activite_principale),
+    categorie_juridique = COALESCE(w.categorie_juridique, l.categorie_juridique),
+    publique            = COALESCE(w.publique, l.publique),
+    visible_pour_cartographie_nationale = COALESCE(w.visible_pour_cartographie_nationale,
+                                                   l.visible_pour_cartographie_nationale),
+    nb_mandats_ac       = COALESCE(w.nb_mandats_ac, l.nb_mandats_ac),
+    contact             = COALESCE(w.contact, l.contact),
+    presentation_resume = COALESCE(w.presentation_resume, l.presentation_resume),
+    presentation_detail = COALESCE(w.presentation_detail, l.presentation_detail),
+    horaires            = COALESCE(w.horaires, l.horaires),
+    prise_rdv           = COALESCE(w.prise_rdv, l.prise_rdv),
+    structure_parente   = COALESCE(w.structure_parente, l.structure_parente),
+    services            = COALESCE(w.services, l.services),
+    publics_specifiquement_adresses = COALESCE(w.publics_specifiquement_adresses, l.publics_specifiquement_adresses),
+    prise_en_charge_specifique      = COALESCE(w.prise_en_charge_specifique, l.prise_en_charge_specifique),
+    typologies = CASE
+      WHEN w.typologies IS NOT NULL AND l.typologies IS NOT NULL THEN (
+        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.typologies || l.typologies) AS t(e)
+                     WHERE e IS NOT NULL AND e <> '')
+      )
+      ELSE COALESCE(w.typologies, l.typologies)
+    END,
+    frais_a_charge = CASE
+      WHEN w.frais_a_charge IS NOT NULL AND l.frais_a_charge IS NOT NULL THEN (
+        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.frais_a_charge || l.frais_a_charge) AS t(e)
+                     WHERE e IS NOT NULL AND e <> '')
+      )
+      ELSE COALESCE(w.frais_a_charge, l.frais_a_charge)
+    END,
+    dispositif_programmes_nationaux = CASE
+      WHEN w.dispositif_programmes_nationaux IS NOT NULL AND l.dispositif_programmes_nationaux IS NOT NULL THEN (
+        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.dispositif_programmes_nationaux || l.dispositif_programmes_nationaux) AS t(e)
+                     WHERE e IS NOT NULL AND e <> '')
+      )
+      ELSE COALESCE(w.dispositif_programmes_nationaux, l.dispositif_programmes_nationaux)
+    END,
+    formations_labels = CASE
+      WHEN w.formations_labels IS NOT NULL AND l.formations_labels IS NOT NULL THEN (
+        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.formations_labels || l.formations_labels) AS t(e)
+                     WHERE e IS NOT NULL AND e <> '')
+      )
+      ELSE COALESCE(w.formations_labels, l.formations_labels)
+    END,
+    autres_formations_labels = COALESCE(w.autres_formations_labels, l.autres_formations_labels),
+    itinerance               = COALESCE(w.itinerance, l.itinerance),
+    modalites_acces          = COALESCE(w.modalites_acces, l.modalites_acces),
+    modalites_accompagnement = COALESCE(w.modalites_accompagnement, l.modalites_accompagnement),
+    emplois                  = COALESCE(w.emplois, l.emplois),
+    mediateurs_en_activite   = COALESCE(w.mediateurs_en_activite, l.mediateurs_en_activite),
+    source                   = COALESCE(NULLIF(w.source,''), l.source),
+    last_sirene_enrich_at    = GREATEST(COALESCE(w.last_sirene_enrich_at, '1900-01-01'),
+                                        COALESCE(l.last_sirene_enrich_at, '1900-01-01'))
+  FROM main.structure l
+  WHERE w.id = v_winner AND l.id = v_loser;
+
+  ---------------------------------------------------------------------------
+  -- 3.pre) Snapshot des PA fermées du loser (pour restitution des dates)
+  ---------------------------------------------------------------------------
+  DROP TABLE IF EXISTS _loser_pa_supp;
+  CREATE TEMP TABLE _loser_pa_supp ON COMMIT DROP AS
+  SELECT
+    personne_id,
+    type,
+    suppression            AS lost_supp,
+    structure_coop_id      AS lost_scoop,
+    mediateur_coop_id      AS lost_mcoop
+  FROM main.personne_affectations
+  WHERE structure_id = v_loser
+    AND suppression IS NOT NULL;
+
+  INSERT INTO main.merge_pa_log(action, winner_id, loser_id, personne_id, type, suppression, structure_coop_id, mediateur_coop_id)
+  SELECT 'loser_closed_seen', v_winner, v_loser, personne_id, type, lost_supp, lost_scoop, lost_mcoop
+  FROM _loser_pa_supp;
+
+  ---------------------------------------------------------------------------
+  -- 3.pre0) DÉSAMORÇAGE collision UK (winner vs loser / orphelins)
+  ---------------------------------------------------------------------------
+  WITH ukey_dups AS (
+    SELECT w.id AS wid
+    FROM main.personne_affectations w
+    JOIN main.personne_affectations l
+      ON l.type = w.type
+     AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+     AND l.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+     AND l.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+    WHERE w.structure_id = v_winner
+      AND l.structure_id = v_loser
+  )
+  UPDATE main.personne_affectations w
+  SET structure_coop_id = NULL,
+      mediateur_coop_id = NULL,
+      updated_at        = NOW()
+  FROM ukey_dups d
+  WHERE w.id = d.wid;
+
+  IF v_loser_coop IS NOT NULL THEN
+    UPDATE main.personne_affectations w
+    SET structure_coop_id = NULL,
+        mediateur_coop_id = NULL,
+        updated_at        = NOW()
+    WHERE w.structure_id = v_winner
+      AND EXISTS (
+        SELECT 1
+        FROM main.personne_affectations o
+        WHERE o.structure_id IS NULL
+          AND o.structure_coop_id = v_loser_coop
+          AND o.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+          AND o.type = w.type
+          AND COALESCE(o.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+      );
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 3) PERSONNE_AFFECTATIONS – NULL pivot → DELETE loser → UPDATE winner
+  ---------------------------------------------------------------------------
+  WITH cand AS (
+    SELECT
+      w.id   AS wid,
+      l.id   AS lid,
+      w.personne_id AS pid,
+      w.type AS type,
+      COALESCE(w.structure_coop_id, l.structure_coop_id) AS tgt_scoop,
+      COALESCE(w.mediateur_coop_id, l.mediateur_coop_id) AS tgt_mcoop,
+      COALESCE(w.suppression,       l.suppression)       AS tgt_supp
+    FROM main.personne_affectations w
+    JOIN main.personne_affectations l
+      ON  l.personne_id = w.personne_id
+      AND l.type        = w.type
+      AND COALESCE(l.suppression, v_zero) = COALESCE(w.suppression, v_zero)
+    WHERE w.structure_id = v_winner
+      AND l.structure_id = v_loser
+  ),
+  null_pivot AS (
+    UPDATE main.personne_affectations w
+    SET structure_coop_id = NULL,
+        mediateur_coop_id = NULL,
+        updated_at        = NOW()
+    FROM cand c
+    WHERE w.id = c.wid
+      AND EXISTS (
+        SELECT 1
+        FROM main.personne_affectations x
+        WHERE x.id <> w.id
+          AND x.type = c.type
+          AND COALESCE(x.suppression, v_zero) = COALESCE(c.tgt_supp, v_zero)
+          AND x.structure_coop_id IS NOT DISTINCT FROM c.tgt_scoop
+          AND x.mediateur_coop_id IS NOT DISTINCT FROM c.tgt_mcoop
+      )
+    RETURNING w.id
+  ),
+  del_l AS (
+    DELETE FROM main.personne_affectations d
+    USING cand c
+    WHERE d.id = c.lid
+    RETURNING c.wid, c.tgt_scoop, c.tgt_mcoop, c.tgt_supp
+  )
+  UPDATE main.personne_affectations w
+  SET structure_coop_id = CASE
+                            WHEN NOT EXISTS (
+                              SELECT 1 FROM main.personne_affectations t
+                              WHERE t.id <> w.id
+                                AND t.type = w.type
+                                AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+                                AND t.structure_coop_id IS NOT DISTINCT FROM d.tgt_scoop
+                                AND t.mediateur_coop_id IS NOT DISTINCT FROM d.tgt_mcoop
+                            ) THEN d.tgt_scoop
+                            ELSE NULL
+                          END,
+      mediateur_coop_id = CASE
+                            WHEN NOT EXISTS (
+                              SELECT 1 FROM main.personne_affectations t
+                              WHERE t.id <> w.id
+                                AND t.type = w.type
+                                AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+                                AND t.structure_coop_id IS NOT DISTINCT FROM d.tgt_scoop
+                                AND t.mediateur_coop_id IS NOT DISTINCT FROM d.tgt_mcoop
+                            ) THEN d.tgt_mcoop
+                            ELSE NULL
+                          END,
+      suppression       = d.tgt_supp,
+      updated_at        = NOW()
+  FROM del_l d
+  WHERE w.id = d.wid;
+
+  -- Rattacher au winner toutes les lignes restantes du loser (sans dupliquer la clé locale)
+  UPDATE main.personne_affectations pa
+  SET structure_id = v_winner,
+      updated_at   = NOW()
+  WHERE pa.structure_id = v_loser
+    AND NOT EXISTS (
+      SELECT 1
+      FROM main.personne_affectations w
+      WHERE w.structure_id = v_winner
+        AND w.personne_id  = pa.personne_id
+        AND w.type         = pa.type
+        AND COALESCE(w.suppression, v_zero) = COALESCE(pa.suppression, v_zero)
+    );
+
+  -- Orphelins (structure_id IS NULL) portant v_loser_coop -> winner (sans collision UK)
+  IF v_loser_coop IS NOT NULL THEN
+    DELETE FROM main.personne_affectations o
+    USING main.personne_affectations w
+    WHERE o.structure_id IS NULL
+      AND o.structure_coop_id = v_loser_coop
+      AND w.structure_id = v_winner
+      AND w.personne_id  = o.personne_id
+      AND w.type         = o.type
+      AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
+      AND w.structure_coop_id IS NOT DISTINCT FROM o.structure_coop_id
+      AND w.mediateur_coop_id IS NOT DISTINCT FROM o.mediateur_coop_id;
+
+    UPDATE main.personne_affectations o
+    SET structure_id = v_winner,
+        updated_at   = NOW()
+    WHERE o.structure_id IS NULL
+      AND o.structure_coop_id = v_loser_coop
+      AND NOT EXISTS (
+        SELECT 1
+        FROM main.personne_affectations w
+        WHERE w.structure_id = v_winner
+          AND w.personne_id  = o.personne_id
+          AND w.type         = o.type
+          AND COALESCE(w.suppression, v_zero) = COALESCE(o.suppression, v_zero)
+      );
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 3.post) Restituer les dates de suppression (sans heurter l’UK globale)
+  ---------------------------------------------------------------------------
+  WITH desired AS (
+    SELECT
+      w.id AS wid,
+      w.structure_id,
+      w.personne_id,
+      w.type,
+      MAX(s.lost_supp) AS tgt_supp
+    FROM main.personne_affectations w
+    JOIN _loser_pa_supp s
+      ON w.personne_id = s.personne_id
+     AND w.type        = s.type
+    WHERE w.structure_id = v_winner
+      AND w.suppression  IS NULL
+    GROUP BY w.id, w.structure_id, w.personne_id, w.type
+  ),
+  merged_closed AS (
+    UPDATE main.personne_affectations y
+    SET structure_coop_id = CASE
+                              WHEN y.structure_coop_id IS NULL AND NOT EXISTS (
+                                SELECT 1 FROM main.personne_affectations t
+                                WHERE t.id <> y.id
+                                  AND t.type = y.type
+                                  AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+                                  AND t.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+                              ) THEN w.structure_coop_id ELSE y.structure_coop_id
+                            END,
+        mediateur_coop_id = CASE
+                              WHEN y.mediateur_coop_id IS NULL AND NOT EXISTS (
+                                SELECT 1 FROM main.personne_affectations t
+                                WHERE t.id <> y.id
+                                  AND t.type = y.type
+                                  AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+                                  AND t.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+                              ) THEN w.mediateur_coop_id ELSE y.mediateur_coop_id
+                            END,
+        updated_at        = NOW()
+    FROM desired d
+    JOIN main.personne_affectations w
+      ON w.id = d.wid
+    WHERE y.structure_id = d.structure_id
+      AND y.personne_id  = d.personne_id
+      AND y.type         = d.type
+      AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+    RETURNING d.wid
+  ),
+  killed_active AS (
+    DELETE FROM main.personne_affectations a
+    USING merged_closed mc
+    WHERE a.id = mc.wid
+    RETURNING 1
+  )
+  UPDATE main.personne_affectations w
+  SET suppression = d.tgt_supp,
+      updated_at  = NOW()
+  FROM desired d
+  WHERE w.id = d.wid
+    AND w.suppression IS NULL
+    AND NOT EXISTS (
+      SELECT 1 FROM main.personne_affectations y
+      WHERE y.structure_id = d.structure_id
+        AND y.personne_id  = d.personne_id
+        AND y.type         = d.type
+        AND COALESCE(y.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+    )
+    AND NOT EXISTS (
+      SELECT 1
+      FROM main.personne_affectations x
+      WHERE x.id <> w.id
+        AND x.type = w.type
+        AND COALESCE(x.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
+        AND x.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
+        AND x.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
+    );
+
+  ---------------------------------------------------------------------------
+  -- 3.collapse) Actif + Fermé (même personne/type) -> ne conserver que la fermée
+  --             ⚠ mise à jour "conflict-aware" pour éviter toute UK globale
+  ---------------------------------------------------------------------------
+  WITH pairs AS (
+    SELECT
+      c.id  AS closed_id,
+      a.id  AS active_id,
+      COALESCE(c.structure_coop_id, a.structure_coop_id) AS tgt_scoop,
+      COALESCE(c.mediateur_coop_id, a.mediateur_coop_id) AS tgt_mcoop,
+      c.type AS k_type,
+      COALESCE(c.suppression, v_zero) AS k_supp
+    FROM main.personne_affectations c
+    JOIN main.personne_affectations a
+      ON a.structure_id = c.structure_id
+     AND a.personne_id  = c.personne_id
+     AND a.type         = c.type
+    WHERE c.structure_id = v_winner
+      AND c.suppression IS NOT NULL
+      AND a.suppression IS NULL
+  ),
+  up AS (
+    UPDATE main.personne_affectations c
+    SET structure_coop_id = CASE
+                              WHEN NOT EXISTS (
+                                SELECT 1 FROM main.personne_affectations t
+                                WHERE t.id <> c.id
+                                  AND t.type = p.k_type
+                                  AND COALESCE(t.suppression, v_zero) = p.k_supp
+                                  AND t.structure_coop_id IS NOT DISTINCT FROM p.tgt_scoop
+                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM p.tgt_mcoop
+                              ) THEN p.tgt_scoop
+                              ELSE NULL
+                            END,
+        mediateur_coop_id = CASE
+                              WHEN NOT EXISTS (
+                                SELECT 1 FROM main.personne_affectations t
+                                WHERE t.id <> c.id
+                                  AND t.type = p.k_type
+                                  AND COALESCE(t.suppression, v_zero) = p.k_supp
+                                  AND t.structure_coop_id IS NOT DISTINCT FROM p.tgt_scoop
+                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM p.tgt_mcoop
+                              ) THEN p.tgt_mcoop
+                              ELSE NULL
+                            END,
+        updated_at        = NOW()
+    FROM pairs p
+    WHERE c.id = p.closed_id
+    RETURNING p.active_id
+  )
+  DELETE FROM main.personne_affectations a
+  USING up
+  WHERE a.id = up.active_id;
+
+  ---------------------------------------------------------------------------
+  -- 3.guard) Dédup finale UK (winner + orphelins)
+  ---------------------------------------------------------------------------
+  WITH dups AS (
+    SELECT
+      structure_coop_id,
+      mediateur_coop_id,
+      type,
+      COALESCE(suppression, v_zero) AS k_supp,
+      ARRAY_AGG(id ORDER BY (structure_id IS NULL), id) AS ids
+    FROM main.personne_affectations
+    WHERE (structure_id = v_winner
+           OR (structure_id IS NULL AND structure_coop_id IS NOT NULL))
+    GROUP BY structure_coop_id, mediateur_coop_id, type, COALESCE(suppression, v_zero)
+    HAVING COUNT(*) > 1
+  )
+  UPDATE main.personne_affectations pa
+  SET structure_coop_id = NULL,
+      mediateur_coop_id = NULL,
+      updated_at        = NOW()
+  WHERE pa.id = ANY (SELECT UNNEST(ids[2:]) FROM dups);
+
+  ---------------------------------------------------------------------------
+  -- 4) Autres tables
+  ---------------------------------------------------------------------------
+  UPDATE main.poste p
+  SET structure_id = v_winner,
+      updated_at   = NOW()
+  WHERE p.structure_id = v_loser;
+
+  UPDATE main.activites_coop a
+  SET structure_id = v_winner
+  WHERE a.structure_id = v_loser;
+
+  ---------------------------------------------------------------------------
+  -- 5) Hiérarchie (structure_parente = UUID COOP)
+  ---------------------------------------------------------------------------
+  IF v_loser_coop IS NOT NULL AND v_winner_coop IS NOT NULL THEN
+    UPDATE main.structure
+    SET structure_parente = v_winner_coop
+    WHERE structure_parente = v_loser_coop;
+  END IF;
+
+  ---------------------------------------------------------------------------
+  -- 6) Supprimer le loser
+  ---------------------------------------------------------------------------
+  DELETE FROM main.structure WHERE id = v_loser;
+
+END;
+$$;
+
+
+ALTER FUNCTION main.merge_structure(v_winner integer, v_loser integer) OWNER TO sonum;
 
 SET default_tablespace = '';
 
@@ -485,9 +959,9 @@ CREATE TABLE main.adresse (
     geom public.geometry(Point,4326),
     clef_interop character varying(50),
     code_ban uuid,
-    code_postal character varying(5),
-    code_insee character varying(5),
-    nom_commune character varying(255),
+    code_postal character varying(5) NOT NULL,
+    code_insee character varying(5) NOT NULL,
+    nom_commune character varying(255) NOT NULL,
     nom_voie character varying(255),
     repetition character varying(10),
     numero_voie smallint,
@@ -506,6 +980,63 @@ ALTER TABLE main.adresse OWNER TO sonum;
 -- Name: COLUMN adresse.departement; Type: COMMENT; Schema: main; Owner: sonum
 
 COMMENT ON COLUMN main.adresse.departement IS 'Code département, généré à partir du code_insee';
+
+
+-- Name: personne; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.personne (
+    id integer NOT NULL,
+    prenom character varying(50),
+    nom character varying(50),
+    contact jsonb,
+    aidant_connect_id integer,
+    conseiller_numerique_id character varying(50),
+    cn_pg_id integer,
+    coop_id uuid,
+    is_coordinateur boolean,
+    is_mediateur boolean,
+    is_active_ac boolean,
+    formation_fne_ac boolean,
+    profession_ac character varying,
+    nb_accompagnements_ac integer,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone
+);
+
+
+ALTER TABLE main.personne OWNER TO sonum;
+
+-- Name: personne_affectations; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.personne_affectations (
+    id integer NOT NULL,
+    personne_id integer NOT NULL,
+    structure_id integer,
+    structure_coop_id uuid,
+    mediateur_coop_id uuid,
+    type character varying NOT NULL,
+    suppression timestamp with time zone,
+    created_at timestamp without time zone DEFAULT now(),
+    updated_at timestamp without time zone,
+    CONSTRAINT personne_affectations_type_check CHECK (((type)::text = ANY ((ARRAY['structure_emploi'::character varying, 'lieu_activite'::character varying])::text[])))
+);
+
+
+ALTER TABLE main.personne_affectations OWNER TO sonum;
+
+-- Name: TABLE personne_affectations; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON TABLE main.personne_affectations IS 'Table de lien entre les personnes et les structures employeuses ou lieux d''activités.';
+
+
+-- Name: COLUMN personne_affectations.type; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne_affectations.type IS 'Type d''affectation personne <-> structure: structure_emploi ou lieu_activite.';
+
+
+-- Name: COLUMN personne_affectations.suppression; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.personne_affectations.suppression IS 'Date de suppression de l''affectation (NULL si en cours).';
 
 
 -- Name: structure; Type: TABLE; Schema: main; Owner: sonum
@@ -550,6 +1081,7 @@ CREATE TABLE main.structure (
     last_sirene_enrich_at date,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone,
+    fiche_acces_libre character varying,
     CONSTRAINT structure_siret_format_check CHECK (((siret)::text ~ '^\d{14}$'::text))
 );
 
@@ -606,30 +1138,6 @@ ALTER TABLE main.activites_coop OWNER TO sonum;
 COMMENT ON COLUMN main.activites_coop.duree IS 'Valeur en minutes';
 
 
--- Name: personne; Type: TABLE; Schema: main; Owner: sonum
-
-CREATE TABLE main.personne (
-    id integer NOT NULL,
-    prenom character varying(50),
-    nom character varying(50),
-    contact jsonb,
-    aidant_connect_id integer,
-    conseiller_numerique_id character varying(50),
-    cn_pg_id integer,
-    coop_id uuid,
-    is_coordinateur boolean,
-    is_mediateur boolean,
-    is_active_ac boolean,
-    formation_fne_ac boolean,
-    profession_ac character varying,
-    nb_accompagnements_ac integer,
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone
-);
-
-
-ALTER TABLE main.personne OWNER TO sonum;
-
 -- Name: poste; Type: TABLE; Schema: main; Owner: sonum
 
 CREATE TABLE main.poste (
@@ -655,39 +1163,6 @@ CREATE TABLE main.poste (
 
 
 ALTER TABLE main.poste OWNER TO sonum;
-
--- Name: personne_affectations; Type: TABLE; Schema: main; Owner: sonum
-
-CREATE TABLE main.personne_affectations (
-    id integer NOT NULL,
-    personne_id integer NOT NULL,
-    structure_id integer,
-    structure_coop_id uuid,
-    mediateur_coop_id uuid,
-    type character varying NOT NULL,
-    suppression timestamp with time zone,
-    created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone,
-    CONSTRAINT personne_affectations_type_check CHECK (((type)::text = ANY ((ARRAY['structure_emploi'::character varying, 'lieu_activite'::character varying])::text[])))
-);
-
-
-ALTER TABLE main.personne_affectations OWNER TO sonum;
-
--- Name: TABLE personne_affectations; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON TABLE main.personne_affectations IS 'Table de lien entre les personnes et les structures employeuses ou lieux d''activités.';
-
-
--- Name: COLUMN personne_affectations.type; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.personne_affectations.type IS 'Type d''affectation personne <-> structure: structure_emploi ou lieu_activite.';
-
-
--- Name: COLUMN personne_affectations.suppression; Type: COMMENT; Schema: main; Owner: sonum
-
-COMMENT ON COLUMN main.personne_affectations.suppression IS 'Date de suppression de l''affectation (NULL si en cours).';
-
 
 -- Name: formation; Type: TABLE; Schema: main; Owner: sonum
 
@@ -896,6 +1371,23 @@ ALTER TABLE main.formation ALTER COLUMN id ADD GENERATED BY DEFAULT AS IDENTITY 
     CACHE 1
 );
 
+
+-- Name: merge_pa_log; Type: TABLE; Schema: main; Owner: sonum
+
+CREATE TABLE main.merge_pa_log (
+    logged_at timestamp with time zone DEFAULT clock_timestamp(),
+    action text,
+    winner_id integer,
+    loser_id integer,
+    personne_id integer,
+    type text,
+    suppression timestamp with time zone,
+    structure_coop_id uuid,
+    mediateur_coop_id uuid
+);
+
+
+ALTER TABLE main.merge_pa_log OWNER TO sonum;
 
 -- Name: personne_affectations_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
 
@@ -1166,10 +1658,24 @@ GRANT SELECT ON TABLE main.adresse TO min_scalingo;
 GRANT SELECT ON TABLE main.adresse TO min_dev;
 
 
+-- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne TO app_python;
+GRANT SELECT ON TABLE main.personne TO min_scalingo;
+GRANT SELECT ON TABLE main.personne TO min_dev;
+
+
+-- Name: TABLE personne_affectations; Type: ACL; Schema: main; Owner: sonum
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations TO app_python;
+GRANT SELECT ON TABLE main.personne_affectations TO min_scalingo;
+GRANT SELECT ON TABLE main.personne_affectations TO min_dev;
+
+
 -- Name: TABLE structure; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.structure TO app_python;
-GRANT SELECT ON TABLE main.structure TO min_scalingo;
+GRANT SELECT,INSERT,UPDATE ON TABLE main.structure TO min_scalingo;
 GRANT SELECT ON TABLE main.structure TO min_dev;
 
 
@@ -1186,25 +1692,11 @@ GRANT SELECT ON TABLE main.activites_coop TO min_scalingo;
 GRANT SELECT ON TABLE main.activites_coop TO min_dev;
 
 
--- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne TO app_python;
-GRANT SELECT ON TABLE main.personne TO min_scalingo;
-GRANT SELECT ON TABLE main.personne TO min_dev;
-
-
 -- Name: TABLE poste; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.poste TO app_python;
 GRANT SELECT ON TABLE main.poste TO min_scalingo;
 GRANT SELECT ON TABLE main.poste TO min_dev;
-
-
--- Name: TABLE personne_affectations; Type: ACL; Schema: main; Owner: sonum
-
-GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations TO app_python;
-GRANT SELECT ON TABLE main.personne_affectations TO min_scalingo;
-GRANT SELECT ON TABLE main.personne_affectations TO min_dev;
 
 
 -- Name: TABLE formation; Type: ACL; Schema: main; Owner: sonum
@@ -1260,6 +1752,13 @@ GRANT USAGE ON SEQUENCE main.coordination_mediation_id_seq TO app_python;
 GRANT USAGE ON SEQUENCE main.formation_id_seq TO app_python;
 
 
+-- Name: TABLE merge_pa
+
+GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.merge_pa_log TO app_python;
+GRANT SELECT ON TABLE main.merge_pa_log TO min_scalingo;
+GRANT SELECT ON TABLE main.merge_pa_log TO min_dev;
+
+
 -- Name: SEQUENCE personne_affectations_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.personne_affectations_id_seq TO app_python;
@@ -1278,6 +1777,7 @@ GRANT USAGE ON SEQUENCE main.poste_id_seq TO app_python;
 -- Name: SEQUENCE structure_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.structure_id_seq TO app_python;
+GRANT USAGE ON SEQUENCE main.structure_id_seq TO min_scalingo;
 
 
 -- Name: SEQUENCE subvention_id_seq; Type: ACL; Schema: main; Owner: sonum
@@ -1289,6 +1789,7 @@ GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
 
 GRANT SELECT ON TABLE reference.naf TO min_scalingo;
 GRANT SELECT ON TABLE reference.naf TO min_dev;
+
 
 
 -- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
@@ -1942,3 +2443,13 @@ ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA main GRANT SELECT ON TABLES TO
 
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABLES TO min_scalingo;
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABLES TO min_dev;
+
+
+-- Name: coll_terr; Type: MATERIALIZED VIEW DATA; Schema: admin; Owner: sonum
+
+REFRESH MATERIALIZED VIEW admin.coll_terr;
+
+
+-- PostgreSQL database dump complete
+
+

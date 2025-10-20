@@ -54,11 +54,14 @@ export class AjouterUnMembre implements CommandHandler<Command> {
           adresse: command.entreprise.adresse,
           categorieJuridique: command.entreprise.categorieJuridiqueCode,
           categorieJuridiqueLibelle: command.entreprise.categorieJuridiqueUniteLegale,
+          codeInsee: command.entreprise.codeInsee,
           codePostal: command.entreprise.codePostal,
           commune: command.entreprise.commune,
           departementCode: gouvernance.state.departement.code,
           identifiantEtablissement: command.entreprise.siret,
           nom: command.entreprise.nom,
+          nomVoie: command.entreprise.nomVoie,
+          numeroVoie: command.entreprise.numeroVoie,
         }, tx)
         structureId = nouvelleStructure.state.uid.value
       }
@@ -109,9 +112,12 @@ type Command = Readonly<{
     adresse: string
     categorieJuridiqueCode: string
     categorieJuridiqueUniteLegale: string
+    codeInsee: string
     codePostal: string
     commune: string
     nom: string
+    nomVoie: string
+    numeroVoie: string
     siret: string
   }>
   uidGestionnaire: string

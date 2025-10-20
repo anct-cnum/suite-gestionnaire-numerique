@@ -90,6 +90,7 @@ model UtilisateurRecord {
   prenom            String
   regionCode        String?   @map("region_code")
   role              Role
+  oldStructureId    Int?      @map("old_structure_id")
   structureId       Int?      @map("structure_id")
   ssoId             String    @unique @default("") @map("sso_id")
   ssoEmail          String    @unique @map("sso_email")
@@ -202,6 +203,7 @@ model MembreRecord {
   nom                        String?   @map("nom")
   siretRidet                 String?   @map("siret_ridet")
   dateSuppression            DateTime? @map("date_suppression")
+  oldStructureId             Int?      @map("old_structure_id")
   structureId                Int?      @map("structure_id")
 
   oldUUID String @map("old_uuid") @db.Uuid

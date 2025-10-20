@@ -5,8 +5,11 @@ export type EntrepriseViewModel = Readonly<{
   adresse: string
   categorieJuridiqueCode: string
   categorieJuridiqueLibelle: string
+  codeInsee: string
   codePostal: string
   commune: string
   denomination: string
   identifiant: string
+  nomVoie: string
+  numeroVoie: string
 }>

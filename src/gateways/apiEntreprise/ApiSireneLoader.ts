@@ -138,14 +138,24 @@ export class ApiSireneLoader implements SireneLoader {
       periodeActuelle.enseigne1Etablissement ??
       'Dénomination non renseignée'
 
+    // Construction du nom de voie propre (type + libellé)
+    const nomVoieElements = [
+      adresseEtab.typeVoieEtablissement,
+      adresseEtab.libelleVoieEtablissement,
+    ].filter(Boolean)
+    const nomVoie = nomVoieElements.join(' ')
+
     return {
       activitePrincipale: uniteLegale.activitePrincipaleUniteLegale,
       adresse: adresseComplete,
       categorieJuridiqueCode: uniteLegale.categorieJuridiqueUniteLegale,
+      codeInsee: adresseEtab.codeCommuneEtablissement ?? '',
       codePostal: adresseEtab.codePostalEtablissement ?? '',
       commune: adresseEtab.libelleCommuneEtablissement ?? '',
       denomination: denominationUniteLegale,
       identifiant: etablissement.siret,
+      nomVoie,
+      numeroVoie: adresseEtab.numeroVoieEtablissement ?? '',
     }
   }
 
@@ -176,6 +186,7 @@ type SireneErrorResponse = Readonly<{
 
 type SireneEtablissement = Readonly<{
   adresseEtablissement: Readonly<{
+    codeCommuneEtablissement: null | string
     codePostalEtablissement: null | string
     complementAdresseEtablissement: null | string
     libelleCommuneEtablissement: null | string

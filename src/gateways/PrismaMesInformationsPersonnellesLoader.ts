@@ -82,7 +82,7 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
         },
         numeroDeSiret: structure.siret ?? '',
         raisonSociale: structure.nom,
-        typeDeStructure: structure.typologies?.[0] ?? '',
+        typeDeStructure: structure.typologies[0] ?? '',
       },
     }
   }

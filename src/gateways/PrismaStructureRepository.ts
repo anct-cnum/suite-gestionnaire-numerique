@@ -23,9 +23,11 @@ export class PrismaStructureRepository implements StructureRepository {
     // Créer ou récupérer l'adresse
     const adresse = await this.getOrCreateAdresse(
       {
+        codeInsee: data.codeInsee,
         codePostal: data.codePostal,
         commune: data.commune,
-        nomVoie: data.adresse,
+        nomVoie: data.nomVoie,
+        numeroVoie: data.numeroVoie,
       },
       client,
     )
@@ -50,15 +52,23 @@ export class PrismaStructureRepository implements StructureRepository {
   }
 
   private async getOrCreateAdresse(
-    data: { codePostal: string; commune: string; nomVoie: string },
+    data: {
+      codeInsee: string
+      codePostal: string
+      commune: string
+      nomVoie: string
+      numeroVoie: string
+    },
     client: Prisma.TransactionClient,
   ) {
     // Chercher une adresse existante
     const existingAdresse = await client.adresse.findFirst({
       where: {
+        code_insee: data.codeInsee,
         code_postal: data.codePostal,
         nom_commune: data.commune,
         nom_voie: data.nomVoie,
+        numero_voie: data.numeroVoie ? Number.parseInt(data.numeroVoie, 10) : null,
       },
     })
 
@@ -69,9 +79,11 @@ export class PrismaStructureRepository implements StructureRepository {
     // Créer une nouvelle adresse si elle n'existe pas
     return client.adresse.create({
       data: {
+        code_insee: data.codeInsee,
         code_postal: data.codePostal,
         nom_commune: data.commune,
         nom_voie: data.nomVoie,
+        numero_voie: data.numeroVoie ? Number.parseInt(data.numeroVoie, 10) : null,
       },
     })
   }
@@ -81,6 +93,33 @@ export class PrismaStructureRepository implements StructureRepository {
     const structure = await client.main_structure.findFirst({
       where: {
         siret,
+      },
+    })
+
+    if (!structure) {
+      return null
+    }
+
+    return Structure.create({
+      departementCode: '', // main.structure n'a pas de departementCode direct
+      identifiantEtablissement: structure.siret ?? '',
+      nom: structure.nom,
+      uid: { value: structure.id },
+    })
+  }
+
+  async getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure> {
+    const client = tx ?? prisma
+
+    // Chercher une structure avec le SIRET donné ET qui est une structure employeuse
+    const structure = await client.main_structure.findFirst({
+      where: {
+        siret,
+        personne_affectations: {
+          some: {
+            type: 'structure_emploi',
+          },
+        },
       },
     })
 
