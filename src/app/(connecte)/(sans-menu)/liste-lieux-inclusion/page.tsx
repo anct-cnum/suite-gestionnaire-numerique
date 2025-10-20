@@ -7,9 +7,11 @@ import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxIncl
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { listeLieuxInclusionPresenter } from '@/presenters/listeLieuxInclusionPresenter'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
   title: 'Liste des lieux d\'inclusion numérique',
@@ -36,9 +38,16 @@ export default async function ListeLieuxInclusionController({
   const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
   const utilisateur = await utilisateurLoader.get(await getSessionSub())
 
-  let territoireDepartement: string | undefined
-  if(utilisateur.state.departement?.code !== undefined && utilisateur.state.departement.code !== '') {
-    territoireDepartement = utilisateur.state.departement.code
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoireResult = await territoireUseCase.handle(utilisateur)
+
+  let territoire: string
+  if (territoireResult.type === 'france') {
+    territoire = 'France'
+  } else if (territoireResult.codes.length > 0) {
+    territoire = territoireResult.codes[0]
+  } else {
+    redirect('/')
   }
 
   const resolvedSearchParams = await searchParams
@@ -46,7 +55,7 @@ export default async function ListeLieuxInclusionController({
   // Utiliser la fonction utilitaire pour construire les filtres
   const filtres = buildFiltresLieuxInclusion(
     resolvedSearchParams,
-    territoireDepartement
+    territoire === 'France' ? undefined : territoire
   )
 
   const listeLieuxInclusionLoader = new PrismaListeLieuxInclusionLoader()
