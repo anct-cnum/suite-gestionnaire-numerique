@@ -92,18 +92,36 @@ export default function EnTete(): ReactElement {
               </div>
             </div>
             <div className="fr-header__tools">
-              <button
-                aria-controls={drawerId}
-                className="fr-link"
-                data-fr-opened="false"
-                onClick={() => {
-                  setIsOpen(true)
-                }}
-                type="button"
-              >
-                {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
-                <Icon icon="arrow-down-s-line" />
-              </button>
+              <div className="fr-header__tools-links">
+                <ul
+                  aria-label="menu"
+                  className={`fr-links-group ${styles['fr-links-group']}`}
+                  id="menuUtilisateur"
+                >
+                  <li>
+                    <a
+                      className="fr-link fr-icon-question-line"
+                      href="mailto:moninclusionnumerique@anct.gouv.fr"
+                    >
+                      Aide
+                    </a>
+                  </li>
+                  <li>
+                    <button
+                      aria-controls={drawerId}
+                      className="fr-link"
+                      data-fr-opened="false"
+                      onClick={() => {
+                        setIsOpen(true)
+                      }}
+                      type="button"
+                    >
+                      {`${sessionUtilisateurViewModel.prenom} ${sessionUtilisateurViewModel.nom}`}
+                      <Icon icon="arrow-down-s-line" />
+                    </button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
