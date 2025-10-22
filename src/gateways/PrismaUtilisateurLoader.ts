@@ -9,18 +9,6 @@ import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/sha
 export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
   readonly #dataResource = prisma.utilisateurRecord
 
-  async #getDepartementsInRegion(codeRegion: string): Promise<Array<string>> {
-    const departements = await prisma.departementRecord.findMany({
-      select: {
-        code: true,
-      },
-      where: {
-        regionCode: codeRegion,
-      },
-    })
-    return departements.map((d) => d.code)
-  }
-
   async findByUid(uid: string, email?: string): Promise<UnUtilisateurReadModel> {
     const utilisateurRecord = await this.#dataResource.findUnique({
       include: {
@@ -206,6 +194,18 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       total,
       utilisateursCourants: utilisateursRecord.map(transform),
     }
+  }
+
+  async #getDepartementsInRegion(codeRegion: string): Promise<Array<string>> {
+    const departements = await prisma.departementRecord.findMany({
+      select: {
+        code: true,
+      },
+      where: {
+        regionCode: codeRegion,
+      },
+    })
+    return departements.map((departement) => departement.code)
   }
 }
 

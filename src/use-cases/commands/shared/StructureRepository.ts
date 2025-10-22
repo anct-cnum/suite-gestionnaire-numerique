@@ -6,16 +6,13 @@ export interface GetStructureBySiretRepository {
   getBySiret(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure>
 }
 
-export interface GetStructureBySiretEmployeuseRepository {
-  getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure>
-}
-
 export interface CreateStructureRepository {
   create(structure: StructureData, tx?: Prisma.TransactionClient): Promise<Structure>
 }
 
 export type StructureData = Readonly<{
   adresse: string
+  adresseEnrichie?: AdresseEnrichie | null
   categorieJuridique?: string
   categorieJuridiqueLibelle: string
   codeInsee: string
@@ -30,5 +27,22 @@ export type StructureData = Readonly<{
 
 export interface StructureRepository
   extends CreateStructureRepository,
-  GetStructureBySiretRepository,
-  GetStructureBySiretEmployeuseRepository {}
+  GetStructureBySiretEmployeuseRepository,
+  GetStructureBySiretRepository {}
+
+interface GetStructureBySiretEmployeuseRepository {
+  getBySiretEmployeuse(siret: string, tx?: Prisma.TransactionClient): Promise<null | Structure>
+}
+
+type AdresseEnrichie = Readonly<{
+  banClefInterop: string
+  banCodeBan: null | string
+  banCodeInsee: string
+  banCodePostal: string
+  banLatitude: number
+  banLongitude: number
+  banNomCommune: string
+  banNomVoie: string
+  banNumeroVoie: null | number
+  banRepetition: null | string
+}>

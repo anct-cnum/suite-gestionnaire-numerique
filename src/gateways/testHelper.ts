@@ -78,18 +78,27 @@ export async function creerUnDepartement(
 }
 
 export async function creerUneStructure(
-  override?: Partial<Prisma.main_structureUncheckedCreateInput> & {
-    departementCode?: string
+  override?: {
     adresse?: string
     codePostal?: string
     commune?: string
+    departementCode?: string
     identifiantEtablissement?: string
     type?: string
-  },
+  } & Partial<Prisma.main_structureUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
 ): Promise<void> {
   const client = tx ?? prisma
-  const { departementCode, id, adresse, codePostal, commune, identifiantEtablissement, type, contact, ...rest } = override ?? {}
+  const { adresse,
+    codePostal,
+    commune,
+    contact,
+    departementCode,
+    id,
+    identifiantEtablissement,
+    type,
+    ...rest
+  } = override ?? {}
 
   // Valeurs par défaut de l'ancien structureRecordFactory
   const defaults = {
@@ -127,11 +136,11 @@ export async function creerUneStructure(
   }
 
   // Mapper type vers typologies (array)
-  const typologies = type ? [type] : [defaults.type]
+  const typologies = type === undefined ? [defaults.type] : [type]
 
   // Créer une adresse si departementCode est fourni
-  let adresse_id: number | null | undefined = rest.adresse_id
-  if (departementCode && !adresse_id) {
+  let adresse_id: null | number | undefined = rest.adresse_id
+  if (departementCode !== undefined && departementCode !== '' && adresse_id === undefined) {
     // Construire un code_insee valide au format [code_dept][code_commune]
     // Le département généré sera les 2 premiers caractères du code_insee (ou 3 pour les DOM-TOM 97x/98x)
     const codeCommune = '001'
@@ -168,10 +177,10 @@ export async function creerUneStructure(
 
   await client.main_structure.create({
     data: {
+      contact: finalContact,
       id: id ?? defaults.id,
       nom: rest.nom ?? defaults.nom,
       siret,
-      contact: finalContact,
       typologies,
       ...rest,
       adresse_id,

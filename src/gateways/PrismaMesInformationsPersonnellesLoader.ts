@@ -55,20 +55,23 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
 
     // Construire l'adresse depuis la relation adresse uniquement
     const adresseComplete = structure.adresse
-      ? `${structure.adresse.nom_voie ?? ''} ${structure.adresse.code_postal ?? ''} ${structure.adresse.nom_commune ?? ''}`.trim()
+      ? `${structure.adresse.nom_voie ?? ''} ${structure.adresse.code_postal} ${structure.adresse.nom_commune}`.trim()
       : ''
 
     // Lire le contact JSON au format:
-    // { nom, prenom, courriels: { mail_gestionnaire } }
+    // { nom, prenom, email, fonction, telephone, adresse, codePostal, commune }
     const contact = structure.contact as {
-      courriels?: {
-        mail_gestionnaire?: string
-      }
+      adresse?: string
+      codePostal?: string
+      commune?: string
+      email?: string
+      fonction?: string
       nom?: string
       prenom?: string
+      telephone?: string
     } | null
 
-    const email = contact?.courriels?.mail_gestionnaire ?? ''
+    const email = contact?.email ?? ''
 
     mesInformationsPersonnelles = {
       ...mesInformationsPersonnelles,
@@ -76,7 +79,7 @@ function transform(utilisateurRecord: UtilisateurAvecStructureEtAdresse): MesInf
         adresse: adresseComplete,
         contact: {
           email,
-          fonction: '',
+          fonction: contact?.fonction ?? '',
           nom: contact?.nom ?? '',
           prenom: contact?.prenom ?? '',
         },

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 import prisma from '../../../../prisma/prismaClient'
+import { ApiBanGeocodingGateway } from '@/gateways/apiBan/ApiBanGeocodingGateway'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
 import { PrismaMembreRepository } from '@/gateways/PrismaMembreRepository'
@@ -36,7 +37,8 @@ export async function ajouterUnMembreAction(
     new PrismaGouvernanceRepository(),
     new PrismaMembreRepository(),
     new PrismaStructureRepository(),
-    new PrismaTransactionRepository()
+    new PrismaTransactionRepository(),
+    new ApiBanGeocodingGateway()
   ).handle({
     contact: actionParams.contact,
     contactTechnique: actionParams.contactTechnique,

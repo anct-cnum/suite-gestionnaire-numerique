@@ -13,6 +13,7 @@ import { MembreCandidat } from '@/domain/MembreCandidat'
 import { Structure, StructureUid } from '@/domain/Structure'
 import { gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
+import { AdresseGeocodeReadModel, BanGeocodingGateway, GeocodageParams } from '@/gateways/apiBan/BanGeocodingGateway'
 
 describe('ajouter un membre', () => {
   beforeEach(() => {
@@ -32,7 +33,8 @@ describe('ajouter un membre', () => {
       new GouvernanceRepositorySpy(),
       new MembreAvecStructureRepositorySpy(),
       new StructureExistanteRepositorySpy(),
-      new TransactionRepositorySpy()
+      new TransactionRepositorySpy(),
+      new BanGeocodingGatewaySpy()
     )
 
     // WHEN
@@ -76,7 +78,8 @@ describe('ajouter un membre', () => {
       new GouvernanceRepositorySpy(),
       new MembreAvecNouvelleStructureRepositorySpy(),
       new StructureNouvelleRepositorySpy(),
-      new TransactionRepositorySpy()
+      new TransactionRepositorySpy(),
+      new BanGeocodingGatewaySpy()
     )
 
     // WHEN
@@ -121,7 +124,8 @@ describe('ajouter un membre', () => {
       new GouvernanceRepositorySpy(),
       new MembreRepositorySpy(),
       new StructureSansResultatRepositorySpy(),
-      new TransactionRepositorySpy()
+      new TransactionRepositorySpy(),
+      new BanGeocodingGatewaySpy()
     )
 
     // WHEN
@@ -297,5 +301,25 @@ class StructureSansResultatRepositorySpy implements CreateStructureRepository, G
 
   async getBySiret(_: string, __?: Prisma.TransactionClient): Promise<null | Structure> {
     return null
+  }
+}
+
+class BanGeocodingGatewaySpy implements BanGeocodingGateway {
+  async geocoder(_params: GeocodageParams): Promise<AdresseGeocodeReadModel | null> {
+    // Retourner des données mockées pour les tests
+    return {
+      banClefInterop: '75101_0001_00001',
+      banCodeBan: 'mock-ban-id',
+      banCodeInsee: '75101',
+      banCodePostal: '75001',
+      banLatitude: 48.8566,
+      banLongitude: 2.3522,
+      banNomCommune: 'Paris',
+      banNomVoie: 'Rue de la Paix',
+      banNumeroVoie: 123,
+      banRepetition: null,
+      score: 0.95,
+      type: 'housenumber',
+    }
   }
 }

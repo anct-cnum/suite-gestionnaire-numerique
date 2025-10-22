@@ -8,9 +8,9 @@ export function createApiEntrepriseLoader(numero?: string): SireneLoader {
   // Déterminer si c'est un RIDET (7 chiffres ou moins) ou un SIRET (14 chiffres)
   const isRidet = Boolean(numero !== undefined && numero.length <= 7)
   
-  // if (process.env.NODE_ENV === 'development') {
-  //   return isRidet ? new MockRidetLoader() : new MockSireneLoader()
-  // }
+  if (process.env.NODE_ENV === 'development') {
+    return isRidet ? new MockRidetLoader() : new MockSireneLoader()
+  }
   
   return isRidet ? new RidetApiLoader() : new ApiSireneLoader()
 }

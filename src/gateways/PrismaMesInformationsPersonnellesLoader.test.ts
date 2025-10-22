@@ -52,7 +52,7 @@ describe('mes informations personnelles loader', () => {
     const structureId = 10
     await creerUneRegion()
     await creerUnDepartement()
-    await creerUneStructure({ id: structureId })
+    await creerUneStructure({ departementCode: '75', id: structureId })
     await creerUnUtilisateur({
       role: 'gestionnaire_structure',
       ssoId: ssoIdExistant,
@@ -70,7 +70,7 @@ describe('mes informations personnelles loader', () => {
       prenom: 'Martin',
       role: 'Gestionnaire structure',
       structure: {
-        adresse: '3 BIS AVENUE CHARLES DE GAULLE, 84200 PARIS',
+        adresse: '3 BIS AVENUE CHARLES DE GAULLE - Dept 75 84200 PARIS',
         contact: {
           email: 'manon.verminac@example.com',
           fonction: 'Chargée de mission',

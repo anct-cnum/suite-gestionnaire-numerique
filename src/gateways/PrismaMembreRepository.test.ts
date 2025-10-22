@@ -232,6 +232,7 @@ describe('membre repository', () => {
       id: 'structure-69-69',
       isCoporteur: false,
       nom: 'HUBIKOOP',
+      oldStructureId: null,
       oldUUID: '30ca3fa5-76b8-471d-a811-d96074b18eb1',
       siretRidet: null,
       statut: 'confirme',

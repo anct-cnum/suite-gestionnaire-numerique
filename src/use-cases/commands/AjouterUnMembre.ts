@@ -8,8 +8,10 @@ import { GouvernanceUid } from '@/domain/Gouvernance'
 import { MembreUid, Statut } from '@/domain/Membre'
 import { MembreCandidat } from '@/domain/MembreCandidat'
 import { StructureUid } from '@/domain/Structure'
+import { BanGeocodingGateway } from '@/gateways/apiBan/BanGeocodingGateway'
 
 export class AjouterUnMembre implements CommandHandler<Command> {
+  readonly #banGeocodingGateway: BanGeocodingGateway
   readonly #gouvernanceRepository: GouvernanceRepository
   readonly #membreRepository: MembreRepository
   readonly #structureRepository: StructureRepository
@@ -21,13 +23,15 @@ export class AjouterUnMembre implements CommandHandler<Command> {
     gouvernanceRepository: GouvernanceRepository,
     membreRepository: MembreRepository,
     structureRepository: StructureRepository,
-    transactionRepository: TransactionRepository
+    transactionRepository: TransactionRepository,
+    banGeocodingGateway: BanGeocodingGateway
   ) {
     this.#utilisateurRepository = utilisateurRepository
     this.#gouvernanceRepository = gouvernanceRepository
     this.#membreRepository = membreRepository
     this.#structureRepository = structureRepository
     this.#transactionRepository = transactionRepository
+    this.#banGeocodingGateway = banGeocodingGateway
   }
 
   async handle(command: Command): ResultAsync<Failure> {
@@ -39,6 +43,12 @@ export class AjouterUnMembre implements CommandHandler<Command> {
       return 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
     }
 
+    // Enrichir l'adresse via l'API BAN avant la transaction
+    const adresseEnrichie = await this.#banGeocodingGateway.geocoder({
+      adresse: command.entreprise.adresse,
+      codeInsee: command.entreprise.codeInsee,
+    })
+
     // Utiliser une transaction pour garantir l'atomicité
     await this.#transactionRepository.transaction(async (tx) => {
       let structureId: number
@@ -49,9 +59,10 @@ export class AjouterUnMembre implements CommandHandler<Command> {
         // Structure trouvée, utiliser son ID
         structureId = structureExistante.state.uid.value
       } else {
-        // Créer une nouvelle structure dans la transaction
+        // Créer une nouvelle structure dans la transaction avec l'adresse enrichie
         const nouvelleStructure = await this.#structureRepository.create({
           adresse: command.entreprise.adresse,
+          adresseEnrichie,
           categorieJuridique: command.entreprise.categorieJuridiqueCode,
           categorieJuridiqueLibelle: command.entreprise.categorieJuridiqueUniteLegale,
           codeInsee: command.entreprise.codeInsee,
@@ -91,7 +102,6 @@ export class AjouterUnMembre implements CommandHandler<Command> {
     return 'OK'
   }
 }
-
 
 type Failure = 'gestionnaireNePeutPasAjouterDeMembreDansLaGouvernance'
 

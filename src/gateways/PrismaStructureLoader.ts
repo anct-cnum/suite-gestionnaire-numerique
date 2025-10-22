@@ -11,8 +11,6 @@ export class PrismaStructureLoader implements StructureLoader {
   }
 
   async structuresByDepartement(match: string, codeDepartement: string): Promise<StructuresReadModel> {
-    // TODO: main.structure n'a pas de departementCode direct
-    // Il faudra faire une jointure avec adresse pour filtrer par département
     return this.#structuresRecord(match, {
       adresse: {
         departement: {
@@ -22,10 +20,27 @@ export class PrismaStructureLoader implements StructureLoader {
     }).then(transform)
   }
 
-  async structuresByRegion(match: string, _codeRegion: string): Promise<StructuresReadModel> {
-    // TODO: main.structure n'a pas de relationDepartement
-    // Il faudra adapter ce filtre avec les tables admin.departement et admin.region
-    return this.#structuresRecord(match).then(transform)
+  async structuresByRegion(match: string, codeRegion: string): Promise<StructuresReadModel> {
+    // Récupérer les codes département de la région (depuis le schéma min)
+    const departements = await prisma.departementRecord.findMany({
+      select: {
+        code: true,
+      },
+      where: {
+        regionCode: codeRegion,
+      },
+    })
+
+    const codesDepartements = departements.map((departement) => departement.code)
+
+    // Filtrer les structures dont l'adresse est dans un de ces départements
+    return this.#structuresRecord(match, {
+      adresse: {
+        departement: {
+          in: codesDepartements,
+        },
+      },
+    }).then(transform)
   }
 
   async #structuresRecord(

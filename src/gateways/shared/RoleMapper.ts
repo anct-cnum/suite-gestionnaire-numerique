@@ -3,8 +3,8 @@ import {
   $Enums,
   DepartementRecord,
   GroupementRecord,
-  RegionRecord,
   main_structure,
+  RegionRecord,
   UtilisateurRecord,
 } from '@prisma/client'
 
@@ -14,7 +14,7 @@ export type UtilisateurEtSesRelationsRecord = Readonly<{
   relationDepartement: DepartementRecord | null
   relationGroupement: GroupementRecord | null
   relationRegion: null | RegionRecord
-  relationStructure: null | main_structure
+  relationStructure: main_structure | null
 }> &
   UtilisateurRecord
 
