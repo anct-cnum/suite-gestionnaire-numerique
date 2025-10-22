@@ -82,6 +82,14 @@ export default function PiedDePage(): ReactElement {
                 Mentions légales
               </Link>
             </li>
+            <li className="fr-footer__bottom-item">
+              <Link
+                className="fr-footer__bottom-link"
+                href="/conditions-generales-utilisation"
+              >
+                Conditions générales d&apos;utilisation
+              </Link>
+            </li>
           </ul>
           <div className="fr-footer__bottom-copy">
             <p>
