@@ -35,7 +35,7 @@ describe('pied de page', () => {
     expect(lienDataGouv).toOpenInNewTab('data.gouv.fr')
 
     const liensReglementaires = within(lists[1]).getAllByRole('listitem')
-    expect(liensReglementaires).toHaveLength(3)
+    expect(liensReglementaires).toHaveLength(4)
 
     const lienAccessibilite = within(liensReglementaires[0]).getByRole('link', { name: 'Accessibilité : partiellement conforme' })
     expect(lienAccessibilite).toHaveAttribute('href', '/accessibilite.html')
