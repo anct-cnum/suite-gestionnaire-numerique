@@ -8,9 +8,11 @@ import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
 import { Roles } from '@/domain/Role'
 import { getSession } from '@/gateways/NextAuthAuthentificationGateway'
+import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { createSessionUtilisateurPresenter } from '@/presenters/sessionUtilisateurPresenter'
 import config from '@/use-cases/config.json'
+import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 import { UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export default async function Layout({ children }: Readonly<PropsWithChildren>): Promise<ReactElement> {
@@ -27,7 +29,10 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
     redirect('/api/auth/signout?callbackUrl=/connexion')
   }
 
-  const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel)
+  const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
+  const territoire = await territoireUseCase.handle(utilisateurReadModel)
+
+  const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel, territoire)
 
   return (
     <ClientContext

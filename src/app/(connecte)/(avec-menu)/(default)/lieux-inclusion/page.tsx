@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../../prisma/prismaClient'
 import LieuxInclusion from '@/components/LieuxInclusion/LieuxInclusion'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import {
@@ -10,7 +9,7 @@ import {
   PrismaLieuxInclusionNumeriqueLoader,
 } from '@/gateways/PrismaLieuxInclusionNumeriqueLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { lieuxInclusionNumeriquePresenter } from '@/presenters/lieuxInclusionNumeriquePresenter'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
@@ -24,8 +23,8 @@ export default async function LieuxInclusionController(): Promise<ReactElement> 
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+  const utilisateurLoader = new PrismaUtilisateurLoader()
+  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
   const territoire = await territoireUseCase.handle(utilisateur)

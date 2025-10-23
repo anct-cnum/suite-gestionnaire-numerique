@@ -2,13 +2,13 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../prisma/prismaClient'
 import ListeLieuxInclusion from '@/components/ListeLieuxInclusion/ListeLieuxInclusion'
 import { handleReadModelOrError } from '@/components/shared/ErrorHandler'
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeLieuxInclusionPresenter } from '@/presenters/listeLieuxInclusionPresenter'
 import { buildFiltresLieuxInclusion } from '@/shared/filtresLieuxInclusionUtils'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
@@ -35,8 +35,8 @@ export default async function ListeLieuxInclusionController({
     redirect('/connexion')
   }
 
-  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+  const utilisateurLoader = new PrismaUtilisateurLoader()
+  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
   const territoireResult = await territoireUseCase.handle(utilisateur)
@@ -90,7 +90,7 @@ export default async function ListeLieuxInclusionController({
       listeLieuxInclusionViewModel={listeLieuxInclusionViewModel}
       searchParams={currentSearchParams}
       typesStructure={typesStructure}
-      utilisateurRole={utilisateur.state.role.nom}
+      utilisateurRole={utilisateur.role.nom as TypologieRole}
     />
   )
 

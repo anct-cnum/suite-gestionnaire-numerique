@@ -1,11 +1,13 @@
+import { TerritoireReadModel } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 import { RoleUtilisateur, UnUtilisateurReadModel } from '@/use-cases/queries/shared/UnUtilisateurReadModel'
 
 export function createSessionUtilisateurPresenter(
-  utilisateurReadModel: UnUtilisateurReadModel
+  utilisateurReadModel: UnUtilisateurReadModel,
+  territoire: TerritoireReadModel
 ): SessionUtilisateurViewModel {
   const role = utilisateurReadModel.role
   return {
-    codeDepartement: utilisateurReadModel.departementCode,
+    codeDepartement: territoire.codes[0] ?? null,
     displayLiensGouvernance: utilisateurReadModel.displayMenusPilotage,
     email: utilisateurReadModel.email,
     nom: utilisateurReadModel.nom,
@@ -20,6 +22,7 @@ export function createSessionUtilisateurPresenter(
       type: role.type,
     },
     telephone: utilisateurReadModel.telephone,
+    territoire,
     uid: utilisateurReadModel.uid,
   }
 }
@@ -40,5 +43,6 @@ export type SessionUtilisateurViewModel = Readonly<{
     type: RoleUtilisateur
   }>
   telephone: string
+  territoire: TerritoireReadModel
   uid: string
 }>
