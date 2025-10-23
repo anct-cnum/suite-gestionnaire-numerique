@@ -81,3 +81,8 @@ CREATE SCHEMA IF NOT EXISTS reference;
 
 
 ALTER SCHEMA reference OWNER TO sonum;
+
+
+DROP FUNCTION IF EXISTS public.edited_by_column();
+
+DROP FUNCTION IF EXISTS public.updated_at_column();

@@ -117,8 +117,8 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
           },
           {
             relationStructure: {
-              relationDepartement: {
-                code: codeDepartement,
+              adresse: {
+                departement: codeDepartement,
               },
             },
           },
@@ -134,9 +134,9 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
           },
           {
             relationStructure: {
-              relationDepartement: {
-                relationRegion: {
-                  code: codeRegion,
+              adresse: {
+                departement: {
+                  in: await this.#getDepartementsInRegion(codeRegion),
                 },
               },
             },
@@ -166,6 +166,7 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
         relationRegion: true,
         relationStructure: {
           include: {
+            adresse: true,
             membres: {
               select: {
                 gouvernanceDepartementCode: true,
@@ -193,6 +194,18 @@ export class PrismaUtilisateurLoader implements MesUtilisateursLoader {
       total,
       utilisateursCourants: utilisateursRecord.map(transform),
     }
+  }
+
+  async #getDepartementsInRegion(codeRegion: string): Promise<Array<string>> {
+    const departements = await prisma.departementRecord.findMany({
+      select: {
+        code: true,
+      },
+      where: {
+        regionCode: codeRegion,
+      },
+    })
+    return departements.map((departement) => departement.code)
   }
 }
 

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import prisma from '../../../../../prisma/prismaClient'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeLieuxInclusionLoader } from '@/gateways/PrismaListeLieuxInclusionLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { LieuInclusionNumeriqueItem } from '@/use-cases/queries/RecupererLieuxInclusion'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
@@ -16,8 +15,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const utilisateur = await utilisateurLoader.get(await getSessionSub())
+    const utilisateurLoader = new PrismaUtilisateurLoader()
+    const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
     const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
     const territoireResult = await territoireUseCase.handle(utilisateur)

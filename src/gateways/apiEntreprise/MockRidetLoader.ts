@@ -7,10 +7,13 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
   adresse: 'NOUMÉA, PROVINCE SUD',
   categorieJuridiqueCode: '92',
   categorieJuridiqueLibelle: 'Association loi de 1901 et assimilé',
+  codeInsee: '',
   codePostal: '',
   commune: 'Nouméa',
   denomination: 'ASS. D\'ENTRAIDE SOCIALE CULTURELLE DE LA JEUNESSE',
   identifiant: '0271528',
+  nomVoie: '',
+  numeroVoie: '',
 }
 
 export class MockRidetLoader implements SireneLoader {

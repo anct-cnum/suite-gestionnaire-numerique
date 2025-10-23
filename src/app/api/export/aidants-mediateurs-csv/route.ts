@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import prisma from '../../../../../prisma/prismaClient'
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { buildFiltresForExport, FiltresURLParams } from '@/shared/filtresAidantsMediateursUtils'
 import { AidantMediateurAvecAccompagnementReadModel } from '@/use-cases/queries/RecupererListeAidantsMediateurs'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
@@ -17,8 +17,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
     }
 
-    const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-    const utilisateur = await utilisateurLoader.get(await getSessionSub())
+    const utilisateurLoader = new PrismaUtilisateurLoader()
+    const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
     const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
     const territoireResult = await territoireUseCase.handle(utilisateur)
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const filtres = buildFiltresForExport(
       params,
       territoire,
-      utilisateur.state.role.nom
+      utilisateur.role.nom as TypologieRole
     )
 
     // Récupération des données avec accompagnements pour l'export

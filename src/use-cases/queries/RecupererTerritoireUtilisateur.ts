@@ -1,7 +1,4 @@
-import { Administrateur } from '@/domain/Administrateur'
-import { GestionnaireDepartement } from '@/domain/GestionnaireDepartement'
-import { GestionnaireStructure } from '@/domain/GestionnaireStructure'
-import { Utilisateur } from '@/domain/Utilisateur'
+import { UnUtilisateurReadModel } from './shared/UnUtilisateurReadModel'
 
 export class RecupererTerritoireUtilisateur {
   readonly #loader: TerritoireDepartementsLoader
@@ -10,28 +7,36 @@ export class RecupererTerritoireUtilisateur {
     this.#loader = loader
   }
 
-  async handle(utilisateur: Utilisateur): Promise<TerritoireReadModel> {
-    if (utilisateur instanceof Administrateur) {
+  async handle(utilisateur: UnUtilisateurReadModel): Promise<TerritoireReadModel> {
+    if (utilisateur.role.type === 'administrateur_dispositif') {
       return { codes: ['France'], type: 'france' }
     }
 
-    if (utilisateur instanceof GestionnaireDepartement) {
+    if (utilisateur.role.type === 'gestionnaire_departement') {
       return {
-        codes: [utilisateur.state.departement.code],
+        codes: utilisateur.departementCode === null ? [] : [utilisateur.departementCode],
         type: 'departement',
       }
     }
 
-    if (utilisateur instanceof GestionnaireStructure) {
-      const code = await this.#loader.getDepartementCodeByStructureId(
-        utilisateur.state.structureUid.value
-      )
+    if (utilisateur.role.type === 'gestionnaire_region') {
+      return {
+        codes: utilisateur.regionCode === null ? [] : [utilisateur.regionCode],
+        type: 'region',
+      }
+    }
+
+    if (utilisateur.role.type === 'gestionnaire_structure') {
+      if (utilisateur.structureId === null) {
+        return { codes: [], type: 'departement' }
+      }
+      const code = await this.#loader.getDepartementCodeByStructureId(utilisateur.structureId)
       return {
         codes: code === null ? [] : [code],
         type: 'departement',
       }
     }
-
+    // implémenter la logique pour les groupements
     throw new Error('Type utilisateur non géré')
   }
 }
@@ -42,5 +47,5 @@ export interface TerritoireDepartementsLoader {
 
 export type TerritoireReadModel = Readonly<{
   codes: ReadonlyArray<string>
-  type: 'departement' | 'france'
+  type: 'departement' | 'france' | 'region'
 }>

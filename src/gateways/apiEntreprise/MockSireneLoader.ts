@@ -7,10 +7,13 @@ const ENTREPRISE_MOCK: EntrepriseReadModel = {
   adresse: '20 AVENUE DE SEGUR, 75007 PARIS',
   categorieJuridiqueCode: '7389',
   categorieJuridiqueLibelle: 'Établissement public national à caractère administratif',
+  codeInsee: '75107',
   codePostal: '75007',
   commune: 'PARIS',
   denomination: 'AGENCE NATIONALE DE LA COHESION DES TERRITOIRES',
   identifiant: SIRET_VALIDE,
+  nomVoie: 'AVENUE DE SEGUR',
+  numeroVoie: '20',
 }
 
 export class MockSireneLoader implements SireneLoader {

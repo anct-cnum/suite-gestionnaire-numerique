@@ -69,9 +69,6 @@ model StructureRecord {
   type                     String
   categorieJuridique       String? @map("categorie_juridique") @db.VarChar(4)
 
-  utilisateurs UtilisateurRecord[]
-  membres      MembreRecord[]
-
   relationDepartement DepartementRecord @relation(fields: [departementCode], references: [code])
 
   @@map("structure")
@@ -93,12 +90,13 @@ model UtilisateurRecord {
   prenom            String
   regionCode        String?   @map("region_code")
   role              Role
+  oldStructureId    Int?      @map("old_structure_id")
   structureId       Int?      @map("structure_id")
   ssoId             String    @unique @default("") @map("sso_id")
   ssoEmail          String    @unique @map("sso_email")
   telephone         String    @db.VarChar(13)
 
-  relationStructure   StructureRecord?   @relation(fields: [structureId], references: [id])
+  relationStructure   main_structure?    @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
   relationGroupement  GroupementRecord?  @relation(fields: [groupementId], references: [id])
   relationDepartement DepartementRecord? @relation(fields: [departementCode], references: [code])
   relationRegion      RegionRecord?      @relation(fields: [regionCode], references: [code])
@@ -205,6 +203,7 @@ model MembreRecord {
   nom                        String?   @map("nom")
   siretRidet                 String?   @map("siret_ridet")
   dateSuppression            DateTime? @map("date_suppression")
+  oldStructureId             Int?      @map("old_structure_id")
   structureId                Int?      @map("structure_id")
 
   oldUUID String @map("old_uuid") @db.Uuid
@@ -212,7 +211,7 @@ model MembreRecord {
   relationGouvernance      GouvernanceRecord               @relation(fields: [gouvernanceDepartementCode], references: [departementCode])
   relationContact          ContactMembreGouvernanceRecord  @relation("contact", fields: [contact], references: [email])
   relationContactTechnique ContactMembreGouvernanceRecord? @relation("contactTechnique", fields: [contactTechnique], references: [email])
-  relationStructure        StructureRecord?                @relation(fields: [structureId], references: [id])
+  relationStructure        main_structure?                 @relation(fields: [structureId], onDelete: NoAction, onUpdate: NoAction, references: [id])
 
   FeuilleDeRouteRecord         FeuilleDeRouteRecord[]
   BeneficiaireSubventionRecord BeneficiaireSubventionRecord[]
@@ -389,6 +388,7 @@ model commune {
   population     Int?
   created_at     DateTime?               @default(now()) @db.Timestamp(6)
   updated_at     DateTime?               @db.Timestamp(6)
+  code_insee_cr  String?                 @db.VarChar(5)
   departement    admin_departement       @relation(fields: [departement_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "commune_departement_id")
   commune_epci   commune_epci[]
   zonage         zonage[]
@@ -500,7 +500,7 @@ model zonage {
   updated_at  DateTime?                @db.Timestamp(6)
   commune     commune                  @relation(fields: [code_insee], references: [code_insee], onDelete: NoAction, onUpdate: NoAction)
 
-  @@unique([code, code_insee], map: "zonage_ukey")
+  @@unique([code, code_insee], map: "zonage_code_ukey")
   @@index([code_insee])
   @@index([geom], type: Gist)
   @@schema("admin")
@@ -510,7 +510,7 @@ model activites_coop {
   id                                  Int             @id @default(autoincrement())
   coop_id                             String?         @unique(map: "activites_coop_coop_id_ukey") @db.Uuid
   structure_id                        Int?
-  personne_id                         Int
+  personne_id                         Int?
   type                                String          @db.VarChar(100)
   date                                DateTime        @db.Date
   duree                               Int
@@ -529,10 +529,13 @@ model activites_coop {
   thematiques_demarche_administrative String[]
   created_at                          DateTime?       @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?       @db.Timestamp(6)
-  personne                            personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
+  periode                             DateTime?       @default(dbgenerated("(date_trunc('month'::text, (date)::timestamp without time zone))::date")) @db.Date
+  personne                            personne?       @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activites_coop_personne_id_fkey")
   structure                           main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([lieu_code_insee])
+  @@index([periode])
+  @@index([personne_id])
   @@schema("main")
 }
 
@@ -542,9 +545,9 @@ model adresse {
   geom         Unsupported("geometry")?
   clef_interop String?                  @db.VarChar(50)
   code_ban     String?                  @unique(map: "adresse_code_ban_ukey") @db.Uuid
-  code_postal  String?                  @db.VarChar(5)
-  code_insee   String?                  @db.VarChar(5)
-  nom_commune  String?                  @db.VarChar(255)
+  code_postal  String                   @db.VarChar(5)
+  code_insee   String                   @db.VarChar(5)
+  nom_commune  String                   @db.VarChar(255)
   nom_voie     String?                  @db.VarChar(255)
   repetition   String?                  @db.VarChar(10)
   numero_voie  Int?                     @db.SmallInt
@@ -592,6 +595,7 @@ model personne {
   nb_accompagnements_ac                                                        Int?
   created_at                                                                   DateTime?                @default(now()) @db.Timestamp(6)
   updated_at                                                                   DateTime?                @db.Timestamp(6)
+  edited_by                                                                    String?                  @db.VarChar(50)
   activites_coop                                                               activites_coop[]
   contrat                                                                      contrat[]
   coordination_mediation_coordination_mediation_coordinateur_idTopersonne      coordination_mediation[] @relation("coordination_mediation_coordinateur_idTopersonne")
@@ -602,6 +606,7 @@ model personne {
   personne_affectations                                                        personne_affectations[]
   poste                                                                        poste[]
 
+  @@index([nom, prenom], map: "personne_patronyme")
   @@schema("main")
 }
 
@@ -631,6 +636,7 @@ model poste {
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model main_structure {
   id                                  Int                     @id @default(autoincrement())
   structure_coop_id                   String?                 @unique(map: "structure_structure_coop_id_ukey") @db.Uuid
@@ -647,7 +653,7 @@ model main_structure {
   categorie_juridique                 String?                 @db.VarChar(4)
   nb_mandats_ac                       Int?
   publique                            Boolean?
-  structure_cartographie_nationale_id String?                 @db.VarChar
+  structure_cartographie_nationale_id String?                 @unique(map: "structure_cartographie_ukey") @db.VarChar
   visible_pour_cartographie_nationale Boolean?
   typologies                          String[]
   presentation_resume                 String?
@@ -671,11 +677,15 @@ model main_structure {
   last_sirene_enrich_at               DateTime?               @db.Date
   created_at                          DateTime?               @default(now()) @db.Timestamp(6)
   updated_at                          DateTime?               @db.Timestamp(6)
+  fiche_acces_libre                   String?                 @db.VarChar
+  edited_by                           String?                 @db.VarChar(50)
   activites_coop                      activites_coop[]
   personne_affectations               personne_affectations[]
   poste                               poste[]
   adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
   categories_juridiques               categories_juridiques?  @relation(fields: [categorie_juridique], references: [code], onDelete: NoAction, onUpdate: NoAction, map: "structure_categorie_juridique_fkey")
+  membres                             MembreRecord[]
+  utilisateurs                        UtilisateurRecord[]
 
   @@unique([siret, nom, adresse_id], map: "structure_ukey")
   @@map("structure")

@@ -16,10 +16,13 @@ export class RidetApiLoader implements SireneLoader {
       adresse: adresseComplete,
       categorieJuridiqueCode: etablissement.code_formjur,
       categorieJuridiqueLibelle: etablissement.libelle_formjur,
+      codeInsee: etablissement.code_commune,
       codePostal: '', // Pas disponible dans l'API RIDET
       commune: etablissement.libelle_commune,
       denomination: etablissement.denomination,
       identifiant: ridetOriginal ?? etablissement.rid7,
+      nomVoie: '', // Pas disponible dans l'API RIDET
+      numeroVoie: '', // Pas disponible dans l'API RIDET
     }
   }
 

@@ -2,12 +2,12 @@ import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { ReactElement } from 'react'
 
-import prisma from '../../../../../../prisma/prismaClient'
 import ListeAidantsMediateurs from '@/components/ListeAidantsMediateurs/ListeAidantsMediateurs'
+import { TypologieRole } from '@/domain/Role'
 import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaListeAidantsMediateursLoader } from '@/gateways/PrismaListeAidantsMediateursLoader'
 import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
-import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
+import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
 import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
@@ -35,8 +35,8 @@ export default async function ListeAidantsMediateursController({
   if (!session) {
     redirect('/connexion')
   }
-  const utilisateurLoader = new PrismaUtilisateurRepository(prisma.utilisateurRecord)
-  const utilisateur = await utilisateurLoader.get(await getSessionSub())
+  const utilisateurLoader = new PrismaUtilisateurLoader()
+  const utilisateur = await utilisateurLoader.findByUid(await getSessionSub())
 
   const territoireUseCase = new RecupererTerritoireUtilisateur(new PrismaMembreLoader())
   const territoireResult = await territoireUseCase.handle(utilisateur)
@@ -54,7 +54,7 @@ export default async function ListeAidantsMediateursController({
   const filtres = buildFiltresListeAidants(
     resolvedSearchParams,
     territoire,
-    utilisateur.state.role.nom
+    utilisateur.role.nom as TypologieRole
   )
 
   const listeAidantsMediateursLoader = new PrismaListeAidantsMediateursLoader()
@@ -96,7 +96,7 @@ export default async function ListeAidantsMediateursController({
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
       searchParams={currentSearchParams}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
-      utilisateurRole={utilisateur.state.role.nom}
+      utilisateurRole={utilisateur.role.nom as TypologieRole}
     />
   )
 

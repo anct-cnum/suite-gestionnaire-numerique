@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // Stryker disable all
 import { Prisma } from '@prisma/client'
 
@@ -77,12 +78,113 @@ export async function creerUnDepartement(
 }
 
 export async function creerUneStructure(
-  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>,
+  override?: {
+    adresse?: string
+    codePostal?: string
+    commune?: string
+    departementCode?: string
+    identifiantEtablissement?: string
+    type?: string
+  } & Partial<Prisma.main_structureUncheckedCreateInput>,
   tx?: Prisma.TransactionClient
 ): Promise<void> {
   const client = tx ?? prisma
-  await client.structureRecord.create({
-    data: structureRecordFactory(override),
+  const { adresse,
+    codePostal,
+    commune,
+    contact,
+    departementCode,
+    id,
+    identifiantEtablissement,
+    type,
+    ...rest
+  } = override ?? {}
+
+  // Valeurs par défaut de l'ancien structureRecordFactory
+  const defaults = {
+    adresse: '3 BIS AVENUE CHARLES DE GAULLE',
+    codePostal: '84200',
+    commune: 'PARIS',
+    contact: {
+      email: 'manon.verminac@example.com',
+      fonction: 'Chargée de mission',
+      nom: 'Verninac',
+      prenom: 'Manon',
+      telephone: '0102030405',
+    },
+    id: 10,
+    identifiantEtablissement: '41816609600069',
+    nom: 'Solidarnum',
+    type: 'COMMUNE',
+  }
+
+  // Mapper les anciens champs vers main.structure
+  const siret = identifiantEtablissement ?? defaults.identifiantEtablissement
+
+  // Construire le contact JSON et l'adresse
+  const contactData = contact ?? defaults.contact
+  const adresseComplete = adresse ?? defaults.adresse
+  const cp = codePostal ?? defaults.codePostal
+  const ville = commune ?? defaults.commune
+
+  // Créer l'adresse si nécessaire (pour le moment, on met juste les infos dans contact)
+  const finalContact = {
+    ...contactData,
+    adresse: adresseComplete,
+    codePostal: cp,
+    commune: ville,
+  }
+
+  // Mapper type vers typologies (array)
+  const typologies = type === undefined ? [defaults.type] : [type]
+
+  // Créer une adresse si departementCode est fourni
+  let adresse_id: null | number | undefined = rest.adresse_id
+  if (departementCode !== undefined && departementCode !== '' && adresse_id === undefined) {
+    // Construire un code_insee valide au format [code_dept][code_commune]
+    // Le département généré sera les 2 premiers caractères du code_insee (ou 3 pour les DOM-TOM 97x/98x)
+    const codeCommune = '001'
+    const code_insee = departementCode + codeCommune
+
+    // Rendre l'adresse unique en ajoutant le departementCode au nom_voie
+    // pour éviter les conflits de contrainte d'unicité entre différents départements
+    const nom_voie_unique = `${adresseComplete} - Dept ${departementCode}`
+
+    // Chercher si l'adresse existe déjà pour éviter les doublons
+    // La contrainte d'unicité est sur: (code_postal, nom_commune, nom_voie, numero_voie, repetition)
+    let adresse = await client.adresse.findFirst({
+      where: {
+        code_insee,
+        code_postal: cp,
+        nom_commune: ville,
+        nom_voie: nom_voie_unique,
+      },
+    })
+
+    if (!adresse) {
+      adresse = await client.adresse.create({
+        data: {
+          code_insee,
+          code_postal: cp,
+          nom_commune: ville,
+          nom_voie: nom_voie_unique,
+        },
+      })
+    }
+
+    adresse_id = adresse.id
+  }
+
+  await client.main_structure.create({
+    data: {
+      contact: finalContact,
+      id: id ?? defaults.id,
+      nom: rest.nom ?? defaults.nom,
+      siret,
+      typologies,
+      ...rest,
+      adresse_id,
+    },
   })
 }
 
@@ -379,31 +481,6 @@ function groupementRecordFactory(
   return {
     id: 10,
     nom: 'Hubikoop',
-    ...override,
-  }
-}
-
-function structureRecordFactory(
-  override?: Partial<Prisma.StructureRecordUncheckedCreateInput>
-): Prisma.StructureRecordUncheckedCreateInput {
-  return {
-    adresse: '3 BIS AVENUE CHARLES DE GAULLE',
-    codePostal: '84200',
-    commune: 'PARIS',
-    contact: {
-      email: 'manon.verminac@example.com',
-      fonction: 'Chargée de mission',
-      nom: 'Verninac',
-      prenom: 'Manon',
-      telephone: '0102030405',
-    },
-    departementCode: '75',
-    id: 10,
-    identifiantEtablissement: '41816609600069',
-    idMongo: '123456',
-    nom: 'Solidarnum',
-    statut: 'VALIDATION_COSELEC',
-    type: 'COMMUNE',
     ...override,
   }
 }

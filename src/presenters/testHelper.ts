@@ -62,6 +62,10 @@ export function sessionUtilisateurViewModelFactory(
       type: 'gestionnaire_structure',
     },
     telephone: '0102030405',
+    territoire: {
+      codes: ['93'],
+      type: 'departement',
+    },
     uid: 'fooId',
     ...override,
   }

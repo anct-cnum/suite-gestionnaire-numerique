@@ -10,10 +10,13 @@ describe('rechercherUneEntreprise', () => {
       adresse: '8 RUE DE LONDRES, 75009 PARIS 9',
       categorieJuridiqueCode: '5499',
       categorieJuridiqueLibelle: 'Société par actions simplifiée',
+      codeInsee: '75109',
       codePostal: '75009',
       commune: 'PARIS 9',
       denomination: 'GOOGLE FRANCE',
       identifiant: '73282932000074',
+      nomVoie: 'RUE DE LONDRES',
+      numeroVoie: '8',
     }
     
     const mockSireneLoader: SireneLoader = {
