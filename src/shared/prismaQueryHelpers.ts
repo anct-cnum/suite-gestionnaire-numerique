@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client'
 
+import departements from '../../ressources/departements.json'
+
 export function buildWhereClause(
   baseConditions: Array<Prisma.Sql>,
   standardFilters: StandardFilters = {},
@@ -13,7 +15,10 @@ export function buildWhereClause(
   }
 
   if (standardFilters.codeRegion !== undefined && standardFilters.codeRegion !== '') {
-    conditions.push(Prisma.sql`a.region = ${standardFilters.codeRegion}`)
+    const departementsRegion = getDepartementsParRegion(standardFilters.codeRegion)
+    if (departementsRegion.length > 0) {
+      conditions.push(Prisma.sql`a.departement IN (${Prisma.join(departementsRegion)})`)
+    }
   }
 
   if (standardFilters.typeStructure !== undefined && standardFilters.typeStructure !== '') {
@@ -46,6 +51,13 @@ export function buildWhereClause(
   return conditions.length > 0
     ? Prisma.sql`WHERE ${Prisma.join(conditions, ' AND ')}`
     : Prisma.empty
+}
+
+// Crée un mapping de code région -> liste de codes départements
+function getDepartementsParRegion(codeRegion: string): Array<string> {
+  return departements
+    .filter(dept => dept.regionCode === codeRegion)
+    .map(dept => dept.code)
 }
 
 interface ZonageFilters {
