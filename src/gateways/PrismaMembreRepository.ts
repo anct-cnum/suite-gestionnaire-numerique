@@ -4,7 +4,7 @@ import { membreInclude, toMembre } from './shared/MembresGouvernance'
 import prisma from '../../prisma/prismaClient'
 import { Membre, MembreState } from '@/domain/Membre'
 import { membreFactory, StatutFactory } from '@/domain/MembreFactory'
-import { ContactData, EntrepriseData, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
+import { ContactData, EntrepriseData, MembreContacts, MembreRepository } from '@/use-cases/commands/shared/MembreRepository'
 
 export class PrismaMembreRepository implements MembreRepository {
   async create(
@@ -108,6 +108,41 @@ export class PrismaMembreRepository implements MembreRepository {
       },
       uidStructure: { value: record.structureId },
     }) as Membre
+  }
+
+  async getContacts(uid: MembreState['uid']['value'], tx?: Prisma.TransactionClient): Promise<MembreContacts> {
+    const client = tx ?? prisma
+    const record = await client.membreRecord.findUniqueOrThrow({
+      include: {
+        relationContact: true,
+        relationContactTechnique: true,
+      },
+      where: {
+        id: uid,
+      },
+    })
+
+    const contact: ContactData = {
+      email: record.relationContact.email,
+      fonction: record.relationContact.fonction,
+      nom: record.relationContact.nom,
+      prenom: record.relationContact.prenom,
+    }
+
+    let contactTechnique: ContactData | undefined
+    if (record.relationContactTechnique) {
+      contactTechnique = {
+        email: record.relationContactTechnique.email,
+        fonction: record.relationContactTechnique.fonction,
+        nom: record.relationContactTechnique.nom,
+        prenom: record.relationContactTechnique.prenom,
+      }
+    }
+
+    return {
+      contact,
+      contactTechnique,
+    }
   }
 
   async update(membre: Membre, tx?: Prisma.TransactionClient): Promise<void> {

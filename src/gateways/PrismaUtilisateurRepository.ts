@@ -62,6 +62,38 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     return this.#drop(utilisateur.state.uid.value)
   }
   
+  async findByEmail(email: string): Promise<undefined | Utilisateur> {
+    const record = await this.#dataResource.findUnique({
+      include: {
+        relationDepartement: true,
+        relationGroupement: true,
+        relationRegion: true,
+        relationStructure: true,
+      },
+      where: {
+        isSupprime: false,
+        ssoEmail: email,
+      },
+    })
+    if (!record) {
+      return undefined
+    }
+    return new UtilisateurFactory({
+      departement: mapDepartement(record.relationDepartement),
+      derniereConnexion: record.derniereConnexion ?? undefined,
+      emailDeContact: record.emailDeContact,
+      groupementUid: record.relationGroupement?.id,
+      inviteLe: record.inviteLe,
+      isSuperAdmin: record.isSuperAdmin,
+      nom: record.nom,
+      prenom: record.prenom,
+      region: record.relationRegion ?? undefined,
+      structureUid: record.relationStructure?.id,
+      telephone: record.telephone,
+      uid: { email: record.ssoEmail, value: record.ssoId },
+    }).create(toTypologieRole(record.role))
+  }
+
   async get(uid: UtilisateurUidState['value']): Promise<Utilisateur> {
     const record = await this.#dataResource.findUnique({
       include: {
