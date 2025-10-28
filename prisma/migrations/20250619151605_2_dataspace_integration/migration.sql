@@ -1,6 +1,3 @@
-
--- Name: citext; Type: EXTENSION; Schema: -; Owner: -
-
 CREATE EXTENSION IF NOT EXISTS citext WITH SCHEMA min;
 
 
@@ -1346,13 +1343,18 @@ CREATE TABLE main.coordination_mediation (
     mediateur_id integer NOT NULL,
     coordinateur_coop_id uuid NOT NULL,
     mediateur_coop_id uuid NOT NULL,
-    en_cours boolean,
     created_at timestamp without time zone DEFAULT now(),
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    suppression timestamp with time zone
 );
 
 
 ALTER TABLE main.coordination_mediation OWNER TO sonum;
+
+-- Name: COLUMN coordination_mediation.suppression; Type: COMMENT; Schema: main; Owner: sonum
+
+COMMENT ON COLUMN main.coordination_mediation.suppression IS 'Date de suppression de la coordination médiation (NULL si en cours).';
+
 
 -- Name: coordination_mediation_id_seq; Type: SEQUENCE; Schema: main; Owner: sonum
 
@@ -1504,35 +1506,35 @@ GRANT ALL ON FUNCTION admin.refresh_coll_terr() TO app_python;
 -- Name: TABLE commune; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune TO app_python;
-GRANT SELECT ON TABLE admin.commune TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.commune TO min_scalingo;
 GRANT SELECT ON TABLE admin.commune TO min_dev;
 
 
 -- Name: TABLE departement; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.departement TO app_python;
-GRANT SELECT ON TABLE admin.departement TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.departement TO min_scalingo;
 GRANT SELECT ON TABLE admin.departement TO min_dev;
 
 
 -- Name: TABLE region; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.region TO app_python;
-GRANT SELECT ON TABLE admin.region TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.region TO min_scalingo;
 GRANT SELECT ON TABLE admin.region TO min_dev;
 
 
 -- Name: TABLE coll_terr; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.coll_terr TO app_python;
-GRANT SELECT ON TABLE admin.coll_terr TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.coll_terr TO min_scalingo;
 GRANT SELECT ON TABLE admin.coll_terr TO min_dev;
 
 
 -- Name: TABLE commune_epci; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.commune_epci TO app_python;
-GRANT SELECT ON TABLE admin.commune_epci TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.commune_epci TO min_scalingo;
 GRANT SELECT ON TABLE admin.commune_epci TO min_dev;
 
 
@@ -1554,7 +1556,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.departement_id_seq TO app_python;
 -- Name: TABLE epci; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.epci TO app_python;
-GRANT SELECT ON TABLE admin.epci TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.epci TO min_scalingo;
 GRANT SELECT ON TABLE admin.epci TO min_dev;
 
 
@@ -1566,7 +1568,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.epci_id_seq TO app_python;
 -- Name: TABLE icp_departement; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.icp_departement TO app_python;
-GRANT SELECT ON TABLE admin.icp_departement TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.icp_departement TO min_scalingo;
 GRANT SELECT ON TABLE admin.icp_departement TO min_dev;
 
 
@@ -1578,7 +1580,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.icp_departement_id_seq TO app_python;
 -- Name: TABLE ifn_commune; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_commune TO app_python;
-GRANT SELECT ON TABLE admin.ifn_commune TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.ifn_commune TO min_scalingo;
 GRANT SELECT ON TABLE admin.ifn_commune TO min_dev;
 
 
@@ -1590,7 +1592,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_commune_id_seq TO app_python;
 -- Name: TABLE ifn_departement; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.ifn_departement TO app_python;
-GRANT SELECT ON TABLE admin.ifn_departement TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.ifn_departement TO min_scalingo;
 GRANT SELECT ON TABLE admin.ifn_departement TO min_dev;
 
 
@@ -1602,7 +1604,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.ifn_departement_id_seq TO app_python;
 -- Name: TABLE insee_cp; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_cp TO app_python;
-GRANT SELECT ON TABLE admin.insee_cp TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.insee_cp TO min_scalingo;
 GRANT SELECT ON TABLE admin.insee_cp TO min_dev;
 
 
@@ -1614,7 +1616,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.insee_cp_id_seq TO app_python;
 -- Name: TABLE insee_historique; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.insee_historique TO app_python;
-GRANT SELECT ON TABLE admin.insee_historique TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.insee_historique TO min_scalingo;
 GRANT SELECT ON TABLE admin.insee_historique TO min_dev;
 
 
@@ -1631,7 +1633,7 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.region_id_seq TO app_python;
 -- Name: TABLE zonage; Type: ACL; Schema: admin; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE admin.zonage TO app_python;
-GRANT SELECT ON TABLE admin.zonage TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE admin.zonage TO min_scalingo;
 GRANT SELECT ON TABLE admin.zonage TO min_dev;
 
 
@@ -1643,69 +1645,69 @@ GRANT USAGE,UPDATE ON SEQUENCE admin.zonage_id_seq TO app_python;
 -- Name: TABLE adresse; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.adresse TO app_python;
-GRANT SELECT ON TABLE main.adresse TO min_scalingo;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.adresse TO min_scalingo;
 GRANT SELECT ON TABLE main.adresse TO min_dev;
 
 
 -- Name: TABLE personne; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne TO app_python;
-GRANT SELECT ON TABLE main.personne TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.personne TO min_scalingo;
 GRANT SELECT ON TABLE main.personne TO min_dev;
 
 
 -- Name: TABLE personne_affectations; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.personne_affectations TO app_python;
-GRANT SELECT ON TABLE main.personne_affectations TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.personne_affectations TO min_scalingo;
 GRANT SELECT ON TABLE main.personne_affectations TO min_dev;
 
 
 -- Name: TABLE structure; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.structure TO app_python;
-GRANT SELECT,INSERT,UPDATE ON TABLE main.structure TO min_scalingo;
+GRANT SELECT,INSERT,REFERENCES,UPDATE ON TABLE main.structure TO min_scalingo;
 GRANT SELECT ON TABLE main.structure TO min_dev;
 
 
 -- Name: TABLE categories_juridiques; Type: ACL; Schema: reference; Owner: sonum
 
-GRANT SELECT ON TABLE reference.categories_juridiques TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE reference.categories_juridiques TO min_scalingo;
 GRANT SELECT ON TABLE reference.categories_juridiques TO min_dev;
 
 
 -- Name: TABLE activites_coop; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.activites_coop TO app_python;
-GRANT SELECT ON TABLE main.activites_coop TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.activites_coop TO min_scalingo;
 GRANT SELECT ON TABLE main.activites_coop TO min_dev;
 
 
 -- Name: TABLE poste; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.poste TO app_python;
-GRANT SELECT ON TABLE main.poste TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.poste TO min_scalingo;
 GRANT SELECT ON TABLE main.poste TO min_dev;
 
 
 -- Name: TABLE formation; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.formation TO app_python;
-GRANT SELECT ON TABLE main.formation TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.formation TO min_scalingo;
 GRANT SELECT ON TABLE main.formation TO min_dev;
 
 
 -- Name: TABLE contrat; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.contrat TO app_python;
-GRANT SELECT ON TABLE main.contrat TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.contrat TO min_scalingo;
 GRANT SELECT ON TABLE main.contrat TO min_dev;
 
 
 -- Name: TABLE subvention; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.subvention TO app_python;
-GRANT SELECT ON TABLE main.subvention TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.subvention TO min_scalingo;
 GRANT SELECT ON TABLE main.subvention TO min_dev;
 
 
@@ -1717,6 +1719,7 @@ GRANT USAGE ON SEQUENCE main.activites_coop_id_seq TO app_python;
 -- Name: SEQUENCE adresse_id_seq; Type: ACL; Schema: main; Owner: sonum
 
 GRANT USAGE ON SEQUENCE main.adresse_id_seq TO app_python;
+GRANT USAGE ON SEQUENCE main.adresse_id_seq TO min_scalingo;
 
 
 -- Name: SEQUENCE contrat_id_seq; Type: ACL; Schema: main; Owner: sonum
@@ -1727,7 +1730,7 @@ GRANT USAGE ON SEQUENCE main.contrat_id_seq TO app_python;
 -- Name: TABLE coordination_mediation; Type: ACL; Schema: main; Owner: sonum
 
 GRANT SELECT,INSERT,DELETE,TRUNCATE,UPDATE ON TABLE main.coordination_mediation TO app_python;
-GRANT SELECT ON TABLE main.coordination_mediation TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE main.coordination_mediation TO min_scalingo;
 GRANT SELECT ON TABLE main.coordination_mediation TO min_dev;
 
 
@@ -1769,16 +1772,15 @@ GRANT USAGE ON SEQUENCE main.subvention_id_seq TO app_python;
 
 -- Name: TABLE naf; Type: ACL; Schema: reference; Owner: sonum
 
-GRANT SELECT ON TABLE reference.naf TO min_scalingo;
+GRANT SELECT,REFERENCES ON TABLE reference.naf TO min_scalingo;
 GRANT SELECT ON TABLE reference.naf TO min_dev;
 
 
 -- PostgreSQL database dump complete
 
 
-CREATE FUNCTION public.updated_at_column() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
+CREATE OR REPLACE FUNCTION public.updated_at_column() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN NEW.updated_at = now(); RETURN NEW; END; $$;
 CREATE OR REPLACE FUNCTION public.edited_by_column() RETURNS TRIGGER AS $$ BEGIN IF NEW.edited_by IS NULL THEN NEW.edited_by = current_user; END IF; RETURN NEW; END; $$ LANGUAGE plpgsql;
-
 
 
 -- Name: commune_epci commune_epci_pkey; Type: CONSTRAINT; Schema: admin; Owner: sonum
@@ -2132,6 +2134,11 @@ CREATE INDEX adresse_geom_idx ON main.adresse USING gist (geom);
 -- Name: adresse_ukey; Type: INDEX; Schema: main; Owner: sonum
 
 CREATE UNIQUE INDEX adresse_ukey ON main.adresse USING btree (code_postal, nom_commune, nom_voie, COALESCE((numero_voie)::integer, 0), COALESCE(repetition, ''::character varying));
+
+
+-- Name: coordination_mediation_ukey; Type: INDEX; Schema: main; Owner: sonum
+
+CREATE UNIQUE INDEX coordination_mediation_ukey ON main.coordination_mediation USING btree (coordinateur_id, mediateur_id, COALESCE(suppression, '1234-01-02 03:04:05+00'::timestamp with time zone));
 
 
 -- Name: formation_personne_id_idx; Type: INDEX; Schema: main; Owner: sonum

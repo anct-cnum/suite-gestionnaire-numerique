@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
+import { emailInvitationGatewayFactory } from './shared/emailInvitationGatewayFactory'
 import prisma from '../../../../prisma/prismaClient'
 import { getSessionSub } from '@/gateways/NextAuthAuthentificationGateway'
 import { PrismaGouvernanceRepository } from '@/gateways/PrismaGouvernanceRepository'
@@ -25,7 +26,9 @@ export async function definirUnCoPorteurAction(
   const message = await new DefinirUnCoPorteur(
     new PrismaMembreRepository(),
     new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-    new PrismaGouvernanceRepository()
+    new PrismaGouvernanceRepository(),
+    emailInvitationGatewayFactory,
+    new Date()
   )
     .handle({
       uidGouvernance: actionParams.uidGouvernance,
