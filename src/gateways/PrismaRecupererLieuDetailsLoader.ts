@@ -17,8 +17,9 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       const adresseComplete = this.construireAdresse(structure)
       const personnes = await this.recupererPersonnes(id)
       const tags = this.determinerTags(structure)
+      const structureId = parseInt(id, 10)
 
-      return this.construireReadModel(structure, adresseComplete, personnes, tags)
+      return this.construireReadModel(structure, adresseComplete, personnes, tags, structureId)
     } catch {
       return { message: 'Erreur interne du serveur', type: 'error' } as ErrorReadModel
     }
@@ -55,9 +56,12 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     publics_specifiquement_adresses: Array<string> | null
     typologies: Array<string> | null
   }): LieuDetailsReadModel['lieuAccueilPublic'] {
+    const contactInfo = this.extraireContactInfo(structure.contact)
+
     return {
       conseillerNumeriqueLabellePhase2: structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') ?? false,
       conseillerNumeriqueLabellePhase3: false,
+      email: contactInfo.email,
       fraisACharge: structure.frais_a_charge ?? [],
       horaires: structure.horaires ?? undefined,
       itinerance: structure.itinerance ?? [],
@@ -68,14 +72,15 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       priseEnChargeSpecifique: structure.prise_en_charge_specifique ?? [],
       priseRdvUrl: structure.prise_rdv ?? undefined,
       publicsSpecifiquementAdresses: structure.publics_specifiquement_adresses ?? [],
-      telephone: structure.contact?.telephone as string | undefined,
+      telephone: contactInfo.telephone,
       typologies: structure.typologies ?? [],
-      websiteUrl: structure.contact?.site_web as string | undefined,
+      websiteUrl: contactInfo.websiteUrl,
     }
   }
 
   private construireReadModel(
     structure: {
+      code_postal: null | string
       contact: null | Record<string, unknown>
       dispositif_programmes_nationaux: Array<string> | null
       frais_a_charge: Array<string> | null
@@ -105,13 +110,16 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       nom: string
       prenom: string
     }>,
-    tags: Array<string>
+    tags: Array<string>,
+    structureId: number
   ): LieuDetailsReadModel {
     const lieuAccueilPublic = this.construireLieuAccueilPublic(structure)
     const personnesTravaillant = personnes.map((personne) => this.mapperPersonne(personne))
     const servicesInclusionNumerique = this.construireServices(structure)
+    const codeDepartement = this.extraireCodeDepartement(structure.code_postal)
 
     return {
+      codeDepartement,
       header: {
         modificationDate: structure.updated_at?.toISOString(),
         nom: structure.nom,
@@ -125,6 +133,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       lieuAccueilPublic,
       personnesTravaillant,
       servicesInclusionNumerique,
+      structureId,
     }
   }
 
@@ -152,6 +161,33 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     }
 
     return tags
+  }
+
+  private extraireCodeDepartement(codePostal: null | string): string | undefined {
+    if (codePostal === null || codePostal.length < 2) {
+      return undefined
+    }
+    // Extraire les 2 premiers caractères du code postal
+    return codePostal.slice(0, 2)
+  }
+
+  private extraireContactInfo(contact: null | Record<string, unknown>): {
+    email: string | undefined
+    telephone: string | undefined
+    websiteUrl: string | undefined
+  } {
+    const courriels = contact?.courriels as Record<string, unknown> | undefined
+    const emailRaw = courriels?.contact_public
+    const email = emailRaw === null ? undefined : (emailRaw as string | undefined)
+
+    const siteWeb = contact?.site_web
+    const telephone = contact?.telephone
+
+    return {
+      email,
+      telephone: telephone === null ? undefined : (telephone as string | undefined),
+      websiteUrl: siteWeb === null ? undefined : (siteWeb as string | undefined),
+    }
   }
 
   private mapperPersonne(personne: {

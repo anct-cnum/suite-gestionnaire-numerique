@@ -1,6 +1,7 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export interface LieuDetailsReadModel {
+  codeDepartement?: string
   header: {
     modificationAuteur?: string
     modificationDate?: string
@@ -17,6 +18,7 @@ export interface LieuDetailsReadModel {
     accessibilite?: string
     conseillerNumeriqueLabellePhase2?: boolean
     conseillerNumeriqueLabellePhase3?: boolean
+    email?: string
     fraisACharge?: ReadonlyArray<string>
     horaires?: string
     itinerance?: ReadonlyArray<string>
@@ -45,6 +47,7 @@ export interface LieuDetailsReadModel {
     nom: string
     thematiques: ReadonlyArray<string>
   }>
+  structureId: number
 }
 
 export interface RecupererLieuDetailsLoader {

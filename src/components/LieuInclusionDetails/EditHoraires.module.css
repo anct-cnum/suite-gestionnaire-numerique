@@ -1,0 +1,51 @@
+.periodCard {
+  background-color: rgb(255 255 255);
+  border: 0.0625rem solid rgb(221 221 221);
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.periodCardClosed {
+  background-color: rgb(229 229 229);
+  border: 0.0625rem solid rgb(221 221 221);
+  border-radius: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.timeInputs {
+  align-items: center;
+  display: flex;
+  gap: 0;
+  margin-bottom: 1rem;
+}
+
+.timeInputs input {
+  flex: 1;
+  margin: 0;
+}
+
+.separator {
+  background-color: rgb(221 221 221);
+  height: 2.5rem;
+  margin: 0 0.5rem;
+  width: 0.0625rem;
+}
+
+.toggleContainer {
+  align-items: center;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.toggleLabel {
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0;
+}

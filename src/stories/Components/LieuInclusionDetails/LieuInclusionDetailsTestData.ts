@@ -103,6 +103,7 @@ export function createDefaultLieuInclusionDetailsData(): LieuInclusionDetailsDat
     informationsGenerales: createDefaultInformationsGeneralesData(),
     lieuAccueilPublic: createDefaultLieuAccueilPublicData(),
     personnesTravaillant: createDefaultPersonnesTravaillantData(),
+    peutModifier: false,
     servicesInclusionNumerique: createDefaultServicesInclusionNumeriqueData(),
   }
 }

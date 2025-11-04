@@ -17,6 +17,11 @@ import { changerMonDepartementAction } from '@/app/api/actions/changerMonDeparte
 import { changerMonRoleAction } from '@/app/api/actions/changerMonRoleAction'
 import { definirUnCoPorteurAction } from '@/app/api/actions/definirUnCoPorteurAction'
 import { inviterUnUtilisateurAction } from '@/app/api/actions/inviterUnUtilisateurAction'
+import { modifierLieuInclusionDescriptionAction } from '@/app/api/actions/modifierLieuInclusionDescriptionAction'
+import { modifierLieuInclusionInformationsPratiquesAction } from '@/app/api/actions/modifierLieuInclusionInformationsPratiquesAction'
+import { modifierLieuInclusionServicesModaliteAction } from '@/app/api/actions/modifierLieuInclusionServicesModaliteAction'
+import { modifierLieuInclusionServicesTypeAccompagnementAction } from '@/app/api/actions/modifierLieuInclusionServicesTypeAccompagnementAction'
+import { modifierLieuInclusionServicesTypePublicAction } from '@/app/api/actions/modifierLieuInclusionServicesTypePublicAction'
 import { modifierMesInformationsPersonnellesAction } from '@/app/api/actions/modifierMesInformationsPersonnellesAction'
 import { modifierUnComiteAction } from '@/app/api/actions/modifierUnComiteAction'
 import { modifierUneActionAction } from '@/app/api/actions/modifierUneActionAction'
@@ -62,6 +67,11 @@ export default function ClientContext({
       changerMonRoleAction,
       definirUnCoPorteurAction,
       inviterUnUtilisateurAction,
+      modifierLieuInclusionDescriptionAction,
+      modifierLieuInclusionInformationsPratiquesAction,
+      modifierLieuInclusionServicesModaliteAction,
+      modifierLieuInclusionServicesTypeAccompagnementAction,
+      modifierLieuInclusionServicesTypePublicAction,
       modifierMesInformationsPersonnellesAction,
       modifierUnComiteAction,
       modifierUneActionAction,
@@ -113,6 +123,11 @@ export type ClientContextProviderValue = Readonly<{
   changerMonRoleAction: typeof changerMonRoleAction
   definirUnCoPorteurAction: typeof definirUnCoPorteurAction
   inviterUnUtilisateurAction: typeof inviterUnUtilisateurAction
+  modifierLieuInclusionDescriptionAction: typeof modifierLieuInclusionDescriptionAction
+  modifierLieuInclusionInformationsPratiquesAction: typeof modifierLieuInclusionInformationsPratiquesAction
+  modifierLieuInclusionServicesModaliteAction: typeof modifierLieuInclusionServicesModaliteAction
+  modifierLieuInclusionServicesTypeAccompagnementAction: typeof modifierLieuInclusionServicesTypeAccompagnementAction
+  modifierLieuInclusionServicesTypePublicAction: typeof modifierLieuInclusionServicesTypePublicAction
   modifierMesInformationsPersonnellesAction: typeof modifierMesInformationsPersonnellesAction
   modifierUnComiteAction: typeof modifierUnComiteAction
   modifierUneActionAction: typeof modifierUneActionAction

@@ -38,6 +38,7 @@ export const DonneesMinimales: Story = {
       },
       lieuAccueilPublic: {},
       personnesTravaillant: [],
+      peutModifier: false,
       servicesInclusionNumerique: [],
     },
   },

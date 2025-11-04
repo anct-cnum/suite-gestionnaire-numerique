@@ -1965,12 +1965,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
-  version: 7.26.10
-  resolution: "@babel/runtime@npm:7.26.10"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10c0/6dc6d88c7908f505c4f7770fb4677dfa61f68f659b943c2be1f2a99cb6680343462867abf2d49822adc435932919b36c77ac60125793e719ea8745f2073d3745
+"@babel/runtime@npm:^7.12.0, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.26.10, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7":
+  version: 7.28.4
+  resolution: "@babel/runtime@npm:7.28.4"
+  checksum: 10c0/792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
   languageName: node
   linkType: hard
 
@@ -2506,6 +2504,22 @@ __metadata:
   version: 0.2.9
   resolution: "@floating-ui/utils@npm:0.2.9"
   checksum: 10c0/48bbed10f91cb7863a796cc0d0e917c78d11aeb89f98d03fc38d79e7eb792224a79f538ed8a2d5d5584511d4ca6354ef35f1712659fd569868e342df4398ad6f
+  languageName: node
+  linkType: hard
+
+"@gouvfr-anct/lieux-de-mediation-numerique@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@gouvfr-anct/lieux-de-mediation-numerique@npm:2.3.0"
+  checksum: 10c0/cfd8d7b03cdf51abb7b8c002879122219b561421de0784fcd187f04d9a9cb55887cdf8753b7367b8916279f2131e49303883ede96faba56f503c35d88ecf449e
+  languageName: node
+  linkType: hard
+
+"@gouvfr-anct/timetable-to-osm-opening-hours@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@gouvfr-anct/timetable-to-osm-opening-hours@npm:2.1.0"
+  dependencies:
+    opening_hours: "npm:^3.8.0"
+  checksum: 10c0/4350d8ea0d608f366ca802c0025fb4c55fbfdede95fbce552c85f110fdb7b4c2fe8a2d0de6217c6a1df49f11f2e4ffc3663ccc379f5f28f35651312476c07103
   languageName: node
   linkType: hard
 
@@ -9937,6 +9951,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"i18next-browser-languagedetector@npm:^8.0.4":
+  version: 8.2.0
+  resolution: "i18next-browser-languagedetector@npm:8.2.0"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10c0/4fcb6ec316e0fd4a10eee67a8d1e3d7e1407f14d5bed98978c50ed6f1853f5d559dc18ea7fd4b2de445ac0a4ed44df5b38f0b31b89b9ac883f99050d59ffec82
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^24.2.3":
+  version: 24.2.3
+  resolution: "i18next@npm:24.2.3"
+  dependencies:
+    "@babel/runtime": "npm:^7.26.10"
+  peerDependencies:
+    typescript: ^5
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: 10c0/7ac11a67d618ec714beef303aa497c1249bf5f1977dd3ebe9ca2673dfa6cadbba9e2d39ec1337688903ae3866ce9c1bc22cd6b265e66cce54c5db3a9bbedd390
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
@@ -11763,6 +11800,8 @@ __metadata:
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.787.0"
     "@eslint/js": "npm:^9.22.0"
+    "@gouvfr-anct/lieux-de-mediation-numerique": "npm:^2.3.0"
+    "@gouvfr-anct/timetable-to-osm-opening-hours": "npm:^2.1.0"
     "@gouvfr/dsfr": "npm:^1.13.1"
     "@next/bundle-analyzer": "npm:^15.3.1"
     "@prisma/client": "npm:^6.6.0"
@@ -11825,6 +11864,7 @@ __metadata:
     next: "npm:^15.3.1"
     next-auth: "npm:^4.24.11"
     nodemailer: "npm:^6.10.1"
+    opening_hours: "npm:^3.9.0"
     playwright: "npm:^1.55.0"
     prettier: "npm:^3.5.3"
     prisma: "npm:^6.6.0"
@@ -12337,6 +12377,17 @@ __metadata:
     object-hash: "npm:^2.2.0"
     oidc-token-hash: "npm:^5.0.3"
   checksum: 10c0/6aae649758562002eace7574b6eda02be7eddbb0df61eef497ae98b7a4a0ae4c6b09f3f0c1b9b6cb7fcc0c70bbde2576691bf31b870db1f19ab634c1def10bc7
+  languageName: node
+  linkType: hard
+
+"opening_hours@npm:^3.8.0, opening_hours@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "opening_hours@npm:3.9.0"
+  dependencies:
+    i18next: "npm:^24.2.3"
+    i18next-browser-languagedetector: "npm:^8.0.4"
+    suncalc: "npm:^1.9.0"
+  checksum: 10c0/c18fc0cc2a2901494c414e09da9d56d06170ad46f7b4defc9e87949adc816e1356d80fe03c0f01435b0770a19a266b99713b2a9a2a264a5f9c1649c15a99821d
   languageName: node
   linkType: hard
 
@@ -13431,13 +13482,6 @@ __metadata:
   version: 1.4.2
   resolution: "regenerate@npm:1.4.2"
   checksum: 10c0/f73c9eba5d398c818edc71d1c6979eaa05af7a808682749dd079f8df2a6d91a9b913db216c2c9b03e0a8ba2bba8701244a93f45211afbff691c32c7b275db1b8
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:^0.14.0":
-  version: 0.14.1
-  resolution: "regenerator-runtime@npm:0.14.1"
-  checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
   languageName: node
   linkType: hard
 
@@ -14698,6 +14742,13 @@ __metadata:
   version: 4.2.0
   resolution: "stylis@npm:4.2.0"
   checksum: 10c0/a7128ad5a8ed72652c6eba46bed4f416521bc9745a460ef5741edc725252cebf36ee45e33a8615a7057403c93df0866ab9ee955960792db210bb80abd5ac6543
+  languageName: node
+  linkType: hard
+
+"suncalc@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "suncalc@npm:1.9.0"
+  checksum: 10c0/3c76c600ec8e60b7a6efab72f48cce3fc9b4ce95f8fa404fcd13d22f618fee2b83d7ad486544aee76bc20129c9f4eae4a76b09640c54167edd1de6099ca6cd3d
   languageName: node
   linkType: hard
 
