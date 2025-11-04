@@ -3,6 +3,7 @@ import { PropsWithChildren, ReactElement } from 'react'
 import { ToastContainer } from 'react-toastify'
 
 import ClientContext from '@/components/shared/ClientContext'
+import DateProvider from '@/components/shared/DateProvider'
 import EnTete from '@/components/transverse/EnTete/EnTete'
 import LienEvitement from '@/components/transverse/LienEvitement/LienEvitement'
 import PiedDePage from '@/components/transverse/PiedDePage/PiedDePage'
@@ -35,21 +36,23 @@ export default async function Layout({ children }: Readonly<PropsWithChildren>):
   const sessionUtilisateurViewModel = createSessionUtilisateurPresenter(utilisateurReadModel, territoire)
 
   return (
-    <ClientContext
-      roles={Roles}
-      sessionUtilisateurViewModel={sessionUtilisateurViewModel}
-      utilisateursParPage={config.utilisateursParPage}
-    >
-      <LienEvitement />
-      <ToastContainer style={{ width: '30rem' }} />
-      <EnTete />
-      <main
-        className="fr-container--fluid fr-mx-5w"
-        id="content"
+    <DateProvider>
+      <ClientContext
+        roles={Roles}
+        sessionUtilisateurViewModel={sessionUtilisateurViewModel}
+        utilisateursParPage={config.utilisateursParPage}
       >
-        {children}
-      </main>
-      <PiedDePage />
-    </ClientContext>
+        <LienEvitement />
+        <ToastContainer style={{ width: '30rem' }} />
+        <EnTete />
+        <main
+          className="fr-container--fluid fr-mx-5w"
+          id="content"
+        >
+          {children}
+        </main>
+        <PiedDePage />
+      </ClientContext>
+    </DateProvider>
   )
 }

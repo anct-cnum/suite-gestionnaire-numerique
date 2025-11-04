@@ -1,13 +1,9 @@
 import { LieuDetailsReadModel } from '@/use-cases/queries/RecupererLieuDetails'
-import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 
 export function lieuDetailsPresenter(
-  lieuDetailsReadModel: ErrorReadModel | LieuDetailsReadModel
-): LieuInclusionDetailsData | null {
-  if (isErrorReadModel(lieuDetailsReadModel)) {
-    return null
-  }
-
+  lieuDetailsReadModel: LieuDetailsReadModel,
+  peutModifier: boolean
+): LieuInclusionDetailsData {
   return {
     header: {
       modificationAuteur: lieuDetailsReadModel.header.modificationAuteur,
@@ -25,6 +21,7 @@ export function lieuDetailsPresenter(
       accessibilite: lieuDetailsReadModel.lieuAccueilPublic.accessibilite,
       conseillerNumeriqueLabellePhase2: lieuDetailsReadModel.lieuAccueilPublic.conseillerNumeriqueLabellePhase2,
       conseillerNumeriqueLabellePhase3: lieuDetailsReadModel.lieuAccueilPublic.conseillerNumeriqueLabellePhase3,
+      email: lieuDetailsReadModel.lieuAccueilPublic.email,
       fraisACharge: lieuDetailsReadModel.lieuAccueilPublic.fraisACharge,
       horaires: lieuDetailsReadModel.lieuAccueilPublic.horaires,
       itinerance: lieuDetailsReadModel.lieuAccueilPublic.itinerance,
@@ -40,14 +37,9 @@ export function lieuDetailsPresenter(
       websiteUrl: lieuDetailsReadModel.lieuAccueilPublic.websiteUrl,
     },
     personnesTravaillant: lieuDetailsReadModel.personnesTravaillant,
+    peutModifier,
     servicesInclusionNumerique: lieuDetailsReadModel.servicesInclusionNumerique,
   }
-}
-
-function isErrorReadModel(
-  model: ErrorReadModel | LieuDetailsReadModel
-): model is ErrorReadModel {
-  return 'type' in model
 }
 
 interface LieuInclusionDetailsData {
@@ -67,6 +59,7 @@ interface LieuInclusionDetailsData {
     accessibilite?: string
     conseillerNumeriqueLabellePhase2?: boolean
     conseillerNumeriqueLabellePhase3?: boolean
+    email?: string
     fraisACharge?: ReadonlyArray<string>
     horaires?: string
     itinerance?: ReadonlyArray<string>
@@ -89,6 +82,7 @@ interface LieuInclusionDetailsData {
     role?: string
     telephone?: string
   }>
+  peutModifier: boolean
   servicesInclusionNumerique: ReadonlyArray<{
     description?: string
     modalites: ReadonlyArray<string>

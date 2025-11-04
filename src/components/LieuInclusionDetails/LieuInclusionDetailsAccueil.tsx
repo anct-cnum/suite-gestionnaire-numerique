@@ -6,18 +6,27 @@ import LieuInclusionDetailsAccueilHeader from '@/components/LieuInclusionDetails
 import LieuInclusionDetailsAccueilInformationsPratique from '@/components/LieuInclusionDetails/LieuInclusionDetailsAccueilInformationsPratique'
 
 export default function LieuInclusionDetailsAccueil(props: Props): ReactElement {
-  const { data } = props
+  const { data, peutModifier } = props
 
   return (
     <div>
       <LieuInclusionDetailsAccueilHeader />
       <hr className="fr-hr" />
       <div id="lieu-detail-description">
-        <LieuInclusionDetailsAccueilDescription data={data} />
+        <LieuInclusionDetailsAccueilDescription
+          data={data}
+          peutModifier={peutModifier}
+        />
       </div>
-      <hr className="fr-hr" />
+      <hr
+        className="fr-hr"
+        style={{ marginTop: '2px' }}
+      />
       <div id="lieu-information-pratique">
-        <LieuInclusionDetailsAccueilInformationsPratique data={data} />
+        <LieuInclusionDetailsAccueilInformationsPratique
+          data={data}
+          peutModifier={peutModifier}
+        />
       </div>
     </div>
   )
@@ -25,5 +34,6 @@ export default function LieuInclusionDetailsAccueil(props: Props): ReactElement 
 
 type Props = Readonly<{
   data: LieuAccueilPublicData
+  peutModifier: boolean
 }>
 

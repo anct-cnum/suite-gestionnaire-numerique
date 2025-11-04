@@ -26,6 +26,7 @@ export type LieuAccueilPublicData = Readonly<{
   accessibilite?: string
   conseillerNumeriqueLabellePhase2?: boolean
   conseillerNumeriqueLabellePhase3?: boolean
+  email?: string
   fraisACharge?: ReadonlyArray<string>
   horaires?: string
   itinerance?: ReadonlyArray<string>
@@ -60,6 +61,7 @@ export type LieuInclusionDetailsData = Readonly<{
   informationsGenerales: InformationsGeneralesData
   lieuAccueilPublic: LieuAccueilPublicData
   personnesTravaillant: ReadonlyArray<PersonneTravaillantData>
+  peutModifier: boolean
   servicesInclusionNumerique: ReadonlyArray<ServiceInclusionNumeriqueData>
 }>
 
@@ -81,13 +83,17 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
       </div>
       <section className="grey-border border-radius ">
         <div id="lieu-accueil-public">
-          <LieuInclusionDetailsAccueil data={data.lieuAccueilPublic} />
+          <LieuInclusionDetailsAccueil
+            data={data.lieuAccueilPublic}
+            peutModifier={data.peutModifier}
+          />
         </div>
         <hr className="fr-hr " />
         <div id="services-inclusion-numerique">
           <LieuInclusionDetailsServices
             data={data.servicesInclusionNumerique}
             lieuAccueilPublic={data.lieuAccueilPublic}
+            peutModifier={data.peutModifier}
           />
         </div>
       </section>
