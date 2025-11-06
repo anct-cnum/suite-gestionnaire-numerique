@@ -561,15 +561,16 @@ model adresse {
   @@schema("main")
 }
 
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
 model coordination_mediation {
   id                                                             Int       @id @default(autoincrement())
   coordinateur_id                                                Int
   mediateur_id                                                   Int
   coordinateur_coop_id                                           String    @db.Uuid
   mediateur_coop_id                                              String    @db.Uuid
-  en_cours                                                       Boolean?
   created_at                                                     DateTime? @default(now()) @db.Timestamp(6)
   updated_at                                                     DateTime? @db.Timestamp(6)
+  suppression                                                    DateTime? @db.Timestamptz(6)
   personne_coordination_mediation_coordinateur_idTopersonne      personne  @relation("coordination_mediation_coordinateur_idTopersonne", fields: [coordinateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "coordination_mediation_coodinateur_id_fkey")
   personne_coordination_mediation_coordinateur_coop_idTopersonne personne  @relation("coordination_mediation_coordinateur_coop_idTopersonne", fields: [coordinateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
   personne_coordination_mediation_mediateur_coop_idTopersonne    personne  @relation("coordination_mediation_mediateur_coop_idTopersonne", fields: [mediateur_coop_id], references: [coop_id], onDelete: NoAction, onUpdate: NoAction)
@@ -680,6 +681,7 @@ model main_structure {
   fiche_acces_libre                   String?                 @db.VarChar
   edited_by                           String?                 @db.VarChar(50)
   activites_coop                      activites_coop[]
+  contrat                             contrat[]
   personne_affectations               personne_affectations[]
   poste                               poste[]
   adresse                             adresse?                @relation(fields: [adresse_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "structure_adresse_fkey")
@@ -706,15 +708,17 @@ model ifn_departement {
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 model contrat {
-  id           Int       @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   personne_id  Int
-  date_debut   DateTime? @db.Date
-  date_fin     DateTime? @db.Date
-  date_rupture DateTime? @db.Date
-  type         String?   @db.VarChar(3)
-  created_at   DateTime? @default(now()) @db.Timestamp(6)
-  updated_at   DateTime? @db.Timestamp(6)
-  personne     personne  @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  date_debut   DateTime?       @db.Date
+  date_fin     DateTime?       @db.Date
+  date_rupture DateTime?       @db.Date
+  type         String?         @db.VarChar(3)
+  created_at   DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at   DateTime?       @db.Timestamp(6)
+  structure_id Int?
+  personne     personne        @relation(fields: [personne_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  structure    main_structure? @relation(fields: [structure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@schema("main")
 }

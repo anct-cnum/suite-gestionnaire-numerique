@@ -71,27 +71,30 @@ DECLARE
   v_winner_coop   uuid;
   v_loser_carto   text;   -- structure_cartographie_nationale_id (texte composite)
   v_winner_carto  text;
+  v_loser_ac      uuid;
+  v_winner_ac     uuid;
 BEGIN
   ---------------------------------------------------------------------------
-  -- 0) Verrouiller + lire identifiants du loser & winner
+  -- 0) Verrouiller + lire les identifiants uniques (COOP + CARTO) du loser & winner
   ---------------------------------------------------------------------------
-  SELECT structure_coop_id, structure_cartographie_nationale_id
-    INTO v_loser_coop, v_loser_carto
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_loser_coop, v_loser_carto, v_loser_ac
   FROM main.structure
   WHERE id = v_loser
   FOR UPDATE;
 
-  SELECT structure_coop_id, structure_cartographie_nationale_id
-    INTO v_winner_coop, v_winner_carto
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_winner_coop, v_winner_carto, v_winner_ac
   FROM main.structure
   WHERE id = v_winner
   FOR UPDATE;
 
   ---------------------------------------------------------------------------
-  -- 1) TRANSFERTS D’UNICITÉ (loser -> NULL ; winner <- valeurs loser)
+  -- 1) TRANSFERTS D’UNICITÉ (loser -> NULL ; winner -> valeur du loser)
   ---------------------------------------------------------------------------
   UPDATE main.structure
   SET structure_coop_id                   = NULL,
+      structure_ac_id                     = NULL,
       structure_cartographie_nationale_id = NULL
   WHERE id = v_loser;
 
@@ -100,18 +103,24 @@ BEGIN
     WHERE id = v_winner;
   END IF;
 
+  IF v_loser_ac IS NOT NULL THEN
+    UPDATE main.structure SET structure_ac_id = v_loser_ac
+    WHERE id = v_winner;
+  END IF;
+
   IF v_loser_carto IS NOT NULL THEN
     UPDATE main.structure SET structure_cartographie_nationale_id = v_loser_carto
     WHERE id = v_winner;
   END IF;
 
-  SELECT structure_coop_id, structure_cartographie_nationale_id
-    INTO v_winner_coop, v_winner_carto
+  SELECT structure_coop_id, structure_cartographie_nationale_id, structure_ac_id
+    INTO v_winner_coop, v_winner_carto, v_winner_ac
   FROM main.structure
   WHERE id = v_winner;
 
   ---------------------------------------------------------------------------
-  -- 2) Fusionner champs informatifs (loser -> winner)
+  -- 2) Fusionner les champs informatifs (loser -> winner)
+  --    ⚠️ NE PAS toucher à structure_coop_id / structure_cartographie_nationale_id ici.
   ---------------------------------------------------------------------------
   UPDATE main.structure w
   SET
@@ -137,29 +146,37 @@ BEGIN
     prise_en_charge_specifique      = COALESCE(w.prise_en_charge_specifique, l.prise_en_charge_specifique),
     typologies = CASE
       WHEN w.typologies IS NOT NULL AND l.typologies IS NOT NULL THEN (
-        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.typologies || l.typologies) AS t(e)
-                     WHERE e IS NOT NULL AND e <> '')
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.typologies || l.typologies) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
       )
       ELSE COALESCE(w.typologies, l.typologies)
     END,
     frais_a_charge = CASE
       WHEN w.frais_a_charge IS NOT NULL AND l.frais_a_charge IS NOT NULL THEN (
-        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.frais_a_charge || l.frais_a_charge) AS t(e)
-                     WHERE e IS NOT NULL AND e <> '')
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.frais_a_charge || l.frais_a_charge) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
       )
       ELSE COALESCE(w.frais_a_charge, l.frais_a_charge)
     END,
     dispositif_programmes_nationaux = CASE
       WHEN w.dispositif_programmes_nationaux IS NOT NULL AND l.dispositif_programmes_nationaux IS NOT NULL THEN (
-        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.dispositif_programmes_nationaux || l.dispositif_programmes_nationaux) AS t(e)
-                     WHERE e IS NOT NULL AND e <> '')
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.dispositif_programmes_nationaux || l.dispositif_programmes_nationaux) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
       )
       ELSE COALESCE(w.dispositif_programmes_nationaux, l.dispositif_programmes_nationaux)
     END,
     formations_labels = CASE
       WHEN w.formations_labels IS NOT NULL AND l.formations_labels IS NOT NULL THEN (
-        SELECT ARRAY(SELECT DISTINCT e FROM unnest(w.formations_labels || l.formations_labels) AS t(e)
-                     WHERE e IS NOT NULL AND e <> '')
+        SELECT ARRAY(
+          SELECT DISTINCT e FROM unnest(w.formations_labels || l.formations_labels) AS t(e)
+          WHERE e IS NOT NULL AND e <> ''
+        )
       )
       ELSE COALESCE(w.formations_labels, l.formations_labels)
     END,
@@ -176,7 +193,7 @@ BEGIN
   WHERE w.id = v_winner AND l.id = v_loser;
 
   ---------------------------------------------------------------------------
-  -- 3.pre) Snapshot des PA fermées du loser (pour restitution des dates)
+  -- 3.pre) Mémoriser TOUTES les PA du loser avec une date de suppression
   ---------------------------------------------------------------------------
   DROP TABLE IF EXISTS _loser_pa_supp;
   CREATE TEMP TABLE _loser_pa_supp ON COMMIT DROP AS
@@ -190,12 +207,11 @@ BEGIN
   WHERE structure_id = v_loser
     AND suppression IS NOT NULL;
 
-  INSERT INTO main.merge_pa_log(action, winner_id, loser_id, personne_id, type, suppression, structure_coop_id, mediateur_coop_id)
-  SELECT 'loser_closed_seen', v_winner, v_loser, personne_id, type, lost_supp, lost_scoop, lost_mcoop
-  FROM _loser_pa_supp;
-
   ---------------------------------------------------------------------------
-  -- 3.pre0) DÉSAMORÇAGE collision UK (winner vs loser / orphelins)
+  -- 3.pre0) DÉSAMORÇAGE COLLISIONS UK (structure_coop_id, mediateur_coop_id, type, suppression)
+  --         - Si une ligne identique existe winner/loser → on neutralise côté winner
+  --         - Si une ligne orpheline (structure_id IS NULL) porte v_loser_coop et
+  --           collisionne avec une ligne du winner → on neutralise côté winner
   ---------------------------------------------------------------------------
   WITH ukey_dups AS (
     SELECT w.id AS wid
@@ -277,34 +293,13 @@ BEGIN
     RETURNING c.wid, c.tgt_scoop, c.tgt_mcoop, c.tgt_supp
   )
   UPDATE main.personne_affectations w
-  SET structure_coop_id = CASE
-                            WHEN NOT EXISTS (
-                              SELECT 1 FROM main.personne_affectations t
-                              WHERE t.id <> w.id
-                                AND t.type = w.type
-                                AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-                                AND t.structure_coop_id IS NOT DISTINCT FROM d.tgt_scoop
-                                AND t.mediateur_coop_id IS NOT DISTINCT FROM d.tgt_mcoop
-                            ) THEN d.tgt_scoop
-                            ELSE NULL
-                          END,
-      mediateur_coop_id = CASE
-                            WHEN NOT EXISTS (
-                              SELECT 1 FROM main.personne_affectations t
-                              WHERE t.id <> w.id
-                                AND t.type = w.type
-                                AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-                                AND t.structure_coop_id IS NOT DISTINCT FROM d.tgt_scoop
-                                AND t.mediateur_coop_id IS NOT DISTINCT FROM d.tgt_mcoop
-                            ) THEN d.tgt_mcoop
-                            ELSE NULL
-                          END,
+  SET structure_coop_id = d.tgt_scoop,
+      mediateur_coop_id = d.tgt_mcoop,
       suppression       = d.tgt_supp,
       updated_at        = NOW()
   FROM del_l d
   WHERE w.id = d.wid;
 
-  -- Rattacher au winner toutes les lignes restantes du loser (sans dupliquer la clé locale)
   UPDATE main.personne_affectations pa
   SET structure_id = v_winner,
       updated_at   = NOW()
@@ -318,7 +313,6 @@ BEGIN
         AND COALESCE(w.suppression, v_zero) = COALESCE(pa.suppression, v_zero)
     );
 
-  -- Orphelins (structure_id IS NULL) portant v_loser_coop -> winner (sans collision UK)
   IF v_loser_coop IS NOT NULL THEN
     DELETE FROM main.personne_affectations o
     USING main.personne_affectations w
@@ -347,7 +341,9 @@ BEGIN
   END IF;
 
   ---------------------------------------------------------------------------
-  -- 3.post) Restituer les dates de suppression (sans heurter l’UK globale)
+  -- 3.post) Préserver TOUTES les dates de suppression sans heurter les contraintes
+  --         1) Si FERMÉE existe déjà (clé structurelle), enrichir la FERMÉE, puis supprimer l’ACTIVE.
+  --         2) Sinon, poser la date sur l’ACTIVE (en respectant l’ukey COOP/MEDIATOR).
   ---------------------------------------------------------------------------
   WITH desired AS (
     SELECT
@@ -366,26 +362,8 @@ BEGIN
   ),
   merged_closed AS (
     UPDATE main.personne_affectations y
-    SET structure_coop_id = CASE
-                              WHEN y.structure_coop_id IS NULL AND NOT EXISTS (
-                                SELECT 1 FROM main.personne_affectations t
-                                WHERE t.id <> y.id
-                                  AND t.type = y.type
-                                  AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-                                  AND t.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
-                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
-                              ) THEN w.structure_coop_id ELSE y.structure_coop_id
-                            END,
-        mediateur_coop_id = CASE
-                              WHEN y.mediateur_coop_id IS NULL AND NOT EXISTS (
-                                SELECT 1 FROM main.personne_affectations t
-                                WHERE t.id <> y.id
-                                  AND t.type = y.type
-                                  AND COALESCE(t.suppression, v_zero) = COALESCE(d.tgt_supp, v_zero)
-                                  AND t.structure_coop_id IS NOT DISTINCT FROM w.structure_coop_id
-                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM w.mediateur_coop_id
-                              ) THEN w.mediateur_coop_id ELSE y.mediateur_coop_id
-                            END,
+    SET structure_coop_id = COALESCE(y.structure_coop_id, w.structure_coop_id),
+        mediateur_coop_id = COALESCE(y.mediateur_coop_id, w.mediateur_coop_id),
         updated_at        = NOW()
     FROM desired d
     JOIN main.personne_affectations w
@@ -426,17 +404,14 @@ BEGIN
     );
 
   ---------------------------------------------------------------------------
-  -- 3.collapse) Actif + Fermé (même personne/type) -> ne conserver que la fermée
-  --             ⚠ mise à jour "conflict-aware" pour éviter toute UK globale
+  -- 3.collapse) Sur le winner : fusionner paires (active + fermée) par (personne_id, type)
   ---------------------------------------------------------------------------
   WITH pairs AS (
     SELECT
       c.id  AS closed_id,
       a.id  AS active_id,
       COALESCE(c.structure_coop_id, a.structure_coop_id) AS tgt_scoop,
-      COALESCE(c.mediateur_coop_id, a.mediateur_coop_id) AS tgt_mcoop,
-      c.type AS k_type,
-      COALESCE(c.suppression, v_zero) AS k_supp
+      COALESCE(c.mediateur_coop_id, a.mediateur_coop_id) AS tgt_mcoop
     FROM main.personne_affectations c
     JOIN main.personne_affectations a
       ON a.structure_id = c.structure_id
@@ -448,28 +423,8 @@ BEGIN
   ),
   up AS (
     UPDATE main.personne_affectations c
-    SET structure_coop_id = CASE
-                              WHEN NOT EXISTS (
-                                SELECT 1 FROM main.personne_affectations t
-                                WHERE t.id <> c.id
-                                  AND t.type = p.k_type
-                                  AND COALESCE(t.suppression, v_zero) = p.k_supp
-                                  AND t.structure_coop_id IS NOT DISTINCT FROM p.tgt_scoop
-                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM p.tgt_mcoop
-                              ) THEN p.tgt_scoop
-                              ELSE NULL
-                            END,
-        mediateur_coop_id = CASE
-                              WHEN NOT EXISTS (
-                                SELECT 1 FROM main.personne_affectations t
-                                WHERE t.id <> c.id
-                                  AND t.type = p.k_type
-                                  AND COALESCE(t.suppression, v_zero) = p.k_supp
-                                  AND t.structure_coop_id IS NOT DISTINCT FROM p.tgt_scoop
-                                  AND t.mediateur_coop_id IS NOT DISTINCT FROM p.tgt_mcoop
-                              ) THEN p.tgt_mcoop
-                              ELSE NULL
-                            END,
+    SET structure_coop_id = p.tgt_scoop,
+        mediateur_coop_id = p.tgt_mcoop,
         updated_at        = NOW()
     FROM pairs p
     WHERE c.id = p.closed_id
@@ -480,7 +435,8 @@ BEGIN
   WHERE a.id = up.active_id;
 
   ---------------------------------------------------------------------------
-  -- 3.guard) Dédup finale UK (winner + orphelins)
+  -- 3.guard) Déduplication finale sur la clé UNIQUE
+  --          (on garde une seule ligne « porteuse » et on neutralise les autres)
   ---------------------------------------------------------------------------
   WITH dups AS (
     SELECT
@@ -497,7 +453,6 @@ BEGIN
   )
   UPDATE main.personne_affectations pa
   SET structure_coop_id = NULL,
-      mediateur_coop_id = NULL,
       updated_at        = NOW()
   WHERE pa.id = ANY (SELECT UNNEST(ids[2:]) FROM dups);
 
@@ -513,8 +468,16 @@ BEGIN
   SET structure_id = v_winner
   WHERE a.structure_id = v_loser;
 
+  UPDATE min.utilisateur
+    SET structure_id = v_winner
+    WHERE structure_id = v_loser;
+
+  UPDATE min.membre
+    SET structure_id = v_winner
+    WHERE structure_id = v_loser;
+
   ---------------------------------------------------------------------------
-  -- 5) Hiérarchie (structure_parente = UUID COOP)
+  -- 5) Hiérarchie (structure_parente = UUID COOP) – sécurité
   ---------------------------------------------------------------------------
   IF v_loser_coop IS NOT NULL AND v_winner_coop IS NOT NULL THEN
     UPDATE main.structure
@@ -1217,6 +1180,7 @@ CREATE TABLE main.contrat (
     type character varying(3),
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone,
+    structure_id integer,
     CONSTRAINT contrat_type_check CHECK (((type)::text = ANY ((ARRAY['CDD'::character varying, 'CDI'::character varying, 'CDP'::character varying, 'PEC'::character varying])::text[])))
 );
 
@@ -2349,6 +2313,12 @@ ALTER TABLE ONLY main.contrat
     ADD CONSTRAINT contrat_personne_id_fkey FOREIGN KEY (personne_id) REFERENCES main.personne(id);
 
 
+-- Name: contrat contrat_structure_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
+
+ALTER TABLE ONLY main.contrat
+    ADD CONSTRAINT contrat_structure_id_fkey FOREIGN KEY (structure_id) REFERENCES main.structure(id);
+
+
 -- Name: coordination_mediation coordination_mediation_coodinateur_id_fkey; Type: FK CONSTRAINT; Schema: main; Owner: sonum
 
 ALTER TABLE ONLY main.coordination_mediation
@@ -2449,3 +2419,4 @@ ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA main GRANT SELECT ON TABLES TO
 
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABLES TO min_scalingo;
 ALTER DEFAULT PRIVILEGES FOR ROLE sonum IN SCHEMA reference GRANT SELECT ON TABLES TO min_dev;
+
