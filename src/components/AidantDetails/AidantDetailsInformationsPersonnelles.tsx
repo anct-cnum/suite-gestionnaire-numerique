@@ -13,7 +13,7 @@ export default function InformationsPersonnellesCard({
       aria-labelledby="infos-title"
       className="fr-mb-4w grey-border border-radius fr-p-4w"
     >
-      <div className="fr-card__body">
+      <div >
         {/* En-tête : titre + action Modifier */}
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col">

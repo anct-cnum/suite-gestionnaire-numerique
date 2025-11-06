@@ -149,7 +149,10 @@ ${avecAidantsConnect.toLocaleString('fr-FR')} accompagnements avec Aidants Conne
 
 function PeriodeSelector({ currentPeriode, onPeriodeChange }: PeriodeSelectorProps): ReactElement {
   return (
-    <fieldset className="fr-segmented fr-segmented--sm fr-mb-3w">
+    <fieldset
+      className="fr-segmented fr-segmented--sm fr-mb-3w"
+      style={{ width: '100%' }}
+    >
       <div className="fr-segmented__elements">
         <div className="fr-segmented__element">
           <input
@@ -182,7 +185,28 @@ function PeriodeSelector({ currentPeriode, onPeriodeChange }: PeriodeSelectorPro
           >
             Par jours
           </label>
+
         </div>
+      </div>
+      <div
+        style={{ display: 'block', textAlign: 'right', width: '100%' }}
+      >
+        {currentPeriode === 'journalier' && (
+          <p
+            className="fr-text--sm fr-text--right fr-text-mention--grey"
+            style={{ margin: 0 }}
+          >
+            Les 30 derniers jours
+          </p>
+        )}
+        {currentPeriode === 'mensuel' && (
+          <p
+            className="fr-text--sm fr-text--right fr-text-mention--grey"
+            style={{ margin: 0 }}
+          >
+            Les 12 derniers mois
+          </p>
+        )}
       </div>
     </fieldset>
   )
