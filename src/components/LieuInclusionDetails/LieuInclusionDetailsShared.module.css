@@ -1,0 +1,71 @@
+/* Couleurs */
+.titleBlueFrance {
+  color: var(--blue-france-sun-113-625);
+}
+
+.subtitleGrey {
+  color: var(--grey-425-625);
+}
+
+/* Icônes avec fond bleu */
+.iconWithBackground {
+  align-items: center;
+  background-color: var(--blue-france-975-75);
+  border-radius: 0.5rem;
+  display: inline-flex;
+  height: 3.5rem;
+  justify-content: center;
+  width: 3.5rem;
+}
+
+.iconSmallWithBackground {
+  align-items: center;
+  background-color: var(--blue-france-975-75);
+  border-radius: 0.5rem;
+  display: inline-flex;
+  height: 2rem;
+  justify-content: center;
+  width: 2rem;
+}
+
+/* Sections */
+.section {
+  margin-bottom: 1.5rem;
+}
+
+.sectionWithBorder {
+  border: 0.0625rem solid var(--border-default-grey);
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+}
+
+/* Headers de section */
+.sectionHeaderWrapper {
+  padding: 1.5rem;
+}
+
+.sectionHeader {
+  margin-bottom: 0.5rem;
+}
+
+.sectionSubtitle {
+  color: var(--grey-425-625);
+  font-size: 0.875rem;
+  margin-bottom: 0;
+}
+
+/* Formulaires */
+.formWrapper {
+  padding: 1.5rem;
+}
+
+.formSection {
+  margin-bottom: 1.5rem;
+}
+
+.fieldLabel {
+  color: var(--grey-425-625);
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}

@@ -19,7 +19,7 @@ export default function LieuInclusionDetailsAccueil(props: Props): ReactElement 
         />
       </div>
       <hr
-        className="fr-hr"
+        className="fr-hr fr-mx-4w"
         style={{ marginTop: '2px' }}
       />
       <div id="lieu-information-pratique">

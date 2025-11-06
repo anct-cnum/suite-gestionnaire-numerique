@@ -88,7 +88,7 @@ export default function LieuxInclusionDetails(props: Props): ReactElement {
             peutModifier={data.peutModifier}
           />
         </div>
-        <hr className="fr-hr " />
+        <hr className="fr-hr fr-p-1" />
         <div id="services-inclusion-numerique">
           <LieuInclusionDetailsServices
             data={data.servicesInclusionNumerique}

@@ -1,11 +1,16 @@
 'use client'
-
 import { usePathname } from 'next/navigation'
-import { FormEvent, ReactElement, useContext, useMemo, useState } from 'react'
+import { ComponentType, FormEvent, ReactElement, useContext, useMemo, useState } from 'react'
 
+import styles from './LieuInclusionDetailsServicesTypeAccompagnement.module.css'
 import { ServiceInclusionNumeriqueData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import sharedStyles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
+import { InternetIcon } from '@/shared/pictograms/digital/InternetIcon'
+import { SittingAtATableIcon } from '@/shared/pictograms/user/SittingAtATableIcon'
+import { TeacherIcon } from '@/shared/pictograms/user/TeacherIcon'
+import { PairIcon } from '@/shared/pictograms/work/PairIcon'
 
 export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Props): ReactElement {
   const { data, modalitesAccueil, peutModifier } = props
@@ -36,6 +41,14 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     'Accès internet et matériel informatique',
     'Acquisition de matériel informatique à prix solidaire',
   ]
+
+  const typesAccompagnementIcons: Record<string, ComponentType<{ height?: number; width?: number }>> = {
+    'Accompagnement individuel': SittingAtATableIcon,
+    'À distance': InternetIcon,
+    // eslint-disable-next-line sort-keys -- sort-keys and perfectionist use different sorting for accents
+    'Atelier collectif': TeacherIcon,
+    'En autonomie': PairIcon,
+  }
 
   const allModalites = data.flatMap(service => service.modalites)
   const uniqueModalites = [...new Set(allModalites)]
@@ -239,24 +252,33 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
     }
 
     if (existingTypesAccompagnement.length > 0) {
+      const selectedTypes = typeAccompagnements
+        .filter((type) => existingTypesAccompagnement.includes(type.value))
+        .map((type) => type.label)
+
       return (
-        <div className="fr-tags-group">
-          {typeAccompagnements
-            .filter((type) => existingTypesAccompagnement.includes(type.value))
-            .map((type) => (
-              <div
-                className="fr-tag"
-                key={type.label}
-                style={{
-                  backgroundColor: 'var(--blue-france-975-75)',
-                  fontSize: '1.125rem',
-                  padding: '0.75rem 1rem',
-                }}
-              >
-                {type.label}
-              </div>
-            ))}
-        </div>
+        <>
+          <h3 className={styles.sectionTitle}>
+            Types d&apos;accompagnement
+          </h3>
+          <ul className={styles.typesList}>
+            {selectedTypes.map((typeAccompagnement) => {
+              const Icon = typesAccompagnementIcons[typeAccompagnement]
+              return (
+                <li
+                  className={styles.typeItem}
+                  key={typeAccompagnement}
+                >
+                  <Icon
+                    height={36}
+                    width={36}
+                  />
+                  {typeAccompagnement}
+                </li>
+              )
+            })}
+          </ul>
+        </>
       )
     }
 
@@ -269,7 +291,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
 
   return (
     <form
-      className="fr-px-4w fr-pb-2w"
+      className="fr-p-4w"
       onSubmit={handleSubmit}
     >
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
@@ -277,10 +299,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
           <h4 className="fr-h6 fr-mb-1v">
             Services & types d&apos;accompagnement
           </h4>
-          <p
-            className="fr-text--sm fr-mb-2w"
-            style={{ color: 'var(--grey-425-625)' }}
-          >
+          <p className={`fr-text--sm fr-mb-2w ${sharedStyles.subtitleGrey}`}>
             Renseigner les les services et les types d&apos;accompagnements proposés dans ce lieu.
           </p>
         </div>
@@ -301,10 +320,7 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
 
       {isEditing
         ? (
-          <p
-            className="fr-text--sm fr-mb-3w"
-            style={{ color: 'var(--grey-425-625)' }}
-          >
+          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
             Ces champs sont optionnels
           </p>
         )
