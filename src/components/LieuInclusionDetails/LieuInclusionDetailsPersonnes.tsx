@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { ReactElement, useState } from 'react'
 
 import { PersonneTravaillantData } from '@/components/LieuInclusionDetails/LieuInclusionDetails'
+import styles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 
 export default function LieuInclusionDetailsPersonnes(props: Props): ReactElement {
   const { data } = props
@@ -15,10 +16,10 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
   if (data.length === 0) {
     return (
       <section className="fr-mb-4w grey-border border-radius fr-p-4w">
-        <h2 className="fr-h5 fr-text-title--blue-france fr-mb-0">
+        <h2 className="fr-h4 fr-text-label--blue-france fr-mb-0">
           <span
             aria-hidden="true"
-            className="fr-icon-account-circle-line fr-icon--sm fr-mr-1w"
+            className={`fr-icon-account-circle-line fr-mr-1w fr-text-label--blue-france ${styles.iconSmallWithBackground}`}
           />
           {' '}
           Personnes identifiées travaillant dans ce lieu
@@ -33,17 +34,10 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
 
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
-      <h2 className="fr-h5 fr-text-title--blue-france fr-m-0">
+      <h2 className="fr-h4 fr-text-label--blue-france fr-m-0">
         <span
           aria-hidden="true"
-          className="fr-icon-account-circle-line fr-icon--md fr-mr-1w fr-text-title--blue-france"
-          style={{
-            backgroundColor: 'var(--blue-france-975-75)',
-            borderRadius: '0.5rem',
-            height: '0.5rem',
-            padding: '0.5rem',
-            width: '0.5rem',
-          }}
+          className={`fr-icon-account-circle-line fr-mr-1w fr-text-label--blue-france ${styles.iconSmallWithBackground}`}
         />
         Personnes identifiées travaillant dans ce lieu
         ·

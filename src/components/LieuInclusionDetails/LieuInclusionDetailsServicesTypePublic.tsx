@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { FormEvent, ReactElement, useContext, useEffect, useState } from 'react'
 
+import sharedStyles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 
@@ -308,10 +309,7 @@ export default function LieuInclusionDetailsServicesTypePublic(props: Props): Re
 
       {isEditing
         ? (
-          <p
-            className="fr-text--sm fr-mb-3w"
-            style={{ color: 'var(--grey-425-625)' }}
-          >
+          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
             Ces champs sont optionnels
           </p>
         )

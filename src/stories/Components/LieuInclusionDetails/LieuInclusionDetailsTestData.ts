@@ -12,7 +12,7 @@ export function createDefaultHeaderData(): LieuInclusionDetailsHeaderData {
     modificationAuteur: 'Marie Dupont',
     modificationDate: '15/03/2024',
     nom: 'Association Connect 69',
-    tags: ['Aidants Connect', 'FRR'],
+    tags: ['FRR', 'QPV', 'Conseiller numérique', 'Médiateur', 'Aidants Connect'],
   }
 }
 
@@ -31,14 +31,14 @@ export function createDefaultPersonnesTravaillantData(): ReadonlyArray<PersonneT
       id: 2,
       nom: 'Durand',
       prenom: 'Marie',
-      role: 'Médiateur numérique',
+      role: 'Aidant',
       telephone: '01 23 45 67 90',
     },
     {
       id: 3,
       nom: 'Leroy',
       prenom: 'Pierre',
-      role: 'Agent d\'accueil',
+      role: 'Médiateur',
     },
   ]
 }

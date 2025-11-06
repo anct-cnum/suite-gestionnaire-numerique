@@ -1,30 +1,20 @@
 import { ReactElement } from 'react'
 
+import SectionIcon from '@/components/LieuInclusionDetails/SectionIcon'
+
 export default function LieuInclusionDetailsAccueilHeader(): ReactElement {
   return (
-    <div className="fr-grid-row fr-grid-row--middle fr-p-4w">
-      <div className="fr-col">
-        <div className="fr-mb-1w">
-          <span
-            aria-hidden="true"
-            className="fr-icon-map-pin-2-line fr-icon--xl fr-mr-1w fr-text-label--blue-france "
-            style={{
-              backgroundColor: 'var(--blue-france-975-75)',
-              borderRadius: '0.5rem',
-              height: '0.5rem',
-              padding: '0.5rem',
-              width: '0.5rem',
-            }}
-          />
-        </div>
-        <h2 className="fr-h4 fr-mb-1w fr-text-label--blue-france">
-          Lieu accueillant du public
-        </h2>
-        <p className="fr-text--sm fr-mb-0 fr-text-mention--grey">
-          Renseignez ici des informations supplémentaires
-          permettant d&apos;ajouter du contexte sur le lieu et de faciliter l&apos;accès au public.
-        </p>
+    <div className="fr-p-4w">
+      <div className="fr-mb-3w">
+        <SectionIcon iconClass="fr-icon-map-pin-2-line" />
       </div>
+      <h2 className="fr-h4 fr-mb-1w fr-text-label--blue-france">
+        Lieu accueillant du public
+      </h2>
+      <p className="fr-text--sm fr-mb-0 fr-text-mention--grey">
+        Renseignez ici des informations supplémentaires
+        permettant d&apos;ajouter du contexte sur le lieu et de faciliter l&apos;accès au public.
+      </p>
     </div>
   )
 }

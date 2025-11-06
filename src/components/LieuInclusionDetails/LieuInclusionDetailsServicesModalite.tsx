@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { FormEvent, ReactElement, useContext, useState } from 'react'
 
+import sharedStyles from '@/components/LieuInclusionDetails/LieuInclusionDetailsShared.module.css'
 import { clientContext } from '@/components/shared/ClientContext'
 import { Notification } from '@/components/shared/Notification/Notification'
 
@@ -14,10 +15,8 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
   const { modifierLieuInclusionServicesModaliteAction } = useContext(clientContext)
   const pathname = usePathname()
 
-  // Extraire l'ID de structure depuis l'URL (/lieu/[id])
   const structureId = pathname.split('/').pop() ?? ''
 
-  // Options pour les modalités d'accès
   const modalitesAccesOptions = [
     { label: 'Se présenter sur place', value: 'Se présenter sur place' },
     { label: 'Téléphoner', value: 'Téléphoner' },
@@ -165,7 +164,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
 
   return (
     <form
-      className="fr-px-4w fr-pb-2w"
+      className="fr-p-4w"
       onSubmit={handleSubmit}
     >
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
@@ -173,10 +172,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
           <h4 className="fr-h6 fr-mb-1v">
             Modalités d&apos;accès au service
           </h4>
-          <p
-            className="fr-text--sm fr-mb-2w"
-            style={{ color: 'var(--grey-425-625)' }}
-          >
+          <p className={`fr-text--sm fr-mb-2w ${sharedStyles.subtitleGrey}`}>
             Indiquez comment bénéficier des services d&apos;inclusion numérique.
           </p>
         </div>
@@ -197,10 +193,7 @@ export default function LieuInclusionDetailsServicesModalite(props: Props): Reac
 
       {isEditing
         ? (
-          <p
-            className="fr-text--sm fr-mb-3w"
-            style={{ color: 'var(--grey-425-625)' }}
-          >
+          <p className={`fr-text--sm fr-mb-3w ${sharedStyles.subtitleGrey}`}>
             Ces champs sont optionnels
           </p>
         )

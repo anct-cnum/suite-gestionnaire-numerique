@@ -12,7 +12,10 @@ export default function LieuInclusionDetailsServices(props: Props): ReactElement
   return (
     <div>
       <LieuInclusionDetailsServicesHeader />
-      <hr className="fr-hr " />
+      <hr
+        className="fr-hr "
+        style={{ marginTop: '2px' }}
+      />
       <div id="lieu-detail-service-accompagnement">
         <LieuInclusionDetailsServicesTypeAccompagnement
           data={data}
@@ -20,7 +23,10 @@ export default function LieuInclusionDetailsServices(props: Props): ReactElement
           peutModifier={peutModifier}
         />
       </div>
-      <hr className="fr-hr " />
+      <hr
+        className="fr-hr fr-mx-4w"
+        style={{ marginTop: '2px' }}
+      />
       <div id="lieu-detail-service-modalite">
         <LieuInclusionDetailsServicesModalite
           email={lieuAccueilPublic?.email}
@@ -30,7 +36,7 @@ export default function LieuInclusionDetailsServices(props: Props): ReactElement
           telephone={lieuAccueilPublic?.telephone}
         />
       </div>
-      <hr className="fr-hr " />
+      <hr className="fr-hr fr-mx-4w" />
       <div id="lieu-detail-service-public">
         <LieuInclusionDetailsServicesTypePublic
           peutModifier={peutModifier}

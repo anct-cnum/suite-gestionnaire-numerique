@@ -16,7 +16,7 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
       const structure = structureResult[0]
       const adresseComplete = this.construireAdresse(structure)
       const personnes = await this.recupererPersonnes(id)
-      const tags = this.determinerTags(structure)
+      const tags = this.determinerTags(structure, personnes)
       const structureId = parseInt(id, 10)
 
       return this.construireReadModel(structure, adresseComplete, personnes, tags, structureId)
@@ -154,10 +154,57 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
     }))
   }
 
-  private determinerTags(structure: { dispositif_programmes_nationaux: Array<string> | null }): Array<string> {
+  private determinerTags(
+    structure: {
+      dispositif_programmes_nationaux: Array<string> | null
+      est_frr: boolean
+      est_qpv: boolean
+    },
+    personnes: Array<{
+      conseiller_numerique_id: null | string
+      is_active_ac: boolean | null
+      is_mediateur: boolean | null
+    }>
+  ): Array<string> {
     const tags: Array<string> = []
-    if (structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') === true) {
+
+    // Tag FRR (France Relance Ruralité)
+    if (structure.est_frr) {
+      tags.push('FRR')
+    }
+
+    // Tag QPV (Quartier Prioritaire de la Ville)
+    if (structure.est_qpv) {
+      tags.push('QPV')
+    }
+
+    // Tag Conseiller numérique
+    // On affiche le tag si la structure a le dispositif OU si au moins une personne est conseiller numérique
+    const hasConseillerNumerique =
+      structure.dispositif_programmes_nationaux?.includes('Conseillers numériques') === true ||
+      personnes.some((personne) => personne.conseiller_numerique_id !== null)
+    if (hasConseillerNumerique) {
       tags.push('Conseiller numérique')
+    }
+
+    // Tag Médiateur
+    // On ne compte que les médiateurs qui ne sont PAS conseillers numériques
+    // Une personne peut être à la fois médiateur et aidant
+    const hasMediateur = personnes.some(
+      (personne) => personne.is_mediateur === true && personne.conseiller_numerique_id === null
+    )
+    if (hasMediateur) {
+      tags.push('Médiateur')
+    }
+
+    // Tag Aidants Connect
+    // On ne compte que les aidants qui ne sont PAS conseillers numériques
+    // Une personne peut être à la fois aidant et médiateur
+    const hasAidantConnect = personnes.some(
+      (personne) => personne.is_active_ac === true && personne.conseiller_numerique_id === null
+    )
+    if (hasAidantConnect) {
+      tags.push('Aidants Connect')
     }
 
     return tags
@@ -264,9 +311,12 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
 
   private async recupererStructure(id: string): Promise<
     Array<{
+      code_insee: null | string
       code_postal: null | string
       contact: null | Record<string, unknown>
       dispositif_programmes_nationaux: Array<string> | null
+      est_frr: boolean
+      est_qpv: boolean
       frais_a_charge: Array<string> | null
       horaires: null | string
       id: string
@@ -311,7 +361,22 @@ export class PrismaRecupererLieuDetailsLoader implements RecupererLieuDetailsLoa
         a.numero_voie,
         a.nom_voie,
         a.code_postal,
-        a.nom_commune
+        a.nom_commune,
+        a.code_insee,
+        CASE
+          WHEN EXISTS (
+            SELECT 1 FROM admin.zonage z
+            WHERE z.type = 'FRR' AND z.code_insee = a.code_insee
+          ) THEN true
+          ELSE false
+        END AS est_frr,
+        CASE
+          WHEN EXISTS (
+            SELECT 1 FROM admin.zonage z
+            WHERE z.type = 'QPV' AND public.st_contains(z.geom, a.geom)
+          ) THEN true
+          ELSE false
+        END AS est_qpv
       FROM main.structure s
       LEFT JOIN main.adresse a ON s.adresse_id = a.id
       WHERE s.id = ${parseInt(id, 10)}
