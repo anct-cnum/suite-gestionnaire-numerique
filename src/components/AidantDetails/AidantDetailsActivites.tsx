@@ -32,10 +32,10 @@ export default function AidantDetailsActivites(props: Props) : ReactElement {
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
       <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--between fr-grid-row--top ">
         <div className="fr-col">
-          <h2 className="fr-h4 fr-m-0">
+          <h2 className="fr-h3 fr-m-0">
             Activités
           </h2>
-          <p className="fr-text--sm  fr-m-0">
+          <p className="fr-text--sm fr-text-mention--grey fr-m-0">
             Statistiques des activités du médiateur
           </p>
         </div>

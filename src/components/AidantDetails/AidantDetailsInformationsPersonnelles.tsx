@@ -18,7 +18,7 @@ export default function InformationsPersonnellesCard({
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col">
             <h2
-              className="fr-h5 fr-mb-0"
+              className="fr-h3 fr-mb-0"
               id="infos-title"
             >
               Informations personnelles
