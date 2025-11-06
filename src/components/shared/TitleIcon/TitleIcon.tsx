@@ -6,7 +6,7 @@ export default function TitleIcon({ background = 'blue', icon }: Props): ReactEl
   return (
     <span
       aria-hidden="true"
-      className={`fr-icon-${icon} ${styles[background]} ${styles.icon} fr-mr-3w`}
+      className={`fr-icon-${icon} ${styles[background]} ${styles.icon}`}
     />
   )
 }
