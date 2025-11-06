@@ -257,28 +257,23 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
         .map((type) => type.label)
 
       return (
-        <>
-          <h3 className={styles.sectionTitle}>
-            Types d&apos;accompagnement
-          </h3>
-          <ul className={styles.typesList}>
-            {selectedTypes.map((typeAccompagnement) => {
-              const Icon = typesAccompagnementIcons[typeAccompagnement]
-              return (
-                <li
-                  className={styles.typeItem}
-                  key={typeAccompagnement}
-                >
-                  <Icon
-                    height={36}
-                    width={36}
-                  />
-                  {typeAccompagnement}
-                </li>
-              )
-            })}
-          </ul>
-        </>
+        <ul className={styles.typesList}>
+          {selectedTypes.map((typeAccompagnement) => {
+            const Icon = typesAccompagnementIcons[typeAccompagnement]
+            return (
+              <li
+                className={styles.typeItem}
+                key={typeAccompagnement}
+              >
+                <Icon
+                  height={36}
+                  width={36}
+                />
+                {typeAccompagnement}
+              </li>
+            )
+          })}
+        </ul>
       )
     }
 
@@ -337,9 +332,9 @@ export default function LieuInclusionDetailsServicesTypeAccompagnement(props: Pr
       </div>
 
       <div className="fr-mb-3w">
-        <h5 className="fr-text--md fr-mb-1w">
+        <p className="fr-text">
           Types d&apos;accompagnements proposés
-        </h5>
+        </p>
         {renderTypesAccompagnement()}
       </div>
 
