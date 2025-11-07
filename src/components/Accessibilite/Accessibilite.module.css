@@ -1,0 +1,8 @@
+.article {
+  background: var(--background-default-grey);
+  border-top: 0.25rem solid var(--blue-france-sun-113-625);
+  box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 10%);
+  margin-bottom: 3rem;
+  margin-top: 3rem;
+  padding: 3rem;
+}
