@@ -38,7 +38,7 @@ describe('pied de page', () => {
     expect(liensReglementaires).toHaveLength(4)
 
     const lienAccessibilite = within(liensReglementaires[0]).getByRole('link', { name: 'Accessibilité : partiellement conforme' })
-    expect(lienAccessibilite).toHaveAttribute('href', '/accessibilite.html')
+    expect(lienAccessibilite).toHaveAttribute('href', '/accessibilite')
 
     const lienMentionsLegales = within(liensReglementaires[1]).getByRole('link', { name: 'Mentions légales' })
     expect(lienMentionsLegales).toHaveAttribute('href', '/mentions-legales')

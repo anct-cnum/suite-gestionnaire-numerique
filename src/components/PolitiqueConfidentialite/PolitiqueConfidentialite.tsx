@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import styles from './PolitiqueConfidentialite.module.css'
 import ExternalLink from '../shared/ExternalLink/ExternalLink'
 import PageTitle from '../shared/PageTitle/PageTitle'
 
@@ -8,7 +9,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
     <div className="fr-grid-row fr-grid-row--center">
       <article
         aria-labelledby="politique-confidentialite-title"
-        className="fr-col-12 fr-col-lg-10"
+        className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
       >
         <PageTitle>
           Politique de confidentialité – Mon inclusion numérique,

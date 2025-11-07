@@ -1,5 +1,6 @@
 import { ReactElement } from 'react'
 
+import styles from './ConditionsGeneralesUtilisation.module.css'
 import PageTitle from '../shared/PageTitle/PageTitle'
 
 export default function ConditionsGeneralesUtilisation(): ReactElement {
@@ -7,7 +8,7 @@ export default function ConditionsGeneralesUtilisation(): ReactElement {
     <div className="fr-grid-row fr-grid-row--center">
       <article
         aria-labelledby="cgu-title"
-        className="fr-col-12 fr-col-lg-10"
+        className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
       >
         <PageTitle>
           Conditions générales d&apos;utilisation
