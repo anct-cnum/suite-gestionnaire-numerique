@@ -5,6 +5,7 @@ import AidantDetailsHeader from '@/components/AidantDetails/AidantDetailsHeader'
 import InformationsPersonnellesCard from '@/components/AidantDetails/AidantDetailsInformationsPersonnelles'
 import AidantDetailsLieuxActivite from '@/components/AidantDetails/AidantDetailsLieuxActivite'
 import AidantDetailsStructureEmployeuse from '@/components/AidantDetails/AidantDetailsStructureEmployeuse'
+import MenuCollant, { MenuCollantSection } from '@/components/AidantDetails/MenuCollant'
 
 export type AidantDetailsHeaderData = Readonly<{
   modificationAutheur?: string
@@ -74,41 +75,60 @@ export type AidantDetailsData = Readonly<{
 export default function AidantDetails(props: Props): ReactElement {
   const { data } = props
 
+  // Cacher la section activités si rôle = médiateur ET pas de labelisation/habilitation
+  const isMediateur = data.header.tags.includes('Médiateur')
+  const hasLabelisation = data.header.tags.includes('Conseiller numérique') || data.header.tags.includes('Aidant numérique')
+  const shouldShowActivites = !(isMediateur && !hasLabelisation)
+
+  const sections: ReadonlyArray<MenuCollantSection> = [
+    { id: 'informations-personnelles', label: 'Informations personnelles' },
+    { id: 'structures-employeuses', label: 'Structures employeuses' },
+    ...shouldShowActivites ? [{ id: 'activites', label: 'Activités' }] : [],
+    { id: 'lieux-activite', label: 'Lieux d\'activité' },
+  ]
   return (
-    <>
-      <div id="header">
-        <AidantDetailsHeader data={data.header} />
-      </div>
+    <div className="fr-container fr-py-4w">
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-3">
+          <MenuCollant sections={sections} />
+        </div>
+        <div className="fr-col-12 fr-col-md-9">
+          <div id="header">
+            <AidantDetailsHeader data={data.header} />
+          </div>
 
-      <div id="informations-personnelles">
-        <InformationsPersonnellesCard data={data.informationsPersonnelles} />
-      </div>
+          <div id="informations-personnelles">
+            <InformationsPersonnellesCard data={data.informationsPersonnelles} />
+          </div>
 
-      <div id="structures-employeuses">
-        {data.structuresEmployeuses.map((structure) => (
-          <AidantDetailsStructureEmployeuse
-            data={structure}
-            key={structure.nom}
-          />
-        ))}
-      </div>
+          <div id="structures-employeuses">
+            {data.structuresEmployeuses.map((structure) => (
+              <AidantDetailsStructureEmployeuse
+                data={structure}
+                key={structure.nom}
+              />
+            ))}
+          </div>
 
-      <div id="activites">
-        <AidantDetailsActivites
-          data={data.statistiquesActivites}
-          nom={data.informationsPersonnelles.nom}
-          prenom={data.informationsPersonnelles.prenom}
-        />
-      </div>
+          {shouldShowActivites ?
+            <div id="activites">
+              <AidantDetailsActivites
+                data={data.statistiquesActivites}
+                nom={data.informationsPersonnelles.nom}
+                prenom={data.informationsPersonnelles.prenom}
+              />
+            </div> : null}
 
-      <div id="lieux-activite">
-        <AidantDetailsLieuxActivite
-          data={data.lieuxActivite}
-          nom={data.informationsPersonnelles.nom}
-          prenom={data.informationsPersonnelles.prenom}
-        />
+          <div id="lieux-activite">
+            <AidantDetailsLieuxActivite
+              data={data.lieuxActivite}
+              nom={data.informationsPersonnelles.nom}
+              prenom={data.informationsPersonnelles.prenom}
+            />
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 
