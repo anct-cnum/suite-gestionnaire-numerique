@@ -1,7 +1,14 @@
-.icon {
+.container {
+  align-items: center;
   border-radius: 0.5rem;
-  line-height: 4rem;
-  padding: 0.1875rem 0.9375rem;
+  display: inline-flex;
+  height: 3rem;
+  justify-content: center;
+  width: 3rem;
+}
+
+.icon {
+  line-height: 1;
 }
 
 .blue {
