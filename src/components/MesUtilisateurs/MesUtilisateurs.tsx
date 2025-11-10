@@ -58,18 +58,24 @@ export default function MesUtilisateurs(
 
   return (
     <>
-      <div className="fr-grid-row space-between fr-grid-row--middle">
-        <PageTitle>
-          <TitleIcon icon="team-line" />
-          {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
-        </PageTitle>
+      <div
+        className="fr-grid-row space-between fr-grid-row--middle"
+        style={{ alignItems: 'flex-start', flexWrap: 'nowrap', gap: '1rem' }}
+      >
+        <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+          <PageTitle>
+            <TitleIcon icon="team-line" />
+            {sessionUtilisateurViewModel.role.doesItBelongToGroupeAdmin ? 'Gestion de mes utilisateurs' : `Utilisateurs · ${sessionUtilisateurViewModel.role.libelle}`}
+          </PageTitle>
+        </div>
         <button
           aria-controls={drawerInvitationId}
-          className="fr-btn fr-btn--icon-left fr-icon-add-line"
+          className="fr-btn fr-btn--icon-left fr-icon-add-line fr-mt-6w"
           data-fr-opened="false"
           onClick={() => {
             setIsDrawerOpen(true)
           }}
+          style={{ flexShrink: 0 }}
           type="button"
         >
           Inviter une personne
