@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
+import React, { memo, ReactElement, useCallback, useEffect, useId, useMemo, useState } from 'react'
 
 import AccompagnementsTableCell from './AccompagnementsTableCell'
 import ListeAidantsMediateurInfos from './ListeAidantsMediateurInfos'
@@ -342,48 +342,62 @@ export default function ListeAidantsMediateurs({
         </div>
       ) : null}
 
-      <>
-        <ListeAidantsMediateurInfos
-          hasActiveFilters={getFiltresActifs().length > 0}
-          totalBeneficiairesPromise={totalBeneficiairesPromise}
-          viewModel={{
-            totalAccompagnements: viewModel.totalAccompagnements,
-            totalActeursNumerique: viewModel.totalActeursNumerique,
-            totalConseillersNumerique: viewModel.totalConseillersNumerique,
-          }}
-        />
-
-        <Table
-          enTetes={[
-            'Prénom et nom',
-            'Rôle',
-            'Labelisation / habilitation',
-            'Formation',
-            'Nb accomp.',
-            '',
-          ]}
-          titre="Aidants et médiateurs numériques"
+      {viewModel.aidants.length === 0 ? (
+        <div
+          style={{ backgroundColor: 'var(--blue-france-975-75)', borderRadius: '1rem', padding: '3rem', textAlign: 'center' }}
         >
-          {viewModel.aidants.map((aidant) => (
-            <AidantRow
-              accompagnementsPromise={accompagnementsPromise}
-              aidant={aidant}
-              badgeStyle={badgeStyle}
-              getAidantIcons={getAidantIcons}
-              key={aidant.id}
-            />
-          ))}
-        </Table>
+          <p
+            className="fr-text--md fr-mb-0"
+            style={{ textAlign: 'center' }}
+          >
+            <span className="fr-text--bold">
+              👻 Aucuns aidants et médiateurs trouvés sur votre territoire
+            </span>
+          </p>
+        </div>
+      ) : (
+        <>
+          <ListeAidantsMediateurInfos
+            hasActiveFilters={getFiltresActifs().length > 0}
+            totalBeneficiairesPromise={totalBeneficiairesPromise}
+            viewModel={{
+              totalAccompagnements: viewModel.totalAccompagnements,
+              totalActeursNumerique: viewModel.totalActeursNumerique,
+              totalConseillersNumerique: viewModel.totalConseillersNumerique,
+            }}
+          />
 
-        {viewModel.displayPagination ? (
-          <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
-            <Pagination
-              pathname="/liste-aidants-mediateurs"
-              totalUtilisateurs={viewModel.total}
-            />
-          </div>
-        ) : null}
-      </>
+          <Table
+            enTetes={[
+              'Prénom et nom',
+              'Rôle',
+              'Labelisation / habilitation',
+              'Formation',
+              'Nb accomp.',
+              '',
+            ]}
+            titre="Aidants et médiateurs numériques"
+          >
+            {viewModel.aidants.map((aidant) => (
+              <AidantRow
+                accompagnementsPromise={accompagnementsPromise}
+                aidant={aidant}
+                badgeStyle={badgeStyle}
+                getAidantIcons={getAidantIcons}
+                key={aidant.id}
+              />
+            ))}
+          </Table>
+        </>)}
+
+      {viewModel.displayPagination ? (
+        <div className="fr-grid-row fr-grid-row--center fr-mt-3w">
+          <Pagination
+            pathname="/liste-aidants-mediateurs"
+            totalUtilisateurs={viewModel.total}
+          />
+        </div>
+      ) : null}
 
       <Drawer
         boutonFermeture="Fermer les filtres"
