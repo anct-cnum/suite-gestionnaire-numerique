@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ReactElement, useEffect, useId, useMemo, useState } from 'react'
+import React, { ReactElement, useEffect, useId, useMemo, useState } from 'react'
 
 import ListeLieuxInclusionFiltre from './ListeLieuxInclusionFiltre'
 import Badge from '../shared/Badge/Badge'
@@ -239,9 +239,23 @@ export default function ListeLieuxInclusion({
       ) : null}
 
       {viewModel.lieux.length === 0 ? (
-        <p>
-          Aucun lieu d&apos;inclusion numérique trouvé.
-        </p>
+        <div
+          style={{ backgroundColor: 'var(--blue-france-975-75)',
+            borderRadius: '1rem',
+            marginBottom: '2rem',
+            padding: '3rem',
+            textAlign: 'center',
+          }}
+        >
+          <p
+            className="fr-text--md fr-mb-0"
+            style={{ textAlign: 'center' }}
+          >
+            <span className="fr-text--bold">
+              👻 Aucun lieu d&apos;inclusion numérique trouvé.
+            </span>
+          </p>
+        </div>
       ) : (
         <>
           <ListeLieuxInclusionInfo infos={{
