@@ -12,6 +12,7 @@
     "deadcode": "knip",
     "depcheck": "depcheck",
     "dev": " next dev --turbo",
+    "dev:vitrine": "SITE_MODE=vitrine next dev --turbo",
     "devmigrate": "yarn prisma:migrate && yarn dev",
     "dotenv:test": "dotenv -e .env.test",
     "format": "prettier -w . \"!**/*.{js,jsx,mjs,mts,ts,tsx}\"",
