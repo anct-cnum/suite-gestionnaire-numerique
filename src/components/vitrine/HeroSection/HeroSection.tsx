@@ -1,11 +1,11 @@
-import { ReactElement } from 'react'
+import { CSSProperties, ReactElement } from 'react'
 
-export default function HeroSection({ subtitle, title }: HeroSectionProps): ReactElement {
+export default function HeroSection({ background = '#f5f5fe', subtitle, title }: HeroSectionProps): ReactElement {
   return (
     <section
       className="fr-py-12w"
       style={{
-        background: '#f5f5fe',
+        background,
       }}
     >
       <div className="fr-container">
@@ -29,8 +29,10 @@ export default function HeroSection({ subtitle, title }: HeroSectionProps): Reac
     </section>
   )
 }
-
+ 
 type HeroSectionProps = {
+  // eslint-disable-next-line react/require-default-props
+  readonly background?: CSSProperties['background']
   readonly subtitle: string
   readonly title: string
 }
