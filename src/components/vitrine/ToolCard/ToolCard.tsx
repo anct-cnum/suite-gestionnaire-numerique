@@ -35,13 +35,13 @@ export default function ToolCard({
                 <img
                   alt={`Icône ${title}`}
                   src={icon}
-                  style={{ height: 'auto', width: '96px' }}
+                  style={{ height: '56px', width: 'auto' }}
                 />
               </div>
             )}
             <h2
               className="fr-h2"
-              style={{ color: '#000091', marginBottom: 0 }}
+              style={{ marginBottom: 0 }}
             >
               {title}
             </h2>
