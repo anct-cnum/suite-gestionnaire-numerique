@@ -117,7 +117,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               <div>
                 <a
                   className="fr-btn fr-btn--lg"
-                  href="https://mon-inclusion-numerique.anct.gouv.fr/"
+                  href="https://mon.inclusion-numerique.anct.gouv.fr/"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -281,7 +281,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
         imageAlt="Capture d'écran du suivi des dispositifs"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/min/visuel-dispositifs.png"
-        link="https://mon-inclusion-numerique.anct.gouv.fr/"
+        link="https://mon.inclusion-numerique.anct.gouv.fr/"
         title="Suivre les dispositifs"
       />
 
@@ -338,7 +338,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
               <div>
                 <a
                   className="fr-btn"
-                  href="https://mon-inclusion-numerique.anct.gouv.fr/"
+                  href="https://mon.inclusion-numerique.anct.gouv.fr/"
                   rel="noopener noreferrer"
                   target="_blank"
                 >
@@ -423,7 +423,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   <div className="fr-mt-4w">
                     <a
                       className="fr-btn fr-btn--secondary fr-btn--sm"
-                      href="https://mon-inclusion-numerique.anct.gouv.fr/"
+                      href="https://mon.inclusion-numerique.anct.gouv.fr/"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
