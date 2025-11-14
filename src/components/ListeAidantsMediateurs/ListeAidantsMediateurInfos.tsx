@@ -1,5 +1,6 @@
 import { ReactElement, ReactNode, Suspense } from 'react'
 
+import AccompagnementsAsyncCard from './AccompagnementsAsyncCard'
 import BeneficiairesAsyncCard from './BeneficiairesAsyncCard'
 import { parseTextWithBold } from '../../shared/textFormatting'
 import AsyncLoaderErrorBoundary from '../AidantsMediateurs/GenericErrorBoundary'
@@ -8,6 +9,7 @@ import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
 export default function ListeAidantsMediateurInfos({
   hasActiveFilters,
+  totalAccompagnementsPromise,
   totalBeneficiairesPromise,
   viewModel,
 }: Props): ReactElement {
@@ -48,11 +50,70 @@ export default function ListeAidantsMediateurInfos({
   function getFilterInfos(): ReactElement {
     return (
       <>
-        {renderAidantsMediateursInfoCard({
-          description: 'Accompagnements',
-          indicateur: hasActiveFilters ? '-' : formaterEnNombreFrancais(viewModel.totalAccompagnements),
-          legends: 'sur les 30 derniers jours',
-        })}
+        <AsyncLoaderErrorBoundary
+          fallback={
+            <div
+              className="fr-col-12 fr-col-md-4"
+              style={{
+                height: '7rem',
+              }}
+            >
+              <div
+                className="fr-background-alt--blue-france fr-p-2w"
+                style={{
+                  borderRadius: '1rem',
+                  gap: '1rem',
+                  height: '7rem',
+                }}
+              >
+                <div className="fr-h5 fr-text-title--blue-france fr-m-0">
+                  -
+                </div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
+                  Accompagnements
+                </div>
+                <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
+                  sur les 30 derniers jours
+                </div>
+              </div>
+            </div>
+          }
+        >
+          <Suspense
+            fallback={
+              <div
+                className="fr-col-12 fr-col-md-4"
+                style={{
+                  height: '7rem',
+                }}
+              >
+                <div
+                  className="fr-background-alt--blue-france fr-p-2w"
+                  style={{
+                    borderRadius: '1rem',
+                    gap: '1rem',
+                    height: '7rem',
+                  }}
+                >
+                  <div className="fr-h5 fr-text-title--blue-france fr-m-0">
+                    ...
+                  </div>
+                  <div className="fr-text--sm fr-text-title--blue-france fr-text--bold fr-m-0">
+                    Accompagnements
+                  </div>
+                  <div className="fr-text--sm fr-text-title--blue-france fr-m-0">
+                    sur les 30 derniers jours
+                  </div>
+                </div>
+              </div>
+            }
+          >
+            <AccompagnementsAsyncCard
+              hasActiveFilters={hasActiveFilters}
+              totalAccompagnementsPromise={totalAccompagnementsPromise}
+            />
+          </Suspense>
+        </AsyncLoaderErrorBoundary>
         <AsyncLoaderErrorBoundary
           fallback={
             <div
@@ -148,9 +209,9 @@ type AidantsMediateursInfoCard = Readonly<{
 
 type Props = Readonly<{
   hasActiveFilters: boolean
+  totalAccompagnementsPromise: Promise<ErrorViewModel | number>
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
   viewModel: {
-    totalAccompagnements: number
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }

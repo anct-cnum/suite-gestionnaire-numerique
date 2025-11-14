@@ -143,6 +143,7 @@ export default function ListeAidantsMediateurs({
   accompagnementsPromise,
   listeAidantsMediateursViewModel,
   searchParams,
+  totalAccompagnementsPromise,
   totalBeneficiairesPromise,
   utilisateurRole,
 }: Props): ReactElement {
@@ -359,9 +360,9 @@ export default function ListeAidantsMediateurs({
         <>
           <ListeAidantsMediateurInfos
             hasActiveFilters={getFiltresActifs().length > 0}
+            totalAccompagnementsPromise={totalAccompagnementsPromise}
             totalBeneficiairesPromise={totalBeneficiairesPromise}
             viewModel={{
-              totalAccompagnements: viewModel.totalAccompagnements,
               totalActeursNumerique: viewModel.totalActeursNumerique,
               totalConseillersNumerique: viewModel.totalConseillersNumerique,
             }}
@@ -435,6 +436,7 @@ type Props = Readonly<{
   accompagnementsPromise: Promise<Map<string, number>>
   listeAidantsMediateursViewModel: ErrorViewModel | ListeAidantsMediateursViewModel
   searchParams: SerializedSearchParams
+  totalAccompagnementsPromise: Promise<ErrorViewModel | number>
   totalBeneficiairesPromise: Promise<ErrorViewModel | number>
   utilisateurRole: TypologieRole
 }>

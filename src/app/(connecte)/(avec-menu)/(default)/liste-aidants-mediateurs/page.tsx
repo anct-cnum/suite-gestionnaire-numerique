@@ -10,7 +10,7 @@ import { PrismaMembreLoader } from '@/gateways/PrismaMembreLoader'
 import { PrismaUtilisateurLoader } from '@/gateways/PrismaUtilisateurLoader'
 import { listeAidantsMediateursPresenter } from '@/presenters/listeAidantsMediateursPresenter'
 import { buildFiltresListeAidants } from '@/shared/filtresAidantsMediateursUtils'
-import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererTerritoireUtilisateur } from '@/use-cases/queries/RecupererTerritoireUtilisateur'
 
 export const metadata: Metadata = {
@@ -75,14 +75,24 @@ export default async function ListeAidantsMediateursController({
     accompagnementsPromise = listeAidantsMediateursLoader.getAccompagnementsForPersonnes(aidantIds)
   }
 
-  // Calculer la période de 30 jours pour les stats des bénéficiaires
+  // Calculer la période de 30 jours pour les stats
   const jusqua = new Date()
   const depuis = new Date()
   depuis.setDate(jusqua.getDate() - 30)
 
-  const totalBeneficiairesPromise = fetchTotalBeneficiaires(
+  // Récupérer les bénéficiaires et accompagnements depuis l'API Coop
+  const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements(
     territoire === 'France' ? undefined : territoire,
     { depuis, jusqua }
+  )
+
+  // Créer les promesses séparées pour chaque valeur
+  const totalBeneficiairesPromise = beneficiairesEtAccompagnementsPromise.then(
+    result => 'type' in result ? result : result.beneficiaires
+  )
+
+  const totalAccompagnementsPromise = beneficiairesEtAccompagnementsPromise.then(
+    result => 'type' in result ? result : result.accompagnements
   )
 
   // Passer les paramètres actuels pour l'affichage des filtres actifs
@@ -95,6 +105,7 @@ export default async function ListeAidantsMediateursController({
       accompagnementsPromise={accompagnementsPromise}
       listeAidantsMediateursViewModel={listeAidantsMediateursViewModel}
       searchParams={currentSearchParams}
+      totalAccompagnementsPromise={totalAccompagnementsPromise}
       totalBeneficiairesPromise={totalBeneficiairesPromise}
       utilisateurRole={utilisateur.role.nom as TypologieRole}
     />
