@@ -14,7 +14,6 @@ export type ListeAidantsMediateursViewModel = Readonly<{
   limite: number
   page: number
   total: number
-  totalAccompagnements: number
   totalActeursNumerique: number
   totalConseillersNumerique: number
   totalPages: number
@@ -33,7 +32,6 @@ export function listeAidantsMediateursPresenter(
     limite: listeAidantsMediateursReadModel.limite,
     page: listeAidantsMediateursReadModel.page,
     total: listeAidantsMediateursReadModel.total,
-    totalAccompagnements: listeAidantsMediateursReadModel.totalAccompagnements,
     totalActeursNumerique: listeAidantsMediateursReadModel.totalActeursNumerique,
     totalConseillersNumerique: listeAidantsMediateursReadModel.totalConseillersNumerique,
     totalPages: listeAidantsMediateursReadModel.totalPages,

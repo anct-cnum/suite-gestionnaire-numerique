@@ -46,7 +46,6 @@ export type ListeAidantsMediateursReadModel = Readonly<{
   limite: number
   page: number
   total: number
-  totalAccompagnements: number
   totalActeursNumerique: number
   totalConseillersNumerique: number
   totalPages: number

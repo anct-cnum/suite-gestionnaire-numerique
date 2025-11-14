@@ -30,7 +30,6 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
         limite: pagination.limite,
         page: pagination.page,
         total: totalCount,
-        totalAccompagnements: statsData.totalAccompagnements,
         totalActeursNumerique: statsData.totalActeursNumerique,
         totalConseillersNumerique: statsData.totalConseillersNumerique,
         totalPages,
@@ -334,7 +333,6 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
   }
 
   private async getStatistiques(territoire: string, filtres: FiltresListeAidants): Promise<{
-    totalAccompagnements: number
     totalActeursNumerique: number
     totalConseillersNumerique: number
   }> {
@@ -358,29 +356,9 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
 
     // Construction des conditions WHERE pour les nouveaux filtres
     const whereConditions = this.buildWhereConditions(roles, habilitations, formations)
-    const departementFilterStats = departementsFilter.length > 0 
-      ? Prisma.sql`AND main.adresse.departement = ANY(${departementsFilter})` 
+    const departementFilterPersonnes = departementsFilter.length > 0
+      ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
       : Prisma.empty
-    const departementFilterPersonnes = departementsFilter.length > 0 
-      ? Prisma.sql`AND a.departement = ANY(${departementsFilter})` 
-      : Prisma.empty
-
-    // Nombre total d'accompagnements réalisés
-    const accompagnementsResult = territoire === 'France' && !geographique
-      ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
-        SELECT SUM(accompagnements) AS total_accompagnements_realises
-        FROM main.activites_coop
-        WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days';
-          `
-      : await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
-            SELECT SUM(main.activites_coop.accompagnements) AS total_accompagnements_realises
-            FROM main.activites_coop
-            JOIN main.structure ON main.activites_coop.structure_id = main.structure.id
-            JOIN main.adresse ON main.structure.adresse_id = main.adresse.id
-            WHERE main.activites_coop.date >= CURRENT_DATE - INTERVAL '30 days'
-              ${departementFilterStats}
-          `
-    const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
 
     // Statistiques des personnes en poste
     const conseillersResult =
@@ -416,7 +394,6 @@ export class PrismaListeAidantsMediateursLoader implements ListeAidantsMediateur
       + Number(conseillersResult[0]?.mediateur || 0)
 
     return {
-      totalAccompagnements: accompagnementsRealises,
       totalActeursNumerique: totalPersonnes,
       totalConseillersNumerique: totalConseillersNumeriques,
     }

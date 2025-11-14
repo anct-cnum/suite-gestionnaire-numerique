@@ -54,21 +54,3 @@ export async function fetchBeneficiairesEtAccompagnements(
     } as ErrorViewModel
   }
 }
-
-/**
- * Récupère le nombre de bénéficiaires depuis l'API Coop
- * @param codeDepartement - Si undefined, retourne les stats France entière
- * @param periode - Période optionnelle avec dates de début et fin pour filtrer les statistiques
- * @returns Promise avec le nombre de bénéficiaires
- * @deprecated Utiliser fetchBeneficiairesEtAccompagnements à la place
- */
-export async function fetchTotalBeneficiaires(
-  codeDepartement?: string,
-  periode?: { depuis: Date; jusqua: Date }
-): Promise<ErrorViewModel | number> {
-  const result = await fetchBeneficiairesEtAccompagnements(codeDepartement, periode)
-  if ('type' in result) {
-    return result
-  }
-  return result.beneficiaires
-}
