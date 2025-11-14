@@ -1,7 +1,6 @@
 import { ErrorReadModel } from './shared/ErrorReadModel'
 
 export type AccompagnementsEtMediateursReadModel = Readonly<{
-  accompagnementsRealises: number
   conseillerNumeriques: number
   habilitesAidantsConnect: number
   mediateursFormes: number

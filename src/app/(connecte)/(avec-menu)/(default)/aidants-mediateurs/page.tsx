@@ -13,7 +13,7 @@ import { getSession, getSessionSub } from '@/gateways/NextAuthAuthentificationGa
 import { PrismaUtilisateurRepository } from '@/gateways/PrismaUtilisateurRepository'
 import { accompagnementsEtMediateursPresenter, AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
 import { niveauDeFormationPresenter, NiveauDeFormationViewModel } from '@/presenters/tableauDeBord/niveauDeFormationPresenter'
-import { fetchTotalBeneficiaires } from '@/use-cases/queries/fetchBeneficiaires'
+import { fetchBeneficiairesEtAccompagnements } from '@/use-cases/queries/fetchBeneficiaires'
 import { RecupererAccompagnementsEtMediateurs } from '@/use-cases/queries/RecupererAccompagnementsEtMediateurs'
 
 export const metadata: Metadata = {
@@ -51,15 +51,15 @@ export default async function AidantsMediateursNumeriquesController(): Promise<R
     niveauDeFormationPresenter
   ) as ErrorViewModel | NiveauDeFormationViewModel
   const dateGeneration = new Date()
-  
-  const totalBeneficiairesPromise = fetchTotalBeneficiaires()
-  
+
+  const beneficiairesEtAccompagnementsPromise = fetchBeneficiairesEtAccompagnements()
+
   return (
     <AidantsMediateurs
       accompagnementsEtMediateursViewModel={accompagnementsEtMediateursViewModel}
+      beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
       dateGeneration={dateGeneration}
       niveauDeFormationViewModel={niveauDeFormationViewModel}
-      totalBeneficiairesPromise={totalBeneficiairesPromise}
     />
   )
 }

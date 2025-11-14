@@ -4,7 +4,7 @@ import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
 import html2canvas from 'html2canvas'
 import { ReactElement, Suspense, useRef } from 'react'
 
-import BeneficiairesAsyncLoader from './BeneficiairesAsyncLoader'
+import BeneficiairesEtAccompagnementsAsyncLoader from './BeneficiairesEtAccompagnementsAsyncLoader'
 import AsyncLoaderErrorBoundary from './GenericErrorBoundary'
 import gouvernancesStyles from '../Gouvernances/Gouvernances.module.css'
 import Dot from '../shared/Dot/Dot'
@@ -16,11 +16,12 @@ import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import styles from '../TableauDeBord/TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { AccompagnementsEtMediateursViewModel } from '@/presenters/tableauDeBord/accompagnementsEtMediateursPresenter'
+import { BeneficiairesEtAccompagnementsResult } from '@/use-cases/queries/fetchBeneficiaires'
 
 export default function AccompagnementsEtMediateurs({
   accompagnementsEtMediateurs,
+  beneficiairesEtAccompagnementsPromise,
   dateGeneration,
-  totalBeneficiairesPromise,
 }: Props): ReactElement {
   ChartJS.register(ArcElement, Tooltip)
 
@@ -110,33 +111,51 @@ export default function AccompagnementsEtMediateurs({
             >
               <AsyncLoaderErrorBoundary
                 fallback={
-                  <div className="fr-display--xs fr-mb-0">
-                    -
+                  <div>
+                    <div className="fr-display--xs fr-mb-0">
+                      -
+                    </div>
+                    <div className="fr-text--lg font-weight-700 fr-m-0">
+                      Bénéficiaires accompagnés
+                    </div>
+                    <div className="color-blue-france fr-pb-4w">
+                      Soit
+                      {' '}
+                      <strong>
+                        -
+                        {' '}
+                        accompagnements réalisés
+                      </strong>
+                    </div>
                   </div>
                 }
               >
                 <Suspense
                   fallback={
-                    <div className="fr-display--xs fr-mb-0 color-grey">
-                      ...
+                    <div>
+                      <div className="fr-display--xs fr-mb-0 color-grey">
+                        ...
+                      </div>
+                      <div className="fr-text--lg font-weight-700 fr-m-0">
+                        Bénéficiaires accompagnés
+                      </div>
+                      <div className="color-blue-france fr-pb-4w">
+                        Soit
+                        {' '}
+                        <strong>
+                          ...
+                          {' '}
+                          accompagnements réalisés
+                        </strong>
+                      </div>
                     </div>
                   }
                 >
-                  <BeneficiairesAsyncLoader totalBeneficiairesPromise={totalBeneficiairesPromise} />
+                  <BeneficiairesEtAccompagnementsAsyncLoader
+                    beneficiairesEtAccompagnementsPromise={beneficiairesEtAccompagnementsPromise}
+                  />
                 </Suspense>
               </AsyncLoaderErrorBoundary>
-            </div>
-            <div className="fr-text--lg font-weight-700 fr-m-0">
-              Bénéficiaires accompagnés
-            </div>
-            <div className="color-blue-france fr-pb-4w">
-              Soit
-              {' '}
-              <strong>
-                {accompagnementsEtMediateurs.accompagnementsRealises}
-                {' '}
-                accompagnements réalisés
-              </strong>
             </div>
           </div>
           <div className="fr-mt-4w">
@@ -225,6 +244,6 @@ function isErrorViewModel(
 
 type Props = Readonly<{
   accompagnementsEtMediateurs: AccompagnementsEtMediateursViewModel | ErrorViewModel
+  beneficiairesEtAccompagnementsPromise: Promise<BeneficiairesEtAccompagnementsResult | ErrorViewModel>
   dateGeneration: Date
-  totalBeneficiairesPromise: Promise<ErrorViewModel | number>
 }>
