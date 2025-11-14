@@ -9,21 +9,6 @@ import { ErrorReadModel } from '@/use-cases/queries/shared/ErrorReadModel'
 export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsEtMediateursLoader {
   async get(territoire = 'France'): Promise<AccompagnementsEtMediateursReadModel | ErrorReadModel> {
     try {
-      // Nombre total d'accompagnements réalisés
-      const accompagnementsResult = territoire === 'France'
-        ? await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
-            SELECT SUM(accompagnements) AS total_accompagnements_realises
-            FROM main.activites_coop
-          `
-        : await prisma.$queryRaw<Array<{ total_accompagnements_realises: bigint }>>`
-            SELECT SUM(ac.accompagnements) AS total_accompagnements_realises
-            FROM main.activites_coop ac
-            JOIN main.structure s ON ac.structure_id = s.id
-            JOIN main.adresse a ON s.adresse_id = a.id
-            WHERE a.departement = ${territoire}
-          `
-      const accompagnementsRealises = Number(accompagnementsResult[0]?.total_accompagnements_realises || 0)
-
       // Thématiques des accompagnements avec comptage des thématiques distinctes
       const thematiquesResult = territoire === 'France'
         ? await prisma.$queryRaw<Array<{ categorie: string; nb: bigint; nb_distinctes: bigint }>>`
@@ -134,7 +119,6 @@ export class PrismaAccompagnementsEtMediateursLoader implements AccompagnementsE
         : 0
 
       return {
-        accompagnementsRealises,
         conseillerNumeriques,
         habilitesAidantsConnect,
         mediateursFormes,
