@@ -21,12 +21,22 @@ export default function VitrineHomePage(): ReactElement {
       <section className="fr-py-12w">
         <div className="fr-container">
           {/* Titre principal */}
-          <h2
+          <div
             className="fr-mb-8w"
-            style={{ color: '#000091', fontSize: '40px', fontWeight: 700, lineHeight: '48px', textAlign: 'center' }}
+            style={{ margin: '0 auto', maxWidth: '960px' }}
           >
-            Quel enjeu pour l&apos;inclusion numérique aujourd&apos;hui en France ?
-          </h2>
+            <h2
+              style={{
+                color: '#000091',
+                fontSize: '48px',
+                fontWeight: 700,
+                lineHeight: '56px',
+                textAlign: 'center',
+              }}
+            >
+              Quel enjeu pour l&apos;inclusion numérique aujourd&apos;hui en France ?
+            </h2>
+          </div>
 
           {/* Bloc 1 : Inégalités (Image gauche / Texte droite) */}
           <div
@@ -44,7 +54,7 @@ export default function VitrineHomePage(): ReactElement {
               className="fr-col-12 fr-col-md-5"
               style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
-              <h3 className="fr-h4">
+              <h3 className="fr-h4 fr-mb-0">
                 Des inégalités numériques persistantes dans notre société
               </h3>
               <p className="fr-text--md">
@@ -95,7 +105,7 @@ export default function VitrineHomePage(): ReactElement {
               className="fr-col-12 fr-col-md-5"
               style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
-              <h2 className="fr-h2">
+              <h2 className="fr-h2 fr-mb-0">
                 Une approche renouvelée de l&apos;inclusion numérique
               </h2>
               <p className="fr-text--md">
@@ -153,8 +163,7 @@ export default function VitrineHomePage(): ReactElement {
                 Ici réside désormais l&apos;enjeu de l&apos;inclusion numérique :
               </p>
               <h2
-                className="fr-h2"
-                style={{ color: '#000091' }}
+                className="fr-h2 fr-mb-0"
               >
                 Permettre à toutes, tous, sans distinction, d&apos;utiliser le numérique pour accroître son
                 bien-être et favoriser son pouvoir d&apos;agir dans la société.
@@ -199,12 +208,22 @@ export default function VitrineHomePage(): ReactElement {
               style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
             />
           </div>
-          <h2
+          <div
             className="fr-mb-8w"
-            style={{ color: '#000091', fontWeight: 700, textAlign: 'center' }}
+            style={{ margin: '0 auto', maxWidth: '960px' }}
           >
-            Comprendre et découvrir l&apos;inclusion numérique dans les territoires
-          </h2>
+            <h2
+              style={{
+                color: '#000091',
+                fontSize: '48px',
+                fontWeight: 700,
+                lineHeight: '56px',
+                textAlign: 'center',
+              }}
+            >
+              Comprendre et découvrir l&apos;inclusion numérique dans les territoires
+            </h2>
+          </div>
 
           {/* Ligne 1 : Lieux (Texte gauche / Image droite) */}
           <div
@@ -213,21 +232,26 @@ export default function VitrineHomePage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
             >
-              <div>
+              <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Territorialiser"
                   src="/vitrine/accueil/icone-territorialiser.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
-              <h3 className="fr-h4">
+              <h3
+                className="fr-h4 fr-mb-0"
+                style={{ fontWeight: 700 }}
+              >
                 Les lieux d&apos;inclusion numérique sur le territoire
               </h3>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Partout en France, des milliers de lieux accompagnent les habitants dans leurs usages du numérique :
+                médiathèques, centres sociaux, tiers-lieux, espaces France Services ou associations locales.
+                Ces structures proposent des ateliers, des permanences et un accueil de proximité pour répondre
+                aux besoins de chacun.
               </p>
               <div>
                 <Link
@@ -249,26 +273,31 @@ export default function VitrineHomePage(): ReactElement {
 
           {/* Ligne 2 : Dispositifs (Image gauche / Texte droite) */}
           <div
-            className="fr-grid-row fr-mb-6w"
+            className="fr-grid-row"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px', order: 2 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px', order: 2 }}
             >
-              <div>
+              <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Former acteurs"
-                  src="/vitrine/accueil/icone-accompagner-acteurs.png"
+                  src="/vitrine/accueil/icone-former-acteurs.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
-              <h3 className="fr-h4">
+              <h3
+                className="fr-h4 fr-mb-0"
+                style={{ fontWeight: 700 }}
+              >
                 Les dispositifs de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Plusieurs dispositifs existent pour soutenir les citoyens : conseillers numériques,
+                pass numériques, ateliers de montée en compétences, actions d&apos;aller-vers ou encore
+                programmes locaux portés par les collectivités. Ils permettent d&apos;accompagner tous les publics
+                vers une utilisation plus autonome, sécurisée et confiante du numérique.
               </p>
               <div>
                 <Link
@@ -298,21 +327,26 @@ export default function VitrineHomePage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}
             >
-              <div>
+              <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Évaluer"
-                  src="/vitrine/accueil/icone-developper-formations.png"
+                  src="/vitrine/accueil/icone-evaluer.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
-              <h3 className="fr-h4">
+              <h3
+                className="fr-h4 fr-mb-0"
+                style={{ fontWeight: 700 }}
+              >
                 Les données et les études de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Accédez aux données qui éclairent les dynamiques locales : actions mises en œuvre dans les feuilles
+                de route territoriales, types d&apos;accompagnements proposés, profils des publics et statistiques.
+                Ces analyses permettent de suivre et d&apos;évaluer les besoins et d&apos;ajuster les stratégies
+                à l&apos;échelle de chaque territoire.
               </p>
               <div>
                 <Link
@@ -339,21 +373,26 @@ export default function VitrineHomePage(): ReactElement {
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '16px', order: 2 }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '8px', order: 2 }}
             >
-              <div>
+              <div style={{ marginBottom: '8px' }}>
                 <img
                   alt="Icône Outiller"
-                  src="/vitrine/accueil/icone-accompagner-acteurs.png"
+                  src="/vitrine/accueil/icone-outiller.png"
                   style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
-              <h3 className="fr-h4">
+              <h3
+                className="fr-h4 fr-mb-0"
+                style={{ fontWeight: 700 }}
+              >
                 Les outils pour les professionnels de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Pour aider les acteurs à mieux travailler ensemble, deux outils sont disponibles :
+                Mon Inclusion Numérique, pour les collectivités qui pilotent les actions sur leur territoire,
+                et La Coop de la médiation numérique, pour les médiateurs qui suivent leurs accompagnements
+                et utilisent des ressources utiles. Ces outils rendent la coordination plus simple.
               </p>
               <div>
                 <Link
@@ -400,8 +439,12 @@ export default function VitrineHomePage(): ReactElement {
               style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
             >
               <h2
-                className="fr-h2"
-                style={{ color: '#000091' }}
+                style={{
+                  color: '#000091',
+                  fontSize: '40px',
+                  fontWeight: 700,
+                  lineHeight: '48px',
+                }}
               >
                 Comment participer à une gouvernance territoriale ?
               </h2>
@@ -573,7 +616,7 @@ export default function VitrineHomePage(): ReactElement {
               >
                 <img
                   alt="République Française - ANCT Société Numérique"
-                  src="/vitrine/accueil/logo-rf-anct.svg"
+                  src="/vitrine/accueil/logo-rf-anct.png"
                   style={{
                     display: 'inline-block',
                     height: 'auto',

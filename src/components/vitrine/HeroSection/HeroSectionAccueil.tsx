@@ -1,5 +1,6 @@
-import Image from 'next/image'
 import { ReactElement } from 'react'
+
+import styles from './HeroSectionAccueil.module.css'
 
 export default function HeroSectionAccueil(): ReactElement {
   return (
@@ -15,6 +16,21 @@ export default function HeroSectionAccueil(): ReactElement {
       <div className="fr-container">
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-8 fr-text--center">
+            {/* Badge Nouvelle plateforme */}
+            <div
+              className="fr-mb-2w"
+              style={{ textAlign: 'center' }}
+            >
+              <span className={`fr-badge fr-badge--sm ${styles.badge}`}>
+                <span
+                  aria-hidden="true"
+                  className="fr-icon-flashlight-fill fr-icon--xs"
+                />
+                {' '}
+                Nouvelle plateforme
+              </span>
+            </div>
+
             {/* Titre principal */}
             <h1
               className="fr-display--lg fr-mb-2w"
@@ -46,15 +62,17 @@ export default function HeroSectionAccueil(): ReactElement {
                 style={{
                   display: 'flex',
                   height: '50px',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="La Coop de la médiation numérique"
-                  fill
-                  src="/vitrine/accueil/logo-coop-vector.svg"
-                  style={{ objectFit: 'contain' }}
+                  src="/vitrine/accueil/logo-coop.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
                 />
               </div>
 
@@ -62,15 +80,17 @@ export default function HeroSectionAccueil(): ReactElement {
                 style={{
                   display: 'flex',
                   height: '50px',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="Cartographie Nationale"
-                  fill
-                  src="/vitrine/accueil/logo-carto.svg"
-                  style={{ objectFit: 'contain' }}
+                  src="/vitrine/accueil/logo-carto.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
                 />
               </div>
 
@@ -81,15 +101,17 @@ export default function HeroSectionAccueil(): ReactElement {
                   display: 'flex',
                   height: '50px',
                   overflow: 'hidden',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="Aidants Connect"
-                  fill
-                  src="/vitrine/accueil/logo-aidants-connect.svg"
-                  style={{ objectFit: 'contain', padding: '8px' }}
+                  src="/vitrine/accueil/logo-aidants-connect.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
                 />
               </div>
 
@@ -100,15 +122,17 @@ export default function HeroSectionAccueil(): ReactElement {
                   display: 'flex',
                   height: '50px',
                   overflow: 'hidden',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="Conseillers Numériques"
-                  fill
-                  src="/vitrine/accueil/logo-conseillers-numeriques.svg"
-                  style={{ objectFit: 'contain', padding: '8px' }}
+                  src="/vitrine/accueil/logo-conseillers-numeriques.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
                 />
               </div>
 
@@ -116,15 +140,17 @@ export default function HeroSectionAccueil(): ReactElement {
                 style={{
                   display: 'flex',
                   height: '50px',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="MedNum"
-                  fill
-                  src="/vitrine/accueil/logo-mednum.svg"
-                  style={{ objectFit: 'contain' }}
+                  src="/vitrine/accueil/logo-mednum.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    width: '100%',
+                  }}
                 />
               </div>
 
@@ -135,15 +161,17 @@ export default function HeroSectionAccueil(): ReactElement {
                   display: 'flex',
                   height: '50px',
                   overflow: 'hidden',
-                  position: 'relative',
                   width: '50px',
                 }}
               >
-                <Image
+                <img
                   alt="France Numérique Ensemble"
-                  fill
-                  src="/vitrine/accueil/logo-frame3031.png"
-                  style={{ objectFit: 'cover' }}
+                  src="/vitrine/accueil/logo-data-inclusion.png"
+                  style={{
+                    height: '100%',
+                    objectFit: 'cover',
+                    width: '100%',
+                  }}
                 />
               </div>
             </div>
