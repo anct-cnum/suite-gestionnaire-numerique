@@ -14,7 +14,7 @@ export default function DispositifsPage(): ReactElement {
   return (
     <>
       <HeroSection
-        background="url(/vitrine/accueil/hero-background-hd.png) center/cover no-repeat"
+        backgroundImage="/vitrine/accueil/hero-background-hd.png"
         subtitle="Nunc enim pellentesque consectetur tempor Vel lobortis accumsan luctus viverra donec nisl ac."
         title="Les dispositifs de l'inclusion numérique"
       />
