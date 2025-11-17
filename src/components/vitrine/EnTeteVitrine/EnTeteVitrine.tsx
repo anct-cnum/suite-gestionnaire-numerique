@@ -1,7 +1,11 @@
+'use client'
+
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ReactElement } from 'react'
 
 export default function EnTeteVitrine(): ReactElement {
+  const pathname = usePathname()
   return (
     <header className="fr-header">
       <div className="fr-header__body">
@@ -23,7 +27,7 @@ export default function EnTeteVitrine(): ReactElement {
                 </div>
                 <div className="fr-header__navbar">
                   <button
-                    aria-controls="modal-vitrine-menu"
+                    aria-controls="navigation"
                     aria-haspopup="menu"
                     className="fr-btn--menu fr-btn"
                     data-fr-opened="false"
@@ -62,81 +66,40 @@ export default function EnTeteVitrine(): ReactElement {
           </div>
         </div>
       </div>
-      <nav
-        aria-label="Menu principal"
-        className="fr-header__menu"
-        id="header-navigation"
-      >
-        <div className="fr-container">
-          <ul className="fr-nav__list">
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine"
-              >
-                Accueil
-              </Link>
-            </li>
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine/lieux"
-              >
-                Lieux
-              </Link>
-            </li>
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine/dispositifs"
-              >
-                Dispositifs
-              </Link>
-            </li>
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine/donnees-territoriales"
-              >
-                Données territoriales
-              </Link>
-            </li>
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine/outils-numeriques"
-              >
-                Outils numériques
-              </Link>
-            </li>
-            <li className="fr-nav__item">
-              <Link
-                className="fr-nav__link"
-                href="/vitrine/etudes-et-recherches"
-              >
-                Etudes et recherches
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
-      <dialog
+      <div
         aria-labelledby="button-vitrine-menu"
         className="fr-header__menu fr-modal"
-        id="modal-vitrine-menu"
+        id="navigation"
       >
         <div className="fr-container">
           <button
-            aria-controls="modal-vitrine-menu"
+            aria-controls="navigation"
             className="fr-btn--close fr-btn"
             type="button"
           >
             Fermer
           </button>
           <div className="fr-header__menu-links">
+            <ul className="fr-btns-group">
+              <li>
+                <a
+                  className="fr-link fr-icon-question-line"
+                  href="mailto:moninclusionnumerique@anct.gouv.fr"
+                >
+                  Aide
+                </a>
+              </li>
+            </ul>
+          </div>
+          <nav
+            aria-label="Menu principal"
+            className="fr-nav"
+            role="navigation"
+          >
             <ul className="fr-nav__list">
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine"
                 >
@@ -145,6 +108,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine/lieux' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/lieux"
                 >
@@ -153,6 +117,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine/dispositifs' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/dispositifs"
                 >
@@ -161,6 +126,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine/donnees-territoriales' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/donnees-territoriales"
                 >
@@ -169,6 +135,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine/outils-numeriques' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/outils-numeriques"
                 >
@@ -177,6 +144,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
+                  aria-current={pathname === '/vitrine/etudes-et-recherches' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/etudes-et-recherches"
                 >
@@ -184,9 +152,9 @@ export default function EnTeteVitrine(): ReactElement {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
         </div>
-      </dialog>
+      </div>
     </header>
   )
 }
