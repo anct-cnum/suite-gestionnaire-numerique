@@ -135,7 +135,7 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
-                  aria-current={pathname === '/vitrine/outils-numeriques' ? 'page' : undefined}
+                  aria-current={pathname.startsWith('/vitrine/outils-numeriques') ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine/outils-numeriques"
                 >
