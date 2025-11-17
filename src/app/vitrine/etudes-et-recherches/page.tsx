@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
 import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
+import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
   robots: {
@@ -34,6 +35,9 @@ export default function EtudesEtRecherchesPage(): ReactElement {
           </div>
         </div>
       </section>
+
+      {/* Section Qui sommes-nous */}
+      <QuiSommesNous />
     </>
   )
 }
