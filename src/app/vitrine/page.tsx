@@ -94,7 +94,7 @@ export default function VitrineHomePage(): ReactElement {
       </section>
 
       {/* Section Approche renouvelée */}
-      <section className="fr-py-12w">
+      <section className="fr-py-1w">
         <div className="fr-container">
           {/* Bloc 2 : Approche renouvelée (Texte gauche / Image droite) */}
           <div
@@ -148,7 +148,7 @@ export default function VitrineHomePage(): ReactElement {
       </section>
 
       {/* Section Permettre à tous */}
-      <section className="fr-py-12w">
+      <section className="fr-py-4w">
         <div className="fr-container">
           {/* Bloc 3 : Permettre à tous (Texte gauche / Texte+Icône droite) */}
           <div
@@ -195,7 +195,7 @@ export default function VitrineHomePage(): ReactElement {
       </section>
 
       {/* Section Comprendre et découvrir */}
-      <section className="fr-py-12w">
+      <section className="fr-py-4w">
         <div className="fr-container">
           {/* Icône et titre centré */}
           <div
@@ -383,7 +383,7 @@ export default function VitrineHomePage(): ReactElement {
                 />
               </div>
               <h3
-                className="fr-h4 fr-mb-0"
+                className="fr-h4"
                 style={{ fontWeight: 700 }}
               >
                 Les outils pour les professionnels de l&apos;inclusion numérique
