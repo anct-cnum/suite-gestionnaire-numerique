@@ -1,9 +1,11 @@
 import { ReactElement } from 'react'
 
-import styles from './ToolCard.module.css'
+import Badge from '@/components/shared/Badge/Badge'
 
 export default function ToolCard({
   badge,
+  badgeColor,
+  badgeIcon,
   buttonText,
   description,
   icon,
@@ -35,27 +37,24 @@ export default function ToolCard({
                 <img
                   alt={`Icône ${title}`}
                   src={icon}
-                  style={{ height: '56px', width: 'auto' }}
+                  style={{ height: '90px', width: 'auto' }}
                 />
               </div>
             )}
             <h2
-              className="fr-h2"
+              className="fr-h2 fr-mb-0"
               style={{ marginBottom: 0 }}
             >
               {title}
             </h2>
-            {badge !== undefined && badge !== '' && (
-              <div>
-                <span className={`fr-badge fr-badge--sm ${styles.badge}`}>
-                  <span
-                    aria-hidden="true"
-                    className="fr-icon-flashlight-fill fr-icon--xs"
-                  />
-                  {' '}
-                  {badge}
-                </span>
-              </div>
+            {badge !== undefined && badge !== '' && badgeColor !== undefined && (
+              <Badge
+                color={badgeColor}
+                icon={badgeIcon ?? false}
+                small={true}
+              >
+                {badge}
+              </Badge>
             )}
             <p className="fr-text--md">
               {description}
@@ -79,7 +78,8 @@ export default function ToolCard({
               backgroundColor: imageBackground ?? '#F5F5FE',
               borderRadius: '8px',
               order: reverse === true ? 1 : 2,
-              padding: '40px',
+              paddingLeft: '40px',
+       
             }}
           >
             <img
@@ -103,6 +103,10 @@ export default function ToolCard({
 type ToolCardProps = {
   // eslint-disable-next-line react/require-default-props
   readonly badge?: string
+  // eslint-disable-next-line react/require-default-props
+  readonly badgeColor?: string
+  // eslint-disable-next-line react/require-default-props
+  readonly badgeIcon?: boolean
   // eslint-disable-next-line react/require-default-props
   readonly buttonText?: string
   readonly description: string
