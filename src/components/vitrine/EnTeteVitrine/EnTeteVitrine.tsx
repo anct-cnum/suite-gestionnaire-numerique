@@ -99,7 +99,7 @@ export default function EnTeteVitrine(): ReactElement {
             <ul className="fr-nav__list">
               <li className="fr-nav__item">
                 <Link
-                  aria-current={pathname === '/vitrine' ? 'page' : undefined}
+                  aria-current={pathname === '/vitrine' || pathname === '/' ? 'page' : undefined}
                   className="fr-nav__link"
                   href="/vitrine"
                 >
