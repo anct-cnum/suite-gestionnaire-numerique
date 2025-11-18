@@ -1,0 +1,22 @@
+.aidantsConnectImage {
+  order: 1;
+  padding: 40px;
+}
+
+.aidantsConnectContent {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  order: 2;
+}
+
+/* Sur mobile (< 768px), inverser l'ordre */
+@media (max-width: 767px) {
+  .aidantsConnectImage {
+    order: 2;
+  }
+
+  .aidantsConnectContent {
+    order: 1;
+  }
+}

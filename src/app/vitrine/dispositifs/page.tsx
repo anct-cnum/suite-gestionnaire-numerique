@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
+import styles from './page.module.css'
 import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
@@ -21,7 +22,7 @@ export default function DispositifsPage(): ReactElement {
       />
 
       {/* Section Conseiller numérique */}
-      <section className="fr-py-12w">
+      <section className="fr-py-8w">
         <div className="fr-container">
           <div
             className="fr-grid-row"
@@ -89,29 +90,20 @@ export default function DispositifsPage(): ReactElement {
       </section>
 
       {/* Section Aidants Connect */}
-      <section className="fr-py-12w">
+      <section className="fr-py-4w">
         <div className="fr-container">
           <div
             className="fr-grid-row"
             style={{ alignItems: 'center', justifyContent: 'space-between' }}
           >
-            <div
-              className="fr-col-12 fr-col-md-6"
-              style={{
-                order: 1,
-                padding: '40px',
-              }}
-            >
+            <div className={`fr-col-12 fr-col-md-6 ${styles.aidantsConnectImage}`}>
               <img
                 alt="Illustration Aidants Connect"
                 src="/vitrine/dispositifs/illustration-aidants-connect.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px', order: 2 }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.aidantsConnectContent}`}>
               <div>
                 <img
                   alt="Logo Aidants Connect"
