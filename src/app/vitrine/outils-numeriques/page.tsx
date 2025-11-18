@@ -62,20 +62,6 @@ export default function OutilsNumeriquesPage(): ReactElement {
         link="https://cartographie.societenumerique.gouv.fr"
         title="La cartographie des lieux d'inclusion"
       />
-
-      {/* La Suite des aidants */}
-      <ToolCard
-        badge="à venir"
-        badgeColor="info"
-        badgeIcon={false}
-        description="Aidants Connect est le service public numérique qui protège les aidants professionnels et les personnes accompagnées dans la réalisation de démarches administratives en ligne."
-        imageAlt="Capture d'écran de La Suite des aidants"
-        imageBackground="#FFFFFF"
-        imageSrc="/vitrine/outils/visuel-cnfs.png"
-        link="https://aidantsconnect.beta.gouv.fr/"
-        title="La Suite des aidants"
-      />
-
       {/* Section Qui sommes-nous */}
       <QuiSommesNous />
     </>
