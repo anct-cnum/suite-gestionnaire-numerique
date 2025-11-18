@@ -178,7 +178,7 @@ export default function VitrineHomePage(): ReactElement {
                 <img
                   alt="Développer formations"
                   src="/vitrine/accueil/icone-developper-formations.png"
-                  style={{ height: 'auto', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
+                  style={{ height: 'auto', marginTop: '2em', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
               <p className="fr-text--md">
@@ -297,7 +297,7 @@ export default function VitrineHomePage(): ReactElement {
                 programmes locaux portés par les collectivités. Ils permettent d&apos;accompagner tous les publics
                 vers une utilisation plus autonome, sécurisée et confiante du numérique.
               </p>
-              <div>
+              <div style={{ marginBottom: '2em' }}>
                 <Link
                   className="fr-btn"
                   href="/vitrine/dispositifs"
@@ -373,7 +373,7 @@ export default function VitrineHomePage(): ReactElement {
               className="fr-col-12 fr-col-md-5"
               style={{ display: 'flex', flexDirection: 'column', gap: '8px', order: 2 }}
             >
-              <div style={{ marginBottom: '8px' }}>
+              <div style={{ marginBottom: '8px', marginTop: '2em' }}>
                 <img
                   alt="Icône Outiller"
                   src="/vitrine/accueil/icone-outiller.png"
