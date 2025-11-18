@@ -39,7 +39,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageAlt="Capture d'écran de La Coop de la Médiation"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-coop.png"
-        link="https://lacoopdelamediation.numerique.gouv.fr/"
+        link="https://coop-numerique.anct.gouv.fr/"
         title="La Coop de la Médiation"
       />
 
@@ -49,7 +49,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageAlt="Capture d'écran des bases du numérique d'intérêt général"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-bases.png"
-        link="https://lacoopdelamediation.numerique.gouv.fr/"
+        link="https://lesbases.anct.gouv.fr/"
         title="Les bases du numérique d'intérêt général"
       />
 
@@ -59,7 +59,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageAlt="Capture d'écran de la cartographie des lieux d'inclusion"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-cartographie.png"
-        link="https://lacoopdelamediation.numerique.gouv.fr/"
+        link="https://cartographie.societenumerique.gouv.fr"
         title="La cartographie des lieux d'inclusion"
       />
 
@@ -72,7 +72,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageAlt="Capture d'écran de La Suite des aidants"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-cnfs.png"
-        link="https://lacoopdelamediation.numerique.gouv.fr/"
+        link="https://aidantsconnect.beta.gouv.fr/"
         title="La Suite des aidants"
       />
 
