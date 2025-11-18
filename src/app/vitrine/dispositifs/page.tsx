@@ -15,9 +15,9 @@ export default function DispositifsPage(): ReactElement {
   return (
     <>
       <HeroSection
-        backgroundImage="/vitrine/accueil/hero-background-hd.png"
-        subtitle="Nunc enim pellentesque consectetur tempor Vel lobortis accumsan luctus viverra donec nisl ac."
-        title="Les dispositifs de l'inclusion numérique"
+        backgroundImage="/vitrine/dispositifs/hero.png"
+        subtitle="Répondre collectivement aux besoins d'accompagnement de la population"
+        title="Les dispositifs d'inclusion numérique"
       />
 
       {/* Section Conseiller numérique */}
@@ -34,8 +34,8 @@ export default function DispositifsPage(): ReactElement {
               <div>
                 <img
                   alt="Icône Conseiller numérique"
-                  src="/vitrine/accueil/logo-conseillers-numeriques.svg"
-                  style={{ height: 'auto', width: '40px' }}
+                  src="/vitrine/dispositifs/logo-conseillers-numeriques.png"
+                  style={{ height: 'auto', width: '80px' }}
                 />
               </div>
               <h2
@@ -45,9 +45,22 @@ export default function DispositifsPage(): ReactElement {
                 Conseiller numérique
               </h2>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Les conseillers numériques sont des initiatives de proximité qui offrent :
               </p>
+              <ul className="fr-text--md">
+                <li>
+                  Un accompagnement dans tous les usages quotidiens du numérique
+                </li>
+                <li>
+                  Identifier vos appels, la typologie d&apos;un bénéficiaire et sa demande
+                </li>
+                <li>
+                  Évaluer son niveau numérique
+                </li>
+                <li>
+                  Proposer et organiser des sessions d&apos;accompagnement en ligne
+                </li>
+              </ul>
               <div>
                 <a
                   className="fr-btn"
@@ -62,14 +75,12 @@ export default function DispositifsPage(): ReactElement {
             <div
               className="fr-col-12 fr-col-md-6"
               style={{
-                backgroundColor: '#FEF4F5',
-                borderRadius: '8px',
                 padding: '40px',
               }}
             >
               <img
                 alt="Illustration Conseiller numérique"
-                src="/vitrine/accueil/illustration-dispositifs.png"
+                src="/vitrine/dispositifs/illustration-conseiller.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
@@ -87,15 +98,13 @@ export default function DispositifsPage(): ReactElement {
             <div
               className="fr-col-12 fr-col-md-6"
               style={{
-                backgroundColor: '#FFF8E1',
-                borderRadius: '8px',
                 order: 1,
                 padding: '40px',
               }}
             >
               <img
                 alt="Illustration Aidants Connect"
-                src="/vitrine/accueil/illustration-dispositifs.png"
+                src="/vitrine/dispositifs/illustration-aidants-connect.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
@@ -106,8 +115,8 @@ export default function DispositifsPage(): ReactElement {
               <div>
                 <img
                   alt="Logo Aidants Connect"
-                  src="/vitrine/accueil/logo-aidants-connect.svg"
-                  style={{ height: 'auto', width: '56px' }}
+                  src="/vitrine/dispositifs/logo-aidants-connect.png"
+                  style={{ height: 'auto', width: '80px' }}
                 />
               </div>
               <h2
@@ -117,8 +126,8 @@ export default function DispositifsPage(): ReactElement {
                 Aidants Connect
               </h2>
               <p className="fr-text--md">
-                Ipsum mattis commodo purus varius. Tristique lacus urna interdum diam pretium enim.
-                Dignissim nulla condimentum tellus et enim vestibulum. Molestie.
+                Vous accompagnez des personnes en difficulté avec le numérique dans la réalisation
+                de leurs démarches en ligne ? Aidants Connect est fait pour vous !
               </p>
               <div>
                 <a

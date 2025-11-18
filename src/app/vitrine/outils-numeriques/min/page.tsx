@@ -265,9 +265,9 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                 className="fr-h2"
                 style={{ color: '#000091' }}
               >
-                Un outil unique pour comprendre l&apos;inclusion numérique sur votre territoire
+                Un outil unique pour comprendre et piloter l&apos;inclusion numérique sur votre territoire
               </h2>
-             
+
             </div>
           </div>
         </div>
@@ -275,34 +275,34 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
       {/* Section: Visualiser la donnée */}
       <ToolCard
-        description="Une visualisation simple de données statistiques sur l'inclusion numérique à l'échelle départementale ou régionale"
+        description="Accédez aux données qui éclairent la dynamique de l'inclusion numérique à l'échelle départementale ou régionale"
         icon="/vitrine/outils/min/logo-evaluer.svg"
         imageAlt="Capture d'écran des visualisations de données"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/min/visuel-data.png"
-        title="Visualiser la donnée"
+        title="Comprendre par la donnée"
       />
 
       {/* Section: Piloter la feuille de route */}
       <ToolCard
-        description="Des fonctionnalités pour suivre sur la feuille de route France Numérique Ensemble et les membres de la gouvernance territoriale"
+        description="Des fonctionnalités pour piloter ensemble la feuille de route France Numérique Ensemble et les membres de la gouvernance territoriale"
         icon="/vitrine/outils/min/logo-former-acteurs.svg"
         imageAlt="Capture d'écran du pilotage de la feuille de route"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/min/visuel-fdr.png"
         reverse
-        title="Piloter la feuille de route"
+        title="Participer à une dynamique locale"
       />
 
       {/* Section: Suivre les dispositifs */}
       <ToolCard
-        description="Des informations sur le déploiement des dispositifs et les financements de l'inclusion numérique"
+        description="Un outil unique pour piloter l'ensemble des dispositifs d'inclusion numérique (Conseillers numérique, etc.)"
         icon="/vitrine/outils/min/logo-identifier.svg"
         imageAlt="Capture d'écran du suivi des dispositifs"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/min/visuel-dispositifs.png"
         link="https://mon.inclusion-numerique.anct.gouv.fr/"
-        title="Suivre les dispositifs"
+        title="Piloter ses actions au quotidien"
       />
 
       {/* Section: Comment participer à une gouvernance territoriale */}
@@ -346,14 +346,10 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                 Comment participer à une gouvernance territoriale ?
               </h2>
               <p className="fr-text--md">
-                <strong>
-                  En tant que collectivité ou acteur territorial,
-                </strong>
-                {' '}
-                vous êtes invité à manifester votre
-                souhait de participer à une gouvernance de l&apos;inclusion numérique sur votre
-                territoire. En tant que Conseil Régional, Conseil Département ou EPCI, vous pouvez
-                également porter une feuille de route.
+                En tant que collectivité ou acteur territorial, vous êtes invité à manifester
+                votre souhait de participer à une gouvernance de l&apos;inclusion numérique
+                sur votre territoire. En tant que Conseil Régional, Conseil Département ou EPCI,
+                vous pouvez également porter une feuille de route.
               </p>
               <div>
                 <a

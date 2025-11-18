@@ -17,7 +17,7 @@ export default function LieuxPage(): ReactElement {
     <>
       <HeroSection
         backgroundImage="/vitrine/lieux/hero-background.png"
-        subtitle="Outil d'orientation et de pilotage, la cartographie mobilise des données territoriales pour une meilleure compréhension des dynamiques d'inclusion."
+        subtitle="Outil de prescription et de pilotage, la cartographie mobilise des données territoriales pour agir plus efficacement en faveur de l'inclusion numérique."
         title="Qu'est-ce que la cartographie nationale des lieux d'inclusion numérique ?"
       />
 
@@ -42,9 +42,9 @@ export default function LieuxPage(): ReactElement {
                 className="fr-text--md"
                 style={{ marginBottom: 0 }}
               >
-                Que vous soyez un particulier ou un professionnel, la cartographie nationale est là
-                pour vous aider à trouver les lieux d&apos;inclusion numérique avec des services
-                adaptés à vos besoins ou à ceux de vos bénéficiaires !
+                Que vous soyez ou non un professionnel de la médiation numérique ou sociale,
+                la cartographie nationale vous permet d&apos;orienter rapidement un bénéficiaire vers
+                un lieu au sein duquel il pourra être accompagné.
               </p>
               <div>
                 <Link
@@ -94,10 +94,9 @@ export default function LieuxPage(): ReactElement {
                 className="fr-text--md"
                 style={{ marginBottom: 0 }}
               >
-                La nouvelle cartographie permet de mieux piloter l&apos;inclusion numérique grâce à
-                la superposition d&apos;indicateurs territoriaux, comme l&apos;Indice de fragilité
-                numérique. Elle aide les acteurs publics et locaux à identifier les zones à
-                renforcer et à orienter leurs actions pour une gouvernance plus éclairée.
+                Grâce à la visualisation de plusieurs indicateurs, notamment l&apos;Indice de fragilité
+                numérique, la cartographie nationale permet aux acteurs de l&apos;inclusion numérique
+                de mieux piloter leurs actions.
               </p>
               <div>
                 <Link
@@ -133,9 +132,9 @@ export default function LieuxPage(): ReactElement {
                 className="fr-text--md"
                 style={{ marginBottom: 0 }}
               >
-                En plus d&apos;intégrer la cartographie sur votre site et de le relier à la source
-                de données de votre choix,Vous pouvez aussi télécharger les données de votre
-                territoire disponibles sur notre API
+                La cartographie peut être facilement intégrée sur votre site. Elle peut être reliée à
+                la source de données de votre choix. Vous pouvez également télécharger les données
+                de votre territoire depuis notre API.
               </p>
               <div>
                 <Link
@@ -296,7 +295,7 @@ export default function LieuxPage(): ReactElement {
                     margin: 0,
                   }}
                 >
-                  Cartographie Nationale
+                  Magna es lorem
                 </h3>
                 <div
                   style={{
@@ -315,11 +314,11 @@ export default function LieuxPage(): ReactElement {
                       lineHeight: '1.5rem',
                     }}
                   >
-                    France
+                    Bretagne/Occitanie/Normandie
                   </span>
                 </div>
                 <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                  Nous sommes notre premier intégrateur.
+                  Lorem ipsum dolor sit amet consectetur. Risus id sit nisi orci ut et in.
                 </p>
                 <div>
                   <a
@@ -329,7 +328,7 @@ export default function LieuxPage(): ReactElement {
                     style={{ display: 'inline-block' }}
                     target="_blank"
                   >
-                    Consulter notre cartographie
+                    Cartographie Magna es
                   </a>
                 </div>
               </div>
@@ -486,28 +485,12 @@ export default function LieuxPage(): ReactElement {
                   margin: 0,
                 }}
               >
-                La mise à jour
+                Mise à jour
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                En lien avec 
-                {' '}
-                <strong>
-                  La Coop de la médiation numérique
-                </strong>
-                {' '}
-                , l&apos;
-                <strong>
-                  entrepôt de données
-                </strong>
-                {' '}
-                et
-                {' '}
-                <strong>
-                  Mon Inclusion Numérique (MIN)
-                </strong>
-                {' '}
-                , la mise à jour des offres devient
-                simple, centralisée et ouverte à tous grâce à l&apos;open data.
+                Les données de la cartographie sont centralisées au sein d&apos;un entrepôt géré en commun
+                par les acteurs de l&apos;inclusion numérique. Cette mutualisation permet une mise à jour
+                plus fréquente et plus simple de ses données.
               </p>
             </div>
 
@@ -540,9 +523,9 @@ export default function LieuxPage(): ReactElement {
                 Visibilité
               </h3>
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                Conçue à l&apos;échelle nationale, la cartographie permet une visualisation fine de
-                l&apos;offre à l&apos;échelle locale. Ouverte et contributive, la base de données
-                peut être réutilisée par tous les acteurs du territoire.
+                La cartographie permet une visualisation fine de l&apos;offre de médiation numérique à toutes
+                les échelles : nationale, régionale, départementale, locale, micro-locale. Ouverte et contributive,
+                les données peuvent être réutilisées par tous les acteurs de la médiation numérique.
               </p>
             </div>
           </div>

@@ -6,7 +6,10 @@ export default function HeroSection({ backgroundColor = '#f5f5fe', backgroundIma
       className="fr-py-12w"
       style={{
         backgroundColor,
-        backgroundImage: backgroundImage ?? `url(${backgroundImage})`,
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
       }}
     >
       <div className="fr-container">

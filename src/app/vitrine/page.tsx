@@ -184,11 +184,8 @@ export default function VitrineHomePage(): ReactElement {
               <p className="fr-text--md">
                 Plus globalement, l&apos;éloignement numérique ne peut plus être considéré comme un
                 simple enjeu technique ou technologique : il s&apos;agit d&apos;abord d&apos;un phénomène social.
-              </p>
-              <p className="fr-text--md">
                 La prise en compte de ce phénomène dans sa complexité et son hétérogénéité ouvre des perspectives
-                importantes pour la construction de politiques d&apos;inclusion numérique différenciées en fonction
-                des publics et des territoires.
+                importantes pour déployer un numérique capacitant, source d&apos;émancipation pour toutes et tous.
               </p>
             </div>
           </div>
@@ -295,8 +292,8 @@ export default function VitrineHomePage(): ReactElement {
                 Les dispositifs de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Plusieurs dispositifs existent pour soutenir les citoyens : conseillers numériques,
-                pass numériques, ateliers de montée en compétences, actions d&apos;aller-vers ou encore
+                Plusieurs dispositifs existentent pour accompagner la population : conseillers numériques,
+                ateliers de montée en compétences, actions d&apos;aller-vers ou encore
                 programmes locaux portés par les collectivités. Ils permettent d&apos;accompagner tous les publics
                 vers une utilisation plus autonome, sécurisée et confiante du numérique.
               </p>
@@ -345,9 +342,9 @@ export default function VitrineHomePage(): ReactElement {
               </h3>
               <p className="fr-text--md">
                 Accédez aux données qui éclairent les dynamiques locales : actions mises en œuvre dans les feuilles
-                de route territoriales, types d&apos;accompagnements proposés, profils des publics et statistiques.
-                Ces analyses permettent de suivre et d&apos;évaluer les besoins et d&apos;ajuster les stratégies
-                à l&apos;échelle de chaque territoire.
+                de route territoriales, types d&apos;accompagnements proposés, profils et besoins
+                des publics bénéficiaires. Ces analyses permettent de suivre et de mesurer les besoins
+                de la population et d&apos;ajuster les stratégies locales d&apos;inclusion numérique.
               </p>
               <div>
                 <Link
@@ -390,10 +387,10 @@ export default function VitrineHomePage(): ReactElement {
                 Les outils pour les professionnels de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Pour aider les acteurs à mieux travailler ensemble, deux outils sont disponibles :
-                Mon Inclusion Numérique, pour les collectivités qui pilotent les actions sur leur territoire,
-                et La Coop de la médiation numérique, pour les médiateurs qui suivent leurs accompagnements
-                et utilisent des ressources utiles. Ces outils rendent la coordination plus simple.
+                Plusieurs outils permettent aux acteurs de l&apos;inclusion numérique de travailler efficacement.
+                Parmi eux, Mon Inclusion Numérique constitue la suite d&apos;outil des porteurs de dispositifs
+                d&apos;inclusion numérique. La Coop de la médiation est l&apos;outil métier des médiateurs numériques
+                oeuvrant partout en France.
               </p>
               <div>
                 <Link
@@ -450,14 +447,10 @@ export default function VitrineHomePage(): ReactElement {
                 Comment participer à une gouvernance territoriale ?
               </h2>
               <p className="fr-text--md">
-                <strong>
-                  En tant que collectivité ou acteur territorial
-                </strong>
-                {', '}
-                vous êtes invité à manifester votre souhait
-                de participer à une gouvernance de l&apos;inclusion numérique sur votre territoire.
-                En tant que Conseil Régional, Conseil Département ou EPCI, vous pouvez également porter
-                une feuille de route.
+                En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique, vous êtes invités à rejoindre
+                la dynamique de votre territoire en rejoignant la gouvernance France Numérique Ensemble
+                de votre département. Vous pourrez ainsi porter ou contribuer à des actions pensées
+                et mises en oeuvre de façon collégiale.
               </p>
               <div>
                 <Link
