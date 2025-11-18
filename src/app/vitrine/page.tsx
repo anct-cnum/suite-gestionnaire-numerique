@@ -6,10 +6,19 @@ import HeroSectionAccueil from '@/components/vitrine/HeroSection/HeroSectionAccu
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
+  description: 'Découvrez les dispositifs, lieux et outils pour favoriser l\'inclusion numérique sur les territoires. Accompagner tous les publics vers une utilisation autonome, sécurisée et confiante du numérique.',
+  keywords: ['inclusion numérique', 'ANCT', 'France Numérique Ensemble', 'conseiller numérique', 'lieux d\'inclusion', 'gouvernance territoriale'],
+  openGraph: {
+    description: 'Découvrez les dispositifs, lieux et outils pour favoriser l\'inclusion numérique sur les territoires.',
+    locale: 'fr_FR',
+    title: 'Inclusion Numérique - Agence Nationale de la Cohésion des Territoires',
+    type: 'website',
   },
+  robots: {
+    follow: true,
+    index: true,
+  },
+  title: 'Inclusion Numérique - Agence Nationale de la Cohésion des Territoires',
 }
 
 export default function VitrineHomePage(): ReactElement {

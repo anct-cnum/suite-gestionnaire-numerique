@@ -8,10 +8,19 @@ import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
+  description: 'Mon Inclusion Numérique : outil de visualisation de données et de pilotage de l\'inclusion numérique dans les territoires. Accédez aux données départementales et régionales, pilotez la feuille de route France Numérique Ensemble.',
+  keywords: ['Mon Inclusion Numérique', 'pilotage territorial', 'données inclusion', 'gouvernance territoriale', 'feuille de route', 'collectivités'],
+  openGraph: {
+    description: 'Outil de visualisation de données et de pilotage de l\'inclusion numérique dans les territoires.',
+    locale: 'fr_FR',
+    title: 'Mon Inclusion Numérique - Inclusion Numérique',
+    type: 'website',
   },
+  robots: {
+    follow: true,
+    index: true,
+  },
+  title: 'Mon Inclusion Numérique - Inclusion Numérique',
 }
 
 export default function MonInclusionNumeriquePage(): ReactElement {
