@@ -1,25 +1,40 @@
 'use client'
 
-import { ReactElement, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { ReactElement, useEffect, useState } from 'react'
 
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import SelecteurZoneGeographique from '@/components/vitrine/SelecteurZoneGeographique/SelecteurZoneGeographique'
 import { ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
 
 export default function DonneesTerritoriales(): ReactElement {
-  // eslint-disable-next-line react/hook-use-state,sonarjs/no-unused-vars,@typescript-eslint/no-unused-vars
-  const [ _, setZoneGeographique] = useState<undefined | ZoneGeographique>()
+  const [ zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
 
-  /*const router = useRouter()
+  const router = useRouter()
 
   useEffect(() => {
     if (zoneGeographique) {
       const { type, value } = zoneGeographique
-      // Navigation vers la page de détail par défaut (synthese)
-      //router.push(`/vitrine/donnees-territoriales/${type}/${value}/synthese`)
+
+      // Si la valeur est "all", naviguer vers /national
+      if (value === 'all') {
+        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+        return
+      }
+
+      // Si la valeur contient un underscore, extraire le code région et département
+      if (value.includes('_')) {
+        const [codeRegion, codeDepartement] = value.split('_')
+
+        if (type === 'region') {
+          router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeRegion}`)
+        } else {
+          router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeDepartement}`)
+        }
+      }
     }
   }, [router, zoneGeographique])
-  */
+
   return (
     <>
       {/* Section Découvrir les données */}
@@ -82,6 +97,7 @@ export default function DonneesTerritoriales(): ReactElement {
                   <div style={{ textAlign: 'center' }}>
                     <button
                       className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+                      onClick={() => { router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national') }}
                       type="button"
                     >
                       Voir les données nationale
