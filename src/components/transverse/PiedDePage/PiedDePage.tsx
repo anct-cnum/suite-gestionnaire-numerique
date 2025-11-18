@@ -22,6 +22,24 @@ export default function PiedDePage(): ReactElement {
                 Française
               </p>
             </Link>
+            <ExternalLink
+              className="fr-footer__brand-link"
+              href="https://anct.gouv.fr/"
+              title="Page d'accueil - ANCT - Agence Nationale de la Cohésion des Territoires - République Française"
+            >
+              <img
+                alt="Logo ANCT"
+                src="/anct-texte.svg"
+                style={{
+                  display: 'block',
+                  marginLeft: '8px',
+                  maxHeight: '90px',
+                  maxWidth: '100%',
+                  paddingLeft: '32px',
+                  verticalAlign: 'middle',
+                }}
+              />
+            </ExternalLink>
           </div>
           <div className="fr-footer__content">
             <ul className="fr-footer__content-list">

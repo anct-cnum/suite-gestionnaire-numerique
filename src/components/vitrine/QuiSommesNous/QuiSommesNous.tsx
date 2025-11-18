@@ -9,23 +9,6 @@ export default function QuiSommesNous(): ReactElement {
       <div className="fr-container">
         <div className="fr-grid-row fr-grid-row--center">
           <div className="fr-col-12 fr-col-md-10">
-            {/* Logos RF + ANCT */}
-            <div
-              className="fr-mb-6w"
-              style={{ textAlign: 'center' }}
-            >
-              <img
-                alt="République Française - ANCT Société Numérique"
-                src="/vitrine/accueil/logo-rf-anct.png"
-                style={{
-                  display: 'inline-block',
-                  height: 'auto',
-                  maxWidth: '384px',
-                  width: '100%',
-                }}
-              />
-            </div>
-
             {/* Titre */}
             <h2
               className="fr-h2 fr-mb-6w"
