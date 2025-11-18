@@ -5,6 +5,8 @@ import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
 
+import styles from './page.module.css'
+
 export const metadata: Metadata = {
   robots: {
     follow: false,
@@ -158,7 +160,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
           >
             {/* Illustration à gauche */}
             <div
-              className="fr-col-12 fr-col-md-6"
+              className={`fr-col-12 fr-col-md-6 ${styles.imageLeft}`}
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '8px',
@@ -179,10 +181,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
             </div>
 
             {/* Contenu à droite */}
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.contentRight}`}>
               <div>
                 <img
                   alt=""
@@ -317,7 +316,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
           >
             {/* Illustration à gauche */}
             <div
-              className="fr-col-12 fr-col-md-5"
+              className={`fr-col-12 fr-col-md-5 ${styles.imageLeft}`}
               style={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -335,10 +334,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
             </div>
 
             {/* Contenu à droite */}
-            <div
-              className="fr-col-12 fr-col-md-6"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-6 ${styles.contentRight}`}>
               <h2
                 className="fr-h2"
                 style={{ color: '#000091', marginBottom: 0 }}

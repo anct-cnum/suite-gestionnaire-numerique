@@ -2,6 +2,8 @@ import { ReactElement } from 'react'
 
 import Badge from '@/components/shared/Badge/Badge'
 
+import styles from './ToolCard.module.css'
+
 export default function ToolCard({
   badge,
   badgeColor,
@@ -24,11 +26,8 @@ export default function ToolCard({
           style={{ alignItems: 'center', justifyContent: 'space-between' }}
         >
           <div
-            className="fr-col-12 fr-col-md-5"
+            className={`fr-col-12 fr-col-md-5 ${styles.content}`}
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '24px',
               order: reverse === true ? 2 : 1,
             }}
           >
@@ -73,13 +72,10 @@ export default function ToolCard({
             )}
           </div>
           <div
-            className="fr-col-12 fr-col-md-6"
+            className={`fr-col-12 fr-col-md-6 ${styles.image}`}
             style={{
               backgroundColor: imageBackground ?? '#F5F5FE',
-              borderRadius: '8px',
               order: reverse === true ? 1 : 2,
-              paddingLeft: '40px',
-       
             }}
           >
             <img

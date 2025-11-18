@@ -1,0 +1,21 @@
+.imageLeft {
+  order: 1;
+}
+
+.contentRight {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  order: 2;
+}
+
+/* Sur mobile (< 768px), inverser l'ordre : texte puis image */
+@media (max-width: 767px) {
+  .imageLeft {
+    order: 2;
+  }
+
+  .contentRight {
+    order: 1;
+  }
+}
