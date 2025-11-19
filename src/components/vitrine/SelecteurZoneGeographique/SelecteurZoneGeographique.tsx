@@ -5,11 +5,12 @@ import Select, { StylesConfig } from 'react-select'
 
 import { regionsEtDepartements, ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
 
-export default function SelecteurZoneGeographique({ onChange }: Props): ReactElement {
+export default function SelecteurZoneGeographique({ defaultValue, onChange }: Props): ReactElement {
   return (
     <div className="fr-select-group">
       <Select
         components={{ DropdownIndicator }}
+        defaultValue={defaultValue}
         inputId="zoneGeographique"
         instanceId="zoneGeographique"
         isClearable={false}
@@ -22,6 +23,7 @@ export default function SelecteurZoneGeographique({ onChange }: Props): ReactEle
         options={regionsEtDepartements()}
         placeholder="Sélectionnez un territoire (région, département)"
         styles={styles}
+        value={defaultValue}
       />
     </div>
   )
@@ -68,5 +70,6 @@ function DropdownIndicator(): ReactElement {
 }
 
 type Props = Readonly<{
+  defaultValue?: ZoneGeographique
   onChange(zoneGeographique: ZoneGeographique): void
 }>

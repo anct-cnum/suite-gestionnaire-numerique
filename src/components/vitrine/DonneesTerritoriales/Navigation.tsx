@@ -1,0 +1,132 @@
+'use client'
+
+import Link from 'next/link'
+import { useParams, usePathname } from 'next/navigation'
+import { ReactElement } from 'react'
+
+import styles from './Navigation.module.css'
+import useStickyPosition from '@/shared/hooks/useStickyPosition'
+
+export default function Navigation(): ReactElement {
+  const { topPosition } = useStickyPosition({ enabled: true })
+  const pathname = usePathname()
+  const params = useParams()
+
+  const niveau = params.niveau as string | undefined
+  const code = params.code as ReadonlyArray<string> | undefined
+
+  const territoirePath = getTerritoirePath(niveau, code)
+
+  const sections = [
+    {
+      href: `/vitrine/donnees-territoriales/synthese-et-indicateurs${territoirePath}`,
+      label: 'Synthèse et indicateurs',
+    },
+    {
+      href: `/vitrine/donnees-territoriales/lieux-inclusion${territoirePath}`,
+      label: 'Lieux d\'inclusion',
+    },
+    {
+      href: `/vitrine/donnees-territoriales/mediateurs-numeriques${territoirePath}`,
+      label: 'Médiateurs numériques',
+    },
+    {
+      href: `/vitrine/donnees-territoriales/gouvernances${territoirePath}`,
+      label: 'Gouvernances',
+    },
+    {
+      href: `/vitrine/donnees-territoriales/feuille-de-route${territoirePath}`,
+      label: 'Feuille de route',
+    },
+  ]
+
+  return (
+    <nav
+      aria-labelledby="donnees-territoriales-menu"
+      className="fr-sidemenu"
+      role="navigation"
+      style={{
+        boxShadow: 'none',
+        maxWidth: '220px',
+        position: 'sticky',
+        top: topPosition,
+        width: '100%',
+      }}
+    >
+      <div
+        className="fr-sidemenu__inner"
+        style={{ boxShadow: 'none' }}
+      >
+        <button
+          aria-controls="donnees-territoriales-menu-wrapper"
+          aria-expanded="false"
+          className="fr-sidemenu__btn"
+          type="button"
+        >
+          Navigation
+        </button>
+        <div
+          className="fr-collapse"
+          id="donnees-territoriales-menu-wrapper"
+        >
+          <ul className="fr-sidemenu__list">
+            {sections.map((section) => {
+              const isActive = pathname.startsWith(section.href)
+
+              return (
+                <li
+                  className="fr-sidemenu__item"
+                  key={section.href}
+                >
+                  <div className={`${styles.menuItem} ${isActive ? styles.menuItemActive : ''}`}>
+                    <Link
+                      aria-current={isActive ? 'page' : undefined}
+                      className={`${styles.menuItemLink} ${isActive ? styles.menuItemLinkActive : ''}`}
+                      href={section.href}
+                    >
+                      {section.label}
+                    </Link>
+                  </div>
+                </li>
+              )
+            })}
+            <li className="fr-sidemenu__item fr-mt-4w">
+              <Link
+                className={styles.buttonAccess}
+                href="#"
+              >
+                <span
+                  aria-hidden="true"
+                  className={styles.buttonAccessIcon}
+                >
+                  <span className="fr-icon-external-link-line" />
+                </span>
+                <span className={styles.buttonAccessText}>
+                  Accéder aux données
+                </span>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  )
+}
+
+function getTerritoirePath(niveau?: string, code?: ReadonlyArray<string>): string {
+  if (niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
+    return '/national'
+  }
+
+  const codeValue = code[0]
+
+  if (niveau === 'region') {
+    return `/region/${codeValue}`
+  }
+
+  if (niveau === 'departement') {
+    return `/departement/${codeValue}`
+  }
+
+  return '/national'
+}

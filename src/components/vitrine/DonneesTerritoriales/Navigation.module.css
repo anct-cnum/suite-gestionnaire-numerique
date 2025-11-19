@@ -1,0 +1,57 @@
+.menuItem {
+  border-left: 0.125rem solid transparent;
+  box-sizing: border-box;
+  display: flex;
+  padding: 0.75rem 0.5rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.menuItem:hover {
+  background-color: var(--background-contrast-grey);
+}
+
+.menuItemActive {
+  border-left-color: var(--border-plain-blue-france);
+  border-left-width: 0.125rem;
+}
+
+.menuItemLink {
+  color: var(--text-label-grey);
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+  text-decoration: none;
+}
+
+.menuItemLinkActive {
+  color: var(--text-action-high-blue-france);
+}
+
+.buttonAccess {
+  background-color: var(--background-contrast-yellow-tournesol);
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  text-decoration: none;
+  width: 100%;
+}
+
+.buttonAccessIcon {
+  align-items: center;
+  color: var(--text-action-high-blue-france);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.667rem;
+  justify-content: center;
+}
+
+.buttonAccessText {
+  color: var(--text-action-high-blue-france);
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5rem;
+  min-width: 0;
+}
