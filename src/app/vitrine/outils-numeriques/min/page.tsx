@@ -1,11 +1,10 @@
 import { Metadata } from 'next'
 import { ReactElement } from 'react'
 
+import styles from './page.module.css'
 import FilAriane from '@/components/vitrine/FilAriane/FilAriane'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import ToolCard from '@/components/vitrine/ToolCard/ToolCard'
-
-import styles from './page.module.css'
 
 export const metadata: Metadata = {
   robots: {

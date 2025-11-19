@@ -77,9 +77,10 @@ export default function VitrineHomePage(): ReactElement {
                 On estime que près de
                 {' '}
                 <strong style={{ color: '#000091' }}>
-                  16 millions de personnes en France sont éloignées du numérique**
+                  16 millions de personnes en France sont éloignées du numérique.**
                 </strong>
-                . Principalement, parce que ces personnes ne se sentent pas assez compétentes pour utiliser
+                {' '}
+                Principalement, parce que ces personnes ne se sentent pas assez compétentes pour utiliser
                 pleinement le numérique.
               </p>
               <p
@@ -117,9 +118,10 @@ export default function VitrineHomePage(): ReactElement {
                 cette capacité est fortement influencée par
                 {' '}
                 <strong style={{ color: '#000091' }}>
-                  les conditions d&apos;existence des individus
+                  les conditions d&apos;existence des individus,
                 </strong>
-                , en particulier leur niveau d&apos;étude.
+                {' '}
+                en particulier leur niveau d&apos;étude.
               </p>
               <p className="fr-text--md">
                 A ce titre, plus de

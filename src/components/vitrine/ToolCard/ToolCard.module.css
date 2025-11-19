@@ -1,16 +1,16 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5em;
 }
 
 .image {
-  border-radius: 8px;
-  padding-left: 40px;
+  border-radius: 0.5em;
+  padding-left: 2.5em;
 }
 
 /* Sur mobile (< 768px), toujours mettre le contenu en premier */
-@media (max-width: 767px) {
+@media (width < 47.9375em) {
   .content {
     order: 1 !important;
   }

@@ -1,12 +1,14 @@
 import { ReactElement } from 'react'
 
+import { isNullishOrEmpty } from '@/shared/lang'
+
 export default function HeroSection({ backgroundColor = '#f5f5fe', backgroundImage, subtitle, title }: HeroSectionProps): ReactElement {
   return (
     <section
       className="fr-py-12w"
       style={{
         backgroundColor,
-        backgroundImage: backgroundImage ?? `url(${backgroundImage})`,
+        backgroundImage: isNullishOrEmpty(backgroundImage) ? undefined : `url(${backgroundImage})`,
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',

@@ -1,8 +1,7 @@
 import { ReactElement } from 'react'
 
-import Badge from '@/components/shared/Badge/Badge'
-
 import styles from './ToolCard.module.css'
+import Badge from '@/components/shared/Badge/Badge'
 
 export default function ToolCard({
   badge,

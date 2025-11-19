@@ -1,17 +1,17 @@
 .aidantsConnectImage {
   order: 1;
-  padding: 40px;
+  padding: 2.5em;
 }
 
 .aidantsConnectContent {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5em;
   order: 2;
 }
 
 /* Sur mobile (< 768px), inverser l'ordre */
-@media (max-width: 767px) {
+@media (width < 47.9375em) {
   .aidantsConnectImage {
     order: 2;
   }

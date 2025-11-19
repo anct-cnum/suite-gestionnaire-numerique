@@ -4,8 +4,8 @@ import { ReactElement, use } from 'react'
 
 import { parseTextWithBold } from '../../shared/textFormatting'
 import { ErrorViewModel, isErrorViewModel } from '@/components/shared/ErrorViewModel'
-import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 import Information from '@/components/shared/Information/Information'
+import { formaterEnNombreFrancais } from '@/presenters/shared/number'
 
 export default function BeneficiairesAsyncCard({
   hasActiveFilters,
