@@ -44,7 +44,7 @@ export default function HeroSectionAccueil(): ReactElement {
               className="fr-text--lead fr-mb-6w"
               style={{ textAlign: 'center' }}
             >
-              L&apos;inclusion numérique en réponse à un phénomène social
+              La plateforme des acteurs de l&apos;inclusion numérique en France
             </p>
 
             {/* Logos */}

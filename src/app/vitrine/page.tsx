@@ -58,13 +58,13 @@ export default function VitrineHomePage(): ReactElement {
               <h3 className="fr-h4 fr-mb-0">
                 Des inégalités numériques persistantes dans notre société
               </h3>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Le numérique est solidement ancré dans le quotidien d&apos;une grande partie de la population française.
               </p>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Aujourd&apos;hui, plus de 9 Français sur 10 utilisent Internet et possèdent un smartphone*.
               </p>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Pourtant, malgré la large diffusion de la connexion et des équipements, d&apos;importantes
                 {' '}
                 <strong>
@@ -72,22 +72,24 @@ export default function VitrineHomePage(): ReactElement {
                 </strong>
                 {' '}
                 persistent dans notre société.
-              </p>
-              <p className="fr-text--md">
+              </p> 
+              <p className="fr-text--md fr-mb-0">
                 On estime que près de
                 {' '}
                 <strong style={{ color: '#000091' }}>
                   16 millions de personnes en France sont éloignées du numérique**
                 </strong>
-                {'. '}
-                Principalement, parce que ces personnes ne se sentent pas assez compétentes pour utiliser
+                . Principalement, parce que ces personnes ne se sentent pas assez compétentes pour utiliser
                 pleinement le numérique.
               </p>
               <p
-                className="fr-text--sm"
+                className="fr-text--sm fr-mb-0"
                 style={{ color: '#666' }}
               >
                 * Baromètre du numérique, 2024.
+                <br />
+                ** ANCT, CREDOC, Université Rennes 2 CREAD-M@rsouin, La société numérique française :
+                définir et mesurer l&apos;éloignement numérique, 2023.
               </p>
             </div>
           </div>
@@ -109,7 +111,7 @@ export default function VitrineHomePage(): ReactElement {
               <h2 className="fr-h2 fr-mb-0">
                 Une approche renouvelée de l&apos;inclusion numérique
               </h2>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Concrètement, tous les individus ne sont pas en situation de tirer les mêmes profits
                 des technologies numériques dans leur vie quotidienne. Loin d&apos;être une simple question d&apos;âge,
                 cette capacité est fortement influencée par
@@ -117,8 +119,7 @@ export default function VitrineHomePage(): ReactElement {
                 <strong style={{ color: '#000091' }}>
                   les conditions d&apos;existence des individus
                 </strong>
-                {', '}
-                en particulier leur niveau d&apos;étude.
+                , en particulier leur niveau d&apos;étude.
               </p>
               <p className="fr-text--md">
                 A ce titre, plus de
@@ -128,13 +129,6 @@ export default function VitrineHomePage(): ReactElement {
                 </strong>
                 {' '}
                 estiment que le numérique complique ou n&apos;a pas d&apos;effet sur leur vie quotidienne.
-              </p>
-              <p
-                className="fr-text--sm"
-                style={{ color: '#666' }}
-              >
-                ** ANCT, CREDOC, Université Rennes 2 CREAD-M@rsouin, La société numérique française :
-                définir et mesurer l&apos;éloignement numérique, 2023.
               </p>
             </div>
             <div className="fr-col-12 fr-col-md-6">
@@ -181,9 +175,11 @@ export default function VitrineHomePage(): ReactElement {
                   style={{ height: 'auto', marginTop: '2em', maxHeight: '56px', maxWidth: '56px', width: 'auto' }}
                 />
               </div>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Plus globalement, l&apos;éloignement numérique ne peut plus être considéré comme un
                 simple enjeu technique ou technologique : il s&apos;agit d&apos;abord d&apos;un phénomène social.
+              </p>
+              <p className="fr-text--md">
                 La prise en compte de ce phénomène dans sa complexité et son hétérogénéité ouvre des perspectives
                 importantes pour déployer un numérique capacitant, source d&apos;émancipation pour toutes et tous.
               </p>
@@ -219,7 +215,7 @@ export default function VitrineHomePage(): ReactElement {
                 textAlign: 'center',
               }}
             >
-              Comprendre et découvrir l&apos;inclusion numérique dans les territoires
+              Comprendre et découvrir l&apos;inclusion numérique de proximité
             </h2>
           </div>
 
@@ -292,7 +288,7 @@ export default function VitrineHomePage(): ReactElement {
                 Les dispositifs de l&apos;inclusion numérique
               </h3>
               <p className="fr-text--md">
-                Plusieurs dispositifs existentent pour accompagner la population : conseillers numériques,
+                Plusieurs dispositifs existent pour accompagner la population : médiateurs numériques,
                 ateliers de montée en compétences, actions d&apos;aller-vers ou encore
                 programmes locaux portés par les collectivités. Ils permettent d&apos;accompagner tous les publics
                 vers une utilisation plus autonome, sécurisée et confiante du numérique.
@@ -447,7 +443,11 @@ export default function VitrineHomePage(): ReactElement {
                 Comment participer à une gouvernance territoriale ?
               </h2>
               <p className="fr-text--md">
-                En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique, vous êtes invités à rejoindre
+                <strong>
+                  En tant qu&apos;acteur public ou privé de l&apos;inclusion numérique,
+                </strong>
+                {' '}
+                vous êtes invités à rejoindre
                 la dynamique de votre territoire en rejoignant la gouvernance France Numérique Ensemble
                 de votre département. Vous pourrez ainsi porter ou contribuer à des actions pensées
                 et mises en oeuvre de façon collégiale.
