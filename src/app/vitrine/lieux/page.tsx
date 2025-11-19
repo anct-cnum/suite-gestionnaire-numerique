@@ -6,10 +6,19 @@ import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
+  description: 'Cartographie interactive des lieux d\'inclusion numérique en France. Outil de prescription et de pilotage mobilisant des données territoriales pour agir efficacement.',
+  keywords: ['lieux inclusion numérique', 'cartographie', 'médiation numérique', 'structures d\'accompagnement', 'aidants numériques'],
+  openGraph: {
+    description: 'Cartographie interactive des lieux d\'inclusion numérique en France.',
+    locale: 'fr_FR',
+    title: 'Lieux d\'inclusion numérique - Inclusion Numérique',
+    type: 'website',
   },
+  robots: {
+    follow: true,
+    index: true,
+  },
+  title: 'Lieux d\'inclusion numérique - Inclusion Numérique',
 }
 
 export default function LieuxPage(): ReactElement {

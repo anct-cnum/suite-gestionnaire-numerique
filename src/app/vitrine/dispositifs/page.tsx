@@ -6,10 +6,19 @@ import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
 export const metadata: Metadata = {
-  robots: {
-    follow: false,
-    index: false,
+  description: 'Découvrez les dispositifs d\'inclusion numérique : conseillers numériques, Aidants Connect, ateliers de montée en compétences. Répondre collectivement aux besoins d\'accompagnement de la population.',
+  keywords: ['conseiller numérique', 'Aidants Connect', 'dispositifs inclusion', 'accompagnement numérique', 'ateliers numériques'],
+  openGraph: {
+    description: 'Découvrez les dispositifs d\'inclusion numérique pour accompagner tous les publics.',
+    locale: 'fr_FR',
+    title: 'Les dispositifs d\'inclusion numérique - Inclusion Numérique',
+    type: 'website',
   },
+  robots: {
+    follow: true,
+    index: true,
+  },
+  title: 'Les dispositifs d\'inclusion numérique - Inclusion Numérique',
 }
 
 export default function DispositifsPage(): ReactElement {
