@@ -1,12 +1,14 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { ReactElement, useEffect, useState } from 'react'
+import { memo, ReactElement, useEffect, useState } from 'react'
 
 import CarteFranceVitrine from '@/components/vitrine/CarteFranceVitrine/CarteFranceVitrine'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import SelecteurZoneGeographique from '@/components/vitrine/SelecteurZoneGeographique/SelecteurZoneGeographique'
 import { ZoneGeographique } from '@/presenters/filtresUtilisateurPresenter'
+
+const MemoizedCarteFranceVitrine = memo(CarteFranceVitrine)
 
 export default function DonneesTerritoriales(): ReactElement {
   const [ zoneGeographique, setZoneGeographique] = useState<undefined | ZoneGeographique>()
@@ -28,12 +30,10 @@ export default function DonneesTerritoriales(): ReactElement {
         // eslint-disable-next-line sonarjs/no-unused-vars,@typescript-eslint/no-unused-vars
         const [_, codeDepartement] = value.split('_')
 
-        if (type === 'departement') {
+        // Ne naviguer que pour les départements, pas pour les régions
+        if (type === 'departement' && codeDepartement !== '00') {
           router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeDepartement}`)
         }
-        /*else {
-          router.push(`/vitrine/donnees-territoriales/synthese-et-indicateurs/${type}/${codeRegion}`)
-        }*/
       }
     }
   }, [router, zoneGeographique])
@@ -120,7 +120,7 @@ export default function DonneesTerritoriales(): ReactElement {
                   padding: '2rem',
                 }}
               >
-                <CarteFranceVitrine />
+                <MemoizedCarteFranceVitrine />
               </div>
             </div>
           </div>
