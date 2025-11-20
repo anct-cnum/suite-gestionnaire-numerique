@@ -90,22 +90,22 @@ export default function Navigation(): ReactElement {
                 </li>
               )
             })}
-            <li className="fr-sidemenu__item fr-mt-4w">
-              <Link
-                className={styles.buttonAccess}
-                href="#"
-              >
-                <span
-                  aria-hidden="true"
-                  className={styles.buttonAccessIcon}
-                >
-                  <span className="fr-icon-external-link-line" />
-                </span>
-                <span className={styles.buttonAccessText}>
-                  Accéder aux données
-                </span>
-              </Link>
-            </li>
+            {/*<li className="fr-sidemenu__item fr-mt-4w">*/}
+            {/*  <Link*/}
+            {/*    className={styles.buttonAccess}*/}
+            {/*    href="#"*/}
+            {/*  >*/}
+            {/*    <span*/}
+            {/*      aria-hidden="true"*/}
+            {/*      className={styles.buttonAccessIcon}*/}
+            {/*    >*/}
+            {/*      <span className="fr-icon-external-link-line" />*/}
+            {/*    </span>*/}
+            {/*    <span className={styles.buttonAccessText}>*/}
+            {/*      Accéder aux données*/}
+            {/*    </span>*/}
+            {/*  </Link>*/}
+            {/*</li>*/}
           </ul>
         </div>
       </div>
