@@ -14,6 +14,7 @@ import { MediateursEtAidantsViewModel } from '@/presenters/tableauDeBord/mediate
 
 export default function EtatDesLieux({
   accompagnementsRealisesViewModel,
+  afficherLienLieux = true,
   carte,
   lieuxInclusionViewModel,
   mediateursEtAidantsViewModel,
@@ -42,12 +43,14 @@ export default function EtatDesLieux({
               >
                 État des lieux de l&apos;inclusion numérique
               </h2>
-              <Link
-                className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-                href="/lieux-inclusion"
-              >
-                Lieux d&apos;inclusion numérique
-              </Link>
+              {afficherLienLieux ?
+                <Link
+                  className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+                  href="/lieux-inclusion"
+                >
+                  Lieux d&apos;inclusion numérique
+                </Link>
+                : null}
             </div>
             <div>
               <p className="fr-m-0 font-weight-500">
@@ -74,6 +77,7 @@ export default function EtatDesLieux({
 
 type EtatDesLieuxProps = Readonly<{
   accompagnementsRealisesViewModel: AccompagnementsRealisesViewModel | ErrorViewModel
+  afficherLienLieux?: boolean
   carte: ReactElement
   lieuxInclusionViewModel: ErrorViewModel | LieuxInclusionNumeriqueViewModel
   mediateursEtAidantsViewModel: ErrorViewModel | MediateursEtAidantsViewModel

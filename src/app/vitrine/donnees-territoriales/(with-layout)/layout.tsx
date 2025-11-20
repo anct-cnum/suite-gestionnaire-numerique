@@ -12,6 +12,7 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
           backgroundColor: '#ffffff',
           display: 'flex',
           gap: '0px',
+          width: '100%',
         }}
       >
         <div
@@ -22,19 +23,16 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
             paddingLeft: '80px',
             paddingRight: '0px',
             paddingTop: '40px',
-            width: '320px',
+            width: '16%',
           }}
         >
           <Navigation />
         </div>
         <div
           style={{
-            minHeight: '756px',
             paddingBottom: '80px',
-            paddingLeft: '40px',
-            paddingRight: '112px',
             paddingTop: '40px',
-            width: '1120px',
+            width: '84%',
           }}
         >
           {children}
