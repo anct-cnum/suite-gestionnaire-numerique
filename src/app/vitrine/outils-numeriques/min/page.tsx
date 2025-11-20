@@ -141,8 +141,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   textAlign: 'center',
                 }}
               >
-                L&apos;outil de visualisation de la donnée et de pilotage de l&apos;inclusion
-                numérique dans les territoires
+                L&apos;outil de pilotage par la données des dispositifs d'inclusion numérique
               </p>
               <div>
                 <a
@@ -282,7 +281,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
       {/* Section: Visualiser la donnée */}
       <ToolCard
-        description="Accédez aux données qui éclairent la dynamique de l'inclusion numérique à l'échelle départementale ou régionale"
+        description="Une visualisation simple de données sur l'inclusion numérique à l'échelle départementale ou régionale"
         icon="/vitrine/outils/min/logo-evaluer.svg"
         imageAlt="Capture d'écran des visualisations de données"
         imageBackground="#FFFFFF"
@@ -292,7 +291,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
       {/* Section: Piloter la feuille de route */}
       <ToolCard
-        description="Des fonctionnalités pour piloter ensemble la feuille de route France Numérique Ensemble et les membres de la gouvernance territoriale"
+        description="Des fonctionnalités pour consulter, participer, porter des actions d'inclusion numérique"
         icon="/vitrine/outils/min/logo-former-acteurs.svg"
         imageAlt="Capture d'écran du pilotage de la feuille de route"
         imageBackground="#FFFFFF"
@@ -303,7 +302,7 @@ export default function MonInclusionNumeriquePage(): ReactElement {
 
       {/* Section: Suivre les dispositifs */}
       <ToolCard
-        description="Un outil unique pour piloter l'ensemble des dispositifs d'inclusion numérique (Conseillers numérique, etc.)"
+        description="Un outil unique pour piloter l’ensemble des dispositifs d’inclusion d’inclusion numérique (Aidants Connect, Conseiller numérique, etc.)"
         icon="/vitrine/outils/min/logo-identifier.svg"
         imageAlt="Capture d'écran du suivi des dispositifs"
         imageBackground="#FFFFFF"
