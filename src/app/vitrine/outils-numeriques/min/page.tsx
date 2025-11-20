@@ -349,10 +349,15 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                 Comment participer à une gouvernance territoriale ?
               </h2>
               <p className="fr-text--md">
-                En tant que collectivité ou acteur territorial, vous êtes invité à manifester
-                votre souhait de participer à une gouvernance de l&apos;inclusion numérique
-                sur votre territoire. En tant que Conseil Régional, Conseil Département ou EPCI,
-                vous pouvez également porter une feuille de route.
+                <strong>
+                  En tant que collectivité ou acteur territorial,
+                </strong>
+                {' '}
+                vous êtes invité à manifester votre souhait de participer à une gouvernance
+                de l’inclusion numérique sur votre territoire.
+                {' '}
+                En tant que Conseil Régional, Conseil Département ou EPCI, vous pouvez également
+                porter une feuille de route.
               </p>
               <div>
                 <a
@@ -361,148 +366,9 @@ export default function MonInclusionNumeriquePage(): ReactElement {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  Rejoindre une gouvernance
+                  Accéder au formulaire
+                  {' '}
                 </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section: Un outil en constante évolution */}
-      <section className="fr-py-12w">
-        <div className="fr-container">
-          <div className="fr-grid-row fr-grid-row--center">
-            <div
-              className="fr-col-12 fr-col-md-8"
-              style={{ textAlign: 'center' }}
-            >
-              <div style={{ marginBottom: '24px' }}>
-                <img
-                  alt=""
-                  src="/vitrine/outils/min/logo-outiller.svg"
-                  style={{ height: '80px', width: 'auto' }}
-                />
-              </div>
-              <h2
-                className="fr-h2"
-                style={{ color: '#000091', marginBottom: '48px' }}
-              >
-                Un outil en constante évolution
-              </h2>
-            </div>
-          </div>
-
-          {/* Cartes des évolutions */}
-          <div className="fr-grid-row fr-grid-row--gutters">
-            {/* Ouverture aux préfectures */}
-            <div className="fr-col-12 fr-col-md-4">
-              <div
-                className="fr-p-4w"
-                style={{
-                  backgroundColor: 'var(--green-tilleul-verveine-975-75)',
-                  borderRadius: '8px',
-                  height: '100%',
-                }}
-              >
-                <div className="fr-mb-2w">
-                  <span className="fr-badge fr-badge--sm fr-badge--new">
-                    Nouveau
-                  </span>
-                </div>
-                <h3 className="fr-h5 fr-mb-3w">
-                  Ouverture aux préfectures
-                </h3>
-                <p className="fr-text--sm">
-                  Les préfectures peuvent accéder aux premières fonctionnalités de Mon Inclusion
-                  Numérique en se connectant avec ProConnect
-                </p>
-                <div className="fr-mt-4w">
-                  <a
-                    className="fr-btn fr-btn--secondary fr-btn--sm"
-                    href="https://mon.inclusion-numerique.anct.gouv.fr/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Je me connecte
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Ouverture aux co-porteurs */}
-            <div className="fr-col-12 fr-col-md-4">
-              <div
-                className="fr-p-4w"
-                style={{
-                  backgroundColor: 'var(--green-tilleul-verveine-975-75)',
-                  borderRadius: '8px',
-                  height: '100%',
-                }}
-              >
-                <div className="fr-mb-2w">
-                  <span className="fr-badge fr-badge--sm fr-badge--new">
-                    Nouveau
-                  </span>
-                </div>
-                <h3 className="fr-h5 fr-mb-3w">
-                  Ouverture aux co-porteurs des feuilles de route
-                </h3>
-                <p className="fr-text--sm">
-                  Lorem ipsum dolor sit amet consectetur. Consectetur massa sagittis consequat
-                  porttitor varius id.
-                </p>
-                <div className="fr-mt-4w">
-                  <a
-                    className="fr-btn fr-btn--secondary fr-btn--sm"
-                    href="https://mon.inclusion-numerique.anct.gouv.fr/"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    Je me connecte
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Ouverture à tous les membres */}
-            <div className="fr-col-12 fr-col-md-4">
-              <div
-                className="fr-p-4w"
-                style={{
-                  backgroundColor: 'var(--blue-france-975-75)',
-                  borderRadius: '8px',
-                  height: '100%',
-                }}
-              >
-                <div className="fr-mb-2w">
-                  <span
-                    className="fr-badge fr-badge--sm"
-                    style={{
-                      backgroundColor: '#E8EDFF',
-                      borderRadius: '4px',
-                      color: '#0063CB',
-                    }}
-                  >
-                    À venir
-                  </span>
-                </div>
-                <h3 className="fr-h5 fr-mb-3w">
-                  Ouverture à tous les membres de la gouvernance
-                </h3>
-                <p className="fr-text--sm">
-                  Lorem ipsum dolor sit amet consectetur. Consectetur massa sagittis consequat
-                  porttitor varius id.
-                </p>
-                <div className="fr-mt-4w">
-                  <button
-                    className="fr-btn fr-btn--secondary fr-btn--sm"
-                    disabled
-                    type="button"
-                  >
-                    Je me connecte
-                  </button>
-                </div>
               </div>
             </div>
           </div>
