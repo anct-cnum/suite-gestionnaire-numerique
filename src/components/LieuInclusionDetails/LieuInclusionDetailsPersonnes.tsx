@@ -16,7 +16,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
   if (data.length === 0) {
     return (
       <section className="fr-mb-4w grey-border border-radius fr-p-4w">
-        <h2 className="fr-h4 fr-text-label--blue-france fr-mb-0">
+        <h2 className="fr-text--lg fr-text--bold fr-text-label--blue-france fr-mb-0">
           <span
             aria-hidden="true"
             className={`fr-icon-account-circle-line fr-mr-1w fr-text-label--blue-france ${styles.iconSmallWithBackground}`}
@@ -34,7 +34,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
 
   return (
     <section className="fr-mb-4w grey-border border-radius fr-p-4w">
-      <h2 className="fr-h4 fr-text-label--blue-france fr-m-0">
+      <h2 className="fr-text--lg fr-text--bold fr-text-label--blue-france fr-m-0">
         <span
           aria-hidden="true"
           className={`fr-icon-account-circle-line fr-mr-1w fr-text-label--blue-france ${styles.iconSmallWithBackground}`}
@@ -50,21 +50,21 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
             className="fr-mb-3w"
             key={personne.id}
           >
-            <h3 className="fr-h6 fr-mb-1w fr-text--bold">
+            <h3 className="fr-text--sm fr-text--bold fr-mb-1w">
               {personne.prenom}
               {' '}
               {personne.nom}
             </h3>
-            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-text--sm">
+            <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-text--xs">
               {typeof personne.role === 'string' && (
                 <div className="fr-col-auto fr-grid-row fr-grid-row--middle">
                   <Image
                     alt=""
-                    height={25}
+                    height={16}
                     src={`${process.env.NEXT_PUBLIC_HOST}/conum.svg`}
-                    width={25}
+                    width={16}
                   />
-                  <span className="fr-text--sm fr-ml-1v fr-mb-0">
+                  <span className="fr-text--xs fr-text-mention--grey fr-ml-1v fr-mb-0">
                     {personne.role}
                   </span>
                 </div>
@@ -76,7 +76,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
                     aria-hidden="true"
                     className="fr-icon-mail-line fr-icon--sm fr-mr-1v"
                   />
-                  <span className="fr-text--sm fr-ml-1v">
+                  <span className="fr-text--xs fr-text-mention--grey fr-ml-1v">
                     {personne.email}
                   </span>
                 </div>
@@ -88,7 +88,7 @@ export default function LieuInclusionDetailsPersonnes(props: Props): ReactElemen
                     aria-hidden="true"
                     className="fr-icon-phone-line fr-icon--sm fr-mr-1v"
                   />
-                  <span className="fr-text--sm">
+                  <span className="fr-text--xs fr-text-mention--grey">
                     {personne.telephone}
                   </span>
                 </div>
