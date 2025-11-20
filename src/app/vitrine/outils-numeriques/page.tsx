@@ -26,7 +26,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
     <>
       <HeroSection
         backgroundImage="/vitrine/outils/hero.png"
-        subtitle="Nunc enim pellentesque consectetur tempor Vel lobortis accumsan luctus viverra donec nisl ac."
+        subtitle="Nunc enim pellentesque consectetur tempor vel lobortis accumsan luctus viverra donec nisl ac."
         title="Les outils professionnels de l'inclusion numérique"
       />
 
@@ -43,23 +43,23 @@ export default function OutilsNumeriquesPage(): ReactElement {
 
       {/* La Coop de la Médiation */}
       <ToolCard
-        description="La Coop facilite le suivi de vos accompagnements et de vos bénéficiaires et vous permet de valoriser votre activité auprès de vos financeurs (statistiques, le compte-rendu SAS en main."
+        description="La Coop facilite le suivi de vos accompagnements et de vos bénéficiaires et vous permet de valoriser votre activité facilement en générant des statistiques et compte-rendus clés en main."
         icon="/vitrine/outils/icon-coop.png"
         imageAlt="Capture d'écran de La Coop de la Médiation"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-coop.png"
         link="https://coop-numerique.anct.gouv.fr/"
-        title="La Coop de la Médiation"
+        title="La Coop de la médiation numérique"
       />
 
       {/* Les bases du numérique d'intérêt général */}
       <ToolCard
-        description="Les Bases est une plateforme collaborative nationale de partage de ressources, de supports pédagogiques et de communs numériques, accessible et ouvert aux structures de tous"
+        description="Les Bases est une plateforme collaborative nationale de partage de ressources, de supports pédagogiques et de communs numériques, accessible et ouvert aux structures de tous."
         imageAlt="Capture d'écran des bases du numérique d'intérêt général"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-bases.png"
         link="https://lesbases.anct.gouv.fr/"
-        title="Les bases du numérique d'intérêt général"
+        title="Les Bases du numérique d'intérêt général"
       />
 
       {/* La cartographie des lieux d'inclusion */}
@@ -69,8 +69,19 @@ export default function OutilsNumeriquesPage(): ReactElement {
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-cartographie.png"
         link="https://cartographie.societenumerique.gouv.fr"
-        title="La cartographie des lieux d'inclusion"
+        title="La cartographie des lieux d'inclusion numérique"
       />
+
+      {/* Aidants Connect */}
+      <ToolCard
+        description="Vous accompagnez régulièrement et gratuitement des personnes en difficulté avec le numérique dans la réalisation de leurs démarches en ligne ? Aidants Connect est fait pour vous !"
+        imageAlt="Capture d'écran d'Aidants Connect"
+        imageBackground="#FFFFFF"
+        imageSrc="/vitrine/outils/visuel-aidants-connect.png"
+        link="https://aidantsconnect.beta.gouv.fr/"
+        title="Aidants Connect"
+      />
+
       {/* Section Qui sommes-nous */}
       <QuiSommesNous />
     </>

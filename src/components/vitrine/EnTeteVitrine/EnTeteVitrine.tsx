@@ -144,9 +144,9 @@ export default function EnTeteVitrine(): ReactElement {
               </li>
               <li className="fr-nav__item">
                 <Link
-                  aria-current={pathname === '/vitrine/etudes-et-recherches' ? 'page' : undefined}
+                  aria-current={pathname === '/vitrine/etudes-et-enquetes' ? 'page' : undefined}
                   className="fr-nav__link"
-                  href="/vitrine/etudes-et-recherches"
+                  href="/vitrine/etudes-et-enquetes"
                 >
                   Etudes et enquêtes
                 </Link>
