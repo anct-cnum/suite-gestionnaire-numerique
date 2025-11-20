@@ -56,22 +56,22 @@ export default function DispositifsPage(): ReactElement {
               </h2>
               <p className="fr-text--md fr-mb-0">
                 Les conseillers et conseillères numériques sont des médiateurs co-financés par l&apos;Etat. Ils :
-                <br />
-                <ul
-                  className="fr-text--md"
-                  style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}
-                >
-                  <li>
-                    Soutiennent les français.es dans leurs usages quotidiens du numérique
-                  </li>
-                  <li>
-                    Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
-                  </li>
-                  <li>
-                    Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
-                  </li>
-                </ul>
               </p>
+              {' '}
+              <ul
+                className="fr-text--md"
+                style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}
+              >
+                <li>
+                  Soutiennent les français.es dans leurs usages quotidiens du numérique
+                </li>
+                <li>
+                  Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
+                </li>
+                <li>
+                  Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
+                </li>
+              </ul>
               <div>
                 <a
                   className="fr-btn"
@@ -128,7 +128,11 @@ export default function DispositifsPage(): ReactElement {
                 Formation Aidants numériques et/ou Aidants Connect
               </h2>
               <p className="fr-text--md">
-                Une enveloppe financière a été dédiée à la formation des professionnels du territoire à l&apos;inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de l&apos;outil Aidants Connect.
+                Une enveloppe financière a été dédiée à la formation des professionnels du territoire à
+                l&apos;inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de l&apos;outil
+                Aidants Connect pour permettre aux aidants professionnels de réaliser des démarches
+                administratives en ligne de manière légale et sécurisée pour le compte de personnes en
+                difficulté avec les outils numériques.
               </p>
               <div>
                 <a
