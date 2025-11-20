@@ -12,10 +12,12 @@
 /* Sur mobile (< 768px), toujours mettre le contenu en premier */
 @media (width < 47.9375em) {
   .content {
+    margin-bottom: 2em;
     order: 1 !important;
   }
 
   .image {
     order: 2 !important;
+    padding-left: 0;
   }
 }
