@@ -55,20 +55,17 @@ export default function DispositifsPage(): ReactElement {
                 Conseiller numérique
               </h2>
               <p className="fr-text--md">
-                Les conseillers numériques sont des initiatives de proximité qui offrent :
+                Les conseillers et conseillères numériques sont des médiateurs co-financés par l&apos;Etat. Ils :
               </p>
               <ul className="fr-text--md">
                 <li>
-                  Un accompagnement dans tous les usages quotidiens du numérique
+                  Soutiennent les français.es dans leurs usages quotidiens du numérique
                 </li>
                 <li>
-                  Identifier vos appels, la typologie d&apos;un bénéficiaire et sa demande
+                  Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
                 </li>
                 <li>
-                  Évaluer son niveau numérique
-                </li>
-                <li>
-                  Proposer et organiser des sessions d&apos;accompagnement en ligne
+                  Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
                 </li>
               </ul>
               <div>
@@ -124,11 +121,10 @@ export default function DispositifsPage(): ReactElement {
                 className="fr-h2"
                 style={{ color: '#000091', marginBottom: 0 }}
               >
-                Aidants Connect
+                Formation Aidants numériques et/ou Aidants Connect
               </h2>
               <p className="fr-text--md">
-                Vous accompagnez des personnes en difficulté avec le numérique dans la réalisation
-                de leurs démarches en ligne ? Aidants Connect est fait pour vous !
+                Une enveloppe financière a été dédiée à la formation des professionnels du territoire à l&apos;inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de l&apos;outil Aidants Connect.
               </p>
               <div>
                 <a

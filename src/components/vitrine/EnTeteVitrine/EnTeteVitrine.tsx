@@ -148,7 +148,7 @@ export default function EnTeteVitrine(): ReactElement {
                   className="fr-nav__link"
                   href="/vitrine/etudes-et-recherches"
                 >
-                  Etudes et recherches
+                  Etudes et enquêtes
                 </Link>
               </li>
             </ul>
