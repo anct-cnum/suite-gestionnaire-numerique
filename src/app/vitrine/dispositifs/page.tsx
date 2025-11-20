@@ -54,20 +54,24 @@ export default function DispositifsPage(): ReactElement {
               >
                 Conseiller numérique
               </h2>
-              <p className="fr-text--md">
+              <p className="fr-text--md fr-mb-0">
                 Les conseillers et conseillères numériques sont des médiateurs co-financés par l&apos;Etat. Ils :
+                <br />
+                <ul
+                  className="fr-text--md"
+                  style={{ listStyleType: 'disc', paddingLeft: '0.75rem' }}
+                >
+                  <li>
+                    Soutiennent les français.es dans leurs usages quotidiens du numérique
+                  </li>
+                  <li>
+                    Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
+                  </li>
+                  <li>
+                    Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
+                  </li>
+                </ul>
               </p>
-              <ul className="fr-text--md">
-                <li>
-                  Soutiennent les français.es dans leurs usages quotidiens du numérique
-                </li>
-                <li>
-                  Sensibilisent aux enjeux du numérique afin d&apos;en favoriser des usages citoyens et critiques ;
-                </li>
-                <li>
-                  Rendent autonomes les citoyens dans l&apos;accès aux démarches administratives en ligne
-                </li>
-              </ul>
               <div>
                 <a
                   className="fr-btn"
