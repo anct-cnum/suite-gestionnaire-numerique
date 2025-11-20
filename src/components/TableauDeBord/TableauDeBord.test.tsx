@@ -96,12 +96,6 @@ describe('tableau de bord', () => {
     expect(membresTitre).toBeInTheDocument()
     const membresSousTitre = within(gouvernancesSection).getByText(matchWithoutMarkup('dont 3 coporteurs'))
     expect(membresSousTitre).toBeInTheDocument()
-    const collectivitesNombre = within(gouvernancesSection).getByText('3')
-    expect(collectivitesNombre).toBeInTheDocument()
-    const collectivitesTitre = within(gouvernancesSection).getByText('Collectivité impliquées')
-    expect(collectivitesTitre).toBeInTheDocument()
-    const collectivitesSousTitre = within(gouvernancesSection).getByText(matchWithoutMarkup('sur les 9 membres'))
-    expect(collectivitesSousTitre).toBeInTheDocument()
     const feuillesDeRouteNombre = within(gouvernancesSection).getByText('1')
     expect(feuillesDeRouteNombre).toBeInTheDocument()
     const feuillesDeRouteTitre = within(gouvernancesSection).getByText('Feuilles de route déposées')
@@ -320,10 +314,6 @@ describe('tableau de bord', () => {
   function afficherMonTableauDeBord(): void {
     const tableauDeBordViewModel = tableauDeBordPresenter('69')
     const gouvernanceViewModel = gouvernancePrefPresenter({
-      collectivite: {
-        membre: 9,
-        total: 3,
-      },
       feuilleDeRoute: {
         action: 3,
         total: 1,

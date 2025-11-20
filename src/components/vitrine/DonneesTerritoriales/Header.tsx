@@ -13,20 +13,31 @@ export default function Header({ titre }: Props): ReactElement {
   const router = useRouter()
   const params = useParams()
   const pathname = usePathname()
-  const niveau = params.niveau as string | undefined
-  const code = params.code as ReadonlyArray<string> | undefined
+
+  const pathParts = pathname.split('/').filter(Boolean)
+  const currentSection = pathParts[2] || 'synthese-et-indicateurs'
+
+  // Extraire niveau et code depuis params
+  const niveau = currentSection === 'gouvernances'
+    ? pathParts[3] // 'departement' pour gouvernances
+    : (params.niveau as string | undefined)
+
+  const codeArray = params.code as ReadonlyArray<string> | undefined
+  const code = codeArray?.[0]
 
   const territoireActuel = getTerritoireLabel(niveau, code)
   const selectedZone = getSelectedZone(niveau, code)
 
-  const currentSection = pathname.split('/').filter(Boolean)[2] || 'synthese-et-indicateurs'
-
   function handleTerritoireChange(zone: ZoneGeographique): void {
-    const basePath = `/vitrine/donnees-territoriales/${currentSection}`
-
     // Si la valeur est "all", naviguer vers /national
     if (zone.value === 'all') {
-      router.push(`${basePath}/national`)
+      // Gouvernances et Feuille de route n'existent qu'au niveau département
+      // Rediriger vers synthèse au niveau national
+      if (currentSection === 'gouvernances' || currentSection === 'feuille-de-route') {
+        router.push('/vitrine/donnees-territoriales/synthese-et-indicateurs/national')
+      } else {
+        router.push(`/vitrine/donnees-territoriales/${currentSection}/national`)
+      }
       return
     }
 
@@ -35,7 +46,7 @@ export default function Header({ titre }: Props): ReactElement {
       const [_, codeDepartement] = zone.value.split('_')
 
       if (zone.type === 'departement' && codeDepartement !== '00') {
-        router.push(`${basePath}/departement/${codeDepartement}`)
+        router.push(`/vitrine/donnees-territoriales/${currentSection}/departement/${codeDepartement}`)
       }
     }
   }
@@ -85,48 +96,45 @@ export default function Header({ titre }: Props): ReactElement {
   )
 }
 
-function getTerritoireLabel(niveau?: string, code?: ReadonlyArray<string>): string {
-  if (niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
+function getTerritoireLabel(niveau?: string, code?: string): string {
+  if (niveau === undefined || niveau === '' || code === undefined) {
     return 'France'
   }
 
-  const codeValue = code[0]
-
   if (niveau === 'region') {
     const region = regions
-      .find((region) => region.code === codeValue)
-    return region ? region.nom : `Région ${codeValue}`
+      .find((region) => region.code === code)
+    return region ? region.nom : `Région ${code}`
   }
 
   if (niveau === 'departement') {
     const departement = departements
-      .find((departement) => departement.code === codeValue)
-    return departement ? `${departement.nom} · ${codeValue}` : `Département ${codeValue}`
+      .find((departement) => departement.code === code)
+    return departement ? `${departement.nom} · ${code}` : `Département ${code}`
   }
 
   return 'France'
 }
 
-function getSelectedZone(niveau?: string, code?: ReadonlyArray<string>): undefined | ZoneGeographique {
+function getSelectedZone(niveau?: string, code?: string): undefined | ZoneGeographique {
   // Si on est sur la page nationale, retourner "Toutes les régions"
-  if (niveau === 'national' || niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
+  if (niveau === 'national' || niveau === undefined || niveau === '' || code === undefined) {
     return regionsEtDepartements().find((zone) => zone.value === 'all')
   }
 
-  const codeValue = code[0]
   const departement = departements
-    .find((departement) => departement.code === codeValue)
+    .find((departement) => departement.code === code)
 
   if (niveau === 'departement' && departement !== undefined) {
     const region = regions.find((regrion) => regrion.code === departement.regionCode)
     if (region !== undefined) {
-      const regionDepartementValue = `${region.code}_${codeValue}`
+      const regionDepartementValue = `${region.code}_${code}`
       return regionsEtDepartements().find((zone) => zone.value === regionDepartementValue)
     }
   }
 
   if (niveau === 'region') {
-    const regionDepartementValue = `${codeValue}_00`
+    const regionDepartementValue = `${code}_00`
     return regionsEtDepartements().find((zone) => zone.value === regionDepartementValue)
   }
 
@@ -135,7 +143,7 @@ function getSelectedZone(niveau?: string, code?: ReadonlyArray<string>): undefin
 
 function getBreadcrumbItems(
   niveau?: string,
-  code?: ReadonlyArray<string>,
+  code?: string,
   currentSection?: string
 ): Array<{ href?: string; label: string }> {
   const section = currentSection ?? 'synthese-et-indicateurs'
@@ -146,14 +154,12 @@ function getBreadcrumbItems(
     { href: `/vitrine/donnees-territoriales/${section}/national`, label: 'France' },
   ]
 
-  if (niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
+  if (niveau === undefined || niveau === '' || code === undefined) {
     return items
   }
 
-  const codeValue = code[0]
-
   if (niveau === 'region') {
-    const region = regions.find((region) => region.code === codeValue)
+    const region = regions.find((region) => region.code === code)
     if (region !== undefined) {
       // Pas de lien cliquable pour les régions pour le moment
       items.push({ label: region.nom })
@@ -161,13 +167,13 @@ function getBreadcrumbItems(
   }
 
   if (niveau === 'departement') {
-    const departementCourant = departements.find((departement) => departement.code === codeValue)
+    const departementCourant = departements.find((departement) => departement.code === code)
     if (departementCourant !== undefined) {
       const regionCourante = regions.find((region) => region.code === departementCourant.regionCode)
       if (regionCourante !== undefined) {
         items.push({ label: regionCourante.nom })
       }
-      items.push({ href: `/vitrine/donnees-territoriales/${section}/departement/${codeValue}`, label: `${departementCourant.nom} · ${codeValue}` })
+      items.push({ href: `/vitrine/donnees-territoriales/${section}/departement/${code}`, label: `${departementCourant.nom} · ${code}` })
     }
   }
 
