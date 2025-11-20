@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 
+import styles from './page.module.css'
 import HeroSection from '@/components/vitrine/HeroSection/HeroSection'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 
@@ -82,17 +83,14 @@ export default function LieuxPage(): ReactElement {
             className="fr-grid-row"
             style={{ alignItems: 'center', gap: '80px' }}
           >
-            <div className="fr-col-12 fr-col-md-6">
+            <div className={`fr-col-12 fr-col-md-6 ${styles.visualisationImage}`}>
               <img
                 alt="Visualisation des indicateurs territoriaux"
                 src="/vitrine/lieux/illustration-visualisation.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
-            <div
-              className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
-            >
+            <div className={`fr-col-12 fr-col-md-5 ${styles.visualisationContent}`}>
               <h2
                 className="fr-h2"
                 style={{ marginBottom: 0 }}
@@ -208,15 +206,18 @@ export default function LieuxPage(): ReactElement {
             }}
           >
             <div
+              className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
                 borderRadius: '16px',
-                display: 'flex',
                 gap: '40px',
                 padding: '40px',
               }}
             >
-              <div style={{ display: 'flex', flex: '1', flexDirection: 'column', gap: '16px' }}>
+              <div
+                className="fr-col-12 fr-col-md-6"
+                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              >
                 <h3
                   style={{
                     color: '#161616',
@@ -266,6 +267,7 @@ export default function LieuxPage(): ReactElement {
                 </div>
               </div>
               <div
+                className="fr-col-12 fr-col-md-5"
                 style={{
                   alignItems: 'center',
                   border: '1px solid #ddd',
@@ -273,8 +275,6 @@ export default function LieuxPage(): ReactElement {
                   display: 'flex',
                   height: '200px',
                   justifyContent: 'center',
-                  minWidth: '300px',
-                  width: '300px',
                 }}
               >
                 <img
@@ -286,15 +286,18 @@ export default function LieuxPage(): ReactElement {
             </div>
 
             <div
+              className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
                 borderRadius: '16px',
-                display: 'flex',
                 gap: '40px',
                 padding: '40px',
               }}
             >
-              <div style={{ display: 'flex', flex: '1', flexDirection: 'column', gap: '16px' }}>
+              <div
+                className="fr-col-12 fr-col-md-6"
+                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+              >
                 <h3
                   style={{
                     color: '#161616',
@@ -323,7 +326,7 @@ export default function LieuxPage(): ReactElement {
                       lineHeight: '1.5rem',
                     }}
                   >
-                    Bretagne/Occitanie/Normandie
+                    Bourgogne franche Comté
                   </span>
                 </div>
                 <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
@@ -337,11 +340,12 @@ export default function LieuxPage(): ReactElement {
                     style={{ display: 'inline-block' }}
                     target="_blank"
                   >
-                    Cartographie Magna es
+                    Cartographie Magna es lorem
                   </a>
                 </div>
               </div>
               <div
+                className="fr-col-12 fr-col-md-5"
                 style={{
                   alignItems: 'center',
                   border: '1px solid #ddd',
@@ -349,8 +353,6 @@ export default function LieuxPage(): ReactElement {
                   display: 'flex',
                   height: '200px',
                   justifyContent: 'center',
-                  minWidth: '300px',
-                  width: '300px',
                 }}
               >
                 <img
@@ -464,7 +466,7 @@ export default function LieuxPage(): ReactElement {
               <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
                 Nous référençons les lieux d&apos;inclusion numérique qui ont renseigné leurs
                 données au format du standard de données des lieux d&apos;inclusion numérique établi
-                par la Mednum , Datactivist et l&apos;ANCT .
+                par la Mednum , Datactivist et l&apos;ANCT.
               </p>
             </div>
 
@@ -566,8 +568,7 @@ export default function LieuxPage(): ReactElement {
                 className="fr-h2"
                 style={{ color: '#000091', marginBottom: 0 }}
               >
-                Vous souhaitez savoir comment apparaître sur la cartographie ou mettre à jour vos
-                données ?
+                Vous souhaitez savoir comment apparaître sur la cartographie ou mettre à jour vos données ?
               </h2>
               <div>
                 <Link
@@ -615,19 +616,18 @@ export default function LieuxPage(): ReactElement {
           </p>
 
           <div
+            className="fr-grid-row fr-grid-row--gutters"
             style={{
               backgroundColor: '#fff',
               border: '1px solid #ddd',
               borderRadius: '16px',
-              display: 'flex',
-              gap: '24px',
               padding: '40px',
             }}
           >
             <div
+              className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
-                flex: '1',
                 flexDirection: 'column',
                 gap: '16px',
               }}
@@ -664,8 +664,7 @@ export default function LieuxPage(): ReactElement {
                 className="fr-text--sm"
                 style={{ marginBottom: 0 }}
               >
-                Vous souhaitez partager la cartographie au sein de votre réseau ? Vous êtes au bon
-                endroit !
+                Vous souhaitez partager la cartographie au sein de votre réseau ? Vous êtes au bon endroit !
               </p>
               <div>
                 <Link
@@ -677,12 +676,10 @@ export default function LieuxPage(): ReactElement {
               </div>
             </div>
 
-            <div style={{ borderLeft: '1px solid #ddd', height: 'auto', width: '1px' }} />
-
             <div
+              className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
-                flex: '1',
                 flexDirection: 'column',
                 gap: '16px',
               }}
@@ -731,12 +728,10 @@ export default function LieuxPage(): ReactElement {
               </div>
             </div>
 
-            <div style={{ borderLeft: '1px solid #ddd', height: 'auto', width: '1px' }} />
-
             <div
+              className="fr-col-12 fr-col-md-4"
               style={{
                 display: 'flex',
-                flex: '1',
                 flexDirection: 'column',
                 gap: '16px',
               }}
@@ -773,8 +768,7 @@ export default function LieuxPage(): ReactElement {
                 className="fr-text--sm"
                 style={{ marginBottom: 0 }}
               >
-                Descriptif des évolutions du standard national des lieux d&apos;inclusion numérique
-                (version 1.0.1)
+                Descriptif des évolutions du standard national des lieux d&apos;inclusion numérique (version 1.0.1)
               </p>
               <div>
                 <Link

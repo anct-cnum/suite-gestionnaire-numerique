@@ -1,0 +1,22 @@
+.visualisationImage {
+  order: 1;
+  padding: 0;
+}
+
+.visualisationContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  order: 2;
+}
+
+/* Sur mobile (< 768px), inverser l'ordre */
+@media (width < 47.9375em) {
+  .visualisationImage {
+    order: 2;
+  }
+
+  .visualisationContent {
+    order: 1;
+  }
+}
