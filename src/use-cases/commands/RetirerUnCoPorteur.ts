@@ -23,6 +23,7 @@ export class RetirerUnCoPorteur implements CommandHandler<Command> {
   async handle(command: Command): ResultAsync<Failure> {
     const user = await this.utilisateurRepository.get(command.uidUtilisateurConnecte)
     const gouvernance = await this.gouvernanceRepository.get(new GouvernanceUid(command.uidGouvernance))
+
     if(!gouvernance.peutEtreGereePar(user)){
       return 'UtilisateurNonAutorise'
     }

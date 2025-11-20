@@ -9,6 +9,11 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
   async get(uid: GouvernanceUid): Promise<Gouvernance> {
     const record = await this.#gouvernanceDataResource.findUniqueOrThrow({
       include: {
+        membres: {
+          where: {
+            isCoporteur: true,
+          },
+        },
         relationDepartement: true,
         relationEditeurNoteDeContexte: true,
         relationEditeurNotePrivee: true,
@@ -39,12 +44,20 @@ export class PrismaGouvernanceRepository implements GouvernanceRepository {
         }),
       } : undefined
 
+    const membresCoporteurs = record.membres
+      .filter((membre): membre is { structureId: number } & typeof membre => membre.structureId !== null)
+      .map(membre => ({
+        isCoporteur: membre.isCoporteur,
+        structureUid: membre.structureId,
+      }))
+
     return Gouvernance.create({
       departement: {
         code: record.relationDepartement.code,
         codeRegion: record.relationDepartement.regionCode,
         nom: record.relationDepartement.nom,
       },
+      membresCoporteurs,
       noteDeContexte,
       notePrivee,
       uid: record.departementCode,
