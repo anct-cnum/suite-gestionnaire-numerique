@@ -2,8 +2,8 @@
 
 import { ReactElement } from 'react'
 
+import ResumeActionVitrine from './ResumeActionVitrine'
 import ResumeFeuilleDeRouteVitrine from './ResumeFeuilleDeRouteVitrine'
-import ResumeAction from '../../FeuillesDeRoute/ResumeAction'
 import SectionSources from '../SyntheseEtIndicateurs/SectionSources'
 import { FeuilleDeRouteViewModel, FeuillesDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
@@ -25,9 +25,8 @@ export default function FeuilleDeRouteVitrine({ feuillesDeRouteViewModel }: Prop
           >
             <ResumeFeuilleDeRouteVitrine feuilleDeRoute={feuilleDeRoute}>
               {feuilleDeRoute.actions.length > 0 && (
-                <ResumeAction
+                <ResumeActionVitrine
                   actions={feuilleDeRoute.actions}
-                  hideStatut
                   uidFeuilleDeRoute={feuilleDeRoute.uid}
                 />
               )}
