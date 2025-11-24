@@ -17,7 +17,7 @@ export default function Navigation(): ReactElement {
 
   const territoirePath = getTerritoirePath(niveau, code)
 
-  const sections = [
+  const allSections = [
     {
       href: `/vitrine/donnees-territoriales/synthese-et-indicateurs${territoirePath}`,
       label: 'Synthèse et indicateurs',
@@ -37,8 +37,17 @@ export default function Navigation(): ReactElement {
     {
       href: `/vitrine/donnees-territoriales/feuille-de-route${territoirePath}`,
       label: 'Feuille de route',
+      onlyDepartement: true,
     },
   ]
+
+  // Filtrer les sections : afficher "Feuille de route" uniquement au niveau département
+  const sections = allSections.filter((section) => {
+    if ('onlyDepartement' in section && section.onlyDepartement === true) {
+      return niveau === 'departement'
+    }
+    return true
+  })
 
   return (
     <nav

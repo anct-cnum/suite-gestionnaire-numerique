@@ -9,7 +9,7 @@ import Tag from '../shared/Tag/Tag'
 import TitleIcon from '../shared/TitleIcon/TitleIcon'
 import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
-export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): ReactElement {
+export default function ResumeAction({ actions, hideStatut = false, uidFeuilleDeRoute }: Props): ReactElement {
   // Stryker disable next-line BooleanLiteral
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [action, setAction] = useState<FeuilleDeRouteViewModel['actions'][number]>(actions[0])
@@ -50,7 +50,18 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
                   </button>
                 </div>
                 <div>
-                  {
+                  {hideStatut ? 
+                    action.porteurs.length > 0 && (
+                      <p
+                        className="fr-text--sm fr-mb-0"
+                        style={{ color: '#666666' }}
+                      >
+                        Coporteur de l&apos;action :
+                        {' '}
+                        {action.porteurs.map((porteur) => porteur.label).join(', ')}
+                      </p>
+                    )
+                    :
                     action.porteurs.map((porteur) => (
                       <Tag
                         href={porteur.link}
@@ -58,12 +69,11 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
                       >
                         {porteur.label}
                       </Tag>
-                    ))
-                  }
+                    ))}
                 </div>
               </div>
               <div className="fr-col-auto" >
-                {action.statut.display ?
+                {!hideStatut && action.statut.display ?
                   <Badge color={action.statut.variant}>
                     {action.statut.libelle}
                   </Badge> : null}
@@ -95,5 +105,6 @@ export default function ResumeAction({ actions, uidFeuilleDeRoute }: Props): Rea
 
 type Props = Readonly<{
   actions: FeuilleDeRouteViewModel['actions']
+  hideStatut?: boolean
   uidFeuilleDeRoute: string
 }>
