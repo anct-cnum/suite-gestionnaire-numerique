@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { ReactElement } from 'react'
 
 import departements from '../../../../ressources/departements.json'
@@ -12,15 +12,16 @@ import { regionsEtDepartements, ZoneGeographique } from '@/presenters/filtresUti
 export default function Header({ titre }: Props): ReactElement {
   const router = useRouter()
   const params = useParams()
+  const pathname = usePathname()
   const niveau = params.niveau as string | undefined
   const code = params.code as ReadonlyArray<string> | undefined
 
   const territoireActuel = getTerritoireLabel(niveau, code)
   const selectedZone = getSelectedZone(niveau, code)
 
+  const currentSection = pathname.split('/').filter(Boolean)[2] || 'synthese-et-indicateurs'
+
   function handleTerritoireChange(zone: ZoneGeographique): void {
-    const pathname = window.location.pathname
-    const currentSection = pathname.split('/').filter(Boolean)[2] || 'synthese-et-indicateurs'
     const basePath = `/vitrine/donnees-territoriales/${currentSection}`
 
     // Si la valeur est "all", naviguer vers /national
@@ -39,7 +40,7 @@ export default function Header({ titre }: Props): ReactElement {
     }
   }
 
-  const breadcrumbItems = getBreadcrumbItems(niveau, code)
+  const breadcrumbItems = getBreadcrumbItems(niveau, code, currentSection)
 
   return (
     <div
@@ -132,14 +133,17 @@ function getSelectedZone(niveau?: string, code?: ReadonlyArray<string>): undefin
   return undefined
 }
 
-function getBreadcrumbItems(niveau?: string, code?: ReadonlyArray<string>): Array<{ href?: string; label: string }> {
-  const pathname = typeof window === 'undefined' ? '' : window.location.pathname
-  const currentSection = pathname.split('/').filter(Boolean)[2] || 'synthese-et-indicateurs'
+function getBreadcrumbItems(
+  niveau?: string,
+  code?: ReadonlyArray<string>,
+  currentSection?: string
+): Array<{ href?: string; label: string }> {
+  const section = currentSection ?? 'synthese-et-indicateurs'
 
   const items: Array<{ href?: string; label: string }> = [
     { href: '/vitrine', label: 'Accueil' },
     { href: '/vitrine/donnees-territoriales', label: 'Données territoriales' },
-    { href: `/vitrine/donnees-territoriales/${currentSection}/national`, label: 'France' },
+    { href: `/vitrine/donnees-territoriales/${section}/national`, label: 'France' },
   ]
 
   if (niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
@@ -163,7 +167,7 @@ function getBreadcrumbItems(niveau?: string, code?: ReadonlyArray<string>): Arra
       if (regionCourante !== undefined) {
         items.push({ label: regionCourante.nom })
       }
-      items.push({ href: `/vitrine/donnees-territoriales/${currentSection}/departement/${codeValue}`, label: `${departementCourant.nom} · ${codeValue}` })
+      items.push({ href: `/vitrine/donnees-territoriales/${section}/departement/${codeValue}`, label: `${departementCourant.nom} · ${codeValue}` })
     }
   }
 
