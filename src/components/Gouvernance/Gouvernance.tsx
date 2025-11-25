@@ -50,7 +50,7 @@ export default function Gouvernance(): ReactElement {
         {' '}
         {gouvernanceViewModel.departement}
       </PageTitle>
-    
+
       <p>
         Retrouvez la gouvernance établie au sein d’un département, sa composition et ses feuilles de route.
       </p>
@@ -103,7 +103,6 @@ export default function Gouvernance(): ReactElement {
               setIsDrawerOpen(false)
             }}
             comite={gouvernanceViewModel.comiteARemplir}
-            dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
             id={drawerComiteId}
             labelId={labelComiteId}
             peutGerer={gouvernanceViewModel.peutGererGouvernance}
@@ -131,7 +130,6 @@ export default function Gouvernance(): ReactElement {
             >
               <ComitologieRemplie
                 comites={gouvernanceViewModel.comites}
-                dateAujourdhui={gouvernanceViewModel.dateAujourdhui}
                 peutGerer={gouvernanceViewModel.peutGererGouvernance}
                 uidGouvernance={gouvernanceViewModel.uid}
               />
@@ -175,9 +173,9 @@ export default function Gouvernance(): ReactElement {
               <MembreRempli
                 coporteurs={gouvernanceViewModel.sectionMembres.coporteurs}
               />
-            ) : 
+            ) :
               null
-            
+
           }
         </SectionRemplie>
       </section>

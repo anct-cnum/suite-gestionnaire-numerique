@@ -127,29 +127,6 @@ describe('comité repository', () => {
     await expect(comiteRecord).rejects.toMatchObject({ code: 'P2025' })
   })
 
-  it('ne trouve pas un comité quand une de ses données n’est pas valide', async () => {
-    // GIVEN
-    const departementCode = '75'
-    const uidEditeur = 'userFooId'
-    await creerUneRegion()
-    await creerUnDepartement()
-    await creerUnUtilisateur({ ssoId: uidEditeur })
-    await creerUneGouvernance({ departementCode })
-    await creerUnComite({
-      date: epochTime,
-      derniereEdition: epochTimePlusOneDay,
-      editeurUtilisateurId: uidEditeur,
-      gouvernanceDepartementCode: departementCode,
-      id: 2,
-    })
-
-    // WHEN
-    const comiteRecord = new PrismaComiteRepository().get('2')
-
-    // THEN
-    await expect(async () => comiteRecord).rejects.toThrow('dateDuComiteDoitEtreDansLeFutur')
-  })
-
   it('modifier un comité', async () => {
     // GIVEN
     const departementCode = '75'

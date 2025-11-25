@@ -6,7 +6,7 @@ import { Comite } from '@/domain/Comite'
 import { Gouvernance, GouvernanceUid } from '@/domain/Gouvernance'
 import { comiteFactory, gouvernanceFactory, utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur, UtilisateurUidState } from '@/domain/Utilisateur'
-import { epochTime, epochTimePlusOneDay, invalidDate } from '@/shared/testHelper'
+import { epochTime, invalidDate } from '@/shared/testHelper'
 
 describe('ajouter un comité à une gouvernance', () => {
   beforeEach(() => {
@@ -115,14 +115,6 @@ describe('ajouter un comité à une gouvernance', () => {
       expectedFailure: 'dateDeCreationInvalide',
       frequence: frequenceValide,
       intention: 'de la date de création invalide',
-      type: typeValide,
-    },
-    {
-      date,
-      dateDeCreation: epochTimePlusOneDay,
-      expectedFailure: 'dateDuComiteDoitEtreDansLeFutur',
-      frequence: frequenceValide,
-      intention: 'de la date de comité qui est dans le passé',
       type: typeValide,
     },
   ])('étant donné une gouvernance, quand un comité est créé par son gestionnaire mais que le comité n’est pas valide à cause $intention, alors une erreur est renvoyée', async ({ date, dateDeCreation, expectedFailure, frequence, type }) => {

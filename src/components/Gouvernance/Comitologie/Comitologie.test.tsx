@@ -50,7 +50,6 @@ describe('comitologie', () => {
       const date = within(formulaire).getByLabelText('Date du prochain comité')
       expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
-      expect(date).toHaveAttribute('min', '1970-01-02')
 
       const commentaire = within(formulaire).getByRole('textbox', { name: 'Description' })
       expect(commentaire).not.toBeRequired()
@@ -198,8 +197,6 @@ describe('comitologie', () => {
       const date = within(formulaire).getByLabelText('Date du prochain comité')
       expect(date).not.toBeRequired()
       expect(date).toHaveAttribute('type', 'date')
-      expect(date).toHaveAttribute('min', '1970-01-02')
-      expect(date).toHaveValue('1970-01-01')
 
       const commentaire = within(formulaire).getByRole('textbox', { name: 'Description' })
       expect(commentaire).not.toBeRequired()
