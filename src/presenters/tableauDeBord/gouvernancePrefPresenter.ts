@@ -13,10 +13,6 @@ export function gouvernancePrefPresenter(
   }
 
   return {
-    collectivite: {
-      membre: readModel.collectivite.membre,
-      total: readModel.collectivite.total,
-    },
     feuilleDeRoute: {
       action: readModel.feuilleDeRoute.action,
       total: readModel.feuilleDeRoute.total,
@@ -29,10 +25,6 @@ export function gouvernancePrefPresenter(
 }
 
 export type GouvernanceViewModel = Readonly<{
-  collectivite: Readonly<{
-    membre: number
-    total: number
-  }>
   feuilleDeRoute: Readonly<{
     action: number
     total: number

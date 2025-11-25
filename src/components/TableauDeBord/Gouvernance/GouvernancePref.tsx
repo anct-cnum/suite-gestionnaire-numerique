@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { ReactElement } from 'react'
 
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
-import styles from '../TableauDeBord.module.css'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
 import { GouvernanceViewModel } from '@/presenters/tableauDeBord/gouvernancePrefPresenter'
 
@@ -30,12 +29,14 @@ export default function GouvernancePref({
               </h2>
             </div>
           </div>
-          <Link
-            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-            href={lienGouvernance}
-          >
-            La gouvernance
-          </Link>
+          {lienGouvernance !== undefined && (
+            <Link
+              className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+              href={lienGouvernance}
+            >
+              La gouvernance
+            </Link>
+          )}
         </div>
         <div className="fr-grid-row">
           <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
@@ -108,12 +109,14 @@ export default function GouvernancePref({
             </h2>
           </div>
         </div>
-        <Link
-          className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
-          href={lienGouvernance}
-        >
-          La gouvernance
-        </Link>
+        {lienGouvernance !== undefined && (
+          <Link
+            className="fr-btn fr-btn--tertiary fr-btn--icon-right fr-icon-arrow-right-line"
+            href={lienGouvernance}
+          >
+            La gouvernance
+          </Link>
+        )}
       </div>
       <div className="fr-grid-row">
         <div className="fr-col background-blue-france fr-p-4w fr-mr-4w">
@@ -137,30 +140,6 @@ export default function GouvernancePref({
               {gouvernanceViewModel.membre.coporteur}
               {' '}
               coporteurs
-            </span>
-          </div>
-        </div>
-        <div className={`fr-col background-blue-france fr-p-4w fr-mr-4w ${styles.hidden}`}>
-          <div className="fr-h1 fr-m-0">
-            <TitleIcon
-              background="white"
-              icon="community-line"
-            />
-            {gouvernanceViewModel.collectivite.total}
-          </div>
-          <div
-            className="fr-text--md fr-mb-0"
-            style={{ fontWeight: 500 }}
-          >
-            Collectivité impliquées
-          </div>
-          <div className="fr-text--xs color-blue-france fr-mb-0">
-            sur les
-            {' '}
-            <span style={{ fontWeight: 700 }}>
-              {gouvernanceViewModel.collectivite.membre}
-              {' '}
-              membres
             </span>
           </div>
         </div>
@@ -195,7 +174,7 @@ export default function GouvernancePref({
 
 type Props = Readonly<{
   gouvernanceViewModel: ErrorViewModel | GouvernanceViewModel
-  lienGouvernance: string
+  lienGouvernance?: string
 }>
 
 function isErrorViewModel(viewModel: ErrorViewModel | GouvernanceViewModel): viewModel is ErrorViewModel {

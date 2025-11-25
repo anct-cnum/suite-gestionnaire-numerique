@@ -12,8 +12,16 @@ export default function Navigation(): ReactElement {
   const pathname = usePathname()
   const params = useParams()
 
-  const niveau = params.niveau as string | undefined
-  const code = params.code as ReadonlyArray<string> | undefined
+  const pathParts = pathname.split('/').filter(Boolean)
+  const currentSection = pathParts[2] || 'synthese-et-indicateurs'
+
+  // Extraire niveau et code depuis params
+  const niveau = currentSection === 'gouvernances'
+    ? pathParts[3] // 'departement' pour gouvernances
+    : (params.niveau as string | undefined)
+
+  const codeArray = params.code as ReadonlyArray<string> | undefined
+  const code = codeArray?.[0]
 
   const territoirePath = getTerritoirePath(niveau, code)
 
@@ -33,6 +41,7 @@ export default function Navigation(): ReactElement {
     {
       href: `/vitrine/donnees-territoriales/gouvernances${territoirePath}`,
       label: 'Gouvernances',
+      onlyDepartement: true,
     },
     {
       href: `/vitrine/donnees-territoriales/feuille-de-route${territoirePath}`,
@@ -122,19 +131,17 @@ export default function Navigation(): ReactElement {
   )
 }
 
-function getTerritoirePath(niveau?: string, code?: ReadonlyArray<string>): string {
-  if (niveau === undefined || niveau === '' || code === undefined || code.length === 0) {
+function getTerritoirePath(niveau?: string, code?: string): string {
+  if (niveau === undefined || niveau === '' || code === undefined) {
     return '/national'
   }
 
-  const codeValue = code[0]
-
   if (niveau === 'region') {
-    return `/region/${codeValue}`
+    return `/region/${code}`
   }
 
   if (niveau === 'departement') {
-    return `/departement/${codeValue}`
+    return `/departement/${code}`
   }
 
   return '/national'

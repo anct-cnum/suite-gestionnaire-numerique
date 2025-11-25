@@ -38,6 +38,13 @@ export default function MembreRempli({ coporteurs }: Props): ReactElement {
                     setMembreDetails(membre)
                     setIsDrawerOpen(true)
                   }}
+                  style={{
+                    display: 'block',
+                    maxWidth: '300px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                  }}
                   type="button"
                 >
                   {membre.nom}
