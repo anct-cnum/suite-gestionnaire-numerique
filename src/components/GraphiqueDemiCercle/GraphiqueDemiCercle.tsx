@@ -90,7 +90,7 @@ export default function GraphiqueDemiCercle(props: Readonly<Props>): ReactElemen
               {dateGeneration.toLocaleDateString('fr-FR')}
             </p>
           </div>
-          <DownloadButton 
+          <DownloadButton
             onClick={() => { void handleDownload(componentRef,label)}}
             title={label}
           />
