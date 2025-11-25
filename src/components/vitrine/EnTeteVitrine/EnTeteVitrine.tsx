@@ -13,18 +13,6 @@ export default function EnTeteVitrine(): ReactElement {
           <div className="fr-header__body-row">
             <div className="fr-header__brand fr-enlarge-link">
               <div className="fr-header__brand-top">
-                <div className="fr-header__logo">
-                  <Link
-                    href="/"
-                    title="Accueil"
-                  >
-                    <p className="fr-logo">
-                      République
-                      <br />
-                      Française
-                    </p>
-                  </Link>
-                </div>
                 <div className="fr-header__navbar">
                   <button
                     aria-controls="navigation"
