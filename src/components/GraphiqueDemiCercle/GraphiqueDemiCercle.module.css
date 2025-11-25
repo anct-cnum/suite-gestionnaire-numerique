@@ -2,7 +2,6 @@
   margin-top: -5rem;
   pointer-events: none;
   position: relative;
-  z-index: -1;
 }
 
 .text-ellipsis {
