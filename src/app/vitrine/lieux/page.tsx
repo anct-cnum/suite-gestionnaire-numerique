@@ -36,11 +36,11 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div
             className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '80px' }}
+            style={{ alignItems: 'center', gap: '5rem' }}
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
             >
               <h2
                 className="fr-h2"
@@ -68,7 +68,7 @@ export default function LieuxPage(): ReactElement {
             <div className="fr-col-12 fr-col-md-6">
               <img
                 alt="Cartographie des lieux d'inclusion numérique"
-                src="/carte-inclusion-numerique.png"
+                src="/vitrine/lieux/illustration-cartographie-avec-main.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
@@ -81,7 +81,7 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div
             className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '80px' }}
+            style={{ alignItems: 'center', gap: '5rem' }}
           >
             <div className={`fr-col-12 fr-col-md-6 ${styles.visualisationImage}`}>
               <img
@@ -123,11 +123,11 @@ export default function LieuxPage(): ReactElement {
         <div className="fr-container">
           <div
             className="fr-grid-row"
-            style={{ alignItems: 'center', gap: '80px' }}
+            style={{ alignItems: 'center', gap: '5rem' }}
           >
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
             >
               <h2
                 className="fr-h2"
@@ -180,7 +180,7 @@ export default function LieuxPage(): ReactElement {
             <img
               alt="Icône exemples"
               src="/vitrine/lieux/icone-exemples.png"
-              style={{ height: 'auto', maxHeight: '80px', maxWidth: '80px', width: 'auto' }}
+              style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
           <h2
@@ -200,23 +200,23 @@ export default function LieuxPage(): ReactElement {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '24px',
+              gap: '3rem',
               margin: '0 auto',
-              maxWidth: '960px',
+              maxWidth: '60rem',
             }}
           >
             <div
               className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
-                borderRadius: '16px',
-                gap: '40px',
-                padding: '40px',
+                borderRadius: '1rem',
+                gap: '2.5rem',
+                padding: '2.5rem',
               }}
             >
               <div
                 className="fr-col-12 fr-col-md-6"
-                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
               >
                 <h3
                   style={{
@@ -232,9 +232,9 @@ export default function LieuxPage(): ReactElement {
                 <div
                   style={{
                     backgroundColor: '#e3e3fd',
-                    borderRadius: '16px',
+                    borderRadius: '1rem',
                     display: 'inline-block',
-                    padding: '4px 12px',
+                    padding: '0.25rem 0.75rem',
                     width: 'fit-content',
                   }}
                 >
@@ -271,16 +271,16 @@ export default function LieuxPage(): ReactElement {
                 style={{
                   alignItems: 'center',
                   border: '1px solid #ddd',
-                  borderRadius: '8px',
+                  borderRadius: '0.5rem',
                   display: 'flex',
-                  height: '200px',
+                  height: '12.5rem',
                   justifyContent: 'center',
                 }}
               >
                 <img
                   alt="Logo Medium Hub Antilles"
                   src="/vitrine/lieux/logo-medium.png"
-                  style={{ height: 'auto', maxHeight: '51px', maxWidth: '174px', width: 'auto' }}
+                  style={{ height: 'auto', maxHeight: '3.1875rem', maxWidth: '10.875rem', width: 'auto' }}
                 />
               </div>
             </div>
@@ -289,14 +289,14 @@ export default function LieuxPage(): ReactElement {
               className="fr-grid-row fr-grid-row--gutters"
               style={{
                 backgroundColor: '#fff',
-                borderRadius: '16px',
-                gap: '40px',
-                padding: '40px',
+                borderRadius: '1rem',
+                gap: '2.5rem',
+                padding: '2.5rem',
               }}
             >
               <div
                 className="fr-col-12 fr-col-md-6"
-                style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
               >
                 <h3
                   style={{
@@ -307,14 +307,14 @@ export default function LieuxPage(): ReactElement {
                     margin: 0,
                   }}
                 >
-                  Magna es lorem
+                  Cartographie nationale
                 </h3>
                 <div
                   style={{
                     backgroundColor: '#e3e3fd',
-                    borderRadius: '16px',
+                    borderRadius: '1rem',
                     display: 'inline-block',
-                    padding: '4px 12px',
+                    padding: '0.25rem 0.75rem',
                     width: 'fit-content',
                   }}
                 >
@@ -326,11 +326,11 @@ export default function LieuxPage(): ReactElement {
                       lineHeight: '1.5rem',
                     }}
                   >
-                    Bourgogne franche Comté
+                    National
                   </span>
                 </div>
                 <p style={{ color: '#3a3a3a', fontSize: '1rem', lineHeight: '1.5rem', margin: 0 }}>
-                  Lorem ipsum dolor sit amet consectetur. Risus id sit nisi orci ut et in.
+                  Nous sommes notre premier intégrateur
                 </p>
                 <div>
                   <a
@@ -340,7 +340,7 @@ export default function LieuxPage(): ReactElement {
                     style={{ display: 'inline-block' }}
                     target="_blank"
                   >
-                    Cartographie Magna es lorem
+                    Voir la cartographie
                   </a>
                 </div>
               </div>
@@ -349,16 +349,16 @@ export default function LieuxPage(): ReactElement {
                 style={{
                   alignItems: 'center',
                   border: '1px solid #ddd',
-                  borderRadius: '8px',
+                  borderRadius: '0.5rem',
                   display: 'flex',
-                  height: '200px',
+                  height: '12.5rem',
                   justifyContent: 'center',
                 }}
               >
                 <img
                   alt="Logo Cartographie Nationale"
                   src="/vitrine/lieux/logo-cartographie-nationale.png"
-                  style={{ height: 'auto', maxHeight: '180px', maxWidth: '280px', width: 'auto' }}
+                  style={{ height: 'auto', maxHeight: '11.25rem', maxWidth: '17.5rem', width: 'auto' }}
                 />
               </div>
             </div>
@@ -376,7 +376,7 @@ export default function LieuxPage(): ReactElement {
             <img
               alt="Icône avantages"
               src="/vitrine/lieux/icone-avantages.png"
-              style={{ height: 'auto', maxHeight: '80px', maxWidth: '80px', width: 'auto' }}
+              style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
           <h2
@@ -396,10 +396,10 @@ export default function LieuxPage(): ReactElement {
             style={{
               backgroundColor: '#fff',
               border: '1px solid #ddd',
-              borderRadius: '16px',
+              borderRadius: '1rem',
               display: 'flex',
-              gap: '24px',
-              padding: '40px',
+              gap: '1.5rem',
+              padding: '2.5rem',
             }}
           >
             <div
@@ -407,14 +407,14 @@ export default function LieuxPage(): ReactElement {
                 display: 'flex',
                 flex: '1',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div>
                 <img
                   alt="Icône Orientation"
                   src="/vitrine/lieux/icone-orientation.png"
-                  style={{ height: '80px', width: '80px' }}
+                  style={{ height: '5rem', width: '5rem' }}
                 />
               </div>
               <h3
@@ -442,14 +442,14 @@ export default function LieuxPage(): ReactElement {
                 display: 'flex',
                 flex: '1',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div>
                 <img
                   alt="Icône Standardisation"
                   src="/vitrine/lieux/icone-standardisation.png"
-                  style={{ height: '80px', width: '80px' }}
+                  style={{ height: '5rem', width: '5rem' }}
                 />
               </div>
               <h3
@@ -477,14 +477,14 @@ export default function LieuxPage(): ReactElement {
                 display: 'flex',
                 flex: '1',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div>
                 <img
                   alt="Icône La mise à jour"
                   src="/vitrine/lieux/icone-mise-a-jour.png"
-                  style={{ height: '80px', width: '80px' }}
+                  style={{ height: '5rem', width: '5rem' }}
                 />
               </div>
               <h3
@@ -512,14 +512,14 @@ export default function LieuxPage(): ReactElement {
                 display: 'flex',
                 flex: '1',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div>
                 <img
                   alt="Icône Visibilité"
                   src="/vitrine/lieux/icone-visibilite.png"
-                  style={{ height: '80px', width: '80px' }}
+                  style={{ height: '5rem', width: '5rem' }}
                 />
               </div>
               <h3
@@ -562,7 +562,7 @@ export default function LieuxPage(): ReactElement {
             </div>
             <div
               className="fr-col-12 fr-col-md-5"
-              style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
             >
               <h2
                 className="fr-h2"
@@ -593,7 +593,7 @@ export default function LieuxPage(): ReactElement {
             <img
               alt="Icône ressources"
               src="/vitrine/lieux/icone-ressources.png"
-              style={{ height: 'auto', maxHeight: '80px', maxWidth: '80px', width: 'auto' }}
+              style={{ height: 'auto', maxHeight: '5rem', maxWidth: '5rem', width: 'auto' }}
             />
           </div>
           <h2
@@ -620,8 +620,8 @@ export default function LieuxPage(): ReactElement {
             style={{
               backgroundColor: '#fff',
               border: '1px solid #ddd',
-              borderRadius: '16px',
-              padding: '40px',
+              borderRadius: '1rem',
+              padding: '2.5rem',
             }}
           >
             <div
@@ -629,24 +629,24 @@ export default function LieuxPage(): ReactElement {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div
                 style={{
                   alignItems: 'center',
                   backgroundColor: '#FEF7DA',
-                  borderRadius: '8px',
+                  borderRadius: '0.5rem',
                   display: 'flex',
-                  height: '96px',
+                  height: '6rem',
                   justifyContent: 'center',
-                  width: '96px',
+                  width: '6rem',
                 }}
               >
                 <img
                   alt="Icône Diffuser"
                   src="/vitrine/lieux/icone-diffuser.png"
-                  style={{ height: '40px', width: '40px' }}
+                  style={{ height: '2.5rem', width: '2.5rem' }}
                 />
               </div>
               <h3
@@ -681,24 +681,24 @@ export default function LieuxPage(): ReactElement {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div
                 style={{
                   alignItems: 'center',
                   backgroundColor: '#FEF7DA',
-                  borderRadius: '8px',
+                  borderRadius: '0.5rem',
                   display: 'flex',
-                  height: '96px',
+                  height: '6rem',
                   justifyContent: 'center',
-                  width: '96px',
+                  width: '6rem',
                 }}
               >
                 <img
                   alt="Icône Collecter"
                   src="/vitrine/lieux/icone-collecter.png"
-                  style={{ height: '40px', width: '40px' }}
+                  style={{ height: '2.5rem', width: '2.5rem' }}
                 />
               </div>
               <h3
@@ -733,24 +733,24 @@ export default function LieuxPage(): ReactElement {
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '16px',
+                gap: '1rem',
               }}
             >
               <div
                 style={{
                   alignItems: 'center',
                   backgroundColor: '#FEF7DA',
-                  borderRadius: '8px',
+                  borderRadius: '0.5rem',
                   display: 'flex',
-                  height: '96px',
+                  height: '6rem',
                   justifyContent: 'center',
-                  width: '96px',
+                  width: '6rem',
                 }}
               >
                 <img
                   alt="Icône Évolution"
                   src="/vitrine/lieux/icone-evolution.png"
-                  style={{ height: '40px', width: '40px' }}
+                  style={{ height: '2.5rem', width: '2.5rem' }}
                 />
               </div>
               <h3
