@@ -210,18 +210,6 @@ export default function DonneesTerritoriales(): ReactElement {
                 >
                   La Coop de la Médiation numérique
                 </h3>
-                <p
-                  className="fr-text--sm fr-mb-3w"
-                  style={{ color: '#666' }}
-                >
-                  Lorem ipsum dolor sit amet consectetur. Diam molestie tellus ut tempus augue in.
-                </p>
-                <a
-                  className="fr-link fr-link--icon-right fr-icon-arrow-right-line"
-                  href="https://coop-numerique.anct.gouv.fr/"
-                >
-                  Découvrir
-                </a>
               </div>
             </div>
 
@@ -251,20 +239,6 @@ export default function DonneesTerritoriales(): ReactElement {
                 >
                   La Cartographie Nationale des lieux d&apos;inclusion numérique
                 </h3>
-                <p
-                  className="fr-text--sm fr-mb-3w"
-                  style={{ color: '#666' }}
-                >
-                  Lorem ipsum dolor sit amet consectetur. Diam molestie
-                </p>
-                <a
-                  className="fr-link fr-link--icon-right fr-icon-arrow-right-line"
-                  href="https://cartographie.societenumerique.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  Découvrir
-                </a>
               </div>
             </div>
 
@@ -294,20 +268,6 @@ export default function DonneesTerritoriales(): ReactElement {
                 >
                   Aidants Connect
                 </h3>
-                <p
-                  className="fr-text--sm fr-mb-3w"
-                  style={{ color: '#666' }}
-                >
-                  Lorem ipsum dolor sit amet consectetur. Diam molestie tellus ut tempus augue in.
-                </p>
-                <a
-                  className="fr-link fr-link--icon-right fr-icon-arrow-right-line"
-                  href="https://aidantsconnect.beta.gouv.fr/"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  Découvrir
-                </a>
               </div>
             </div>
 
@@ -338,12 +298,6 @@ export default function DonneesTerritoriales(): ReactElement {
                 >
                   Conseiller Numérique
                 </h3>
-                <p
-                  className="fr-text--sm fr-mb-3w"
-                  style={{ color: '#666' }}
-                >
-                  Lorem ipsum dolor sit amet consectetur. Diam molestie tellus ut tempus augue in.
-                </p>
               </div>
             </div>
 
@@ -387,12 +341,6 @@ export default function DonneesTerritoriales(): ReactElement {
                 >
                   France Service
                 </h3>
-                <p
-                  className="fr-text--sm fr-mb-3w"
-                  style={{ color: '#666' }}
-                >
-                  Lorem ipsum dolor sit amet consectetur. Diam molestie tellus ut tempus augue in.
-                </p>
               </div>
             </div>
           </div>
