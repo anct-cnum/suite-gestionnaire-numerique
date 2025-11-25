@@ -68,7 +68,7 @@ export default function LieuxPage(): ReactElement {
             <div className="fr-col-12 fr-col-md-6">
               <img
                 alt="Cartographie des lieux d'inclusion numérique"
-                src="/vitrine/lieux/illustration-cartographie.png"
+                src="/carte-inclusion-numerique.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
