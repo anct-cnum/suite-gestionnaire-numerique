@@ -128,7 +128,9 @@ export default function DispositifsPage(): ReactElement {
                 Formation Aidants numériques et/ou Aidants Connect
               </h2>
               <p className="fr-text--md">
-                Une enveloppe financière a été dédiée à la formation des professionnels du territoire à l’inclusion et à la médiation numérique, ainsi qu'à l'utilisation de l'outil Aidants Connect.
+                Une enveloppe financière a été dédiée à la formation des professionnels du
+                territoire à l’inclusion et à la médiation numérique, ainsi qu&apos;à l&apos;utilisation de
+                l&apos;outil Aidants Connect.
               </p>
               <div>
                 <a

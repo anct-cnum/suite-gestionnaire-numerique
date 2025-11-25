@@ -10,7 +10,6 @@ import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
 export default function FormulaireComite({
   children,
   comite,
-  dateAujourdhui,
   label,
   labelId,
   peutGerer,
@@ -60,7 +59,6 @@ export default function FormulaireComite({
         <Datepicker
           defaultValue={comite.date}
           disable={!(peutGerer ?? false)}
-          min={dateAujourdhui}
           name="date"
         >
           Date du prochain comité
@@ -88,7 +86,6 @@ export default function FormulaireComite({
 
 type Props = PropsWithChildren<Readonly<{
   comite: ComiteViewModel
-  dateAujourdhui: string
   label: string
   labelId: string
   peutGerer?: boolean

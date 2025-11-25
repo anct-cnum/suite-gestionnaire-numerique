@@ -81,11 +81,6 @@ export class Comite extends Entity<State> {
         dateDuComiteValidee
       )
 
-      if (date !== undefined) {
-        // @ts-expect-error
-        validerQueLadateDuComiteDoitEtreDansLeFutur(dateDuComiteValidee, dateDeModificationValidee)
-      }
-
       return comite
     } catch (error: unknown) {
       return (error as Exception<ComiteFailure>).message as ComiteFailure
@@ -96,7 +91,6 @@ export class Comite extends Entity<State> {
 export type ComiteFailure =
   | 'dateDeCreationInvalide'
   | 'dateDeModificationInvalide'
-  | 'dateDuComiteDoitEtreDansLeFutur'
   | 'dateDuComiteInvalide'
   | 'frequenceInvalide'
   | 'typeInvalide'
@@ -157,11 +151,3 @@ type AttributState = Readonly<{ value: string }>
 
 type UidState = Readonly<{ value: string }>
 
-function validerQueLadateDuComiteDoitEtreDansLeFutur(date: Date, dateDeCreation: Date): never | void {
-  const dateDuComiteAComparer = Number(date.toISOString().split('T')[0].replaceAll('-', ''))
-  const dateDeCreationAComparer = Number(dateDeCreation.toISOString().split('T')[0].replaceAll('-', ''))
-
-  if (dateDuComiteAComparer < dateDeCreationAComparer) {
-    throw Exception.of<ComiteFailure>('dateDuComiteDoitEtreDansLeFutur')
-  }
-}

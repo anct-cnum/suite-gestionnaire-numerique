@@ -9,7 +9,6 @@ import { ComiteViewModel } from '@/presenters/gouvernancePresenter'
 export default function AjouterUnComite({
   closeDrawer,
   comite,
-  dateAujourdhui,
   id,
   labelId,
   peutGerer,
@@ -21,7 +20,6 @@ export default function AjouterUnComite({
   return (
     <FormulaireComite
       comite={comite}
-      dateAujourdhui={dateAujourdhui}
       label="Ajouter un comité"
       labelId={labelId}
       peutGerer={peutGerer}
@@ -66,7 +64,6 @@ export default function AjouterUnComite({
 type Props = Readonly<{
   closeDrawer(): void
   comite: ComiteViewModel
-  dateAujourdhui: string
   id: string
   labelId: string
   peutGerer: boolean
