@@ -32,7 +32,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
 
       {/* Mon inclusion Numérique */}
       <ToolCard
-        description="Mon Inclusion Numérique est une suite d'outils conçus par et pour les gestionnaires de la politique d'inclusion numérique qui propose une mise en cohérence des différentes données."
+        description="Mon Inclusion Numérique est une suite d'outils pensée par et pour les gestionnaires de la politique d'inclusion numérique qui propose une mise en cohérence des différents dispositifs."
         icon="/vitrine/outils/icon-min.png"
         imageAlt="Capture d'écran de Mon inclusion Numérique"
         imageBackground="#FFFFFF"
@@ -54,7 +54,8 @@ export default function OutilsNumeriquesPage(): ReactElement {
 
       {/* Les bases du numérique d'intérêt général */}
       <ToolCard
-        description="Les Bases est une plateforme collaborative nationale de partage de ressources, de supports pédagogiques et de communs numériques, accessible et ouvert aux structures de tous."
+        description="Les Bases est une plateforme collaborative nationale de partage de ressources, de supports pédagogiques et de communs numériques, accessible et ouverte à toutes et tous."
+        icon="/vitrine/outils/icon-bases.png"
         imageAlt="Capture d'écran des bases du numérique d'intérêt général"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-bases.png"
@@ -64,7 +65,8 @@ export default function OutilsNumeriquesPage(): ReactElement {
 
       {/* La cartographie des lieux d'inclusion */}
       <ToolCard
-        description="Que vous soyez un particulier ou un professionnel, la cartographie nationale est là pour vous aider à trouver les lieux d'accompagnement au numérique les plus proches et adaptés à vos besoins ou à ceux de vos bénéficiaires !"
+        description="Que vous soyez un particulier ou un professionnel, la cartographie nationale est là pour vous aider à trouver les lieux d'inclusion numérique avec des services adaptés à vos besoins ou à ceux de vos bénéficiaires !"
+        icon="/vitrine/outils/icon-min.png"
         imageAlt="Capture d'écran de la cartographie des lieux d'inclusion"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-cartographie.png"
@@ -75,6 +77,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
       {/* Aidants Connect */}
       <ToolCard
         description="Vous accompagnez régulièrement et gratuitement des personnes en difficulté avec le numérique dans la réalisation de leurs démarches en ligne ? Aidants Connect est fait pour vous !"
+        icon="/vitrine/outils/icon-aidants-connect.png"
         imageAlt="Capture d'écran d'Aidants Connect"
         imageBackground="#FFFFFF"
         imageSrc="/vitrine/outils/visuel-aidants-connect.png"
