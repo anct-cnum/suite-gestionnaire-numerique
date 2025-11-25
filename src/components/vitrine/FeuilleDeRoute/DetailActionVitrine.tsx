@@ -7,7 +7,7 @@ import { FeuilleDeRouteViewModel } from '@/presenters/feuillesDeRoutePresenter'
 
 export default function DetailActionVitrine({ action, labelId }: Props): ReactElement {
   return (
-    <div className="fr-px-10w fr-pt-10w fr-pb-14w">
+    <div className="fr-pb-4w">
       <DrawerTitle id={labelId}>
         <TitleIcon
           background={action.statut.background}
@@ -22,7 +22,7 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
         </p>
       )}
 
-      <div className="color-grey fr-mt-6w fr-mb-2w">
+      <div className="color-grey fr-mt-2w fr-mb-1w">
         Porteur de l&apos;action
       </div>
       {action.porteurs.length === 0 ? (
@@ -41,7 +41,7 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
         </ul>
       )}
 
-      <div className="color-grey fr-mt-6w fr-mb-2w">
+      <div className="color-grey fr-mt-2w fr-mb-1w ">
         Budget total de l&apos;action
       </div>
       <p className="fr-text--bold">
@@ -50,7 +50,7 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
 
       {action.description.length > 0 && (
         <>
-          <div className="color-grey fr-text--bold fr-mt-6w fr-mb-2w">
+          <div className="color-grey fr-text--bold fr-mt-2w fr-mb-1w">
             Contexte de l&apos;action
           </div>
           <ReadMoreVitrine texte={action.description} />
@@ -59,14 +59,14 @@ export default function DetailActionVitrine({ action, labelId }: Props): ReactEl
 
       {action.description.length > 0 && (
         <>
-          <div className="color-grey fr-mt-6w fr-mb-2w">
+          <div className="color-grey fr-mt-1w fr-mb-1w">
             Description de l&apos;action
           </div>
           <ReadMoreVitrine texte={action.description} />
         </>
       )}
 
-      <div className="color-grey fr-mt-6w fr-mb-2w">
+      <div className="color-grey fr-mt-2w fr-mb-1w">
         Bénéficiaires des subventions
       </div>
       {action.beneficiaires.length === 0 ? (
