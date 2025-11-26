@@ -23,6 +23,7 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
           min.personne_enrichie.est_actuellement_conseiller_numerique,
           min.personne_enrichie.est_actuellement_aidant_numerique_en_poste,
           min.personne_enrichie.est_actuellement_mediateur_en_poste,
+          min.personne_enrichie.labellisation_aidant_connect,
           main.structure.nom as employeur_raison_social,
           reference.categories_juridiques.nom as employeur_categorie_juridique,
           main.structure.siret as employeur_siret,
@@ -230,6 +231,10 @@ export default class PrismaAidantDetailsLoader implements AidantDetailsLoader {
       tags.push('Médiateur')
     }
 
+    if (personne.labellisation_aidant_connect === true) {
+      tags.push('Aidant Connect')
+    }
+
     return tags
   }
 
@@ -344,5 +349,6 @@ type PersonneEnrichieResult = Readonly<{
   est_actuellement_conseiller_numerique: boolean | null
   est_actuellement_coordo_actif: boolean | null
   est_actuellement_mediateur_en_poste: boolean | null
+  labellisation_aidant_connect: boolean | null
 }>
 
