@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react'
 
 export type StickyPositionOptions = Readonly<{
   enabled?: boolean
-  headerSelector?: string
+  headerSelectors?: ReadonlyArray<string>
 }>
 
 export default function useStickyPosition(options: StickyPositionOptions = {}): { topPosition: string } {
   const {
     enabled = true,
-    headerSelector = 'header, .fr-header, [role="banner"]',
+    headerSelectors = ['.fr-header'],
   } = options
 
   const [topPosition, setTopPosition] = useState<string>('30px')
@@ -21,10 +21,13 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
 
     function handleScrollAndResize(): void {
       const scrollPosition = window.scrollY
-      const headerElement: HTMLElement | null = document.querySelector(headerSelector)
-      const headerHeight = headerElement ? headerElement.offsetHeight : 200
 
-      const newTopPosition = Math.max(0, headerHeight - scrollPosition) + 40
+      const totalHeaderHeight = headerSelectors.reduce((total, selector) => {
+        const element: HTMLElement | null = document.querySelector(selector)
+        return total + (element ? element.offsetHeight : 0)
+      }, 0)
+
+      const newTopPosition = Math.max(0, totalHeaderHeight - scrollPosition) + 40
       setTopPosition(`${newTopPosition}px`)
     }
 
@@ -36,7 +39,7 @@ export default function useStickyPosition(options: StickyPositionOptions = {}): 
       window.removeEventListener('scroll', handleScrollAndResize)
       window.removeEventListener('resize', handleScrollAndResize)
     }
-  }, [headerSelector, enabled])
+  }, [headerSelectors, enabled])
 
   return {
     topPosition,
