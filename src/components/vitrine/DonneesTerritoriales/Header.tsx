@@ -55,6 +55,7 @@ export default function Header({ titre }: Props): ReactElement {
 
   return (
     <div
+      data-donnees-territoriales-header
       style={{
         backgroundColor: '#f5f5fe',
         borderTop: '1px solid #dddddd',

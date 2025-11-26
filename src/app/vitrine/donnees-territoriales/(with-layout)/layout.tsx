@@ -15,24 +15,22 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
           width: '100%',
         }}
       >
-        <div
+        <aside
           style={{
             backgroundColor: '#ffffff',
-            minHeight: '756px',
-            paddingBottom: '40px',
-            paddingLeft: '80px',
-            paddingRight: '0px',
-            paddingTop: '40px',
-            width: '16%',
+            flexShrink: 0,
+            width: '320px',
           }}
         >
           <Navigation />
-        </div>
+        </aside>
         <div
           style={{
+            flex: 1,
             paddingBottom: '80px',
+            paddingLeft: '40px',
+            paddingRight: '40px',
             paddingTop: '40px',
-            width: '84%',
           }}
         >
           {children}

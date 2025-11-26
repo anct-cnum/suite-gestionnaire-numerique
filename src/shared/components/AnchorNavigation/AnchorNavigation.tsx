@@ -9,7 +9,7 @@ export default function AnchorNavigation(props: AnchorNavigationProps): ReactEle
   const {
     className = '',
     enabled = true,
-    headerSelector,
+    headerSelectors,
     offset,
     scrollBehavior,
     sections,
@@ -20,7 +20,7 @@ export default function AnchorNavigation(props: AnchorNavigationProps): ReactEle
   } = props
 
   const anchorNavigation = useAnchorNavigation({
-    headerSelector,
+    headerSelector: headerSelectors?.[0],
     offset,
     scrollBehavior,
     sections,
@@ -30,7 +30,7 @@ export default function AnchorNavigation(props: AnchorNavigationProps): ReactEle
 
   const { topPosition } = useStickyPosition({
     enabled: sticky && enabled,
-    headerSelector,
+    headerSelectors,
   })
 
   const navStyle = sticky
