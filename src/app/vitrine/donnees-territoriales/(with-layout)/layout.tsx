@@ -31,6 +31,7 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
             paddingLeft: '40px',
             paddingRight: '40px',
             paddingTop: '40px',
+            width: '84%',
           }}
         >
           {children}
