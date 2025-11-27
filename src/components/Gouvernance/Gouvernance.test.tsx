@@ -540,7 +540,7 @@ describe('gouvernance', () => {
     expect(columns1Body[1].textContent).toBe('Comité stratégique')
   })
 
-  it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché sans date', () => {
+  it('quand j’affiche une gouvernance avec un comité dont la date est dans le passé, alors le comité est affiché avec sa date', () => {
     // GIVEN
     const gouvernanceViewModel = gouvernancePresenter(gouvernanceReadModelFactory({
       comites: [
@@ -563,7 +563,7 @@ describe('gouvernance', () => {
     // THEN
     const comites = screen.getByRole('table', { name: 'Comités' })
     const columns1Body = within(comites).getAllByRole('cell')
-    expect(columns1Body[1].textContent).toBe('Comité stratégique')
+    expect(columns1Body[1].textContent).toBe('Comité stratégique : 01/01/1970')
   })
 
   it('quand j’affiche une gouvernance avec un comité dont la date est le jour même ou dans le futur, alors le comité est affiché avec sa date', () => {

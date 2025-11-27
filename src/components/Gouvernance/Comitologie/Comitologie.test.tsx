@@ -164,10 +164,10 @@ describe('comitologie', () => {
       jOuvreLeFormulairePourModifierUnComite()
 
       // THEN
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       expect(drawer).toHaveAttribute('id', 'drawerModifierComiteId')
-      const formulaire = within(drawer).getByRole('form', { name: 'Détail du Comité technique' })
-      const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Détail du Comité technique' })
+      const formulaire = within(drawer).getByRole('form', { name: 'Détail du Comité technique : 01/01/1970' })
+      const titre = within(formulaire).getByRole('heading', { level: 1, name: 'Détail du Comité technique : 01/01/1970' })
       expect(titre).toBeInTheDocument()
       const sousTitre = within(formulaire).getByText('Renseignez les comités prévus et la fréquence à laquelle ils se réunissent', { selector: 'p' })
       expect(sousTitre).toBeInTheDocument()
@@ -222,7 +222,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       const fermer = jeFermeLeFormulairePourModifierUnComite()
 
       // THEN
@@ -237,7 +237,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       jeSelectionneUnType('Technique')
       jeSelectionneUneFrequence('Trimestrielle')
       jeChoisisUneDate(drawer, '2990-04-15')
@@ -270,7 +270,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       jeChoisisUneDate(drawer, '')
       jeTapeUnCommentaire(drawer, '')
       jEnregistreLeComite()
@@ -296,7 +296,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       jeChoisisUneDate(drawer, epochTimePlusOneDay.toISOString())
       jEnregistreLeComite()
 
@@ -312,7 +312,7 @@ describe('comitologie', () => {
 
       // WHEN
       jOuvreLeFormulairePourModifierUnComite()
-      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique' })
+      const drawer = screen.getByRole('dialog', { hidden: false, name: 'Détail du Comité technique : 01/01/1970' })
       const supprimer = jeSupprimeLeComite()
 
       // THEN
@@ -345,7 +345,7 @@ describe('comitologie', () => {
     })
 
     function jEnregistreLeComite(): HTMLElement {
-      const form = screen.getByRole('form', { name: 'Détail du Comité technique' })
+      const form = screen.getByRole('form', { name: 'Détail du Comité technique : 01/01/1970' })
       const enregistrer = within(form).getByRole('button', { name: 'Enregistrer' })
       fireEvent.click(enregistrer)
       return enregistrer
@@ -385,11 +385,11 @@ describe('comitologie', () => {
   }
 
   function jOuvreLeFormulairePourModifierUnComite(): void {
-    presserLeBouton('Comité technique')
+    presserLeBouton('Comité technique : 01/01/1970')
   }
 
   function jeFermeLeFormulairePourModifierUnComite(): HTMLElement {
-    return presserLeBouton('Fermer la modification du Comité technique')
+    return presserLeBouton('Fermer la modification du Comité technique : 01/01/1970')
   }
 
   function afficherUneGouvernance(options?: Partial<Parameters<typeof renderComponent>[1]>): void {
