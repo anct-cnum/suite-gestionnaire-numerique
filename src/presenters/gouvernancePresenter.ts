@@ -13,7 +13,7 @@ export function gouvernancePresenter(
   now: Date
 ): GouvernanceViewModel {
   return {
-    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite, now)) },
+    ...{ comites: gouvernanceReadModel.comites?.map((comite) => toComitesViewModel(comite)) },
     comiteARemplir,
     dateAujourdhui: formatForInputDate(now),
     departement: gouvernanceReadModel.departement,
@@ -166,8 +166,8 @@ type FeuilleDeRouteViewModel = Readonly<{
   wordingBeneficiairesSubventionFormationAccordee: string
 }>
 
-function toComitesViewModel(comite: ComiteReadModel, now: Date): ComiteResumeViewModel {
-  const date = comite.date !== undefined && comite.date >= now
+function toComitesViewModel(comite: ComiteReadModel): ComiteResumeViewModel {
+  const date = comite.date
     ? ` : ${formaterEnDateFrancaise(new Date(comite.date))}`
     : ''
   const frequence: Record<string, string> = {

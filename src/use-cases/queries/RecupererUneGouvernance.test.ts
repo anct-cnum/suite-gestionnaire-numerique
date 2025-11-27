@@ -4,7 +4,6 @@ import { gouvernanceReadModelFactory } from '../testHelper'
 import { utilisateurFactory } from '@/domain/testHelper'
 import { Utilisateur } from '@/domain/Utilisateur'
 import { Membre } from '@/gateways/shared/MembresGouvernance'
-import { epochTime } from '@/shared/testHelper'
 
 describe('recupérer une gouvernance', () => {
   beforeEach(() => {
@@ -16,8 +15,7 @@ describe('recupérer une gouvernance', () => {
     // GIVEN
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub(),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -40,8 +38,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub(),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -82,8 +79,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub(),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -146,8 +142,7 @@ describe('recupérer une gouvernance', () => {
     }
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub(),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub()
     )
 
     // WHEN
@@ -217,8 +212,7 @@ describe('recupérer une gouvernance', () => {
 
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurNonGestionnaireDepartementRepositoryStub(),
-      new Date(epochTime)
+      new UtilisateurNonGestionnaireDepartementRepositoryStub()
     )
 
     // WHEN
@@ -269,8 +263,7 @@ describe('recupérer une gouvernance', () => {
 
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub('11'),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub('11')
     )
 
     // WHEN
@@ -321,8 +314,7 @@ describe('recupérer une gouvernance', () => {
 
     const queryHandler = new RecupererUneGouvernance(
       new GouvernanceLoaderSpy(),
-      new UtilisateurRepositoryStub('69'),
-      new Date(epochTime)
+      new UtilisateurRepositoryStub('69')
     )
 
     // WHEN

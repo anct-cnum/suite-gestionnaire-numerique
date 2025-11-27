@@ -25,18 +25,17 @@ export default async function FeuilleDeRouteController({ params }: Props): Promi
     const feuilleDeRouteReadModel = await new PrismaUneFeuilleDeRouteLoader(
       etablirSyntheseFinanciereGouvernance
     ).get(uidFeuilleDeRoute)
-  
+
     if (feuilleDeRouteReadModel.uidGouvernance !== codeDepartement) {
       notFound()
     }
-  
+
     const utilisateurLoader = new PrismaUtilisateurLoader()
     const utilisateur = await utilisateurLoader.findByUid(session.user.sub)
 
     const gouvernanceReadModel = await new RecupererUneGouvernance(
       new PrismaGouvernanceLoader(etablirSyntheseFinanciereGouvernance),
-      new PrismaUtilisateurRepository(prisma.utilisateurRecord),
-      new Date()
+      new PrismaUtilisateurRepository(prisma.utilisateurRecord)
     ).handle({
       codeDepartement,
       uidUtilisateurCourant: utilisateur.uid,
