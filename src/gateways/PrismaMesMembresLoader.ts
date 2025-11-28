@@ -55,6 +55,7 @@ function toMesMembresReadModel(membre: Membre): MembreReadModel {
     roles: membre.roles,
     siret: 'Siret bouchonné',
     statut: membre.statut as MembreReadModel['statut'],
+    structureId: membre.structureId,
     suppressionDuMembreAutorise: false,
     typologie: membre.type,
     uid: membre.id,

@@ -21,6 +21,7 @@ export function createSessionUtilisateurPresenter(
       rolesGerables: role.rolesGerables,
       type: role.type,
     },
+    structureId: utilisateurReadModel.structureId,
     telephone: utilisateurReadModel.telephone,
     territoire,
     uid: utilisateurReadModel.uid,
@@ -42,6 +43,7 @@ export type SessionUtilisateurViewModel = Readonly<{
     rolesGerables: ReadonlyArray<string>
     type: RoleUtilisateur
   }>
+  structureId: null | number
   telephone: string
   territoire: TerritoireReadModel
   uid: string

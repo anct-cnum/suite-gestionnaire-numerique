@@ -35,6 +35,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     definirUnCoPorteurAction ,
     pathname,
     retirerUnCoPorteurAction,
+    sessionUtilisateurViewModel,
     supprimerUnMembreOuCandidatAction,
   } = useContext(clientContext)
 
@@ -50,8 +51,6 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     typologieSelectionnee: touteTypologie,
   })
   const { gouvernanceViewModel } = useContext(gouvernanceContext)
-  // Ce code n'est pas testé
-  // Cela met à jour la liste des membres après avoir accepté un candidat ou suggéré
   useEffect(() => {
     setMembresView({
       membres: membresByStatut[statutInitial],
@@ -61,12 +60,12 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     })
   }, [membresViewModel.membres, statutInitial])
 
-  function nestPasUnePrefecture(membre: MembreViewModel): boolean {
-    return membre.typologie.simple.value !== 'Préfecture départementale'
+  function estUnePrefecture(membre: MembreViewModel): boolean {
+    return membre.typologie.simple.value === 'Préfecture départementale'
   }
 
   function getMenuMembreCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
-    const menuItems = [
+    return [
       <MenuItem
         iconClass="fr-icon-user-line"
         key={`ajout-${membre.uid}`}
@@ -75,26 +74,19 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await retirerUnCoPorteur(membre)
         }}
       />,
+      <MenuItem
+        iconClass="fr-icon-delete-line"
+        key={`delete-${membre.uid}`}
+        label="Retirer ce membre"
+        onClick={async () => {
+          await supprimerUnMembreOuCandidat(membre)
+        }}
+      />,
     ]
-
-    if (nestPasUnePrefecture(membre)) {
-      menuItems.push(
-        <MenuItem
-          iconClass="fr-icon-delete-line"
-          key={`delete-${membre.uid}`}
-          label="Retirer ce membre"
-          onClick={async () => {
-            await supprimerUnMembreOuCandidat(membre)
-          }}
-        />
-      )
-    }
-
-    return menuItems
   }
 
   function getMenuMembreNonCoPorteur(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>> {
-    const menuItems = [
+    return [
       <MenuItem
         iconClass="fr-icon-user-star-line"
         key={`ajout-${membre.uid}`}
@@ -103,22 +95,15 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
           await definirUnCoPorteur(membre)
         }}
       />,
+      <MenuItem
+        iconClass="fr-icon-delete-line"
+        key={`delete-${membre.uid}`}
+        label="Retirer ce membre"
+        onClick={async () => {
+          await supprimerUnMembreOuCandidat(membre)
+        }}
+      />,
     ]
-
-    if (nestPasUnePrefecture(membre)) {
-      menuItems.push(
-        <MenuItem
-          iconClass="fr-icon-delete-line"
-          key={`delete-${membre.uid}`}
-          label="Retirer ce membre"
-          onClick={async () => {
-            await supprimerUnMembreOuCandidat(membre)
-          }}
-        />
-      )
-    }
-
-    return menuItems
   }
 
   function getMenuCandidat(membre: MembreViewModel):  Array<ReactElement<MenuItemProps, typeof MenuItem>>{
@@ -142,8 +127,15 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
     ]
   }
 
+  function estDansLaMemeStructure(membre: MembreViewModel): boolean{
+    return membre.structureId !== undefined && membre.structureId === sessionUtilisateurViewModel.structureId
+  }
+
   function getMenu(membre: MembreViewModel): null | ReactElement {
-    if(!gouvernanceViewModel.peutGererGouvernance){
+    if(!gouvernanceViewModel.peutGererGouvernance ||
+      estDansLaMemeStructure(membre) ||
+      estUnePrefecture(membre)
+    ){
       return null
     }
     let menuItem
