@@ -35,7 +35,10 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
   // Récupérer les statistiques synchrones des médiateurs
   const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()
   const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(territoire)
-  const statistiquesMediateursViewModel = handleReadModelOrError(statistiquesMediateursReadModel, statistiquesMediateursPresenter)
+  const statistiquesMediateursViewModel = handleReadModelOrError(
+    statistiquesMediateursReadModel,
+    statistiquesMediateursPresenter
+  )
 
   // Créer la promesse de récupération des statistiques async (Coop)
   const statistiquesPromise = recupererStatistiques(codeDepartement)
@@ -49,9 +52,11 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
         <h1 className="fr-h3 color-blue-france fr-mb-1w">
           Médiateurs numériques
         </h1>
-        <p className="fr-text--lg fr-mb-0">
-          L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
-        </p>
+        <div>
+          <p className="fr-m-0 font-weight-500">
+            L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
+          </p>
+        </div>
       </div>
       {renderCartesStatistiques(statistiquesMediateursViewModel)}
       <AsyncLoaderErrorBoundary

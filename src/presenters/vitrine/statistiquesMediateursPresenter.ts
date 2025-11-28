@@ -1,7 +1,7 @@
 import { StatistiquesMediateursReadModel } from '@/gateways/PrismaStatistiquesMediateursLoader'
 
 export type StatistiquesMediateursViewModel = Readonly<{
-  mediateurs: {
+  aidantsConnect: {
     nombre: string
     sousTexte: string
   }
@@ -9,7 +9,7 @@ export type StatistiquesMediateursViewModel = Readonly<{
     nombre: string
     sousTexte: string
   }
-  aidantsConnect: {
+  mediateurs: {
     nombre: string
     sousTexte: string
   }
@@ -21,11 +21,11 @@ export function statistiquesMediateursPresenter(
   const { nombreAidantsConnect, nombreConseillersNumeriques, nombreCoordinateurs, nombreMediateurs } = readModel
 
   const pourcentageConseillers = nombreMediateurs > 0
-    ? Math.round((nombreConseillersNumeriques / nombreMediateurs) * 100)
+    ? Math.round(nombreConseillersNumeriques / nombreMediateurs * 100)
     : 0
 
   const pourcentageAidants = nombreMediateurs > 0
-    ? Math.round((nombreAidantsConnect / nombreMediateurs) * 100)
+    ? Math.round(nombreAidantsConnect / nombreMediateurs * 100)
     : 0
 
   return {

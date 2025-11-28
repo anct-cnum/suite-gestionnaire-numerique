@@ -54,9 +54,7 @@ export default function EtatDesLieux({
             </div>
             <div>
               <p className="fr-m-0 font-weight-500">
-                Source de données : Conseiller numérique, La Coop,
-                Cartographie nationale des lieux d&apos;inclusion numérique, Aidants Connect,
-                France Services
+                Données cumulées de tous les dispositifs d&apos;inclusion numériques
               </p>
             </div>
           </div>

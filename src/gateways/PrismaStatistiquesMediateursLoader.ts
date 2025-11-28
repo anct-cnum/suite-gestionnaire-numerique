@@ -12,10 +12,6 @@ export interface StatistiquesMediateursReadModel {
   nombreMediateurs: number
 }
 
-export interface StatistiquesMediateursLoader {
-  get(territoire: string): Promise<ErrorReadModel | StatistiquesMediateursReadModel>
-}
-
 export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateursLoader {
   async get(territoire: string): Promise<ErrorReadModel | StatistiquesMediateursReadModel> {
     try {
@@ -58,19 +54,6 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
     return [territoire]
   }
 
-  private async getStatistiquesNationales(): Promise<StatistiquesQueryResult> {
-    const result = await prisma.$queryRaw<Array<StatistiquesQueryResult>>`
-      SELECT
-        COUNT(*) FILTER (WHERE pe.est_actuellement_mediateur_en_poste = true) AS mediateurs,
-        COUNT(*) FILTER (WHERE pe.is_coordinateur = true AND pe.est_actuellement_mediateur_en_poste = true) AS coordinateurs,
-        COUNT(*) FILTER (WHERE pe.est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
-        COUNT(*) FILTER (WHERE pe.labellisation_aidant_connect = true AND pe.est_actuellement_mediateur_en_poste = true) AS aidants_connect
-      FROM min.personne_enrichie pe
-      WHERE pe.est_actuellement_mediateur_en_poste = true
-    `
-    return result[0]
-  }
-
   private async getStatistiquesDepartement(departementsFilter: Array<string>): Promise<StatistiquesQueryResult> {
     const departementCondition = departementsFilter.length > 0
       ? Prisma.sql`AND a.departement = ANY(${departementsFilter})`
@@ -90,6 +73,23 @@ export class PrismaStatistiquesMediateursLoader implements StatistiquesMediateur
     `
     return result[0]
   }
+
+  private async getStatistiquesNationales(): Promise<StatistiquesQueryResult> {
+    const result = await prisma.$queryRaw<Array<StatistiquesQueryResult>>`
+      SELECT
+        COUNT(*) FILTER (WHERE pe.est_actuellement_mediateur_en_poste = true) AS mediateurs,
+        COUNT(*) FILTER (WHERE pe.is_coordinateur = true AND pe.est_actuellement_mediateur_en_poste = true) AS coordinateurs,
+        COUNT(*) FILTER (WHERE pe.est_actuellement_conseiller_numerique = true) AS conseillers_numeriques,
+        COUNT(*) FILTER (WHERE pe.labellisation_aidant_connect = true AND pe.est_actuellement_mediateur_en_poste = true) AS aidants_connect
+      FROM min.personne_enrichie pe
+      WHERE pe.est_actuellement_mediateur_en_poste = true
+    `
+    return result[0]
+  }
+}
+
+interface StatistiquesMediateursLoader {
+  get(territoire: string): Promise<ErrorReadModel | StatistiquesMediateursReadModel>
 }
 
 interface StatistiquesQueryResult {

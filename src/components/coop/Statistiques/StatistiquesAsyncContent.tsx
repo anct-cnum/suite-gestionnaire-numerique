@@ -35,6 +35,9 @@ export default function StatistiquesAsyncContent({
 
   return (
     <div className="fr-py-4w">
+      <h2 className="fr-h3 color-blue-france fr-mb-4w">
+        Données et statistiques
+      </h2>
       <section className="fr-mb-6w">
         <StatistiquesGenerales
           accompagnementsParJour={accompagnementsParJour}
