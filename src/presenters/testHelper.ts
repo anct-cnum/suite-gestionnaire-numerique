@@ -61,6 +61,7 @@ export function sessionUtilisateurViewModelFactory(
       rolesGerables: [] as ReadonlyArray<string>,
       type: 'gestionnaire_structure',
     },
+    structureId: null,
     telephone: '0102030405',
     territoire: {
       codes: ['93'],

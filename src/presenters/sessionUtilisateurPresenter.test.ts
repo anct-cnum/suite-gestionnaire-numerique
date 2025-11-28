@@ -45,6 +45,7 @@ describe('session utilisateur presenter', () => {
         rolesGerables: [],
         type: 'gestionnaire_structure',
       },
+      structureId: null,
       telephone: '0102030405',
       territoire: {
         codes: ['75'],
@@ -95,6 +96,7 @@ describe('session utilisateur presenter', () => {
         rolesGerables: [],
         type: 'gestionnaire_structure',
       },
+      structureId: null,
       telephone: '0102030405',
       territoire: {
         codes: [],

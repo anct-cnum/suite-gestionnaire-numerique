@@ -54,6 +54,7 @@ export type MembreReadModel = Readonly<{
   roles: ReadonlyArray<Role>
   siret: string
   statut: Statut
+  structureId: number | undefined
   suppressionDuMembreAutorise: boolean
   typologie: string
   uid: string
