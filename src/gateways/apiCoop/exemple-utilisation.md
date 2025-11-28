@@ -381,3 +381,45 @@ npx tsx scripts/test-cache-api-coop.ts
 # Ou lancer les tests unitaires
 yarn test src/gateways/apiCoop/
 ```
+
+## Mapping des données pour la page Vitrine Médiateurs Numériques
+
+### Vue d'ensemble
+
+La page `/vitrine/donnees-territoriales/mediateurs-numeriques` utilise les données de l'API Coop via le transformer `statistiquesCoopToMediateursData`.
+
+**⚠️ Le mapping n'est pas complet** : certaines données attendues par l'UI ne sont pas fournies par l'API.
+
+### Tableau de correspondance
+
+| API (`StatistiquesCoopReadModel`) | UI (`StatistiquesMediateursData`) | Statut                                |
+| --------------------------------- | --------------------------------- | ------------------------------------- |
+| `totaux`                          | `totalCounts`                     | ✅ Complet                            |
+| `totaux.accompagnements`          | `totalCounts.accompagnements`     | ✅ Complet                            |
+| `totaux.activites`                | `totalCounts.activites`           | ✅ Complet                            |
+| `totaux.beneficiaires`            | `totalCounts.beneficiaires`       | ✅ Complet                            |
+| `accompagnementsParJour`          | `accompagnementsParJour`          | ✅ Complet                            |
+| `accompagnementsParMois`          | `accompagnementsParMois`          | ✅ Complet                            |
+| `activites.typeActivites`         | `activites.typeActivites`         | ✅ Complet                            |
+| `activites.durees`                | `activites.durees`                | ✅ Complet                            |
+| `activites.typeLieu`              | `activites.typeLieu`              | ✅ Complet                            |
+| `activites.thematiques`           | `activites.thematiques`           | ✅ Complet                            |
+| `activites.materiels`             | `activites.materiels`             | ✅ Complet                            |
+| -                                 | `activites.thematiquesDemarches`  | ❌ Non fourni par l'API (placeholder) |
+| `beneficiaires.genres`            | `beneficiaires.genres`            | ✅ Complet                            |
+| `beneficiaires.trancheAges`       | `beneficiaires.trancheAges`       | ✅ Complet                            |
+| `beneficiaires.statutsSocial`     | `beneficiaires.statutsSocial`     | ✅ Complet                            |
+
+### Données manquantes
+
+Le champ suivant est attendu par l'UI mais n'est pas fourni par l'API :
+
+1. **`activites.thematiquesDemarches`** : Thématiques des démarches administratives (Papiers, Famille, Social, etc.)
+
+Ce champ est initialisé avec une valeur placeholder (`count: -1`, `label: 'Non disponible'`) dans le transformer.
+
+### Fichiers concernés
+
+- Transformer : `src/components/coop/Statistiques/statistiquesCoopToMediateursData.ts`
+- Page : `src/app/vitrine/donnees-territoriales/(with-layout)/mediateurs-numeriques/[niveau]/[[...code]]/page.tsx`
+- Composant async : `src/components/coop/Statistiques/StatistiquesAsyncContent.tsx`

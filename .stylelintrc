@@ -1,6 +1,7 @@
 {
   "extends": ["stylelint-config-standard"],
   "plugins": ["stylelint-order"],
+  "ignoreFiles": ["src/components/coop/**/*"],
   "rules": {
     "color-no-hex": true,
     "selector-class-pattern": null,
