@@ -10,6 +10,7 @@ export default function MentionsLegales(): ReactElement {
       <article
         aria-labelledby="mentions-title"
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
+        style={{ maxWidth: '960px' }}
       >
         <PageTitle>
           Mentions légales

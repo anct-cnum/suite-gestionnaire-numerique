@@ -10,6 +10,7 @@ export default function Accessibilite(): ReactElement {
       <article
         aria-labelledby="declaration-accessibilite-title"
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
+        style={{ maxWidth: '960px' }}
       >
         <PageTitle>
           Déclaration d&apos;accessibilité

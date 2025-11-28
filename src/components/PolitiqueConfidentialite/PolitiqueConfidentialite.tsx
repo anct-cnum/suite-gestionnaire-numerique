@@ -10,6 +10,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
       <article
         aria-labelledby="politique-confidentialite-title"
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
+        style={{ maxWidth: '960px' }}
       >
         <PageTitle>
           Politique de confidentialité – Mon inclusion numérique,
@@ -19,6 +20,7 @@ export default function PolitiqueConfidentialite(): ReactElement {
         <section
           aria-labelledby="qui-sommes-nous-title"
           className="fr-mb-4w"
+
         >
           <h2
             className="fr-h6"

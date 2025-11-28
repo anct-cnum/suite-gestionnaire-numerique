@@ -9,6 +9,7 @@ export default function ConditionsGeneralesUtilisation(): ReactElement {
       <article
         aria-labelledby="cgu-title"
         className={`fr-col-12 fr-col-lg-10 ${styles.article}`}
+        style={{ maxWidth: '960px' }}
       >
         <PageTitle>
           Conditions générales d&apos;utilisation
