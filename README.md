@@ -216,6 +216,7 @@ Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.be
 - Permet d'avoir un feedback rapide d'erreur
 - Permet d'avoir la notion d'interface pour étendre des classes
 - Configurer tout en strict pour avoir une haute qualité de développement
+- **Note :** Le répertoire `src/components/coop` est exclu des vérifications TypeScript, ESLint et Stylelint
 
 ### ESLint
 
@@ -224,6 +225,7 @@ Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.be
 - Permet d'avoir un feedback rapide d'erreur
 - Configurer en strict pour avoir une haute qualité de développement
 - Ajout de quelques plugins pour renforcer
+- **Note :** Le répertoire `src/components/coop` est exclu des vérifications TypeScript, ESLint et Stylelint
 
 ### Stylelint
 
@@ -231,6 +233,7 @@ Les statistiques sont visible sur [https://stats.beta.gouv.fr/](https://stats.be
 - Permet d'avoir un feedback rapide d'erreur
 - Configurer en strict pour avoir une haute qualité de développement
 - Ajout de quelques plugins pour renforcer
+- **Note :** Le répertoire `src/components/coop` est exclu des vérifications TypeScript, ESLint et Stylelint
 
 ### Prettier
 

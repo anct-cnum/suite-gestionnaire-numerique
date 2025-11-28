@@ -344,6 +344,9 @@ export default [
     },
   },
   {
+    ignores: ['src/components/coop/**/*'],
+  },
+  {
     files: ['**/*'],
     ignores: ['src/app/**/*'],
     rules: {

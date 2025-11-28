@@ -1,0 +1,120 @@
+/* Styles pour les statistiques de la Coop */
+
+/* Points de couleur dans les légendes */
+.ri-circle-fill {
+  font-size: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+/* Barres de progression */
+.fr-progress {
+  display: block;
+  width: 100%;
+  height: 8px;
+  background-color: var(--background-contrast-grey);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.fr-progress--sm {
+  height: 4px;
+}
+
+.fr-progress--lg {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.fr-progress__bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.fr-progress-stacked {
+  display: flex;
+  width: 100%;
+  height: 12px;
+  background-color: var(--background-contrast-grey);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.fr-progress-stacked .fr-progress {
+  height: 100%;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.fr-progress-stacked .fr-progress__bar {
+  border-radius: 0;
+}
+
+/* Conteneur des thématiques avec barres de progression */
+.fr-width-full {
+  width: 100%;
+}
+
+/* Utilitaires de texte */
+.fr-whitespace-nowrap {
+  white-space: nowrap;
+}
+
+/* Border radius personnalisés */
+.fr-border-radius--8 {
+  border-radius: 8px;
+}
+
+.fr-border-radius--16 {
+  border-radius: 16px;
+}
+
+/* Couleurs de fond personnalisées */
+.fr-background-alt--brown-caramel {
+  background-color: var(--background-alt-brown-caramel, #f3ebe5);
+}
+
+/* Flex gap personnalisés */
+.fr-flex-gap-2v {
+  gap: 0.5rem;
+}
+
+.fr-flex-gap-4v {
+  gap: 1rem;
+}
+
+.fr-flex-gap-6v {
+  gap: 1.5rem;
+}
+
+/* Séparateurs */
+.fr-separator-1px {
+  border: none;
+  border-top: 1px solid var(--border-default-grey);
+  margin: 0;
+}
+
+.fr-separator-8v {
+  border: none;
+  border-top: 1px solid var(--border-default-grey);
+  margin: 2rem 0;
+}
+
+/* Display inline-block */
+.fr-display-inline-block {
+  display: inline-block;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

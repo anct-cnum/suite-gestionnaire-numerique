@@ -9,6 +9,7 @@
     "build:dev": "next build",
     "check": "yarn dedupe --check && yarn deadcode && yarn typecheck && yarn prisma format --check && yarn format:check && yarn lint:css && yarn lint:ts && yarn test:coverage",
     "db:start": "docker compose down && docker compose up -d && bash -c \"while ! docker compose logs | grep -q 'listening on IPv4 address'; do echo 'Waiting for database'; sleep 0.5; done\";",
+    "check:shai-hulud": "bash scripts/check-hulud.sh yarn.lock",
     "deadcode": "knip",
     "depcheck": "depcheck",
     "dev": " next dev --turbo",
@@ -74,7 +75,7 @@
     "react-dom": "^19.1.0",
     "react-select": "^5.10.1",
     "react-toastify": "^11.0.5",
-    "recharts": "^3.5.0",
+    "recharts": "^2.15.3",
     "sanitize-html": "^2.16.0",
     "zod": "^3.24.3"
   },
