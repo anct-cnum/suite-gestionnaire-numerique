@@ -3,8 +3,15 @@ import { ReactElement, Suspense } from 'react'
 
 import AsyncLoaderErrorBoundary from '@/components/AidantsMediateurs/GenericErrorBoundary'
 import { StatistiquesAsyncContent, statistiquesCoopToMediateursData, StatistiquesMediateursData } from '@/components/coop/Statistiques'
+import { handleReadModelOrError, isErrorReadModel } from '@/components/shared/ErrorHandler'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
+import CarteStatistiqueAidantsConnect from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueAidantsConnect'
+import CarteStatistiqueConseillersNumeriques from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueConseillersNumeriques'
+import CarteStatistiqueMediateurs from '@/components/vitrine/MediateursNumeriques/CarteStatistiqueMediateurs'
+import SectionSources from '@/components/vitrine/SyntheseEtIndicateurs/SectionSources'
 import { createApiCoopStatistiquesLoader } from '@/gateways/factories/apiCoopLoaderFactory'
+import { PrismaStatistiquesMediateursLoader } from '@/gateways/PrismaStatistiquesMediateursLoader'
+import { statistiquesMediateursPresenter, StatistiquesMediateursViewModel } from '@/presenters/vitrine/statistiquesMediateursPresenter'
 
 export default async function MediateursNumeriques({ params }: Props): Promise<ReactElement> {
   const { code, niveau } = await params
@@ -22,35 +29,96 @@ export default async function MediateursNumeriques({ params }: Props): Promise<R
   // Extraction du code département si présent
   const codeDepartement = niveau === 'departement' && code !== undefined ? code[0] : undefined
 
-  // Créer la promesse de récupération des statistiques
+  // Déterminer le territoire pour les loaders
+  const territoire = niveau === 'national' ? 'France' : codeDepartement ?? ''
+
+  // Récupérer les statistiques synchrones des médiateurs
+  const statistiquesMediateursLoader = new PrismaStatistiquesMediateursLoader()
+  const statistiquesMediateursReadModel = await statistiquesMediateursLoader.get(territoire)
+  const statistiquesMediateursViewModel = handleReadModelOrError(statistiquesMediateursReadModel, statistiquesMediateursPresenter)
+
+  // Créer la promesse de récupération des statistiques async (Coop)
   const statistiquesPromise = recupererStatistiques(codeDepartement)
 
   return (
-    <AsyncLoaderErrorBoundary
-      fallback={
-        <div className="fr-py-4w">
-          <div className="fr-alert fr-alert--error">
-            <p>
-              Erreur de récupération de la donnée depuis la Coop
-            </p>
-          </div>
-        </div>
-      }
+    <div
+      className="fr-pr-10w"
+      style={{ display: 'flex', flexDirection: 'column' }}
     >
-      <Suspense
+      <div className="fr-mb-4w">
+        <h1 className="fr-h3 color-blue-france fr-mb-1w">
+          Médiateurs numériques
+        </h1>
+        <p className="fr-text--lg fr-mb-0">
+          L&apos;ensemble des personnes dont le rôle est de faire de la médiation numérique
+        </p>
+      </div>
+      {renderCartesStatistiques(statistiquesMediateursViewModel)}
+      <AsyncLoaderErrorBoundary
         fallback={
           <div className="fr-py-4w">
-            <div className="fr-alert fr-alert--info">
+            <div className="fr-alert fr-alert--error">
               <p>
-                Récupération des données depuis la Coop
+                Erreur de récupération de la donnée depuis la Coop
               </p>
             </div>
           </div>
         }
       >
-        <StatistiquesAsyncContent statistiquesPromise={statistiquesPromise} />
-      </Suspense>
-    </AsyncLoaderErrorBoundary>
+        <Suspense
+          fallback={
+            <div className="fr-py-4w">
+              <div className="fr-alert fr-alert--info">
+                <p>
+                  Récupération des données depuis la Coop
+                </p>
+              </div>
+            </div>
+          }
+        >
+          <StatistiquesAsyncContent statistiquesPromise={statistiquesPromise} />
+        </Suspense>
+      </AsyncLoaderErrorBoundary>
+      <div className="fr-mb-4w ">
+        <SectionSources />
+      </div>
+    </div>
+  )
+}
+
+function renderCartesStatistiques(
+  viewModel: ErrorViewModel | StatistiquesMediateursViewModel
+): ReactElement {
+  if (isErrorReadModel(viewModel)) {
+    return (
+      <div className="fr-mb-4w">
+        <div className="fr-alert fr-alert--error">
+          <p>
+            {viewModel.message}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div
+      className="fr-mb-4w"
+      style={{ display: 'flex', flex: 1, gap: '16px' }}
+    >
+      <CarteStatistiqueMediateurs
+        nombre={viewModel.mediateurs.nombre}
+        sousTexte={viewModel.mediateurs.sousTexte}
+      />
+      <CarteStatistiqueConseillersNumeriques
+        nombre={viewModel.conseillersNumeriques.nombre}
+        sousTexte={viewModel.conseillersNumeriques.sousTexte}
+      />
+      <CarteStatistiqueAidantsConnect
+        nombre={viewModel.aidantsConnect.nombre}
+        sousTexte={viewModel.aidantsConnect.sousTexte}
+      />
+    </div>
   )
 }
 
