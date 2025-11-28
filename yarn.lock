@@ -2523,7 +2523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gouvfr/dsfr@npm:^1.14.2":
+"@gouvfr/dsfr@npm:^1.13.1":
   version: 1.14.2
   resolution: "@gouvfr/dsfr@npm:1.14.2"
   checksum: 10c0/f56a708e167f82172d6f916df144f48b489ae05f9518175b9e4ee1f335190e5858c6215333521a9331eee125ddbfd8c3257381b64fdf77b25a1aceed2eab5960
@@ -11992,7 +11992,7 @@ __metadata:
     "@eslint/js": "npm:^9.22.0"
     "@gouvfr-anct/lieux-de-mediation-numerique": "npm:^2.3.0"
     "@gouvfr-anct/timetable-to-osm-opening-hours": "npm:^2.1.0"
-    "@gouvfr/dsfr": "npm:^1.14.2"
+    "@gouvfr/dsfr": "npm:^1.13.1"
     "@next/bundle-analyzer": "npm:^15.3.1"
     "@prisma/client": "npm:^6.6.0"
     "@sentry/nextjs": "npm:^9"
