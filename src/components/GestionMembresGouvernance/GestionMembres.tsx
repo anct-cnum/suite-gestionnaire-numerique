@@ -136,7 +136,7 @@ export default function GestionMembres({ membresViewModel }: Props): ReactElemen
       estDansLaMemeStructure(membre) ||
       estUnePrefecture(membre)
     ){
-      return null
+      return (<td />)
     }
     let menuItem
     if(membresView.statutSelectionne === 'candidat')
