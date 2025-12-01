@@ -81,7 +81,7 @@ export default function VitrineHomePage(): ReactElement {
                 </strong>
                 {' '}
                 persistent dans notre société.
-              </p> 
+              </p>
               <p className="fr-text--md fr-mb-0">
                 On estime que près de
                 {' '}
@@ -270,7 +270,7 @@ export default function VitrineHomePage(): ReactElement {
             <div className="fr-col-12 fr-col-md-6">
               <img
                 alt="Lieux d'inclusion"
-                src="/vitrine/accueil/illustration-lieux-inclusions.png"
+                src="/vitrine/accueil/carte-france-logos.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
@@ -414,7 +414,7 @@ export default function VitrineHomePage(): ReactElement {
             >
               <img
                 alt="Outils"
-                src="/vitrine/accueil/illustration-outils.png"
+                src="/vitrine/accueil/illustration-visuel-bleu.png"
                 style={{ height: 'auto', width: '100%' }}
               />
             </div>
