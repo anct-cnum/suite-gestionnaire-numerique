@@ -1,0 +1,10 @@
+.carteContainer {
+  min-height: 25rem;
+  padding: 0;
+}
+
+@media (width > 62rem) {
+  .carteContainer {
+    min-height: auto;
+  }
+}

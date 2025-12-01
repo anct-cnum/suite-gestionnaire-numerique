@@ -49,13 +49,14 @@ export default function DonneesTerritoriales(): ReactElement {
             {/* Colonne gauche - Titre + Dropdown + Bouton */}
             <div className="fr-col-12 fr-col-lg-6">
               <div
+                className="fr-py-6w fr-py-lg-0"
                 style={{
                   alignItems: 'center',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
                   minHeight: '639px',
-                  padding: '0 2rem',
+                  padding: '0 1rem',
                 }}
               >
                 <div style={{ maxWidth: '512px', width: '100%' }}>
@@ -109,8 +110,8 @@ export default function DonneesTerritoriales(): ReactElement {
               </div>
             </div>
 
-            {/* Colonne droite - Carte */}
-            <div className="fr-col-12 fr-col-lg-6">
+            {/* Colonne droite - Carte (masquée en mobile) */}
+            <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg">
               <div
                 style={{
                   backgroundColor: '#f5f5fe',

@@ -1,0 +1,31 @@
+.header {
+  background-color: var(--background-alt-blue-france);
+  border-top: 0.0625rem solid var(--border-default-grey);
+  padding: 1rem 7rem 2.5rem;
+}
+
+.title {
+  color: var(--text-title-blue-france);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 3rem;
+}
+
+.titleRow {
+  margin-top: 2.5rem;
+}
+
+@media (width <= 62rem) {
+  .header {
+    padding: 1rem 1rem 1.5rem;
+  }
+
+  .title {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+
+  .titleRow {
+    margin-top: 1.5rem;
+  }
+}

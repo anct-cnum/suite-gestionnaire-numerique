@@ -1,5 +1,6 @@
 import { ReactElement, ReactNode } from 'react'
 
+import styles from './layout.module.css'
 import { Header, Navigation } from '@/components/vitrine/DonneesTerritoriales'
 
 export default function DonneesTerritoriales({ children }: Props): ReactElement {
@@ -7,33 +8,11 @@ export default function DonneesTerritoriales({ children }: Props): ReactElement 
     <>
       <Header titre="Données de l'inclusion numérique" />
 
-      <div
-        style={{
-          backgroundColor: '#ffffff',
-          display: 'flex',
-          gap: '0px',
-          width: '100%',
-        }}
-      >
-        <aside
-          style={{
-            backgroundColor: '#ffffff',
-            flexShrink: 0,
-            width: '320px',
-          }}
-        >
+      <div className={styles.container}>
+        <aside className={styles.sidebar}>
           <Navigation />
         </aside>
-        <div
-          style={{
-            flex: 1,
-            paddingBottom: '80px',
-            paddingLeft: '40px',
-            paddingRight: '40px',
-            paddingTop: '40px',
-            width: '84%',
-          }}
-        >
+        <div className={styles.content}>
           {children}
         </div>
       </div>

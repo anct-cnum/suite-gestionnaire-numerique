@@ -66,7 +66,7 @@ describe('tableau de bord', () => {
     const etatDesLieuxSection = screen.getByRole('region', { name: 'État des lieux de l\'inclusion numérique' })
     const etatDesLieuxTitre = within(etatDesLieuxSection).getByRole('heading', { level: 2, name: 'État des lieux de l\'inclusion numérique' })
     expect(etatDesLieuxTitre).toBeInTheDocument()
-    const etatDesLieuxSousTitre = within(etatDesLieuxSection).getByText('Source de données : Conseiller numérique, La Coop, Cartographie nationale des lieux d\'inclusion numérique, Aidants Connect, France Services', { selector: 'p' })
+    const etatDesLieuxSousTitre = within(etatDesLieuxSection).getByText('Données cumulées de tous les dispositifs d\'inclusion numériques', { selector: 'p' })
     expect(etatDesLieuxSousTitre).toBeInTheDocument()
     const etatDesLieuxLien = within(etatDesLieuxSection).getByRole('link', { name: 'Lieux d\'inclusion numérique' })
     expect(etatDesLieuxLien).toHaveAttribute('href', '/lieux-inclusion')

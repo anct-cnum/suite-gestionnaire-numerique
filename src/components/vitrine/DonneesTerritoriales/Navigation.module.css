@@ -4,6 +4,15 @@
   position: fixed;
 }
 
+@media (width <= 62rem) {
+  .navigationFixed {
+    height: auto !important;
+    padding: 0 !important;
+    position: static;
+    width: 100% !important;
+  }
+}
+
 .menuItem {
   border-left: 0.125rem solid transparent;
   box-sizing: border-box;

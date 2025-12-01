@@ -3,6 +3,7 @@
 import { useParams, usePathname, useRouter } from 'next/navigation'
 import { ReactElement } from 'react'
 
+import styles from './Header.module.css'
 import departements from '../../../../ressources/departements.json'
 import regions from '../../../../ressources/regions.json'
 import FilAriane from '../FilAriane/FilAriane'
@@ -55,32 +56,14 @@ export default function Header({ titre }: Props): ReactElement {
 
   return (
     <div
+      className={styles.header}
       data-donnees-territoriales-header
-      style={{
-        backgroundColor: '#f5f5fe',
-        borderTop: '1px solid #dddddd',
-        paddingBottom: '40px',
-        paddingLeft: '112px',
-        paddingRight: '120px',
-        paddingTop: '16px',
-      }}
     >
       <FilAriane items={breadcrumbItems} />
 
-      <div
-        className="fr-grid-row fr-grid-row--gutters"
-        style={{ marginTop: '40px' }}
-      >
+      <div className={`fr-grid-row fr-grid-row--gutters ${styles.titleRow}`}>
         <div className="fr-col-12 fr-col-md-8">
-          <h1
-            className="fr-mb-0"
-            style={{
-              color: '#000091',
-              fontSize: '40px',
-              fontWeight: 700,
-              lineHeight: '48px',
-            }}
-          >
+          <h1 className={`fr-mb-0 ${styles.title}`}>
             {titre}
             <br />
             {territoireActuel}
