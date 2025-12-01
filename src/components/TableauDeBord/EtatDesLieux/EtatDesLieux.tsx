@@ -61,9 +61,9 @@ export default function EtatDesLieux({
         </div>
 
       </div>
-      <div className="fr-grid-row">
+      <div className="fr-grid-row fr-grid-row--gutters">
         {carte}
-        <div className="fr-col-4">
+        <div className="fr-col-12 fr-col-lg-4">
           <LieuxInclusionNumerique viewModel={lieuxInclusionViewModel} />
           <MediateursEtAidants viewModel={mediateursEtAidantsViewModel} />
           <AccompagnementsRealises viewModel={accompagnementsRealisesViewModel} />

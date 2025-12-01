@@ -1,0 +1,35 @@
+.container {
+  background-color: var(--background-default-grey);
+  display: flex;
+  gap: 0;
+  width: 100%;
+}
+
+.sidebar {
+  background-color: var(--background-default-grey);
+  flex-shrink: 0;
+  width: 20rem;
+}
+
+.content {
+  flex: 1;
+  padding: 2.5rem;
+  padding-bottom: 5rem;
+  width: 84%;
+}
+
+@media (width <= 62rem) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .content {
+    padding: 1rem;
+    padding-bottom: 2.5rem;
+    width: 100%;
+  }
+}

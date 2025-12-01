@@ -1,6 +1,7 @@
 'use client'
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
+import styles from './CarteFragilite.module.css'
 import CarteFranceAvecInsets from '../../shared/Carte/CarteFranceAvecInsets'
 import Legend from '../../shared/Carte/Legend'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
@@ -40,9 +41,8 @@ export default function CarteIndicesFrance({
   if (isFragiliteError) {
     return (
       <div
-        className="fr-col-8 background-blue-france"
+        className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
         ref={containerRef}
-        style={{ padding: 0 }}
       >
         <div
           className="fr-p-0w"
@@ -86,9 +86,8 @@ export default function CarteIndicesFrance({
 
   return (
     <div
-      className="fr-col-8 background-blue-france"
+      className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
       ref={containerRef}
-      style={{ padding: 0 }}
     >
       <div
         className="fr-p-0w"

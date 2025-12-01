@@ -24,7 +24,7 @@ export default async function Gouvernances({ params }: Props): Promise<ReactElem
 
   return (
     <div
-      className="fr-pr-10w"
+      className="fr-pr-md-10w"
       style={{ display: 'flex', flexDirection: 'column' }}
     >
       <h2 className="fr-h2 color-blue-france">

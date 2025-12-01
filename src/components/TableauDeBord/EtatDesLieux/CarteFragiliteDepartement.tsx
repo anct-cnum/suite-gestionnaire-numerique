@@ -1,5 +1,6 @@
 import { ReactElement, useEffect, useRef, useState } from 'react'
 
+import styles from './CarteFragilite.module.css'
 import Carte from '../../shared/Carte/Carte'
 import TitleIcon from '../../shared/TitleIcon/TitleIcon'
 import { ErrorViewModel } from '@/components/shared/ErrorViewModel'
@@ -37,9 +38,8 @@ export default function CarteFragiliteDepartement({
   if (isErrorViewModel(communesFragilite)) {
     return (
       <div
-        className="fr-col-8 background-blue-france"
+        className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
         ref={containerRef}
-        style={{ padding: 0 }}
       >
         <div
           className="fr-p-0w"
@@ -79,9 +79,8 @@ export default function CarteFragiliteDepartement({
 
   return (
     <div
-      className="fr-col-8 background-blue-france"
+      className={`fr-col-12 fr-col-lg-8 background-blue-france ${styles.carteContainer}`}
       ref={containerRef}
-      style={{ padding: 0 }}
     >
       <div
         className="fr-p-0w"
