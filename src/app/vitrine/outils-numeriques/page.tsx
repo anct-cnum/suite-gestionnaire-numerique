@@ -26,7 +26,7 @@ export default function OutilsNumeriquesPage(): ReactElement {
     <>
       <HeroSection
         backgroundImage="/vitrine/outils/hero.png"
-        subtitle="Nunc enim pellentesque consectetur tempor vel lobortis accumsan luctus viverra donec nisl ac."
+        subtitle="Des outils pour échanger, piloter, accompagner"
         title="Les outils professionnels de l'inclusion numérique"
       />
 

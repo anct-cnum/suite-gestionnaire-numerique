@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { memo, ReactElement, useEffect, useState } from 'react'
 
+import styles from './DonneesTerritoriales.module.css'
 import CarteFranceVitrine from '@/components/vitrine/CarteFranceVitrine/CarteFranceVitrine'
 import QuiSommesNous from '@/components/vitrine/QuiSommesNous/QuiSommesNous'
 import SelecteurZoneGeographique from '@/components/vitrine/SelecteurZoneGeographique/SelecteurZoneGeographique'
@@ -50,14 +51,13 @@ export default function DonneesTerritoriales(): ReactElement {
             {/* Colonne gauche - Titre + Dropdown + Bouton */}
             <div className="fr-col-12 fr-col-lg-6">
               <div
-                className="fr-py-6w fr-py-lg-0"
                 style={{
                   alignItems: 'center',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'center',
                   minHeight: '639px',
-                  padding: '0 1rem',
+                  padding: '0 2rem',
                 }}
               >
                 <div style={{ maxWidth: '512px', width: '100%' }}>
@@ -112,7 +112,7 @@ export default function DonneesTerritoriales(): ReactElement {
             </div>
 
             {/* Colonne droite - Carte (masquée en mobile) */}
-            <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg">
+            <div className={`fr-col-12 fr-col-lg-6 ${styles.carteColonne}`}>
               <div
                 style={{
                   backgroundColor: '#f5f5fe',
