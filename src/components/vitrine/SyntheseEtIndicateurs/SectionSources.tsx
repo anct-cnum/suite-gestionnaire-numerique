@@ -54,7 +54,7 @@ export default function SectionSources(): ReactElement {
         >
           <img
             alt="Logo France Services"
-            src="/vitrine/donnees-territoriales/logo-france-service.png"
+            src="/vitrine/donnees-territoriales/logo-data-inclusion.png"
             style={{ height: '100%', width: '100%' }}
           />
         </div>
