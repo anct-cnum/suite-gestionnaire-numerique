@@ -23,8 +23,10 @@
   .navigationFixed :global(.fr-sidemenu__btn) {
     margin-left: 1rem;
   }
+}
 
-  /* Forcer le collapse fermé par défaut en mobile */
+/* Forcer le collapse fermé uniquement en très petit écran (quand le bouton DSFR est visible) */
+@media (width <= 48rem) {
   .navigationFixed :global(.fr-collapse:not(.fr-collapse--expanded)) {
     --collapse: -100%;
 
