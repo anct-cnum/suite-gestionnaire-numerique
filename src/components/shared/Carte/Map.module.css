@@ -32,3 +32,104 @@
   transform: translateX(-50%);
   z-index: 1;
 }
+
+/* Layout principal carte + insets + légende */
+.carteAvecInsetsWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.carteAvecInsetsContainer {
+  display: flex;
+  flex: 1;
+  flex-direction: row;
+  min-height: 0;
+  position: relative;
+  width: 100%;
+}
+
+/* Conteneur des insets DOM-TOM */
+.insetsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  width: 14%;
+}
+
+/* Conteneur de la carte principale */
+.carteMainContainer {
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+
+/* Légende en dessous */
+.legendBottom {
+  padding: 0.5rem 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* Un inset individuel */
+.insetItem {
+  background-color: var(--background-alt-blue-france);
+  height: 5.3125rem;
+  overflow: visible;
+  position: relative;
+}
+
+.insetLabel {
+  color: var(--text-default-grey);
+  font-size: 0.6875rem;
+  font-weight: bold;
+  left: 0;
+  position: absolute;
+  right: 0;
+  text-align: center;
+  top: -1rem;
+  z-index: 10;
+}
+
+.insetMapContainer {
+  height: 100%;
+  width: 100%;
+}
+
+/* Responsive mobile */
+@media (width <= 78rem) {
+  .carteAvecInsetsContainer {
+    flex-direction: column;
+  }
+
+  .insetsContainer {
+    flex-flow: row wrap;
+    gap: 1rem;
+    justify-content: center;
+    order: 2;
+    padding: 1rem 0.5rem;
+    width: 100%;
+  }
+
+  .carteMainContainer {
+    min-height: 38rem;
+    order: 1;
+  }
+
+  .insetItem {
+    flex: 0 0 calc(33.333% - 1rem);
+    height: 5rem;
+    max-width: 7.5rem;
+  }
+
+  .insetLabel {
+    font-size: 0.625rem;
+    top: -0.875rem;
+  }
+
+  .legendBottom {
+    padding: 0.5rem;
+  }
+}

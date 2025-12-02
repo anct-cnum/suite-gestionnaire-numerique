@@ -66,7 +66,7 @@ export default async function SyntheseEtIndicateurs({ params }: Props): Promise<
 
   return (
     <div
-      className="fr-pr-md-10w"
+      className="fr-pr-lg-10w"
       style={{ display: 'flex', flexDirection: 'column' }}
     >
       <EtatDesLieux

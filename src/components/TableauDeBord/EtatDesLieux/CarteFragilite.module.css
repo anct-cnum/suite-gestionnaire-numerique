@@ -1,9 +1,9 @@
 .carteContainer {
-  min-height: 25rem;
+  min-height: 38rem;
   padding: 0;
 }
 
-@media (width > 62rem) {
+@media (width > 78rem) {
   .carteContainer {
     min-height: auto;
   }

@@ -202,12 +202,14 @@ export default function CarteFranceAvecInsets(
 
     // Initialiser la carte principale
     mainMap.current = new Map({
+      attributionControl: false,
       boxZoom: false,
       container: mainMapContainer.current,
       doubleClickZoom: false,
       dragPan: false,
       dragRotate: false,
       keyboard: false,
+      maplibreLogo: false,
       maxZoom: 7,
       minZoom: 4,
       scrollZoom: false,
@@ -236,6 +238,7 @@ export default function CarteFranceAvecInsets(
         dragRotate: false,
         interactive: true, // Garder pour les survols/popups
         keyboard: false,
+        maplibreLogo: false,
         maxZoom: 10,
         minZoom: 3,
         scrollZoom: false,
@@ -259,88 +262,52 @@ export default function CarteFranceAvecInsets(
   }, [donneesDepartements])
 
   return (
-    <div style={{ height: '100%', position: 'relative', width: '100%' }}>
-      {/* Carte principale */}
-      <div
-        className={styles.mapWrapper}
-        data-testid="carte-france-wrapper"
-        style={{
-          height:  '100%',
-          marginLeft: '10%',
-          width: '90%',
-        }}
-      >
-        <div
-          className={styles.mapContainer}
-          data-testid="carte-france-container"
-          ref={mainMapContainer}
-          style={{ height: '100%' }}
-        />
+    <div className={styles.carteAvecInsetsWrapper}>
+      <div className={styles.carteAvecInsetsContainer}>
+        {/* Conteneur des insets DOM-TOM */}
+        <div className={styles.insetsContainer}>
+          {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {
+            const config = DOM_TOM_CONFIG[code]
+            return (
+              <div
+                className={styles.insetItem}
+                key={code}
+              >
+                {/* Label du DOM-TOM au-dessus de l'inset */}
+                <div className={styles.insetLabel}>
+                  {config.name}
+                </div>
+                {/* Conteneur de la carte */}
+                <div
+                  className={styles.insetMapContainer}
+                  ref={(el) => { domTomContainers.current[code] = el }}
+                />
+              </div>
+            )})}
+        </div>
 
-        <div
-          className={styles.legendWrapper}
-          data-testid="legend-wrapper"
-          style={{
-            bottom: '2rem',
-            width: '90%',
-          }}
-        >
-          {legend}
+        {/* Carte principale */}
+        <div className={styles.carteMainContainer}>
+          <div
+            className={styles.mapWrapper}
+            data-testid="carte-france-wrapper"
+          >
+            <div
+              className={styles.mapContainer}
+              data-testid="carte-france-container"
+              ref={mainMapContainer}
+              style={{ height: '100%' }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Conteneur des insets DOM-TOM */}
+      {/* Légende en dessous */}
       <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '420px',
-          justifyContent: 'space-between',
-          left: '1%',
-          position: 'absolute',
-          top:  '40%',
-          transform: 'translateY(-40%)',
-          width: '14%',
-        }}
+        className={styles.legendBottom}
+        data-testid="legend-wrapper"
       >
-        {(Object.keys(DOM_TOM_CONFIG) as Array<keyof typeof DOM_TOM_CONFIG>).map((code) => {
-          const config = DOM_TOM_CONFIG[code]
-          return (
-            <div
-              key={code}
-              style={{
-                backgroundColor: '#f5f5fe',
-                height: '85px', // Augmenté pour réduire l'espace
-                overflow: 'visible',
-                position: 'relative',
-              }}
-            >
-              {/* Label du DOM-TOM au-dessus de l'inset */}
-              <div
-                style={{
-                  color: '#000',
-                  fontSize: '11px',
-                  fontWeight: 'bold',
-                  left: 0,
-                  position: 'absolute',
-                  right: 0,
-                  textAlign: 'center',
-                  top: '-16px',
-                  zIndex: 10,
-                }}
-              >
-                {config.name}
-              </div>
-              {/* Conteneur de la carte */}
-              <div
-                ref={(el) => { domTomContainers.current[code] = el }}
-                style={{
-                  height: '100%',
-                  width: '100%',
-                }}
-              />
-            </div>
-          )})}
+        {legend}
       </div>
     </div>
   )

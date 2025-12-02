@@ -66,18 +66,7 @@ export default function Navigation(): ReactElement {
       aria-labelledby="donnees-territoriales-menu"
       className={`fr-sidemenu ${styles.navigationFixed}`}
       role="navigation"
-      style={{
-        boxShadow: 'none',
-        gap: '56px',
-        height: '384px',
-        opacity: 1,
-        paddingBottom: 'var(--spacing-10v, 2.5rem)',
-        paddingLeft: 'var(--spacing-20v, 5rem)',
-        paddingRight: 'var(--spacing-0v, 0)',
-        paddingTop: 'var(--spacing-10v, 2.5rem)',
-        top: topPosition,
-        width: '320px',
-      }}
+      style={{ top: topPosition }}
     >
       <div
         className="fr-sidemenu__inner"
@@ -89,7 +78,7 @@ export default function Navigation(): ReactElement {
           className="fr-sidemenu__btn"
           type="button"
         >
-          Navigation
+          Dans cette rubrique
         </button>
         <div
           className="fr-collapse"
