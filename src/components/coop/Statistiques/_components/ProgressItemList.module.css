@@ -64,3 +64,14 @@
   display: flex;
   justify-content: center;
 }
+
+/* Responsive mobile */
+@media (width <= 48rem) {
+  .rightPart {
+    display: none;
+  }
+
+  .leftPart {
+    width: 100%;
+  }
+}

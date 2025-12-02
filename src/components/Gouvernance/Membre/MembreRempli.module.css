@@ -1,0 +1,49 @@
+/* Responsive mobile - transformer le tableau en liste */
+@media (width <= 48rem) {
+  .responsiveTable > table,
+  .responsiveTable > table > thead,
+  .responsiveTable > table > tbody,
+  .responsiveTable > table > tbody > tr {
+    display: block;
+    width: 100%;
+  }
+
+  .responsiveTable > table > thead {
+    display: none;
+  }
+
+  .responsiveTable > table > tbody > tr {
+    border-bottom: 0.0625rem solid var(--border-default-grey);
+    margin-bottom: 1rem;
+    padding: 0.5rem 0 1rem;
+  }
+
+  .responsiveTable > table > tbody > tr > td {
+    border: none;
+    display: block;
+    padding: 0.25rem 0;
+    text-align: left;
+    width: 100%;
+  }
+
+  /* Logo - masquer en mobile */
+  .responsiveTable > table > tbody > tr > td:first-child {
+    display: none;
+  }
+
+  /* Nom */
+  .responsiveTable > table > tbody > tr > td:nth-child(2) {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Type */
+  .responsiveTable > table > tbody > tr > td:nth-child(3) {
+    margin-bottom: 0.5rem;
+  }
+
+  /* Rôle - masquer si vide */
+  .responsiveTable > table > tbody > tr > td:nth-child(4):empty {
+    display: none;
+  }
+}

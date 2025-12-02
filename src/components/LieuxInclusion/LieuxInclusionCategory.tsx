@@ -1,6 +1,7 @@
 'use client'
 import React, { ReactElement, useRef } from 'react'
 
+import styles from './LieuxInclusionCategory.module.css'
 import Information from '../shared/Information/Information'
 import { DownloadButton } from '@/components/shared/Download/DownloadButton'
 import GraphiqueBarList from '@/components/shared/GraphiqueBarList/GraphiqueBarList'
@@ -43,8 +44,7 @@ export default function LieuxInclusionCategory(props : Props): ReactElement {
             </p>
           </div>
           <div
-            className="fr-col-12 fr-col-md-6 fr-pl-4w "
-            style={{ borderLeftColor: 'var(--grey-900-175)' ,borderLeftStyle: 'solid', borderLeftWidth: '1px' }}
+            className={`fr-col-12 fr-col-md-6 ${styles.graphiqueContainer}`}
           >
             <div
               className="fr-text--bold  fr-mb-1w fr-text--sm"

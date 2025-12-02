@@ -1,0 +1,14 @@
+.graphiqueContainer {
+  border-left: 0.0625rem solid var(--grey-900-175);
+  padding-left: 2rem;
+}
+
+@media (width <= 48rem) {
+  .graphiqueContainer {
+    border-left: none;
+    border-top: 0.0625rem solid var(--grey-900-175);
+    margin-top: 1.5rem;
+    padding-left: 0;
+    padding-top: 1.5rem;
+  }
+}

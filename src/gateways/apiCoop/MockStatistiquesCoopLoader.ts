@@ -171,13 +171,7 @@ export class MockStatistiquesCoopLoader implements StatistiquesCoopLoader {
           label: 'Atelier collectif',
           proportion: 29.5,
           value: 'Collectif',
-        },
-        {
-          count: Math.round(150000 * facteur),
-          label: 'Aide aux démarches',
-          proportion: 15.8,
-          value: 'Demarche',
-        },
+        }
       ],
       typeLieu: [
         {

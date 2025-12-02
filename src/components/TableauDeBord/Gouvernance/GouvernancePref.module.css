@@ -1,0 +1,10 @@
+.cartesContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.carte {
+  flex: 1;
+  min-width: 15rem;
+}

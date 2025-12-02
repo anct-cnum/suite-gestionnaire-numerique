@@ -12,6 +12,7 @@ import {
   dureesAccompagnementColors,
   thematiquesAccompagnementColors,
 } from '../colors'
+import styles from './StatistiquesActivites.module.css'
 import type { AccompagnementsStats, ActivitesStats } from '../types'
 import { numberToString, sPluriel } from '../utils'
 import Information from '@/components/shared/Information/Information'
@@ -49,14 +50,7 @@ export function StatistiquesActivites({
       </h2>
       {/* Bloc Types d'activité */}
       <div
-        className="fr-background-alt--blue-france fr-mb-3w fr-border-radius--16"
-        style={{
-          alignItems: 'center',
-          alignSelf: 'stretch',
-          display: 'flex',
-          gap: '24px',
-          padding: '24px 32px',
-        }}
+        className={`fr-background-alt--blue-france fr-mb-3w fr-border-radius--16 ${styles.typesActiviteContainer}`}
       >
         {activites.typeActivites.map(({ count, proportion, value }) => (
           <StatistiqueAccompagnement
@@ -87,17 +81,10 @@ export function StatistiquesActivites({
       >
         {/* Thématiques des activités */}
         <div
-          className="fr-mb-4v"
-          style={{
-            alignItems: 'center',
-            display: 'flex',
-            gap: '24px',
-            justifyContent: 'space-between',
-          }}
+          className={`fr-mb-4v ${styles.thematiquesHeader}`}
         >
           <h3
             className="fr-text--lg fr-mb-0"
-            style={{ flexShrink: 0 }}
           >
             <span>
               Thématiques des activités
@@ -106,7 +93,6 @@ export function StatistiquesActivites({
           </h3>
           <fieldset
             className="fr-segmented fr-segmented--sm"
-            style={{ flexShrink: 0 }}
           >
             <legend className="fr-segmented__legend sr-only">
               Bascule entre les thématiques
@@ -175,7 +161,7 @@ export function StatistiquesActivites({
         <div className="fr-grid-row fr-grid-row--gutters">
           {activites.materiels.map(({ count, label, proportion, value }) => (
             <StatistiqueMateriel
-              className="fr-col-xl fr-col-4"
+              className="fr-col-6 fr-col-lg-3"
               count={count}
               key={value}
               label={label}
@@ -191,28 +177,15 @@ export function StatistiquesActivites({
         className="fr-p-4w fr-border-radius--16"
         style={{ border: '1px solid var(--border-default-grey)' }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '64px',
-          }}
-        >
-          <div style={{ flex: 1 }}>
+        <div className={styles.canauxDureesContainer}>
+          <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
               <span>
                 Canaux des activités
               </span>
               <Information label="Répartition des activités enregistrées par canal." />
             </h3>
-            <div
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'row',
-                gap: '48px',
-              }}
-            >
+            <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart
                 colors={canauxAccompagnementColors}
                 data={activites.typeLieu}
@@ -225,21 +198,14 @@ export function StatistiquesActivites({
               />
             </div>
           </div>
-          <div style={{ flex: 1 }}>
+          <div className={styles.canauxDureesItem}>
             <h3 className="fr-text--lg fr-mb-0 fr-mb-3w">
               <span>
                 Durées des activités
               </span>
               <Information label="Répartition des activités enregistrées par durée." />
             </h3>
-            <div
-              style={{
-                alignItems: 'center',
-                display: 'flex',
-                flexDirection: 'row',
-                gap: '48px',
-              }}
-            >
+            <div className={styles.canauxDureesContent}>
               <AccompagnementPieChart
                 colors={dureesAccompagnementColors}
                 data={activites.durees}

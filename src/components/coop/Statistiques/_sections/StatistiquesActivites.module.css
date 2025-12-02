@@ -1,0 +1,71 @@
+/* Bloc Types d'activité */
+.typesActiviteContainer {
+  align-items: center;
+  align-self: stretch;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+}
+
+/* Bloc Thématiques header */
+.thematiquesHeader {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.thematiquesHeader h3 {
+  flex-shrink: 0;
+}
+
+.thematiquesHeader fieldset {
+  flex-shrink: 0;
+}
+
+/* Bloc Canaux et Durées */
+.canauxDureesContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 4rem;
+}
+
+.canauxDureesItem {
+  flex: 1;
+}
+
+.canauxDureesContent {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+}
+
+/* Responsive mobile */
+@media (width <= 48rem) {
+  .typesActiviteContainer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .thematiquesHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .canauxDureesContainer {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .canauxDureesContent {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
