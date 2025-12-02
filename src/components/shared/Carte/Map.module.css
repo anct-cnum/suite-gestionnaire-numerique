@@ -99,7 +99,7 @@
 }
 
 /* Responsive mobile */
-@media (width <= 62rem) {
+@media (width <= 78rem) {
   .carteAvecInsetsContainer {
     flex-direction: column;
   }
@@ -114,7 +114,7 @@
   }
 
   .carteMainContainer {
-    min-height: 18rem;
+    min-height: 38rem;
     order: 1;
   }
 
