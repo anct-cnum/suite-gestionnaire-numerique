@@ -5,7 +5,8 @@
   height: 24rem;
   left: 0;
   opacity: 1;
-  padding: var(--spacing-10v, 2.5rem) var(--spacing-0v, 0) var(--spacing-10v, 2.5rem) var(--spacing-20v, 5rem);
+  padding: var(--spacing-10v, 2.5rem) var(--spacing-0v, 0) var(--spacing-10v, 2.5rem)
+    var(--spacing-20v, 5rem);
   position: fixed;
   width: 20rem;
 }
